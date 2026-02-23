@@ -211,31 +211,6 @@ const sdk = {
         });
     },
 
-    inviteLink: function(params) {
-        return this._call("create invite link", function(sdkRoot) {
-            return sdkRoot.game.inviteLink(params || {});
-        });
-    },
-
-    getInviteParam: function(name) {
-        return this._call("get invite param", function(sdkRoot) {
-            return sdkRoot.game.getInviteParam(name);
-        });
-    },
-
-    showInviteButton: function(params) {
-        return this._call("show invite button", function(sdkRoot) {
-            return sdkRoot.game.showInviteButton(params || {});
-        });
-    },
-
-    hideInviteButton: function() {
-        return this._call("hide invite button", function(sdkRoot) {
-            sdkRoot.game.hideInviteButton();
-            return true;
-        });
-    },
-
     requestBanner: function(config) {
         return this._call("request banner", function(sdkRoot) {
             return sdkRoot.banner.requestBanner(config);
@@ -297,24 +272,6 @@ const sdk = {
         sdkRoot.user.removeAuthListener(listener);
         return true;
     },
-
-    addJoinRoomListener: function(listener) {
-        const sdkRoot = this._getRoot();
-        if (!sdkRoot || !sdkRoot.game || typeof sdkRoot.game.addJoinRoomListener !== "function") {
-            return false;
-        }
-        sdkRoot.game.addJoinRoomListener(listener);
-        return true;
-    },
-
-    removeJoinRoomListener: function(listener) {
-        const sdkRoot = this._getRoot();
-        if (!sdkRoot || !sdkRoot.game || typeof sdkRoot.game.removeJoinRoomListener !== "function") {
-            return false;
-        }
-        sdkRoot.game.removeJoinRoomListener(listener);
-        return true;
-    }
 };
 
 const sdkGetItem = function(key) {

@@ -92,8 +92,17 @@ class LoadingScreen {
     }
 
     _onComplete() {
-        if (this._bar)  { this._bar.destroy();  this._bar  = null; }
-        this._text.setText('Loading done');
+        if (this._bar) { this._bar.destroy(); this._bar = null; }
+        if (this._text) {
+            this._text.setText('Done');
+            PhaserScene.tweens.add({
+                targets:  this._text,
+                alpha:    0,
+                delay:    300,
+                duration: 400,
+                onComplete: () => { if (this._text) { this._text.destroy(); this._text = null; } }
+            });
+        }
     }
 }
 
