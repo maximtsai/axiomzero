@@ -7,4 +7,8 @@ const FLAGS = {
 
     // Set true for desktop-targeted builds (affects input, UI scaling hints, etc.)
     IS_DESKTOP: false,
+
+    // Set true locally to enable the FPS overlay and verbose console logging.
+    // Always leave false in production builds.
+    DEBUG: false,
 };

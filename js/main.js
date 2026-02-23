@@ -4,19 +4,33 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        loadingScreen.preload(this);
+        try {
+            loadingScreen.preload(this);
+        } catch (error) {
+            console.error('[MainScene] preload error:', error);
+        }
     }
 
     create() {
-        window.PhaserScene = this;
-        setupMouseInteraction(this);
-        loadingScreen.create(this);
-        this.load.start();
+        try {
+            window.PhaserScene = this;
+            helper.initClickEffectPool(this);
+            setupMouseInteraction(this);
+            initDebug(this);
+            loadingScreen.create(this);
+            this.load.start();
+        } catch (error) {
+            console.error('[MainScene] create error:', error);
+        }
     }
 
     update(_time, delta) {
-        updateManager.update(delta);
-        buttonManager.update(delta);
+        try {
+            updateManager.update(delta);
+            buttonManager.update(delta);
+        } catch (error) {
+            console.error('[MainScene] update error:', error);
+        }
     }
 }
 
@@ -31,7 +45,7 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
-    }
+    },
 };
 
 // ─── Host guard ───────────────────────────────────────────────────────────────
