@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(uglifyjs:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(ls:*)"
     ]
   }
 }

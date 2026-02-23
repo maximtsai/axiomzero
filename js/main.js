@@ -46,6 +46,13 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
+    plugins: {
+        global: [{
+            key: 'rexBBCodeTextPlugin',
+            plugin: window.rexbbcodetextplugin,
+            start: true
+        }]
+    }
 };
 
 // ─── Host guard ───────────────────────────────────────────────────────────────
