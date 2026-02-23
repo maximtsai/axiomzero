@@ -52,7 +52,6 @@ const GAME_OPTIONS_DEFAULTS = {
     language:     'en',
     sfxVolume:    1,
     musicVolume:  1,
-    infoBoxAlign: 'center',
 };
 
 const gameOptions = (function () {

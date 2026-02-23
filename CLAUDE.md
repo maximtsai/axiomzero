@@ -39,12 +39,10 @@ js/
     buttonManager.js    # Button lifecycle/input routing
     audioManager.js     # Sound/music management
     mouseManager.js     # Mouse input handling
-    hoverText.js        # Tooltip/hover text
     popupManager.js     # Popup dialogs
     timeManager.js      # Time/timer utilities
     updateManager.js    # Per-frame update loop
     tweens.js           # Custom tween helpers (e.g. tweenTint)
-    wrappedtext.js      # Text wrapping utilities
     helperFunction.js   # Misc helpers (typewriter, fullscreen, mobile detect)
     textEffects.js      # Text effect utilities
     videoManager.js     # Video playback

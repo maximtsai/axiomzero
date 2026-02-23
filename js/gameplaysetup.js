@@ -188,7 +188,6 @@ function setupGame() {
     createAnimations(PhaserScene);
 
     globalObjects.timeManager = new TimeManager();
-    globalObjects.hoverTextManager = new InternalHoverTextManager(PhaserScene);
     mainMenu.onLoadComplete();
 }
 
