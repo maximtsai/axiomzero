@@ -19,10 +19,10 @@ class MainMenu {
     onLoadComplete(scene) {
 
         // Calculate center of remaining space
-        let leftCenterX = (gameConsts.width - this.clearOnStartObjects.preloadImage.width) / 2;
+        let leftCenterX = (GAME_CONSTANTS.width - this.clearOnStartObjects.preloadImage.width) / 2;
 
         // Create "Maid Ready" text
-        this.elements.loadingText = PhaserScene.add.text(leftCenterX, gameConsts.halfHeight - 45, 'Maid Ready', {
+        this.elements.loadingText = PhaserScene.add.text(leftCenterX, GAME_CONSTANTS.halfHeight - 45, 'Maid Ready', {
             fontFamily: 'CrimsonText_Bold',
             fontSize: 46,
             color: '#EBC99F',
@@ -79,7 +79,7 @@ class MainMenu {
         this.elements.startButton.tweenToAlpha(1, 1000, 'Quart.easeOut');
 
         // Create and play intro video
-        const videoScale = (gameConsts.height / 768) * 0.891;
+        const videoScale = (GAME_CONSTANTS.height / 768) * 0.891;
         const videoDepth = 1;
         const loop = true;
         this.elements.currentVideo = videoManager.playVideo(
@@ -108,24 +108,24 @@ class MainMenu {
     }
 
     createOnStartObjects(scene) {
-        this.clearOnStartObjects.preloadBackground = scene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'bg').setDepth(-1);
-        this.clearOnStartObjects.rightbg = scene.add.image(gameConsts.width, gameConsts.halfHeight, 'right_bg').setDepth(0).setOrigin(1, 0.5);
+        this.clearOnStartObjects.preloadBackground = scene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'bg').setDepth(-1);
+        this.clearOnStartObjects.rightbg = scene.add.image(GAME_CONSTANTS.width, GAME_CONSTANTS.halfHeight, 'right_bg').setDepth(0).setOrigin(1, 0.5);
 
 
-        this.clearOnStartObjects.preloadImage = scene.add.image(gameConsts.width, gameConsts.halfHeight, 'zzza').setDepth(1001).setScale(0.95);
-        this.clearOnStartObjects.preloadImage.x = gameConsts.width - this.clearOnStartObjects.preloadImage.width * 0.5 - 28;
+        this.clearOnStartObjects.preloadImage = scene.add.image(GAME_CONSTANTS.width, GAME_CONSTANTS.halfHeight, 'zzza').setDepth(1001).setScale(0.95);
+        this.clearOnStartObjects.preloadImage.x = GAME_CONSTANTS.width - this.clearOnStartObjects.preloadImage.width * 0.5 - 28;
 
-        this.clearOnStartObjects.portrait = scene.add.image(gameConsts.width, gameConsts.halfHeight, 'portrait').setDepth(1011);
+        this.clearOnStartObjects.portrait = scene.add.image(GAME_CONSTANTS.width, GAME_CONSTANTS.halfHeight, 'portrait').setDepth(1011);
         this.clearOnStartObjects.portrait.x = this.clearOnStartObjects.preloadImage.x - 4;
 
-        this.clearOnStartObjects.vignette_right = scene.add.image(gameConsts.width, gameConsts.halfHeight, 'vignette_right').setDepth(1012).setOrigin(1, 0.5).setScale(2);
+        this.clearOnStartObjects.vignette_right = scene.add.image(GAME_CONSTANTS.width, GAME_CONSTANTS.halfHeight, 'vignette_right').setDepth(1012).setOrigin(1, 0.5).setScale(2);
 
-        this.clearOnStartObjects.divider = scene.add.image(0, gameConsts.halfHeight, 'divider').setDepth(1011).setScale(0.71);
+        this.clearOnStartObjects.divider = scene.add.image(0, GAME_CONSTANTS.halfHeight, 'divider').setDepth(1011).setScale(0.71);
         this.clearOnStartObjects.divider.x = this.clearOnStartObjects.preloadImage.x - this.clearOnStartObjects.preloadImage.width * 0.5 - 45
 
         this.clearOnStartObjects.disclaimerText = PhaserScene.add.text(
             loadObjects.loadingText.x,
-            gameConsts.height - 32,
+            GAME_CONSTANTS.height - 32,
             "WARNING:\nContains NSFW and potentially disturbing content such as\nfurries, BDSM, extreme fetishes and AI generated imagery.\nViewer discretion is advised.",
             {
                 fontFamily: 'Times New Roman',
@@ -161,7 +161,7 @@ class MainMenu {
             this.elements.startButton.destroy();
             delete this.elements.startButton;
         }
-        let tempBlackImage = PhaserScene.add.image(-1, gameConsts.halfHeight, 'blackPixel').setScale(0, 2000).setDepth(9999).setOrigin(0, 0.5);
+        let tempBlackImage = PhaserScene.add.image(-1, GAME_CONSTANTS.halfHeight, 'blackPixel').setScale(0, 2000).setDepth(9999).setOrigin(0, 0.5);
         fadeAwayMusic(1500, undefined, () => {
             playMusic("victoriandance");
         })
@@ -171,13 +171,13 @@ class MainMenu {
         }, 1200);
         PhaserScene.tweens.add({
             targets: tempBlackImage,
-            scaleX: gameConsts.halfWidth + 2,
+            scaleX: GAME_CONSTANTS.halfWidth + 2,
             duration: 1100,
             ease: 'Quint.easeIn',
             delay: 400,
             onComplete: () => {
                 this.handleTrueStartLogic();
-                tempBlackImage.setOrigin(1, 0.5).setPosition(gameConsts.width + 1, gameConsts.halfHeight);
+                tempBlackImage.setOrigin(1, 0.5).setPosition(GAME_CONSTANTS.width + 1, GAME_CONSTANTS.halfHeight);
                 PhaserScene.tweens.add({
                     targets: tempBlackImage,
                     scaleX: 0,
@@ -261,13 +261,13 @@ class MainMenu {
 
         // Swap video
         if (this.elements.currentVideo) {
-            const videoScale = (gameConsts.height / 768) * 0.891;
+            const videoScale = (GAME_CONSTANTS.height / 768) * 0.891;
             this.elements.currentVideo = videoManager.swapVideo(
                 PhaserScene,
                 this.elements.currentVideo,
                 'lifter',
-                this.elements.currentVideo.x ? this.elements.currentVideo.x : gameConsts.width - 90,
-                this.elements.currentVideo.y ? this.elements.currentVideo.y : gameConsts.halfHeight,
+                this.elements.currentVideo.x ? this.elements.currentVideo.x : GAME_CONSTANTS.width - 90,
+                this.elements.currentVideo.y ? this.elements.currentVideo.y : GAME_CONSTANTS.halfHeight,
                 videoScale,
                 true,
                 250
@@ -306,8 +306,8 @@ class MainMenu {
             PhaserScene,
             'start_clip',
             'start_loop',
-            gameConsts.mainVideoXPos,
-            gameConsts.halfHeight,
+            GAME_CONSTANTS.mainVideoXPos,
+            GAME_CONSTANTS.halfHeight,
             videoScale,
             1
         );

@@ -28,8 +28,8 @@ class InternalHoverTextManager {
     // }
 
     onPointerMove(mouseX, mouseY) {
-        let handX = gameVars.mouseposx;
-        let handY = gameVars.mouseposy;
+        let handX = GAME_VARS.mouseposx;
+        let handY = GAME_VARS.mouseposy;
         // check hovering
         let currentHovered = null;
 

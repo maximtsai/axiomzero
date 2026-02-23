@@ -17,8 +17,8 @@ const helper = {
                 intervals.shift();
                 helper.runFunctionOverIntervals(func, intervals, prevDelay);
             }, delayAmt);
-            this.push(timeoutId);
-._typewriterTimeouts        }
+            this._typewriterTimeouts.push(timeoutId);
+        }
     },
 
     openFullscreen: function() {
@@ -50,8 +50,8 @@ const helper = {
             globalObjects.clickBlocker = new Button({
                 normal: {
                     ref: "blackPixel",
-                    x: gameConsts.halfWidth,
-                    y: gameConsts.halfHeight,
+                    x: GAME_CONSTANTS.halfWidth,
+                    y: GAME_CONSTANTS.halfHeight,
                     alpha: 0.001,
                     scaleX: 1000,
                     scaleY: 1000

@@ -7,16 +7,16 @@ function setupLoadingBar(scene) {
     // Calculate center of remaining space (left of the image)
     // Image is at width - 80, so remaining space is from 0 to (width - 80 - image_half_width)
     // Approximate center of left space
-    let leftCenterX = (gameConsts.halfWidth - 150);
+    let leftCenterX = (GAME_CONSTANTS.halfWidth - 150);
 
     // Basic loading bar visual
-    loadObjects.loadingText = scene.add.text(leftCenterX, gameConsts.halfHeight - 45, 'Loading...', {fontFamily: 'Times New Roman', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(1001);
+    loadObjects.loadingText = scene.add.text(leftCenterX, GAME_CONSTANTS.halfHeight - 45, 'Loading...', {fontFamily: 'Times New Roman', fontSize: 36, color: '#FFFFFF', align: 'center'}).setDepth(1001);
     loadObjects.loadingText.setScale(0.6).setAlpha(0.93);
     loadObjects.loadingText.setAlign('center');
     loadObjects.loadingText.setOrigin(0.5, 0.5);
     loadObjects.loadingText.scrollFactorX = 0.3; loadObjects.loadingText.scrollFactorY = 0.3;
-    loadObjects.loadingBarBack = scene.add.image(leftCenterX, gameConsts.halfHeight + 100, 'whitePixel').setAlpha(0.5);
-    loadObjects.loadingBarMain = scene.add.image(leftCenterX, gameConsts.halfHeight + 100, 'whitePixel');
+    loadObjects.loadingBarBack = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'whitePixel').setAlpha(0.5);
+    loadObjects.loadingBarMain = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'whitePixel');
 
     loadObjects.loadingBarBack.setScale(GAME_CONSTANTS.LOADING_BAR_WIDTH, GAME_CONSTANTS.LOADING_BAR_HEIGHT);
     loadObjects.loadingBarMain.setScale(1, GAME_CONSTANTS.LOADING_BAR_HEIGHT);
@@ -55,7 +55,7 @@ function setupLoadingBar(scene) {
                 // Create loading progress text in bottom left
                 const delayedLoadingText = PhaserScene.add.text(
                     10,
-                    gameConsts.height - 10,
+                    GAME_CONSTANTS.height - 10,
                     `LOADING EXTRA CONTENT (0/${totalDelayedVideos})`,
                     {
                         fontFamily: 'Times New Roman',
@@ -103,7 +103,7 @@ function setupLoadingBar(scene) {
 
 
 function clickIntro() {
-    gameVars.runningIntro = true;
+    GAME_VARS.runningIntro = true;
 
     PhaserScene.tweens.add({
         targets: PhaserScene.cameras.main,
@@ -149,8 +149,8 @@ function clickIntro() {
         });
     }
 
-    loadObjects.skipIntroText = PhaserScene.add.text(gameConsts.width - 5, gameConsts.height - 5, getLangText('click_to_skip'), {fontFamily: 'verdana', fontSize: 18, color: '#FFFFFF', align: 'right'}).setDepth(1005).setAlpha(0).setOrigin(1, 1);
-    loadObjects.whiteOverall = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setDepth(2000).setAlpha(0).setScale(1000);
+    loadObjects.skipIntroText = PhaserScene.add.text(GAME_CONSTANTS.width - 5, GAME_CONSTANTS.height - 5, getLangText('click_to_skip'), {fontFamily: 'verdana', fontSize: 18, color: '#FFFFFF', align: 'right'}).setDepth(1005).setAlpha(0).setOrigin(1, 1);
+    loadObjects.whiteOverall = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'whitePixel').setDepth(2000).setAlpha(0).setScale(1000);
     PhaserScene.tweens.add({
         targets: loadObjects.whiteOverall,
         alpha: 0.75,
@@ -160,11 +160,11 @@ function clickIntro() {
 }
 
 function cleanupIntro() {
-    if (gameVars.introFinished) {
+    if (GAME_VARS.introFinished) {
         return;
     }
-    gameVars.introFinished = true;
-    tempBG = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'whitePixel').setScale(1000).setAlpha(0.85).setDepth(1002);
+    GAME_VARS.introFinished = true;
+    tempBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'whitePixel').setScale(1000).setAlpha(0.85).setDepth(1002);
     PhaserScene.tweens.add({
         targets: tempBG,
         alpha: 0,
@@ -179,11 +179,11 @@ function cleanupIntro() {
 
 function setupGame() {
     canvas = game.canvas;
-    if (gameVars.started) {
+    if (GAME_VARS.started) {
         return;
     }
 
-    gameVars.started = true;
+    GAME_VARS.started = true;
 
     createAnimations(PhaserScene);
 
@@ -193,7 +193,7 @@ function setupGame() {
 }
 
 function setupPlayer() {
-    globalObjects.options = new Options(PhaserScene, gameConsts.width - 27, 27);
+    globalObjects.options = new Options(PhaserScene, GAME_CONSTANTS.width - 27, 27);
 }
 
 function handleGlobalKeyPresses() {

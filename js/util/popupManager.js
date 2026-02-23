@@ -1,10 +1,10 @@
 function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", onYes = () => {}, superFast = false) {
-    let darkBG = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight, 'blackPixel').setScale(500).setDepth(110900).setAlpha(0);
+    let darkBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'blackPixel').setScale(500).setDepth(110900).setAlpha(0);
     let dieClickBlocker = new Button({
         normal: {
             ref: "blackPixel",
-            x: gameConsts.halfWidth,
-            y: gameConsts.halfHeight,
+            x: GAME_CONSTANTS.halfWidth,
+            y: GAME_CONSTANTS.halfHeight,
             alpha: 0.001,
             scaleX: 1000,
             scaleY: 1000
@@ -20,9 +20,9 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", on
         duration: superFast ? 0.2 : 50
     });
 
-    let popupBG = PhaserScene.add.image(gameConsts.halfWidth, gameConsts.halfHeight - 40, 'ui', 'paper_half.png').setDepth(111000).setScale(0.7, 0.58);
-    let newText = PhaserScene.add.text(gameConsts.halfWidth, popupBG.y - 75, titleText, {fontFamily: 'Arial', fontSize: 30, color: '#000000', align: 'center'}).setOrigin(0.5, 0.5).setDepth(111000).setAlpha(0.1);
-    let descText = PhaserScene.add.text(gameConsts.halfWidth, popupBG.y - 17, bodyText, {fontFamily: 'Arial', fontSize: 24, color: '#000000', align: 'center'}).setOrigin(0.5, 0.5).setDepth(111000).setAlpha(0.1);
+    let popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'ui', 'paper_half.png').setDepth(111000).setScale(0.7, 0.58);
+    let newText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 75, titleText, {fontFamily: 'Arial', fontSize: 30, color: '#000000', align: 'center'}).setOrigin(0.5, 0.5).setDepth(111000).setAlpha(0.1);
+    let descText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 17, bodyText, {fontFamily: 'Arial', fontSize: 24, color: '#000000', align: 'center'}).setOrigin(0.5, 0.5).setDepth(111000).setAlpha(0.1);
     PhaserScene.tweens.add({
         targets: [newText, descText],
         alpha: 1,
@@ -44,7 +44,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", on
         normal: {
             ref: "menu_btn_normal.png",
             atlas: 'buttons',
-            x: gameConsts.halfWidth + 128,
+            x: GAME_CONSTANTS.halfWidth + 128,
             y: popupBG.y + 55,
         },
         hover: {
@@ -95,7 +95,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", on
             atlas: 'buttons',
             ref: "closebtn.png",
             alpha: 0.95,
-            x: gameConsts.halfWidth + 190,
+            x: GAME_CONSTANTS.halfWidth + 190,
             y: popupBG.y - 95,
         },
         hover: {
@@ -144,7 +144,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = "...", on
         normal: {
             ref: "menu_btn2_normal.png",
             atlas: 'buttons',
-            x: gameConsts.halfWidth - 128,
+            x: GAME_CONSTANTS.halfWidth - 128,
             y: popupBG.y + 55,
         },
         hover: {

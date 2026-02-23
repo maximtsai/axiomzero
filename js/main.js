@@ -9,6 +9,19 @@ class MainScene extends Phaser.Scene {
 
     create() {
         window.PhaserScene = this;
+
+        // Keep GAME_VARS canvas-offset values in sync with the actual DOM
+        // position of the Phaser canvas so mouseToHand() converts coordinates
+        // correctly at any window size.
+        const syncCanvasScale = () => {
+            const rect = this.game.canvas.getBoundingClientRect();
+            GAME_VARS.canvasXOffset = rect.left;
+            GAME_VARS.canvasYOffset = rect.top;
+            GAME_VARS.gameScale     = rect.width / GAME_CONSTANTS.WIDTH;
+        };
+        syncCanvasScale();                        // set correct values immediately
+        this.scale.on('resize', syncCanvasScale); // keep them updated on resize
+
         loadingScreen.create(this);
         this.load.start();
     }

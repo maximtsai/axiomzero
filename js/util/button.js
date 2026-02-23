@@ -201,7 +201,7 @@ class Button {
             }
             if (this.isDraggable) {
                 if (!this.isDragged) {
-                    this.setPos(gameVars.mouseposx + PhaserScene.cameras.main.scrollX, gameVars.mouseposy + PhaserScene.cameras.main.scrollY);
+                    this.setPos(GAME_VARS.mouseposx + PhaserScene.cameras.main.scrollX, GAME_VARS.mouseposy + PhaserScene.cameras.main.scrollY);
                     this.isDragged = true;
                     let oldDraggedObj = buttonManager.getDraggedObj();
                     if (oldDraggedObj && oldDraggedObj.onDrop) {

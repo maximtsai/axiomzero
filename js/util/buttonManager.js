@@ -14,8 +14,8 @@ class InternalButtonManager {
     }
 
     update(delta) {
-        let handX = gameVars.mouseposx;
-        let handY = gameVars.mouseposy;
+        let handX = GAME_VARS.mouseposx;
+        let handY = GAME_VARS.mouseposy;
         // check hovering
         let hasHovered = false;
         let currentHovered = null;

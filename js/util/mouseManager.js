@@ -3,48 +3,48 @@ class InternalMouseManager {
     }
 
     onPointerMove(pointer) {
-        gameVars.wasTouch = pointer.wasTouch || pointer.pointerType === "touch";
+        GAME_VARS.wasTouch = pointer.wasTouch || pointer.pointerType === "touch";
         let handPos = mouseToHand(pointer.x, pointer.y, true);
-        gameVars.mouseposx = handPos.x;
-        gameVars.mouseposy = handPos.y;
+        GAME_VARS.mouseposx = handPos.x;
+        GAME_VARS.mouseposy = handPos.y;
         messageBus.publish("pointerMove", handPos.x, handPos.y);
     }
 
     onPointerDown(pointer) {
-        gameVars.wasTouch = pointer.wasTouch;
-        gameVars.mousedown = true;
-        gameVars.mouseJustDowned = true;
+        GAME_VARS.wasTouch = pointer.wasTouch;
+        GAME_VARS.mousedown = true;
+        GAME_VARS.mouseJustDowned = true;
         let handPos = mouseToHand(pointer.x, pointer.y);
-        gameVars.mouseposx = handPos.x;
-        gameVars.mouseposy = handPos.y;
+        GAME_VARS.mouseposx = handPos.x;
+        GAME_VARS.mouseposy = handPos.y;
 
-        gameVars.lastmousedown.x = handPos.x;
-        gameVars.lastmousedown.y = handPos.y;
+        GAME_VARS.lastmousedown.x = handPos.x;
+        GAME_VARS.lastmousedown.y = handPos.y;
         messageBus.publish("pointerDown", handPos.x, handPos.y);
     }
 
     onPointerDownAlt(pointer) {
         let handPos = mouseToHand(pointer.x, pointer.y, true);
-        gameVars.wasTouch = pointer.wasTouch || (pointer.wasTouch === undefined);
-        gameVars.mousedown = true;
-        gameVars.mouseJustDowned = true;
-        gameVars.mouseposx = handPos.x;
-        gameVars.mouseposy = handPos.y;
+        GAME_VARS.wasTouch = pointer.wasTouch || (pointer.wasTouch === undefined);
+        GAME_VARS.mousedown = true;
+        GAME_VARS.mouseJustDowned = true;
+        GAME_VARS.mouseposx = handPos.x;
+        GAME_VARS.mouseposy = handPos.y;
 
-        gameVars.lastmousedown.x = handPos.x;
-        gameVars.lastmousedown.y = handPos.y;
+        GAME_VARS.lastmousedown.x = handPos.x;
+        GAME_VARS.lastmousedown.y = handPos.y;
         messageBus.publish("pointerDown", handPos.x, handPos.y);
     }
 
     onPointerUpAlt(pointer) {
         let handPos = mouseToHand(pointer.x, pointer.y, true);
-        gameVars.wasTouch = pointer.pointerType;
-        gameVars.mousedown = false;
-        gameVars.mouseJustUpped = true;
+        GAME_VARS.wasTouch = pointer.pointerType;
+        GAME_VARS.mousedown = false;
+        GAME_VARS.mouseJustUpped = true;
         messageBus.publish("pointerUp", handPos.x, handPos.y);
 
-        gameVars.mouseposx = handPos.x;
-        gameVars.mouseposy = handPos.y;
+        GAME_VARS.mouseposx = handPos.x;
+        GAME_VARS.mouseposy = handPos.y;
     }
 }
 
@@ -55,23 +55,23 @@ function mouseToHand(x, y, convertFromWindow = false) {
     let inGameX = x;
     let inGameY = y;
     if (convertFromWindow) {
-        inGameX = (inGameX - gameVars.canvasXOffset) / gameVars.gameScale;
-        inGameY = (inGameY - gameVars.canvasYOffset) / gameVars.gameScale;
+        inGameX = (inGameX - GAME_VARS.canvasXOffset) / GAME_VARS.gameScale;
+        inGameY = (inGameY - GAME_VARS.canvasYOffset) / GAME_VARS.gameScale;
     }
 
     let bufferDist = 0;
-    let xRatio = gameConsts.halfWidth / (gameConsts.halfWidth - bufferDist);
-    let yRatio = gameConsts.halfHeight / (gameConsts.halfHeight - bufferDist);
-    let handX = gameConsts.halfWidth + xRatio * (inGameX - gameConsts.halfWidth);
-    let handY = gameConsts.halfHeight + yRatio * (inGameY - gameConsts.halfHeight);
-    handX = Math.min(Math.max(0, handX), gameConsts.width - 1);
-    handY = Math.min(Math.max(0, handY), gameConsts.height - 1);
+    let xRatio = GAME_CONSTANTS.halfWidth / (GAME_CONSTANTS.halfWidth - bufferDist);
+    let yRatio = GAME_CONSTANTS.halfHeight / (GAME_CONSTANTS.halfHeight - bufferDist);
+    let handX = GAME_CONSTANTS.halfWidth + xRatio * (inGameX - GAME_CONSTANTS.halfWidth);
+    let handY = GAME_CONSTANTS.halfHeight + yRatio * (inGameY - GAME_CONSTANTS.halfHeight);
+    handX = Math.min(Math.max(0, handX), GAME_CONSTANTS.width - 1);
+    handY = Math.min(Math.max(0, handY), GAME_CONSTANTS.height - 1);
     return {x: handX, y: handY};
 }
 
 function setupMouseInteraction(scene) {
     let baseTouchLayer = scene.make.image({
-        x: 0, y: 0, key: 'whitePixel', add: true, scale: {x: gameConsts.width, y: gameConsts.height}, alpha: 0.001});
+        x: 0, y: 0, key: 'whitePixel', add: true, scale: {x: GAME_CONSTANTS.width, y: GAME_CONSTANTS.height}, alpha: 0.001});
     baseTouchLayer.setInteractive();
     baseTouchLayer.on('pointerdown', mouseManager.onPointerDown, scene);
     baseTouchLayer.scrollFactorX = 0;

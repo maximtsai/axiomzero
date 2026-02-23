@@ -11,62 +11,62 @@
     }
 
     setTempPause(dur = 100, magnitude) {
-        gameVars.timeScale = magnitude || 0.5;
+        GAME_VARS.timeScale = magnitude || 0.5;
         PhaserScene.tweens.timeScale = magnitude || 0.6;
         PhaserScene.time.timeScale = magnitude || 0.5;
         PhaserScene.anims.globalTimeScale = magnitude || 0.6;
         if (this.currTimeoutAmt) {
-            if (gameVars.timeScale > this.currTimeoutAmt) {
+            if (GAME_VARS.timeScale > this.currTimeoutAmt) {
                 return;
             }
         }
 
-        this.currTimeoutAmt = gameVars.timeScale;
+        this.currTimeoutAmt = GAME_VARS.timeScale;
         if (this.currTimeoutPause) {
             clearTimeout(this.currTimeoutPause);
         }
         this.currTimeoutPause = setTimeout(() => {
-            gameVars.timeScale = gameVars.gameManualSlowSpeed || 1;
-            PhaserScene.tweens.timeScale = gameVars.gameManualSlowSpeed || 1;
-            PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed || 1;
-            PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed || 1;
+            GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+            PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+            PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+            PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed || 1;
             this.currTimeoutAmt = null;
         }, dur)
     }
 
     setPermPause(amt = 0.002) {
-        gameVars.permTimeScale = amt;
-        gameVars.timeScale = amt;
+        GAME_VARS.permTimeScale = amt;
+        GAME_VARS.timeScale = amt;
         PhaserScene.tweens.timeScale = amt;
         PhaserScene.time.timeScale = amt;
         PhaserScene.anims.globalTimeScale = amt;
     }
 
     setUnpause() {
-        gameVars.timeScale = gameVars.gameManualSlowSpeed || 1;
-        gameVars.permTimeScale = gameVars.timeScale;
+        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+        GAME_VARS.permTimeScale = GAME_VARS.timeScale;
 
-        PhaserScene.tweens.timeScale = gameVars.gameManualSlowSpeed || 1;
-        PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed || 1;
-        PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed || 1;
+        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
+        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed || 1;
     }
 
     setGameSlow(amt) {
-        gameVars.gameManualSlowSpeed = amt;
-        gameVars.gameManualSlowSpeedInverse = 1 / gameVars.gameManualSlowSpeed;
-        gameVars.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.tweens.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed;
+        GAME_VARS.gameManualSlowSpeed = amt;
+        GAME_VARS.gameManualSlowSpeedInverse = 1 / GAME_VARS.gameManualSlowSpeed;
+        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed;
     }
 
     clearGameSlow() {
-        gameVars.gameManualSlowSpeed = 1;
-        gameVars.gameManualSlowSpeedInverse = 1;
-        gameVars.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.tweens.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.time.timeScale = gameVars.gameManualSlowSpeed;
-        PhaserScene.anims.globalTimeScale = gameVars.gameManualSlowSpeed;
+        GAME_VARS.gameManualSlowSpeed = 1;
+        GAME_VARS.gameManualSlowSpeedInverse = 1;
+        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed;
+        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed;
     }
 
 }

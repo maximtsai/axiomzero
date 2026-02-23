@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>phaser-maxim</string>
         <key>textureFileName</key>
-        <filename>../assets/sprites/pixels-{n}.webp</filename>
+        <filename>../assets/sprites/pixels-{n}.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrQualityLevel</key>
@@ -74,7 +74,7 @@
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
-        <enum type="SettingsBase::TextureFormat">webp</enum>
+        <enum type="SettingsBase::TextureFormat">png</enum>
         <key>borderPadding</key>
         <uint>0</uint>
         <key>maxTextureSize</key>
