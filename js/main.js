@@ -78,7 +78,9 @@ async function initSdkSettings() {
 
 if (isAllowedRuntimeHost()) {
     (async function () {
-        await initSdkSettings();
+        if (FLAGS.USING_CRAZYGAMES_SDK) {
+            await initSdkSettings();
+        }
         new Phaser.Game(config);
     })();
 } else {

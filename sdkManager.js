@@ -42,6 +42,9 @@ const sdk = {
     },
 
     _call: function(actionName, action) {
+        if (!FLAGS.USING_CRAZYGAMES_SDK) {
+            return Promise.resolve(null);
+        }
         const self = this;
         return (async function() {
             try {
@@ -154,6 +157,9 @@ const sdk = {
     },
 
     getItem: function(key) {
+        if (!FLAGS.USING_CRAZYGAMES_SDK) {
+            return Promise.resolve(localStorage.getItem(key));
+        }
         const self = this;
         return (async function() {
             try {
@@ -170,6 +176,10 @@ const sdk = {
     },
 
     setItem: function(key, value) {
+        if (!FLAGS.USING_CRAZYGAMES_SDK) {
+            localStorage.setItem(key, value);
+            return Promise.resolve(true);
+        }
         const self = this;
         return (async function() {
             try {
