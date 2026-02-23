@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>MCat</title>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <link href="data:," rel="icon">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @font-face {
+            font-family: 'Michroma';
+            src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'JetBrainsMono';
+            src: url('assets/fonts/JetBrainsMono_Regular.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'JetBrainsMono';
+            src: url('assets/fonts/JetBrainsMono_Bold.ttf') format('truetype');
+            font-weight: bold;
+        }
+        @font-face {
+            font-family: 'JetBrainsMono';
+            src: url('assets/fonts/JetBrainsMono_Italic.ttf') format('truetype');
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'VCR';
+            src: url('assets/fonts/VCR.ttf') format('truetype');
+        }
+    </style>
+    <script src="phaser.min.js"></script>
+    <script src="rexbbcodetextplugin.min.js"></script>
+    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    <script src="sdkManager.js"></script>
+    <script src="assets/audioFiles.js"></script>
+    <script src="assets/imageFiles.js"></script>
+    <script src="assets/gameAnims.js"></script>
+    <script src="assets/fontFiles.js"></script>
+    
+    <script src="js/util/constants.js"></script>
+    <script src="js/util/loadingManager.js"></script>
+    <script src="js/util/gameState.js"></script>
+    <script src="js/util/utilities.js"></script>
+
+    <script src="js/mainmenu.js"></script>
+    <script src="js/gameplaysetup.js"></script>
+    <script src="js/uibuttons.js"></script>
+    <script src="js/main.js"></script>
+
+    <noscript>Enable JavaScript to play this game.</noscript>
+</head>
+<body onload="onloadFunc()" onresize="resizeGame()">
+    <div id="background"></div>
+    <div id="preload"></div>
+    <div id="preload-notice" onclick="location.href='https://adayofjoy.itch.io'">Loading Preloader ...</div>
+</body>
+</html>
