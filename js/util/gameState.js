@@ -1,4 +1,4 @@
-var gameState = {};
+const gameState = {};
 
 const SAVE_VERSION = 1;
 

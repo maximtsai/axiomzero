@@ -30,7 +30,7 @@ GAME_CONSTANTS.halfHeight = GAME_CONSTANTS.HEIGHT / 2;
 
 // ─── Runtime state ────────────────────────────────────────────────────────────
 
-var GAME_VARS = {
+const GAME_VARS = {
     timeScale:       1,
     mouseposx:       0,
     mouseposy:       0,
@@ -55,7 +55,7 @@ const GAME_OPTIONS_DEFAULTS = {
     infoBoxAlign: 'center',
 };
 
-var gameOptions = (function () {
+const gameOptions = (function () {
     try {
         const raw = localStorage.getItem(OPTIONS_KEY);
         if (raw) return Object.assign({}, GAME_OPTIONS_DEFAULTS, JSON.parse(raw));
