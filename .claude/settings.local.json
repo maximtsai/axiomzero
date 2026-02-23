@@ -3,7 +3,8 @@
     "allow": [
       "Bash(uglifyjs:*)",
       "Bash(wc:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(test:*)"
     ]
   }
 }

@@ -2,7 +2,9 @@
 
 ## Project Overview
 
-Browser-based idle game called "Axiom Zero" built with **Phaser.js**. No bundler or module system — all files are plain JS loaded via `<script>` tags in `index.html`. Load order matters.
+Browser-based **hybrid incremental/tower-defense** game called "Axiom Zero" built with **Phaser.js**. No bundler or module system — all files are plain JS loaded via `<script>` tags in `index.html`. Load order matters.
+
+The game starts immediately on load — there is no main menu. Gameplay alternates between an **upgrade phase** (between waves) and a **wave phase** (enemies active). All phase transitions are coordinated by `gameStateMachine` via the `messageBus`.
 
 - **Game dimensions:** 1280 × 720
 - **Version:** v.1.0
@@ -27,7 +29,12 @@ assets/
 js/
   main.js               # Phaser game config + MainScene (preload/create/update hooks only)
   loadingScreen.js      # Two-phase loading screen (preload UI + asset loading)
-  uibuttons.js          # UI button definitions
+  uibuttons.js          # UI button definitions (mute buttons, etc.)
+  gameStateMachine.js   # Phase state machine: UPGRADE_PHASE / WAVE_ACTIVE / WAVE_COMPLETE / GAME_OVER
+  waveManager.js        # Wave spawning, enemy logic, win/fail detection (stub)
+  upgradeManager.js     # Upgrade definitions and purchase logic (stub)
+  gameHUD.js            # All in-game Phaser UI (stub)
+  gameInit.js           # Bootstrapper — subscribes to 'assetsLoaded', inits all systems
   util/                 # Utility modules (source files — see Build section)
     globals.js          # GAME_CONSTANTS, GAME_VARS, globalObjects
     loadingManager.js   # Asset loading with retry, stall detection, timeout
@@ -62,9 +69,14 @@ Order is critical — each file depends on globals defined by files above it:
 10. `js/util/utilities.js` — all other util singletons (`messageBus`, `buttonManager`, etc.)
 11. `js/util/debugManager.js` — `initDebug` (loaded separately; not bundled)
 12. `js/util/notificationManager.js` — `notificationManager` singleton (loaded separately; not bundled)
-13. `js/uibuttons.js` — game scripts
-12. `js/loadingScreen.js` — `loadingScreen` singleton
-13. `js/main.js` — Phaser game boot (last)
+13. `js/uibuttons.js` — mute/SFX button factories
+14. `js/gameStateMachine.js` — phase state machine
+15. `js/waveManager.js` — wave logic (subscribes to `'phaseChanged'`)
+16. `js/upgradeManager.js` — upgrade logic (subscribes to `'phaseChanged'`)
+17. `js/gameHUD.js` — in-game UI (subscribes to `'phaseChanged'`)
+18. `js/gameInit.js` — bootstrapper (subscribes to `'assetsLoaded'`, inits all systems)
+19. `js/loadingScreen.js` — `loadingScreen` singleton
+20. `js/main.js` — Phaser game boot (last)
 
 ## Build Process
 
@@ -200,6 +212,38 @@ Full-screen transparent button to block input:
 const blocker = helper.createGlobalClickBlocker(showPointer);
 helper.hideGlobalClickBlocker();
 ```
+
+## Game Loop
+
+The game starts immediately after assets load — there is no main menu.
+
+### Phase State Machine (`js/gameStateMachine.js`)
+
+```js
+gameStateMachine.goTo('UPGRADE_PHASE');   // transition to a phase
+gameStateMachine.getPhase();              // returns current phase string
+gameStateMachine.is('WAVE_ACTIVE');       // boolean check
+```
+
+Phases: `'UPGRADE_PHASE'` → `'WAVE_ACTIVE'` → `'WAVE_COMPLETE'` → `'UPGRADE_PHASE'` (or `'GAME_OVER'`)
+
+Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems react to this topic — **they never call each other directly**.
+
+### Startup Sequence
+
+1. Phaser boots → `loadingScreen` handles two-phase asset load
+2. `loadingScreen._onComplete()` publishes `'assetsLoaded'`
+3. `gameInit.js` receives `'assetsLoaded'`, inits all systems, calls `gameStateMachine.goTo('UPGRADE_PHASE')`
+
+### Key messageBus Topics
+
+| Topic | Published by | Payload |
+|---|---|---|
+| `'assetsLoaded'` | `loadingScreen` | — |
+| `'phaseChanged'` | `gameStateMachine` | phase string |
+| `'enemyKilled'` | `waveManager` | — |
+| `'waveComplete'` | `waveManager` | — |
+| `'upgradePurchased'` | `upgradeManager` | upgrade id |
 
 ## Conventions
 

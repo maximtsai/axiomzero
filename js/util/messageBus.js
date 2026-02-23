@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @fileoverview Pub/sub event system for decoupled communication
+ * @module messageBus
+ */
+
 const MESSAGE_BUS_CONSTANTS = {
     INDEX_THRESHOLD: 32767
 };

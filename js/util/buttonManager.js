@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Manages all Button instances and input routing
+ * @module buttonManager
+ */
+
+/**
+ * Internal button manager - routes pointer events to Button instances
+ * @class
+ * @singleton
+ */
 class InternalButtonManager {
     constructor() {
         this.buttonList = [];

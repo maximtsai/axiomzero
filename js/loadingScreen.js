@@ -142,8 +142,13 @@ class LoadingScreen {
                 alpha:    0,
                 delay:    300,
                 duration: 400,
-                onComplete: () => { if (this._text) { this._text.destroy(); this._text = null; } }
+                onComplete: () => {
+                    if (this._text) { this._text.destroy(); this._text = null; }
+                    messageBus.publish('assetsLoaded');
+                }
             });
+        } else {
+            messageBus.publish('assetsLoaded');
         }
     }
 }

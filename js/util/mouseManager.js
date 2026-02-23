@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Captures pointer events and updates GAME_VARS
+ * @module mouseManager
+ */
+
+/**
+ * Routes Phaser pointer events to messageBus and GAME_VARS
+ * @class
+ * @singleton
+ */
 class InternalMouseManager {
     setup(scene) {
         scene.input.on('pointermove', (pointer) => {

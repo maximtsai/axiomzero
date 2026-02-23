@@ -1,8 +1,67 @@
+/**
+ * @fileoverview Button component for UI interactions
+ * @module button
+ */
+
+/** @type {string} */
 const NORMAL = "normal";
+/** @type {string} */
 const HOVER = "hover";
+/** @type {string} */
 const PRESS = "press";
+/** @type {string} */
 const DISABLE = "disable";
 
+/**
+ * Button state constants
+ * @readonly
+ * @enum {string}
+ */
+const ButtonState = {
+    NORMAL: "normal",
+    HOVER: "hover",
+    PRESS: "press",
+    DISABLE: "disable"
+};
+
+/**
+ * @typedef {Object} ButtonStateData
+ * @property {string} [ref] - Atlas or image reference
+ * @property {string} [atlas] - Atlas name
+ * @property {number} [x]
+ * @property {number} [y]
+ * @property {number} [alpha]
+ * @property {number} [scaleX]
+ * @property {number} [scaleY]
+ * @property {number} [rotation]
+ * @property {number} [depth]
+ * @property {number} [originX]
+ * @property {number} [originY]
+ * @property {number} [tint]
+ * @property {boolean} [preload]
+ */
+
+/**
+ * @typedef {Object} ButtonConfig
+ * @property {import('phaser').Scene} [scene] - Phaser scene
+ * @property {ButtonStateData} normal - Normal state data
+ * @property {ButtonStateData} [hover] - Hover state data
+ * @property {ButtonStateData} [press] - Press state data
+ * @property {ButtonStateData} [disable] - Disabled state data
+ * @property {Function} [onMouseUp] - Click handler
+ * @property {Function} [onMouseDown] - Mouse down handler
+ * @property {Function} [onHover] - Hover enter handler
+ * @property {Function} [onHoverOut] - Hover exit handler
+ * @property {Function} [onDrag] - Drag handler
+ * @property {Function} [onDrop] - Drop handler
+ * @property {boolean} [isDraggable] - Enable drag
+ * @property {boolean} [cursorInteractive] - Show cursor
+ */
+
+/**
+ * Multi-state button component
+ * @class
+ */
 class Button {
     /**
      * Create a button with some parameters
