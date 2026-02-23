@@ -15,8 +15,8 @@ function setupLoadingBar(scene) {
     loadObjects.loadingText.setAlign('center');
     loadObjects.loadingText.setOrigin(0.5, 0.5);
     loadObjects.loadingText.scrollFactorX = 0.3; loadObjects.loadingText.scrollFactorY = 0.3;
-    loadObjects.loadingBarBack = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'whitePixel').setAlpha(0.5);
-    loadObjects.loadingBarMain = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'whitePixel');
+    loadObjects.loadingBarBack = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'white_pixel').setAlpha(0.5);
+    loadObjects.loadingBarMain = scene.add.image(leftCenterX, GAME_CONSTANTS.halfHeight + 100, 'white_pixel');
 
     loadObjects.loadingBarBack.setScale(GAME_CONSTANTS.LOADING_BAR_WIDTH, GAME_CONSTANTS.LOADING_BAR_HEIGHT);
     loadObjects.loadingBarMain.setScale(1, GAME_CONSTANTS.LOADING_BAR_HEIGHT);
@@ -150,7 +150,7 @@ function clickIntro() {
     }
 
     loadObjects.skipIntroText = PhaserScene.add.text(GAME_CONSTANTS.width - 5, GAME_CONSTANTS.height - 5, getLangText('click_to_skip'), {fontFamily: 'verdana', fontSize: 18, color: '#FFFFFF', align: 'right'}).setDepth(1005).setAlpha(0).setOrigin(1, 1);
-    loadObjects.whiteOverall = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'whitePixel').setDepth(2000).setAlpha(0).setScale(1000);
+    loadObjects.whiteOverall = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel').setDepth(2000).setAlpha(0).setScale(1000);
     PhaserScene.tweens.add({
         targets: loadObjects.whiteOverall,
         alpha: 0.75,
@@ -164,7 +164,7 @@ function cleanupIntro() {
         return;
     }
     GAME_VARS.introFinished = true;
-    tempBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'whitePixel').setScale(1000).setAlpha(0.85).setDepth(1002);
+    tempBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel').setScale(1000).setAlpha(0.85).setDepth(1002);
     PhaserScene.tweens.add({
         targets: tempBG,
         alpha: 0,

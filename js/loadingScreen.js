@@ -81,7 +81,8 @@ class LoadingScreen {
 
         imageAtlases.forEach(f => {
             const json = 'assets/' + f.src;
-            scene.load.atlas(f.name, json.replace('.json', '.png'), json);
+            const base = json.substring(0, json.lastIndexOf('/') + 1);
+            scene.load.multiatlas(f.name, json, base);
         });
 
         fontFiles.forEach(f => {

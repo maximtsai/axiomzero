@@ -49,7 +49,7 @@ const helper = {
         if (!globalObjects.clickBlocker) {
             globalObjects.clickBlocker = new Button({
                 normal: {
-                    ref: "blackPixel",
+                    ref: "black_pixel",
                     x: GAME_CONSTANTS.halfWidth,
                     y: GAME_CONSTANTS.halfHeight,
                     alpha: 0.001,

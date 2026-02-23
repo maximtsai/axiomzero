@@ -161,7 +161,7 @@ class MainMenu {
             this.elements.startButton.destroy();
             delete this.elements.startButton;
         }
-        let tempBlackImage = PhaserScene.add.image(-1, GAME_CONSTANTS.halfHeight, 'blackPixel').setScale(0, 2000).setDepth(9999).setOrigin(0, 0.5);
+        let tempBlackImage = PhaserScene.add.image(-1, GAME_CONSTANTS.halfHeight, 'black_pixel').setScale(0, 2000).setDepth(9999).setOrigin(0, 0.5);
         fadeAwayMusic(1500, undefined, () => {
             playMusic("victoriandance");
         })
