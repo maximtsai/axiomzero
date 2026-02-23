@@ -1,3 +1,7 @@
+// ─── Game startup ───────────────────────────────────────────────────────────
+
+console.log('%c Axiom Zero ' + GAME_CONSTANTS.VERSION + ' ', 'background: #222; color: #bada55; font-size: 16px; padding: 4px 8px;');
+
 class MainScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MainScene' });
