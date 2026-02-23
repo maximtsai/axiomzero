@@ -1,8 +1,8 @@
-# MCat - Idle Game
+# Axiom Zero - Idle Game
 
 ## Project Overview
 
-Browser-based idle game called "MCat" built with **Phaser.js**. No bundler or module system — all files are plain JS loaded via `<script>` tags in `index.html`. Load order matters.
+Browser-based idle game called "Axiom Zero" built with **Phaser.js**. No bundler or module system — all files are plain JS loaded via `<script>` tags in `index.html`. Load order matters.
 
 - **Game dimensions:** 1280 × 720
 - **Version:** v.1.0
