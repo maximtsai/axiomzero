@@ -173,20 +173,20 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">button.png</key>
-            <key type="filename">button_hover.png</key>
-            <key type="filename">button_press.png</key>
+            <key type="filename">buttons/button.png</key>
+            <key type="filename">buttons/button_hover.png</key>
+            <key type="filename">buttons/button_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.75</double>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>55,19,111,37</rect>
+                <rect>94,34,188,67</rect>
                 <key>scale9Paddings</key>
-                <rect>55,19,111,37</rect>
+                <rect>94,34,188,67</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -197,7 +197,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>.</filename>
+                    <filename>buttons</filename>
                 </array>
             </struct>
         </map>
