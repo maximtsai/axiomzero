@@ -4,7 +4,8 @@ const GAME_CONSTANTS = {
     RETRY_DELAY_BASE: 500,
     MAX_RETRIES: 3,
     WATCHDOG_INTERVAL: 5000,
-    TIMEOUT_THRESHOLD: 20000,   // ms of no progress before forcing game start
+    SLOW_WARNING_THRESHOLD: 15000,  // ms of silence before showing slow-load warning
+    TIMEOUT_THRESHOLD: 25000,       // ms of silence before showing run-anyway button
     INITIAL_PRELOAD_STALL: 20000,
 
     // Game Dimensions

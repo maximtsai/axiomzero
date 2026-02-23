@@ -4,35 +4,49 @@ class LoadingManager {
 
     // ─── Phase 2: main asset load ─────────────────────────────────────────────
     //
-    // Three completion paths, all routed through finish():
-    //   1. Normal  — Phaser fires 'complete' after all files are processed.
-    //   2. Stall   — no progress for TIMEOUT_THRESHOLD ms; hard timeout fires.
-    //   3. Forced  — caller could invoke resetTimer externally if needed.
+    // Two completion paths, both routed through finish():
+    //   1. Normal      — Phaser fires 'complete' after all files are processed.
+    //   2. User forced — caller invokes forceFinish() (e.g. "RUN ANYWAYS" button).
     //
-    // The hard timeout resets on every progress event, so a slow-but-steady
-    // connection is never penalised — only a true silence triggers the fallback.
+    // Two informational thresholds that fire callbacks but never auto-complete:
+    //   - SLOW_WARNING_THRESHOLD  → onSlowWarning() (update loading text).
+    //   - TIMEOUT_THRESHOLD       → onTimeoutReached() (show run-anyway button).
+    //
+    // Both thresholds reset on every progress event, so a slow-but-steady
+    // connection is never penalised — only true silence triggers the callbacks.
+    //
+    // Returns { forceFinish } so the caller can trigger completion externally.
 
-    setupMainLoading(scene, onCompleteCallback, onProgressCallback = null) {
-        let loadComplete = false;
-        let loadTimeout  = null;
-        let failedFiles  = new Map();
+    setupMainLoading(scene, onCompleteCallback, onProgressCallback = null,
+                     onSlowWarning = null, onTimeoutReached = null) {
+        let loadComplete   = false;
+        let pendingRetries = 0;      // retry timers in flight — complete is skipped while > 0
+        let warningTimeout = null;
+        let loadTimeout    = null;
+        let failedFiles    = new Map();
 
         const finish = () => {
             if (loadComplete) return;
             loadComplete = true;
+            clearTimeout(warningTimeout);
             clearTimeout(loadTimeout);
             if (onCompleteCallback) onCompleteCallback();
         };
 
         const resetTimer = () => {
+            clearTimeout(warningTimeout);
             clearTimeout(loadTimeout);
+
+            warningTimeout = setTimeout(() => {
+                if (onSlowWarning) onSlowWarning();
+            }, GAME_CONSTANTS.SLOW_WARNING_THRESHOLD);
+
             loadTimeout = setTimeout(() => {
-                console.warn(`No loader progress for ${GAME_CONSTANTS.TIMEOUT_THRESHOLD}ms — forcing start (${scene.load.totalFailed || 0} failed file(s))`);
-                finish();
+                if (onTimeoutReached) onTimeoutReached();
             }, GAME_CONSTANTS.TIMEOUT_THRESHOLD);
         };
 
-        // Overall progress (0–1) — update bar and reset stall timer
+        // Overall progress (0–1) — update bar and reset stall timers
         scene.load.on('progress', (value) => {
             resetTimer();
             if (onProgressCallback) onProgressCallback(value);
@@ -50,9 +64,10 @@ class LoadingManager {
 
             if (retryCount <= GAME_CONSTANTS.MAX_RETRIES) {
                 failedFiles.set(file.key, retryCount);
+                pendingRetries++;
                 console.warn(`Retrying ${file.key} (attempt ${retryCount}/${GAME_CONSTANTS.MAX_RETRIES})`);
                 if (onProgressCallback) onProgressCallback(null, `retrying ${retryCount}/${GAME_CONSTANTS.MAX_RETRIES}`);
-                setTimeout(() => scene.load.retry(), GAME_CONSTANTS.RETRY_DELAY_BASE * retryCount);
+                setTimeout(() => { pendingRetries--; scene.load.retry(); }, GAME_CONSTANTS.RETRY_DELAY_BASE * retryCount);
             } else {
                 console.error(`Giving up on ${file.key} after ${GAME_CONSTANTS.MAX_RETRIES} attempts`);
                 if (onProgressCallback) onProgressCallback(null, 'some files failed');
@@ -67,16 +82,20 @@ class LoadingManager {
             }
         });
 
-        // Normal completion
-        scene.load.once('complete', () => {
+        // Normal completion — skipped if retries are still pending; scene.load.retry()
+        // will restart the loader and fire another 'complete' once those finish.
+        scene.load.on('complete', () => {
+            if (pendingRetries > 0) return;
             if (scene.load.totalFailed > 0) {
                 console.warn(`${scene.load.totalFailed} file(s) failed — continuing anyway`);
             }
             finish();
         });
 
-        // Seed the timeout before load.start() is called
+        // Seed the timers before load.start() is called
         resetTimer();
+
+        return { forceFinish: finish };
     }
 
     // ─── Phase 1: minimal preload ─────────────────────────────────────────────

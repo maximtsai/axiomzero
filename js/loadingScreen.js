@@ -6,6 +6,11 @@
 // Phase 2  create()   → loadingScreen.create(scene)
 //   Builds the loading bar UI, queues all main assets, and delegates
 //   retry / stall / completion handling to loadingManager.
+//
+// Stall feedback:
+//   15 s of silence → "Slow loading detected"
+//   25 s of silence → "Load error, run game anyways?" + RUN ANYWAYS button
+//   Only a button click forces the game to start.
 
 class LoadingScreen {
 
@@ -27,10 +32,11 @@ class LoadingScreen {
     // ─── Phase 2 ──────────────────────────────────────────────────────────────
 
     create(scene) {
+        this._scene = scene;
         this._buildUI(scene);
         this._queueAssets(scene);
 
-        loadingManager.setupMainLoading(
+        const { forceFinish } = loadingManager.setupMainLoading(
             scene,
             () => { this._onComplete(); },
             (progress, statusText) => {
@@ -40,7 +46,9 @@ class LoadingScreen {
                 if (statusText) {
                     this._text.setText('Loading... (' + statusText + ')');
                 }
-            }
+            },
+            () => { this._onSlowWarning(); },
+            () => { this._onTimeoutReached(forceFinish); }
         );
     }
 
@@ -91,8 +99,42 @@ class LoadingScreen {
         });
     }
 
+    _onSlowWarning() {
+        if (this._text) this._text.setText('Slow loading detected');
+    }
+
+    _onTimeoutReached(forceFinish) {
+        if (this._text) this._text.setText('Load error, run game anyways?');
+        this._showRunAnywaysButton(forceFinish);
+    }
+
+    _showRunAnywaysButton(forceFinish) {
+        const scene = this._scene;
+        const cx    = GAME_CONSTANTS.halfWidth;
+        const btnY  = GAME_CONSTANTS.halfHeight + 100;  // below bar (bar is at cy+50)
+
+        this._runBtnBg = scene.add.image(cx, btnY, 'black_pixel')
+            .setScale(200, 40)
+            .setAlpha(0.85)
+            .setDepth(3)
+            .setInteractive({ useHandCursor: true });
+
+        this._runBtnText = scene.add.text(cx, btnY, 'RUN ANYWAYS', {
+            fontFamily: 'Times New Roman',
+            fontSize:   20,
+            color:      '#ffffff',
+            align:      'center',
+        }).setOrigin(0.5, 0.5).setDepth(4);
+
+        this._runBtnBg.on('pointerover', () => this._runBtnBg.setAlpha(1));
+        this._runBtnBg.on('pointerout',  () => this._runBtnBg.setAlpha(0.85));
+        this._runBtnBg.on('pointerup',   () => forceFinish());
+    }
+
     _onComplete() {
-        if (this._bar) { this._bar.destroy(); this._bar = null; }
+        if (this._bar)        { this._bar.destroy();        this._bar = null; }
+        if (this._runBtnBg)   { this._runBtnBg.destroy();   this._runBtnBg = null; }
+        if (this._runBtnText) { this._runBtnText.destroy();  this._runBtnText = null; }
         if (this._text) {
             this._text.setText('Done');
             PhaserScene.tweens.add({
