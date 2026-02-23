@@ -114,7 +114,7 @@ class LoadingScreen {
         const btnY  = GAME_CONSTANTS.halfHeight + 100;  // below bar (bar is at cy+50)
 
         this._runBtnBg = scene.add.image(cx, btnY, 'black_pixel')
-            .setScale(200, 40)
+            .setScale(190, 34)
             .setAlpha(0.85)
             .setDepth(3)
             .setInteractive({ useHandCursor: true });
