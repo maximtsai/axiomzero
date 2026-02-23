@@ -4,7 +4,7 @@
 function createMuteSFXButton(x, y) {
     // Get current mute state from localStorage or default to false
     let isMuted = localStorage.getItem('sfxMuted') === 'true';
-    
+
     // Determine which sprites to use based on current state
     const getSprites = () => {
         if (isMuted) {
@@ -21,9 +21,9 @@ function createMuteSFXButton(x, y) {
             };
         }
     };
-    
+
     const sprites = getSprites();
-    
+
     // Create the button
     const button = new Button({
         normal: {
@@ -47,37 +47,26 @@ function createMuteSFXButton(x, y) {
         onMouseUp: () => {
             // Toggle mute state
             isMuted = !isMuted;
-            localStorage.setItem('sfxMuted', isMuted.toString());
-            
-            // Apply using helper function
-            muteSFX(isMuted);
-            
+            audio.muteSFX(isMuted);
+
             // Update button sprites
             const newSprites = getSprites();
             button.normal.ref = newSprites.normal.ref;
             button.hover.ref = newSprites.hover.ref;
             button.press.ref = newSprites.press.ref;
             button.setState(button.state); // Refresh to show new sprite
-            
-            console.log('SFX muted:', isMuted);
         }
     });
-    
+
     button.setDepth(1010);
-    
-    // Apply initial mute state if needed
-    if (isMuted && typeof isSFXMuted !== 'undefined' && !isSFXMuted) {
-        muteSFX(true);
-    }
-    
     return button;
 }
 
-// Create a mute music button at position x, y  
+// Create a mute music button at position x, y
 function createMuteMusicButton(x, y) {
     // Get current mute state from localStorage or default to false
     let isMuted = localStorage.getItem('musicMuted') === 'true';
-    
+
     // Determine which sprites to use based on current state
     const getSprites = () => {
         if (isMuted) {
@@ -94,9 +83,9 @@ function createMuteMusicButton(x, y) {
             };
         }
     };
-    
+
     const sprites = getSprites();
-    
+
     // Create the button
     const button = new Button({
         normal: {
@@ -120,28 +109,17 @@ function createMuteMusicButton(x, y) {
         onMouseUp: () => {
             // Toggle mute state
             isMuted = !isMuted;
-            localStorage.setItem('musicMuted', isMuted.toString());
-            
-            // Apply using helper function
-            muteMusic(isMuted);
-            
+            audio.muteMusic(isMuted);
+
             // Update button sprites
             const newSprites = getSprites();
             button.normal.ref = newSprites.normal.ref;
             button.hover.ref = newSprites.hover.ref;
             button.press.ref = newSprites.press.ref;
             button.setState(button.state); // Refresh to show new sprite
-            
-            console.log('Music muted:', isMuted);
         }
     });
-    
+
     button.setDepth(1010);
-    
-    // Apply initial mute state if needed
-    if (isMuted && typeof isMusicMuted !== 'undefined' && !isMusicMuted) {
-        muteMusic(true);
-    }
-    
     return button;
 }

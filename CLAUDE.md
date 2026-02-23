@@ -27,8 +27,6 @@ assets/
 js/
   main.js               # Phaser game config + MainScene (preload/create/update hooks only)
   loadingScreen.js      # Two-phase loading screen (preload UI + asset loading)
-  mainmenu.js           # Main menu scene
-  gameplaysetup.js      # Gameplay initialization
   uibuttons.js          # UI button definitions
   util/                 # Utility modules (source files — see Build section)
     globals.js          # GAME_CONSTANTS, GAME_VARS, globalObjects
@@ -45,7 +43,6 @@ js/
     tweens.js           # Custom tween helpers (e.g. tweenTint)
     helperFunction.js   # Misc helpers (typewriter, fullscreen, mobile detect)
     textEffects.js      # Text effect utilities
-    videoManager.js     # Video playback
     utilities.js        # BUILD OUTPUT — minified bundle of the above (do not edit directly)
 ```
 
@@ -65,7 +62,7 @@ Order is critical — each file depends on globals defined by files above it:
 10. `js/util/utilities.js` — all other util singletons (`messageBus`, `buttonManager`, etc.)
 11. `js/util/debugManager.js` — `initDebug` (loaded separately; not bundled)
 12. `js/util/notificationManager.js` — `notificationManager` singleton (loaded separately; not bundled)
-13. `js/mainmenu.js`, `js/gameplaysetup.js`, `js/uibuttons.js` — game scripts
+13. `js/uibuttons.js` — game scripts
 12. `js/loadingScreen.js` — `loadingScreen` singleton
 13. `js/main.js` — Phaser game boot (last)
 
@@ -184,20 +181,24 @@ updateManager.removeFunction(myUpdateFunc);
 ```
 
 ### AudioManager (`js/util/audioManager.js`)
-Audio settings persist via `localStorage` (`sfxMuted`, `musicMuted`).
+All audio functions live on the `audio` namespace object. Settings persist via `localStorage`.
 
 ```js
-muteAll();
-recheckMuteState();
-playSound(sfxKey);
+audio.play(key, volume, loop);          // play a sound effect
+audio.playMusic(key, volume, loop);     // play music (auto cross-fades)
+audio.swapMusic(key);                   // cross-fade to new track
+audio.muteAll();   audio.unmuteAll();
+audio.muteSFX(bool);   audio.muteMusic(bool);
+audio.recheckMuteState();               // re-read mute state from localStorage
+audio.fadeAway(soundObj, duration);
 ```
 
 ### Click Blocker (`js/util/helperFunction.js`)
 Full-screen transparent button to block input:
 
 ```js
-const blocker = createGlobalClickBlocker(showPointer);
-hideGlobalClickBlocker();
+const blocker = helper.createGlobalClickBlocker(showPointer);
+helper.hideGlobalClickBlocker();
 ```
 
 ## Conventions

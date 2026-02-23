@@ -78,9 +78,9 @@ function onloadFunc() {}
 function applyCrazyGamesMuteSetting(settings) {
     if (!settings || typeof settings.muteAudio !== 'boolean') return;
     if (settings.muteAudio) {
-        if (typeof muteAll   === 'function') muteAll();
+        audio.muteAll();
     } else {
-        if (typeof unmuteAll === 'function') unmuteAll();
+        audio.unmuteAll();
     }
 }
 
