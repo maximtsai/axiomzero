@@ -1,59 +1,116 @@
 // tweens.js - Custom tweening utilities for complex animations
 
 /**
- * Tween an image's tint from current color to target color
- * Uses RGB component interpolation for smooth color transitions
+ * Tween an image's tint from its current color to a target color.
+ * Uses RGB component interpolation for smooth color transitions.
  *
- * @param {Phaser.GameObjects.Image} image - The image to tint
- * @param {number} endTint - Target tint color as hex (e.g., 0xFF0000 for red)
- * @param {number} duration - Duration in milliseconds
- * @param {string} ease - Easing function (default: 'Linear')
- * @param {function} onComplete - Optional callback when complete
- * @returns {Phaser.Tweens.Tween} The tween object
+ * @param {Phaser.GameObjects.Image} image
+ * @param {number} endTint - Target tint as hex (e.g. 0xFF0000)
+ * @param {number} duration - Duration in ms
+ * @param {string} ease
+ * @param {function} onComplete
+ * @returns {Phaser.Tweens.Tween}
  */
 function tweenTint(image, endTint, duration, ease = 'Linear', onComplete = null) {
     if (!image || !image.setTint) {
-        console.warn('tweenTint: Invalid image provided');
+        console.warn('tweenTint: invalid image');
         return null;
     }
-
-    // Get current tint (default to white if no tint applied)
-    const currentTint = image.tintTopLeft || 0xFFFFFF;
-
-    // Extract RGB components from current tint
-    const startR = (currentTint >> 16) & 0xFF;
-    const startG = (currentTint >> 8) & 0xFF;
-    const startB = currentTint & 0xFF;
-
-    // Extract RGB components from target tint
-    const endR = (endTint >> 16) & 0xFF;
-    const endG = (endTint >> 8) & 0xFF;
-    const endB = endTint & 0xFF;
-
-    // Create a proxy object to tween
-    const colorProxy = {
-        r: startR,
-        g: startG,
-        b: startB
-    };
-
-    // Create the tween
-    let tween = PhaserScene.tweens.add({
-        targets: colorProxy,
-        r: endR,
-        g: endG,
-        b: endB,
-        duration: duration,
-        ease: ease,
+    const cur  = image.tintTopLeft || 0xFFFFFF;
+    const sR = (cur >> 16) & 0xFF, sG = (cur >> 8) & 0xFF, sB = cur & 0xFF;
+    const eR = (endTint >> 16) & 0xFF, eG = (endTint >> 8) & 0xFF, eB = endTint & 0xFF;
+    const proxy = { r: sR, g: sG, b: sB };
+    return PhaserScene.tweens.add({
+        targets: proxy,
+        r: eR, g: eG, b: eB,
+        duration, ease,
         onUpdate: () => {
-            // Convert RGB back to hex and apply tint
-            const newTint = (Math.round(colorProxy.r) << 16) |
-                           (Math.round(colorProxy.g) << 8) |
-                            Math.round(colorProxy.b);
-            image.setTint(newTint);
+            image.setTint(
+                (Math.round(proxy.r) << 16) |
+                (Math.round(proxy.g) << 8)  |
+                 Math.round(proxy.b)
+            );
         },
-        onComplete: onComplete
+        onComplete
     });
+}
 
-    return tween;
+/**
+ * Scale a target up to a peak and back down (pulse).
+ *
+ * @param {Phaser.GameObjects.GameObject} target
+ * @param {number} scale - Peak scale multiplier (default 1.2)
+ * @param {number} duration - Total duration in ms (default 300)
+ * @param {string} ease
+ * @param {function} onComplete
+ * @returns {Phaser.Tweens.Tween}
+ */
+function tweenPulse(target, scale = 1.2, duration = 300, ease = 'Sine.easeInOut', onComplete = null) {
+    if (!target) return null;
+    const ox = target.scaleX || 1;
+    const oy = target.scaleY || 1;
+    return PhaserScene.tweens.add({
+        targets:  target,
+        scaleX:   ox * scale,
+        scaleY:   oy * scale,
+        duration: duration / 2,
+        ease,
+        yoyo: true,
+        onComplete: () => {
+            target.scaleX = ox;
+            target.scaleY = oy;
+            if (onComplete) onComplete();
+        }
+    });
+}
+
+/**
+ * Shake a target horizontally.
+ *
+ * @param {Phaser.GameObjects.GameObject} target
+ * @param {number} intensity - Shake distance in pixels (default 6)
+ * @param {number} duration - Total duration in ms (default 400)
+ * @param {function} onComplete
+ * @returns {Phaser.Tweens.Tween}
+ */
+function tweenShake(target, intensity = 6, duration = 400, onComplete = null) {
+    if (!target) return null;
+    const ox = target.x;
+    return PhaserScene.tweens.add({
+        targets:  target,
+        x:        ox + intensity,
+        duration: duration / 8,
+        ease:     'Sine.easeInOut',
+        yoyo:     true,
+        repeat:   3,
+        onComplete: () => {
+            target.x = ox;
+            if (onComplete) onComplete();
+        }
+    });
+}
+
+/**
+ * Bounce a target up and back to its original Y position.
+ *
+ * @param {Phaser.GameObjects.GameObject} target
+ * @param {number} bounceHeight - Pixels to rise (default 20)
+ * @param {number} duration - Total duration in ms (default 500)
+ * @param {function} onComplete
+ * @returns {Phaser.Tweens.Tween}
+ */
+function tweenBounce(target, bounceHeight = 20, duration = 500, onComplete = null) {
+    if (!target) return null;
+    const oy = target.y;
+    return PhaserScene.tweens.add({
+        targets:  target,
+        y:        oy - bounceHeight,
+        duration: duration / 2,
+        ease:     'Sine.easeOut',
+        yoyo:     true,
+        onComplete: () => {
+            target.y = oy;
+            if (onComplete) onComplete();
+        }
+    });
 }

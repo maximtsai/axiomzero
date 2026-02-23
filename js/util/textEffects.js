@@ -10,7 +10,7 @@
  * @returns {Phaser.GameObjects.Text | null} The created wrapped text object, or null on invalid scene.
  */
 function precomputeWrapText(scene, x, y, content, style = {}) {
-    if (!Validation.isValidScene(scene)) {
+    if (!scene) {
         return null;
     }
 

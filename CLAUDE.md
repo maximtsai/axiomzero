@@ -65,7 +65,9 @@ Order is critical — each file depends on globals defined by files above it:
 8. `js/util/loadingManager.js` — `loadingManager` singleton
 9. `js/util/gameState.js` — `gameState`
 10. `js/util/utilities.js` — all other util singletons (`messageBus`, `buttonManager`, etc.)
-11. `js/mainmenu.js`, `js/gameplaysetup.js`, `js/uibuttons.js` — game scripts
+11. `js/util/debugManager.js` — `initDebug` (loaded separately; not bundled)
+12. `js/util/notificationManager.js` — `notificationManager` singleton (loaded separately; not bundled)
+13. `js/mainmenu.js`, `js/gameplaysetup.js`, `js/uibuttons.js` — game scripts
 12. `js/loadingScreen.js` — `loadingScreen` singleton
 13. `js/main.js` — Phaser game boot (last)
 
@@ -80,7 +82,7 @@ uglifyjs messageBus.js mouseManager.js audioManager.js tweens.js button.js butto
 
 `js/util/utilities.js` is the file loaded by `index.html` — **do not edit it directly**. Edit the individual source files in `js/util/` and rebuild.
 
-Note: `globals.js` and `loadingManager.js` are loaded separately (not bundled), so they can be edited directly.
+Note: `globals.js`, `loadingManager.js`, and `gameState.js` are loaded separately (not bundled), so they can be edited directly. `debugManager.js` and `notificationManager.js` are also loaded separately (after `utilities.js`) so they are NOT part of the bundle.
 
 ## Feature Flags (`flags.js`)
 

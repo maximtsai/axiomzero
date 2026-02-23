@@ -446,7 +446,7 @@ class Button {
     }
 
     _applyRussianTextScale() {
-        if (language === 'ru') {
+        if (gameOptions.language === 'ru') {
             this.text.setScale(0.72, 0.77);
         } else {
             this.text.setScale(1);
@@ -487,7 +487,7 @@ class Button {
         if (this.text) {
             this.text.setText(text);
         }
-        if (language === 'ru') {
+        if (gameOptions.language === 'ru') {
             this.text.setScale(0.77, 0.84);
         } else {
             this.text.setScale(1);

@@ -44,6 +44,40 @@ var GAME_VARS = {
     lastmousedown:   { x: 0, y: 0 },
 };
 
+// ─── User options (persisted to localStorage) ─────────────────────────────────
+
+const OPTIONS_KEY = 'axiomzero_options';
+
+const GAME_OPTIONS_DEFAULTS = {
+    language:     'en',
+    sfxVolume:    1,
+    musicVolume:  1,
+    infoBoxAlign: 'center',
+};
+
+var gameOptions = (function () {
+    try {
+        const raw = localStorage.getItem(OPTIONS_KEY);
+        if (raw) return Object.assign({}, GAME_OPTIONS_DEFAULTS, JSON.parse(raw));
+    } catch (e) { /* ignore corrupt data */ }
+    return Object.assign({}, GAME_OPTIONS_DEFAULTS);
+})();
+
+function saveGameOptions() {
+    try {
+        localStorage.setItem(OPTIONS_KEY, JSON.stringify(gameOptions));
+    } catch (e) {
+        console.error('saveGameOptions failed:', e);
+    }
+}
+
 // ─── Shared object registry ───────────────────────────────────────────────────
 
 const globalObjects = {};
+
+// ─── Debug (defined here for early availability before utilities.js loads) ────
+
+function debugLog(...args) {
+    if (!FLAGS.DEBUG) return;
+    console.log('[DEBUG]', ...args);
+}
