@@ -4,7 +4,11 @@
       "Bash(uglifyjs:*)",
       "Bash(wc:*)",
       "Bash(ls:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "WebFetch(domain:chromewebstore.google.com)",
+      "WebFetch(domain:docs.browsermcp.io)",
+      "mcp__browsermcp__browser_navigate",
+      "mcp__browsermcp__browser_get_console_logs"
     ]
   }
 }

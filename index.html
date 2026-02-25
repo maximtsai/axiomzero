@@ -3,39 +3,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Axiom Zero: Incremental Tower Defense">
+    
     <title>Axiom Zero</title>
+    
     <link rel="icon" type="image/x-icon" href="favicon.png">
-    <link href="data:," rel="icon">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        @font-face {
-            font-family: 'Michroma';
-            src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'JetBrainsMono';
-            src: url('assets/fonts/JetBrainsMono_Regular.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'JetBrainsMono';
-            src: url('assets/fonts/JetBrainsMono_Bold.ttf') format('truetype');
-            font-weight: bold;
-        }
-        @font-face {
-            font-family: 'JetBrainsMono';
-            src: url('assets/fonts/JetBrainsMono_Italic.ttf') format('truetype');
-            font-style: italic;
-        }
-        @font-face {
-            font-family: 'VCR';
-            src: url('assets/fonts/VCR.ttf') format('truetype');
-        }
-    </style>
+
     <script src="flags.js"></script>
     <script src="phaser.min.js"></script>
     <script src="rexbbcodetextplugin.min.js"></script>
     <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
     <script src="sdkManager.js"></script>
+    
     <script src="assets/audioFiles.js"></script>
     <script src="assets/imageFiles.js"></script>
     <script src="assets/gameAnims.js"></script>
@@ -57,11 +37,24 @@
     <script src="js/loadingScreen.js"></script>
     <script src="js/main.js"></script>
 
-    <noscript>Enable JavaScript to play this game.</noscript>
+    <noscript>Enable JavaScript to play Axiom Zero.</noscript>
 </head>
 <body onload="onloadFunc()">
-    <div id="background"></div>
-    <div id="preload"></div>
-    <div id="preload-notice" onclick="location.href='https://adayofjoy.itch.io'">Loading Preloader ...</div>
+
+    <div id="preload">
+        <span style="font-family: 'Michroma'">.</span>
+        <span style="font-family: 'JetBrainsMono'">.</span>
+        <span style="font-family: 'JetBrainsMono'; font-weight: bold;">.</span>
+        <span style="font-family: 'VCR'">.</span>
+    </div>
+
+    <div id="preload-notice">INITIALIZING SYSTEM...</div>
+
+    <script>
+        // Simple focus handler for CrazyGames/Portals
+        window.addEventListener('mousedown', function() {
+            window.focus();
+        });
+    </script>
 </body>
 </html>

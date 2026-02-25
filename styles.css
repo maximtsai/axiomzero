@@ -1,74 +1,82 @@
-@keyframes changeShadow {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+/* --- ANIMATIONS (Kept from your file) --- */
+@keyframes changeShadow { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeAway { from { opacity: 1; } to { opacity: 0; } }
+@keyframes changeFull { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fastChange { from { opacity: 0.5; } to { opacity: 1; } }
+
+/* --- FONTS --- */
+/* Defined here so they can be referenced immediately */
+@font-face {
+    font-family: 'Michroma';
+    src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'JetBrainsMono';
+    src: url('assets/fonts/JetBrainsMono_Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'JetBrainsMono';
+    src: url('assets/fonts/JetBrainsMono_Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'VCR';
+    src: url('assets/fonts/VCR.ttf') format('truetype');
 }
 
-@keyframes fadeAway {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes changeFull {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fastChange {
-    from {
-        opacity: 0.5;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
+/* --- LAYOUT --- */
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: hidden; /* Prevents scrollbars */
     background-color: #111010;
+    
+    /* Flexbox centers the canvas perfectly in the viewport */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Prevents highlighting text on the page */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 canvas {
     display: block;
-    touch-action: none;
+    touch-action: none; /* Disables mobile zoom/pan gestures on the game */
+    outline: none; /* Removes the blue border when clicked */
 }
 
-#newgame {
-    margin: 0 auto;
-}
-
+/* --- PRELOADER --- */
+/* This div is invisible but contains text using your fonts. 
+   This forces the browser to download the .ttf files immediately. */
 #preload {
-    margin: 0;
-    height: 0px;
+    position: absolute;
     width: 0px;
+    height: 0px;
+    overflow: hidden;
     opacity: 0;
-    position: fixed;
+    z-index: -1;
 }
 
+#preload span {
+    /* Helper to apply font families inside the hidden div */
+    font-size: 1px; 
+}
+
+/* --- UI ELEMENTS --- */
 #preload-notice {
-    color: grey;
+    color: #888;
+    font-family: 'Michroma', sans-serif; /* Use your game font here */
+    font-size: 14px;
     text-align: center;
-    vertical-align: middle;
-    white-space: pre-line;
-    z-index: 10000;
+    
     position: absolute;
-    left: 50%;
-    top: 0px;
-    transform: translate(-50%, 0%);
-    cursor: pointer;
+    bottom: 20px; /* Moved to bottom to avoid covering game UI */
+    width: 100%;
+    
+    z-index: 10000;
+    pointer-events: none; /* Lets clicks pass through to the game */
 }
