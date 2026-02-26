@@ -240,7 +240,7 @@ const tower = (() => {
         // 5 full oscillations in `duration` ms: each direction change = duration/10
         PhaserScene.tweens.add({
             targets,
-            x: { from: origX - 14, to: origX + 14 },
+            x: { from: origX - 10, to: origX + 10 },
             duration: duration / 10,
             yoyo: true,
             repeat: 4,

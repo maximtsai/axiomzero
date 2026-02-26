@@ -8,5 +8,6 @@ const imageAtlases = [
     {name: 'pixels', src: 'sprites/pixels.json'},
     {name: 'buttons', src: 'sprites/buttons.json'},
     {name: 'player', src: 'sprites/player.json'},
+    {name: 'enemies', src: 'sprites/enemies.json'},
 ];
 

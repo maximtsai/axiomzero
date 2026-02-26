@@ -34,6 +34,7 @@ function createOptionsButton(x, y) {
     });
 
     button.setDepth(1010);
+    button.setScale(helper.testMobile() ? 0.8 : 0.68);
     return button;
 }
 
