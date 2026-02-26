@@ -1,33 +1,33 @@
 {
 	"textures": [
 		{
-			"image": "buttons-0.webp",
+			"image": "sprites/buttons-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 378,
-				"h": 408
+				"w": 1367,
+				"h": 103
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "button.png",
+					"filename": "button_hover.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"anchor": {
 						"x": 0.5,
@@ -35,24 +35,24 @@
 					}
 				},
 				{
-					"filename": "button_hover.png",
+					"filename": "button_normal.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"frame": {
-						"x": 1,
-						"y": 137,
-						"w": 376,
-						"h": 134
+						"x": 285,
+						"y": 1,
+						"w": 282,
+						"h": 101
 					},
 					"anchor": {
 						"x": 0.5,
@@ -64,20 +64,145 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 376,
-						"h": 134
+						"w": 282,
+						"h": 101
 					},
 					"frame": {
-						"x": 1,
-						"y": 273,
-						"w": 376,
-						"h": 134
+						"x": 569,
+						"y": 1,
+						"w": 282,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "empty_square.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 853,
+						"y": 1,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "options_hover.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 956,
+						"y": 1,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "options_normal.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 1059,
+						"y": 1,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "options_press.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 1162,
+						"y": 1,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sound_on.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 1265,
+						"y": 1,
+						"w": 101,
+						"h": 101
 					},
 					"anchor": {
 						"x": 0.5,
@@ -90,6 +215,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:2ab31e0e6dc0f012fd669270aec5dd6c:c3aa718411e74a2428eb220c10da2847:65710e74d82152c30eef887a1ead3394$"
+		"smartupdate": "$TexturePacker:SmartUpdate:26eb3ae8bbf4e67a8071fa1eda754db2:8e34ef1f623868be4e2a4c109e6003f8:65710e74d82152c30eef887a1ead3394$"
 	}
 }
