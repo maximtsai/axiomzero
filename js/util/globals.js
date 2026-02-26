@@ -35,7 +35,7 @@ const GAME_CONSTANTS = {
     // Tower
     TOWER_BASE_HEALTH:      100,
     TOWER_BASE_DAMAGE:      10,
-    TOWER_ATTACK_RANGE:     200,
+    TOWER_ATTACK_RANGE:     350,
     TOWER_ATTACK_COOLDOWN:  1000,   // ms between auto-attacks
     TOWER_BASE_REGEN:       -2,     // HP/sec (negative = drain)
 
@@ -45,7 +45,7 @@ const GAME_CONSTANTS = {
 
     // Enemy — Basic type (Phase 1 only)
     ENEMY_SPAWN_MARGIN:    60,    // px outside screen edge
-    ENEMY_BASE_HEALTH:     20,
+    ENEMY_BASE_HEALTH:     15,
     ENEMY_BASE_DAMAGE:     10,
     ENEMY_BASE_SPEED:      60,    // px/sec
     ENEMY_CONTACT_RADIUS:  30,    // px — deals damage & dies when this close to tower
@@ -54,8 +54,8 @@ const GAME_CONSTANTS = {
 
     // DATA drops
     DATA_DROP_CHANCE:   0.6,
-    DATA_PICKUP_RADIUS: 50,   // px — cursor auto-collects within this
-    DATA_DECAY_TIME:    8000, // ms before uncollected drop fades away
+    DATA_PICKUP_RADIUS: 100,   // px — cursor auto-collects within this
+    DATA_DECAY_TIME:    12000, // ms before uncollected drop fades away
     DATA_DRIFT_SPEED:   8,    // px/sec downward drift
 
     // Projectile
