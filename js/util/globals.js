@@ -74,6 +74,8 @@ const GAME_CONSTANTS = {
     DEPTH_RESOURCES:      400,
     DEPTH_HUD:            1000,
     DEPTH_NEURAL_TREE:    2000,
+    DEPTH_DEATH_OVERLAY:  3000,  // death flash — covers entire game
+    DEPTH_DEATH_TOWER:    3500,  // tower elevated above death overlay during shake
     DEPTH_TRANSITION:     5000,
     DEPTH_ITERATION_OVER: 6000,
     DEPTH_POPUPS:         10000,

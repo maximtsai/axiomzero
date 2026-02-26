@@ -32,12 +32,13 @@ const gameHUD = (() => {
     function init() {
         _createElements();
         _hideAll();
-        messageBus.subscribe('phaseChanged', _onPhaseChanged);
-        messageBus.subscribe('healthChanged', _onHealthChanged);
-        messageBus.subscribe('expChanged', _onExpChanged);
-        messageBus.subscribe('currencyChanged', _onCurrencyChanged);
-        messageBus.subscribe('enemyKilled', _onEnemyKilled);
-        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
+        messageBus.subscribe('phaseChanged',       _onPhaseChanged);
+        messageBus.subscribe('healthChanged',       _onHealthChanged);
+        messageBus.subscribe('expChanged',          _onExpChanged);
+        messageBus.subscribe('currencyChanged',     _onCurrencyChanged);
+        messageBus.subscribe('enemyKilled',         _onEnemyKilled);
+        messageBus.subscribe('upgradePurchased',    _onUpgradePurchased);
+        messageBus.subscribe('towerDeathStarted',   _onTowerDeathStarted);
     }
 
     function _createElements() {
@@ -221,6 +222,11 @@ const gameHUD = (() => {
 
     function _onEnemyKilled() {
         // Could add kill counter later
+    }
+
+    function _onTowerDeathStarted() {
+        endIterationBtn.setVisible(false);
+        endIterationBtn.setState(DISABLE);
     }
 
     function _onUpgradePurchased() {

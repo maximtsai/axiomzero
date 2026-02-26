@@ -8,6 +8,7 @@ const enemyManager = (() => {
     let activeEnemies = []; // currently alive references
     let spawnTimer = 0;
     let spawning = false;
+    let frozen = false;     // true during death sequence — movement paused, spawning stopped
     let waveElapsed = 0;    // seconds since wave start — drives scaling
 
     // cached enemy texture (generated once)
@@ -57,12 +58,24 @@ const enemyManager = (() => {
 
     function startSpawning() {
         spawning = true;
+        frozen = false;
         spawnTimer = 0;
         waveElapsed = 0;
     }
 
     function stopSpawning() {
         spawning = false;
+    }
+
+    /** Instantly halt all enemy movement and spawning (death sequence). */
+    function freeze() {
+        frozen = true;
+        spawning = false;
+    }
+
+    /** Resume normal update behaviour (called when death sequence ends). */
+    function unfreeze() {
+        frozen = false;
     }
 
     function clearAllEnemies() {
@@ -202,6 +215,7 @@ const enemyManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
+        if (frozen) return; // death sequence — all enemies paused
         if (!spawning && activeEnemies.length === 0) return;
 
         const dt = delta / 1000;
@@ -259,5 +273,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, startSpawning, stopSpawning, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, damageEnemy };
+    return { init, startSpawning, stopSpawning, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, damageEnemy };
 })();

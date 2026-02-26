@@ -219,6 +219,43 @@ const tower = (() => {
         if (sparkleSprite) sparkleSprite.setPosition(x, y);
     }
 
+    /**
+     * Violently shake the tower left/right for `duration` ms, then call onComplete.
+     * Elevates sprite depths above the death overlay so the tower stays visible.
+     */
+    function shake(duration, onComplete) {
+        const targets = [];
+        if (sprite)        targets.push(sprite);
+        if (glowSprite)    targets.push(glowSprite);
+        if (sparkleSprite) targets.push(sparkleSprite);
+        if (targets.length === 0) { if (onComplete) onComplete(); return; }
+
+        // Elevate above death overlay
+        if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+
+        const origX = targets[0].x;
+
+        // 5 full oscillations in `duration` ms: each direction change = duration/10
+        PhaserScene.tweens.add({
+            targets,
+            x: { from: origX - 14, to: origX + 14 },
+            duration: duration / 10,
+            yoyo: true,
+            repeat: 4,
+            ease: 'Linear',
+            onComplete: () => {
+                // Snap back to original x and restore normal depths
+                for (let i = 0; i < targets.length; i++) { targets[i].x = origX; }
+                if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
+                if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                if (onComplete) onComplete();
+            },
+        });
+    }
+
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
@@ -302,7 +339,7 @@ const tower = (() => {
 
     return {
         init, spawn, awaken, reset,
-        takeDamage, heal, die,
+        takeDamage, heal, die, shake,
         getPosition, isAlive, getDamage,
         setVisible, setPosition,
     };
