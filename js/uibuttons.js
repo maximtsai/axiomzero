@@ -4,7 +4,7 @@ function createOptionsButton(x, y) {
     const button = new Button({
         normal: {
             atlas: 'buttons',
-            ref: 'options.png',
+            ref: 'options_normal.png',
             x: x,
             y: y
         },
@@ -21,7 +21,15 @@ function createOptionsButton(x, y) {
             y: y
         },
         onMouseUp: function() {
-            console.log('options clicked');
+            showPopup({
+                title: 'Options',
+                body: '',
+                buttons: [
+                    { text: 'Close', onClick: function() {
+                        console.log("close");
+                        }, primary: true }
+                ]
+            });
         }
     });
 

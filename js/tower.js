@@ -77,7 +77,7 @@ const tower = (() => {
     function spawn() {
         if (sparkleSprite) return; // already spawned
 
-        const cx = GAME_CONSTANTS.halfWidth;
+        const cx = GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2;
         const cy = GAME_CONSTANTS.halfHeight;
 
         sparkleSprite = PhaserScene.add.sprite(cx, cy, 'player', 'sparkle.png');
@@ -116,7 +116,7 @@ const tower = (() => {
         awakened = true;
 
         // Capture position from sparkle before destroying it
-        const cx = sparkleSprite ? sparkleSprite.x : GAME_CONSTANTS.halfWidth;
+        const cx = sparkleSprite ? sparkleSprite.x : GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2;
         const cy = sparkleSprite ? sparkleSprite.y : GAME_CONSTANTS.halfHeight;
 
         // Destroy sparkle placeholder
@@ -201,7 +201,7 @@ const tower = (() => {
     function getPosition() {
         if (sprite)       return { x: sprite.x,       y: sprite.y };
         if (sparkleSprite) return { x: sparkleSprite.x, y: sparkleSprite.y };
-        return { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.halfHeight };
+        return { x: GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2, y: GAME_CONSTANTS.halfHeight };
     }
 
     function isAlive()    { return alive; }
