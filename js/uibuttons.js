@@ -1,5 +1,35 @@
 // UIButtons - Helper functions for creating UI buttons
 
+function createOptionsButton(x, y) {
+    const button = new Button({
+        normal: {
+            atlas: 'buttons',
+            ref: 'options.png',
+            x: x,
+            y: y
+        },
+        hover: {
+            atlas: 'buttons',
+            ref: 'options_hover.png',
+            x: x,
+            y: y
+        },
+        press: {
+            atlas: 'buttons',
+            ref: 'options_press.png',
+            x: x,
+            y: y
+        },
+        onMouseUp: function() {
+            console.log('options clicked');
+        }
+    });
+
+    button.setDepth(1010);
+    return button;
+}
+
+
 // Create a mute SFX button at position x, y
 function createMuteSFXButton(x, y) {
     // Get current mute state from localStorage or default to false

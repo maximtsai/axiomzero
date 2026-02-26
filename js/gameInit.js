@@ -44,9 +44,8 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     iterationOverScreen.init();
     transitionManager.init();
 
-    // Mute buttons (top-right corner, always visible)
-    createMuteSFXButton(GAME_CONSTANTS.WIDTH - 54, 27);
-    createMuteMusicButton(GAME_CONSTANTS.WIDTH - 27, 27);
+    // Options button (top-right corner, always visible)
+    createOptionsButton(GAME_CONSTANTS.WIDTH - 40, 27);
 
     // ── Set background color ────────────────────────────────────────────
     PhaserScene.cameras.main.setBackgroundColor(GAME_CONSTANTS.COLOR_BG);
