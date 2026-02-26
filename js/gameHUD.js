@@ -10,6 +10,7 @@ const gameHUD = (() => {
     let expBarBg      = null;
     let expBarFill    = null;
     let expText       = null;
+    let dataIcon      = null;
     let dataText      = null;
     let insightText   = null;
 
@@ -21,6 +22,8 @@ const gameHUD = (() => {
     const BAR_W = 200;
     const BAR_H = 14;
     const BAR_GAP = 6;
+    const DATA_ICON_SIZE = 14;
+    const DATA_ICON_GAP  = 4;
 
     let visible = false;
 
@@ -69,7 +72,11 @@ const gameHUD = (() => {
 
         // ── Currency counters ──
         const currY = expY + 6 + BAR_GAP + 4;
-        dataText = PhaserScene.add.text(HUD_X, currY, '\u25C8 0', {
+
+        dataIcon = PhaserScene.add.image(HUD_X, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
+        dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2);
+
+        dataText = PhaserScene.add.text(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
             fontFamily: 'JetBrainsMono',
             fontSize: '14px',
             color: '#00f5ff',
@@ -126,6 +133,7 @@ const gameHUD = (() => {
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
+        dataIcon.setVisible(true);
         dataText.setVisible(true);
         insightText.setVisible(true);
         endIterationBtn.setVisible(true);
@@ -140,6 +148,7 @@ const gameHUD = (() => {
         expBarBg.setVisible(false);
         expBarFill.setVisible(false);
         expText.setVisible(false);
+        dataIcon.setVisible(false);
         dataText.setVisible(false);
         insightText.setVisible(false);
         endIterationBtn.setVisible(false);
@@ -162,10 +171,12 @@ const gameHUD = (() => {
     function _showUpgradeHUD() {
         visible = true;
         // Show currency counters on the right half
+        const upgradeBaseX = GAME_CONSTANTS.halfWidth + 16;
+        dataIcon.setVisible(true);
+        dataIcon.setPosition(upgradeBaseX, HUD_Y + DATA_ICON_SIZE / 2);
         dataText.setVisible(true);
+        dataText.setPosition(upgradeBaseX + DATA_ICON_SIZE + DATA_ICON_GAP, HUD_Y);
         insightText.setVisible(true);
-        // Reposition currencies to right half during upgrade
-        dataText.setPosition(GAME_CONSTANTS.halfWidth + 16, HUD_Y);
         insightText.setPosition(GAME_CONSTANTS.halfWidth + 116, HUD_Y);
 
         // Hide combat-only elements
@@ -204,7 +215,7 @@ const gameHUD = (() => {
     }
 
     function _onCurrencyChanged(type, amount) {
-        if (type === 'data')    dataText.setText('\u25C8 ' + Math.floor(amount));
+        if (type === 'data')    dataText.setText('' + Math.floor(amount));
         if (type === 'insight') insightText.setText('\u25C9 ' + Math.floor(amount));
     }
 
@@ -214,14 +225,16 @@ const gameHUD = (() => {
 
     function _onUpgradePurchased() {
         // Refresh currency display
-        dataText.setText('\u25C8 ' + Math.floor(resourceManager.getData()));
+        dataText.setText('' + Math.floor(resourceManager.getData()));
         insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
     }
 
     /** Reposition HUD for full-screen combat layout. */
     function _resetCombatPositions() {
-        dataText.setPosition(HUD_X, HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4);
-        insightText.setPosition(HUD_X + 100, HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4);
+        const combatCurrY = HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4;
+        dataIcon.setPosition(HUD_X, combatCurrY + DATA_ICON_SIZE / 2);
+        dataText.setPosition(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, combatCurrY);
+        insightText.setPosition(HUD_X + 100, combatCurrY);
     }
 
     return { init };

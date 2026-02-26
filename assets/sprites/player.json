@@ -4,8 +4,8 @@
 			"image": "player-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 788,
-				"h": 151
+				"w": 250,
+				"h": 572
 			},
 			"scale": 1,
 			"frames": [
@@ -35,6 +35,56 @@
 					}
 				},
 				{
+					"filename": "sparkle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 133,
+						"h": 133
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 8,
+						"w": 97,
+						"h": 120
+					},
+					"frame": {
+						"x": 152,
+						"y": 1,
+						"w": 97,
+						"h": 120
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_processor.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 18,
+						"w": 63,
+						"h": 64
+					},
+					"frame": {
+						"x": 152,
+						"y": 123,
+						"w": 63,
+						"h": 64
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "tower4.png",
 					"rotated": false,
 					"trimmed": false,
@@ -49,10 +99,60 @@
 						"h": 149
 					},
 					"frame": {
-						"x": 152,
-						"y": 1,
+						"x": 1,
+						"y": 152,
 						"w": 149,
 						"h": 149
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_data.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 19,
+						"w": 63,
+						"h": 63
+					},
+					"frame": {
+						"x": 152,
+						"y": 189,
+						"w": 63,
+						"h": 63
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_insight.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 22,
+						"w": 59,
+						"h": 59
+					},
+					"frame": {
+						"x": 152,
+						"y": 254,
+						"w": 59,
+						"h": 59
 					},
 					"anchor": {
 						"x": 0.5,
@@ -74,8 +174,8 @@
 						"h": 149
 					},
 					"frame": {
-						"x": 303,
-						"y": 1,
+						"x": 1,
+						"y": 303,
 						"w": 149,
 						"h": 149
 					},
@@ -99,8 +199,8 @@
 						"h": 117
 					},
 					"frame": {
-						"x": 454,
-						"y": 1,
+						"x": 1,
+						"y": 454,
 						"w": 117,
 						"h": 117
 					},
@@ -124,35 +224,10 @@
 						"h": 115
 					},
 					"frame": {
-						"x": 573,
-						"y": 1,
+						"x": 120,
+						"y": 454,
 						"w": 115,
 						"h": 115
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sparkle.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 133,
-						"h": 133
-					},
-					"spriteSourceSize": {
-						"x": 18,
-						"y": 8,
-						"w": 97,
-						"h": 120
-					},
-					"frame": {
-						"x": 690,
-						"y": 1,
-						"w": 97,
-						"h": 120
 					},
 					"anchor": {
 						"x": 0.5,
@@ -165,6 +240,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c9d1f4ce9676a88d956cc68de717ad4b:03e5c66be9d1cb18194393b091cda5e9:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:4bbe64448f224d373fb1d10b89327995:5ebdcef2a90cfd921497f39c84e45252:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

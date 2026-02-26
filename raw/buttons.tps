@@ -180,7 +180,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.46</double>
+                <double>0.4</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -200,6 +200,7 @@
             <key type="filename">buttons/options_hover.png</key>
             <key type="filename">buttons/options_normal.png</key>
             <key type="filename">buttons/options_press.png</key>
+            <key type="filename">buttons/reset.png</key>
             <key type="filename">buttons/sound_on.png</key>
             <key type="filename">buttons/sound_on_hover.png</key>
             <key type="filename">buttons/sound_on_press.png</key>

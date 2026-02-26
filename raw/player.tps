@@ -173,6 +173,23 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">player/resrc_data.png</key>
+            <key type="filename">player/resrc_insight.png</key>
+            <key type="filename">player/resrc_processor.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,25,51,51</rect>
+                <key>scale9Paddings</key>
+                <rect>25,25,51,51</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">player/sparkle.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
