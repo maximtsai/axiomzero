@@ -38,9 +38,14 @@ const neuralTree = (() => {
             treeX: TREE_CENTER_X,
             treeY: 450,
             effect: function() {
-                tower.spawn();
+                tower.awaken();
                 // Reveal children
                 _revealChildren('awaken');
+                // Show the deploy button immediately
+                if (visible) {
+                    deployBtn.setVisible(true);
+                    deployBtn.setState(NORMAL);
+                }
             },
         },
         {

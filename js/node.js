@@ -219,6 +219,7 @@ class Node {
 
     _updateVisual() {
         if (!this.btn) return;
+        this._hideHover(); // Clear any lingering tooltip when state changes
 
         switch (this.state) {
             case NODE_STATE.HIDDEN:

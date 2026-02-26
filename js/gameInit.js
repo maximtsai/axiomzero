@@ -51,6 +51,13 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // ── Set background color ────────────────────────────────────────────
     PhaserScene.cameras.main.setBackgroundColor(GAME_CONSTANTS.COLOR_BG);
 
+    // ── Spawn tower sparkle — always visible before first AWAKEN click ──
+    tower.spawn();
+    // For returning players who already purchased AWAKEN, skip sparkle animation
+    if ((gameState.upgrades && gameState.upgrades.awaken) >= 1) {
+        tower.awaken();
+    }
+
     // ── Enter the game ──────────────────────────────────────────────────
     gameStateMachine.goTo('UPGRADE_PHASE');
     debugLog('Game initialised — entering UPGRADE_PHASE');
