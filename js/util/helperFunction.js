@@ -81,8 +81,9 @@ const helper = {
             globalObjects.clickBlocker.setOnMouseUpFunc(function() {});
             buttonManager.bringButtonToTop(globalObjects.clickBlocker);
         }
-        if (showPointer && canvas) {
-            canvas.style.cursor = 'pointer';
+        if (showPointer) {
+            const canvas = PhaserScene.sys.canvas;
+            if (canvas) canvas.style.cursor = 'pointer';
         }
         return globalObjects.clickBlocker;
     },

@@ -12,19 +12,22 @@ const NODE_STATE = {
 /**
  * Node definition schema (passed into constructor):
  * {
- *   id:          string,
- *   name:        string,
- *   description: string,
- *   maxLevel:    number,
- *   baseCost:    number,        // DATA cost at level 1
- *   costScaling: 'static'|'linear',
- *   costStep:    number,        // added per level for 'linear'
- *   costType:    'data'|'insight',
- *   effect:      function(level),  // called after purchase to apply effect
- *   parentId:    string|null,
- *   childIds:    string[],
- *   treeX:       number,        // x position within tree panel (0–640)
- *   treeY:       number,        // y position within tree panel
+ * id:          string,
+ * name:        string,
+ * description: string,
+ * maxLevel:    number,
+ * baseCost:    number,        // DATA cost at level 1
+ * costScaling: 'static'|'linear',
+ * costStep:    number,        // added per level for 'linear'
+ * costType:    'data'|'insight',
+ * effect:      function(level),  // called after purchase to apply effect
+ * parentId:    string|null,
+ * childIds:    string[],
+ * treeX:       number,        // x position within tree panel (0–640)
+ * treeY:       number,        // y position within tree panel
+ * tier:        number,        // NEW: Required global tier
+ * isDuoBox:    boolean,       // NEW: Is this part of a Shard choice?
+ * shardId:     string|null,   // NEW: Unique ID for this specific shard choice
  * }
  */
 
@@ -44,8 +47,14 @@ class Node {
         this.treeX       = def.treeX       || 0;
         this.treeY       = def.treeY       || 0;
 
+        // New Properties for Tier and Duo-Box Logic
+        this.tier        = def.tier        || 1;
+        this.isDuoBox    = def.isDuoBox    || false;
+        this.shardId     = def.shardId     || null;
+
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
+        this.branchActive = true; // Tracks if this specific Shard path is active
 
         // Phaser objects
         this.btn        = null;
@@ -69,11 +78,52 @@ class Node {
 
     canAfford() {
         const cost = this.getCost();
+        // Updated to use resourceManager API
         if (this.costType === 'insight') return resourceManager.getInsight() >= cost;
         return resourceManager.getData() >= cost;
     }
 
     // ── state management ─────────────────────────────────────────────────
+
+    // NEW: Logic to check Tier and Parent requirements
+    isRequirementsMet() {
+        if (gameState.currentTier < this.tier) return false;
+        if (this.parentId) {
+            const p = neuralTree.getNode(this.parentId);
+            if (!p || p.level < 1 || !p.branchActive) return false;
+        }
+        return true;
+    }
+
+    // NEW: Handles Duo-Box swapping and recursive ghosting
+    refreshState() {
+        // 1. Determine if this branch is active (for Duo-Boxes)
+        if (this.isDuoBox) {
+            this.branchActive = (gameState.activeShards[this.tier] === this.shardId);
+        } else if (this.parentId) {
+            const p = neuralTree.getNode(this.parentId);
+            this.branchActive = p ? p.branchActive : true;
+        }
+
+        // 2. Set State based on requirements and level
+        if (!this.branchActive && this.level > 0) {
+            this.setState(NODE_STATE.GHOST); // Purchased but currently deactivated
+        } else if (this.level >= this.maxLevel) {
+            this.setState(NODE_STATE.MAXED);
+        } else if (this.isRequirementsMet()) {
+            this.setState(NODE_STATE.UNLOCKED);
+        } else if (this.parentId && neuralTree.getNode(this.parentId).level > 0) {
+            this.setState(NODE_STATE.GHOST); // Visible but locked
+        } else {
+            this.setState(NODE_STATE.HIDDEN);
+        }
+
+        // 3. Recursively refresh children so ghost/active state cascades down the tree
+        for (let i = 0; i < this.childIds.length; i++) {
+            const child = neuralTree.getNode(this.childIds[i]);
+            if (child) child.refreshState();
+        }
+    }
 
     setState(newState) {
         this.state = newState;
@@ -96,13 +146,11 @@ class Node {
         const cost = this.getCost();
         if (!this.canAfford()) return false;
 
-        // Deduct cost
+        // Deduct cost via resourceManager (Fix 2: Centralized Economy)
         if (this.costType === 'insight') {
-            gameState.insight -= cost;
-            messageBus.publish('currencyChanged', 'insight', gameState.insight);
+            resourceManager.addInsight(-cost);
         } else {
-            gameState.data -= cost;
-            messageBus.publish('currencyChanged', 'data', gameState.data);
+            resourceManager.addData(-cost);
         }
 
         this.level++;
@@ -180,9 +228,6 @@ class Node {
             case NODE_STATE.GHOST:
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-                if (this.btn.btn && this.btn.btn.normal) {
-                    // Access the underlying Phaser image to set alpha
-                }
                 // Faint appearance
                 this.btn.setAlpha(0.25);
                 if (this.label) {
