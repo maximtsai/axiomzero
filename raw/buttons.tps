@@ -180,7 +180,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.75</double>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -191,15 +191,23 @@
                 <false/>
             </struct>
             <key type="filename">buttons/empty_square.png</key>
+            <key type="filename">buttons/music_off.png</key>
+            <key type="filename">buttons/music_off_hover.png</key>
+            <key type="filename">buttons/music_off_press.png</key>
+            <key type="filename">buttons/music_on.png</key>
+            <key type="filename">buttons/music_on_hover.png</key>
+            <key type="filename">buttons/music_on_press.png</key>
             <key type="filename">buttons/options_hover.png</key>
             <key type="filename">buttons/options_normal.png</key>
             <key type="filename">buttons/options_press.png</key>
             <key type="filename">buttons/sound_on.png</key>
+            <key type="filename">buttons/sound_on_hover.png</key>
+            <key type="filename">buttons/sound_on_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.75</double>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>

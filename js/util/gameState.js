@@ -1,3 +1,29 @@
+// ─── Default state shape — all Phase 1 fields ───────────────────────────────
+const GAME_STATE_DEFAULTS = {
+    // Tower
+    towerMaxHealth:   100,
+    towerDamage:      10,
+    towerAttackRange: 200,
+    towerHealthRegen: -2,   // HP/sec (negative = drain)
+
+    // Resources
+    data:    0,
+    insight: 0,
+
+    // EXP (0–100, awards INSIGHT at 100)
+    exp: 0,
+
+    // Wave / progression
+    currentWave: 1,
+    currentTier: 1,
+
+    // First-launch flag — drives AWAKEN-only tree state
+    isFirstLaunch: true,
+
+    // Purchased upgrade levels  { nodeId: level }
+    upgrades: {},
+};
+
 const gameState = {};
 
 const SAVE_VERSION = 1;

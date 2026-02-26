@@ -209,6 +209,9 @@ class Button {
         Object.keys(this.imageRefs).forEach(key => {
             this.imageRefs[key].setVisible(vis);
         });
+        if (this.text) {
+            this.text.setVisible(vis);
+        }
         this.forceInvis = !vis;
     }
 

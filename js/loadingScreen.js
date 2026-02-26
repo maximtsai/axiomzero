@@ -60,10 +60,10 @@ class LoadingScreen {
         const barW = GAME_CONSTANTS.LOADING_BAR_WIDTH;
         const barH = GAME_CONSTANTS.LOADING_BAR_HEIGHT;
 
-        scene.add.image(cx, cy, 'bg').setDepth(0);
+        this._bg = scene.add.image(cx, cy, 'bg').setDepth(0);
 
         // Bar track
-        scene.add.image(cx, cy + 50, 'white_pixel')
+        this._barTrack = scene.add.image(cx, cy + 50, 'white_pixel')
             .setAlpha(0.3)
             .setScale(barW, barH)
             .setDepth(1);
@@ -132,6 +132,8 @@ class LoadingScreen {
     }
 
     _onComplete() {
+        if (this._bg)         { this._bg.destroy();         this._bg = null; }
+        if (this._barTrack)   { this._barTrack.destroy();   this._barTrack = null; }
         if (this._bar)        { this._bar.destroy();        this._bar = null; }
         if (this._runBtnBg)   { this._runBtnBg.destroy();   this._runBtnBg = null; }
         if (this._runBtnText) { this._runBtnText.destroy();  this._runBtnText = null; }

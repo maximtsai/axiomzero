@@ -21,7 +21,62 @@ const GAME_CONSTANTS = {
 
     // Timing
     RESIZE_DELAY: 100,
-    INTRO_FLASH_DURATION: 500
+    INTRO_FLASH_DURATION: 500,
+
+    // ─── Phase 1 gameplay constants ──────────────────────────────────────────
+
+    // Colors (GDD §4)
+    COLOR_BG:        0x05080f,
+    COLOR_FRIENDLY:  0x00f5ff,
+    COLOR_RESOURCE:  0xff9500,
+    COLOR_HOSTILE:   0xff2d78,
+    COLOR_STRAY:     0xffe600,
+
+    // Tower
+    TOWER_BASE_HEALTH:      100,
+    TOWER_BASE_DAMAGE:      10,
+    TOWER_ATTACK_RANGE:     200,
+    TOWER_ATTACK_COOLDOWN:  1000,   // ms between auto-attacks
+    TOWER_BASE_REGEN:       -2,     // HP/sec (negative = drain)
+
+    // EXP
+    EXP_FILL_RATE:    5,    // per second during combat
+    EXP_TO_INSIGHT:   100,  // EXP needed to award 1 INSIGHT
+
+    // Enemy — Basic type (Phase 1 only)
+    ENEMY_SPAWN_MARGIN:    60,    // px outside screen edge
+    ENEMY_BASE_HEALTH:     20,
+    ENEMY_BASE_DAMAGE:     10,
+    ENEMY_BASE_SPEED:      60,    // px/sec
+    ENEMY_CONTACT_RADIUS:  30,    // px — deals damage & dies when this close to tower
+    ENEMY_SPAWN_INTERVAL:  1500,  // ms between spawns
+    ENEMY_SCALE_RATE:      0.02,  // health/damage multiplier increase per second
+
+    // DATA drops
+    DATA_DROP_CHANCE:   0.6,
+    DATA_PICKUP_RADIUS: 50,   // px — cursor auto-collects within this
+    DATA_DECAY_TIME:    8000, // ms before uncollected drop fades away
+    DATA_DRIFT_SPEED:   8,    // px/sec downward drift
+
+    // Projectile
+    PROJECTILE_SPEED:      400,  // px/sec
+    PROJECTILE_HIT_RADIUS: 15,
+
+    // Transition
+    TRANSITION_DURATION: 800,  // ms for slide animation
+
+    // Depth layers (flat ordering, no Containers)
+    DEPTH_BG:             0,
+    DEPTH_GLOW:           50,
+    DEPTH_ENEMIES:        100,
+    DEPTH_TOWER:          200,
+    DEPTH_PROJECTILES:    300,
+    DEPTH_RESOURCES:      400,
+    DEPTH_HUD:            1000,
+    DEPTH_NEURAL_TREE:    2000,
+    DEPTH_TRANSITION:     5000,
+    DEPTH_ITERATION_OVER: 6000,
+    DEPTH_POPUPS:         10000,
 };
 
 // Derived dimension shortcuts (computed after declaration to allow self-reference)

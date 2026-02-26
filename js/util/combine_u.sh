@@ -1,1 +1,1 @@
-uglifyjs messageBus.js debugManager.js mouseManager.js audioManager.js tweens.js objectPool.js button.js buttonManager.js helperFunction.js textEffects.js timeManager.js updateManager.js popupManager.js -o utilities.js -c -m
+uglifyjs messageBus.js debugManager.js mouseManager.js audioManager.js tweens.js objectPool.js button.js buttonManager.js helperFunction.js textEffects.js timeManager.js updateManager.js popupManager.js virtualGroup.js -o utilities.js -c -m

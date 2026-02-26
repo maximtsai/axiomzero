@@ -8,7 +8,11 @@
       "WebFetch(domain:chromewebstore.google.com)",
       "WebFetch(domain:docs.browsermcp.io)",
       "mcp__browsermcp__browser_navigate",
-      "mcp__browsermcp__browser_get_console_logs"
+      "mcp__browsermcp__browser_get_console_logs",
+      "Bash(python3:*)",
+      "Bash(node -e:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx uglifyjs:*)"
     ]
   }
 }

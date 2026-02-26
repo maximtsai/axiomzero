@@ -92,6 +92,7 @@ const helper = {
             return;
         }
         globalObjects.clickBlocker.setState(DISABLE);
+        const canvas = PhaserScene.sys.canvas;
         if (canvas) {
             canvas.style.cursor = 'default';
         }

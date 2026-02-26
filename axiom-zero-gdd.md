@@ -8,7 +8,7 @@
 
 **Title:** Axiom Zero  
 **Engine:** Phaser 3  
-**Resolution:** 1600×900  
+**Resolution:** 1280×720  
 **Genre:** Tower Defense / Incremental Hybrid  
 **Platform:** Browser (Web)  
 **Visual Style:** Minimalist flat geometry with Tron-adjacent glow; digital glitch effects during high-pressure moments

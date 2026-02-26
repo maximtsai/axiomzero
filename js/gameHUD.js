@@ -1,32 +1,228 @@
 // gameHUD.js
-// All Phaser UI for both the upgrade phase and wave phase.
-// Responds to phase changes by swapping the active UI layer.
-//
-// Topics subscribed:
-//   'phaseChanged'      — swap between wave HUD and upgrade screen
-//   'enemyKilled'       — update kill counter display
-//   'upgradePurchased'  — refresh upgrade button states
+// In-game HUD: health bar, EXP bar, currency counters, END ITERATION button.
+// All elements use JetBrainsMono. Show/hide based on phaseChanged.
 
 const gameHUD = (() => {
+    // ── HUD elements ─────────────────────────────────────────────────────────
+    let healthBarBg   = null;
+    let healthBarFill = null;
+    let healthText    = null;
+    let expBarBg      = null;
+    let expBarFill    = null;
+    let expText       = null;
+    let dataText      = null;
+    let insightText   = null;
+
+    let endIterationBtn = null;
+
+    // Layout
+    const HUD_X = 16;
+    const HUD_Y = 16;
+    const BAR_W = 200;
+    const BAR_H = 14;
+    const BAR_GAP = 6;
+
+    let visible = false;
+
+    // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
+        _createElements();
+        _hideAll();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('healthChanged', _onHealthChanged);
+        messageBus.subscribe('expChanged', _onExpChanged);
+        messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
     }
 
+    function _createElements() {
+        const depth = GAME_CONSTANTS.DEPTH_HUD;
+
+        // ── Health bar ──
+        healthBarBg = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
+        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(0x333333).setDepth(depth);
+
+        healthBarFill = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
+        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1);
+
+        healthText = PhaserScene.add.text(HUD_X + BAR_W + 8, HUD_Y, '', {
+            fontFamily: 'JetBrainsMono',
+            fontSize: '13px',
+            color: '#ffffff',
+        }).setOrigin(0, 0).setDepth(depth + 2);
+
+        // ── EXP bar ──
+        const expY = HUD_Y + BAR_H + BAR_GAP;
+        expBarBg = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
+        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 6).setTint(0x222222).setDepth(depth);
+
+        expBarFill = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, 6).setTint(0xffffff).setDepth(depth + 1);
+
+        expText = PhaserScene.add.text(HUD_X + BAR_W + 8, expY - 2, 'EXP 0%', {
+            fontFamily: 'JetBrainsMono',
+            fontSize: '10px',
+            color: '#aaaaaa',
+        }).setOrigin(0, 0).setDepth(depth + 2);
+
+        // ── Currency counters ──
+        const currY = expY + 6 + BAR_GAP + 4;
+        dataText = PhaserScene.add.text(HUD_X, currY, '\u25C8 0', {
+            fontFamily: 'JetBrainsMono',
+            fontSize: '14px',
+            color: '#00f5ff',
+        }).setOrigin(0, 0).setDepth(depth + 2);
+
+        insightText = PhaserScene.add.text(HUD_X + 100, currY, '\u25C9 0', {
+            fontFamily: 'JetBrainsMono',
+            fontSize: '14px',
+            color: '#ffffff',
+        }).setOrigin(0, 0).setDepth(depth + 2);
+
+        // ── END ITERATION button ──
+        endIterationBtn = new Button({
+            normal: {
+                ref: 'button_normal.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 36,
+                depth: depth + 3,
+            },
+            hover: {
+                ref: 'button_hover.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 36,
+                depth: depth + 3,
+            },
+            press: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 36,
+                depth: depth + 3,
+            },
+            onMouseUp: () => {
+                waveManager.endIteration();
+            },
+        });
+        endIterationBtn.addText('END ITERATION', {
+            fontFamily: 'JetBrainsMono-Bold',
+            fontSize: '11px',
+            color: '#ffffff',
+        });
+    }
+
+    // ── show / hide ──────────────────────────────────────────────────────────
+
+    function _showCombatHUD() {
+        visible = true;
+        _resetCombatPositions();
+        healthBarBg.setVisible(true);
+        healthBarFill.setVisible(true);
+        healthText.setVisible(true);
+        expBarBg.setVisible(true);
+        expBarFill.setVisible(true);
+        expText.setVisible(true);
+        dataText.setVisible(true);
+        insightText.setVisible(true);
+        endIterationBtn.setVisible(true);
+        endIterationBtn.setState(NORMAL);
+    }
+
+    function _hideAll() {
+        visible = false;
+        healthBarBg.setVisible(false);
+        healthBarFill.setVisible(false);
+        healthText.setVisible(false);
+        expBarBg.setVisible(false);
+        expBarFill.setVisible(false);
+        expText.setVisible(false);
+        dataText.setVisible(false);
+        insightText.setVisible(false);
+        endIterationBtn.setVisible(false);
+        endIterationBtn.setState(DISABLE);
+    }
+
+    // ── event handlers ───────────────────────────────────────────────────────
+
     function _onPhaseChanged(phase) {
-        // TODO: swap active UI layer based on phase
+        if (phase === 'WAVE_ACTIVE') {
+            _showCombatHUD();
+        } else if (phase === 'UPGRADE_PHASE') {
+            // During upgrade, show currencies but hide combat-only elements
+            _showUpgradeHUD();
+        } else {
+            _hideAll();
+        }
+    }
+
+    function _showUpgradeHUD() {
+        visible = true;
+        // Show currency counters on the right half
+        dataText.setVisible(true);
+        insightText.setVisible(true);
+        // Reposition currencies to right half during upgrade
+        dataText.setPosition(GAME_CONSTANTS.halfWidth + 16, HUD_Y);
+        insightText.setPosition(GAME_CONSTANTS.halfWidth + 116, HUD_Y);
+
+        // Hide combat-only elements
+        healthBarBg.setVisible(false);
+        healthBarFill.setVisible(false);
+        healthText.setVisible(false);
+        expBarBg.setVisible(false);
+        expBarFill.setVisible(false);
+        expText.setVisible(false);
+        endIterationBtn.setVisible(false);
+        endIterationBtn.setState(DISABLE);
+    }
+
+    function _onHealthChanged(current, max) {
+        if (!visible) return;
+        const ratio = Math.max(0, current / max);
+        healthBarFill.setDisplaySize(BAR_W * ratio, BAR_H);
+
+        // Color shift: cyan → red as health drops
+        if (ratio > 0.5) {
+            healthBarFill.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        } else if (ratio > 0.25) {
+            healthBarFill.setTint(GAME_CONSTANTS.COLOR_RESOURCE);
+        } else {
+            healthBarFill.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
+        }
+
+        healthText.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
+    }
+
+    function _onExpChanged(current, max) {
+        if (!visible) return;
+        const ratio = Math.min(1, Math.max(0, current / max));
+        expBarFill.setDisplaySize(BAR_W * ratio, 6);
+        expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
+    }
+
+    function _onCurrencyChanged(type, amount) {
+        if (type === 'data')    dataText.setText('\u25C8 ' + Math.floor(amount));
+        if (type === 'insight') insightText.setText('\u25C9 ' + Math.floor(amount));
     }
 
     function _onEnemyKilled() {
-        // TODO: update kill counter display
+        // Could add kill counter later
     }
 
-    function _onUpgradePurchased(id) {
-        // TODO: refresh upgrade button states
+    function _onUpgradePurchased() {
+        // Refresh currency display
+        dataText.setText('\u25C8 ' + Math.floor(resourceManager.getData()));
+        insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
+    }
+
+    /** Reposition HUD for full-screen combat layout. */
+    function _resetCombatPositions() {
+        dataText.setPosition(HUD_X, HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4);
+        insightText.setPosition(HUD_X + 100, HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4);
     }
 
     return { init };
-
 })();
