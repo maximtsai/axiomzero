@@ -65,9 +65,12 @@ const tower = (() => {
     // ── public API ───────────────────────────────────────────────────────────
 
     function init() {
-        messageBus.subscribe('phaseChanged',    _onPhaseChanged);
-        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
-        messageBus.subscribe('bossDefeated',    _onBossDefeated);
+        messageBus.subscribe('phaseChanged',      _onPhaseChanged);
+        messageBus.subscribe('upgradePurchased',  _onUpgradePurchased);
+        messageBus.subscribe('bossDefeated',      _onBossDefeated);
+        messageBus.subscribe('towerShakeRequested', function(duration) {
+            shake(duration, function() { messageBus.publish('towerShakeComplete'); });
+        });
     }
 
     /**

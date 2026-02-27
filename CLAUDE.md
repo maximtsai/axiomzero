@@ -31,9 +31,9 @@ js/
   loadingScreen.js      # Two-phase loading screen (preload UI + asset loading)
   uibuttons.js          # UI button definitions (mute buttons, etc.)
   gameStateMachine.js   # Phase state machine: UPGRADE_PHASE / WAVE_ACTIVE / WAVE_COMPLETE / GAME_OVER
-  waveManager.js        # Wave spawning, enemy logic, win/fail detection (stub)
+  waveManager.js        # Wave lifecycle: spawning, tower death sequence, END ITERATION
   upgradeManager.js     # Upgrade definitions and purchase logic (stub)
-  gameHUD.js            # All in-game Phaser UI (stub)
+  gameHUD.js            # In-game HUD: health/EXP bars, currency, END ITERATION button
   gameInit.js           # Bootstrapper — subscribes to 'assetsLoaded', inits all systems
   util/                 # Utility modules (source files — see Build section)
     globals.js          # GAME_CONSTANTS, GAME_VARS, globalObjects
@@ -44,12 +44,17 @@ js/
     buttonManager.js    # Button lifecycle/input routing
     audioManager.js     # Sound/music management
     mouseManager.js     # Mouse input handling
-    popupManager.js     # Popup dialogs
+    popupManager.js     # Popup dialogs (showPopup, showYesNoPopup)
     timeManager.js      # Time/timer utilities
     updateManager.js    # Per-frame update loop
     tweens.js           # Custom tween helpers (e.g. tweenTint)
-    helperFunction.js   # Misc helpers (typewriter, fullscreen, mobile detect)
-    textEffects.js      # Text effect utilities
+    typewriterHelper.js # Typewriter text animation — defines the `helper` global
+    effectPool.js       # Click effect object pooling — extends `helper`
+    uiHelper.js         # Fullscreen, mobile detect, click blocker — extends `helper`
+    helperFunction.js   # DEPRECATED — split into the three files above (do not edit)
+    textEffects.js      # Text effect utilities (CJK-aware word wrap)
+    objectPool.js       # Generic ObjectPool class
+    virtualGroup.js     # Virtual display-list grouping utility
     utilities.js        # BUILD OUTPUT — minified bundle of the above (do not edit directly)
 ```
 
@@ -83,9 +88,14 @@ Order is critical — each file depends on globals defined by files above it:
 The `util/` source files get minified and combined into `util/utilities.js` using UglifyJS:
 
 ```sh
-# Run from the js/util/ directory
-uglifyjs messageBus.js mouseManager.js audioManager.js tweens.js button.js buttonManager.js helperFunction.js timeManager.js updateManager.js hoverText.js popupManager.js -o utilities.js -c -m
+# Run from the js/util/ directory  (or just run /build)
+uglifyjs messageBus.js debugManager.js mouseManager.js audioManager.js tweens.js objectPool.js button.js buttonManager.js typewriterHelper.js effectPool.js uiHelper.js textEffects.js timeManager.js updateManager.js popupManager.js virtualGroup.js -o utilities.js -c -m
 ```
+
+`helperFunction.js` has been split into three focused files:
+- **`typewriterHelper.js`** — defines the `helper` global; typewriter text animation
+- **`effectPool.js`** — extends `helper`; click effect object pooling
+- **`uiHelper.js`** — extends `helper`; fullscreen, mobile detect, global click blocker
 
 `js/util/utilities.js` is the file loaded by `index.html` — **do not edit it directly**. Edit the individual source files in `js/util/` and rebuild.
 
@@ -205,12 +215,22 @@ audio.recheckMuteState();               // re-read mute state from localStorage
 audio.fadeAway(soundObj, duration);
 ```
 
-### Click Blocker (`js/util/helperFunction.js`)
-Full-screen transparent button to block input:
+### Helper Utilities (`js/util/uiHelper.js`, `typewriterHelper.js`, `effectPool.js`)
+The `helper` global is assembled from three source files bundled into `utilities.js`:
 
 ```js
+// Click blocker (uiHelper.js)
 const blocker = helper.createGlobalClickBlocker(showPointer);
 helper.hideGlobalClickBlocker();
+
+// Typewriter text (typewriterHelper.js)
+helper.typewriterText(textObj, str, delay, sfx);
+helper.typewriterTextByWord(textObj, str, delay, sfx);
+helper.clearTypewriterTimeouts();
+
+// Click effect pool (effectPool.js) — call initClickEffectPool(scene) once on init
+helper.initClickEffectPool(scene);
+helper.createClickEffect(x, y);
 ```
 
 ## Game Loop
@@ -237,13 +257,23 @@ Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems 
 
 ### Key messageBus Topics
 
-| Topic | Published by | Payload |
-|---|---|---|
-| `'assetsLoaded'` | `loadingScreen` | — |
-| `'phaseChanged'` | `gameStateMachine` | phase string |
-| `'enemyKilled'` | `waveManager` | — |
-| `'waveComplete'` | `waveManager` | — |
-| `'upgradePurchased'` | `upgradeManager` | upgrade id |
+| Topic | Published by | Subscribed by | Payload |
+|---|---|---|---|
+| `'assetsLoaded'` | `loadingScreen` | `gameInit` | — |
+| `'phaseChanged'` | `gameStateMachine` | all systems | phase string |
+| `'enemyKilled'` | `enemyManager` | `resourceManager`, `gameHUD` | x, y |
+| `'waveComplete'` | `waveManager` | — | — |
+| `'upgradePurchased'` | `upgradeManager` | `tower`, `gameHUD` | upgrade id |
+| `'healthChanged'` | `tower` | `gameHUD` | current, max |
+| `'expChanged'` | `tower` | `gameHUD` | current, max |
+| `'currencyChanged'` | `resourceManager` | `gameHUD` | type, amount |
+| `'towerDied'` | `tower` | `waveManager` | — |
+| `'towerDeathStarted'` | `waveManager` | `gameHUD` | — |
+| `'towerShakeRequested'` | `waveManager` | `tower` | duration (ms) |
+| `'towerShakeComplete'` | `tower` | `waveManager` (once) | — |
+| `'freezeEnemies'` | `waveManager` | `enemyManager` | — |
+| `'unfreezeEnemies'` | `waveManager` | `enemyManager` | — |
+| `'endIterationRequested'` | `gameHUD` | `waveManager` | — |
 
 ## Conventions
 

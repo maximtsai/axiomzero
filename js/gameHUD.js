@@ -113,7 +113,7 @@ const gameHUD = (() => {
                 depth: depth + 3,
             },
             onMouseUp: () => {
-                waveManager.endIteration();
+                messageBus.publish('endIterationRequested');
             },
         });
         endIterationBtn.addText('END ITERATION', {

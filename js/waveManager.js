@@ -3,17 +3,24 @@
 // enemy spawning (via enemyManager), and detects tower death → WAVE_COMPLETE.
 //
 // Topics published:
-//   'waveComplete'   — wave ended (tower died or END ITERATION pressed)
+//   'waveComplete'          — wave ended (tower died or END ITERATION pressed)
+//   'freezeEnemies'         — halt all enemy movement and spawning (death sequence)
+//   'unfreezeEnemies'       — resume enemy update behaviour
+//   'towerShakeRequested'   — ask tower to shake for N ms, then publish 'towerShakeComplete'
 //
 // Topics subscribed:
-//   'phaseChanged'   — starts/stops wave logic based on phase
-//   'towerDied'      — tower health reached 0
+//   'phaseChanged'          — starts/stops wave logic based on phase
+//   'towerDied'             — tower health reached 0
+//   'towerShakeComplete'    — tower shake animation finished; finalize death sequence
+//   'endIterationRequested' — player pressed END ITERATION button
 
 const waveManager = (() => {
     let towerDiedSub = null;
+    let deathOverlay = null; // module-level so _onTowerShakeComplete can clean it up
 
     function init() {
-        messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('phaseChanged',          _onPhaseChanged);
+        messageBus.subscribe('endIterationRequested', endIteration);
     }
 
     function _onPhaseChanged(phase) {
@@ -47,11 +54,11 @@ const waveManager = (() => {
     function _onTowerDied() {
         debugLog('Tower died — playing death sequence');
 
-        // Unsubscribe immediately to prevent any re-entry
+        // Unsubscribe immediately to prevent re-entry
         if (towerDiedSub) { towerDiedSub.unsubscribe(); towerDiedSub = null; }
 
         // 1. Freeze all enemies — stop movement and spawning
-        enemyManager.freeze();
+        messageBus.publish('freezeEnemies');
 
         // 2. Block all cursor input
         helper.createGlobalClickBlocker(false);
@@ -63,9 +70,7 @@ const waveManager = (() => {
         audio.play('retro_explosion', 1.0, false);
 
         // 5. Black pixel overlay scales up from center to full screen at 0.3 alpha.
-        // black_pixel is 1×1 — drive display size via scaleX/scaleY directly so
-        // the scale tween (0 → game dimensions) produces a clean expand-from-center.
-        const deathOverlay = PhaserScene.add.image(
+        deathOverlay = PhaserScene.add.image(
             GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel'
         );
         deathOverlay.setScale(0);
@@ -74,24 +79,27 @@ const waveManager = (() => {
 
         PhaserScene.tweens.add({
             targets:  deathOverlay,
-            scaleX:   GAME_CONSTANTS.WIDTH,   // 1×1 px → 1280 px wide
-            scaleY:   GAME_CONSTANTS.HEIGHT,  // 1×1 px → 720 px tall
+            scaleX:   GAME_CONSTANTS.WIDTH,
+            scaleY:   GAME_CONSTANTS.HEIGHT,
             alpha:    0.3,
             duration: 350,
             ease:     'Quad.easeOut',
         });
 
-        // 6. Tower shakes violently for 500ms, then transition to WAVE_COMPLETE
-        tower.shake(500, () => {
-            deathOverlay.destroy();
-            helper.hideGlobalClickBlocker();
-            enemyManager.unfreeze(); // also cleared properly by WAVE_COMPLETE
-            gameStateMachine.goTo('WAVE_COMPLETE');
-            debugLog('Death sequence complete — entering WAVE_COMPLETE');
-        });
+        // 6. Request tower shake — _onTowerShakeComplete fires when done
+        messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
+        messageBus.publish('towerShakeRequested', 500);
     }
 
-    /** Called by END ITERATION button — voluntarily end combat. */
+    function _onTowerShakeComplete() {
+        if (deathOverlay) { deathOverlay.destroy(); deathOverlay = null; }
+        helper.hideGlobalClickBlocker();
+        messageBus.publish('unfreezeEnemies');
+        gameStateMachine.goTo('WAVE_COMPLETE');
+        debugLog('Death sequence complete — entering WAVE_COMPLETE');
+    }
+
+    /** Called via 'endIterationRequested' — voluntarily end combat. */
     function endIteration() {
         if (!gameStateMachine.is('WAVE_ACTIVE')) return;
         debugLog('Player ended iteration manually');

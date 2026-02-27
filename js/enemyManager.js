@@ -20,7 +20,9 @@ const enemyManager = (() => {
 
     function init() {
         _buildPool();
-        messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('phaseChanged',    _onPhaseChanged);
+        messageBus.subscribe('freezeEnemies',   freeze);
+        messageBus.subscribe('unfreezeEnemies', unfreeze);
     }
 
     function _buildPool() {
