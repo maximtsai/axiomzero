@@ -256,6 +256,7 @@ const neuralTree = (() => {
     }
 
     function _onCurrencyChanged() {
+        if (!gameStateMachine.is('UPGRADE_PHASE')) return;
         // Refresh UNLOCKED node visuals so disabled/normal state tracks affordability
         for (const id in nodes) {
             const n = nodes[id];

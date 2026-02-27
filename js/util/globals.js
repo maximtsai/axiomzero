@@ -33,20 +33,20 @@ const GAME_CONSTANTS = {
     COLOR_STRAY:     0xffe600,
 
     // Tower
-    TOWER_BASE_HEALTH:      100,
-    TOWER_BASE_DAMAGE:      10,
+    TOWER_BASE_HEALTH:      20,
+    TOWER_BASE_DAMAGE:      6,
     TOWER_ATTACK_RANGE:     350,
     TOWER_ATTACK_COOLDOWN:  1000,   // ms between auto-attacks
-    TOWER_BASE_REGEN:       -2,     // HP/sec (negative = drain)
+    TOWER_BASE_REGEN:       -0.4,     // HP/sec (negative = drain)
 
     // EXP
-    EXP_FILL_RATE:    5,    // per second during combat
+    EXP_FILL_RATE:    0.2,    // per second during combat
     EXP_TO_INSIGHT:   100,  // EXP needed to award 1 INSIGHT
 
     // Enemy — Basic type (Phase 1 only)
     ENEMY_SPAWN_MARGIN:    60,    // px outside screen edge
-    ENEMY_BASE_HEALTH:     15,
-    ENEMY_BASE_DAMAGE:     10,
+    ENEMY_BASE_HEALTH:     10,
+    ENEMY_BASE_DAMAGE:     2,
     ENEMY_BASE_SPEED:      60,    // px/sec
     ENEMY_CONTACT_RADIUS:  30,    // px — deals damage & dies when this close to tower
     ENEMY_SPAWN_INTERVAL:  1500,  // ms between spawns
