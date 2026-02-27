@@ -68,6 +68,12 @@
         window.addEventListener('mousedown', function() {
             window.focus();
         });
+
+        // Service Worker — dynamic asset caching for faster repeat loads.
+        // Controlled by FLAGS.USE_SERVICE_WORKER in flags.js.
+        if (FLAGS.USE_SERVICE_WORKER && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
     </script>
 </body>
 </html>
