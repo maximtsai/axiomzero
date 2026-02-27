@@ -207,13 +207,21 @@ class Button {
     }
 
     setVisible(vis = true) {
-        Object.keys(this.imageRefs).forEach(key => {
-            this.imageRefs[key].setVisible(vis);
-        });
+        if (vis) {
+            // Only the current state sprite should be visible; hide all others
+            this.forceInvis = false;
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].setVisible(key === this.currImageRef);
+            });
+        } else {
+            Object.keys(this.imageRefs).forEach(key => {
+                this.imageRefs[key].setVisible(false);
+            });
+            this.forceInvis = true;
+        }
         if (this.text) {
             this.text.setVisible(vis);
         }
-        this.forceInvis = !vis;
     }
 
     checkCoordOver(valX, valY) {

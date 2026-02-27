@@ -21,87 +21,6 @@ const neuralTree = (() => {
     const PANEL_W = GAME_CONSTANTS.halfWidth;
     const TREE_CENTER_X = PANEL_W / 2;  // 320
 
-    // ── node definitions (Phase 1) ───────────────────────────────────────
-
-    const NODE_DEFS = [
-        {
-            id: 'awaken',
-            name: 'AWAKEN',
-            description: 'Initialize the core process. Begin existence.',
-            maxLevel: 1,
-            baseCost: 0,
-            costType: 'data',
-            costScaling: 'static',
-            costStep: 0,
-            parentId: null,
-            childIds: ['basic_pulse', 'reinforce', 'sharpen'],
-            treeX: TREE_CENTER_X,
-            treeY: 450,
-            effect: function() {
-                tower.awaken();
-                // Reveal children
-                _revealChildren('awaken');
-                // Show the deploy button immediately
-                if (visible) {
-                    deployBtn.setVisible(true);
-                    deployBtn.setState(NORMAL);
-                }
-            },
-        },
-        {
-            id: 'basic_pulse',
-            name: 'Basic Pulse',
-            description: 'Unlocks cursor auto-pulse attack (2s interval, AoE).',
-            maxLevel: 1,
-            baseCost: 5,
-            costType: 'data',
-            costScaling: 'static',
-            costStep: 0,
-            parentId: 'awaken',
-            childIds: [],
-            treeX: TREE_CENTER_X - 120,
-            treeY: 340,
-            effect: function() {
-                // Stub — cursor pulse implemented in Phase 2
-                debugLog('Basic Pulse unlocked (stub)');
-            },
-        },
-        {
-            id: 'reinforce',
-            name: 'Reinforce',
-            description: '+25% tower max health per level.',
-            maxLevel: 3,
-            baseCost: 5,
-            costType: 'data',
-            costScaling: 'linear',
-            costStep: 5,
-            parentId: 'awaken',
-            childIds: [],
-            treeX: TREE_CENTER_X,
-            treeY: 340,
-            effect: function() {
-                // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
-            },
-        },
-        {
-            id: 'sharpen',
-            name: 'Sharpen',
-            description: '+25% tower attack damage per level.',
-            maxLevel: 3,
-            baseCost: 5,
-            costType: 'data',
-            costScaling: 'linear',
-            costStep: 5,
-            parentId: 'awaken',
-            childIds: [],
-            treeX: TREE_CENTER_X + 120,
-            treeY: 340,
-            effect: function() {
-                // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
-            },
-        },
-    ];
-
     // ── init ─────────────────────────────────────────────────────────────
 
     function init() {
@@ -360,5 +279,14 @@ const neuralTree = (() => {
 
     function getNode(id) { return nodes[id] || null; }
 
-    return { init, show, hide, getNode };
+    function isVisible() { return visible; }
+
+    function _showDeployButton() {
+        if (deployBtn) {
+            deployBtn.setVisible(true);
+            deployBtn.setState(NORMAL);
+        }
+    }
+
+    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton };
 })();

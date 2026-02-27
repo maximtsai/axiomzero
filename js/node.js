@@ -292,50 +292,66 @@ class Node {
         if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
         this._hideHover();
 
-        const x = this.treeX + 40;
-        const y = this.treeY - 10;
+        const x = this.treeX;  // center of node
+        const y = this.treeY - 50;  // directly above
         const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
+        const bgWidth = 240;
+        const bgHeight = 110;
 
         this.hoverGroup = [];
 
-        // Background
+        // Background - centered above node
         const bg = PhaserScene.add.image(x, y, 'white_pixel');
-        bg.setOrigin(0, 1).setDisplaySize(180, 70).setTint(0x111122).setAlpha(0.92).setDepth(depth);
+        bg.setOrigin(0.5, 1)  // center-top
+            .setDisplaySize(bgWidth, bgHeight)
+            .setTint(0x111122)
+            .setAlpha(0.92)
+            .setDepth(depth);
         this.hoverGroup.push(bg);
 
-        // Name
-        const nameT = PhaserScene.add.text(x + 8, y - 60, this.name, {
-            fontFamily: 'JetBrainsMono-Bold',
-            fontSize: '12px',
-            color: '#00f5ff',
-        }).setOrigin(0, 0).setDepth(depth + 1);
-        this.hoverGroup.push(nameT);
+        const padding = 10;
+        const startY = y - bgHeight + padding;
+        let currentY = startY;
 
-        // Description
-        const descT = PhaserScene.add.text(x + 8, y - 44, this.description, {
+        // Name - center aligned, larger font
+        const nameT = PhaserScene.add.text(x, currentY, this.name, {
+            fontFamily: 'JetBrainsMono-Bold',
+            fontSize: '16px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5, 0).setDepth(depth + 1);
+        this.hoverGroup.push(nameT);
+        currentY += nameT.height + 6;
+
+        // Description - center aligned, larger font
+        const descT = PhaserScene.add.text(x, currentY, this.description, {
             fontFamily: 'JetBrainsMono',
-            fontSize: '10px',
+            fontSize: '14px',
             color: '#cccccc',
-            wordWrap: { width: 164 },
-        }).setOrigin(0, 0).setDepth(depth + 1);
+            align: 'center',
+            wordWrap: { width: 220 },
+        }).setOrigin(0.5, 0).setDepth(depth + 1);
         this.hoverGroup.push(descT);
+        currentY += descT.height + 6;
 
         if (this.state === NODE_STATE.MAXED) {
-            const maxT = PhaserScene.add.text(x + 8, y - 16, 'MAXED', {
+            const maxT = PhaserScene.add.text(x, currentY, 'MAXED', {
                 fontFamily: 'JetBrainsMono-Italic',
-                fontSize: '10px',
+                fontSize: '14px',
                 color: '#ffe600',
-            }).setOrigin(0, 0).setDepth(depth + 1);
+                align: 'center',
+            }).setOrigin(0.5, 0).setDepth(depth + 1);
             this.hoverGroup.push(maxT);
         } else {
-            // Level and cost
+            // Level and cost - center aligned, larger font
             const lvStr = 'Lv ' + this.level + '/' + this.maxLevel;
             const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '\u25C8' : '\u25C9');
-            const infoT = PhaserScene.add.text(x + 8, y - 16, lvStr + '  ' + costStr, {
+            const infoT = PhaserScene.add.text(x, currentY, lvStr + '  ' + costStr, {
                 fontFamily: 'JetBrainsMono',
-                fontSize: '10px',
+                fontSize: '14px',
                 color: this.canAfford() ? '#00ff88' : '#ff4444',
-            }).setOrigin(0, 0).setDepth(depth + 1);
+                align: 'center',
+            }).setOrigin(0.5, 0).setDepth(depth + 1);
             this.hoverGroup.push(infoT);
         }
     }

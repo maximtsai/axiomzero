@@ -33,6 +33,9 @@ js/
   gameStateMachine.js   # Phase state machine: UPGRADE_PHASE / WAVE_ACTIVE / WAVE_COMPLETE / GAME_OVER
   waveManager.js        # Wave lifecycle: spawning, tower death sequence, END ITERATION
   upgradeManager.js     # Upgrade definitions and purchase logic (stub)
+  node.js               # Node class — individual upgrade button in neural tree
+  nodeDefs.js           # NODE_DEFS[] — centralized upgrade definitions (data + effects)
+  neuralTree.js         # Neural Tree UI (left panel during UPGRADE_PHASE)
   gameHUD.js            # In-game HUD: health/EXP bars, currency, END ITERATION button
   gameInit.js           # Bootstrapper — subscribes to 'assetsLoaded', inits all systems
   util/                 # Utility modules (source files — see Build section)
@@ -78,10 +81,13 @@ Order is critical — each file depends on globals defined by files above it:
 14. `js/gameStateMachine.js` — phase state machine
 15. `js/waveManager.js` — wave logic (subscribes to `'phaseChanged'`)
 16. `js/upgradeManager.js` — upgrade logic (subscribes to `'phaseChanged'`)
-17. `js/gameHUD.js` — in-game UI (subscribes to `'phaseChanged'`)
-18. `js/gameInit.js` — bootstrapper (subscribes to `'assetsLoaded'`, inits all systems)
-19. `js/loadingScreen.js` — `loadingScreen` singleton
-20. `js/main.js` — Phaser game boot (last)
+17. `js/node.js` — Node class for individual upgrades
+18. `js/nodeDefs.js` — NODE_DEFS[] centralized upgrade data
+19. `js/neuralTree.js` — neural tree UI manager
+20. `js/gameHUD.js` — in-game UI (subscribes to `'phaseChanged'`)
+21. `js/gameInit.js` — bootstrapper (subscribes to `'assetsLoaded'`, inits all systems)
+22. `js/loadingScreen.js` — `loadingScreen` singleton
+23. `js/main.js` — Phaser game boot (last)
 
 ## Build Process
 
