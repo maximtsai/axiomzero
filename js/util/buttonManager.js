@@ -42,8 +42,7 @@ class InternalButtonManager {
                 break;
             }
         }
-        if (this.lastHovered && this.lastHovered !== currentHovered && this.lastHovered.getState() !== DISABLE) {
-            this.lastHovered.setState(NORMAL);
+        if (this.lastHovered && this.lastHovered !== currentHovered) {
             this.lastHovered.onHoverOut();
         }
         if (newHovered) {

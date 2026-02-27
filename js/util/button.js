@@ -94,6 +94,7 @@ class Button {
         this.setState(NORMAL);
 
         this.isDraggable = data.isDraggable || false;
+        this.hoverWhileDisabled = data.hoverWhileDisabled || false;
         this.depth = 0;
     }
 
@@ -216,7 +217,7 @@ class Button {
     }
 
     checkCoordOver(valX, valY) {
-        if (this.state === DISABLE) {
+        if (this.state === DISABLE && !this.hoverWhileDisabled) {
             return false;
         }
         let scrollFactorX = this.normal.scrollFactorX !== undefined ? this.normal.scrollFactorX : 1;
@@ -252,7 +253,9 @@ class Button {
         if (this.onHoverOutFunc) {
             this.onHoverOutFunc();
         }
-        this.setState(NORMAL);
+        if (this.state !== DISABLE) {
+            this.setState(NORMAL);
+        }
     }
 
     onMouseDown(x, y) {

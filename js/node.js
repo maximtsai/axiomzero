@@ -209,6 +209,7 @@ class Node {
             onMouseUp: () => { this._onClick(); },
             onHover: () => { this._showHover(); },
             onHoverOut: () => { this._hideHover(); },
+            hoverWhileDisabled: true,
         });
         this.btn.setDepth(nodeDepth);
 
@@ -256,8 +257,13 @@ class Node {
                 // Restore disable ref to the unlocked-disabled image
                 this.btn.disable = { ref: 'node_unlocked_disabled.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
-                this.btn.setState(NORMAL);
                 this.btn.setAlpha(1);
+                // Show disabled appearance when unaffordable, but hover still works
+                if (this.canAfford()) {
+                    this.btn.setState(NORMAL);
+                } else {
+                    this.btn.setState(DISABLE);
+                }
                 if (this.label) {
                     this.label.setVisible(true);
                     this.label.setAlpha(1);

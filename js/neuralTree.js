@@ -337,7 +337,13 @@ const neuralTree = (() => {
     }
 
     function _onCurrencyChanged() {
-        // Could refresh node affordability visuals here if desired
+        // Refresh UNLOCKED node visuals so disabled/normal state tracks affordability
+        for (const id in nodes) {
+            const n = nodes[id];
+            if (n.state === NODE_STATE.UNLOCKED) {
+                n._updateVisual();
+            }
+        }
     }
 
     function _onDeployClicked() {
