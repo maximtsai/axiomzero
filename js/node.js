@@ -180,7 +180,7 @@ class Node {
         const x = this.treeX + offsetX;
         const y = this.treeY + offsetY;
 
-        const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1;
+        const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
         this.btn = new Button({
             normal: {
                 ref: 'node_unlocked.png',
@@ -210,6 +210,7 @@ class Node {
             onHover: () => { this._showHover(); },
             onHoverOut: () => { this._hideHover(); },
         });
+        this.btn.setDepth(nodeDepth);
 
         // Node name label
         this.label = PhaserScene.add.text(x, y + 26, this.name, {
@@ -235,6 +236,7 @@ class Node {
         switch (this.state) {
             case NODE_STATE.HIDDEN:
                 this.btn.setVisible(false);
+                this.btn.setState(DISABLE);
                 if (this.label) this.label.setVisible(false);
                 break;
 
