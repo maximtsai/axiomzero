@@ -192,6 +192,8 @@ const neuralTree = (() => {
                 child.setState(NODE_STATE.UNLOCKED);
             }
         }
+        // Redraw lines to reflect new child states
+        _drawLines();
     }
 
     function _createDeployButton() {
@@ -266,9 +268,6 @@ const neuralTree = (() => {
 
     function _drawLines() {
         _clearLines();
-        const gfx = PhaserScene.add.graphics();
-        gfx.lineStyle(1, 0x00f5ff, 0.3);
-        gfx.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 0.5);
 
         for (const id in nodes) {
             const n = nodes[id];
@@ -276,10 +275,40 @@ const neuralTree = (() => {
             if (n.parentId && nodes[n.parentId]) {
                 const p = nodes[n.parentId];
                 if (p.state === NODE_STATE.HIDDEN) continue;
-                gfx.lineBetween(p.treeX, p.treeY, n.treeX, n.treeY);
+
+                // Create white pixel sprite line
+                const px = p.treeX;
+                const py = p.treeY;
+                const cx = n.treeX;
+                const cy = n.treeY;
+
+                const dx = cx - px;
+                const dy = cy - py;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) + 1.57;
+
+                // White pixel sprite, 2×2 in size
+                const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+
+                // Scale: 3px wide (from 2×2 original → 1.5×), distance tall
+                line.setScale(1.5, distance / 2);
+
+                // Position at parent, origin at left-center
+                line.setOrigin(0.5, 1);
+
+                // Rotate to point from parent to child
+                line.setRotation(angle);
+
+                // Depth behind nodes (nodes are at +1, labels at +2)
+                line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+
+                // Alpha based on child state
+                const alpha = n.state === NODE_STATE.GHOST ? 0.6 : 1.0;
+                line.setAlpha(alpha);
+
+                lines.push(line);
             }
         }
-        lines.push(gfx);
     }
 
     function _clearLines() {

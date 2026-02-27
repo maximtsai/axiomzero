@@ -218,6 +218,26 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/node_ghost.png</key>
+            <key type="filename">buttons/node_maxed.png</key>
+            <key type="filename">buttons/node_unlocked.png</key>
+            <key type="filename">buttons/node_unlocked_disabled.png</key>
+            <key type="filename">buttons/node_unlocked_hover.png</key>
+            <key type="filename">buttons/node_unlocked_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.8</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,25,51,51</rect>
+                <key>scale9Paddings</key>
+                <rect>25,25,51,51</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileLists</key>
         <map type="SpriteSheetMap">

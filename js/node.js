@@ -180,20 +180,31 @@ class Node {
         const x = this.treeX + offsetX;
         const y = this.treeY + offsetY;
 
+        const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1;
         this.btn = new Button({
             normal: {
-                ref: 'empty_square.png',
+                ref: 'node_unlocked.png',
                 atlas: 'buttons',
-                x: x,
-                y: y,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1,
+                x: x, y: y,
+                depth: nodeDepth,
             },
             hover: {
-                ref: 'empty_square.png',
+                ref: 'node_unlocked_hover.png',
                 atlas: 'buttons',
-                x: x,
-                y: y,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1,
+                x: x, y: y,
+                depth: nodeDepth,
+            },
+            press: {
+                ref: 'node_unlocked_press.png',
+                atlas: 'buttons',
+                x: x, y: y,
+                depth: nodeDepth,
+            },
+            disable: {
+                ref: 'node_unlocked_disabled.png',
+                atlas: 'buttons',
+                x: x, y: y,
+                depth: nodeDepth,
             },
             onMouseUp: () => { this._onClick(); },
             onHover: () => { this._showHover(); },
@@ -226,17 +237,22 @@ class Node {
                 this.btn.setVisible(false);
                 if (this.label) this.label.setVisible(false);
                 break;
+
             case NODE_STATE.GHOST:
+                // Swap disable ref to ghost image, then disable the button
+                this.btn.disable = { ref: 'node_ghost.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-                // Faint appearance
-                this.btn.setAlpha(0.25);
+                this.btn.setAlpha(1);
                 if (this.label) {
                     this.label.setVisible(true);
                     this.label.setAlpha(0.25);
                 }
                 break;
+
             case NODE_STATE.UNLOCKED:
+                // Restore disable ref to the unlocked-disabled image
+                this.btn.disable = { ref: 'node_unlocked_disabled.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setState(NORMAL);
                 this.btn.setAlpha(1);
@@ -246,10 +262,13 @@ class Node {
                     this.label.setColor('#00f5ff');
                 }
                 break;
+
             case NODE_STATE.MAXED:
+                // Swap disable ref to maxed image
+                this.btn.disable = { ref: 'node_maxed.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-                this.btn.setAlpha(0.8);
+                this.btn.setAlpha(1);
                 if (this.label) {
                     this.label.setVisible(true);
                     this.label.setAlpha(0.8);
