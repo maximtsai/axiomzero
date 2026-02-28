@@ -55,14 +55,14 @@ const tower = (() => {
         });
 
         // Scale animation
-        PhaserScene.tweens.add({
+        rangeSprite.currAnim = PhaserScene.tweens.add({
             targets:  rangeSprite,
             scaleX:   newScale * 1.14,
             scaleY:   newScale * 1.14,
             duration: 550,
             ease:     'Cubic.easeOut',
             onComplete: () => {
-                PhaserScene.tweens.add({
+                rangeSprite.currAnim = PhaserScene.tweens.add({
                     targets:  rangeSprite,
                     scaleX:   newScale,
                     scaleY:   newScale,
@@ -72,11 +72,14 @@ const tower = (() => {
                         // add a tiny brief zoom in here
                         zoomShake();
                         rangeSprite.setAlpha(1);
-                        PhaserScene.tweens.add({
+                        rangeSprite.currAnim = PhaserScene.tweens.add({
                             targets:  rangeSprite,
                             alpha:    0.25,
                             duration: 1400,
                             ease:     'Quart.easeOut',
+                            onComplete: () => {
+                                rangeSprite.currAnim = null;
+                            }
                         });
                     }
                 });
@@ -98,19 +101,29 @@ const tower = (() => {
 
     /** Tweens the active tower visuals (sprite+glow OR sparkle) to a new x. */
     function _tweenToX(targetX, duration) {
-        const targets = [];
-        if (sprite)       targets.push(sprite);
-        if (glowSprite)   targets.push(glowSprite);
-        if (rangeSprite)  targets.push(rangeSprite);
-        if (sparkleSprite) targets.push(sparkleSprite);
-        if (targets.length === 0) return;
-
-        PhaserScene.tweens.add({
-            targets,
-            x: targetX,
-            duration,
-            ease: 'Sine.easeInOut',
-        });
+        let sprites = [];
+        if (sprite)       sprites.push(sprite);
+        if (glowSprite)   sprites.push(glowSprite);
+        if (rangeSprite)  sprites.push(rangeSprite);
+        if (sparkleSprite) sprites.push(sparkleSprite);
+        
+        if (sprites.length === 0) {
+            console.log('[Tower] _tweenToX: no sprites, skipping');
+            return;
+        }
+        
+        console.log('[Tower] _tweenToX:', targetX, 'sprites:', sprites.length);
+        
+        // Tween each sprite individually
+        //sprites.forEach(s => {
+            //PhaserScene.tweens.killTweensOf(s);
+            PhaserScene.tweens.add({
+                targets: sprites,
+                x: targetX,
+                duration,
+                ease: 'Sine.easeInOut',
+            });
+        //});
     }
 
     // ── public API ───────────────────────────────────────────────────────────
@@ -397,7 +410,29 @@ const tower = (() => {
         } else if (phase === 'UPGRADE_PHASE') {
             active = false;
             // Tween to center of right half (right of neural tree panel)
+            // Ensure range sprite is visible and at default alpha
+            if (rangeSprite) {
+                if (rangeSprite.currAnim) {
+                    rangeSprite.currAnim.stop();
+                }
+                rangeSprite.setVisible(true);
+                rangeSprite.setAlpha(0);
+                const rangeScale = attackRange / 202;  // 202 = base range for 400x400 sprite
+                rangeSprite.setScale(rangeScale * 1.05);
+                rangeSprite.currAnim = PhaserScene.tweens.add({
+                    targets: rangeSprite,
+                    alpha: 0.25,
+                    duration: 0.5,
+                    ease: 'Cubic.easeOut',
+                    scaleX: rangeScale,
+                    scaleY: rangeScale,
+                    onComplete: () => {
+                        rangeSprite.currAnim = null;
+                    }
+                })
+            }
             _tweenToX(GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2, 500);
+
         } else {
             active = false;
         }

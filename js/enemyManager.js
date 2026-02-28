@@ -159,14 +159,14 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 1.4;
-            const secondThreshold = 0.8;
+            const firstThreshold = 0.55;
+            const secondThreshold = 0.75;
             if (waveElapsed < firstThreshold) {
-                spawnSpeedMultiplier = 10;
+                spawnSpeedMultiplier = 21;
             } else if (waveElapsed < firstThreshold + secondThreshold) {
                 // Linear interpolation from 5 to 1 over 0.8 seconds
                 const progress = (waveElapsed - firstThreshold) / secondThreshold;
-                spawnSpeedMultiplier = 10 - 9 * progress;
+                spawnSpeedMultiplier = 21 - 20 * progress;
             } else {
                 spawnSpeedMultiplier = 1;
             }
