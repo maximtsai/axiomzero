@@ -43,9 +43,9 @@ The 8th Tier tile appears visually distinct — dimmer, pulsing differently. Cli
 | Font | Usage |
 |------|-------|
 | `Michroma-Regular.ttf` | Game title, cinematic moments, major story beats, Tier unlock announcements |
-| `JetBrainsMono-Regular.ttf` | Primary UI text, currency counters, node descriptions, HUD |
-| `JetBrainsMono-Italic.ttf` | Flavor text on maxed nodes, secondary narrative captions |
-| `JetBrainsMono-Bold.ttf` | Button labels, important values, headings within panels |
+| `JetBrainsMono_Regular.ttf` | Primary UI text, currency counters, node descriptions, HUD |
+| `JetBrainsMono_Italic.ttf` | Flavor text on maxed nodes, secondary narrative captions |
+| `JetBrainsMono_Bold.ttf` | Button labels, important values, headings within panels |
 | `VCR.ttf` | Any text originating from enemies — damage numbers from enemy attacks, enemy name labels if shown |
 
 ---
@@ -82,7 +82,7 @@ Tasteful and rare — they should feel like *the system destabilizing around you
 
 ## 5. LOADING SCREEN
 
-Black background, green monospaced text (`JetBrainsMono-Regular`). Lines of loading messages appear one-by-one, synchronized to actual asset load progress. Messages are dry, clinical system diagnostics — occasionally ominous. The final line before the game begins always references the anomaly the system is about to fail to contain.
+Black background, green monospaced text (`JetBrainsMono_Regular`). Lines of loading messages appear one-by-one, synchronized to actual asset load progress. Messages are dry, clinical system diagnostics — occasionally ominous. The final line before the game begins always references the anomaly the system is about to fail to contain.
 
 Example lines:
 ```
@@ -252,7 +252,7 @@ A vertically scrolling radial node map representing the AI's evolving cognition.
 | **Hidden** | Invisible | None |
 | **Ghost** | Faint outline — appears when parent node reaches Lv. 1 | None — not interactable |
 | **Unlocked** | Full visibility | Hover: Name, Effect, current Level, Cost. Click to purchase or upgrade if resources and Tier authorization are met. |
-| **Maxed** | Dim gold-yellow tint — visually distinct from active nodes | Cannot be clicked. Not interactable. Hover shows Flavor Text in JetBrainsMono-Italic instead of cost. |
+| **Maxed** | Dim gold-yellow tint — visually distinct from active nodes | Cannot be clicked. Not interactable. Hover shows Flavor Text in JetBrainsMono_Italic instead of cost. |
 
 ### 10.2 Cost Scaling
 - **Static:** Cost = Base (flat, identical each level)

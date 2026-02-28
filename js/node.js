@@ -221,10 +221,12 @@ class Node {
 
         // Node name label
         this.label = PhaserScene.add.text(x, y + 26, this.name, {
-            fontFamily: 'JetBrainsMono',
-            fontSize: '10px',
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '14px',
             color: '#ffffff',
             align: 'center',
+            stroke: '#000000',
+            strokeThickness: 5,
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2);
 
         // Fadeout sprite — overlays button, starts invisible
@@ -370,8 +372,8 @@ class Node {
 
         // Name - center aligned, larger font
         const nameT = PhaserScene.add.text(x, currentY, this.name, {
-            fontFamily: 'JetBrainsMono-Bold',
-            fontSize: '16px',
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '18px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(depth + 1);
@@ -380,8 +382,8 @@ class Node {
 
         // Description - center aligned, larger font
         const descT = PhaserScene.add.text(x, currentY, this.description, {
-            fontFamily: 'JetBrainsMono',
-            fontSize: '14px',
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '16px',
             color: '#cccccc',
             align: 'center',
             wordWrap: { width: 220 },
@@ -391,8 +393,8 @@ class Node {
 
         if (this.state === NODE_STATE.MAXED) {
             const maxT = PhaserScene.add.text(x, currentY, 'MAXED', {
-                fontFamily: 'JetBrainsMono-Italic',
-                fontSize: '14px',
+                fontFamily: 'JetBrainsMono_Italic',
+                fontSize: '16px',
                 color: '#ffe600',
                 align: 'center',
             }).setOrigin(0.5, 0).setDepth(depth + 1);
@@ -402,8 +404,8 @@ class Node {
             const lvStr = 'Lv ' + this.level + '/' + this.maxLevel;
             const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '\u25C8' : '\u25C9');
             const infoT = PhaserScene.add.text(x, currentY, lvStr + '  ' + costStr, {
-                fontFamily: 'JetBrainsMono',
-                fontSize: '14px',
+                fontFamily: 'JetBrainsMono_Regular',
+                fontSize: '16px',
                 color: this.canAfford() ? '#00ff88' : '#ff4444',
                 align: 'center',
             }).setOrigin(0.5, 0).setDepth(depth + 1);

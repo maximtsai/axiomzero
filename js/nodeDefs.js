@@ -6,7 +6,7 @@ const NODE_DEFS = [
     {
         id: 'awaken',
         name: 'AWAKEN',
-        description: 'Initialize the core process. Begin existence.',
+        description: 'Begin existence.',
         maxLevel: 1,
         baseCost: 0,
         costType: 'data',
@@ -28,7 +28,7 @@ const NODE_DEFS = [
     },
     {
         id: 'basic_pulse',
-        name: 'Basic Pulse',
+        name: 'BASIC PULSE',
         description: 'Unlocks cursor auto-pulse attack (2s interval, AoE).',
         maxLevel: 1,
         baseCost: 5,
@@ -46,7 +46,7 @@ const NODE_DEFS = [
     },
     {
         id: 'reinforce',
-        name: 'Reinforce',
+        name: 'REINFORCE',
         description: '+25% tower max health per level.',
         maxLevel: 3,
         baseCost: 5,
@@ -63,7 +63,7 @@ const NODE_DEFS = [
     },
     {
         id: 'sharpen',
-        name: 'Sharpen',
+        name: 'SHARPEN',
         description: '+25% tower attack damage per level.',
         maxLevel: 3,
         baseCost: 5,

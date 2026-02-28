@@ -2,9 +2,9 @@
 | Family | File | Weights |
 |--------|------|---------|
 | Michroma | Michroma_Regular.ttf | Regular |
-| JetBrainsMono | JetBrainsMono_Regular.ttf | Regular |
-| JetBrainsMono | JetBrainsMono_Bold.ttf | Bold |
-| JetBrainsMono | JetBrainsMono_Italic.ttf | Italic |
+| JetBrainsMono_Regular | JetBrainsMono_Regular.ttf | Regular |
+| JetBrainsMono_Bold | JetBrainsMono_Bold.ttf | Bold |
+| JetBrainsMono_Italic | JetBrainsMono_Italic.ttf | Italic |
 | VCR | VCR.ttf | Regular |
 
 ### `assets/fontFiles.js`

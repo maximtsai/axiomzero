@@ -30,7 +30,7 @@ const notificationManager = (() => {
             fontSize:        size,
             color:           col,
             stroke:          '#000000',
-            strokeThickness: 3,
+            strokeThickness: 4,
             align:           'center',
         }).setOrigin(0.5, 0.5).setDepth(DEPTH);
 

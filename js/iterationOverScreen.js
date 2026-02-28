@@ -39,14 +39,14 @@ const iterationOverScreen = (() => {
 
         // Acquired resources
         dataText = PhaserScene.add.text(cx, cy - 30, '', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '16px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         insightText = PhaserScene.add.text(cx, cy, '', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '16px',
             color: '#ffffff',
             align: 'center',
@@ -78,7 +78,7 @@ const iterationOverScreen = (() => {
             onMouseUp: _onUpgradesClicked,
         });
         upgradesBtn.addText('UPGRADES', {
-            fontFamily: 'JetBrainsMono-Bold',
+            fontFamily: 'JetBrainsMono_Bold',
             fontSize: '12px',
             color: '#ffffff',
         });
@@ -109,7 +109,7 @@ const iterationOverScreen = (() => {
             onMouseUp: _onRetryClicked,
         });
         retryBtn.addText('RETRY', {
-            fontFamily: 'JetBrainsMono-Bold',
+            fontFamily: 'JetBrainsMono_Bold',
             fontSize: '12px',
             color: '#ffffff',
         });

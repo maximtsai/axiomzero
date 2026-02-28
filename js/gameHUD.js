@@ -52,7 +52,7 @@ const gameHUD = (() => {
         healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1);
 
         healthText = PhaserScene.add.text(HUD_X + BAR_W + 8, HUD_Y, '', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '13px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2);
@@ -66,7 +66,7 @@ const gameHUD = (() => {
         expBarFill.setOrigin(0, 0).setDisplaySize(0, 6).setTint(0xffffff).setDepth(depth + 1);
 
         expText = PhaserScene.add.text(HUD_X + BAR_W + 8, expY - 2, 'EXP 0%', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '10px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2);
@@ -78,13 +78,13 @@ const gameHUD = (() => {
         dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2);
 
         dataText = PhaserScene.add.text(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '14px',
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2);
 
         insightText = PhaserScene.add.text(HUD_X + 100, currY, '\u25C9 0', {
-            fontFamily: 'JetBrainsMono',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '14px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2);
@@ -117,8 +117,8 @@ const gameHUD = (() => {
             },
         });
         endIterationBtn.addText('END ITERATION', {
-            fontFamily: 'JetBrainsMono-Bold',
-            fontSize: '11px',
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '12px',
             color: '#ffffff',
         });
     }

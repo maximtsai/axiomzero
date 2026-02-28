@@ -141,8 +141,8 @@ const neuralTree = (() => {
             onMouseUp: _onDeployClicked,
         });
         deployBtn.addText('DEPLOY', {
-            fontFamily: 'JetBrainsMono-Bold',
-            fontSize: '13px',
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '18px',
             color: '#ffffff',
         });
         // Hidden until tower is spawned
