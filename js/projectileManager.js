@@ -117,7 +117,7 @@ const projectileManager = (() => {
                 if (dx * dx + dy * dy < hitR2) {
                     // Spark burst pointing from enemy toward tower
                     const tPos = tower.getPosition();
-                    const hitAngle = Math.atan2(tPos.y - e.y, tPos.x - e.x) * (180 / Math.PI);
+                    const hitAngle = Math.atan2(tPos.y - e.y, tPos.x - e.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;
                     customEmitters.basicStrike(e.x, e.y, hitAngle);
                     enemyManager.damageEnemy(e, p.damage);
                     hit = true;

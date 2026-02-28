@@ -1,5 +1,7 @@
 // Game Globals - Centralized configuration values
 const GAME_CONSTANTS = {
+    DEG_TO_RADIAL: 57.296,
+    HALF_PI:1.5708,
     // Loading/Retry
     RETRY_DELAY_BASE: 500,
     MAX_RETRIES: 3,

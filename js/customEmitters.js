@@ -1,10 +1,13 @@
 // customEmitters.js
 // Named Phaser 3.60+ particle emitter effects.
 //
-// Adding a new emitter:
-//   1. const _myFx = _make(texture, config, depth);
-//   2. function myEffect(x, y, ...) { const e = _myFx(); e.setAngle(...); e.explode(n, x, y); }
-//   3. Add myEffect to the return object.
+// Adding a new emitter with dynamic angle:
+//   1. let _myFxAngle = 0;  (module-scoped slot for angle)
+//   2. const _getMyFx = _make(texture, config, depth);
+//      — use angle: { onEmit: () => _myFxAngle + Phaser.Math.Between(-spread, spread) } for cone
+//   3. function _myFx(angle) { _myFxAngle = angle; return _getMyFx(); }
+//   4. function myEffect(x, y, angle) { _myFx(angle).explode(count, x, y); }
+//   5. Add myEffect to the return object.
 
 const customEmitters = (() => {
 
@@ -23,15 +26,21 @@ const customEmitters = (() => {
     }
 
     // ── basicStrike ──────────────────────────────────────────────────────────
-    const _strike = _make('pixels', {
+    // Angle slot — set before explode() so the onEmit callback reads the correct value.
+    let _strikeAngle = 0;
+
+    const strikeParams = {
         frame:    'blue_pixel.png',
-        speed:    { min: 30, max: 60 },
-        lifespan: 250,
-        scale:    { start: 4, end: 0 },
+        speed:    { min: 80, max: 230, ease: 'Cubic.easeOut' },
+        lifespan: { min: 200, max: 400 },
+        scale:    { start: 4, end: 0, ease: 'Quad.easeIn' },
         alpha:    1,
         gravityY: 0,
         emitting: false,
-    }, GAME_CONSTANTS.DEPTH_PROJECTILES);
+        angle:    { min: -180, max: 180 },
+    }
+
+    const _strike = _make('pixels', strikeParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
 
     /**
      * Short directional burst of blue pixels — used on projectile hit.
@@ -42,7 +51,12 @@ const customEmitters = (() => {
     function basicStrike(x, y, angle) {
         const count = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
         const e = _strike();
-        e.setAngle({ min: angle - 60, max: angle + 60 });
+        let minAngle = angle - 60;
+        let maxAngle = angle + 60;
+        let newParams = strikeParams;
+        newParams.angle = { min: minAngle, max: maxAngle }
+        e.setConfig(newParams)
+        //e.setAngle({min: minAngle, max: maxAngle});
         e.explode(count, x, y);
     }
 

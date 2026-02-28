@@ -194,7 +194,7 @@ const tower = (() => {
 
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via _updateRangeSprite()
-        const rangeScale = attackRange / 200;  // 200 = base range for 400x400 sprite
+        const rangeScale = attackRange / 202;  // 202 = base range for 400x400 sprite
         rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
         rangeSprite.setDepth(50);  // Below enemies (100) and tower (200), above background
         rangeSprite.setAlpha(0.25 / 3);
@@ -312,7 +312,7 @@ const tower = (() => {
         const stepDuration = duration / 5;
 
         // 5 sequential oscillations with decreasing amplitude (damping effect)
-        const amplitudes = [16, 12, 8, 5, 2];
+        const amplitudes = [12, 8, 4, 2, 1];
         amplitudes.forEach((amp, index) => {
             const isLastOscillation = index === amplitudes.length - 1;
             PhaserScene.tweens.add({
@@ -399,7 +399,7 @@ const tower = (() => {
         _recalcStats();
         // Update range sprite scale and animation to match new tower range
         if (rangeSprite) {
-            const rangeScale = attackRange / 200;  // 200 = base range for 400x400 sprite
+            const rangeScale = attackRange / 202;  // 202 = base range for 400x400 sprite
             _updateRangeSprite(rangeScale);
         }
         // If between waves, refresh health to new max
