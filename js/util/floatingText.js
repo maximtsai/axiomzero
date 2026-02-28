@@ -56,20 +56,20 @@ const floatingText = (() => {
         t.setDepth(depth);
         t.setVisible(true);
 
-        // Float up 100px linearly over 2 seconds
+        // Float up 100px linearly over 3 seconds
         _scene.tweens.add({
             targets:  t,
-            y:        y - 100,
-            duration: 2000,
-            ease:     'Linear',
+            y:        y - 90,
+            duration: 2400,
+            ease:     'Quad.easeOut',
         });
 
-        // Fade to alpha 0 starting at 1.5s, over 0.5s (Quad.easeIn)
+        // Fade to alpha 0 starting at 2.5s, over 0.5s (Quad.easeIn)
         _scene.tweens.add({
             targets:  t,
             alpha:    0,
             duration: 500,
-            delay:    1500,
+            delay:    1900,
             ease:     'Quad.easeIn',
             onComplete: () => {
                 _pool.release(t);

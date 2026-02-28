@@ -252,8 +252,16 @@ class Node {
     }
 
     _onClick() {
-        if (this.state === NODE_STATE.UNLOCKED) {
+        if (this.state !== NODE_STATE.UNLOCKED) return;
+
+        if (this.canAfford()) {
             this.purchase();
+        } else {
+            // Can't afford — show hover and shake the cost text
+            if (!this.hoverGroup) {
+                this._showHover();
+            }
+            this._shakeCostText();
         }
     }
 
@@ -433,6 +441,37 @@ class Node {
             }
             this.hoverGroup = null;
         }
+    }
+
+    _shakeCostText() {
+        if (!this.hoverGroup || this.hoverGroup.length < 3) return;
+        // infoT is the last element (added last in _showHover)
+        const infoT = this.hoverGroup[this.hoverGroup.length - 1];
+        if (!infoT) return;
+
+        const origX = infoT.x;
+        const shakeAmp = 8; // pixels
+        const shakes = 4;   // number of oscillations
+        const duration = 80; // ms per oscillation
+
+        for (let i = 0; i < shakes; i++) {
+            PhaserScene.tweens.add({
+                targets: infoT,
+                x: origX + (i % 2 === 0 ? shakeAmp : -shakeAmp),
+                duration: duration,
+                ease: 'Linear',
+                delay: i * duration,
+            });
+        }
+
+        // Return to original position
+        PhaserScene.tweens.add({
+            targets: infoT,
+            x: origX,
+            duration: 150,
+            ease: 'Cubic.easeOut',
+            delay: shakes * duration,
+        });
     }
 
     // ── cleanup ──────────────────────────────────────────────────────────

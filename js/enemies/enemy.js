@@ -21,6 +21,8 @@ class Enemy {
         this.maxHealth = 0;
         this.damage    = 0;   // damage dealt to the tower on contact
         this.speed     = 0;   // movement speed in px/sec
+        this.isBoss    = false; // if true, knockback does not apply
+        this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -99,6 +101,37 @@ class Enemy {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Apply knockback in direction (dirX, dirY) for stunDuration ms.
+     * Non-bosses are pushed back and temporarily stop. Affected by knockBackModifier.
+     * @param {number} dirX  Unit direction (normalized)
+     * @param {number} dirY  Unit direction (normalized)
+     * @param {number} distance  Base distance in pixels
+     */
+    applyKnockback(dirX, dirY, distance) {
+        if (this.isBoss) return; // Bosses are immune
+
+        const knockDist = distance * this.knockBackModifier;
+        this.x += dirX * knockDist;
+        this.y += dirY * knockDist;
+        if (this.img) {
+            this.img.setPosition(this.x, this.y);
+        }
+
+        // Temporarily stop movement for 0.15s
+        const origVx = this.vx;
+        const origVy = this.vy;
+        this.vx = 0;
+        this.vy = 0;
+
+        PhaserScene.time.delayedCall(150, () => {
+            if (this.alive) {
+                this.vx = origVx;
+                this.vy = origVy;
+            }
+        });
     }
 
     /** Texture key shared by all enemy instances. */

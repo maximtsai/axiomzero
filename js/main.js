@@ -48,7 +48,7 @@ const config = {
     scene: MainScene,
     scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.NO_CENTER
     },
     plugins: {
         global: [{

@@ -118,7 +118,14 @@ const projectileManager = (() => {
                     // Spark burst pointing from enemy toward tower
                     const tPos = tower.getPosition();
                     const hitAngle = Math.atan2(tPos.y - e.y, tPos.x - e.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;
-                    customEmitters.basicStrikeManual(e.x, e.y, hitAngle);
+                    customEmitters.basicStrikeManual(p.x, p.y, hitAngle);
+
+                    // Apply knockback in projectile direction
+                    const projDirDist = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 1;
+                    const projDirX = p.vx / projDirDist;
+                    const projDirY = p.vy / projDirDist;
+                    e.applyKnockback(projDirX, projDirY, 10);
+
                     enemyManager.damageEnemy(e, p.damage);
                     hit = true;
                     break;

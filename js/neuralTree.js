@@ -157,10 +157,13 @@ const neuralTree = (() => {
         panelBg.setVisible(true);
         titleText.setVisible(true);
 
-        // Show all nodes according to their state
+        // Show all nodes and refresh affordability state
         for (const id in nodes) {
             const n = nodes[id];
             n.setVisible(n.state !== NODE_STATE.HIDDEN);
+            if (n.state === NODE_STATE.UNLOCKED) {
+                n._updateVisual();
+            }
         }
 
         // Show DEPLOY button only if tower has been spawned
