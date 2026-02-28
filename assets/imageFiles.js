@@ -9,5 +9,6 @@ const imageAtlases = [
     {name: 'buttons', src: 'sprites/buttons.json'},
     {name: 'player', src: 'sprites/player.json'},
     {name: 'enemies', src: 'sprites/enemies.json'},
+    {name: 'ui', src: 'sprites/ui.json'},
 ];
 

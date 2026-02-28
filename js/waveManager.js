@@ -17,10 +17,15 @@
 const waveManager = (() => {
     let towerDiedSub = null;
     let deathOverlay = null; // module-level so _onTowerShakeComplete can clean it up
+    let waveProgress = 0;    // 0→1 over WAVE_DURATION seconds during combat
+    let waveActive   = false;
+    let frozen       = false;
 
     function init() {
         messageBus.subscribe('phaseChanged',          _onPhaseChanged);
         messageBus.subscribe('endIterationRequested', endIteration);
+        messageBus.subscribe('freezeEnemies',         () => { frozen = true; });
+        messageBus.subscribe('unfreezeEnemies',       () => { frozen = false; });
     }
 
     function _onPhaseChanged(phase) {
@@ -33,6 +38,9 @@ const waveManager = (() => {
 
     function _startWave() {
         debugLog('Wave started — wave', gameState.currentWave || 1);
+        waveProgress = 0;
+        waveActive   = true;
+        frozen       = false;
 
         // Reset tower for this combat session
         tower.reset();
@@ -44,6 +52,8 @@ const waveManager = (() => {
     }
 
     function _stopWave() {
+        waveActive = false;
+        waveProgress = 0;
         if (towerDiedSub) {
             towerDiedSub.unsubscribe();
             towerDiedSub = null;
@@ -105,9 +115,23 @@ const waveManager = (() => {
     /** Called via 'endIterationRequested' — voluntarily end combat. */
     function endIteration() {
         if (!gameStateMachine.is('WAVE_ACTIVE')) return;
+        waveProgress = 0;
         debugLog('Player ended iteration manually');
         gameStateMachine.goTo('WAVE_COMPLETE');
     }
 
-    return { init, endIteration };
+    // ── per-frame update ────────────────────────────────────────────────────────
+
+    function _update(delta) {
+        if (!waveActive || frozen) return;
+        const dt = delta / 1000;
+        waveProgress = Math.min(1, waveProgress + dt / GAME_CONSTANTS.WAVE_DURATION);
+        messageBus.publish('waveProgressChanged', waveProgress);
+    }
+
+    function getProgress() { return waveProgress; }
+
+    updateManager.addFunction(_update);
+
+    return { init, endIteration, getProgress };
 })();

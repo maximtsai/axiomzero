@@ -16,6 +16,10 @@ const gameHUD = (() => {
 
     let endIterationBtn = null;
 
+    let progressContainer = null;
+    let progressIndicator = null;
+    const PROGRESS_MAX_SCALE_X = (GAME_CONSTANTS.WIDTH - 100) / 2;
+
     // Layout
     const HUD_X = 20;
     const HUD_Y = 20;
@@ -39,6 +43,7 @@ const gameHUD = (() => {
         messageBus.subscribe('enemyKilled',         _onEnemyKilled);
         messageBus.subscribe('upgradePurchased',    _onUpgradePurchased);
         messageBus.subscribe('towerDeathStarted',   _onTowerDeathStarted);
+        messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
     }
 
     function _createElements() {
@@ -121,6 +126,23 @@ const gameHUD = (() => {
             fontSize: '14px',
             color: '#ffffff',
         });
+
+        // ── Progress bar ──
+        progressContainer = PhaserScene.add.nineslice(
+            GAME_CONSTANTS.halfWidth,
+            GAME_CONSTANTS.HEIGHT - 25,
+            'ui',
+            'progress_container.png',
+            GAME_CONSTANTS.WIDTH - 50,
+            50,
+            23, 23, 23, 23
+        );
+        progressContainer.setDepth(depth);
+
+        progressIndicator = PhaserScene.add.image(75, GAME_CONSTANTS.HEIGHT - 25, 'white_pixel');
+        progressIndicator.setOrigin(0, 0.5);
+        progressIndicator.setScale(0, 4);
+        progressIndicator.setDepth(depth + 1);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -139,6 +161,9 @@ const gameHUD = (() => {
         insightText.setVisible(true);
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
+        progressContainer.setVisible(true);
+        progressIndicator.setVisible(true);
+        progressIndicator.setScale(0, 4);
     }
 
     function _hideAll() {
@@ -154,6 +179,8 @@ const gameHUD = (() => {
         insightText.setVisible(false);
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
+        progressContainer.setVisible(false);
+        progressIndicator.setVisible(false);
     }
 
     // ── event handlers ───────────────────────────────────────────────────────
@@ -189,6 +216,8 @@ const gameHUD = (() => {
         expText.setVisible(false);
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
+        progressContainer.setVisible(false);
+        progressIndicator.setVisible(false);
     }
 
     function _onHealthChanged(current, max) {
@@ -222,6 +251,11 @@ const gameHUD = (() => {
 
     function _onEnemyKilled() {
         // Could add kill counter later
+    }
+
+    function _onWaveProgressChanged(progress) {
+        if (!visible) return;
+        progressIndicator.setScale(PROGRESS_MAX_SCALE_X * progress, 4);
     }
 
     function _onTowerDeathStarted() {

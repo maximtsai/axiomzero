@@ -209,7 +209,7 @@ The cursor is a direct interaction tool — not just a UI pointer.
 ### [1] DATA `◈` — Common / Kinetic
 **Source:** Probabilistic drops from standard enemies (manual cursor collection required). Guaranteed drops from Bosses (large cache) and certain milestone rewards.  
 **Usage:** Primary currency for base stat upgrades (Attack, Health, Range, utility nodes).  
-**Decay:** Uncollected drops fade after ~8 seconds.  
+**No decay:** Drops persist until collected. No cap on simultaneous drops.
 **Visual:** Small cyan geometric shards drifting slowly from enemy death location.
 
 ### [2] INSIGHT `◉` — Survival / Evolution
@@ -491,7 +491,7 @@ Optional modifiers:
 - Player tower with sprite-based glow and breathe/pulse animation
 - Basic enemy spawning (60px off screen edges, random position, straight path to tower, no collision)
 - Enemy visual degradation on damage
-- DATA drop with decay timer (manual cursor collection)
+- DATA drop (manual cursor collection, no decay)
 - Basic tower auto-attack
 - Negative health regen on tower
 - Health bar (HEALTH/MAXHEALTH, 1 decimal) and EXP bar (0–100% → INSIGHT on fill)

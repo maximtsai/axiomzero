@@ -6,7 +6,7 @@ Browser-based **hybrid incremental/tower-defense** game called "Axiom Zero" buil
 
 The game starts immediately on load — there is no main menu. Gameplay alternates between an **upgrade phase** (between waves) and a **wave phase** (enemies active). All phase transitions are coordinated by `gameStateMachine` via the `messageBus`.
 
-- **Game dimensions:** 1280 × 720
+- **Game dimensions:** 1600 × 900
 - **Version:** v.1.0
 - **Dev server:** `runServer8124.exe` (port 8124)
 
@@ -278,6 +278,7 @@ Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems 
 | `'freezeEnemies'` | `waveManager` | `enemyManager` | — |
 | `'unfreezeEnemies'` | `waveManager` | `enemyManager` | — |
 | `'endIterationRequested'` | `gameHUD` | `waveManager` | — |
+| `'waveProgressChanged'` | `waveManager` | `gameHUD` | progress (0–1) |
 
 ## Conventions
 

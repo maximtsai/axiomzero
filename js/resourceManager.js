@@ -1,9 +1,9 @@
 // resourceManager.js — Currency state and DATA drop objects.
-// DATA drops spawn at enemy death positions, drift downward, fade over 8s,
+// DATA drops spawn at enemy death positions, drift downward,
 // and are collected when the cursor passes within pickup radius.
 
 const resourceManager = (() => {
-    const DROP_POOL_SIZE = 60;
+    const DROP_POOL_SIZE = 500;
 
     let dropPool = [];
     let activeDrops = [];

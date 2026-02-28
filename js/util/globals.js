@@ -65,6 +65,9 @@ const GAME_CONSTANTS = {
     PROJECTILE_SPEED:      400,  // px/sec
     PROJECTILE_HIT_RADIUS: 15,
 
+    // Wave duration
+    WAVE_DURATION: 50,  // seconds — progress bar fills over this period
+
     // Transition
     TRANSITION_DURATION: 800,  // ms for slide animation
 
