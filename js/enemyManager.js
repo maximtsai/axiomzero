@@ -131,6 +131,13 @@ const enemyManager = (() => {
         if (!enemy || !enemy.alive) return;
 
         const died = enemy.takeDamage(amount);
+        floatingText.show(enemy.x, enemy.y - 14, Math.round(amount).toString(), {
+            fontFamily: 'VCR',
+            fontSize: 24,
+            color: helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE),
+            depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
+            duration: 1000,
+        });
         if (died) {
             _killEnemy(enemy);
         }

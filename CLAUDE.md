@@ -54,7 +54,6 @@ js/
     typewriterHelper.js # Typewriter text animation — defines the `helper` global
     effectPool.js       # Click effect object pooling — extends `helper`
     uiHelper.js         # Fullscreen, mobile detect, click blocker — extends `helper`
-    helperFunction.js   # DEPRECATED — split into the three files above (do not edit)
     textEffects.js      # Text effect utilities (CJK-aware word wrap)
     objectPool.js       # Generic ObjectPool class
     virtualGroup.js     # Virtual display-list grouping utility
@@ -98,7 +97,6 @@ The `util/` source files get minified and combined into `util/utilities.js` usin
 uglifyjs messageBus.js debugManager.js mouseManager.js audioManager.js tweens.js objectPool.js button.js buttonManager.js typewriterHelper.js effectPool.js uiHelper.js textEffects.js timeManager.js updateManager.js popupManager.js virtualGroup.js -o utilities.js -c -m
 ```
 
-`helperFunction.js` has been split into three focused files:
 - **`typewriterHelper.js`** — defines the `helper` global; typewriter text animation
 - **`effectPool.js`** — extends `helper`; click effect object pooling
 - **`uiHelper.js`** — extends `helper`; fullscreen, mobile detect, global click blocker

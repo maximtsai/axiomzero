@@ -358,6 +358,14 @@ const tower = (() => {
             exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
             resourceManager.addInsight(1);
             messageBus.publish('insightGained');
+            audio.play('levelup', 1.0, false);
+            const towerPos = getPosition();
+            floatingText.show(towerPos.x, towerPos.y - 15, '+INSIGHT', {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: 18,
+                color: '#ffe600',
+                depth: GAME_CONSTANTS.DEPTH_TOWER,
+            });
         }
         messageBus.publish('expChanged', exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
 

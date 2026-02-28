@@ -1,0 +1,45 @@
+{
+	"textures": [
+		{
+			"image": "ui-0.webp",
+			"format": "RGBA8888",
+			"size": {
+				"w": 44,
+				"h": 44
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "progress_container.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 42,
+						"h": 42
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 42,
+						"h": 42
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:9e2a11d722b30e89b3141f0d3768df93:ec404a89d436d4da31a3f8e6a9f2d139:6af6d199855d1c5980a61db04791f8fb$"
+	}
+}

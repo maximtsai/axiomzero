@@ -32,7 +32,7 @@ const iterationOverScreen = (() => {
         // Title — Michroma
         titleText = PhaserScene.add.text(cx, cy - 100, 'ITERATION COMPLETE', {
             fontFamily: 'Michroma',
-            fontSize: '28px',
+            fontSize: '30px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -40,14 +40,14 @@ const iterationOverScreen = (() => {
         // Acquired resources
         dataText = PhaserScene.add.text(cx, cy - 30, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '16px',
+            fontSize: '20px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         insightText = PhaserScene.add.text(cx, cy, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '16px',
+            fontSize: '20px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -79,7 +79,7 @@ const iterationOverScreen = (() => {
         });
         upgradesBtn.addText('UPGRADES', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '12px',
+            fontSize: '18px',
             color: '#ffffff',
         });
 
@@ -110,7 +110,7 @@ const iterationOverScreen = (() => {
         });
         retryBtn.addText('RETRY', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '12px',
+            fontSize: '18px',
             color: '#ffffff',
         });
     }

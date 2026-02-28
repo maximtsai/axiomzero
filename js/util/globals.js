@@ -43,7 +43,7 @@ const GAME_CONSTANTS = {
     TOWER_BASE_REGEN:       -0.4,     // HP/sec (negative = drain)
 
     // EXP
-    EXP_FILL_RATE:    0.2,    // per second during combat
+    EXP_FILL_RATE:    0.5,    // per second during combat
     EXP_TO_INSIGHT:   100,  // EXP needed to award 1 INSIGHT
 
     // Enemy — Basic type (Phase 1 only)

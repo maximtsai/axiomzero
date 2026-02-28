@@ -11,6 +11,7 @@
 //   fontFamily {string}  default 'Arial'
 //   color      {string}  default '#ffffff'
 //   depth      {number}  default 9999
+//   duration   {number}  default 2400 (ms)
 
 const floatingText = (() => {
     let _scene = null;
@@ -47,6 +48,7 @@ const floatingText = (() => {
         const fontFamily = opts.fontFamily || 'Arial';
         const color      = opts.color      || '#ffffff';
         const depth      = opts.depth      !== undefined ? opts.depth      : 9999;
+        const duration   = opts.duration   !== undefined ? opts.duration   : 2400;
 
         const t = _pool.get();
         t.setText(text);
@@ -56,20 +58,23 @@ const floatingText = (() => {
         t.setDepth(depth);
         t.setVisible(true);
 
-        // Float up 100px linearly over 3 seconds
+        const fadeDelay = (duration / 2400) * 1900;
+        const travelDist = 90 * (duration / 2400)
+
+        // Float up 100px linearly
         _scene.tweens.add({
             targets:  t,
-            y:        y - 90,
-            duration: 2400,
+            y:        y - travelDist,
+            duration: duration,
             ease:     'Quad.easeOut',
         });
 
-        // Fade to alpha 0 starting at 2.5s, over 0.5s (Quad.easeIn)
+        // Fade to alpha 0, delay scales with duration, duration fixed
         _scene.tweens.add({
             targets:  t,
             alpha:    0,
             duration: 500,
-            delay:    1900,
+            delay:    fadeDelay,
             ease:     'Quad.easeIn',
             onComplete: () => {
                 _pool.release(t);
