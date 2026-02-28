@@ -11,15 +11,15 @@ const GAME_CONSTANTS = {
     INITIAL_PRELOAD_STALL: 20000,
 
     // Game Dimensions
-    WIDTH: 1280,
-    HEIGHT: 720,
+    WIDTH: 1600,
+    HEIGHT: 900,
 
     // Version
     VERSION: "v.1.0",
 
     // Loading Visuals
-    LOADING_BAR_WIDTH: 200,
-    LOADING_BAR_HEIGHT: 3,
+    LOADING_BAR_WIDTH: 250,
+    LOADING_BAR_HEIGHT: 4,
 
     // Timing
     RESIZE_DELAY: 100,

@@ -30,24 +30,24 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 100, 'ITERATION COMPLETE', {
+        titleText = PhaserScene.add.text(cx, cy - 125, 'ITERATION COMPLETE', {
             fontFamily: 'Michroma',
-            fontSize: '30px',
+            fontSize: '36px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         // Acquired resources
-        dataText = PhaserScene.add.text(cx, cy - 30, '', {
+        dataText = PhaserScene.add.text(cx, cy - 38, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '20px',
+            fontSize: '24px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         insightText = PhaserScene.add.text(cx, cy, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '20px',
+            fontSize: '24px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -57,29 +57,29 @@ const iterationOverScreen = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: cx - 90,
-                y: cy + 80,
+                x: cx - 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: cx - 90,
-                y: cy + 80,
+                x: cx - 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: cx - 90,
-                y: cy + 80,
+                x: cx - 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             onMouseUp: _onUpgradesClicked,
         });
         upgradesBtn.addText('UPGRADES', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#ffffff',
         });
 
@@ -88,29 +88,29 @@ const iterationOverScreen = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: cx + 90,
-                y: cy + 80,
+                x: cx + 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: cx + 90,
-                y: cy + 80,
+                x: cx + 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: cx + 90,
-                y: cy + 80,
+                x: cx + 113,
+                y: cy + 100,
                 depth: depth + 2,
             },
             onMouseUp: _onRetryClicked,
         });
         retryBtn.addText('RETRY', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#ffffff',
         });
     }

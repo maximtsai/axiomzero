@@ -74,9 +74,9 @@ class LoadingScreen {
             .setScale(1, barH)
             .setDepth(2);
 
-        this._text = scene.add.text(cx, cy - 20, 'Loading...', {
+        this._text = scene.add.text(cx, cy - 25, 'Loading...', {
             fontFamily: 'Times New Roman',
-            fontSize:   24,
+            fontSize:   29,
             color:      '#ffffff',
             align:      'center',
         }).setOrigin(0.5, 0.5).setDepth(2);
@@ -111,17 +111,17 @@ class LoadingScreen {
     _showRunAnywaysButton(forceFinish) {
         const scene = this._scene;
         const cx    = GAME_CONSTANTS.halfWidth;
-        const btnY  = GAME_CONSTANTS.halfHeight + 100;  // below bar (bar is at cy+50)
+        const btnY  = GAME_CONSTANTS.halfHeight + 125;  // below bar (bar is at cy+50)
 
         this._runBtnBg = scene.add.image(cx, btnY, 'black_pixel')
-            .setScale(190, 34)
+            .setScale(238, 43)
             .setAlpha(0.85)
             .setDepth(3)
             .setInteractive({ useHandCursor: true });
 
         this._runBtnText = scene.add.text(cx, btnY, 'RUN ANYWAYS', {
             fontFamily: 'Times New Roman',
-            fontSize:   20,
+            fontSize:   24,
             color:      '#ffffff',
             align:      'center',
         }).setOrigin(0.5, 0.5).setDepth(4);

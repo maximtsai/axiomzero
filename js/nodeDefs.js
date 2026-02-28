@@ -1,6 +1,6 @@
 // nodeDefs.js — Neural Tree upgrade definitions.
 // Centralized node data for the upgrade tree.
-// Tree center X is at 320 (half of 640px panel width)
+// Tree center X is at 400 (half of 800px panel width)
 
 const NODE_DEFS = [
     {
@@ -14,8 +14,8 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: null,
         childIds: ['basic_pulse', 'reinforce', 'sharpen'],
-        treeX: 320,
-        treeY: 450,
+        treeX: 400,
+        treeY: 563,
         effect: function() {
             tower.awaken();
             // Reveal children
@@ -37,8 +37,8 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'awaken',
         childIds: [],
-        treeX: 200,
-        treeY: 340,
+        treeX: 250,
+        treeY: 425,
         effect: function() {
             // Stub — cursor pulse implemented in Phase 2
             debugLog('Basic Pulse unlocked (stub)');
@@ -57,8 +57,8 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'awaken',
         childIds: [],
-        treeX: 320,
-        treeY: 340,
+        treeX: 400,
+        treeY: 425,
         effect: function() {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -76,8 +76,8 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'awaken',
         childIds: [],
-        treeX: 440,
-        treeY: 340,
+        treeX: 550,
+        treeY: 425,
         effect: function() {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

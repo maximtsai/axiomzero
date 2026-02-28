@@ -49,7 +49,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.testMobile() ? 3 : 0;
-    createOptionsButton(GAME_CONSTANTS.WIDTH - 28 + optionsBtnOffset, 28 + optionsBtnOffset);
+    createOptionsButton(GAME_CONSTANTS.WIDTH - 35 + optionsBtnOffset, 35 + optionsBtnOffset);
 
     // ── Set background color ────────────────────────────────────────────
     PhaserScene.cameras.main.setBackgroundColor(GAME_CONSTANTS.COLOR_BG);

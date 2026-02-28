@@ -23,7 +23,7 @@ const NODE_STATE = {
  * effect:      function(level),  // called after purchase to apply effect
  * parentId:    string|null,
  * childIds:    string[],
- * treeX:       number,        // x position within tree panel (0–640)
+ * treeX:       number,        // x position within tree panel (0–800)
  * treeY:       number,        // y position within tree panel
  * tier:        number,        // NEW: Required global tier
  * isDuoBox:    boolean,       // NEW: Is this part of a Shard choice?
@@ -177,7 +177,7 @@ class Node {
                 pos.x + (Math.random() - 0.5) * 100,
                 pos.y + (Math.random() - 0.5) * 100,
                 this.popupText,
-                { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 20 }
+                { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 24 }
             );
         }
 
@@ -233,13 +233,13 @@ class Node {
         this.btn.setDepth(nodeDepth);
 
         // Node name label
-        this.label = PhaserScene.add.text(x, y + 26, this.name, {
+        this.label = PhaserScene.add.text(x, y + 32, this.name, {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '14px',
+            fontSize: '17px',
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
-            strokeThickness: 5,
+            strokeThickness: 6,
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2);
 
         // Fadeout sprite — overlays button, starts invisible
@@ -371,10 +371,10 @@ class Node {
         this._hideHover();
 
         const x = this.treeX;  // center of node
-        const y = this.treeY - 50;  // directly above
+        const y = this.treeY - 63;  // directly above
         const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
-        const bgWidth = 240;
-        const bgHeight = 110;
+        const bgWidth = 300;
+        const bgHeight = 138;
 
         this.hoverGroup = [];
 
@@ -387,14 +387,14 @@ class Node {
             .setDepth(depth);
         this.hoverGroup.push(bg);
 
-        const padding = 10;
+        const padding = 12;
         const startY = y - bgHeight + padding;
         let currentY = startY;
 
         // Name - center aligned, larger font
         const nameT = PhaserScene.add.text(x, currentY, this.name, {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(depth + 1);
@@ -404,10 +404,10 @@ class Node {
         // Description - center aligned, larger font
         const descT = PhaserScene.add.text(x, currentY, this.description, {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '16px',
+            fontSize: '19px',
             color: '#cccccc',
             align: 'center',
-            wordWrap: { width: 220 },
+            wordWrap: { width: 275 },
         }).setOrigin(0.5, 0).setDepth(depth + 1);
         this.hoverGroup.push(descT);
         currentY += descT.height + 6;
@@ -415,7 +415,7 @@ class Node {
         if (this.state === NODE_STATE.MAXED) {
             const maxT = PhaserScene.add.text(x, currentY, 'MAXED', {
                 fontFamily: 'JetBrainsMono_Italic',
-                fontSize: '16px',
+                fontSize: '19px',
                 color: '#ffe600',
                 align: 'center',
             }).setOrigin(0.5, 0).setDepth(depth + 1);
@@ -426,7 +426,7 @@ class Node {
             const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '\u25C8' : '\u25C9');
             const infoT = PhaserScene.add.text(x, currentY, lvStr + '  ' + costStr, {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '16px',
+                fontSize: '19px',
                 color: this.canAfford() ? '#00ff88' : '#ff4444',
                 align: 'center',
             }).setOrigin(0.5, 0).setDepth(depth + 1);

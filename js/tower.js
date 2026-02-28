@@ -362,7 +362,7 @@ const tower = (() => {
             const towerPos = getPosition();
             floatingText.show(towerPos.x, towerPos.y - 15, '+INSIGHT', {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 18,
+                fontSize: 22,
                 color: '#ffe600',
                 depth: GAME_CONSTANTS.DEPTH_TOWER,
             });

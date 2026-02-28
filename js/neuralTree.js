@@ -17,9 +17,9 @@ const neuralTree = (() => {
 
     let visible = false;
 
-    // Tree layout constants (within the 640px left-half panel)
+    // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
-    const TREE_CENTER_X = PANEL_W / 2;  // 320
+    const TREE_CENTER_X = PANEL_W / 2;  // 400
 
     // ── init ─────────────────────────────────────────────────────────────
 
@@ -44,9 +44,9 @@ const neuralTree = (() => {
         panelBg.setVisible(false);
 
         // Title
-        titleText = PhaserScene.add.text(TREE_CENTER_X, 30, 'NEURAL TREE', {
+        titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
             fontFamily: 'Michroma',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5).setVisible(false);
@@ -120,29 +120,29 @@ const neuralTree = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: PANEL_W - 80,
-                y: GAME_CONSTANTS.HEIGHT - 50,
+                x: PANEL_W - 100,
+                y: GAME_CONSTANTS.HEIGHT - 63,
                 depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: PANEL_W - 80,
-                y: GAME_CONSTANTS.HEIGHT - 50,
+                x: PANEL_W - 100,
+                y: GAME_CONSTANTS.HEIGHT - 63,
                 depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: PANEL_W - 80,
-                y: GAME_CONSTANTS.HEIGHT - 50,
+                x: PANEL_W - 100,
+                y: GAME_CONSTANTS.HEIGHT - 63,
                 depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             onMouseUp: _onDeployClicked,
         });
         deployBtn.addText('DEPLOY', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#ffffff',
         });
         // Hidden until tower is spawned

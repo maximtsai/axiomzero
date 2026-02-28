@@ -17,13 +17,13 @@ const gameHUD = (() => {
     let endIterationBtn = null;
 
     // Layout
-    const HUD_X = 16;
-    const HUD_Y = 16;
-    const BAR_W = 200;
-    const BAR_H = 14;
-    const BAR_GAP = 6;
-    const DATA_ICON_SIZE = 14;
-    const DATA_ICON_GAP  = 4;
+    const HUD_X = 20;
+    const HUD_Y = 20;
+    const BAR_W = 250;
+    const BAR_H = 18;
+    const BAR_GAP = 8;
+    const DATA_ICON_SIZE = 18;
+    const DATA_ICON_GAP  = 5;
 
     let visible = false;
 
@@ -53,39 +53,39 @@ const gameHUD = (() => {
 
         healthText = PhaserScene.add.text(HUD_X + BAR_W + 8, HUD_Y, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '13px',
+            fontSize: '16px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2);
 
         // ── EXP bar ──
         const expY = HUD_Y + BAR_H + BAR_GAP;
         expBarBg = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
-        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 6).setTint(0x222222).setDepth(depth);
+        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 8).setTint(0x222222).setDepth(depth);
 
         expBarFill = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, 6).setTint(0xffffff).setDepth(depth + 1);
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, 8).setTint(0xffffff).setDepth(depth + 1);
 
         expText = PhaserScene.add.text(HUD_X + BAR_W + 8, expY - 2, 'EXP 0%', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '10px',
+            fontSize: '12px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2);
 
         // ── Currency counters ──
-        const currY = expY + 6 + BAR_GAP + 4;
+        const currY = expY + 8 + BAR_GAP + 5;
 
         dataIcon = PhaserScene.add.image(HUD_X, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
         dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2);
 
         dataText = PhaserScene.add.text(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '14px',
+            fontSize: '17px',
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2);
 
-        insightText = PhaserScene.add.text(HUD_X + 100, currY, '\u25C9 0', {
+        insightText = PhaserScene.add.text(HUD_X + 125, currY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '14px',
+            fontSize: '17px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2);
 
@@ -94,22 +94,22 @@ const gameHUD = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 36,
+                x: GAME_CONSTANTS.WIDTH - 125,
+                y: GAME_CONSTANTS.HEIGHT - 45,
                 depth: depth + 3,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 36,
+                x: GAME_CONSTANTS.WIDTH - 125,
+                y: GAME_CONSTANTS.HEIGHT - 45,
                 depth: depth + 3,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 36,
+                x: GAME_CONSTANTS.WIDTH - 125,
+                y: GAME_CONSTANTS.HEIGHT - 45,
                 depth: depth + 3,
             },
             onMouseUp: () => {
@@ -118,7 +118,7 @@ const gameHUD = (() => {
         });
         endIterationBtn.addText('END ITERATION', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '12px',
+            fontSize: '14px',
             color: '#ffffff',
         });
     }
@@ -178,7 +178,7 @@ const gameHUD = (() => {
         dataText.setVisible(true);
         dataText.setPosition(upgradeBaseX + DATA_ICON_SIZE + DATA_ICON_GAP, HUD_Y);
         insightText.setVisible(true);
-        insightText.setPosition(GAME_CONSTANTS.halfWidth + 116, HUD_Y);
+        insightText.setPosition(GAME_CONSTANTS.halfWidth + 145, HUD_Y);
 
         // Hide combat-only elements
         healthBarBg.setVisible(false);
@@ -211,7 +211,7 @@ const gameHUD = (() => {
     function _onExpChanged(current, max) {
         if (!visible) return;
         const ratio = Math.min(1, Math.max(0, current / max));
-        expBarFill.setDisplaySize(BAR_W * ratio, 6);
+        expBarFill.setDisplaySize(BAR_W * ratio, 8);
         expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
     }
 
@@ -237,10 +237,10 @@ const gameHUD = (() => {
 
     /** Reposition HUD for full-screen combat layout. */
     function _resetCombatPositions() {
-        const combatCurrY = HUD_Y + BAR_H + BAR_GAP + 6 + BAR_GAP + 4;
+        const combatCurrY = HUD_Y + BAR_H + BAR_GAP + 8 + BAR_GAP + 5;
         dataIcon.setPosition(HUD_X, combatCurrY + DATA_ICON_SIZE / 2);
         dataText.setPosition(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, combatCurrY);
-        insightText.setPosition(HUD_X + 100, combatCurrY);
+        insightText.setPosition(HUD_X + 125, combatCurrY);
     }
 
     return { init };

@@ -7,7 +7,7 @@
 //   floatingText.show(x, y, 'text', { ...opts }); // spawn a label
 //
 // Options (all optional):
-//   fontSize   {number}  default 18
+//   fontSize   {number}  default 22
 //   fontFamily {string}  default 'Arial'
 //   color      {string}  default '#ffffff'
 //   depth      {number}  default 9999
@@ -25,7 +25,7 @@ const floatingText = (() => {
     function _factory() {
         const t = _scene.add.text(0, 0, '', {
             fontFamily: 'Arial',
-            fontSize:   '18px',
+            fontSize:   '22px',
             color:      '#ffffff',
         });
         t.setOrigin(0.5, 0.5);
@@ -44,7 +44,7 @@ const floatingText = (() => {
         if (!_pool) return;
 
         opts = opts || {};
-        const fontSize   = opts.fontSize   !== undefined ? opts.fontSize   : 18;
+        const fontSize   = opts.fontSize   !== undefined ? opts.fontSize   : 22;
         const fontFamily = opts.fontFamily || 'Arial';
         const color      = opts.color      || '#ffffff';
         const depth      = opts.depth      !== undefined ? opts.depth      : 9999;

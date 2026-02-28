@@ -4,17 +4,17 @@
 const _POPUP = {
     DEPTH:         111000,  // content depth for both popup types
     OVERLAY_DEPTH: 110900,  // dark overlay sits just below content
-    W:             460,     // showPopup box width
-    H:             200,     // showPopup box height
-    BTN_H:         42,      // showPopup button height
-    BTN_W:         140,     // showPopup button width
-    BTN_GAP:       20,      // gap between showPopup buttons
-    FONT_TITLE:    24,      // showPopup title font size
-    FONT_BODY:     19,      // showPopup body font size
-    FONT_BTN:      18,      // showPopup button font size
-    FONT_YN:       28,      // showYesNoPopup button / title font size
-    FONT_YN_TITLE: 30,      // showYesNoPopup title font size
-    FONT_YN_BODY:  24,      // showYesNoPopup body font size
+    W:             575,     // showPopup box width
+    H:             250,     // showPopup box height
+    BTN_H:         53,      // showPopup button height
+    BTN_W:         175,     // showPopup button width
+    BTN_GAP:       25,      // gap between showPopup buttons
+    FONT_TITLE:    29,      // showPopup title font size
+    FONT_BODY:     23,      // showPopup body font size
+    FONT_BTN:      22,      // showPopup button font size
+    FONT_YN:       34,      // showYesNoPopup button / title font size
+    FONT_YN_TITLE: 36,      // showYesNoPopup title font size
+    FONT_YN_BODY:  29,      // showYesNoPopup body font size
 };
 
 // ─── Private helpers ───────────────────────────────────────────────────────────
@@ -230,14 +230,14 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     const darkBG         = _createDarkOverlay({ ref: 'black_pixel', scaleX: 500, depth: _POPUP.OVERLAY_DEPTH, targetAlpha: 0.75, duration: dur });
     const dieClickBlocker = _createFullscreenBlocker(_POPUP.OVERLAY_DEPTH);
 
-    const popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'ui', 'paper_half.png')
-        .setDepth(_POPUP.DEPTH).setScale(0.7, 0.58);
+    const popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 50, 'ui', 'paper_half.png')
+        .setDepth(_POPUP.DEPTH).setScale(0.88, 0.73);
 
-    const newText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 75, titleText, {
+    const newText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 94, titleText, {
         fontFamily: 'Arial', fontSize: _POPUP.FONT_YN_TITLE, color: '#000000', align: 'center',
     }).setOrigin(0.5, 0.5).setDepth(_POPUP.DEPTH).setAlpha(0.1);
 
-    const descText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 17, bodyText, {
+    const descText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 21, bodyText, {
         fontFamily: 'Arial', fontSize: _POPUP.FONT_YN_BODY, color: '#000000', align: 'center',
     }).setOrigin(0.5, 0.5).setDepth(_POPUP.DEPTH).setAlpha(0.1);
 
@@ -251,7 +251,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     const _destroyAll = (items) => items.forEach(item => { if (item) item.destroy(); });
 
     const yesBtn = new Button({
-        normal:  { ref: 'menu_btn_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.halfWidth + 128, y: popupBG.y + 55 },
+        normal:  { ref: 'menu_btn_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.halfWidth + 160, y: popupBG.y + 69 },
         hover:   { ref: 'menu_btn_hover.png',  atlas: 'buttons' },
         press:   { ref: 'menu_btn_hover.png',  atlas: 'buttons' },
         disable: { alpha: 0 },
@@ -268,7 +268,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     yesBtn.setScale(0.7);
 
     closeBtn = new Button({
-        normal:  { ref: 'closebtn.png',       atlas: 'buttons', alpha: 0.95, x: GAME_CONSTANTS.halfWidth + 190, y: popupBG.y - 95 },
+        normal:  { ref: 'closebtn.png',       atlas: 'buttons', alpha: 0.95, x: GAME_CONSTANTS.halfWidth + 238, y: popupBG.y - 119 },
         hover:   { ref: 'closebtn_hover.png', atlas: 'buttons', alpha: 1 },
         press:   { ref: 'closebtn_press.png', atlas: 'buttons', alpha: 1 },
         disable: { ref: 'closebtn.png',       atlas: 'buttons', alpha: 0 },
@@ -284,7 +284,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     const itemsToDestroy = [closeBtn, null, yesBtn, darkBG, dieClickBlocker, newText, descText, popupBG];
 
     noBtn = new Button({
-        normal:  { ref: 'menu_btn2_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.halfWidth - 128, y: popupBG.y + 55 },
+        normal:  { ref: 'menu_btn2_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.halfWidth - 160, y: popupBG.y + 69 },
         hover:   { ref: 'menu_btn2_hover.png',  atlas: 'buttons' },
         press:   { ref: 'menu_btn2_hover.png',  atlas: 'buttons' },
         disable: { alpha: 0 },
