@@ -25,6 +25,26 @@ const customEmitters = (() => {
         };
     }
 
+    // ── Sprite pool for basicStrikeManual ─────────────────────────────────────
+    const strikeSpritePool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.sprite(0, 0, 'pixels', 'blue_pixel.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.setScale(1);
+            sprite.setAlpha(1);
+            sprite.setRotation(0);
+            sprite.x = 0;
+            sprite.y = 0;
+        },
+        50
+    );
+
     // ── basicStrike ──────────────────────────────────────────────────────────
     // Angle slot — set before explode() so the onEmit callback reads the correct value.
     let _strikeAngle = 0;
@@ -61,6 +81,55 @@ const customEmitters = (() => {
         e.explode(count, x, y);
     }
 
+    // ── basicStrikeManual ─────────────────────────────────────────────────────
+    // Sprite-based version using ObjectPool — matches basicStrike behavior.
+    function basicStrikeManual(x, y, angle) {
+        const count = Math.floor(Math.random() * 3) + 3;
+        const minAngle = angle - 60;
+        const maxAngle = angle + 60;
+        const depth = GAME_CONSTANTS.DEPTH_ENEMIES + 2;
+
+        for (let i = 0; i < count; i++) {
+            const sprite = strikeSpritePool.get();
+            sprite.setPosition(x, y);
+            sprite.setDepth(depth);
+            sprite.setVisible(true);
+            sprite.setActive(true);
+
+            const emitAngle = Phaser.Math.Between(minAngle, maxAngle);
+            const radians = Phaser.Math.DegToRad(emitAngle);
+            const lifespan = Phaser.Math.Between(80, 380);
+
+            sprite.setRotation(radians);
+            sprite.setOrigin(0, 0.5);
+            sprite.setScale(lifespan * 0.05 + Phaser.Math.Between(1, 2), 2);
+            sprite.setAlpha(1);
+
+            const dist = lifespan * 0.17 + 15;
+            const targetX = x + Math.cos(radians) * dist;
+            const targetY = y + Math.sin(radians) * dist;
+
+            PhaserScene.tweens.add({
+                targets: sprite,
+                x: targetX,
+                y: targetY,
+                duration: lifespan + 70,
+                ease: 'Cubic.easeOut',
+            });
+            PhaserScene.tweens.add({
+                targets: sprite,
+                scaleX: 0,
+                duration: lifespan,
+                completeDelay: 100,
+                onComplete: () => {
+                    sprite.setActive(false);
+                    sprite.setVisible(false);
+                    strikeSpritePool.release(sprite);
+                }
+            });
+        }
+    }
+
     // ── public API ───────────────────────────────────────────────────────────
-    return { basicStrike };
+    return { basicStrike, basicStrikeManual };
 })();
