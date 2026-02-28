@@ -35,7 +35,6 @@ class BasicEnemy extends Enemy {
         // Reset visuals before super.activate() makes the img visible
         if (this.img) {
             this.img.setAlpha(1);
-            this.img.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
             this.img.setScale(1);
         }
 

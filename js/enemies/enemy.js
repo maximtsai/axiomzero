@@ -47,6 +47,9 @@ class Enemy {
             this.img.setPosition(x, y);
             this.img.setVisible(true);
             this.img.setActive(true);
+            const distToTowerX = GAME_CONSTANTS.halfWidth - x;
+            const distToTowerY = GAME_CONSTANTS.halfHeight - y;
+            this.setRotation(Math.atan2(distToTowerY, distToTowerX));
         }
     }
 
@@ -62,6 +65,10 @@ class Enemy {
     }
 
     // ── Movement ──────────────────────────────────────────────────────────────
+
+    setRotation(rot) {
+        this.img.setRotation(rot); 
+    }
 
     /**
      * Point velocity toward (tx, ty) at this.speed.
