@@ -61,6 +61,24 @@ class BasicEnemy extends Enemy {
             const b     = Math.round(hB + (255 - hB) * (1 - ratio));
             this.img.setTint((r << 16) | (g << 8) | b);
 
+            // Rotation wobble on hit, then tween back to base rotation
+            const wobble = Phaser.Math.FloatBetween(-0.3, 0.3);
+            this.img.setRotation(this.baseRotation + wobble);
+            if (this.wobbleAnim) {
+                this.wobbleAnim.stop();
+            }
+            this.wobbleAnim = PhaserScene.tweens.add({
+                delay: 75,
+                targets:  this.img,
+                rotation: '-=' + wobble,
+                duration: 370,
+                ease:     'Cubic.easeInOut',
+                onComplete: () => {
+                    this.img.setRotation(this.baseRotation);
+                    this.wobbleAnim = null;
+                }
+            });
+
             // Alpha flicker
             if (this.img.scene) {
                 PhaserScene.tweens.add({

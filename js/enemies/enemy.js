@@ -49,7 +49,8 @@ class Enemy {
             this.img.setActive(true);
             const distToTowerX = GAME_CONSTANTS.halfWidth - x;
             const distToTowerY = GAME_CONSTANTS.halfHeight - y;
-            this.setRotation(Math.atan2(distToTowerY, distToTowerX));
+            this.baseRotation = Math.atan2(distToTowerY, distToTowerX);
+            this.setRotation(this.baseRotation);
         }
     }
 
@@ -59,6 +60,7 @@ class Enemy {
     deactivate() {
         this.alive = false;
         if (this.img) {
+            PhaserScene.tweens.killTweensOf(this.img);
             this.img.setVisible(false);
             this.img.setActive(false);
         }
