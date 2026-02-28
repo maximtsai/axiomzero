@@ -46,7 +46,7 @@ const gameHUD = (() => {
 
         // ── Health bar ──
         healthBarBg = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
-        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(0x333333).setDepth(depth);
+        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth);
 
         healthBarFill = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
         healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1);

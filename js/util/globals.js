@@ -33,6 +33,7 @@ const GAME_CONSTANTS = {
     COLOR_RESOURCE:  0xff9500,
     COLOR_HOSTILE:   0xff2d78,
     COLOR_STRAY:     0xffe600,
+    HEALTH_BAR_TINT: 0x333333,
 
     // Tower
     TOWER_BASE_HEALTH:      20,

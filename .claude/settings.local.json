@@ -12,7 +12,8 @@
       "Bash(python3:*)",
       "Bash(node -e:*)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(npx uglifyjs:*)"
+      "Bash(npx uglifyjs:*)",
+      "Bash(find . -name \"*.js\" ! -path \"./phaser*\" ! -path \"./rexbbcode*\" ! -path \"./node_modules/*\" -type f -exec grep -n \"WIDTH\\\\|HEIGHT\" {} +)"
     ]
   }
 }
