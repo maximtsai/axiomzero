@@ -86,6 +86,9 @@ const waveManager = (() => {
             ease:     'Quad.easeOut',
         });
 
+        customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+
+
         // 6. Request tower shake — _onTowerShakeComplete fires when done
         messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
         messageBus.publish('towerShakeRequested', 500);

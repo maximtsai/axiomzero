@@ -333,7 +333,7 @@ class Node {
         this.fadeoutTween = PhaserScene.tweens.add({
             targets: this.fadeoutSprite,
             alpha: 0,
-            duration: 500,
+            duration: 400,
             ease: 'Linear',
             onComplete: () => {
                 this.fadeoutTween = null;

@@ -45,6 +45,7 @@ const customEmitters = (() => {
         50
     );
 
+
     // ── basicStrike ──────────────────────────────────────────────────────────
     // Angle slot — set before explode() so the onEmit callback reads the correct value.
     let _strikeAngle = 0;
@@ -98,14 +99,16 @@ const customEmitters = (() => {
 
             const emitAngle = Phaser.Math.Between(minAngle, maxAngle);
             const radians = Phaser.Math.DegToRad(emitAngle);
-            const lifespan = Phaser.Math.Between(80, 380);
+            const lifespan = Phaser.Math.Between(30, 250) + Phaser.Math.Between(30, 100);
 
             sprite.setRotation(radians);
             sprite.setOrigin(0, 0.5);
-            sprite.setScale(lifespan * 0.05 + Phaser.Math.Between(1, 2), 2);
             sprite.setAlpha(1);
 
-            const dist = lifespan * 0.17 + 15;
+            const dist = (lifespan * 0.2 + 20) * (0.4 + Math.random() * 0.6);
+            let startScale = dist * (0.2 + Math.random() * 0.3) + 2;
+            sprite.setScale(startScale, 2);
+
             const targetX = x + Math.cos(radians) * dist;
             const targetY = y + Math.sin(radians) * dist;
 
@@ -130,6 +133,25 @@ const customEmitters = (() => {
         }
     }
 
+    // tower death 
+    const towerDeathParams = {
+        frame:    'white_pixel.png',
+        speed:    { min: 50, max: 250, ease: 'Cubic.easeOut' },
+        lifespan: { min: 400, max: 1400 },
+        scale:   { start: 25, end: 5, ease: 'Quad.easeIn' },
+        alpha:    { start: 0.4, end: 0, ease: 'Quad.easeIn' },
+        gravityY: 0,
+        emitting: false,
+    }
+
+    const _towerDeath = _make('pixels', towerDeathParams, GAME_CONSTANTS.DEPTH_TOWER + 2);
+
+    function towerDeath(x, y) {
+        const count = 7;
+        const e = _towerDeath();
+        e.explode(count, x, y);
+    }
+
     // ── public API ───────────────────────────────────────────────────────────
-    return { basicStrike, basicStrikeManual };
+    return { basicStrike, basicStrikeManual, towerDeath };
 })();
