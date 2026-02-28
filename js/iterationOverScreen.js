@@ -82,6 +82,7 @@ const iterationOverScreen = (() => {
             fontSize: '22px',
             color: '#ffffff',
         });
+        upgradesBtn.setScrollFactor(0);
 
         // RETRY SESSION button
         retryBtn = new Button({
@@ -113,6 +114,7 @@ const iterationOverScreen = (() => {
             fontSize: '22px',
             color: '#ffffff',
         });
+        retryBtn.setScrollFactor(0);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────

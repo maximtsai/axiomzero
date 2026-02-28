@@ -38,6 +38,7 @@ function createOptionsButton(x, y) {
 
     button.setDepth(1010);
     button.setScale(helper.testMobile() ? 0.8 : 0.68);
+    button.setScrollFactor(0);
     return button;
 }
 
@@ -101,6 +102,7 @@ function createMuteSFXButton(x, y) {
     });
 
     button.setDepth(1010);
+    button.setScrollFactor(0);
     return button;
 }
 
@@ -163,5 +165,6 @@ function createMuteMusicButton(x, y) {
     });
 
     button.setDepth(1010);
+    button.setScrollFactor(0);
     return button;
 }

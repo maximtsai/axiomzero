@@ -51,48 +51,48 @@ const gameHUD = (() => {
 
         // ── Health bar ──
         healthBarBg = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
-        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth);
+        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth).setScrollFactor(0);
 
         healthBarFill = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
-        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1);
+        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1).setScrollFactor(0);
 
         healthText = PhaserScene.add.text(HUD_X + BAR_W + 8, HUD_Y, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '16px',
             color: '#ffffff',
-        }).setOrigin(0, 0).setDepth(depth + 2);
+        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── EXP bar ──
         const expY = HUD_Y + BAR_H + BAR_GAP;
         expBarBg = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
-        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 8).setTint(0x222222).setDepth(depth);
+        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 8).setTint(0x222222).setDepth(depth).setScrollFactor(0);
 
         expBarFill = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, 8).setTint(0xffffff).setDepth(depth + 1);
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, 8).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
         expText = PhaserScene.add.text(HUD_X + BAR_W + 8, expY - 2, 'EXP 0%', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '12px',
             color: '#aaaaaa',
-        }).setOrigin(0, 0).setDepth(depth + 2);
+        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── Currency counters ──
         const currY = expY + 8 + BAR_GAP + 5;
 
         dataIcon = PhaserScene.add.image(HUD_X, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
-        dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2);
+        dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2).setScrollFactor(0);
 
         dataText = PhaserScene.add.text(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#00f5ff',
-        }).setOrigin(0, 0).setDepth(depth + 2);
+        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         insightText = PhaserScene.add.text(HUD_X + 125, currY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#ffffff',
-        }).setOrigin(0, 0).setDepth(depth + 2);
+        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── END ITERATION button ──
         endIterationBtn = new Button({
@@ -126,6 +126,7 @@ const gameHUD = (() => {
             fontSize: '14px',
             color: '#ffffff',
         });
+        endIterationBtn.setScrollFactor(0);
 
         // ── Progress bar ──
         progressContainer = PhaserScene.add.nineslice(
@@ -137,12 +138,12 @@ const gameHUD = (() => {
             50,
             23, 23, 23, 23
         );
-        progressContainer.setDepth(depth);
+        progressContainer.setDepth(depth).setScrollFactor(0);
 
         progressIndicator = PhaserScene.add.image(75, GAME_CONSTANTS.HEIGHT - 25, 'white_pixel');
         progressIndicator.setOrigin(0, 0.5);
         progressIndicator.setScale(0, 4);
-        progressIndicator.setDepth(depth + 1);
+        progressIndicator.setDepth(depth + 1).setScrollFactor(0);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────

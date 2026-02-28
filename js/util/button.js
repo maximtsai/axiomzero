@@ -476,6 +476,9 @@ class Button {
             Object.keys(this.imageRefs).forEach(key => {
                 this.imageRefs[key].scrollFactorX = x;
             });
+            if (this.text) {
+                this.text.scrollFactorX = x;
+            }
         }
         if (y !== undefined) {
             this.normal.scrollFactorY = y;
@@ -485,10 +488,9 @@ class Button {
             Object.keys(this.imageRefs).forEach(key => {
                 this.imageRefs[key].scrollFactorY = y;
             });
-        }
-        if (this.text) {
-            this.text.scrollFactorX = x;
-            this.text.scrollFactorY = y;
+            if (this.text) {
+                this.text.scrollFactorY = y;
+            }
         }
     }
 

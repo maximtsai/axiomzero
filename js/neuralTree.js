@@ -145,6 +145,7 @@ const neuralTree = (() => {
             fontSize: '22px',
             color: '#ffffff',
         });
+        deployBtn.setScrollFactor(0);
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);

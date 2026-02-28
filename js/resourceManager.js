@@ -3,11 +3,12 @@
 // and are collected when the cursor passes within pickup radius.
 
 const resourceManager = (() => {
-    const DROP_POOL_SIZE = 500;
+    const DROP_POOL_SIZE = 1200;
 
     let dropPool = [];
     let activeDrops = [];
     let dropTexKey = null;
+    let totalDropsSpawned = 0;
 
     // Session tracking — reset each combat session for the summary screen
     let sessionData = 0;
@@ -61,14 +62,27 @@ const resourceManager = (() => {
         const d = _getFromPool();
         if (!d) return;
 
+        totalDropsSpawned++;
+
         d.x = x;
         d.y = y;
         d.alive = true;
         d.life = GAME_CONSTANTS.DATA_DECAY_TIME;
         d.maxLife = GAME_CONSTANTS.DATA_DECAY_TIME;
         d.img.setPosition(x, y);
-        d.img.setAlpha(1);
-        d.img.setVisible(true);
+        
+        // Visibility logic based on total drops spawned
+        let visible = true;
+        if (totalDropsSpawned > 600) {
+            // After 600: 2 of every 3 drops invisible
+            visible = (totalDropsSpawned % 3) === 1;
+        } else if (totalDropsSpawned > 300) {
+            // After 300: every 3rd drop invisible
+            visible = (totalDropsSpawned % 3) !== 0;
+        }
+        
+        d.img.setAlpha(visible ? 1 : 0);
+        d.img.setVisible(visible);
         d.img.setActive(true);
         activeDrops.push(d);
     }
@@ -93,6 +107,7 @@ const resourceManager = (() => {
     function resetSession() {
         sessionData = 0;
         sessionInsight = 0;
+        totalDropsSpawned = 0;
     }
 
     function clearDrops() {

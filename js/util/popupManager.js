@@ -57,6 +57,7 @@ function _createFullscreenBlocker(depth) {
         onMouseUp: () => {}
     });
     blocker.setDepth(depth);
+    blocker.setScrollFactor(0);
     return blocker;
 }
 
@@ -135,6 +136,7 @@ function showPopup({ title = '', body = '', buttons = [], depth = _POPUP.DEPTH, 
             }
         });
         btn.setDepth(depth + 2);
+        btn.setScrollFactor(0);
         btn.addText(def.text, { fontFamily: 'Arial', fontSize: _POPUP.FONT_BTN, color: '#ffffff', align: 'center' });
         btnObjs.push(btn);
     });
@@ -215,6 +217,7 @@ function showNineSlicePopup({ title = '', body = '', buttons = [], texture = 'po
             }
         });
         btn.setDepth(depth + 2);
+        btn.setScrollFactor(0);
         btn.addText(def.text, { fontFamily: 'Arial', fontSize: _POPUP.FONT_BTN, color: '#ffffff', align: 'center' });
         btnObjs.push(btn);
     });
@@ -265,6 +268,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     yesBtn.setOrigin(0.5, 0.5);
     yesBtn.addText(yesText, { fontFamily: 'Arial', fontSize: _POPUP.FONT_YN, color: '#000000', align: 'center' });
     yesBtn.setDepth(_POPUP.DEPTH);
+    yesBtn.setScrollFactor(0);
     yesBtn.setScale(0.7);
 
     closeBtn = new Button({
@@ -280,6 +284,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     });
     closeBtn.setOrigin(0.5, 0.5);
     closeBtn.setDepth(_POPUP.DEPTH);
+    closeBtn.setScrollFactor(0);
 
     const itemsToDestroy = [closeBtn, null, yesBtn, darkBG, dieClickBlocker, newText, descText, popupBG];
 
@@ -300,6 +305,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     noBtn.setOrigin(0.5, 0.5);
     noBtn.addText(noText, { fontFamily: 'Arial', fontSize: _POPUP.FONT_YN, color: '#000000', align: 'center' });
     noBtn.setDepth(_POPUP.DEPTH);
+    noBtn.setScrollFactor(0);
     noBtn.setScale(0.7);
 
     return itemsToDestroy;

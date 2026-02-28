@@ -40,6 +40,7 @@ Object.assign(helper, {
                 },
                 onMouseUp: function() {}
             });
+            globalObjects.clickBlocker.setScrollFactor(0);
         } else {
             globalObjects.clickBlocker.setState(NORMAL);
             globalObjects.clickBlocker.setOnMouseUpFunc(function() {});
