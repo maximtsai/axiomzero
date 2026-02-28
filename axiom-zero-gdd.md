@@ -141,7 +141,7 @@ The game operates between four primary states: Combat, Iteration Over, Transitio
 
 **END ITERATION:** Clicking this button immediately secures all resources collected during the session and transitions to the Iteration Over Phase. This button is present from the first wave onward.
 
-**Enemy spawning:** Enemies spawn from 60px outside the screen edges at random positions along all four edges. Upon spawning, each enemy moves in a straight fixed-path line directly toward the tower at the center of the screen. Enemies can overlap one another — there is no collision detection between enemies.
+**Enemy spawning:** Enemies spawn 900px from the center of the screen at random angles. Upon spawning, each enemy moves in a straight fixed-path line directly toward the tower at the center of the screen. Enemies can overlap one another — there is no collision detection between enemies.
 
 ### 7.2 Iteration Over Phase
 
@@ -326,7 +326,7 @@ Each boss has a single, distinct behavioral identity referencing its Tier's narr
 
 ## 13. ENEMIES
 
-Geometric forms rendered in hostile colors (red-violet, harsh white, acidic yellow). Upon spawning 60px outside the screen edge at a random position, each enemy moves in a straight fixed-path line directly toward the tower. No pathfinding. No collision detection between enemies — they can fully overlap.
+Geometric forms rendered in hostile colors (red-violet, harsh white, acidic yellow). Upon spawning 900px from the center of the screen at a random angle, each enemy moves in a straight fixed-path line directly toward the tower. No pathfinding. No collision detection between enemies — they can fully overlap.
 
 No health bars are displayed over enemies. Damage is communicated through visual degradation: cracking geometry, flickering fill color. Damage numbers from enemy attacks render in **VCR.ttf**.
 
@@ -477,7 +477,7 @@ Optional modifiers:
 - **Glow effects:** Traditional sprite methods only (pre-rendered glow sprites, additive blending on layered sprites). The Phaser FX pipeline is not used anywhere in the codebase.
 - **Depth/layering:** All game objects use flat depth values via `setDepth()`. Phaser Containers are not used anywhere in the codebase.
 - **Enemy collision:** No collision detection between enemies. Enemies may fully overlap one another.
-- **Enemy spawning:** Enemies spawn 60px outside the screen edges at random positions. They then travel in a straight fixed-path line directly to the tower. No dynamic pathfinding.
+- **Enemy spawning:** Enemies spawn 900px from the center of the screen at random angles. They then travel in a straight fixed-path line directly to the tower. No dynamic pathfinding.
 - **Performance:** Optimization for lower-end device compatibility is a consistent priority across all implementation phases.
 
 ---
@@ -489,7 +489,7 @@ Optional modifiers:
 - Font loading (all 5 fonts)
 - Loading screen (terminal style, progress-synced to actual load)
 - Player tower with sprite-based glow and breathe/pulse animation
-- Basic enemy spawning (60px off screen edges, random position, straight path to tower, no collision)
+- Basic enemy spawning (900px from center, random angle, straight path to tower, no collision)
 - Enemy visual degradation on damage
 - DATA drop (manual cursor collection, no decay)
 - Basic tower auto-attack

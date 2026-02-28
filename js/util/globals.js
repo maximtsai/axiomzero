@@ -47,7 +47,7 @@ const GAME_CONSTANTS = {
     EXP_TO_INSIGHT:   100,  // EXP needed to award 1 INSIGHT
 
     // Enemy — Basic type (Phase 1 only)
-    ENEMY_SPAWN_MARGIN:    60,    // px outside screen edge
+    ENEMY_SPAWN_DISTANCE:  900,    // px from center of screen
     ENEMY_BASE_HEALTH:     10,
     ENEMY_BASE_DAMAGE:     2,
     ENEMY_BASE_SPEED:      30,    // px/sec

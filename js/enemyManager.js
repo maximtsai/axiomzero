@@ -67,16 +67,11 @@ const enemyManager = (() => {
         const e = _getFromPool();
         if (!e) return; // pool exhausted
 
-        // Determine spawn position — random edge, 60px outside
-        const edge   = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
-        const margin = GAME_CONSTANTS.ENEMY_SPAWN_MARGIN;
-        let sx, sy;
-        switch (edge) {
-            case 0: sx = Math.random() * GAME_CONSTANTS.WIDTH;  sy = -margin; break;
-            case 1: sx = GAME_CONSTANTS.WIDTH + margin;          sy = Math.random() * GAME_CONSTANTS.HEIGHT; break;
-            case 2: sx = Math.random() * GAME_CONSTANTS.WIDTH;  sy = GAME_CONSTANTS.HEIGHT + margin; break;
-            case 3: sx = -margin;                                 sy = Math.random() * GAME_CONSTANTS.HEIGHT; break;
-        }
+        // Determine spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
+        const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
+        const angle = Math.random() * Math.PI * 2;
+        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
+        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
         // Scaling factor
         const scaleFactor = 1 + waveElapsed * GAME_CONSTANTS.ENEMY_SCALE_RATE;
@@ -164,14 +159,14 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 1;
+            const firstThreshold = 1.4;
             const secondThreshold = 0.8;
             if (waveElapsed < firstThreshold) {
-                spawnSpeedMultiplier = 8;
+                spawnSpeedMultiplier = 10;
             } else if (waveElapsed < firstThreshold + secondThreshold) {
                 // Linear interpolation from 5 to 1 over 0.8 seconds
                 const progress = (waveElapsed - firstThreshold) / secondThreshold;
-                spawnSpeedMultiplier = 8 - 7 * progress;
+                spawnSpeedMultiplier = 10 - 9 * progress;
             } else {
                 spawnSpeedMultiplier = 1;
             }
