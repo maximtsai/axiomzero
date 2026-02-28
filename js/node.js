@@ -42,6 +42,8 @@ class Node {
         this.costStep    = def.costStep    || 0;
         this.costType    = def.costType    || 'data';
         this.effect      = def.effect      || function() {};
+        this.popupText   = def.popupText   || null;
+        this.popupColor  = def.popupColor  || '#ffffff';
         this.parentId    = def.parentId    || null;
         this.childIds    = def.childIds    || [];
         this.treeX       = def.treeX       || 0;
@@ -167,6 +169,17 @@ class Node {
 
         // Apply effect
         this.effect(this.level);
+
+        // Floating text popup (if defined on this node)
+        if (this.popupText) {
+            const pos = tower.getPosition();
+            floatingText.show(
+                pos.x + (Math.random() - 0.5) * 100,
+                pos.y + (Math.random() - 0.5) * 100,
+                this.popupText,
+                { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 20 }
+            );
+        }
 
         // Check if maxed
         if (this.isMaxed()) {

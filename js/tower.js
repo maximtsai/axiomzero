@@ -89,8 +89,8 @@ const tower = (() => {
         const reinforceLv = ups.reinforce || 0;
         const sharpenLv   = ups.sharpen   || 0;
 
-        maxHealth      = GAME_CONSTANTS.TOWER_BASE_HEALTH * (1 + 0.25 * reinforceLv);
-        damage         = GAME_CONSTANTS.TOWER_BASE_DAMAGE * (1 + 0.25 * sharpenLv);
+        maxHealth      = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * reinforceLv;
+        damage         = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
         attackRange    = GAME_CONSTANTS.TOWER_ATTACK_RANGE;
         healthRegen    = GAME_CONSTANTS.TOWER_BASE_REGEN;
         attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN;

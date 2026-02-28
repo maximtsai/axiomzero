@@ -136,8 +136,8 @@ const customEmitters = (() => {
     // tower death 
     const towerDeathParams = {
         frame:    'white_pixel.png',
-        speed:    { min: 50, max: 250, ease: 'Cubic.easeOut' },
-        lifespan: { min: 400, max: 1400 },
+        speed:    { min: 100, max: 200, ease: 'Cubic.easeOut' },
+        lifespan: { min: 400, max: 1000 },
         scale:   { start: 25, end: 5, ease: 'Quad.easeIn' },
         alpha:    { start: 0.4, end: 0, ease: 'Quad.easeIn' },
         gravityY: 0,
@@ -147,7 +147,7 @@ const customEmitters = (() => {
     const _towerDeath = _make('pixels', towerDeathParams, GAME_CONSTANTS.DEPTH_TOWER + 2);
 
     function towerDeath(x, y) {
-        const count = 7;
+        const count = 8;
         const e = _towerDeath();
         e.explode(count, x, y);
     }

@@ -26,6 +26,9 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
 
+    // Floating text pool — requires PhaserScene, no other deps
+    floatingText.init(PhaserScene);
+
     // Core entities — no cross-deps at init time
     tower.init();
     enemyManager.init();
