@@ -88,7 +88,7 @@ const waveManager = (() => {
 
         // 6. Request tower shake — _onTowerShakeComplete fires when done
         messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
-        messageBus.publish('towerShakeRequested', 500);
+        messageBus.publish('towerShakeRequested', 400);
     }
 
     function _onTowerShakeComplete() {

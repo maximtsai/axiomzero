@@ -1,10 +1,10 @@
 // ─── Default state shape — all Phase 1 fields ───────────────────────────────
 const GAME_STATE_DEFAULTS = {
     // Tower
-    towerMaxHealth:   100,
-    towerDamage:      10,
+    towerMaxHealth:   20,
+    towerDamage:      6,
     towerAttackRange: 200,
-    towerHealthRegen: -2,   // HP/sec (negative = drain)
+    towerHealthRegen: -0.4,   // HP/sec (negative = drain)
 
     // Resources
     data:    0,

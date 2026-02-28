@@ -114,3 +114,26 @@ function tweenBounce(target, bounceHeight = 20, duration = 500, onComplete = nul
         }
     });
 }
+
+/**
+ * Zoom camera to a value and tween back to 1x zoom (impact punch effect).
+ *
+ * @param {number} val - Zoom multiplier (default 1.015)
+ * @param {function} onComplete
+ * @returns {Phaser.Tweens.Tween}
+ */
+function zoomShake(val = 1.015, onComplete = null) {
+    if (!PhaserScene || !PhaserScene.cameras.main) return null;
+    const camera = PhaserScene.cameras.main;
+    camera.setZoom(val);
+    return PhaserScene.tweens.add({
+        targets:  camera,
+        zoom:     1,
+        duration: 250,
+        ease:     'Cubic.easeOut',
+        onComplete: () => {
+            camera.setZoom(1);
+            if (onComplete) onComplete();
+        }
+    });
+}

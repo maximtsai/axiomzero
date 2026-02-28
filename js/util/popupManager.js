@@ -142,6 +142,86 @@ function showPopup({ title = '', body = '', buttons = [], depth = _POPUP.DEPTH, 
     return closePopup;
 }
 
+// ─── NineSlice popup variant ───────────────────────────────────────────────────
+//
+// showNineSlicePopup({ title, body, buttons, texture, atlas, cornerSize, width, height, depth, fast })
+//
+// Creates a popup with a nineslice-scaled background texture.
+// Default: popup.png from 'buttons' atlas with 50px corners, 460x200 size.
+//
+// Returns a closePopup() function.
+
+function showNineSlicePopup({ title = '', body = '', buttons = [], texture = 'popup.png', atlas = 'buttons', cornerSize = 50, width = 460, height = 200, depth = _POPUP.DEPTH, fast = false } = {}) {
+    const W = GAME_CONSTANTS.halfWidth;
+    const H = GAME_CONSTANTS.halfHeight;
+
+    // Dark overlay + click blocker
+    const darkBG  = _createDarkOverlay({
+        ref: 'white_pixel', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
+        tint: 0x000000, depth, targetAlpha: 0.75, duration: fast ? 1 : 60,
+    });
+    const blocker = _createFullscreenBlocker(depth);
+
+    // Popup box with nineslice background
+    const popupBG = PhaserScene.add.nineslice(W, H - 10, atlas, texture, width, height, cornerSize, cornerSize, cornerSize, cornerSize);
+    popupBG.setDepth(depth + 1).setAlpha(0);
+    PhaserScene.tweens.add({ targets: popupBG, alpha: 1, ease: 'Back.easeOut', duration: fast ? 1 : 220 });
+
+    // Title
+    const titleObj = PhaserScene.add.text(W, H - 10 - height * 0.5 + 32, title, {
+        fontFamily: 'Arial', fontSize: _POPUP.FONT_TITLE, color: '#ffffff',
+        fontStyle: 'bold', align: 'center',
+    }).setOrigin(0.5, 0.5).setDepth(depth + 2).setAlpha(0);
+
+    // Body
+    const bodyObj = PhaserScene.add.text(W, H - 10, body, {
+        fontFamily: 'Arial', fontSize: _POPUP.FONT_BODY, color: '#cccccc',
+        align: 'center', wordWrap: { width: width - 48 },
+    }).setOrigin(0.5, 0.5).setDepth(depth + 2).setAlpha(0);
+
+    PhaserScene.tweens.add({ targets: [titleObj, bodyObj], alpha: 1, ease: 'Cubic.easeOut', duration: fast ? 1 : 220 });
+
+    const btnObjs = [];
+
+    function closePopup() {
+        darkBG.destroy();
+        popupBG.destroy();
+        titleObj.destroy();
+        bodyObj.destroy();
+        blocker.destroy();
+        btnObjs.forEach(b => b.destroy());
+    }
+
+    // Layout buttons evenly
+    const n      = buttons.length;
+    const totalW = n * _POPUP.BTN_W + (n - 1) * _POPUP.BTN_GAP;
+    const startX = W - totalW / 2 + _POPUP.BTN_W / 2;
+    const BTN_Y  = H + 70;
+
+    buttons.forEach((def, i) => {
+        const bx         = startX + i * (_POPUP.BTN_W + _POPUP.BTN_GAP);
+        const tintNormal = def.primary ? 0x2c5282 : 0x2d3748;
+        const tintHover  = def.primary ? 0x3a6ba8 : 0x4a5568;
+        const tintPress  = def.primary ? 0x1a3561 : 0x1a202c;
+
+        const btn = new Button({
+            normal:  { ref: 'white_pixel', x: bx, y: BTN_Y, scaleX: _POPUP.BTN_W, scaleY: _POPUP.BTN_H, tint: tintNormal },
+            hover:   { tint: tintHover },
+            press:   { tint: tintPress },
+            disable: { alpha: 0 },
+            onMouseUp: () => {
+                closePopup();
+                if (def.onClick) def.onClick();
+            }
+        });
+        btn.setDepth(depth + 2);
+        btn.addText(def.text, { fontFamily: 'Arial', fontSize: _POPUP.FONT_BTN, color: '#ffffff', align: 'center' });
+        btnObjs.push(btn);
+    });
+
+    return closePopup;
+}
+
 // ─── Yes / No convenience wrapper ─────────────────────────────────────────────
 
 function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', onYes = () => {}, superFast = false) {

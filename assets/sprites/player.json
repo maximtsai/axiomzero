@@ -4,30 +4,130 @@
 			"image": "player-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 250,
-				"h": 572
+				"w": 495,
+				"h": 523
 			},
 			"scale": 1,
 			"frames": [
+				{
+					"filename": "range.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 400,
+						"h": 400
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 400,
+						"h": 400
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 400,
+						"h": 400
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
 				{
 					"filename": "tower3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 149,
-						"h": 149
+						"w": 119,
+						"h": 119
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 149,
-						"h": 149
+						"w": 119,
+						"h": 119
 					},
 					"frame": {
 						"x": 1,
+						"y": 403,
+						"w": 119,
+						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 119,
+						"h": 119
+					},
+					"frame": {
+						"x": 122,
+						"y": 403,
+						"w": 119,
+						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 119,
+						"h": 119
+					},
+					"frame": {
+						"x": 243,
+						"y": 403,
+						"w": 119,
+						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 91,
+						"h": 91
+					},
+					"frame": {
+						"x": 403,
 						"y": 1,
-						"w": 149,
-						"h": 149
+						"w": 91,
+						"h": 91
 					},
 					"anchor": {
 						"x": 0.5,
@@ -39,20 +139,45 @@
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 133,
-						"h": 133
+						"w": 106,
+						"h": 106
 					},
 					"spriteSourceSize": {
-						"x": 18,
-						"y": 8,
-						"w": 97,
-						"h": 120
+						"x": 14,
+						"y": 6,
+						"w": 78,
+						"h": 96
 					},
 					"frame": {
-						"x": 152,
-						"y": 1,
-						"w": 97,
-						"h": 120
+						"x": 403,
+						"y": 94,
+						"w": 78,
+						"h": 96
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 13,
+						"w": 93,
+						"h": 93
+					},
+					"frame": {
+						"x": 364,
+						"y": 403,
+						"w": 93,
+						"h": 93
 					},
 					"anchor": {
 						"x": 0.5,
@@ -74,35 +199,10 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 152,
-						"y": 123,
+						"x": 403,
+						"y": 192,
 						"w": 63,
 						"h": 64
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower4.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 149,
-						"h": 149
-					},
-					"frame": {
-						"x": 1,
-						"y": 152,
-						"w": 149,
-						"h": 149
 					},
 					"anchor": {
 						"x": 0.5,
@@ -124,8 +224,8 @@
 						"h": 63
 					},
 					"frame": {
-						"x": 152,
-						"y": 189,
+						"x": 403,
+						"y": 258,
 						"w": 63,
 						"h": 63
 					},
@@ -149,85 +249,10 @@
 						"h": 59
 					},
 					"frame": {
-						"x": 152,
-						"y": 254,
+						"x": 403,
+						"y": 323,
 						"w": 59,
 						"h": 59
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower5.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 149,
-						"h": 149
-					},
-					"frame": {
-						"x": 1,
-						"y": 303,
-						"w": 149,
-						"h": 149
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 117,
-						"h": 117
-					},
-					"frame": {
-						"x": 1,
-						"y": 454,
-						"w": 117,
-						"h": 117
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 17,
-						"y": 17,
-						"w": 115,
-						"h": 115
-					},
-					"frame": {
-						"x": 120,
-						"y": 454,
-						"w": 115,
-						"h": 115
 					},
 					"anchor": {
 						"x": 0.5,
@@ -240,6 +265,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:4bbe64448f224d373fb1d10b89327995:5ebdcef2a90cfd921497f39c84e45252:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:1f7270f6ae9b907fcd545876087fc656:dd325fddb663024714b86cd755d21a35:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

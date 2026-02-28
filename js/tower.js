@@ -14,6 +14,7 @@ const tower = (() => {
     // ── tower visuals (post-awaken) ──────────────────────────────────────────
     let sprite      = null;
     let glowSprite  = null;
+    let rangeSprite = null;  // Range indicator circle below tower
     let breatheTween = null;
 
     // ── runtime combat state (not persisted — reset each session) ────────────
@@ -34,6 +35,56 @@ const tower = (() => {
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
+    /** Updates range sprite scale and plays awakening animation tweens. */
+    function _updateRangeSprite(newScale) {
+        if (!rangeSprite) return;
+
+        // Kill existing tweens on rangeSprite to prevent conflicts
+        PhaserScene.tweens.killTweensOf(rangeSprite);
+
+        // Alpha animation: dim → full → bright → back to dim
+        PhaserScene.tweens.add({
+            targets:  rangeSprite,
+            alpha:    0.25,
+            duration: 450,
+            ease:     'Cubic.easeOut',
+            completeDelay: 100,
+            onComplete: () => {
+
+            },
+        });
+
+        // Scale animation
+        PhaserScene.tweens.add({
+            targets:  rangeSprite,
+            scaleX:   newScale * 1.1,
+            scaleY:   newScale * 1.1,
+            duration: 550,
+            ease:     'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets:  rangeSprite,
+                    scaleX:   newScale,
+                    scaleY:   newScale,
+                    duration: 400,
+                    easeParams:[4],
+                    ease:     'Back.easeIn',
+                    onComplete: () => {
+                        // add a tiny brief zoom in here
+                        zoomShake();
+                        rangeSprite.setAlpha(1);
+                        PhaserScene.tweens.add({
+                            targets:  rangeSprite,
+                            alpha:    0.25,
+                            duration: 1400,
+                            ease:     'Quart.easeOut',
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     function _recalcStats() {
         const ups = gameState.upgrades || {};
         const reinforceLv = ups.reinforce || 0;
@@ -51,6 +102,7 @@ const tower = (() => {
         const targets = [];
         if (sprite)       targets.push(sprite);
         if (glowSprite)   targets.push(glowSprite);
+        if (rangeSprite)  targets.push(rangeSprite);
         if (sparkleSprite) targets.push(sparkleSprite);
         if (targets.length === 0) return;
 
@@ -126,6 +178,9 @@ const tower = (() => {
         if (sparkleTween)  { sparkleTween.stop(); sparkleTween = null; }
         if (sparkleSprite) { sparkleSprite.destroy(); sparkleSprite = null; }
 
+        // Clean up any existing range sprite (safety check)
+        if (rangeSprite) { rangeSprite.destroy(); rangeSprite = null; }
+
         // Glow layer — additive blend, slightly larger, pulses
         glowSprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
         glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
@@ -137,6 +192,15 @@ const tower = (() => {
         // Main tower sprite
         sprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
         sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+
+        // Range indicator — positioned below tower, scaled to represent attack range
+        // Plays awakening animation via _updateRangeSprite()
+        const rangeScale = attackRange / 200;  // 200 = base range for 400x400 sprite
+        rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
+        rangeSprite.setDepth(50);  // Below enemies (100) and tower (200), above background
+        rangeSprite.setAlpha(0.25 / 3);
+        rangeSprite.setScale(rangeScale * 0.2);
+        _updateRangeSprite(rangeScale);
 
         // Breathe / pulse tween on glow
         breatheTween = PhaserScene.tweens.add({
@@ -197,6 +261,8 @@ const tower = (() => {
         alive        = false;
         active       = false;
         isInvincible = false;
+        // Clean up range sprite
+        if (rangeSprite) { rangeSprite.destroy(); rangeSprite = null; }
         messageBus.publish('towerDied');
         debugLog('Tower destroyed');
     }
@@ -213,49 +279,60 @@ const tower = (() => {
     function setVisible(vis) {
         if (sprite)       sprite.setVisible(vis);
         if (glowSprite)   glowSprite.setVisible(vis);
+        if (rangeSprite)  rangeSprite.setVisible(vis);
         if (sparkleSprite) sparkleSprite.setVisible(vis);
     }
 
     function setPosition(x, y) {
         if (sprite)       sprite.setPosition(x, y);
         if (glowSprite)   glowSprite.setPosition(x, y);
+        if (rangeSprite)  rangeSprite.setPosition(x, y);  // 80px below tower
         if (sparkleSprite) sparkleSprite.setPosition(x, y);
     }
 
     /**
-     * Violently shake the tower left/right for `duration` ms, then call onComplete.
+     * Shake the tower left/right for `duration` ms with damping effect.
+     * Starts at full intensity, gradually dies down over time.
      * Elevates sprite depths above the death overlay so the tower stays visible.
      */
     function shake(duration, onComplete) {
         const targets = [];
         if (sprite)        targets.push(sprite);
         if (glowSprite)    targets.push(glowSprite);
+        if (rangeSprite)   targets.push(rangeSprite);
         if (sparkleSprite) targets.push(sparkleSprite);
         if (targets.length === 0) { if (onComplete) onComplete(); return; }
 
         // Elevate above death overlay
         if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
         if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (rangeSprite)   rangeSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
         if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
 
         const origX = targets[0].x;
+        const stepDuration = duration / 5;
 
-        // 5 full oscillations in `duration` ms: each direction change = duration/10
-        PhaserScene.tweens.add({
-            targets,
-            x: { from: origX - 10, to: origX + 10 },
-            duration: duration / 10,
-            yoyo: true,
-            repeat: 4,
-            ease: 'Linear',
-            onComplete: () => {
-                // Snap back to original x and restore normal depths
-                for (let i = 0; i < targets.length; i++) { targets[i].x = origX; }
-                if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-                if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
-                if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-                if (onComplete) onComplete();
-            },
+        // 5 sequential oscillations with decreasing amplitude (damping effect)
+        const amplitudes = [14, 10, 7, 4, 2];
+        amplitudes.forEach((amp, index) => {
+            const isLastOscillation = index === amplitudes.length - 1;
+            PhaserScene.tweens.add({
+                targets,
+                x: { from: origX - amp, to: origX + amp },
+                duration: stepDuration,
+                yoyo: true,
+                delay: index * stepDuration,
+                ease: 'Linear',
+                onComplete: isLastOscillation ? () => {
+                    // Snap back and restore normal depths
+                    for (let i = 0; i < targets.length; i++) { targets[i].x = origX; }
+                    if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                    if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
+                    if (rangeSprite)   rangeSprite.setDepth(50);
+                    if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                    if (onComplete) onComplete();
+                } : undefined,
+            });
         });
     }
 
@@ -321,6 +398,11 @@ const tower = (() => {
 
     function _onUpgradePurchased() {
         _recalcStats();
+        // Update range sprite scale and animation to match new tower range
+        if (rangeSprite) {
+            const rangeScale = attackRange / 200;  // 200 = base range for 400x400 sprite
+            _updateRangeSprite(rangeScale);
+        }
         // If between waves, refresh health to new max
         if (!active) {
             health = maxHealth;

@@ -21,9 +21,12 @@ function createOptionsButton(x, y) {
             y: y
         },
         onMouseUp: function() {
-            showPopup({
+            showNineSlicePopup({
                 title: 'Options',
                 body: '',
+                texture: 'popup.png',
+                atlas: 'buttons',
+                cornerSize: 50,
                 buttons: [
                     { text: 'Close', onClick: function() {
                         console.log("close");

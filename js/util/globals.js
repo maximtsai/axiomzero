@@ -35,7 +35,7 @@ const GAME_CONSTANTS = {
     // Tower
     TOWER_BASE_HEALTH:      20,
     TOWER_BASE_DAMAGE:      6,
-    TOWER_ATTACK_RANGE:     350,
+    TOWER_ATTACK_RANGE:     250,
     TOWER_ATTACK_COOLDOWN:  1000,   // ms between auto-attacks
     TOWER_BASE_REGEN:       -0.4,     // HP/sec (negative = drain)
 
