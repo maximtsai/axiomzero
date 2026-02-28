@@ -60,6 +60,12 @@ class Node {
         this.btn        = null;
         this.label      = null;
         this.hoverGroup = null; // array of Phaser objects for hover tooltip
+
+        // Fadeout sprite effect
+        this.fadeoutSprite = null;
+        this.fadeoutTween = null;
+        this.lastVisualState = NODE_STATE.HIDDEN;
+        this.lastSpriteRef = null;
     }
 
     // ── cost calculation ─────────────────────────────────────────────────
@@ -221,6 +227,12 @@ class Node {
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2);
 
+        // Fadeout sprite — overlays button, starts invisible
+        this.fadeoutSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_ghost.png')
+            .setOrigin(0.5, 0.5)
+            .setAlpha(0)
+            .setDepth(nodeDepth + 1);
+
         this._updateVisual();
     }
 
@@ -234,11 +246,19 @@ class Node {
         if (!this.btn) return;
         this._hideHover(); // Clear any lingering tooltip when state changes
 
+        // Trigger fadeout if state changed
+        if (this.lastVisualState !== this.state && this.lastSpriteRef) {
+            this._playFadeoutAnimation(this.lastSpriteRef);
+        }
+
+        let currentSpriteRef;
+
         switch (this.state) {
             case NODE_STATE.HIDDEN:
                 this.btn.setVisible(false);
                 this.btn.setState(DISABLE);
                 if (this.label) this.label.setVisible(false);
+                currentSpriteRef = null;
                 break;
 
             case NODE_STATE.GHOST:
@@ -251,6 +271,7 @@ class Node {
                     this.label.setVisible(true);
                     this.label.setAlpha(0.25);
                 }
+                currentSpriteRef = 'node_ghost.png';
                 break;
 
             case NODE_STATE.UNLOCKED:
@@ -261,8 +282,10 @@ class Node {
                 // Show disabled appearance when unaffordable, but hover still works
                 if (this.canAfford()) {
                     this.btn.setState(NORMAL);
+                    currentSpriteRef = 'node_unlocked.png';
                 } else {
                     this.btn.setState(DISABLE);
+                    currentSpriteRef = 'node_unlocked_disabled.png';
                 }
                 if (this.label) {
                     this.label.setVisible(true);
@@ -282,8 +305,40 @@ class Node {
                     this.label.setAlpha(0.8);
                     this.label.setColor('#ffe600');
                 }
+                currentSpriteRef = 'node_maxed.png';
                 break;
         }
+
+        // Store current sprite for next state change
+        this.lastSpriteRef = currentSpriteRef;
+        this.lastVisualState = this.state;
+    }
+
+    // ── fadeout animation ───────────────────────────────────────────────
+
+    _playFadeoutAnimation(spriteRef) {
+        // Stop any existing tween
+        if (this.fadeoutTween) {
+            this.fadeoutTween.stop();
+            this.fadeoutTween = null;
+        }
+
+        if (!this.fadeoutSprite || !spriteRef) return;
+
+        // Set fadeout sprite to the old sprite and make it visible
+        this.fadeoutSprite.setTexture('buttons', spriteRef);
+        this.fadeoutSprite.setAlpha(1);
+
+        // Tween to alpha 0 over 0.5 seconds
+        this.fadeoutTween = PhaserScene.tweens.add({
+            targets: this.fadeoutSprite,
+            alpha: 0,
+            duration: 500,
+            ease: 'Linear',
+            onComplete: () => {
+                this.fadeoutTween = null;
+            }
+        });
     }
 
     // ── hover tooltip ────────────────────────────────────────────────────
@@ -375,6 +430,14 @@ class Node {
 
     destroy() {
         this._hideHover();
+        if (this.fadeoutTween) {
+            this.fadeoutTween.stop();
+            this.fadeoutTween = null;
+        }
+        if (this.fadeoutSprite) {
+            this.fadeoutSprite.destroy();
+            this.fadeoutSprite = null;
+        }
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.label) { this.label.destroy(); this.label = null; }
     }

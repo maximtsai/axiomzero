@@ -47,9 +47,9 @@ const GAME_CONSTANTS = {
     ENEMY_SPAWN_MARGIN:    60,    // px outside screen edge
     ENEMY_BASE_HEALTH:     10,
     ENEMY_BASE_DAMAGE:     2,
-    ENEMY_BASE_SPEED:      60,    // px/sec
+    ENEMY_BASE_SPEED:      30,    // px/sec
     ENEMY_CONTACT_RADIUS:  30,    // px — deals damage & dies when this close to tower
-    ENEMY_SPAWN_INTERVAL:  1500,  // ms between spawns
+    ENEMY_SPAWN_INTERVAL:  1000,  // ms between spawns
     ENEMY_SCALE_RATE:      0.02,  // health/damage multiplier increase per second
 
     // DATA drops

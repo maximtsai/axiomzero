@@ -15,6 +15,7 @@ const enemyManager = (() => {
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
     let waveElapsed = 0;    // seconds since wave start — drives scaling
+    let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -155,10 +156,23 @@ const enemyManager = (() => {
         if (spawning) {
             waveElapsed += dt;
 
+            // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
+            const firstThreshold = 1.2;
+            const secondThreshold = 0.6;
+            if (waveElapsed < firstThreshold) {
+                spawnSpeedMultiplier = 5;
+            } else if (waveElapsed < firstThreshold + secondThreshold) {
+                // Linear interpolation from 5 to 1 over 0.6 seconds
+                const progress = (waveElapsed - firstThreshold) / secondThreshold;
+                spawnSpeedMultiplier = 5 - 4 * progress;
+            } else {
+                spawnSpeedMultiplier = 1;
+            }
+
             // Spawn timer
             spawnTimer += delta;
-            if (spawnTimer >= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL) {
-                spawnTimer -= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL;
+            if (spawnTimer >= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier) {
+                spawnTimer -= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier;
                 _spawnOne();
             }
         }
@@ -172,7 +186,7 @@ const enemyManager = (() => {
             const e = activeEnemies[i];
             if (!e || !e.alive) continue;
 
-            e.update(dt);
+            e.update(dt * spawnSpeedMultiplier);
 
             // Tower contact check
             const dx = e.x - tPos.x;

@@ -57,8 +57,8 @@ const tower = (() => {
         // Scale animation
         PhaserScene.tweens.add({
             targets:  rangeSprite,
-            scaleX:   newScale * 1.1,
-            scaleY:   newScale * 1.1,
+            scaleX:   newScale * 1.14,
+            scaleY:   newScale * 1.14,
             duration: 550,
             ease:     'Cubic.easeOut',
             onComplete: () => {
@@ -66,9 +66,8 @@ const tower = (() => {
                     targets:  rangeSprite,
                     scaleX:   newScale,
                     scaleY:   newScale,
-                    duration: 400,
-                    easeParams:[4],
-                    ease:     'Back.easeIn',
+                    duration: 350,
+                    ease:     'Cubic.easeIn',
                     onComplete: () => {
                         // add a tiny brief zoom in here
                         zoomShake();
@@ -313,7 +312,7 @@ const tower = (() => {
         const stepDuration = duration / 5;
 
         // 5 sequential oscillations with decreasing amplitude (damping effect)
-        const amplitudes = [14, 10, 7, 4, 2];
+        const amplitudes = [16, 12, 8, 5, 2];
         amplitudes.forEach((amp, index) => {
             const isLastOscillation = index === amplitudes.length - 1;
             PhaserScene.tweens.add({
