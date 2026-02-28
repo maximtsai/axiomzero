@@ -37,7 +37,7 @@ const enemyManager = (() => {
     function startSpawning() {
         spawning = true;
         frozen = false;
-        spawnTimer = 0;
+        spawnTimer = -1;
         waveElapsed = 0;
     }
 
@@ -165,21 +165,22 @@ const enemyManager = (() => {
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
             const firstThreshold = 1;
-            const secondThreshold = 0.6;
+            const secondThreshold = 0.8;
             if (waveElapsed < firstThreshold) {
-                spawnSpeedMultiplier = 6;
+                spawnSpeedMultiplier = 8;
             } else if (waveElapsed < firstThreshold + secondThreshold) {
-                // Linear interpolation from 5 to 1 over 0.6 seconds
+                // Linear interpolation from 5 to 1 over 0.8 seconds
                 const progress = (waveElapsed - firstThreshold) / secondThreshold;
-                spawnSpeedMultiplier = 6 - 5 * progress;
+                spawnSpeedMultiplier = 8 - 7 * progress;
             } else {
                 spawnSpeedMultiplier = 1;
             }
 
             // Spawn timer
             spawnTimer += delta;
-            if (spawnTimer >= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier) {
-                spawnTimer -= GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier;
+            const trueSpawnInterval = GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier
+            if (spawnTimer >= trueSpawnInterval) {
+                spawnTimer -= trueSpawnInterval;
                 _spawnOne();
             }
         }
