@@ -19,6 +19,9 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
     const group = {
         add: (gameObject) => {
+            // Auto-clean any dead references to prevent memory leaks from destroyed objects
+            children = children.filter(c => c.ref && c.ref.scene);
+
             children.push({
                 ref: gameObject,
                 offsetX: gameObject.x - _x,

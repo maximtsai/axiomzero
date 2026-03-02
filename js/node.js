@@ -260,6 +260,14 @@ class Node {
             .setDepth(nodeDepth + 1)
             .setScrollFactor(0);
 
+        const treeGroup = neuralTree.getGroup();
+        if (treeGroup) {
+            treeGroup.add(this.btn.getContainer ? this.btn.getContainer() : this.btn);
+            if (this.iconSprite) treeGroup.add(this.iconSprite);
+            if (this.label) treeGroup.add(this.label);
+            treeGroup.add(this.fadeoutSprite);
+        }
+
         this._updateVisual();
     }
 
@@ -387,6 +395,7 @@ class Node {
         const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
         const bgWidth = 300;
         const bgHeight = 138;
+        const treeGroup = neuralTree.getGroup();
 
         this.hoverGroup = [];
 

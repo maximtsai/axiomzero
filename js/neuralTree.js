@@ -14,6 +14,7 @@ const neuralTree = (() => {
     let titleText = null;
     let deployBtn = null;
     let lines = [];  // Phaser Graphics lines connecting parent → child
+    let treeGroup = null;
 
     let visible = false;
 
@@ -24,6 +25,8 @@ const neuralTree = (() => {
     // ── init ─────────────────────────────────────────────────────────────
 
     function init() {
+        treeGroup = createVirtualGroup(PhaserScene, 0, 0);
+
         _createPanel();
         _createNodes();
         _createDeployButton();
@@ -42,7 +45,10 @@ const neuralTree = (() => {
         panelBg.setAlpha(0.9);
         panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
         panelBg.setScrollFactor(0);
+        // Flat depth layering (scrollFactor(0)) keeps UI elements fixed and reduces rendering overhead, improving performance.
+
         panelBg.setVisible(false);
+        treeGroup.add(panelBg);
 
         // Title
         titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
@@ -51,6 +57,8 @@ const neuralTree = (() => {
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5).setScrollFactor(0).setVisible(false);
+
+        treeGroup.add(titleText);
     }
 
     function _createNodes() {
@@ -150,6 +158,8 @@ const neuralTree = (() => {
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
+        // Virtual group handles tracking positions relative to master
+        treeGroup.add(deployBtn.getContainer ? deployBtn.getContainer() : deployBtn); // Note: Button doesn't expose container generally, maybe add multiple
     }
 
     // ── show / hide ──────────────────────────────────────────────────────
@@ -234,6 +244,8 @@ const neuralTree = (() => {
 
                 // Fixed to screen (not affected by camera scroll)
                 line.setScrollFactor(0);
+
+                treeGroup.add(line);
             }
         }
     }
@@ -297,5 +309,7 @@ const neuralTree = (() => {
         }
     }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton };
+    function getGroup() { return treeGroup; }
+
+    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, getGroup };
 })();
