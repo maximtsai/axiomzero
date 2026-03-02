@@ -1,6 +1,6 @@
 /**
  * @fileoverview Draggable horizontal slider UI component.
- * Built on top of Button and messageBus for input handling.
+ * Uses Button for the hit area and Phaser's native input for drag tracking.
  * @module slider
  *
  * Usage:
@@ -31,15 +31,16 @@ class Slider {
 
         this.isDragging = false;
 
-        this._onPointerMove = (mx, my) => this._updateKnob(mx);
-        this._onPointerUp = () => this._endDrag();
+        // Bind once so we can cleanly add/remove Phaser input listeners
+        this._boundMove = (pointer) => this._updateKnob(pointer.x);
+        this._boundUp = () => this._endDrag();
     }
 
     _startDrag(mx) {
         this.isDragging = true;
         this._updateKnob(mx);
-        messageBus.subscribe('pointerMove', this._onPointerMove);
-        messageBus.subscribe('pointerUp', this._onPointerUp);
+        PhaserScene.input.on('pointermove', this._boundMove);
+        PhaserScene.input.on('pointerup', this._boundUp);
     }
 
     _updateKnob(mx) {
@@ -50,8 +51,8 @@ class Slider {
     _endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;
-        messageBus.unsubscribe('pointerMove', this._onPointerMove);
-        messageBus.unsubscribe('pointerUp', this._onPointerUp);
+        PhaserScene.input.off('pointermove', this._boundMove);
+        PhaserScene.input.off('pointerup', this._boundUp);
         const value = (this.knob.x - this.minX) / this.width;
         if (this.onChange) this.onChange(value);
     }
