@@ -100,7 +100,7 @@ class Button {
 
     setState(newState) {
         let stateData;
-        switch(newState) {
+        switch (newState) {
             case NORMAL:
                 stateData = this.normal;
                 break;
@@ -367,6 +367,27 @@ class Button {
 
     getYPos() {
         return this.normal.y;
+    }
+
+    get x() {
+        return this.getXPos();
+    }
+
+    set x(value) {
+        this.setPos(value, undefined);
+    }
+
+    get y() {
+        return this.getYPos();
+    }
+
+    set y(value) {
+        this.setPos(undefined, value);
+    }
+
+    setPosition(x, y) {
+        this.setPos(x, y);
+        return this;
     }
 
     getWidth() {

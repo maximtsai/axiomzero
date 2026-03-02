@@ -97,22 +97,19 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 45,
-                depth: depth + 3,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 45,
-                depth: depth + 3,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 45,
-                depth: depth + 3,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
@@ -120,9 +117,10 @@ const gameHUD = (() => {
         });
         endIterationBtn.addText('END ITERATION', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '14px',
+            fontSize: '18px',
             color: '#ffffff',
         });
+        endIterationBtn.setDepth(depth + 3);
         endIterationBtn.setScrollFactor(0);
 
         // ── Progress bar ──
@@ -130,9 +128,9 @@ const gameHUD = (() => {
             x: GAME_CONSTANTS.halfWidth,
             y: GAME_CONSTANTS.HEIGHT - 25,
             width: GAME_CONSTANTS.WIDTH - 50,
-            height: 38,
+            height: 36,
             padding: 8,
-            bgColor: 0x111122,
+            bgColor: 0x222233,
             fillColor: 0x00f5ff,
             depth: depth
         });

@@ -121,7 +121,7 @@ const neuralTree = (() => {
             }
         }
         // Redraw lines to reflect new child states
-        _drawLines();
+        _updateLines();
     }
 
     function _createDeployButton() {
@@ -131,21 +131,18 @@ const neuralTree = (() => {
                 atlas: 'buttons',
                 x: PANEL_W - 100,
                 y: GAME_CONSTANTS.HEIGHT - 63,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: PANEL_W - 100,
                 y: GAME_CONSTANTS.HEIGHT - 63,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: PANEL_W - 100,
                 y: GAME_CONSTANTS.HEIGHT - 63,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5,
             },
             onMouseUp: _onDeployClicked,
         });
@@ -154,6 +151,7 @@ const neuralTree = (() => {
             fontSize: '22px',
             color: '#ffffff',
         });
+        deployBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5);
         deployBtn.setScrollFactor(0);
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
@@ -185,7 +183,7 @@ const neuralTree = (() => {
             deployBtn.setState(NORMAL);
         }
 
-        _drawLines();
+        _updateLines();
     }
 
     function hide() {
@@ -197,64 +195,64 @@ const neuralTree = (() => {
         for (const id in nodes) {
             nodes[id].setVisible(false);
         }
-        _clearLines();
+        _hideLines();
     }
 
-    function _drawLines() {
-        _clearLines();
+    function _updateLines() {
+        // Create lines if they don't exist yet
+        if (lines.length === 0) {
+            for (const id in nodes) {
+                const n = nodes[id];
+                if (n.parentId && nodes[n.parentId]) {
+                    const p = nodes[n.parentId];
 
-        for (const id in nodes) {
-            const n = nodes[id];
-            if (n.state === NODE_STATE.HIDDEN) continue;
-            if (n.parentId && nodes[n.parentId]) {
-                const p = nodes[n.parentId];
-                if (p.state === NODE_STATE.HIDDEN) continue;
+                    const px = p.treeX;
+                    const py = p.treeY;
+                    const cx = n.treeX;
+                    const cy = n.treeY;
 
-                // Create white pixel sprite line
-                const px = p.treeX;
-                const py = p.treeY;
-                const cx = n.treeX;
-                const cy = n.treeY;
+                    const dx = cx - px;
+                    const dy = cy - py;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) + 1.57;
 
-                const dx = cx - px;
-                const dy = cy - py;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const angle = Math.atan2(dy, dx) + 1.57;
+                    const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+                    line.setScale(1.5, distance / 2);
+                    line.setOrigin(0.5, 1);
+                    line.setRotation(angle);
+                    line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+                    line.setScrollFactor(0);
 
-                // White pixel sprite, 2×2 in size
-                const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+                    // Attach id data so we know who this line belongs to
+                    line.childId = id;
+                    line.parentId = n.parentId;
 
-                // Scale: 3px wide (from 2×2 original → 1.5×), distance tall
-                line.setScale(1.5, distance / 2);
+                    lines.push(line);
+                    treeGroup.add(line);
+                }
+            }
+        }
 
-                // Position at parent, origin at left-center
-                line.setOrigin(0.5, 1);
+        // Update their visual states based on the current nodes' states
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const p = nodes[line.parentId];
+            const n = nodes[line.childId];
 
-                // Rotate to point from parent to child
-                line.setRotation(angle);
-
-                // Depth behind nodes (nodes are at +1, labels at +2)
-                line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
-
-                // Alpha based on child state
+            if (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN) {
+                line.setVisible(false);
+            } else {
+                line.setVisible(true);
                 const alpha = n.state === NODE_STATE.GHOST ? 0.6 : 1.0;
                 line.setAlpha(alpha);
-
-                lines.push(line);
-
-                // Fixed to screen (not affected by camera scroll)
-                line.setScrollFactor(0);
-
-                treeGroup.add(line);
             }
         }
     }
 
-    function _clearLines() {
+    function _hideLines() {
         for (let i = 0; i < lines.length; i++) {
-            lines[i].destroy();
+            lines[i].setVisible(false);
         }
-        lines.length = 0;
     }
 
     // ── events ───────────────────────────────────────────────────────────
