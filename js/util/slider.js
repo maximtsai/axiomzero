@@ -1,3 +1,11 @@
+/**
+ * @fileoverview Draggable horizontal slider UI component.
+ * Built on top of Button and messageBus for input handling.
+ * @module slider
+ *
+ * Usage:
+ *   const s = new Slider(x, y, width, height, 'knob.png', 'buttons', val => { ... }, 0.5);
+ */
 class Slider {
     constructor(x, y, width, height, sprite, atlas, onChange, initialValue = 0, depth = 10000) {
         this.x = x;
@@ -6,39 +14,39 @@ class Slider {
         this.height = height;
         this.onChange = onChange;
         this.depth = depth;
-        
+
         this.minX = x - width / 2;
         this.maxX = x + width / 2;
-        
+
         this.hitArea = new Button({
             normal: { ref: 'black_pixel', atlas: 'buttons', x: x, y: y, alpha: 0.001, scaleX: width, scaleY: height },
             onMouseDown: (mx, my) => this._startDrag(mx),
             onMouseUp: (mx, my) => this._endDrag(),
         });
         this.hitArea.setScrollFactor(0);
-        
+
         this.knob = PhaserScene.add.sprite(this.minX + initialValue * width, y, atlas, sprite);
         this.knob.setDepth(depth);
         this.knob.setScrollFactor(0);
-        
+
         this.isDragging = false;
-        
+
         this._onPointerMove = (mx, my) => this._updateKnob(mx);
         this._onPointerUp = () => this._endDrag();
     }
-    
+
     _startDrag(mx) {
         this.isDragging = true;
         this._updateKnob(mx);
         messageBus.subscribe('pointerMove', this._onPointerMove);
         messageBus.subscribe('pointerUp', this._onPointerUp);
     }
-    
+
     _updateKnob(mx) {
         const clampedX = Math.max(this.minX, Math.min(this.maxX, mx));
         this.knob.x = clampedX;
     }
-    
+
     _endDrag() {
         if (!this.isDragging) return;
         this.isDragging = false;

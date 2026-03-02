@@ -1,4 +1,9 @@
-// LoadingManager - Centralized loading with retry, stall detection, and error handling
+/**
+ * @fileoverview Centralized asset loading with retry, stall detection, and timeout.
+ * Provides two-phase loading: setupInitialPreload() for essential assets,
+ * setupMainLoading() for all remaining assets with progress callbacks.
+ * @module loadingManager
+ */
 
 class LoadingManager {
 
@@ -18,12 +23,12 @@ class LoadingManager {
     // Returns { forceFinish } so the caller can trigger completion externally.
 
     setupMainLoading(scene, onCompleteCallback, onProgressCallback = null,
-                     onSlowWarning = null, onTimeoutReached = null) {
-        let loadComplete   = false;
+        onSlowWarning = null, onTimeoutReached = null) {
+        let loadComplete = false;
         let pendingRetries = 0;      // retry timers in flight — complete is skipped while > 0
         let warningTimeout = null;
-        let loadTimeout    = null;
-        let failedFiles    = new Map();
+        let loadTimeout = null;
+        let failedFiles = new Map();
 
         const finish = () => {
             if (loadComplete) return;
@@ -105,7 +110,7 @@ class LoadingManager {
 
     setupInitialPreload(scene, statusElement) {
         let lastProgressTime = Date.now();
-        let failedFiles      = new Map();
+        let failedFiles = new Map();
 
         const resetTimer = () => { lastProgressTime = Date.now(); };
 
@@ -114,14 +119,14 @@ class LoadingManager {
             if (Date.now() - lastProgressTime > GAME_CONSTANTS.INITIAL_PRELOAD_STALL) {
                 console.error('Phase 1 load stalled');
                 if (statusElement) {
-                    statusElement.innerHTML   = 'Loading appears stuck. Please check your connection and refresh.';
+                    statusElement.innerHTML = 'Loading appears stuck. Please check your connection and refresh.';
                     statusElement.style.color = '#ff6b6b';
                 }
                 clearInterval(stallCheck);
             }
         }, GAME_CONSTANTS.WATCHDOG_INTERVAL);
 
-        scene.load.on('progress',     resetTimer);
+        scene.load.on('progress', resetTimer);
         scene.load.on('fileprogress', resetTimer);
         scene.load.on('complete', () => clearInterval(stallCheck));
 

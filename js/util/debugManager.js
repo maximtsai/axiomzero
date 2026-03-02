@@ -1,17 +1,25 @@
-// debugManager.js
-// initDebug — call once from MainScene.create().
-// debugLog is defined in globals.js for early availability before utilities.js loads.
+/**
+ * @fileoverview Debug overlay — FPS counter and GAME_VARS inspector.
+ * Only activates when FLAGS.DEBUG is true.
+ * Call initDebug(scene) once from MainScene.create().
+ * @module debugManager
+ */
 
+/**
+ * Initialize the debug overlay (FPS text + GAME_VARS inspector).
+ * No-ops if FLAGS.DEBUG is false.
+ * @param {Phaser.Scene} scene
+ */
 function initDebug(scene) {
     if (!FLAGS.DEBUG) return;
 
     // ── FPS counter ───────────────────────────────────────────────────────────
     const fpsText = scene.add.text(10, 10, '', {
-        fontFamily:      'monospace',
-        fontSize:        17,
-        color:           '#00ff00',
+        fontFamily: 'monospace',
+        fontSize: 17,
+        color: '#00ff00',
         backgroundColor: '#00000088',
-        padding:         { x: 4, y: 2 },
+        padding: { x: 4, y: 2 },
     }).setDepth(9999).setScrollFactor(0);
 
     // ── GAME_VARS inspector ───────────────────────────────────────────────────
@@ -19,9 +27,9 @@ function initDebug(scene) {
         .setOrigin(0, 0).setDepth(9998).setScrollFactor(0);
 
     const inspectorText = scene.add.text(10, 40, '', {
-        fontFamily:  'monospace',
-        fontSize:    13,
-        color:       '#88ff88',
+        fontFamily: 'monospace',
+        fontSize: 13,
+        color: '#88ff88',
         lineSpacing: 2,
     }).setDepth(9999).setScrollFactor(0);
 
@@ -41,7 +49,7 @@ function initDebug(scene) {
             return `${k}: ${val}`;
         });
         inspectorText.setText(lines.join('\n'));
-        inspectorBg.width  = inspectorText.width  + 8;
+        inspectorBg.width = inspectorText.width + 8;
         inspectorBg.height = inspectorText.height + 8;
     });
 

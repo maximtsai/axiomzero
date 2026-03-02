@@ -1,48 +1,60 @@
-// audioManager.js
+/**
+ * @fileoverview Sound and music management singleton.
+ * All audio functions live on the `audio` namespace object.
+ * Settings (mute state, volumes) persist via localStorage.
+ *
+ * Depends on: PhaserScene (global), localStorage
+ * @module audioManager
+ */
+
 const AUDIO_CONSTANTS = {
     LONG_SOUND_THRESHOLD: 3.5,
-    FADE_AWAY_DURATION:   650,
-    FADE_IN_DURATION:     1000,
-    FADE_IN_DELAY:        100,
-    MUSIC_START_VOLUME:   0.1,
+    FADE_AWAY_DURATION: 650,
+    FADE_IN_DURATION: 1000,
+    FADE_IN_DELAY: 100,
+    MUSIC_START_VOLUME: 0.1,
     DEFAULT_MUSIC_VOLUME: 0.85,
 };
 
-let soundList          = {};
-let globalVolume       = 1;
-let globalMusicVol     = 1;
-let globalMusic        = null;
-let globalTempMusic    = null;
-let lastLongSound      = null;
-let lastLongSound2    = null;
+let soundList = {};
+let globalVolume = 1;
+let globalMusicVol = 1;
+let globalMusic = null;
+let globalTempMusic = null;
+let lastLongSound = null;
+let lastLongSound2 = null;
 let useSecondLongSound = false;
-let isMuted            = false;
-let isSFXMuted         = localStorage.getItem('sfxMuted')   === 'true';
-let isMusicMuted       = localStorage.getItem('musicMuted') === 'true';
+let isMuted = false;
+let isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
+let isMusicMuted = localStorage.getItem('musicMuted') === 'true';
 
 const audio = {
-    recheckMuteState: function() {
-        isSFXMuted   = localStorage.getItem('sfxMuted')   === 'true';
+    /** Re-read mute flags from localStorage (call after external settings change). */
+    recheckMuteState: function () {
+        isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
         isMusicMuted = localStorage.getItem('musicMuted') === 'true';
     },
 
-    muteAll: function() {
+    /** Mute all audio (music + SFX). */
+    muteAll: function () {
         isMuted = true;
-        if (globalMusic)     globalMusic.setVolume(0);
+        if (globalMusic) globalMusic.setVolume(0);
         if (globalTempMusic) globalTempMusic.setVolume(0);
-        if (lastLongSound)   lastLongSound.setVolume(0);
-        if (lastLongSound2)  lastLongSound2.setVolume(0);
+        if (lastLongSound) lastLongSound.setVolume(0);
+        if (lastLongSound2) lastLongSound2.setVolume(0);
     },
 
-    unmuteAll: function() {
+    /** Unmute all audio, restoring previous volumes. */
+    unmuteAll: function () {
         isMuted = false;
-        if (globalMusic)     globalMusic.volume     = globalMusic.fullVolume     * globalMusicVol;
+        if (globalMusic) globalMusic.volume = globalMusic.fullVolume * globalMusicVol;
         if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * globalMusicVol;
-        if (lastLongSound)   lastLongSound.volume   = lastLongSound.fullVolume   * globalMusicVol;
-        if (lastLongSound2)  lastLongSound2.volume  = lastLongSound2.fullVolume  * globalMusicVol;
+        if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * globalMusicVol;
+        if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * globalMusicVol;
     },
 
-    muteSFX: function(shouldMute) {
+    /** @param {boolean} shouldMute - Mute/unmute SFX; persists to localStorage. */
+    muteSFX: function (shouldMute) {
         isSFXMuted = shouldMute;
         localStorage.setItem('sfxMuted', shouldMute.toString());
         for (let i in soundList) {
@@ -52,42 +64,53 @@ const audio = {
         }
     },
 
-    muteMusic: function(shouldMute) {
+    /** @param {boolean} shouldMute - Mute/unmute music; persists to localStorage. */
+    muteMusic: function (shouldMute) {
         isMusicMuted = shouldMute;
         localStorage.setItem('musicMuted', shouldMute.toString());
         if (shouldMute) {
-            if (globalMusic)     globalMusic.setVolume(0);
+            if (globalMusic) globalMusic.setVolume(0);
             if (globalTempMusic) globalTempMusic.setVolume(0);
         } else {
-            if (globalMusic)     globalMusic.volume     = globalMusic.fullVolume     * globalMusicVol;
+            if (globalMusic) globalMusic.volume = globalMusic.fullVolume * globalMusicVol;
             if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * globalMusicVol;
         }
     },
 
-    init: function(scene) {
-        globalVolume    = parseFloat(localStorage.getItem('globalVolume'))    || 1;
-        globalMusicVol  = parseFloat(localStorage.getItem('globalMusicVol')) || 1;
-        isSFXMuted      = localStorage.getItem('sfxMuted')   === 'true';
-        isMusicMuted    = localStorage.getItem('musicMuted') === 'true';
+    /** Initialize audio system — reads persisted volume/mute settings. */
+    init: function (scene) {
+        globalVolume = parseFloat(localStorage.getItem('globalVolume')) || 1;
+        globalMusicVol = parseFloat(localStorage.getItem('globalMusicVol')) || 1;
+        isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
+        isMusicMuted = localStorage.getItem('musicMuted') === 'true';
     },
 
-    play: function(name, volume = 1, loop = false, isMusic = false) {
+    /**
+     * Play a sound or music track. Auto-creates the Phaser sound if needed.
+     * @param {string} name - Asset key.
+     * @param {number} [volume=1]
+     * @param {boolean} [loop=false]
+     * @param {boolean} [isMusic=false] - If true, becomes the global music track.
+     * @returns {Phaser.Sound.BaseSound}
+     */
+    play: function (name, volume = 1, loop = false, isMusic = false) {
         if (!soundList[name]) {
             soundList[name] = PhaserScene.sound.add(name);
         }
-        soundList[name].fullVolume = volume;
-        soundList[name].volume     = soundList[name].fullVolume * globalVolume;
-        soundList[name].loop       = loop;
-        soundList[name].isMusic    = isMusic;
+        const s = soundList[name];
+        s.fullVolume = volume;
+        s.volume = s.fullVolume * globalVolume;
+        s.loop = loop;
+        s.isMusic = isMusic;
 
-        if (soundList[name].currTween) {
-            soundList[name].currTween.stop();
-            soundList[name].currTween = null;
+        if (s.currTween) {
+            s.currTween.stop();
+            s.currTween = null;
         }
 
         if (isMusic) {
             if (globalMusic) audio.fadeAway(globalMusic);
-            globalMusic        = soundList[name];
+            globalMusic = s;
             globalMusic.volume = AUDIO_CONSTANTS.MUSIC_START_VOLUME * volume * globalMusicVol;
             if (isMusicMuted || isMuted) {
                 globalMusic.volume = 0;
@@ -96,51 +119,55 @@ const audio = {
             }
         }
 
-        if (!isMusic && soundList[name].duration > AUDIO_CONSTANTS.LONG_SOUND_THRESHOLD) {
+        if (!isMusic && s.duration > AUDIO_CONSTANTS.LONG_SOUND_THRESHOLD) {
             if (useSecondLongSound) {
-                lastLongSound2 = soundList[name];
+                lastLongSound2 = s;
             } else {
-                lastLongSound  = soundList[name];
+                lastLongSound = s;
             }
             useSecondLongSound = !useSecondLongSound;
         }
 
         if (isMuted || (!isMusic && isSFXMuted) || (isMusic && isMusicMuted)) {
-            soundList[name].volume = 0;
+            s.volume = 0;
         }
 
-        soundList[name].detune = 0;
-        soundList[name].pan    = 0;
-        soundList[name].play();
-        return soundList[name];
+        s.detune = 0;
+        s.pan = 0;
+        s.play();
+        return s;
     },
 
-    playMusic: function(name, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
+    /** Shorthand for play() with isMusic=true. */
+    playMusic: function (name, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
         return audio.play(name, volume, loop, true);
     },
 
-    playFakeBGMusic: function(name, volume = 1, loop = false) {
+    /** Play a temporary background track (not tracked as globalMusic). */
+    playFakeBGMusic: function (name, volume = 1, loop = false) {
         if (!soundList[name]) {
             soundList[name] = PhaserScene.sound.add(name);
         }
-        globalTempMusic = soundList[name];
-        soundList[name].fullVolume = volume;
-        soundList[name].volume     = soundList[name].fullVolume * globalMusicVol;
-        soundList[name].loop       = loop;
-        soundList[name].isMusic    = true;
+        const s = soundList[name];
+        globalTempMusic = s;
+        s.fullVolume = volume;
+        s.volume = s.fullVolume * globalMusicVol;
+        s.loop = loop;
+        s.isMusic = true;
 
-        if (soundList[name].currTween) {
-            soundList[name].currTween.stop();
-            soundList[name].currTween = null;
+        if (s.currTween) {
+            s.currTween.stop();
+            s.currTween = null;
         }
 
-        if (isMuted) soundList[name].volume = 0;
+        if (isMuted) s.volume = 0;
 
-        soundList[name].play();
-        return soundList[name];
+        s.play();
+        return s;
     },
 
-    setVolume: function(newVol = 1) {
+    /** Set global SFX volume (0–1). Persists to localStorage. */
+    setVolume: function (newVol = 1) {
         globalVolume = newVol;
         localStorage.setItem('globalVolume', newVol.toString());
         for (let i in soundList) {
@@ -150,16 +177,18 @@ const audio = {
         }
     },
 
-    setMusicVolume: function(newVol = 1) {
+    /** Set global music volume (0–1). Persists to localStorage. */
+    setMusicVolume: function (newVol = 1) {
         globalMusicVol = newVol;
         localStorage.setItem('globalMusicVol', newVol.toString());
-        if (globalMusic)     globalMusic.volume     = globalMusic.fullVolume     * newVol;
+        if (globalMusic) globalMusic.volume = globalMusic.fullVolume * newVol;
         if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
-        if (lastLongSound)   lastLongSound.volume   = lastLongSound.fullVolume   * newVol;
-        if (lastLongSound2)  lastLongSound2.volume  = lastLongSound2.fullVolume  * newVol;
+        if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;
+        if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * newVol;
     },
 
-    setSoundVolume: function(sound, volume = 0, duration) {
+    /** Set volume on a specific sound, optionally tweened over duration (ms). */
+    setSoundVolume: function (sound, volume = 0, duration) {
         let globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
         sound.fullVolume = volume;
         if (!duration) {
@@ -167,31 +196,34 @@ const audio = {
         } else {
             PhaserScene.tweens.add({
                 targets: sound,
-                volume:  sound.fullVolume * globalToUse,
+                volume: sound.fullVolume * globalToUse,
                 duration
             });
         }
     },
 
-    swapMusic: function(newMusic, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
+    /** Cross-fade to a new music track (no-ops if already playing). */
+    swapMusic: function (newMusic, volume = AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, loop = true) {
         if (newMusic !== audio.getMusicName()) {
             globalMusic = audio.playMusic(newMusic, volume, loop);
         }
     },
 
-    getMusicName: function() {
+    /** @returns {string} Asset key of the current music track, or ''. */
+    getMusicName: function () {
         return globalMusic ? globalMusic.key : '';
     },
 
-    fadeAway: function(sound, duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
+    /** Fade a sound to silence and stop it. */
+    fadeAway: function (sound, duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
         const originalVolume = sound.fullVolume;
         sound.fullVolume = 0;
         sound.currTween = PhaserScene.tweens.add({
             targets: sound,
-            volume:  0,
+            volume: 0,
             ease,
             duration,
-            onComplete: function() {
+            onComplete: function () {
                 sound.stop();
                 sound.fullVolume = originalVolume;
                 if (onComplete) onComplete();
@@ -199,14 +231,15 @@ const audio = {
         });
     },
 
-    fadeIn: function(sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURATION) {
+    /** Fade a sound in from current volume to target volume. */
+    fadeIn: function (sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURATION) {
         const globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
         return PhaserScene.tweens.add({
-            delay:    AUDIO_CONSTANTS.FADE_IN_DELAY,
-            targets:  sound,
-            volume:   volume * globalToUse,
+            delay: AUDIO_CONSTANTS.FADE_IN_DELAY,
+            targets: sound,
+            volume: volume * globalToUse,
             duration,
-            ease:     'Quad.easeIn'
+            ease: 'Quad.easeIn'
         });
     }
 };

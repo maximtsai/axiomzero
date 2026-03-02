@@ -1,13 +1,19 @@
+/**
+ * @fileoverview Game state management and save/load persistence.
+ * Defines: gameState, getGameState, setGameState, saveGame, loadGame, hasSave, clearSave.
+ * Uses localStorage with versioned save format for migration support.
+ * @module gameState
+ */
 // ─── Default state shape — all Phase 1 fields ───────────────────────────────
 const GAME_STATE_DEFAULTS = {
     // Tower
-    towerMaxHealth:   20,
-    towerDamage:      6,
+    towerMaxHealth: 20,
+    towerDamage: 6,
     towerAttackRange: 200,
     towerHealthRegen: -0.4,   // HP/sec (negative = drain)
 
     // Resources
-    data:    0,
+    data: 0,
     insight: 0,
 
     // EXP (0–100, awards INSIGHT at 100)
@@ -28,10 +34,12 @@ const gameState = {};
 
 const SAVE_VERSION = 1;
 
+/** @returns {Object} The current game state object. */
 function getGameState() {
     return gameState;
 }
 
+/** Set a game state field. @param {string} key @param {*} value */
 function setGameState(key, value) {
     gameState[key] = value;
 }
@@ -46,6 +54,7 @@ function _migrateState(fromVersion, data) {
     return data;
 }
 
+/** Serialize game state to localStorage. */
 function saveGame() {
     try {
         const payload = JSON.stringify({ version: SAVE_VERSION, data: gameState });
@@ -56,6 +65,7 @@ function saveGame() {
     }
 }
 
+/** Load game state from localStorage. @returns {boolean} true if a save was found and loaded. */
 function loadGame() {
     try {
         const raw = localStorage.getItem(SAVE_KEY);
@@ -80,10 +90,12 @@ function loadGame() {
     }
 }
 
+/** @returns {boolean} True if a save exists in localStorage. */
 function hasSave() {
     return localStorage.getItem(SAVE_KEY) !== null;
 }
 
+/** Delete the save from localStorage. */
 function clearSave() {
     localStorage.removeItem(SAVE_KEY);
     debugLog('Save cleared');

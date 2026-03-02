@@ -1,7 +1,9 @@
 /**
- * Controls passage of game time, lets you pause and unpause stuff
- **/
- class TimeManager {
+ * @fileoverview Controls passage of game time via GAME_VARS.timeScale.
+ * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame.
+ * @module timeManager
+ */
+class TimeManager {
     constructor() {
         messageBus.subscribe("tempPause", this.setTempPause.bind(this));
         messageBus.subscribe("pauseGame", this.setPermPause.bind(this));
@@ -10,11 +12,21 @@
         messageBus.subscribe("unpauseGame", this.setUnpause.bind(this));
     }
 
+    /** Apply a timeScale value to all Phaser time systems and GAME_VARS. */
+    _applyTimeScale(val) {
+        GAME_VARS.timeScale = val;
+        PhaserScene.tweens.timeScale = val;
+        PhaserScene.time.timeScale = val;
+        PhaserScene.anims.globalTimeScale = val;
+    }
+
+    /**
+     * Briefly slow game time, then auto-restore.
+     * @param {number} [dur=100] - Pause duration in ms.
+     * @param {number} [magnitude] - timeScale during pause (default 0.5).
+     */
     setTempPause(dur = 100, magnitude) {
-        GAME_VARS.timeScale = magnitude || 0.5;
-        PhaserScene.tweens.timeScale = magnitude || 0.6;
-        PhaserScene.time.timeScale = magnitude || 0.5;
-        PhaserScene.anims.globalTimeScale = magnitude || 0.6;
+        this._applyTimeScale(magnitude || 0.5);
         if (this.currTimeoutAmt) {
             if (GAME_VARS.timeScale > this.currTimeoutAmt) {
                 return;
@@ -26,47 +38,36 @@
             clearTimeout(this.currTimeoutPause);
         }
         this.currTimeoutPause = setTimeout(() => {
-            GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-            PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-            PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-            PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed || 1;
+            this._applyTimeScale(GAME_VARS.gameManualSlowSpeed || 1);
             this.currTimeoutAmt = null;
         }, dur)
     }
 
+    /** Pause the game until explicitly unpaused. @param {number} [amt=0.002] */
     setPermPause(amt = 0.002) {
         GAME_VARS.permTimeScale = amt;
-        GAME_VARS.timeScale = amt;
-        PhaserScene.tweens.timeScale = amt;
-        PhaserScene.time.timeScale = amt;
-        PhaserScene.anims.globalTimeScale = amt;
+        this._applyTimeScale(amt);
     }
 
+    /** Restore normal game speed (respects manual slow if active). */
     setUnpause() {
-        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-        GAME_VARS.permTimeScale = GAME_VARS.timeScale;
-
-        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed || 1;
-        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed || 1;
+        const speed = GAME_VARS.gameManualSlowSpeed || 1;
+        GAME_VARS.permTimeScale = speed;
+        this._applyTimeScale(speed);
     }
 
+    /** Set a persistent slow-motion speed. @param {number} amt - timeScale value. */
     setGameSlow(amt) {
         GAME_VARS.gameManualSlowSpeed = amt;
-        GAME_VARS.gameManualSlowSpeedInverse = 1 / GAME_VARS.gameManualSlowSpeed;
-        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed;
+        GAME_VARS.gameManualSlowSpeedInverse = 1 / amt;
+        this._applyTimeScale(amt);
     }
 
+    /** Remove slow-motion and restore normal speed. */
     clearGameSlow() {
         GAME_VARS.gameManualSlowSpeed = 1;
         GAME_VARS.gameManualSlowSpeedInverse = 1;
-        GAME_VARS.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.tweens.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.time.timeScale = GAME_VARS.gameManualSlowSpeed;
-        PhaserScene.anims.globalTimeScale = GAME_VARS.gameManualSlowSpeed;
+        this._applyTimeScale(1);
     }
 
 }

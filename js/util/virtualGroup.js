@@ -1,6 +1,16 @@
 /**
- * High-Performance Virtual Group (Absolute Offset Version)
- * Fixes floating-point drift and adds external destruction safety.
+ * @fileoverview Virtual display-list grouping utility.
+ * Manages a collection of Phaser GameObjects as a logical group
+ * with shared positioning, alpha, and tween support.
+ * Uses absolute offsets to prevent floating-point drift.
+ * @module virtualGroup
+ *
+ * Usage:
+ *   const g = createVirtualGroup(scene, x, y);
+ *   g.add(sprite);          // track a child
+ *   g.setPosition(100, 200); // move all children
+ *   g.tweenTo(300, 400, { duration: 500 });
+ *   g.destroy();            // destroy all children
  */
 const createVirtualGroup = (scene, x = 0, y = 0) => {
     let children = [];

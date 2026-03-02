@@ -1,7 +1,12 @@
-// Game Globals - Centralized configuration values
+/**
+ * @fileoverview Centralized game configuration, runtime state, and shared registries.
+ * Defines: GAME_CONSTANTS, GAME_VARS, gameOptions, globalObjects, debugLog.
+ * Must be loaded before all other util scripts.
+ * @module globals
+ */
 const GAME_CONSTANTS = {
     DEG_TO_RADIAL: 57.296,
-    HALF_PI:1.5708,
+    HALF_PI: 1.5708,
     // Loading/Retry
     RETRY_DELAY_BASE: 500,
     MAX_RETRIES: 3,
@@ -28,41 +33,41 @@ const GAME_CONSTANTS = {
     // ─── Phase 1 gameplay constants ──────────────────────────────────────────
 
     // Colors (GDD §4)
-    COLOR_BG:        0x05080f,
-    COLOR_FRIENDLY:  0x00f5ff,
-    COLOR_RESOURCE:  0xff9500,
-    COLOR_HOSTILE:   0xff2d78,
-    COLOR_STRAY:     0xffe600,
+    COLOR_BG: 0x05080f,
+    COLOR_FRIENDLY: 0x00f5ff,
+    COLOR_RESOURCE: 0xff9500,
+    COLOR_HOSTILE: 0xff2d78,
+    COLOR_STRAY: 0xffe600,
     HEALTH_BAR_TINT: 0x333333,
 
     // Tower
-    TOWER_BASE_HEALTH:      20,
-    TOWER_BASE_DAMAGE:      6,
-    TOWER_ATTACK_RANGE:     250,
-    TOWER_ATTACK_COOLDOWN:  1000,   // ms between auto-attacks
-    TOWER_BASE_REGEN:       -0.4,     // HP/sec (negative = drain)
+    TOWER_BASE_HEALTH: 20,
+    TOWER_BASE_DAMAGE: 6,
+    TOWER_ATTACK_RANGE: 250,
+    TOWER_ATTACK_COOLDOWN: 1000,   // ms between auto-attacks
+    TOWER_BASE_REGEN: -0.4,     // HP/sec (negative = drain)
 
     // EXP
-    EXP_FILL_RATE:    0.5,    // per second during combat
-    EXP_TO_INSIGHT:   100,  // EXP needed to award 1 INSIGHT
+    EXP_FILL_RATE: 0.5,    // per second during combat
+    EXP_TO_INSIGHT: 100,  // EXP needed to award 1 INSIGHT
 
     // Enemy — Basic type (Phase 1 only)
-    ENEMY_SPAWN_DISTANCE:  900,    // px from center of screen
-    ENEMY_BASE_HEALTH:     10,
-    ENEMY_BASE_DAMAGE:     2,
-    ENEMY_BASE_SPEED:      30,    // px/sec
-    ENEMY_CONTACT_RADIUS:  30,    // px — deals damage & dies when this close to tower
-    ENEMY_SPAWN_INTERVAL:  1000,  // ms between spawns
-    ENEMY_SCALE_RATE:      0.02,  // health/damage multiplier increase per second
+    ENEMY_SPAWN_DISTANCE: 900,    // px from center of screen
+    ENEMY_BASE_HEALTH: 10,
+    ENEMY_BASE_DAMAGE: 2,
+    ENEMY_BASE_SPEED: 30,    // px/sec
+    ENEMY_CONTACT_RADIUS: 30,    // px — deals damage & dies when this close to tower
+    ENEMY_SPAWN_INTERVAL: 1000,  // ms between spawns
+    ENEMY_SCALE_RATE: 0.02,  // health/damage multiplier increase per second
 
     // DATA drops
-    DATA_DROP_CHANCE:   0.6,
+    DATA_DROP_CHANCE: 0.6,
     DATA_PICKUP_RADIUS: 100,   // px — cursor auto-collects within this
-    DATA_DECAY_TIME:    12000, // ms before uncollected drop fades away
-    DATA_DRIFT_SPEED:   8,    // px/sec downward drift
+    DATA_DECAY_TIME: 12000, // ms before uncollected drop fades away
+    DATA_DRIFT_SPEED: 8,    // px/sec downward drift
 
     // Projectile
-    PROJECTILE_SPEED:      400,  // px/sec
+    PROJECTILE_SPEED: 400,  // px/sec
     PROJECTILE_HIT_RADIUS: 15,
 
     // Wave duration
@@ -72,39 +77,39 @@ const GAME_CONSTANTS = {
     TRANSITION_DURATION: 800,  // ms for slide animation
 
     // Depth layers (flat ordering, no Containers)
-    DEPTH_BG:             0,
-    DEPTH_GLOW:           50,
-    DEPTH_ENEMIES:        100,
-    DEPTH_TOWER:          200,
-    DEPTH_PROJECTILES:    300,
-    DEPTH_RESOURCES:      400,
-    DEPTH_HUD:            1000,
-    DEPTH_NEURAL_TREE:    2000,
-    DEPTH_DEATH_OVERLAY:  3000,  // death flash — covers entire game
-    DEPTH_DEATH_TOWER:    3500,  // tower elevated above death overlay during shake
-    DEPTH_TRANSITION:     5000,
+    DEPTH_BG: 0,
+    DEPTH_GLOW: 50,
+    DEPTH_ENEMIES: 100,
+    DEPTH_TOWER: 200,
+    DEPTH_PROJECTILES: 300,
+    DEPTH_RESOURCES: 400,
+    DEPTH_HUD: 1000,
+    DEPTH_NEURAL_TREE: 2000,
+    DEPTH_DEATH_OVERLAY: 3000,  // death flash — covers entire game
+    DEPTH_DEATH_TOWER: 3500,  // tower elevated above death overlay during shake
+    DEPTH_TRANSITION: 5000,
     DEPTH_ITERATION_OVER: 6000,
-    DEPTH_POPUPS:         10000,
+    DEPTH_POPUPS: 10000,
 };
 
 // Derived dimension shortcuts (computed after declaration to allow self-reference)
-GAME_CONSTANTS.halfWidth  = GAME_CONSTANTS.WIDTH  / 2;
+GAME_CONSTANTS.halfWidth = GAME_CONSTANTS.WIDTH / 2;
 GAME_CONSTANTS.halfHeight = GAME_CONSTANTS.HEIGHT / 2;
 
 // ─── Runtime state ────────────────────────────────────────────────────────────
 
 const GAME_VARS = {
-    timeScale:       1,
-    mouseposx:       0,
-    mouseposy:       0,
-    mousedown:       false,
+    timeScale: 1,
+    mouseposx: 0,
+    mouseposy: 0,
+    mousedown: false,
     mouseJustDowned: false,
-    mouseJustUpped:  false,
-    wasTouch:        false,
-    canvasXOffset:   0,
-    canvasYOffset:   0,
-    gameScale:       1,
-    lastmousedown:   { x: 0, y: 0 },
+    mouseJustUpped: false,
+    wasTouch: false,
+    canvasXOffset: 0,
+    canvasYOffset: 0,
+    gameScale: 1,
+    lastmousedown: { x: 0, y: 0 },
 };
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────
@@ -112,9 +117,9 @@ const GAME_VARS = {
 const OPTIONS_KEY = 'axiomzero_options';
 
 const GAME_OPTIONS_DEFAULTS = {
-    language:     'en',
-    sfxVolume:    1,
-    musicVolume:  1,
+    language: 'en',
+    sfxVolume: 1,
+    musicVolume: 1,
 };
 
 const gameOptions = (function () {
@@ -125,6 +130,7 @@ const gameOptions = (function () {
     return Object.assign({}, GAME_OPTIONS_DEFAULTS);
 })();
 
+/** Persist current gameOptions to localStorage. */
 function saveGameOptions() {
     try {
         localStorage.setItem(OPTIONS_KEY, JSON.stringify(gameOptions));
@@ -137,8 +143,9 @@ function saveGameOptions() {
 
 const globalObjects = {};
 
-// ─── Debug (defined here for early availability before utilities.js loads) ────
+// ─── Debug (defined here for early availability before other util scripts) ────
 
+/** Log to console only when FLAGS.DEBUG is true. */
 function debugLog(...args) {
     if (!FLAGS.DEBUG) return;
     console.log('[DEBUG]', ...args);
