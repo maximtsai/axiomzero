@@ -39,7 +39,7 @@ const transitionManager = (() => {
         if (targetPhase === 'WAVE_ACTIVE') {
             // First switch phase so game logic activates, then slide camera
             gameStateMachine.goTo('WAVE_ACTIVE');
-            const targetX = -GAME_CONSTANTS.halfWidth - 30;
+            const targetX = -GAME_CONSTANTS.halfWidth - 10;
 
             _tweenTreeGroup(targetX, duration);
             cameraManager.toCombatView(duration, () => {

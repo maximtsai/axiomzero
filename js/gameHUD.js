@@ -45,7 +45,7 @@ const gameHUD = (() => {
 
     function _createElements() {
         const depth = GAME_CONSTANTS.DEPTH_HUD;
-        const groupX = GAME_CONSTANTS.halfWidth + 30 + HUD_X;
+        const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
         // ── Health bar ──
         healthBarBg = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
@@ -76,6 +76,7 @@ const gameHUD = (() => {
 
         // ── Currency counters ──
         const currY = expY + 8 + BAR_GAP + 5;
+        const insightY = currY + 26; // place it vertically below
 
         dataIcon = PhaserScene.add.image(groupX, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
         dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2).setScrollFactor(0);
@@ -86,7 +87,7 @@ const gameHUD = (() => {
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
-        insightText = PhaserScene.add.text(groupX + 125, currY, '\u25C9 0', {
+        insightText = PhaserScene.add.text(groupX, insightY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#ffffff',
