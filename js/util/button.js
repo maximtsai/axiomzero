@@ -479,6 +479,12 @@ class Button {
             Object.keys(this.imageRefs).forEach(key => {
                 this.imageRefs[key].x = x;
             });
+            if (this.text) {
+                this.text.x = x;
+                if (this.text.offsetX) {
+                    this.text.x += this.text.offsetX;
+                }
+            }
         }
         if (y !== undefined) {
             this.normal.y = y;
@@ -488,6 +494,12 @@ class Button {
             Object.keys(this.imageRefs).forEach(key => {
                 this.imageRefs[key].y = y;
             });
+            if (this.text) {
+                this.text.y = y;
+                if (this.text.offsetY) {
+                    this.text.y += this.text.offsetY;
+                }
+            }
         }
     }
 
