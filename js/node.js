@@ -48,6 +48,7 @@ class Node {
         this.childIds    = def.childIds    || [];
         this.treeX       = def.treeX       || 0;
         this.treeY       = def.treeY       || 0;
+        this.icon        = def.icon        || null;
 
         // New Properties for Tier and Duo-Box Logic
         this.tier        = def.tier        || 1;
@@ -61,6 +62,7 @@ class Node {
         // Phaser objects
         this.btn        = null;
         this.label      = null;
+        this.iconSprite = null;
         this.hoverGroup = null; // array of Phaser objects for hover tooltip
 
         // Fadeout sprite effect
@@ -231,6 +233,13 @@ class Node {
             hoverWhileDisabled: true,
         });
         this.btn.setDepth(nodeDepth);
+
+        // Node icon
+        if (this.icon) {
+            this.iconSprite = PhaserScene.add.sprite(x, y - 5, 'buttons', this.icon)
+                .setOrigin(0.5, 0.5)
+                .setDepth(nodeDepth + 1);
+        }
 
         // Node name label
         this.label = PhaserScene.add.text(x, y + 32, this.name, {
@@ -494,5 +503,6 @@ class Node {
         }
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.label) { this.label.destroy(); this.label = null; }
+        if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
     }
 }

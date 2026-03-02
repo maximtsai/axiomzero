@@ -6,6 +6,7 @@ const NODE_DEFS = [
     {
         id: 'awaken',
         name: 'AWAKEN',
+        icon: 'Skillicon14_01.png',
         description: 'Begin existence.',
         maxLevel: 1,
         baseCost: 0,
@@ -29,6 +30,7 @@ const NODE_DEFS = [
     {
         id: 'basic_pulse',
         name: 'FOCUS',
+        icon: 'Skillicon14_02.png',
         description: 'Your cursor also deals damage now.',
         maxLevel: 1,
         baseCost: 1,
@@ -47,6 +49,7 @@ const NODE_DEFS = [
     {
         id: 'reinforce',
         name: 'REINFORCE',
+        icon: 'Skillicon14_03.png',
         description: '+4 tower max health',
         popupText: '+4 MAX HEALTH',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
@@ -66,6 +69,7 @@ const NODE_DEFS = [
     {
         id: 'sharpen',
         name: 'SHARPEN',
+        icon: 'Skillicon14_04.png',
         description: '+2 tower basic damage',
         popupText: '+2 DAMAGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),

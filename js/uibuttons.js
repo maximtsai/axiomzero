@@ -21,18 +21,7 @@ function createOptionsButton(x, y) {
             y: y
         },
         onMouseUp: function() {
-            showNineSlicePopup({
-                title: 'Options',
-                body: '',
-                texture: 'popup.png',
-                atlas: 'buttons',
-                cornerSize: 50,
-                buttons: [
-                    { text: 'Close', onClick: function() {
-                        console.log("close");
-                        }, primary: true }
-                ]
-            });
+            _showOptionsPopup();
         }
     });
 
@@ -40,6 +29,95 @@ function createOptionsButton(x, y) {
     button.setScale(helper.testMobile() ? 0.8 : 0.68);
     button.setScrollFactor(0);
     return button;
+}
+
+function _showOptionsPopup() {
+    const W = GAME_CONSTANTS.halfWidth;
+    const H = GAME_CONSTANTS.halfHeight;
+    const depth = 110900;
+    const width = 550;
+    const height = 630;
+
+    const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
+    darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+    darkBG.setTint(0x000000);
+    darkBG.setAlpha(0);
+    darkBG.setDepth(depth);
+    darkBG.setScrollFactor(0);
+    PhaserScene.tweens.add({ targets: darkBG, alpha: 0.75, duration: 60 });
+
+    const blocker = new Button({
+        normal: { ref: 'white_pixel', x: W, y: H, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT },
+        onMouseUp: () => closePopup()
+    });
+    blocker.setDepth(depth + 1);
+    blocker.setScrollFactor(0);
+
+    const popupBG = PhaserScene.add.nineslice(W, H, 'buttons', 'popup.png', width, height, 50, 50, 50, 50);
+    popupBG.setDepth(depth + 2);
+    popupBG.setScrollFactor(0);
+
+    const titleObj = PhaserScene.add.text(W, H - height/2 + 35, 'Options', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff',
+    }).setOrigin(0.5, 0).setDepth(depth + 3).setScrollFactor(0);
+
+    const sfxLabel = PhaserScene.add.text(W - 120, H - 40, 'SFX', {
+        fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+
+    const musicLabel = PhaserScene.add.text(W - 120, H + 20, 'Music', {
+        fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+
+    const sfxSliderWidth = 200;
+    const musicSliderWidth = 200;
+
+    const sfxSlider = new Slider(
+        W + 20, H - 40, sfxSliderWidth, 20,
+        'sound_on.png', 'buttons',
+        (value) => {
+            const volume = Math.max(0, Math.min(1, value));
+            localStorage.setItem('sfxVolume', volume);
+            audio.recheckMuteState();
+        },
+        parseFloat(localStorage.getItem('sfxVolume')) || 1.0,
+        depth + 3
+    );
+
+    const musicSlider = new Slider(
+        W + 20, H + 20, musicSliderWidth, 20,
+        'music_on.png', 'buttons',
+        (value) => {
+            const volume = Math.max(0, Math.min(1, value));
+            localStorage.setItem('musicVolume', volume);
+            audio.recheckMuteState();
+        },
+        parseFloat(localStorage.getItem('musicVolume')) || 1.0,
+        depth + 3
+    );
+
+    const closeBtn = new Button({
+        normal: { ref: 'closebtn.png', atlas: 'buttons', x: W + width/2 - 35, y: H - height/2 + 35 },
+        hover: { ref: 'closebtn_hover.png', atlas: 'buttons' },
+        press: { ref: 'closebtn_press.png', atlas: 'buttons' },
+        onMouseUp: () => closePopup()
+    });
+    closeBtn.setDepth(depth + 3);
+    closeBtn.setScrollFactor(0);
+
+    function closePopup() {
+        darkBG.destroy();
+        blocker.destroy();
+        popupBG.destroy();
+        titleObj.destroy();
+        sfxLabel.destroy();
+        musicLabel.destroy();
+        sfxSlider.knob.destroy();
+        sfxSlider.hitArea.destroy();
+        musicSlider.knob.destroy();
+        musicSlider.hitArea.destroy();
+        closeBtn.destroy();
+    }
 }
 
 

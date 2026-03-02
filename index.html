@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="Axiom Zero: Incremental Tower Defense">
     
+    <!-- Basic mobile / theme -->
+    <meta name="theme-color" content="#05080f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Favicons / icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+    <!-- Social / SEO -->
+    <meta property="og:title" content="Axiom Zero">
+    <meta property="og:description" content="A newborn AI fights to become the system. Tower defense + incremental mechanics.">
+    <!-- Performance: preconnect and preload critical resources -->
+    <link rel="preconnect" href="https://sdk.crazygames.com" crossorigin>
+
+
     <title>Axiom Zero</title>
     
     <link rel="icon" type="image/x-icon" href="favicon.png">
@@ -24,7 +43,23 @@
     <script src="js/util/globals.js"></script>
     <script src="js/util/loadingManager.js"></script>
     <script src="js/util/gameState.js"></script>
-    <script src="js/util/utilities.js"></script>
+    <script src="js/util/messageBus.js"></script>
+    <script src="js/util/mouseManager.js"></script>
+    <script src="js/util/audioManager.js"></script>
+    <script src="js/util/tweens.js"></script>
+    <script src="js/util/objectPool.js"></script>
+    <script src="js/util/button.js"></script>
+    <script src="js/util/buttonManager.js"></script>
+    <script src="js/util/typewriterHelper.js"></script>
+    <script src="js/util/effectPool.js"></script>
+    <script src="js/util/uiHelper.js"></script>
+    <script src="js/util/textEffects.js"></script>
+    <script src="js/util/timeManager.js"></script>
+    <script src="js/util/updateManager.js"></script>
+    <script src="js/util/popupManager.js"></script>
+    <script src="js/util/floatingText.js"></script>
+    <script src="js/util/virtualGroup.js"></script>
+    <script src="js/util/slider.js"></script>
     <script src="js/util/debugManager.js"></script>
     <script src="js/util/notificationManager.js"></script>
 
@@ -50,7 +85,6 @@
 
     <script src="js/gameInit.js"></script>
     <script src="js/loadingScreen.js"></script>
-    <script src="js/main.js"></script>
 
     <noscript>Enable JavaScript to play Axiom Zero.</noscript>
 </head>
@@ -75,8 +109,15 @@
         // Service Worker — dynamic asset caching for faster repeat loads.
         // Controlled by FLAGS.USE_SERVICE_WORKER in flags.js.
         if (FLAGS.USE_SERVICE_WORKER && 'serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => {
+              reg.addEventListener('updatefound', function () {
+                // optional: notify user that an update is available
+              });
+            })
+            .catch(err => console.warn('SW registration failed', err));
         }
     </script>
+    <script src="js/main.js"></script>
 </body>
 </html>

@@ -173,6 +173,60 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">buttons/Skillicon14_01.png</key>
+            <key type="filename">buttons/Skillicon14_02.png</key>
+            <key type="filename">buttons/Skillicon14_03.png</key>
+            <key type="filename">buttons/Skillicon14_04.png</key>
+            <key type="filename">buttons/Skillicon14_05.png</key>
+            <key type="filename">buttons/Skillicon14_06.png</key>
+            <key type="filename">buttons/Skillicon14_07.png</key>
+            <key type="filename">buttons/Skillicon14_08.png</key>
+            <key type="filename">buttons/Skillicon14_09.png</key>
+            <key type="filename">buttons/Skillicon14_10.png</key>
+            <key type="filename">buttons/Skillicon14_11.png</key>
+            <key type="filename">buttons/Skillicon14_12.png</key>
+            <key type="filename">buttons/Skillicon14_13.png</key>
+            <key type="filename">buttons/Skillicon14_14.png</key>
+            <key type="filename">buttons/Skillicon14_15.png</key>
+            <key type="filename">buttons/Skillicon14_16.png</key>
+            <key type="filename">buttons/Skillicon14_17.png</key>
+            <key type="filename">buttons/Skillicon14_18.png</key>
+            <key type="filename">buttons/Skillicon14_19.png</key>
+            <key type="filename">buttons/Skillicon14_20.png</key>
+            <key type="filename">buttons/Skillicon14_21.png</key>
+            <key type="filename">buttons/Skillicon14_22.png</key>
+            <key type="filename">buttons/Skillicon14_23.png</key>
+            <key type="filename">buttons/Skillicon14_24.png</key>
+            <key type="filename">buttons/Skillicon14_25.png</key>
+            <key type="filename">buttons/Skillicon14_26.png</key>
+            <key type="filename">buttons/Skillicon14_27.png</key>
+            <key type="filename">buttons/Skillicon14_28.png</key>
+            <key type="filename">buttons/Skillicon14_29.png</key>
+            <key type="filename">buttons/Skillicon14_30.png</key>
+            <key type="filename">buttons/Skillicon14_31.png</key>
+            <key type="filename">buttons/Skillicon14_32.png</key>
+            <key type="filename">buttons/Skillicon14_33.png</key>
+            <key type="filename">buttons/Skillicon14_34.png</key>
+            <key type="filename">buttons/Skillicon14_35.png</key>
+            <key type="filename">buttons/Skillicon14_36.png</key>
+            <key type="filename">buttons/Skillicon14_37.png</key>
+            <key type="filename">buttons/Skillicon14_38.png</key>
+            <key type="filename">buttons/Skillicon14_39.png</key>
+            <key type="filename">buttons/Skillicon14_40.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/button_hover.png</key>
             <key type="filename">buttons/button_normal.png</key>
             <key type="filename">buttons/button_press.png</key>
@@ -180,7 +234,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.4</double>
+                <double>0.525</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -250,6 +304,23 @@
                 <rect>38,38,75,75</rect>
                 <key>scale9Paddings</key>
                 <rect>38,38,75,75</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/slider_knob.png</key>
+            <key type="filename">buttons/slider_knob_hover.png</key>
+            <key type="filename">buttons/slider_knob_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>9,15,18,30</rect>
+                <key>scale9Paddings</key>
+                <rect>9,15,18,30</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

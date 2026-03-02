@@ -57,7 +57,6 @@ js/
     textEffects.js      # Text effect utilities (CJK-aware word wrap)
     objectPool.js       # Generic ObjectPool class
     virtualGroup.js     # Virtual display-list grouping utility
-    utilities.js        # BUILD OUTPUT — minified bundle of the above (do not edit directly)
 ```
 
 ## Script Load Order (`index.html`)
@@ -73,9 +72,24 @@ Order is critical — each file depends on globals defined by files above it:
 7. `js/util/globals.js` — `GAME_CONSTANTS`, `GAME_VARS`, `globalObjects`
 8. `js/util/loadingManager.js` — `loadingManager` singleton
 9. `js/util/gameState.js` — `gameState`
-10. `js/util/utilities.js` — all other util singletons (`messageBus`, `buttonManager`, etc.)
-11. `js/util/debugManager.js` — `initDebug` (loaded separately; not bundled)
-12. `js/util/notificationManager.js` — `notificationManager` singleton (loaded separately; not bundled)
+10. `js/util/messageBus.js` — pub/sub event bus
+11. `js/util/mouseManager.js` — mouse input handling
+12. `js/util/audioManager.js` — sound/music management
+13. `js/util/tweens.js` — custom tween helpers
+14. `js/util/objectPool.js` — generic object pool
+15. `js/util/button.js` — Button class
+16. `js/util/buttonManager.js` — button lifecycle/input routing
+17. `js/util/typewriterHelper.js` — typewriter text animation (defines `helper` global)
+18. `js/util/effectPool.js` — click effect pooling (extends `helper`)
+19. `js/util/uiHelper.js` — fullscreen, mobile detect, click blocker (extends `helper`)
+20. `js/util/textEffects.js` — text effect utilities
+21. `js/util/timeManager.js` — time/timer utilities
+22. `js/util/updateManager.js` — per-frame update loop
+23. `js/util/popupManager.js` — popup dialogs
+24. `js/util/floatingText.js` — floating text
+25. `js/util/virtualGroup.js` — virtual display-list grouping
+26. `js/util/debugManager.js` — `initDebug`
+27. `js/util/notificationManager.js` — `notificationManager` singleton
 13. `js/uibuttons.js` — mute/SFX button factories
 14. `js/gameStateMachine.js` — phase state machine
 15. `js/waveManager.js` — wave logic (subscribes to `'phaseChanged'`)
@@ -88,22 +102,13 @@ Order is critical — each file depends on globals defined by files above it:
 22. `js/loadingScreen.js` — `loadingScreen` singleton
 23. `js/main.js` — Phaser game boot (last)
 
-## Build Process
+## Util Source Files
 
-The `util/` source files get minified and combined into `util/utilities.js` using UglifyJS:
-
-```sh
-# Run from the js/util/ directory  (or just run /build)
-uglifyjs messageBus.js debugManager.js mouseManager.js audioManager.js tweens.js objectPool.js button.js buttonManager.js typewriterHelper.js effectPool.js uiHelper.js textEffects.js timeManager.js updateManager.js popupManager.js virtualGroup.js -o utilities.js -c -m
-```
+All files in `js/util/` are loaded individually and can be edited directly.
 
 - **`typewriterHelper.js`** — defines the `helper` global; typewriter text animation
 - **`effectPool.js`** — extends `helper`; click effect object pooling
 - **`uiHelper.js`** — extends `helper`; fullscreen, mobile detect, global click blocker
-
-`js/util/utilities.js` is the file loaded by `index.html` — **do not edit it directly**. Edit the individual source files in `js/util/` and rebuild.
-
-Note: `globals.js`, `loadingManager.js`, and `gameState.js` are loaded separately (not bundled), so they can be edited directly. `debugManager.js` and `notificationManager.js` are also loaded separately (after `utilities.js`) so they are NOT part of the bundle.
 
 ## Feature Flags (`flags.js`)
 
@@ -125,9 +130,9 @@ All globals are available throughout the codebase after their respective files l
 | `GAME_VARS` | `js/util/globals.js` | Mutable runtime state: `timeScale`, mouse coords, canvas scale |
 | `globalObjects` | `js/util/globals.js` | Shared object registry (e.g. `clickBlocker`, `timeManager`) |
 | `PhaserScene` | `js/main.js` (set in `create()`) | Active Phaser scene reference |
-| `messageBus` | `js/util/utilities.js` | Global pub/sub event bus |
-| `buttonManager` | `js/util/utilities.js` | Manages all Button instances |
-| `updateManager` | `js/util/utilities.js` | Per-frame update loop registry |
+| `messageBus` | `js/util/messageBus.js` | Global pub/sub event bus |
+| `buttonManager` | `js/util/buttonManager.js` | Manages all Button instances |
+| `updateManager` | `js/util/updateManager.js` | Per-frame update loop registry |
 | `loadingManager` | `js/util/loadingManager.js` | Asset loading with retry/stall/timeout |
 | `loadingScreen` | `js/loadingScreen.js` | Two-phase loading screen controller |
 
@@ -220,7 +225,7 @@ audio.fadeAway(soundObj, duration);
 ```
 
 ### Helper Utilities (`js/util/uiHelper.js`, `typewriterHelper.js`, `effectPool.js`)
-The `helper` global is assembled from three source files bundled into `utilities.js`:
+The `helper` global is assembled from three source files:
 
 ```js
 // Click blocker (uiHelper.js)
@@ -289,4 +294,4 @@ Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems 
 - **Per-frame logic** registers with `updateManager`, not Phaser's `update()` directly.
 - **Events** between systems use `messageBus` topics, not direct references where possible.
 - **localStorage** used for persisting user settings (audio mute state, etc.).
-- After editing files in `js/util/`, rebuild `utilities.js` with the uglifyjs command above.
+- Edit files in `js/util/` directly — all source files are loaded individually by `index.html`.

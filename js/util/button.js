@@ -292,6 +292,10 @@ class Button {
         }
     }
 
+    removeDrag() {
+        this.onDragFunc = null;
+    }
+
     // Force click but only if button isn't disabled
     clickMouseUp() {
         if (this.state !== DISABLE) {
