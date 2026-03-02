@@ -74,7 +74,7 @@ const GAME_CONSTANTS = {
     WAVE_DURATION: 50,  // seconds — progress bar fills over this period
 
     // Transition
-    TRANSITION_DURATION: 800,  // ms for slide animation
+    TRANSITION_DURATION: 650,  // ms for slide animation
 
     // Depth layers (flat ordering, no Containers)
     DEPTH_BG: 0,
@@ -95,7 +95,7 @@ const GAME_CONSTANTS = {
 // Derived dimension shortcuts (computed after declaration to allow self-reference)
 GAME_CONSTANTS.halfWidth = GAME_CONSTANTS.WIDTH / 2;
 GAME_CONSTANTS.halfHeight = GAME_CONSTANTS.HEIGHT / 2;
-GAME_CONSTANTS.TRANSITION_DURATION = 800;  // 0.8s camera slide per GDD §7.3
+GAME_CONSTANTS.TRANSITION_DURATION = 650;  // 0.65s camera slide (shortened by 0.15s)
 
 // ─── Runtime state ────────────────────────────────────────────────────────────
 

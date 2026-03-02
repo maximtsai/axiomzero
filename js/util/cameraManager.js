@@ -18,11 +18,11 @@ const cameraManager = (() => {
     /**
      * Smoothly scroll the camera to a target scrollX.
      * @param {number} targetX - Target scrollX value.
-     * @param {number} [duration=800] - Transition duration in ms.
+     * @param {number} [duration=GAME_CONSTANTS.TRANSITION_DURATION] - Transition duration in ms.
      * @param {string} [ease='Sine.easeInOut'] - Easing function.
      * @param {Function} [onComplete] - Called when slide finishes.
      */
-    function slideTo(targetX, duration = 800, ease = 'Sine.easeInOut', onComplete) {
+    function slideTo(targetX, duration = GAME_CONSTANTS.TRANSITION_DURATION, ease = 'Sine.easeInOut', onComplete) {
         if (!camera) return;
         sliding = true;
         PhaserScene.tweens.add({

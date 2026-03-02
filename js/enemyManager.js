@@ -21,8 +21,8 @@ const enemyManager = (() => {
 
     function init() {
         _buildPool();
-        messageBus.subscribe('phaseChanged',    _onPhaseChanged);
-        messageBus.subscribe('freezeEnemies',   freeze);
+        messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
     }
 
@@ -34,14 +34,14 @@ const enemyManager = (() => {
 
     // ── spawning ─────────────────────────────────────────────────────────────
 
-    function startSpawning() {
+    function _startSpawning() {
         spawning = true;
         frozen = false;
-        spawnTimer = -1;
+        spawnTimer = -550;
         waveElapsed = 0;
     }
 
-    function stopSpawning() {
+    function _stopSpawning() {
         spawning = false;
     }
 
@@ -95,7 +95,7 @@ const enemyManager = (() => {
     // ── public queries ───────────────────────────────────────────────────────
 
     function getNearestEnemy(x, y, range) {
-        let best     = null;
+        let best = null;
         let bestDist = range * range;
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
@@ -159,7 +159,7 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 0.55;
+            const firstThreshold = 1.1;
             const secondThreshold = 0.75;
             if (waveElapsed < firstThreshold) {
                 spawnSpeedMultiplier = 21;
@@ -181,8 +181,8 @@ const enemyManager = (() => {
         }
 
         // Move enemies & check tower contact
-        const tPos    = tower.getPosition();
-        const contactR  = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
+        const tPos = tower.getPosition();
+        const contactR = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
         const contactR2 = contactR * contactR;
 
         for (let i = activeEnemies.length - 1; i >= 0; i--) {
@@ -209,9 +209,9 @@ const enemyManager = (() => {
 
     function _onPhaseChanged(phase) {
         if (phase === 'WAVE_ACTIVE') {
-            startSpawning();
+            _startSpawning();
         } else {
-            stopSpawning();
+            _stopSpawning();
             if (phase === 'WAVE_COMPLETE' || phase === 'UPGRADE_PHASE') {
                 clearAllEnemies();
             }
@@ -220,5 +220,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, startSpawning, stopSpawning, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, damageEnemy };
+    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, damageEnemy };
 })();

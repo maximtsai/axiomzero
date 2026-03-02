@@ -4,21 +4,18 @@
 
 const gameHUD = (() => {
     // ── HUD elements ─────────────────────────────────────────────────────────
-    let healthBarBg   = null;
+    let healthBarBg = null;
     let healthBarFill = null;
-    let healthText    = null;
-    let expBarBg      = null;
-    let expBarFill    = null;
-    let expText       = null;
-    let dataIcon      = null;
-    let dataText      = null;
-    let insightText   = null;
+    let healthText = null;
+    let expBarBg = null;
+    let expBarFill = null;
+    let expText = null;
+    let dataIcon = null;
+    let dataText = null;
+    let insightText = null;
 
     let endIterationBtn = null;
-
-    let progressContainer = null;
-    let progressIndicator = null;
-    const PROGRESS_MAX_SCALE_X = (GAME_CONSTANTS.WIDTH - 100) / 2;
+    let waveProgressBar = null;
 
     // Layout
     const HUD_X = 20;
@@ -27,7 +24,7 @@ const gameHUD = (() => {
     const BAR_H = 18;
     const BAR_GAP = 8;
     const DATA_ICON_SIZE = 18;
-    const DATA_ICON_GAP  = 5;
+    const DATA_ICON_GAP = 5;
 
     let visible = false;
 
@@ -36,13 +33,13 @@ const gameHUD = (() => {
     function init() {
         _createElements();
         _hideAll();
-        messageBus.subscribe('phaseChanged',       _onPhaseChanged);
-        messageBus.subscribe('healthChanged',       _onHealthChanged);
-        messageBus.subscribe('expChanged',          _onExpChanged);
-        messageBus.subscribe('currencyChanged',     _onCurrencyChanged);
-        messageBus.subscribe('enemyKilled',         _onEnemyKilled);
-        messageBus.subscribe('upgradePurchased',    _onUpgradePurchased);
-        messageBus.subscribe('towerDeathStarted',   _onTowerDeathStarted);
+        messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('healthChanged', _onHealthChanged);
+        messageBus.subscribe('expChanged', _onExpChanged);
+        messageBus.subscribe('currencyChanged', _onCurrencyChanged);
+        messageBus.subscribe('enemyKilled', _onEnemyKilled);
+        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
+        messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
         messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
     }
 
@@ -129,21 +126,17 @@ const gameHUD = (() => {
         endIterationBtn.setScrollFactor(0);
 
         // ── Progress bar ──
-        progressContainer = PhaserScene.add.nineslice(
-            GAME_CONSTANTS.halfWidth,
-            GAME_CONSTANTS.HEIGHT - 25,
-            'ui',
-            'progress_container.png',
-            GAME_CONSTANTS.WIDTH - 50,
-            50,
-            23, 23, 23, 23
-        );
-        progressContainer.setDepth(depth).setScrollFactor(0);
-
-        progressIndicator = PhaserScene.add.image(75, GAME_CONSTANTS.HEIGHT - 25, 'white_pixel');
-        progressIndicator.setOrigin(0, 0.5);
-        progressIndicator.setScale(0, 4);
-        progressIndicator.setDepth(depth + 1).setScrollFactor(0);
+        waveProgressBar = new ProgressBar(PhaserScene, {
+            x: GAME_CONSTANTS.halfWidth,
+            y: GAME_CONSTANTS.HEIGHT - 25,
+            width: GAME_CONSTANTS.WIDTH - 50,
+            height: 38,
+            padding: 8,
+            bgColor: 0x111122,
+            fillColor: 0x00f5ff,
+            depth: depth
+        });
+        waveProgressBar.setVisible(false);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -162,9 +155,7 @@ const gameHUD = (() => {
         insightText.setVisible(true);
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
-        progressContainer.setVisible(true);
-        progressIndicator.setVisible(true);
-        progressIndicator.setScale(0, 4);
+        waveProgressBar.setVisible(true);
     }
 
     function _hideAll() {
@@ -180,8 +171,7 @@ const gameHUD = (() => {
         insightText.setVisible(false);
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
-        progressContainer.setVisible(false);
-        progressIndicator.setVisible(false);
+        if (waveProgressBar) waveProgressBar.setVisible(false);
     }
 
     // ── event handlers ───────────────────────────────────────────────────────
@@ -217,8 +207,7 @@ const gameHUD = (() => {
         expText.setVisible(false);
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
-        progressContainer.setVisible(false);
-        progressIndicator.setVisible(false);
+        if (waveProgressBar) waveProgressBar.setVisible(false);
     }
 
     function _onHealthChanged(current, max) {
@@ -246,7 +235,7 @@ const gameHUD = (() => {
     }
 
     function _onCurrencyChanged(type, amount) {
-        if (type === 'data')    dataText.setText('' + Math.floor(amount));
+        if (type === 'data') dataText.setText('' + Math.floor(amount));
         if (type === 'insight') insightText.setText('\u25C9 ' + Math.floor(amount));
     }
 
@@ -256,7 +245,7 @@ const gameHUD = (() => {
 
     function _onWaveProgressChanged(progress) {
         if (!visible) return;
-        progressIndicator.setScale(PROGRESS_MAX_SCALE_X * progress, 4);
+        if (waveProgressBar) waveProgressBar.setProgress(progress);
     }
 
     function _onTowerDeathStarted() {
