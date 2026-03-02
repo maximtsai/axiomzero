@@ -3,10 +3,10 @@
 // Handles: state (HIDDEN/GHOST/UNLOCKED/MAXED), rendering, hover info, click-to-purchase.
 
 const NODE_STATE = {
-    HIDDEN:   'HIDDEN',
-    GHOST:    'GHOST',
+    HIDDEN: 'HIDDEN',
+    GHOST: 'GHOST',
     UNLOCKED: 'UNLOCKED',
-    MAXED:    'MAXED',
+    MAXED: 'MAXED',
 };
 
 /**
@@ -33,35 +33,35 @@ const NODE_STATE = {
 
 class Node {
     constructor(def) {
-        this.id          = def.id;
-        this.name        = def.name;
+        this.id = def.id;
+        this.name = def.name;
         this.description = def.description;
-        this.maxLevel    = def.maxLevel    || 1;
-        this.baseCost    = def.baseCost    || 0;
+        this.maxLevel = def.maxLevel || 1;
+        this.baseCost = def.baseCost || 0;
         this.costScaling = def.costScaling || 'static';
-        this.costStep    = def.costStep    || 0;
-        this.costType    = def.costType    || 'data';
-        this.effect      = def.effect      || function() {};
-        this.popupText   = def.popupText   || null;
-        this.popupColor  = def.popupColor  || '#ffffff';
-        this.parentId    = def.parentId    || null;
-        this.childIds    = def.childIds    || [];
-        this.treeX       = def.treeX       || 0;
-        this.treeY       = def.treeY       || 0;
-        this.icon        = def.icon        || null;
+        this.costStep = def.costStep || 0;
+        this.costType = def.costType || 'data';
+        this.effect = def.effect || function () { };
+        this.popupText = def.popupText || null;
+        this.popupColor = def.popupColor || '#ffffff';
+        this.parentId = def.parentId || null;
+        this.childIds = def.childIds || [];
+        this.treeX = def.treeX || 0;
+        this.treeY = def.treeY || 0;
+        this.icon = def.icon || null;
 
         // New Properties for Tier and Duo-Box Logic
-        this.tier        = def.tier        || 1;
-        this.isDuoBox    = def.isDuoBox    || false;
-        this.shardId     = def.shardId     || null;
+        this.tier = def.tier || 1;
+        this.isDuoBox = def.isDuoBox || false;
+        this.shardId = def.shardId || null;
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
 
         // Phaser objects
-        this.btn        = null;
-        this.label      = null;
+        this.btn = null;
+        this.label = null;
         this.iconSprite = null;
         this.hoverGroup = null; // array of Phaser objects for hover tooltip
 
@@ -233,12 +233,14 @@ class Node {
             hoverWhileDisabled: true,
         });
         this.btn.setDepth(nodeDepth);
+        this.btn.setScrollFactor(0);
 
         // Node icon
         if (this.icon) {
             this.iconSprite = PhaserScene.add.sprite(x, y - 5, 'buttons', this.icon)
                 .setOrigin(0.5, 0.5)
-                .setDepth(nodeDepth + 1);
+                .setDepth(nodeDepth + 1)
+                .setScrollFactor(0);
         }
 
         // Node name label
@@ -249,13 +251,14 @@ class Node {
             align: 'center',
             stroke: '#000000',
             strokeThickness: 6,
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2).setScrollFactor(0);
 
         // Fadeout sprite — overlays button, starts invisible
         this.fadeoutSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_ghost.png')
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
-            .setDepth(nodeDepth + 1);
+            .setDepth(nodeDepth + 1)
+            .setScrollFactor(0);
 
         this._updateVisual();
     }
@@ -389,11 +392,12 @@ class Node {
 
         // Background - centered above node
         const bg = PhaserScene.add.image(x, y, 'white_pixel');
-        bg.setOrigin(0.5, 1)  // center-top
+        bg.setOrigin(0.5, 1)
             .setDisplaySize(bgWidth, bgHeight)
             .setTint(0x111122)
             .setAlpha(0.92)
-            .setDepth(depth);
+            .setDepth(depth)
+            .setScrollFactor(0);
         this.hoverGroup.push(bg);
 
         const padding = 12;
@@ -406,7 +410,7 @@ class Node {
             fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
-        }).setOrigin(0.5, 0).setDepth(depth + 1);
+        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
         this.hoverGroup.push(nameT);
         currentY += nameT.height + 6;
 
@@ -417,7 +421,7 @@ class Node {
             color: '#cccccc',
             align: 'center',
             wordWrap: { width: 275 },
-        }).setOrigin(0.5, 0).setDepth(depth + 1);
+        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
         this.hoverGroup.push(descT);
         currentY += descT.height + 6;
 
@@ -427,7 +431,7 @@ class Node {
                 fontSize: '19px',
                 color: '#ffe600',
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 1);
+            }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
             this.hoverGroup.push(maxT);
         } else {
             // Level and cost - center aligned, larger font
@@ -438,7 +442,7 @@ class Node {
                 fontSize: '19px',
                 color: this.canAfford() ? '#00ff88' : '#ff4444',
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 1);
+            }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
             this.hoverGroup.push(infoT);
         }
     }

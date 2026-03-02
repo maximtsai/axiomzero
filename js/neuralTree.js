@@ -10,10 +10,10 @@ const neuralTree = (() => {
     const nodes = {};
 
     // Tree visual elements
-    let panelBg    = null;
-    let titleText  = null;
-    let deployBtn  = null;
-    let lines      = [];  // Phaser Graphics lines connecting parent → child
+    let panelBg = null;
+    let titleText = null;
+    let deployBtn = null;
+    let lines = [];  // Phaser Graphics lines connecting parent → child
 
     let visible = false;
 
@@ -38,9 +38,10 @@ const neuralTree = (() => {
         panelBg = PhaserScene.add.image(0, 0, 'white_pixel');
         panelBg.setOrigin(0, 0);
         panelBg.setDisplaySize(PANEL_W, GAME_CONSTANTS.HEIGHT);
-        panelBg.setTint(0x0a0a18);
+        panelBg.setTint(0x12122a);
         panelBg.setAlpha(0.9);
         panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
+        panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
 
         // Title
@@ -49,7 +50,7 @@ const neuralTree = (() => {
             fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5).setVisible(false);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5).setScrollFactor(0).setVisible(false);
     }
 
     function _createNodes() {
@@ -230,6 +231,9 @@ const neuralTree = (() => {
                 line.setAlpha(alpha);
 
                 lines.push(line);
+
+                // Fixed to screen (not affected by camera scroll)
+                line.setScrollFactor(0);
             }
         }
     }

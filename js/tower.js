@@ -8,29 +8,29 @@
 const tower = (() => {
     // ── sparkle (pre-awaken placeholder) ────────────────────────────────────
     let sparkleSprite = null;
-    let sparkleTween  = null;
-    let awakened      = false; // true after awaken() is called
+    let sparkleTween = null;
+    let awakened = false; // true after awaken() is called
 
     // ── tower visuals (post-awaken) ──────────────────────────────────────────
-    let sprite      = null;
-    let glowSprite  = null;
+    let sprite = null;
+    let glowSprite = null;
     let rangeSprite = null;  // Range indicator circle below tower
     let breatheTween = null;
 
     // ── runtime combat state (not persisted — reset each session) ────────────
-    let health        = 0;
-    let maxHealth     = 0;
-    let damage        = 0;
-    let attackRange   = 0;
-    let healthRegen   = 0;
+    let health = 0;
+    let maxHealth = 0;
+    let damage = 0;
+    let attackRange = 0;
+    let healthRegen = 0;
     let attackCooldown = 0;
-    let attackTimer   = 0;
+    let attackTimer = 0;
 
     // ── EXP accumulator ──────────────────────────────────────────────────────
     let exp = 0;
 
-    let alive        = false;
-    let active       = false;       // true only during WAVE_ACTIVE
+    let alive = false;
+    let active = false;       // true only during WAVE_ACTIVE
     let isInvincible = false;       // true briefly after a boss is defeated
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -44,10 +44,10 @@ const tower = (() => {
 
         // Alpha animation: dim → full → bright → back to dim
         PhaserScene.tweens.add({
-            targets:  rangeSprite,
-            alpha:    0.25,
+            targets: rangeSprite,
+            alpha: 0.25,
             duration: 450,
-            ease:     'Cubic.easeOut',
+            ease: 'Cubic.easeOut',
             completeDelay: 100,
             onComplete: () => {
 
@@ -56,27 +56,27 @@ const tower = (() => {
 
         // Scale animation
         rangeSprite.currAnim = PhaserScene.tweens.add({
-            targets:  rangeSprite,
-            scaleX:   newScale * 1.14,
-            scaleY:   newScale * 1.14,
+            targets: rangeSprite,
+            scaleX: newScale * 1.14,
+            scaleY: newScale * 1.14,
             duration: 550,
-            ease:     'Cubic.easeOut',
+            ease: 'Cubic.easeOut',
             onComplete: () => {
                 rangeSprite.currAnim = PhaserScene.tweens.add({
-                    targets:  rangeSprite,
-                    scaleX:   newScale,
-                    scaleY:   newScale,
+                    targets: rangeSprite,
+                    scaleX: newScale,
+                    scaleY: newScale,
                     duration: 350,
-                    ease:     'Cubic.easeIn',
+                    ease: 'Cubic.easeIn',
                     onComplete: () => {
                         // add a tiny brief zoom in here
                         zoomShake();
                         rangeSprite.setAlpha(1);
                         rangeSprite.currAnim = PhaserScene.tweens.add({
-                            targets:  rangeSprite,
-                            alpha:    0.25,
+                            targets: rangeSprite,
+                            alpha: 0.25,
                             duration: 1400,
-                            ease:     'Quart.easeOut',
+                            ease: 'Quart.easeOut',
                             onComplete: () => {
                                 rangeSprite.currAnim = null;
                             }
@@ -90,50 +90,25 @@ const tower = (() => {
     function _recalcStats() {
         const ups = gameState.upgrades || {};
         const reinforceLv = ups.reinforce || 0;
-        const sharpenLv   = ups.sharpen   || 0;
+        const sharpenLv = ups.sharpen || 0;
 
-        maxHealth      = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * reinforceLv;
-        damage         = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
-        attackRange    = GAME_CONSTANTS.TOWER_ATTACK_RANGE;
-        healthRegen    = GAME_CONSTANTS.TOWER_BASE_REGEN;
+        maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * reinforceLv;
+        damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
+        attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE;
+        healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN;
         attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN;
     }
 
-    /** Tweens the active tower visuals (sprite+glow OR sparkle) to a new x. */
-    function _tweenToX(targetX, duration) {
-        let sprites = [];
-        if (sprite)       sprites.push(sprite);
-        if (glowSprite)   sprites.push(glowSprite);
-        if (rangeSprite)  sprites.push(rangeSprite);
-        if (sparkleSprite) sprites.push(sparkleSprite);
-        
-        if (sprites.length === 0) {
-            console.log('[Tower] _tweenToX: no sprites, skipping');
-            return;
-        }
-        
-        console.log('[Tower] _tweenToX:', targetX, 'sprites:', sprites.length);
-        
-        // Tween each sprite individually
-        //sprites.forEach(s => {
-            //PhaserScene.tweens.killTweensOf(s);
-            PhaserScene.tweens.add({
-                targets: sprites,
-                x: targetX,
-                duration,
-                ease: 'Sine.easeInOut',
-            });
-        //});
-    }
+
 
     // ── public API ───────────────────────────────────────────────────────────
 
     function init() {
-        messageBus.subscribe('phaseChanged',      _onPhaseChanged);
-        messageBus.subscribe('upgradePurchased',  _onUpgradePurchased);
-        messageBus.subscribe('bossDefeated',      _onBossDefeated);
-        messageBus.subscribe('towerShakeRequested', function(duration) {
-            shake(duration, function() { messageBus.publish('towerShakeComplete'); });
+        messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
+        messageBus.subscribe('bossDefeated', _onBossDefeated);
+        messageBus.subscribe('towerShakeRequested', function (duration) {
+            shake(duration, function () { messageBus.publish('towerShakeComplete'); });
         });
     }
 
@@ -144,7 +119,7 @@ const tower = (() => {
     function spawn() {
         if (sparkleSprite) return; // already spawned
 
-        const cx = GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2;
+        const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
         sparkleSprite = PhaserScene.add.sprite(cx, cy, 'player', 'sparkle.png');
@@ -153,24 +128,24 @@ const tower = (() => {
         sparkleSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
 
         sparkleTween = PhaserScene.tweens.add({
-            targets:  sparkleSprite,
-            alpha:    { from: 0.4, to: 1.0 },
-            scale:    { from: 0.8, to: 1.2 },
+            targets: sparkleSprite,
+            alpha: { from: 0.4, to: 1.0 },
+            scale: { from: 0.8, to: 1.2 },
             duration: 900,
-            yoyo:     true,
-            repeat:   -1,
-            ease:     'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
         });
 
         _recalcStats();
-        health   = maxHealth;
-        alive    = true;
+        health = maxHealth;
+        alive = true;
         awakened = false;
-        exp      = 0;
+        exp = 0;
 
         messageBus.publish('towerSpawned');
         messageBus.publish('healthChanged', health, maxHealth);
-        messageBus.publish('expChanged',    exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+        messageBus.publish('expChanged', exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
 
     /**
@@ -183,11 +158,11 @@ const tower = (() => {
         awakened = true;
 
         // Capture position from sparkle before destroying it
-        const cx = sparkleSprite ? sparkleSprite.x : GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2;
+        const cx = sparkleSprite ? sparkleSprite.x : GAME_CONSTANTS.halfWidth;
         const cy = sparkleSprite ? sparkleSprite.y : GAME_CONSTANTS.halfHeight;
 
         // Destroy sparkle placeholder
-        if (sparkleTween)  { sparkleTween.stop(); sparkleTween = null; }
+        if (sparkleTween) { sparkleTween.stop(); sparkleTween = null; }
         if (sparkleSprite) { sparkleSprite.destroy(); sparkleSprite = null; }
 
         // Clean up any existing range sprite (safety check)
@@ -216,13 +191,13 @@ const tower = (() => {
 
         // Breathe / pulse tween on glow
         breatheTween = PhaserScene.tweens.add({
-            targets:  glowSprite,
-            alpha:    { from: 0.2, to: 0.5 },
-            scale:    { from: 1.3, to: 1.45 },
+            targets: glowSprite,
+            alpha: { from: 0.2, to: 0.5 },
+            scale: { from: 1.3, to: 1.45 },
             duration: 1800,
-            yoyo:     true,
-            repeat:   -1,
-            ease:     'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut',
         });
 
         messageBus.publish('towerAwakened');
@@ -231,14 +206,14 @@ const tower = (() => {
 
     function reset() {
         _recalcStats();
-        health       = maxHealth;
-        alive        = true;
-        attackTimer  = 0;
-        exp          = 0;
+        health = maxHealth;
+        alive = true;
+        attackTimer = 0;
+        exp = 0;
         isInvincible = false;
         // NOTE: active is controlled solely by _onPhaseChanged — do NOT set it here
         messageBus.publish('healthChanged', health, maxHealth);
-        messageBus.publish('expChanged',    exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+        messageBus.publish('expChanged', exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
 
     function takeDamage(amount) {
@@ -255,10 +230,10 @@ const tower = (() => {
         // visual hit flash
         if (sprite) {
             PhaserScene.tweens.add({
-                targets:  sprite,
-                alpha:    { from: 0.5, to: 1 },
+                targets: sprite,
+                alpha: { from: 0.5, to: 1 },
                 duration: 120,
-                ease:     'Linear',
+                ease: 'Linear',
             });
         }
     }
@@ -270,8 +245,8 @@ const tower = (() => {
     }
 
     function die() {
-        alive        = false;
-        active       = false;
+        alive = false;
+        active = false;
         isInvincible = false;
         // Clean up range sprite
         if (rangeSprite) { rangeSprite.destroy(); rangeSprite = null; }
@@ -280,25 +255,25 @@ const tower = (() => {
     }
 
     function getPosition() {
-        if (sprite)       return { x: sprite.x,       y: sprite.y };
+        if (sprite) return { x: sprite.x, y: sprite.y };
         if (sparkleSprite) return { x: sparkleSprite.x, y: sparkleSprite.y };
-        return { x: GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2, y: GAME_CONSTANTS.halfHeight };
+        return { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.halfHeight };
     }
 
-    function isAlive()    { return alive; }
-    function getDamage()  { return damage; }
+    function isAlive() { return alive; }
+    function getDamage() { return damage; }
 
     function setVisible(vis) {
-        if (sprite)       sprite.setVisible(vis);
-        if (glowSprite)   glowSprite.setVisible(vis);
-        if (rangeSprite)  rangeSprite.setVisible(vis);
+        if (sprite) sprite.setVisible(vis);
+        if (glowSprite) glowSprite.setVisible(vis);
+        if (rangeSprite) rangeSprite.setVisible(vis);
         if (sparkleSprite) sparkleSprite.setVisible(vis);
     }
 
     function setPosition(x, y) {
-        if (sprite)       sprite.setPosition(x, y);
-        if (glowSprite)   glowSprite.setPosition(x, y);
-        if (rangeSprite)  rangeSprite.setPosition(x, y);  // 80px below tower
+        if (sprite) sprite.setPosition(x, y);
+        if (glowSprite) glowSprite.setPosition(x, y);
+        if (rangeSprite) rangeSprite.setPosition(x, y);  // 80px below tower
         if (sparkleSprite) sparkleSprite.setPosition(x, y);
     }
 
@@ -309,16 +284,16 @@ const tower = (() => {
      */
     function shake(duration, onComplete) {
         const targets = [];
-        if (sprite)        targets.push(sprite);
-        if (glowSprite)    targets.push(glowSprite);
-        if (rangeSprite)   targets.push(rangeSprite);
+        if (sprite) targets.push(sprite);
+        if (glowSprite) targets.push(glowSprite);
+        if (rangeSprite) targets.push(rangeSprite);
         if (sparkleSprite) targets.push(sparkleSprite);
         if (targets.length === 0) { if (onComplete) onComplete(); return; }
 
         // Elevate above death overlay
-        if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
-        if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
-        if (rangeSprite)   rangeSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (sprite) sprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (glowSprite) glowSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
+        if (rangeSprite) rangeSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
         if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_DEATH_TOWER);
 
         const origX = targets[0].x;
@@ -338,9 +313,9 @@ const tower = (() => {
                 onComplete: isLastOscillation ? () => {
                     // Snap back and restore normal depths
                     for (let i = 0; i < targets.length; i++) { targets[i].x = origX; }
-                    if (sprite)        sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-                    if (glowSprite)    glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
-                    if (rangeSprite)   rangeSprite.setDepth(50);
+                    if (sprite) sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                    if (glowSprite) glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
+                    if (rangeSprite) rangeSprite.setDepth(50);
                     if (sparkleSprite) sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
                     if (onComplete) onComplete();
                 } : undefined,
@@ -393,7 +368,7 @@ const tower = (() => {
     }
 
     function _tryAutoAttack() {
-        const pos    = getPosition();
+        const pos = getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, attackRange);
         if (!target) return;
         projectileManager.fire(pos.x, pos.y, target.x, target.y, damage);
@@ -403,21 +378,19 @@ const tower = (() => {
 
     function _onPhaseChanged(phase) {
         if (phase === 'WAVE_ACTIVE') {
-            active      = true;
+            active = true;
             attackTimer = 0;
-            // Tween back to full-screen center
-            _tweenToX(GAME_CONSTANTS.halfWidth, 500);
+            // Camera handles the slide — tower stays at screen center
         } else if (phase === 'UPGRADE_PHASE') {
             active = false;
-            // Tween to center of right half (right of neural tree panel)
-            // Ensure range sprite is visible and at default alpha
+            // Show range sprite during upgrade view
             if (rangeSprite) {
                 if (rangeSprite.currAnim) {
                     rangeSprite.currAnim.stop();
                 }
                 rangeSprite.setVisible(true);
                 rangeSprite.setAlpha(0);
-                const rangeScale = attackRange / 202;  // 202 = base range for 400x400 sprite
+                const rangeScale = attackRange / 202;
                 rangeSprite.setScale(rangeScale * 1.05);
                 rangeSprite.currAnim = PhaserScene.tweens.add({
                     targets: rangeSprite,
@@ -431,8 +404,7 @@ const tower = (() => {
                     }
                 })
             }
-            _tweenToX(GAME_CONSTANTS.halfWidth + GAME_CONSTANTS.halfWidth / 2, 500);
-
+            // Camera handles the slide — tower stays at screen center
         } else {
             active = false;
         }

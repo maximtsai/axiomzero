@@ -45,7 +45,15 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     gameHUD.init();
     neuralTree.init();
     iterationOverScreen.init();
+
+    // Camera & transition — cameraManager before transitionManager
+    cameraManager.init();
     transitionManager.init();
+
+    // Tooltip, milestone tracking, and glitch effects
+    tooltipManager.init();
+    milestoneTracker.init();
+    glitchFX.init();
 
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.testMobile() ? 3 : 0;
@@ -62,6 +70,8 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     }
 
     // ── Enter the game ──────────────────────────────────────────────────
+    // Start camera in upgrade view position (no animation on initial load)
+    PhaserScene.cameras.main.scrollX = -GAME_CONSTANTS.halfWidth / 2;
     gameStateMachine.goTo('UPGRADE_PHASE');
     debugLog('Game initialised — entering UPGRADE_PHASE');
 
