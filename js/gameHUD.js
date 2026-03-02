@@ -45,15 +45,16 @@ const gameHUD = (() => {
 
     function _createElements() {
         const depth = GAME_CONSTANTS.DEPTH_HUD;
+        const groupX = GAME_CONSTANTS.halfWidth + 30 + HUD_X;
 
         // ── Health bar ──
-        healthBarBg = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
+        healthBarBg = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
         healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth).setScrollFactor(0);
 
-        healthBarFill = PhaserScene.add.image(HUD_X, HUD_Y, 'white_pixel');
+        healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
         healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1).setScrollFactor(0);
 
-        healthText = PhaserScene.add.text(HUD_X + BAR_W + 8, HUD_Y, '', {
+        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '16px',
             color: '#ffffff',
@@ -61,13 +62,13 @@ const gameHUD = (() => {
 
         // ── EXP bar ──
         const expY = HUD_Y + BAR_H + BAR_GAP;
-        expBarBg = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
+        expBarBg = PhaserScene.add.image(groupX, expY, 'white_pixel');
         expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 8).setTint(0x222222).setDepth(depth).setScrollFactor(0);
 
-        expBarFill = PhaserScene.add.image(HUD_X, expY, 'white_pixel');
+        expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
         expBarFill.setOrigin(0, 0).setDisplaySize(0, 8).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
-        expText = PhaserScene.add.text(HUD_X + BAR_W + 8, expY - 2, 'EXP 0%', {
+        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - 2, 'EXP 0%', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '12px',
             color: '#aaaaaa',
@@ -75,18 +76,17 @@ const gameHUD = (() => {
 
         // ── Currency counters ──
         const currY = expY + 8 + BAR_GAP + 5;
-        const upgradeBaseX = GAME_CONSTANTS.halfWidth + 16;
 
-        dataIcon = PhaserScene.add.image(upgradeBaseX, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
+        dataIcon = PhaserScene.add.image(groupX, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
         dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2).setScrollFactor(0);
 
-        dataText = PhaserScene.add.text(upgradeBaseX + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
+        dataText = PhaserScene.add.text(groupX + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
-        insightText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 145, currY, '\u25C9 0', {
+        insightText = PhaserScene.add.text(groupX + 125, currY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#ffffff',
@@ -95,6 +95,12 @@ const gameHUD = (() => {
         if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
             const treeGroup = neuralTree.getGroup();
             if (treeGroup) {
+                treeGroup.add(healthBarBg);
+                treeGroup.add(healthBarFill);
+                treeGroup.add(healthText);
+                treeGroup.add(expBarBg);
+                treeGroup.add(expBarFill);
+                treeGroup.add(expText);
                 treeGroup.add(dataIcon);
                 treeGroup.add(dataText);
                 treeGroup.add(insightText);
@@ -151,7 +157,6 @@ const gameHUD = (() => {
 
     function _showCombatHUD() {
         visible = true;
-        _resetCombatPositions();
         healthBarBg.setVisible(true);
         healthBarFill.setVisible(true);
         healthText.setVisible(true);
@@ -197,18 +202,19 @@ const gameHUD = (() => {
 
     function _showUpgradeHUD() {
         visible = true;
-        // Show currency counters (they are part of treeGroup and will slide automatically)
+
+        // Show all HUD elements grouped with the Neural Tree
+        healthBarBg.setVisible(true);
+        healthBarFill.setVisible(true);
+        healthText.setVisible(true);
+        expBarBg.setVisible(true);
+        expBarFill.setVisible(true);
+        expText.setVisible(true);
         dataIcon.setVisible(true);
         dataText.setVisible(true);
         insightText.setVisible(true);
 
         // Hide combat-only elements
-        healthBarBg.setVisible(false);
-        healthBarFill.setVisible(false);
-        healthText.setVisible(false);
-        expBarBg.setVisible(false);
-        expBarFill.setVisible(false);
-        expText.setVisible(false);
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -263,12 +269,5 @@ const gameHUD = (() => {
         insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
     }
 
-    /** Reposition HUD for full-screen combat layout. */
-    function _resetCombatPositions() {
-        const combatCurrY = HUD_Y + BAR_H + BAR_GAP + 8 + BAR_GAP + 5;
-        dataIcon.setPosition(HUD_X, combatCurrY + DATA_ICON_SIZE / 2);
-        dataText.setPosition(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, combatCurrY);
-        insightText.setPosition(HUD_X + 125, combatCurrY);
-    }
     return { init };
 })();
