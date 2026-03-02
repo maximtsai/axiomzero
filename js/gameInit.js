@@ -42,8 +42,8 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     upgradeManager.init();
 
     // UI systems — depend on resource / tower for data display
-    gameHUD.init();
     neuralTree.init();
+    gameHUD.init();
     iterationOverScreen.init();
 
     // Camera & transition — cameraManager before transitionManager

@@ -75,21 +75,31 @@ const gameHUD = (() => {
 
         // ── Currency counters ──
         const currY = expY + 8 + BAR_GAP + 5;
+        const upgradeBaseX = GAME_CONSTANTS.halfWidth + 16;
 
-        dataIcon = PhaserScene.add.image(HUD_X, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
+        dataIcon = PhaserScene.add.image(upgradeBaseX, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
         dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2).setScrollFactor(0);
 
-        dataText = PhaserScene.add.text(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
+        dataText = PhaserScene.add.text(upgradeBaseX + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
-        insightText = PhaserScene.add.text(HUD_X + 125, currY, '\u25C9 0', {
+        insightText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 145, currY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
+
+        if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
+            const treeGroup = neuralTree.getGroup();
+            if (treeGroup) {
+                treeGroup.add(dataIcon);
+                treeGroup.add(dataText);
+                treeGroup.add(insightText);
+            }
+        }
 
         // ── END ITERATION button ──
         endIterationBtn = new Button({
@@ -187,14 +197,10 @@ const gameHUD = (() => {
 
     function _showUpgradeHUD() {
         visible = true;
-        // Show currency counters on the right half
-        const upgradeBaseX = GAME_CONSTANTS.halfWidth + 16;
+        // Show currency counters (they are part of treeGroup and will slide automatically)
         dataIcon.setVisible(true);
-        dataIcon.setPosition(upgradeBaseX, HUD_Y + DATA_ICON_SIZE / 2);
         dataText.setVisible(true);
-        dataText.setPosition(upgradeBaseX + DATA_ICON_SIZE + DATA_ICON_GAP, HUD_Y);
         insightText.setVisible(true);
-        insightText.setPosition(GAME_CONSTANTS.halfWidth + 145, HUD_Y);
 
         // Hide combat-only elements
         healthBarBg.setVisible(false);
@@ -264,6 +270,5 @@ const gameHUD = (() => {
         dataText.setPosition(HUD_X + DATA_ICON_SIZE + DATA_ICON_GAP, combatCurrY);
         insightText.setPosition(HUD_X + 125, combatCurrY);
     }
-
     return { init };
 })();

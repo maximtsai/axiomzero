@@ -261,7 +261,9 @@ const neuralTree = (() => {
         if (phase === 'UPGRADE_PHASE') {
             show();
         } else {
-            hide();
+            if (typeof transitionManager === 'undefined' || !transitionManager.isTransitioning()) {
+                hide();
+            }
         }
     }
 
@@ -290,7 +292,6 @@ const neuralTree = (() => {
         // Mark first launch as complete
         gameState.isFirstLaunch = false;
 
-        hide();
         transitionManager.transitionTo('WAVE_ACTIVE');
     }
 

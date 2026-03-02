@@ -301,6 +301,7 @@ class Node {
                 this.btn.setVisible(false);
                 this.btn.setState(DISABLE);
                 if (this.label) this.label.setVisible(false);
+                if (this.iconSprite) this.iconSprite.setVisible(false);
                 currentSpriteRef = null;
                 break;
 
@@ -313,6 +314,10 @@ class Node {
                 if (this.label) {
                     this.label.setVisible(true);
                     this.label.setAlpha(0.25);
+                }
+                if (this.iconSprite) {
+                    this.iconSprite.setVisible(true);
+                    this.iconSprite.setAlpha(0.2);
                 }
                 currentSpriteRef = 'node_ghost.png';
                 break;
@@ -335,6 +340,10 @@ class Node {
                     this.label.setAlpha(1);
                     this.label.setColor('#00f5ff');
                 }
+                if (this.iconSprite) {
+                    this.iconSprite.setVisible(true);
+                    this.iconSprite.setAlpha(1);
+                }
                 break;
 
             case NODE_STATE.MAXED:
@@ -347,6 +356,10 @@ class Node {
                     this.label.setVisible(true);
                     this.label.setAlpha(0.8);
                     this.label.setColor('#ffe600');
+                }
+                if (this.iconSprite) {
+                    this.iconSprite.setVisible(true);
+                    this.iconSprite.setAlpha(1);
                 }
                 currentSpriteRef = 'node_maxed.png';
                 break;
@@ -501,6 +514,7 @@ class Node {
     setVisible(vis) {
         if (this.btn) this.btn.setVisible(vis);
         if (this.label) this.label.setVisible(vis);
+        if (this.iconSprite) this.iconSprite.setVisible(vis);
         if (!vis) this._hideHover();
     }
 

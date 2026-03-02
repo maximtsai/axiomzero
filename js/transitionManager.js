@@ -39,11 +39,14 @@ const transitionManager = (() => {
         if (targetPhase === 'WAVE_ACTIVE') {
             // First switch phase so game logic activates, then slide camera
             gameStateMachine.goTo('WAVE_ACTIVE');
-            const targetX = -GAME_CONSTANTS.halfWidth;
+            const targetX = -GAME_CONSTANTS.halfWidth - 30;
 
             _tweenTreeGroup(targetX, duration);
             cameraManager.toCombatView(duration, () => {
                 _endTransition();
+                if (typeof neuralTree !== 'undefined') {
+                    neuralTree.hide();
+                }
             });
         } else if (targetPhase === 'UPGRADE_PHASE') {
             // First switch phase so tree UI appears, then slide camera
