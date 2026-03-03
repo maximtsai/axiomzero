@@ -8,27 +8,41 @@
 
 const enemyManager = (() => {
     const POOL_SIZE = 80;
+    const MINIBOSS_POOL_SIZE = 2;
 
     let pool = [];          // pre-allocated Enemy instances
-    let activeEnemies = []; // currently alive Enemy references
+    let minibossPool = [];  // pre-allocated Miniboss instances
+    let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
     let waveElapsed = 0;    // seconds since wave start — drives scaling
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
+    // Miniboss tracking
+    let minibossSpawned = false;  // has a miniboss spawned this wave?
+    let minibossAlive = false;    // is the current miniboss still alive?
+
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
         _buildPool();
+        _buildMinibossPool();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
+        messageBus.subscribe('waveProgressChanged', _onWaveProgress);
     }
 
     function _buildPool() {
         for (let i = 0; i < POOL_SIZE; i++) {
             pool.push(new BasicEnemy());
+        }
+    }
+
+    function _buildMinibossPool() {
+        for (let i = 0; i < MINIBOSS_POOL_SIZE; i++) {
+            minibossPool.push(new Miniboss1());
         }
     }
 
@@ -39,6 +53,8 @@ const enemyManager = (() => {
         frozen = false;
         spawnTimer = -550;
         waveElapsed = 0;
+        minibossSpawned = false;
+        minibossAlive = false;
     }
 
     function _stopSpawning() {
@@ -85,9 +101,37 @@ const enemyManager = (() => {
         activeEnemies.push(e);
     }
 
+    function _spawnMiniboss() {
+        if (minibossSpawned) return;
+        const mb = _getMinibossFromPool();
+        if (!mb) return;
+
+        minibossSpawned = true;
+        minibossAlive = true;
+
+        const distance = GAME_CONSTANTS.MINIBOSS_SPAWN_DISTANCE;
+        const angle = Miniboss.getSpawnAngle();
+        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
+        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
+
+        mb.activate(sx, sy);
+        mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+        activeEnemies.push(mb);
+
+        messageBus.publish('minibossSpawned');
+        debugLog('Miniboss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
+    }
+
     function _getFromPool() {
         for (let i = 0; i < pool.length; i++) {
             if (!pool[i].alive) return pool[i];
+        }
+        return null;
+    }
+
+    function _getMinibossFromPool() {
+        for (let i = 0; i < minibossPool.length; i++) {
+            if (!minibossPool[i].alive) return minibossPool[i];
         }
         return null;
     }
@@ -141,10 +185,18 @@ const enemyManager = (() => {
     function _killEnemy(enemy) {
         const ex = enemy.x;
         const ey = enemy.y;
+        const wasMiniboss = enemy.isMiniboss;
         enemy.deactivate();
         const idx = activeEnemies.indexOf(enemy);
         if (idx !== -1) activeEnemies.splice(idx, 1);
-        messageBus.publish('enemyKilled', ex, ey);
+
+        if (wasMiniboss) {
+            minibossAlive = false;
+            messageBus.publish('minibossDefeated', ex, ey);
+            debugLog('Miniboss defeated');
+        } else {
+            messageBus.publish('enemyKilled', ex, ey);
+        }
     }
 
     // ── per-frame update ─────────────────────────────────────────────────────
@@ -159,14 +211,14 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 1.1;
-            const secondThreshold = 0.75;
+            const firstThreshold = 1;
+            const secondThreshold = 0.85;
             if (waveElapsed < firstThreshold) {
-                spawnSpeedMultiplier = 21;
+                spawnSpeedMultiplier = 27;
             } else if (waveElapsed < firstThreshold + secondThreshold) {
                 // Linear interpolation from 5 to 1 over 0.8 seconds
                 const progress = (waveElapsed - firstThreshold) / secondThreshold;
-                spawnSpeedMultiplier = 21 - 20 * progress;
+                spawnSpeedMultiplier = 27 - 26 * progress;
             } else {
                 spawnSpeedMultiplier = 1;
             }
@@ -191,16 +243,18 @@ const enemyManager = (() => {
 
             e.update(dt * spawnSpeedMultiplier);
 
-            // Tower contact check
-            const dx = e.x - tPos.x;
-            const dy = e.y - tPos.y;
-            if (dx * dx + dy * dy < contactR2) {
-                tower.takeDamage(e.damage);
-                // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
-                // which empties activeEnemies mid-loop, so bail out
-                if (activeEnemies.length === 0) break;
-                e.deactivate();
-                activeEnemies.splice(i, 1);
+            // Tower contact check — minibosses do NOT die on contact
+            if (!e.isMiniboss) {
+                const dx = e.x - tPos.x;
+                const dy = e.y - tPos.y;
+                if (dx * dx + dy * dy < contactR2) {
+                    tower.takeDamage(e.damage);
+                    // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
+                    // which empties activeEnemies mid-loop, so bail out
+                    if (activeEnemies.length === 0) break;
+                    e.deactivate();
+                    activeEnemies.splice(i, 1);
+                }
             }
         }
     }
@@ -215,6 +269,12 @@ const enemyManager = (() => {
             if (phase === 'WAVE_COMPLETE' || phase === 'UPGRADE_PHASE') {
                 clearAllEnemies();
             }
+        }
+    }
+
+    function _onWaveProgress(progress) {
+        if (progress >= 0.5 && !minibossSpawned && spawning) {
+            _spawnMiniboss();
         }
     }
 

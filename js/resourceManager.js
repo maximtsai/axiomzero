@@ -13,6 +13,7 @@ const resourceManager = (() => {
     // Session tracking — reset each combat session for the summary screen
     let sessionData = 0;
     let sessionInsight = 0;
+    let sessionShards = 0;
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -21,6 +22,7 @@ const resourceManager = (() => {
         _buildPool();
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
         updateManager.addFunction(_update);
     }
 
@@ -31,9 +33,9 @@ const resourceManager = (() => {
         gfx.fillStyle(GAME_CONSTANTS.COLOR_FRIENDLY, 1);
         gfx.fillPoints([
             { x: size / 2, y: 0 },
-            { x: size,     y: size / 2 },
+            { x: size, y: size / 2 },
             { x: size / 2, y: size },
-            { x: 0,        y: size / 2 },
+            { x: 0, y: size / 2 },
         ], true);
         gfx.generateTexture('data_drop', size, size);
         gfx.destroy();
@@ -70,7 +72,7 @@ const resourceManager = (() => {
         d.life = GAME_CONSTANTS.DATA_DECAY_TIME;
         d.maxLife = GAME_CONSTANTS.DATA_DECAY_TIME;
         d.img.setPosition(x, y);
-        
+
         // Visibility logic based on total drops spawned
         let visible = true;
         if (totalDropsSpawned > 600) {
@@ -80,7 +82,7 @@ const resourceManager = (() => {
             // After 300: every 3rd drop invisible
             visible = (totalDropsSpawned % 3) !== 0;
         }
-        
+
         d.img.setAlpha(visible ? 1 : 0);
         d.img.setVisible(visible);
         d.img.setActive(true);
@@ -99,14 +101,23 @@ const resourceManager = (() => {
         messageBus.publish('currencyChanged', 'insight', gameState.insight);
     }
 
-    function getData()    { return gameState.data    || 0; }
-    function getInsight() { return gameState.insight  || 0; }
-    function getSessionData()    { return sessionData; }
+    function addShard(amount) {
+        gameState.shards = (gameState.shards || 0) + amount;
+        sessionShards += amount;
+        messageBus.publish('currencyChanged', 'shard', gameState.shards);
+    }
+
+    function getData() { return gameState.data || 0; }
+    function getInsight() { return gameState.insight || 0; }
+    function getShards() { return gameState.shards || 0; }
+    function getSessionData() { return sessionData; }
     function getSessionInsight() { return sessionInsight; }
+    function getSessionShards() { return sessionShards; }
 
     function resetSession() {
         sessionData = 0;
         sessionInsight = 0;
+        sessionShards = 0;
         totalDropsSpawned = 0;
     }
 
@@ -193,6 +204,10 @@ const resourceManager = (() => {
         }
     }
 
+    function _onMinibossDefeated(x, y) {
+        addShard(1);
+    }
+
     function _onPhaseChanged(phase) {
         if (phase === 'WAVE_ACTIVE') {
             resetSession();
@@ -202,9 +217,9 @@ const resourceManager = (() => {
     }
 
     return {
-        init, spawnDataDrop, addData, addInsight,
-        getData, getInsight,
-        getSessionData, getSessionInsight, resetSession,
+        init, spawnDataDrop, addData, addInsight, addShard,
+        getData, getInsight, getShards,
+        getSessionData, getSessionInsight, getSessionShards, resetSession,
         clearDrops,
     };
 })();

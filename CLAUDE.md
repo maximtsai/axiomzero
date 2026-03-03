@@ -55,8 +55,15 @@ js/
     effectPool.js       # Click effect object pooling — extends `helper`
     uiHelper.js         # Fullscreen, mobile detect, click blocker — extends `helper`
     textEffects.js      # Text effect utilities (CJK-aware word wrap)
-    objectPool.js       # Generic ObjectPool class
-    virtualGroup.js     # Virtual display-list grouping utility
+  enemies/             # Enemy class hierarchy
+    enemy.js           # Abstract base class for all enemies
+    basic_enemy.js     # BasicEnemy — Phase 1 red-violet square
+    miniboss.js        # Miniboss abstract base (spawn angle, knockback reduction)
+    miniboss_1.js      # Miniboss1 — ranged attacker (MOVING / ATTACKING states)
+  enemyManager.js      # Enemy spawning, pooling, movement, damage (includes miniboss logic)
+  projectileManager.js # Tower projectile pooling and collision
+  enemyBulletManager.js # Enemy bullet pooling and collision (miniboss/boss bullets)
+  resourceManager.js   # Currency state (DATA, INSIGHT, SHARD) and DATA drops
 ```
 
 ## Script Load Order (`index.html`)
@@ -284,6 +291,8 @@ Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems 
 | `'unfreezeEnemies'` | `waveManager` | `enemyManager` | — |
 | `'endIterationRequested'` | `gameHUD` | `waveManager` | — |
 | `'waveProgressChanged'` | `waveManager` | `gameHUD` | progress (0–1) |
+| `'minibossSpawned'` | `enemyManager` | `waveManager` | — |
+| `'minibossDefeated'` | `enemyManager` | `waveManager`, `resourceManager` | x, y |
 
 ## Conventions
 

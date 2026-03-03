@@ -53,39 +53,39 @@ const gameHUD = (() => {
         healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
         healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1).setScrollFactor(0);
 
-        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y, '', {
+        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 1, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '16px',
+            fontSize: '20px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── EXP bar ──
-        const expY = HUD_Y + BAR_H + BAR_GAP;
+        const expY = HUD_Y + BAR_H + BAR_GAP + 3;
         expBarBg = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 8).setTint(0x222222).setDepth(depth).setScrollFactor(0);
+        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 10).setTint(0x222222).setDepth(depth).setScrollFactor(0);
 
         expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, 8).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, 10).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
-        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - 2, 'EXP 0%', {
+        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - 5, 'EXP 0%', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '12px',
+            fontSize: '20px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── Currency counters ──
-        const currY = expY + 8 + BAR_GAP + 5;
-        const insightY = currY + 26; // place it vertically below
+        const currY = expY + 10 + BAR_GAP + 5;
+        const insightY = currY + 28; // place it vertically below
 
         dataText = PhaserScene.add.text(groupX, currY, '\u25C8 0', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '17px',
+            fontSize: '21px',
             color: '#00f5ff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         insightText = PhaserScene.add.text(groupX, insightY, '\u25C9 0', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '17px',
+            fontSize: '21px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
@@ -233,7 +233,7 @@ const gameHUD = (() => {
     function _onExpChanged(current, max) {
         if (!visible) return;
         const ratio = Math.min(1, Math.max(0, current / max));
-        expBarFill.setDisplaySize(BAR_W * ratio, 8);
+        expBarFill.setDisplaySize(BAR_W * ratio, 10);
         expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
     }
 

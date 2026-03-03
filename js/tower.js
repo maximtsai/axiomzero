@@ -211,6 +211,18 @@ const tower = (() => {
         attackTimer = 0;
         exp = 0;
         isInvincible = false;
+
+        // Re-show range indicator on retry if awakened
+        if (awakened && !rangeSprite) {
+            const pos = getPosition();
+            const rangeScale = attackRange / 202;
+            rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'player', 'range.png');
+            rangeSprite.setDepth(50);
+            rangeSprite.setAlpha(0);
+            rangeSprite.setScale(rangeScale * 0.2);
+            _updateRangeSprite(rangeScale);
+        }
+
         // NOTE: active is controlled solely by _onPhaseChanged — do NOT set it here
         messageBus.publish('healthChanged', health, maxHealth);
         messageBus.publish('expChanged', exp, GAME_CONSTANTS.EXP_TO_INSIGHT);

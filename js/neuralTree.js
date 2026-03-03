@@ -129,20 +129,20 @@ const neuralTree = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: PANEL_W - 100,
-                y: GAME_CONSTANTS.HEIGHT - 63,
+                x: PANEL_W - 106,
+                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: PANEL_W - 100,
-                y: GAME_CONSTANTS.HEIGHT - 63,
+                x: PANEL_W - 106,
+                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: PANEL_W - 100,
-                y: GAME_CONSTANTS.HEIGHT - 63,
+                x: PANEL_W - 106,
+                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             onMouseUp: _onDeployClicked,
         });

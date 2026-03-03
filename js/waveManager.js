@@ -18,14 +18,17 @@ const waveManager = (() => {
     let towerDiedSub = null;
     let deathOverlay = null; // module-level so _onTowerShakeComplete can clean it up
     let waveProgress = 0;    // 0→1 over WAVE_DURATION seconds during combat
-    let waveActive   = false;
-    let frozen       = false;
+    let waveActive = false;
+    let frozen = false;
+    let progressPaused = false; // true while a miniboss/boss is alive
 
     function init() {
-        messageBus.subscribe('phaseChanged',          _onPhaseChanged);
+        messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('endIterationRequested', endIteration);
-        messageBus.subscribe('freezeEnemies',         () => { frozen = true; });
-        messageBus.subscribe('unfreezeEnemies',       () => { frozen = false; });
+        messageBus.subscribe('freezeEnemies', () => { frozen = true; });
+        messageBus.subscribe('unfreezeEnemies', () => { frozen = false; });
+        messageBus.subscribe('minibossSpawned', () => { progressPaused = true; });
+        messageBus.subscribe('minibossDefeated', () => { progressPaused = false; });
     }
 
     function _onPhaseChanged(phase) {
@@ -39,8 +42,9 @@ const waveManager = (() => {
     function _startWave() {
         debugLog('Wave started — wave', gameState.currentWave || 1);
         waveProgress = 0;
-        waveActive   = true;
-        frozen       = false;
+        waveActive = true;
+        frozen = false;
+        progressPaused = false;
 
         // Reset tower for this combat session
         tower.reset();
@@ -88,12 +92,12 @@ const waveManager = (() => {
         deathOverlay.setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY);
 
         PhaserScene.tweens.add({
-            targets:  deathOverlay,
-            scaleX:   GAME_CONSTANTS.WIDTH,
-            scaleY:   GAME_CONSTANTS.HEIGHT,
-            alpha:    0.3,
+            targets: deathOverlay,
+            scaleX: GAME_CONSTANTS.WIDTH,
+            scaleY: GAME_CONSTANTS.HEIGHT,
+            alpha: 0.3,
             duration: 350,
-            ease:     'Quad.easeOut',
+            ease: 'Quad.easeOut',
         });
 
         customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
@@ -125,8 +129,13 @@ const waveManager = (() => {
     function _update(delta) {
         if (!waveActive || frozen) return;
         const dt = delta / 1000;
-        waveProgress = Math.min(1, waveProgress + dt / GAME_CONSTANTS.WAVE_DURATION);
-        messageBus.publish('waveProgressChanged', waveProgress);
+
+        if (!progressPaused) {
+            waveProgress = Math.min(1, waveProgress + dt / GAME_CONSTANTS.WAVE_DURATION);
+            messageBus.publish('waveProgressChanged', waveProgress);
+        }
+
+        // TODO: When waveProgress >= 1.0, spawn the boss (future implementation)
     }
 
     function getProgress() { return waveProgress; }

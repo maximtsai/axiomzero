@@ -42,7 +42,7 @@ const GAME_CONSTANTS = {
 
     // Tower
     TOWER_BASE_HEALTH: 20,
-    TOWER_BASE_DAMAGE: 6,
+    TOWER_BASE_DAMAGE: 5,
     TOWER_ATTACK_RANGE: 250,
     TOWER_ATTACK_COOLDOWN: 1000,   // ms between auto-attacks
     TOWER_BASE_REGEN: -0.4,     // HP/sec (negative = drain)
@@ -52,8 +52,8 @@ const GAME_CONSTANTS = {
     EXP_TO_INSIGHT: 100,  // EXP needed to award 1 INSIGHT
 
     // Enemy — Basic type (Phase 1 only)
-    ENEMY_SPAWN_DISTANCE: 900,    // px from center of screen
-    ENEMY_BASE_HEALTH: 10,
+    ENEMY_SPAWN_DISTANCE: 1000,    // px from center of screen
+    ENEMY_BASE_HEALTH: 5,
     ENEMY_BASE_DAMAGE: 2,
     ENEMY_BASE_SPEED: 30,    // px/sec
     ENEMY_CONTACT_RADIUS: 30,    // px — deals damage & dies when this close to tower
@@ -69,6 +69,14 @@ const GAME_CONSTANTS = {
     // Projectile
     PROJECTILE_SPEED: 400,  // px/sec
     PROJECTILE_HIT_RADIUS: 15,
+
+    // Miniboss / Boss spawning
+    MINIBOSS_SPAWN_DISTANCE: 1000,   // px from center
+    MINIBOSS_SPAWN_ANGLE: 60,        // degrees — left/right cone only (±30° from horizontal)
+
+    // Enemy bullets (fired by minibosses/bosses)
+    ENEMY_BULLET_HIT_RADIUS: 15,
+    ENEMY_BULLET_POOL_SIZE: 20,
 
     // Wave duration
     WAVE_DURATION: 50,  // seconds — progress bar fills over this period
