@@ -5,8 +5,8 @@
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
-    const FLY_SPEED = 200;  // px/sec while flying toward cursor
-    const FLY_COLLECT_DIST = 10;   // Manhattan distance (px) — no sqrt needed
+    const FLY_SPEED = 60;  // px/sec while flying toward cursor
+    const FLY_COLLECT_DIST = 9;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
@@ -56,6 +56,8 @@ const resourceManager = (() => {
 
         d.x = x;
         d.y = y;
+        d.dx = 0;
+        d.dy = 0;
         d.alive = true;
         d.flying = false;
         d.img.setPosition(x, y);
@@ -225,8 +227,15 @@ const resourceManager = (() => {
             // Move: normalize with sqrt (small array, fine here) then step
             const len = Math.sqrt(dx * dx + dy * dy);
             const move = Math.min(flyStep, len);  // don't overshoot cursor
-            d.x += (dx / len) * move;
-            d.y += (dy / len) * move;
+
+            const moveAmtX = (dx / len) * move;
+            const moveAmtY = (dy / len) * move;
+            d.dx += moveAmtX;
+            d.dy += moveAmtY;
+            d.x += moveAmtX + d.dx;
+            d.y += moveAmtY + d.dy;
+            d.dx *= 0.95;
+            d.dy *= 0.95;
             d.img.setPosition(d.x, d.y);
         }
     }

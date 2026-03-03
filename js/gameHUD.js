@@ -281,7 +281,7 @@ const gameHUD = (() => {
 
         let charIdx = 0;
         PhaserScene.time.addEvent({
-            delay: 45,
+            delay: 25,
             repeat: msg.length - 1,
             callback: () => {
                 txt.text += msg[charIdx];
