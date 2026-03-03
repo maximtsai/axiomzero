@@ -55,6 +55,8 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     tooltipManager.init();
     milestoneTracker.init();
     glitchFX.init();
+    glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
+
 
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.testMobile() ? 3 : 0;

@@ -1,12 +1,19 @@
 /**
- * @fileoverview Centralized game configuration, runtime state, and shared registries.
+ * @fileoverview Generic engine configuration and runtime state.
  * Defines: GAME_CONSTANTS, GAME_VARS, gameOptions, globalObjects, debugLog.
+ *
+ * Contains ONLY engine-level constants reusable across any Phaser project.
+ * Game-specific constants (phase names, colors, tuning values, depth layers)
+ * belong in js/gameConfig.js, which extends GAME_CONSTANTS after this file loads.
+ *
  * Must be loaded before all other util scripts.
  * @module globals
  */
 const GAME_CONSTANTS = {
+    // Math
     DEG_TO_RADIAL: 57.296,
     HALF_PI: 1.5708,
+
     // Loading/Retry
     RETRY_DELAY_BASE: 500,
     MAX_RETRIES: 3,
@@ -29,83 +36,11 @@ const GAME_CONSTANTS = {
     // Timing
     RESIZE_DELAY: 100,
     INTRO_FLASH_DURATION: 500,
-
-    // ─── Phase 1 gameplay constants ──────────────────────────────────────────
-
-    // Game Phases
-    PHASE_UPGRADE: 'UPGRADE_PHASE',
-    PHASE_COMBAT: 'COMBAT_PHASE',
-    PHASE_WAVE_COMPLETE: 'WAVE_COMPLETE',
-    PHASE_GAME_OVER: 'GAME_OVER',
-
-
-    // Colors (GDD §4)
-    COLOR_BG: 0x05080f,
-    COLOR_FRIENDLY: 0x00f5ff,
-    COLOR_RESOURCE: 0xff9500,
-    COLOR_HOSTILE: 0xff2d78,
-    COLOR_STRAY: 0xffe600,
-    HEALTH_BAR_TINT: 0x333333,
-
-    // Tower
-    TOWER_BASE_HEALTH: 20,
-    TOWER_BASE_DAMAGE: 5,
-    TOWER_ATTACK_RANGE: 250,
-    TOWER_ATTACK_COOLDOWN: 1000,   // ms between auto-attacks
-    TOWER_BASE_REGEN: -0.4,     // HP/sec (negative = drain)
-
-    // EXP
-    EXP_FILL_RATE: 0.5,    // per second during combat
-    EXP_TO_INSIGHT: 100,  // EXP needed to award 1 INSIGHT
-
-    // Enemy — Basic type (Phase 1 only)
-    ENEMY_SPAWN_DISTANCE: 1000,    // px from center of screen
-    ENEMY_BASE_HEALTH: 5,
-    ENEMY_BASE_DAMAGE: 2,
-    ENEMY_BASE_SPEED: 30,    // px/sec
-    ENEMY_CONTACT_RADIUS: 30,    // px — deals damage & dies when this close to tower
-    ENEMY_SPAWN_INTERVAL: 900,  // ms between spawns
-    ENEMY_SCALE_RATE: 0.02,  // health/damage multiplier increase per second
-
-    // DATA drops
-    DATA_DROP_CHANCE: 0.6,
-    DATA_PICKUP_RADIUS: 100,   // px — cursor auto-collects within this
-
-    // Projectile
-    PROJECTILE_SPEED: 400,  // px/sec
-    PROJECTILE_HIT_RADIUS: 15,
-
-    // Miniboss / Boss spawning
-    MINIBOSS_SPAWN_DISTANCE: 1000,   // px from center
-    MINIBOSS_SPAWN_ANGLE: 60,        // degrees — left/right cone only (±30° from horizontal)
-
-    // Enemy bullets (fired by minibosses/bosses)
-    ENEMY_BULLET_HIT_RADIUS: 15,
-    ENEMY_BULLET_POOL_SIZE: 20,
-
-    // Wave duration
-    WAVE_DURATION: 50,  // seconds — progress bar fills over this period
-
-    // Depth layers (flat ordering, no Containers)
-    DEPTH_BG: 0,
-    DEPTH_GLOW: 50,
-    DEPTH_ENEMIES: 100,
-    DEPTH_TOWER: 200,
-    DEPTH_PROJECTILES: 300,
-    DEPTH_RESOURCES: 400,
-    DEPTH_HUD: 1000,
-    DEPTH_NEURAL_TREE: 2000,
-    DEPTH_DEATH_OVERLAY: 3000,  // death flash — covers entire game
-    DEPTH_DEATH_TOWER: 3500,  // tower elevated above death overlay during shake
-    DEPTH_TRANSITION: 5000,
-    DEPTH_ITERATION_OVER: 6000,
-    DEPTH_POPUPS: 10000,
 };
 
 // Derived dimension shortcuts (computed after declaration to allow self-reference)
 GAME_CONSTANTS.halfWidth = GAME_CONSTANTS.WIDTH / 2;
 GAME_CONSTANTS.halfHeight = GAME_CONSTANTS.HEIGHT / 2;
-GAME_CONSTANTS.TRANSITION_DURATION = 600;  // 0.65s camera slide (shortened by 0.15s)
 
 // ─── Runtime state ────────────────────────────────────────────────────────────
 

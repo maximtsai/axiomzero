@@ -15,6 +15,7 @@ The game starts immediately on load — there is no main menu. Gameplay alternat
 ```
 index.html              # Entry point — defines script load order
 flags.js                # Feature flags (loaded first — see Flags section)
+gameConfig.js           # Game-specific constants that extend GAME_CONSTANTS (loaded after globals.js)
 phaser.min.js           # Phaser game engine (do not modify)
 sdkManager.js           # CrazyGames SDK integration
 assets/
@@ -113,9 +114,19 @@ Order is critical — each file depends on globals defined by files above it:
 
 All files in `js/util/` are loaded individually and can be edited directly.
 
+> **Design intent**: `js/util/` is meant to be a **fully reusable, project-agnostic library** of Phaser helpers. Nothing in this folder should reference Axiom Zero–specific concepts (enemy types, currency names, phase names, etc.). Game-specific wiring belongs in `js/` root files.
+
+Currently the following files contain game-specific code that partially violates this rule:
+
+- **`gameState.js`** — `GAME_STATE_DEFAULTS` contains Axiom Zero gameplay fields (tower stats, resource types, upgrade schema). The persistence helpers are generic; only the schema needs to move.
+- **`milestoneTracker.js`** — subscribes to game-specific messageBus topics and defines Axiom Zero achievement data. This is the most tightly coupled file; it should be moved to `js/` root or split into a generic engine + game data layer.
+
+All other util files are clean and fully generic:
+
 - **`typewriterHelper.js`** — defines the `helper` global; typewriter text animation
 - **`effectPool.js`** — extends `helper`; click effect object pooling
 - **`uiHelper.js`** — extends `helper`; fullscreen, mobile detect, global click blocker
+
 
 ## Feature Flags (`flags.js`)
 
@@ -144,13 +155,23 @@ All globals are available throughout the codebase after their respective files l
 | `loadingScreen` | `js/loadingScreen.js` | Two-phase loading screen controller |
 
 ### `GAME_CONSTANTS` notable fields
+`globals.js` defines only generic engine fields. `gameConfig.js` extends it with game-specific constants.
 ```js
-GAME_CONSTANTS.WIDTH        // 1280
-GAME_CONSTANTS.HEIGHT       // 720
-GAME_CONSTANTS.halfWidth    // 640 (derived)
-GAME_CONSTANTS.halfHeight   // 360 (derived)
+// From globals.js (generic)
+GAME_CONSTANTS.WIDTH        // 1600
+GAME_CONSTANTS.HEIGHT       // 900
+GAME_CONSTANTS.halfWidth    // 800 (derived)
+GAME_CONSTANTS.halfHeight   // 450 (derived)
 GAME_CONSTANTS.LOADING_BAR_WIDTH
 GAME_CONSTANTS.LOADING_BAR_HEIGHT
+
+// From gameConfig.js (Axiom Zero-specific)
+GAME_CONSTANTS.PHASE_UPGRADE / PHASE_COMBAT / PHASE_WAVE_COMPLETE / PHASE_GAME_OVER
+GAME_CONSTANTS.COLOR_BG / COLOR_FRIENDLY / COLOR_HOSTILE / COLOR_RESOURCE / COLOR_STRAY
+GAME_CONSTANTS.DEPTH_*      // depth layer ordering
+GAME_CONSTANTS.TOWER_*      // tower tuning
+GAME_CONSTANTS.ENEMY_*      // enemy tuning
+GAME_CONSTANTS.WAVE_DURATION / TRANSITION_DURATION
 ```
 
 ### `GAME_VARS` fields

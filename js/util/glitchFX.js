@@ -1,19 +1,22 @@
 /**
  * @fileoverview Sprite-based glitch visual effects.
- * No Phaser FX pipeline — uses only sprites and tweens per GDD §19.
+ * No Phaser FX pipeline — uses only sprites and tweens.
  * Effects: scanline tear, UI flicker, geometry ghosting.
  * @module glitchFX
  *
  * Usage:
  *   glitchFX.init();
+ *   glitchFX.setColors(0xff2d78, 0x00f5ff);  // optional — set scanline/ghost tints
  *   glitchFX.triggerScanline();
  *   glitchFX.triggerFlicker([sprite1, sprite2], 300);
- *   glitchFX.autoTrigger(true);  // auto-fires when health < 30%
+ *   glitchFX.triggerGhost(sprite);
  */
 const glitchFX = (() => {
     let intensity = 1;     // 0–1 global multiplier
-    let autoEnabled = false;
     let scanlines = [];
+    let _color1 = 0xffffff;  // primary scanline tint
+    let _color2 = 0xaaaaaa;  // secondary scanline tint
+    let _ghostTint = 0xffffff;  // ghost overlay tint
     const SCANLINE_DEPTH = 150000;  // above everything
 
     function init() {
@@ -27,8 +30,19 @@ const glitchFX = (() => {
                 .setBlendMode(Phaser.BlendModes.ADD);
             scanlines.push(line);
         }
+    }
 
-        messageBus.subscribe('healthChanged', _onHealthChanged);
+    /**
+     * Set the tint colors used by scanline and ghost effects.
+     * Call this after init() to customize the look for your game.
+     * @param {number} color1 - Primary scanline tint (hex color).
+     * @param {number} color2 - Secondary scanline tint (hex color).
+     * @param {number} [ghostTint] - Ghost overlay tint. Defaults to color1.
+     */
+    function setColors(color1, color2, ghostTint) {
+        _color1 = color1;
+        _color2 = color2;
+        _ghostTint = ghostTint !== undefined ? ghostTint : color1;
     }
 
     // ── Scanline tear ────────────────────────────────────────────────────
@@ -51,7 +65,7 @@ const glitchFX = (() => {
             line.setPosition(offsetX, y);
             line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h);
             line.setAlpha(0.3 * intensity);
-            line.setTint(Math.random() > 0.5 ? 0xff2d78 : 0x00f5ff);
+            line.setTint(Math.random() > 0.5 ? _color1 : _color2);
             line.setVisible(true);
 
             PhaserScene.time.delayedCall(duration, () => {
@@ -118,7 +132,7 @@ const glitchFX = (() => {
             .setRotation(target.rotation)
             .setAlpha(0.35 * intensity)
             .setDepth(target.depth - 1)
-            .setTint(0xff2d78)
+            .setTint(_ghostTint)
             .setBlendMode(Phaser.BlendModes.ADD)
             .setScrollFactor(target.scrollFactorX, target.scrollFactorY);
 
@@ -137,22 +151,5 @@ const glitchFX = (() => {
         intensity = Math.max(0, Math.min(1, level));
     }
 
-    /**
-     * Enable/disable auto-triggering based on tower health.
-     * When enabled, glitch effects fire when health drops below 30%.
-     * @param {boolean} enabled
-     */
-    function autoTrigger(enabled) {
-        autoEnabled = enabled;
-    }
-
-    function _onHealthChanged(current, max) {
-        if (!autoEnabled || intensity <= 0) return;
-        const ratio = current / max;
-        if (ratio < 0.3 && Math.random() < 0.15) {
-            triggerScanline(1 + Math.floor(Math.random() * 2), 60 + Math.random() * 60);
-        }
-    }
-
-    return { init, triggerScanline, triggerFlicker, triggerGhost, setIntensity, autoTrigger };
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost };
 })();
