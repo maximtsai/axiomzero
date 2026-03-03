@@ -189,6 +189,7 @@ const iterationOverScreen = (() => {
             callback: () => {
                 charIndex++;
                 titleText.setText(titleText.fullText.substring(0, charIndex));
+                audio.play('digital_typewriter_short', 0.75);
             }
         });
     }

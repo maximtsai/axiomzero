@@ -86,6 +86,7 @@ GAME_CONSTANTS.DEPTH_POPUPS = 10000;
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.TRANSITION_DURATION = 600;  // ms — camera slide duration
+GAME_CONSTANTS.COMBAT_INTRO_TEXT = 'SYSTEM ANOMALY DETECTED';
 
 // ─── Save / persistence keys ──────────────────────────────────────────────────
 // Consumed by js/util/gameState.js — kept here so renaming for a new project

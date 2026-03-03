@@ -101,6 +101,16 @@ class Enemy {
         if (this.img) this.img.setPosition(this.x, this.y);
     }
 
+    /**
+     * Restore the enemy's color/tint. Default is clear, but subclasses with
+     * dynamic coloring (e.g. health-based) should override this.
+     */
+    refreshTint() {
+        if (this.img && this.img.scene) {
+            this.img.clearTint();
+        }
+    }
+
     // ── Damage ────────────────────────────────────────────────────────────────
 
     /**
@@ -116,9 +126,7 @@ class Enemy {
         if (this.img && this.img.scene) {
             this.img.setTintFill(0xffffff);
             PhaserScene.time.delayedCall(60, () => {
-                if (this.img && this.img.scene) {
-                    this.img.clearTint();
-                }
+                this.refreshTint();
             });
         }
 

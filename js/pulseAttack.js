@@ -14,11 +14,16 @@ const pulseAttack = (() => {
     const CORNER_SIZE = 30;    // nine-slice corner size
 
     let sprite = null;
+    let spriteBright = null;
     let active = false;  // true when combat phase AND node purchased
     let unlocked = false;  // true after basic_pulse purchased
     let fireTimer = 0;
     let size = BASE_SIZE;  // current square side length (upgradeable)
     let damage = BASE_DAMAGE; // current damage per pulse (upgradeable)
+    let shakeVelX = 0;
+    let shakeVelY = 0;
+    let shakeX = 0;
+    let shakeY = 0;
 
     // Reusable array for enemy queries — avoids GC
     const _hitBuffer = [];
@@ -26,7 +31,7 @@ const pulseAttack = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        // Nine-sliced sprite — created once, reused
+        // Base sprite
         sprite = PhaserScene.add.nineslice(
             0, 0,
             'player', 'player_attack.png',
@@ -38,6 +43,18 @@ const pulseAttack = (() => {
         sprite.setAlpha(IDLE_ALPHA);
         sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
         sprite.setVisible(false);
+
+        // Flash overlay sprite
+        spriteBright = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_attack_bright.png',
+            size, size,
+            CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_SIZE
+        );
+        spriteBright.setOrigin(0.5, 0.5);
+        spriteBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
+        spriteBright.setAlpha(0);
+        spriteBright.setVisible(false);
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         updateManager.addFunction(_update);
@@ -54,6 +71,9 @@ const pulseAttack = (() => {
         if (sprite) {
             sprite.setSize(size, size);
         }
+        if (spriteBright) {
+            spriteBright.setSize(size, size);
+        }
     }
 
     /** Set the damage per pulse. */
@@ -67,7 +87,15 @@ const pulseAttack = (() => {
         if (!active) return;
 
         // Follow mouse
-        sprite.setPosition(GAME_VARS.mouseposx, GAME_VARS.mouseposy);
+        const mx = GAME_VARS.mouseposx;
+        const my = GAME_VARS.mouseposy;
+        sprite.setPosition(mx + shakeX, my + shakeY);
+        spriteBright.setPosition(mx, my);
+
+        shakeX += shakeVelX * delta;
+        shakeY += shakeVelY * delta;
+        shakeX *= 0.36;
+        shakeY *= 0.36;
 
         // Fire timer
         fireTimer += delta;
@@ -82,34 +110,55 @@ const pulseAttack = (() => {
         const cy = GAME_VARS.mouseposy;
         const halfSize = size / 2;
         const damageSize = halfSize + 5;
-        // Flash visual — alpha
-        sprite.setAlpha(FLASH_ALPHA);
+
+        // Pulse flash overlay
+        spriteBright.setAlpha(FLASH_ALPHA);
+        spriteBright.setScale(1.25);
+
+        // Tween alpha back to 0
         PhaserScene.tweens.add({
-            targets: sprite,
-            alpha: IDLE_ALPHA,
+            targets: spriteBright,
+            alpha: 0,
             duration: FLASH_DURATION,
             ease: 'Quart.easeOut',
         });
 
-        // Color flash — white burst, tween back to friendly cyan
-        sprite.setTint(0xffffff);
-        PhaserScene.time.delayedCall(80, () => {
-            sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
-        });
-
-        // Scale punch — pop out then snap back
+        // Scale punch for both sprites
         sprite.setScale(1.25);
+
         PhaserScene.tweens.add({
-            targets: sprite,
+            targets: [sprite, spriteBright],
             scaleX: 1,
             scaleY: 1,
             duration: 240,
             ease: 'Cubic.easeOut',
         });
 
+        // Jitter shake for base sprite only
+        if (sprite.scene) {
+            shakeX = (Math.random() - 0.5);
+            shakeY = (Math.random() - 0.5);
+
+            PhaserScene.tweens.addCounter({
+                from: 4,
+                to: 0,
+                duration: 200,
+                onUpdate: (twn) => {
+                    const power = twn.getValue();
+                    shakeVelX = (Math.random() - 0.5) * power;
+                    shakeVelY = (Math.random() - 0.5) * power;
+                },
+                onComplete: () => {
+                    shakeVelX = 0;
+                    shakeVelY = 0;
+                    shakeX = 0;
+                    shakeY = 0;
+                }
+            });
+        }
+
         // Micro camera shake
-        zoomShake();
-        //PhaserScene.cameras.main.shake(80, 0.003);
+        zoomShake(1.005);
 
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
@@ -126,9 +175,12 @@ const pulseAttack = (() => {
             fireTimer = 0;
             sprite.setVisible(true);
             sprite.setAlpha(IDLE_ALPHA);
+            spriteBright.setVisible(true);
+            spriteBright.setAlpha(0);
         } else {
             active = false;
             sprite.setVisible(false);
+            spriteBright.setVisible(false);
         }
     }
 

@@ -339,12 +339,12 @@ const gameHUD = (() => {
                             PhaserScene.time.delayedCall(400, () => {
                                 txt.setOrigin(0.5, 0.5);
                                 txt.x = GAME_CONSTANTS.halfWidth + 60;
-                                txt.setAlpha(0.45);
+                                txt.setAlpha(0.65);
                                 txt.setScale(1.4, 0.8);
                                 PhaserScene.time.delayedCall(50, () => {
                                     txt.x = GAME_CONSTANTS.halfWidth - 50;
-                                    txt.setAlpha(0.55);
-                                    txt.setScale(3.2, 0.25);
+                                    txt.setAlpha(0.45);
+                                    txt.setScale(3.2, 0.2);
                                     PhaserScene.time.delayedCall(25, () => {
                                         txt.destroy();
                                     });

@@ -42,6 +42,22 @@ class BasicEnemy extends Enemy {
         super.activate(x, y);
     }
 
+    /**
+     * Update tint based on current health ratio: hostile color → white.
+     */
+    refreshTint() {
+        if (!this.img || !this.img.scene) return;
+
+        const ratio = Math.max(0, this.health / this.maxHealth);
+        const hR = (GAME_CONSTANTS.COLOR_HOSTILE >> 16) & 0xff;
+        const hG = (GAME_CONSTANTS.COLOR_HOSTILE >> 8) & 0xff;
+        const hB = GAME_CONSTANTS.COLOR_HOSTILE & 0xff;
+        const r = Math.round(hR + (255 - hR) * (1 - ratio));
+        const g = Math.round(hG + (255 - hG) * (1 - ratio));
+        const b = Math.round(hB + (255 - hB) * (1 - ratio));
+        this.img.setTint((r << 16) | (g << 8) | b);
+    }
+
     // ── Damage ────────────────────────────────────────────────────────────────
 
     /**
@@ -52,15 +68,8 @@ class BasicEnemy extends Enemy {
         const died = super.takeDamage(amount);
 
         if (this.img) {
-            // Health-proportional tint shift: hostile color → white
-            const ratio = Math.max(0, this.health / this.maxHealth);
-            const hR = (GAME_CONSTANTS.COLOR_HOSTILE >> 16) & 0xff;
-            const hG = (GAME_CONSTANTS.COLOR_HOSTILE >> 8) & 0xff;
-            const hB = GAME_CONSTANTS.COLOR_HOSTILE & 0xff;
-            const r = Math.round(hR + (255 - hR) * (1 - ratio));
-            const g = Math.round(hG + (255 - hG) * (1 - ratio));
-            const b = Math.round(hB + (255 - hB) * (1 - ratio));
-            this.img.setTint((r << 16) | (g << 8) | b);
+            // Update the underlying tint immediately
+            this.refreshTint();
 
             // Rotation wobble on hit, then tween back to base rotation
             const wobble = Phaser.Math.FloatBetween(-0.3, 0.3);
