@@ -111,6 +111,17 @@ class Enemy {
      */
     takeDamage(amount) {
         this.health -= amount;
+
+        // White hit flash — applies to all enemy types/damage sources
+        if (this.img && this.img.scene) {
+            this.img.setTintFill(0xffffff);
+            PhaserScene.time.delayedCall(60, () => {
+                if (this.img && this.img.scene) {
+                    this.img.clearTint();
+                }
+            });
+        }
+
         if (this.health <= 0) {
             this.health = 0;
             return true;

@@ -8,7 +8,7 @@ const pulseAttack = (() => {
     const FIRE_INTERVAL = 2000;  // ms between pulses
     const BASE_DAMAGE = 5;
     const BASE_SIZE = 90;    // px — AOE square side length
-    const IDLE_ALPHA = 0.3;
+    const IDLE_ALPHA = 0.4;
     const FLASH_ALPHA = 1.0;
     const FLASH_DURATION = 500;  // ms — tween from flash back to idle
     const CORNER_SIZE = 30;    // nine-slice corner size
@@ -81,7 +81,7 @@ const pulseAttack = (() => {
         const cy = GAME_VARS.mouseposy;
         const halfSize = size / 2;
 
-        // Flash visual
+        // Flash visual — alpha
         sprite.setAlpha(FLASH_ALPHA);
         PhaserScene.tweens.add({
             targets: sprite,
@@ -89,6 +89,19 @@ const pulseAttack = (() => {
             duration: FLASH_DURATION,
             ease: 'Quart.easeOut',
         });
+
+        // Scale punch — pop out then snap back
+        sprite.setScale(1.15);
+        PhaserScene.tweens.add({
+            targets: sprite,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 200,
+            ease: 'Cubic.easeOut',
+        });
+
+        // Micro camera shake
+        PhaserScene.cameras.main.shake(80, 0.003);
 
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(cx, cy, halfSize, _hitBuffer);
