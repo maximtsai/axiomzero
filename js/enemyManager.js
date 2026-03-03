@@ -51,7 +51,7 @@ const enemyManager = (() => {
     function _startSpawning() {
         spawning = true;
         frozen = false;
-        spawnTimer = -550;
+        spawnTimer = -950;
         waveElapsed = 0;
         minibossSpawned = false;
         minibossAlive = false;
@@ -231,7 +231,7 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 0.9;
+            const firstThreshold = 1.25;
             const secondThreshold = 1;
             if (waveElapsed < firstThreshold) {
                 spawnSpeedMultiplier = 27;

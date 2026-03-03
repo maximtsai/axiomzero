@@ -267,12 +267,17 @@ const gameHUD = (() => {
      * @param {string} msg 
      */
     function showTransitionMessage(msg) {
-        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 340, '', {
+        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 340, msg, {
             fontFamily: 'VCR',
             fontSize: '32px',
-            color: '#00f5ff',
+            color: '#ffffff',
             align: 'center'
-        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
+        }).setOrigin(0, 0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
+
+        // Calculate final width and shift x to keep it centered as we type
+        const fullWidth = txt.width;
+        txt.text = '';
+        txt.x = GAME_CONSTANTS.halfWidth - (fullWidth / 2);
 
         let charIdx = 0;
         PhaserScene.time.addEvent({
@@ -282,16 +287,26 @@ const gameHUD = (() => {
                 txt.text += msg[charIdx];
                 charIdx++;
 
-                // When done typing, wait then fade out
+                // When done typing, wait, blink twice, pause 0.5s, then finish
                 if (charIdx === msg.length) {
-                    PhaserScene.tweens.add({
-                        targets: txt,
-                        alpha: 0,
-                        y: '-=15',
-                        delay: 1500,
-                        duration: 800,
-                        ease: 'Power2',
-                        onComplete: () => { txt.destroy(); }
+                    PhaserScene.time.delayedCall(1500, () => {
+                        // Blink 1 (invisible briefly)
+                        txt.setVisible(false);
+                        PhaserScene.time.delayedCall(50, () => {
+                            txt.setVisible(true);
+                            // Short gap
+                            PhaserScene.time.delayedCall(80, () => {
+                                // Blink 2 (invisible briefly)
+                                txt.setVisible(false);
+                                PhaserScene.time.delayedCall(50, () => {
+                                    txt.setVisible(true);
+                                    // Pause for 0.5 seconds then destroy
+                                    PhaserScene.time.delayedCall(500, () => {
+                                        txt.destroy();
+                                    });
+                                });
+                            });
+                        });
                     });
                 }
             }
