@@ -16,13 +16,14 @@ class Enemy {
         this.img = null;
 
         // ── Combat state ──────────────────────────────────────────────────────
-        this.alive     = false;
-        this.health    = 0;
+        this.alive = false;
+        this.health = 0;
         this.maxHealth = 0;
-        this.damage    = 0;   // damage dealt to the tower on contact
-        this.speed     = 0;   // movement speed in px/sec
-        this.isBoss    = false; // if true, knockback does not apply
+        this.damage = 0;   // damage dealt to the tower on contact
+        this.speed = 0;   // movement speed in px/sec
+        this.isBoss = false; // if true, knockback does not apply
         this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1
+        this.stunned = false;
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -40,9 +41,10 @@ class Enemy {
      * Subclasses set stats and reset visuals BEFORE calling super.activate().
      */
     activate(x, y) {
-        this.x     = x;
-        this.y     = y;
+        this.x = x;
+        this.y = y;
         this.alive = true;
+        this.stunned = false;
         if (this.img) {
             this.img.setPosition(x, y);
             this.img.setVisible(true);
@@ -59,6 +61,7 @@ class Enemy {
      */
     deactivate() {
         this.alive = false;
+        this.stunned = false;
         if (this.img) {
             PhaserScene.tweens.killTweensOf(this.img);
             this.img.setVisible(false);
@@ -69,7 +72,7 @@ class Enemy {
     // ── Movement ──────────────────────────────────────────────────────────────
 
     setRotation(rot) {
-        this.img.setRotation(rot); 
+        this.img.setRotation(rot);
     }
 
     /**
@@ -77,8 +80,8 @@ class Enemy {
      * Call after this.speed is set in activate().
      */
     aimAt(tx, ty) {
-        const dx   = tx - this.x;
-        const dy   = ty - this.y;
+        const dx = tx - this.x;
+        const dy = ty - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
         this.vx = (dx / dist) * this.speed;
         this.vy = (dy / dist) * this.speed;
@@ -90,8 +93,10 @@ class Enemy {
      * @param {number} dt  Delta time in seconds
      */
     update(dt) {
-        this.x += this.vx * dt;
-        this.y += this.vy * dt;
+        if (!this.stunned) {
+            this.x += this.vx * dt;
+            this.y += this.vy * dt;
+        }
         if (this.img) this.img.setPosition(this.x, this.y);
     }
 
@@ -129,17 +134,11 @@ class Enemy {
             this.img.setPosition(this.x, this.y);
         }
 
-        // Temporarily stop movement for 0.15s
-        const origVx = this.vx;
-        const origVy = this.vy;
-        this.vx = 0;
-        this.vy = 0;
+        this.stunned = true;
+        const stunDuration = 150 * this.knockBackModifier;
 
-        PhaserScene.time.delayedCall(150, () => {
-            if (this.alive) {
-                this.vx = origVx;
-                this.vy = origVy;
-            }
+        PhaserScene.time.delayedCall(stunDuration, () => {
+            this.stunned = false;
         });
     }
 

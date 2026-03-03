@@ -17,6 +17,8 @@ const MB1 = {
     FIRE_INTERVAL: 3000,  // ms between shots
     BULLET_DAMAGE: 4,
     KNOCKBACK_MOD: 0.4,   // 60% knockback reduction
+    SPAWN_BURST_DURATION: 2,    // seconds — speed burst on spawn
+    SPAWN_BURST_MULT: 7,    // initial speed multiplier at spawn (fades to 1×)
 };
 
 const MINIBOSS_STATE = {
@@ -47,6 +49,7 @@ class Miniboss1 extends Miniboss {
 
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0; // starts at 0 so first shot fires immediately on entering range
+        this._spawnBurstElapsed = 0; // seconds elapsed since spawn — drives the speed burst
 
         // Reset visuals
         if (this.img) {
@@ -67,8 +70,16 @@ class Miniboss1 extends Miniboss {
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
         if (this.state === MINIBOSS_STATE.MOVING) {
-            // Move toward tower
-            super.update(dt);
+            // Spawn burst: 7× speed at t=0, linearly fading to 1× over SPAWN_BURST_DURATION seconds
+            let burstMult = 1;
+            if (this._spawnBurstElapsed < MB1.SPAWN_BURST_DURATION) {
+                const t = this._spawnBurstElapsed / MB1.SPAWN_BURST_DURATION;
+                burstMult = MB1.SPAWN_BURST_MULT + (1 - MB1.SPAWN_BURST_MULT) * t;
+                this._spawnBurstElapsed += dt;
+            }
+
+            // Move toward tower (scale dt by burst multiplier)
+            super.update(dt * burstMult);
 
             // Check if within attack range
             if (distToTower <= MB1.ATTACK_RANGE) {
@@ -165,12 +176,7 @@ class Miniboss1 extends Miniboss {
 
         if (this.state === MINIBOSS_STATE.ATTACKING && distToTower > MB1.RETREAT_RANGE) {
             this.state = MINIBOSS_STATE.MOVING;
-            // aimAt will be called once velocity is restored (after knockback stun)
-            PhaserScene.time.delayedCall(160, () => {
-                if (this.alive) {
-                    this.aimAt(tPos.x, tPos.y);
-                }
-            });
+            this.aimAt(tPos.x, tPos.y);
         }
     }
 }
