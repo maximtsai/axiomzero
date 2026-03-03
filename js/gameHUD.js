@@ -287,21 +287,65 @@ const gameHUD = (() => {
                 txt.text += msg[charIdx];
                 charIdx++;
 
-                // When done typing, wait, blink twice, pause 0.5s, then finish
+                // When done typing, hold, then glitch out
                 if (charIdx === msg.length) {
+                    const baseX = txt.x;
+                    const baseY = txt.y;
+
                     PhaserScene.time.delayedCall(1500, () => {
-                        // Blink 1 (invisible briefly)
-                        txt.setVisible(false);
-                        PhaserScene.time.delayedCall(50, () => {
-                            txt.setVisible(true);
-                            // Short gap
-                            PhaserScene.time.delayedCall(80, () => {
-                                // Blink 2 (invisible briefly)
-                                txt.setVisible(false);
-                                PhaserScene.time.delayedCall(50, () => {
-                                    txt.setVisible(true);
-                                    // Pause for 0.5 seconds then destroy
-                                    PhaserScene.time.delayedCall(500, () => {
+                        // Glitch jitter phase — erratic shaking + alpha flicker
+                        let jitterCount = 0;
+                        const jitterTotal = 8;
+                        const jitterEvent = PhaserScene.time.addEvent({
+                            delay: 35,
+                            repeat: jitterTotal - 1,
+                            callback: () => {
+                                jitterCount++;
+                                // Random position offset
+                                txt.x = baseX + (Math.random() - 0.5) * 12;
+                                txt.y = baseY + (Math.random() - 0.5) * 6;
+                                // Random alpha flicker between 0.5 and 1
+                                txt.setAlpha(0.5 + Math.random() * 0.5);
+                            }
+                        });
+
+                        // Blink 1 — deeper alpha dip at ~180ms into jitter
+                        PhaserScene.time.delayedCall(180, () => {
+                            txt.setAlpha(0.3);
+                            txt.x = baseX + (Math.random() - 0.5) * 18;
+                            PhaserScene.time.delayedCall(30, () => {
+                                txt.setAlpha(0.85);
+                                txt.x = baseX;
+                                txt.y = baseY;
+                            });
+                        });
+
+                        // Blink 2 — deeper alpha dip at ~350ms into jitter
+                        PhaserScene.time.delayedCall(350, () => {
+                            txt.setAlpha(0.3);
+                            txt.x = baseX + (Math.random() - 0.5) * 18;
+                            PhaserScene.time.delayedCall(30, () => {
+                                txt.setAlpha(0.85);
+                                txt.x = baseX;
+                                txt.y = baseY;
+                            });
+                        });
+
+                        // Final: reset position, pause 0.5s, then vanish
+                        PhaserScene.time.delayedCall(jitterTotal * 35 + 10, () => {
+                            txt.x = baseX;
+                            txt.y = baseY;
+                            txt.setAlpha(1);
+                            PhaserScene.time.delayedCall(400, () => {
+                                txt.setOrigin(0.5, 0.5);
+                                txt.x = GAME_CONSTANTS.halfWidth + 60;
+                                txt.setAlpha(0.45);
+                                txt.setScale(1.4, 0.8);
+                                PhaserScene.time.delayedCall(30, () => {
+                                    txt.x = GAME_CONSTANTS.halfWidth - 50;
+                                    txt.setAlpha(0.55);
+                                    txt.setScale(3.2, 0.25);
+                                    PhaserScene.time.delayedCall(75, () => {
                                         txt.destroy();
                                     });
                                 });
