@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>phaser-maxim</string>
         <key>textureFileName</key>
-        <filename>../assets/sprites/player-{n}.webp</filename>
+        <filename>../assets/sprites/attacks-{n}.webp</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrQualityLevel</key>
@@ -70,7 +70,7 @@
         <key>pngOptimizationLevel</key>
         <uint>1</uint>
         <key>webpQualityLevel</key>
-        <uint>95</uint>
+        <uint>85</uint>
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
@@ -124,7 +124,7 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../assets/sprites/player.json</filename>
+                <filename>../assets/sprites/attacks.json</filename>
             </struct>
         </map>
         <key>multiPackMode</key>
@@ -173,7 +173,8 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">player/player_attack.png</key>
+            <key type="filename">attacks/glow_box.png</key>
+            <key type="filename">attacks/hit_circle.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -182,104 +183,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>28,28,56,56</rect>
+                <rect>15,15,30,30</rect>
                 <key>scale9Paddings</key>
-                <rect>28,28,56,56</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/player_attack_bright.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>27,27,54,54</rect>
-                <key>scale9Paddings</key>
-                <rect>27,27,54,54</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/range.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>100,100,200,200</rect>
-                <key>scale9Paddings</key>
-                <rect>100,100,200,200</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/resrc_data.png</key>
-            <key type="filename">player/resrc_insight.png</key>
-            <key type="filename">player/resrc_processor.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>25,25,51,51</rect>
-                <key>scale9Paddings</key>
-                <rect>25,25,51,51</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/sparkle.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.8</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>33,33,67,67</rect>
-                <key>scale9Paddings</key>
-                <rect>33,33,67,67</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/tower1.png</key>
-            <key type="filename">player/tower2.png</key>
-            <key type="filename">player/tower3.png</key>
-            <key type="filename">player/tower4.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.8</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>30,30,59,59</rect>
-                <key>scale9Paddings</key>
-                <rect>30,30,59,59</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/tower5.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.8</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>37,37,75,75</rect>
-                <key>scale9Paddings</key>
-                <rect>37,37,75,75</rect>
+                <rect>15,15,30,30</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -290,7 +196,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>player</filename>
+                    <filename>attacks</filename>
                 </array>
             </struct>
         </map>

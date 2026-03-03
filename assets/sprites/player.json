@@ -4,8 +4,8 @@
 			"image": "player-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 523,
-				"h": 504
+				"w": 512,
+				"h": 573
 			},
 			"scale": 1,
 			"frames": [
@@ -35,24 +35,24 @@
 					}
 				},
 				{
-					"filename": "player_attack.png",
+					"filename": "player_attack_bright.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 100,
-						"h": 100
+						"w": 108,
+						"h": 108
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 100,
-						"h": 100
+						"w": 108,
+						"h": 108
 					},
 					"frame": {
-						"x": 1,
-						"y": 403,
-						"w": 100,
-						"h": 100
+						"x": 403,
+						"y": 1,
+						"w": 108,
+						"h": 108
 					},
 					"anchor": {
 						"x": 0.5,
@@ -60,24 +60,24 @@
 					}
 				},
 				{
-					"filename": "sparkle.png",
+					"filename": "player_attack.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 106,
-						"h": 106
+						"w": 108,
+						"h": 108
 					},
 					"spriteSourceSize": {
-						"x": 14,
-						"y": 6,
-						"w": 78,
-						"h": 96
+						"x": 3,
+						"y": 3,
+						"w": 102,
+						"h": 102
 					},
 					"frame": {
-						"x": 103,
-						"y": 403,
-						"w": 78,
-						"h": 96
+						"x": 403,
+						"y": 111,
+						"w": 102,
+						"h": 102
 					},
 					"anchor": {
 						"x": 0.5,
@@ -99,8 +99,8 @@
 						"h": 93
 					},
 					"frame": {
-						"x": 183,
-						"y": 403,
+						"x": 403,
+						"y": 215,
 						"w": 93,
 						"h": 93
 					},
@@ -124,35 +124,10 @@
 						"h": 91
 					},
 					"frame": {
-						"x": 278,
-						"y": 403,
+						"x": 403,
+						"y": 310,
 						"w": 91,
 						"h": 91
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_data.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 15,
-						"w": 71,
-						"h": 71
-					},
-					"frame": {
-						"x": 371,
-						"y": 403,
-						"w": 71,
-						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -174,8 +149,8 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 403,
-						"y": 1,
+						"x": 1,
+						"y": 403,
 						"w": 119,
 						"h": 119
 					},
@@ -199,8 +174,8 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 403,
-						"y": 122,
+						"x": 122,
+						"y": 403,
 						"w": 119,
 						"h": 119
 					},
@@ -224,10 +199,35 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 403,
-						"y": 243,
+						"x": 243,
+						"y": 403,
 						"w": 119,
 						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sparkle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 106,
+						"h": 106
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 6,
+						"w": 78,
+						"h": 96
+					},
+					"frame": {
+						"x": 364,
+						"y": 403,
+						"w": 78,
+						"h": 96
 					},
 					"anchor": {
 						"x": 0.5,
@@ -250,7 +250,7 @@
 					},
 					"frame": {
 						"x": 444,
-						"y": 364,
+						"y": 403,
 						"w": 63,
 						"h": 64
 					},
@@ -275,9 +275,34 @@
 					},
 					"frame": {
 						"x": 444,
-						"y": 430,
+						"y": 469,
 						"w": 59,
 						"h": 59
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_data.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 15,
+						"w": 71,
+						"h": 71
+					},
+					"frame": {
+						"x": 364,
+						"y": 501,
+						"w": 71,
+						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -290,6 +315,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:cc4371bb78bba2801caa9ef261c4b533:04027ad47a29862ba8079e737aaa9015:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:8b2af4ebd334160ee100a9ca4475c188:6f5e0338373ae254944040cc6a9e0326:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

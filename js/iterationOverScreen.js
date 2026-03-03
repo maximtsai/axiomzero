@@ -35,7 +35,17 @@ const iterationOverScreen = (() => {
             fontSize: '36px',
             color: '#00f5ff',
             align: 'center',
-        }).setOrigin(0.5).setDepth(depth + 1);
+        }).setDepth(depth + 1);
+
+        // Add slight glow
+        titleText.setShadow(0, 0, '#00f5ff', 8, true, true);
+
+        // Calculate centered X for origin (0, 0.5)
+        const fullWidth = titleText.width;
+        titleText.setOrigin(0, 0.5);
+        titleText.setX(cx - fullWidth / 2);
+        titleText.fullText = 'ITERATION COMPLETE';
+        titleText.setText('');
 
         // Acquired resources
         dataText = PhaserScene.add.text(cx, cy - 38, '', {
@@ -122,18 +132,65 @@ const iterationOverScreen = (() => {
     function show() {
         visible = true;
 
-        // Update resource text
-        dataText.setText('\u25C8 DATA collected: ' + resourceManager.getSessionData());
-        insightText.setText('\u25C9 INSIGHT gained: ' + resourceManager.getSessionInsight());
+        const sessionData = resourceManager.getSessionData();
+        const sessionInsight = resourceManager.getSessionInsight();
 
         overlay.setVisible(true);
         titleText.setVisible(true);
-        dataText.setVisible(true);
-        insightText.setVisible(true);
+        titleText.setText('');
         upgradesBtn.setVisible(true);
         upgradesBtn.setState(NORMAL);
         retryBtn.setVisible(true);
         retryBtn.setState(NORMAL);
+
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+
+        if (sessionData === 0 && sessionInsight === 0) {
+            dataText.setText('no resources');
+            dataText.setY(cy - 19);
+            dataText.setVisible(true);
+            insightText.setVisible(false);
+        } else {
+            // Data text
+            if (sessionData > 0) {
+                dataText.setText('\u25C8 DATA collected: ' + sessionData);
+                dataText.setVisible(true);
+            } else {
+                dataText.setVisible(false);
+            }
+
+            // Insight text
+            if (sessionInsight > 0) {
+                insightText.setText('\u25C9 INSIGHT gained: ' + sessionInsight);
+                insightText.setVisible(true);
+            } else {
+                insightText.setVisible(false);
+            }
+
+            // Reposition for centering if only one is shown
+            if (sessionData > 0 && sessionInsight > 0) {
+                dataText.setY(cy - 38);
+                insightText.setY(cy);
+            } else if (sessionData > 0) {
+                dataText.setY(cy - 19);
+            } else if (sessionInsight > 0) {
+                insightText.setY(cy - 19);
+            }
+        }
+
+        // Start typewriter effect
+        if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
+
+        let charIndex = 0;
+        titleText.typewriterEvent = PhaserScene.time.addEvent({
+            delay: 30,
+            repeat: titleText.fullText.length - 1,
+            callback: () => {
+                charIndex++;
+                titleText.setText(titleText.fullText.substring(0, charIndex));
+            }
+        });
     }
 
     function _hideAll() {
