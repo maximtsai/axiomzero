@@ -2,12 +2,12 @@
 // Shows collected resources and offers UPGRADES or RETRY SESSION.
 
 const iterationOverScreen = (() => {
-    let overlay     = null;
-    let titleText   = null;
-    let dataText    = null;
+    let overlay = null;
+    let titleText = null;
+    let dataText = null;
     let insightText = null;
     let upgradesBtn = null;
-    let retryBtn    = null;
+    let retryBtn = null;
 
     let visible = false;
 
@@ -158,7 +158,7 @@ const iterationOverScreen = (() => {
         resourceManager.clearDrops();
         tower.reset();
         // Transition to upgrade phase
-        transitionManager.transitionTo('UPGRADE_PHASE');
+        transitionManager.transitionTo(GAME_CONSTANTS.PHASE_UPGRADE);
     }
 
     function _onRetryClicked() {
@@ -169,13 +169,13 @@ const iterationOverScreen = (() => {
         resourceManager.clearDrops();
         tower.reset();
         // Go straight back to combat
-        gameStateMachine.goTo('WAVE_ACTIVE');
+        gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
     }
 
     // ── events ───────────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_COMPLETE') {
+        if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
             show();
         } else if (visible) {
             _hideAll();

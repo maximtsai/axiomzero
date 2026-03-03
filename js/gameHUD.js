@@ -184,9 +184,9 @@ const gameHUD = (() => {
     // ── event handlers ───────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _showCombatHUD();
-        } else if (phase === 'UPGRADE_PHASE') {
+        } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             // During upgrade, show currencies but hide combat-only elements
             _showUpgradeHUD();
         } else {
@@ -262,5 +262,41 @@ const gameHUD = (() => {
         insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
     }
 
-    return { init };
+    /**
+     * Show a centered transition message using a typewriter effect.
+     * @param {string} msg 
+     */
+    function showTransitionMessage(msg) {
+        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 340, '', {
+            fontFamily: 'VCR',
+            fontSize: '32px',
+            color: '#00f5ff',
+            align: 'center'
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
+
+        let charIdx = 0;
+        PhaserScene.time.addEvent({
+            delay: 45,
+            repeat: msg.length - 1,
+            callback: () => {
+                txt.text += msg[charIdx];
+                charIdx++;
+
+                // When done typing, wait then fade out
+                if (charIdx === msg.length) {
+                    PhaserScene.tweens.add({
+                        targets: txt,
+                        alpha: 0,
+                        y: '-=15',
+                        delay: 1500,
+                        duration: 800,
+                        ease: 'Power2',
+                        onComplete: () => { txt.destroy(); }
+                    });
+                }
+            }
+        });
+    }
+
+    return { init, showTransitionMessage };
 })();

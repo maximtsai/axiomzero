@@ -258,7 +258,7 @@ const neuralTree = (() => {
     // ── events ───────────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
-        if (phase === 'UPGRADE_PHASE') {
+        if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             show();
         } else {
             if (typeof transitionManager === 'undefined' || !transitionManager.isTransitioning()) {
@@ -276,7 +276,7 @@ const neuralTree = (() => {
     }
 
     function _onCurrencyChanged() {
-        if (!gameStateMachine.is('UPGRADE_PHASE')) return;
+        if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
         // Refresh UNLOCKED node visuals so disabled/normal state tracks affordability
         for (const id in nodes) {
             const n = nodes[id];
@@ -287,12 +287,12 @@ const neuralTree = (() => {
     }
 
     function _onDeployClicked() {
-        if (!gameStateMachine.is('UPGRADE_PHASE')) return;
+        if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
 
         // Mark first launch as complete
         gameState.isFirstLaunch = false;
 
-        transitionManager.transitionTo('WAVE_ACTIVE');
+        transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
     }
 
     // ── public ───────────────────────────────────────────────────────────

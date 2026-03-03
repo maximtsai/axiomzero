@@ -32,6 +32,13 @@ const GAME_CONSTANTS = {
 
     // ─── Phase 1 gameplay constants ──────────────────────────────────────────
 
+    // Game Phases
+    PHASE_UPGRADE: 'UPGRADE_PHASE',
+    PHASE_COMBAT: 'COMBAT_PHASE',
+    PHASE_WAVE_COMPLETE: 'WAVE_COMPLETE',
+    PHASE_GAME_OVER: 'GAME_OVER',
+
+
     // Colors (GDD §4)
     COLOR_BG: 0x05080f,
     COLOR_FRIENDLY: 0x00f5ff,
@@ -57,14 +64,12 @@ const GAME_CONSTANTS = {
     ENEMY_BASE_DAMAGE: 2,
     ENEMY_BASE_SPEED: 30,    // px/sec
     ENEMY_CONTACT_RADIUS: 30,    // px — deals damage & dies when this close to tower
-    ENEMY_SPAWN_INTERVAL: 1000,  // ms between spawns
+    ENEMY_SPAWN_INTERVAL: 900,  // ms between spawns
     ENEMY_SCALE_RATE: 0.02,  // health/damage multiplier increase per second
 
     // DATA drops
     DATA_DROP_CHANCE: 0.6,
     DATA_PICKUP_RADIUS: 100,   // px — cursor auto-collects within this
-    DATA_DECAY_TIME: 12000, // ms before uncollected drop fades away
-    DATA_DRIFT_SPEED: 8,    // px/sec downward drift
 
     // Projectile
     PROJECTILE_SPEED: 400,  // px/sec

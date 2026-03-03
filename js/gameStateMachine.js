@@ -3,13 +3,13 @@
 //
 // Phases:
 //   'UPGRADE_PHASE' — between waves; player spends currency and prepares
-//   'WAVE_ACTIVE'   — wave is running; enemies are alive
+//   'COMBAT_PHASE'   — wave is running; enemies are alive
 //   'WAVE_COMPLETE' — wave just ended; brief pause before returning to upgrades
 //   'GAME_OVER'     — player failed the wave
 //
 // Usage:
-//   gameStateMachine.goTo('WAVE_ACTIVE');
-//   gameStateMachine.getPhase();          // → 'WAVE_ACTIVE'
+//   gameStateMachine.goTo('COMBAT_PHASE');
+//   gameStateMachine.getPhase();          // → 'COMBAT_PHASE'
 //   messageBus.subscribe('phaseChanged', (phase) => { ... });
 
 const gameStateMachine = (() => {

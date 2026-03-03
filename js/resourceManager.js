@@ -27,6 +27,7 @@ const resourceManager = (() => {
     function _buildPool() {
         for (let i = 0; i < DROP_POOL_SIZE; i++) {
             const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data.png');
+            img.setScale(0.75);
             img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
             img.setVisible(false);
             img.setActive(false);
@@ -34,8 +35,6 @@ const resourceManager = (() => {
                 img: img,
                 alive: false,
                 x: 0, y: 0,
-                life: 0,
-                maxLife: 0,
             });
         }
     }
@@ -51,8 +50,6 @@ const resourceManager = (() => {
         d.x = x;
         d.y = y;
         d.alive = true;
-        d.life = GAME_CONSTANTS.DATA_DECAY_TIME;
-        d.maxLife = GAME_CONSTANTS.DATA_DECAY_TIME;
         d.img.setPosition(x, y);
 
         // Visibility logic based on total drops spawned
@@ -139,20 +136,6 @@ const resourceManager = (() => {
             const d = activeDrops[i];
             if (!d.alive) { activeDrops.splice(i, 1); continue; }
 
-            // Slow downward drift
-            d.y += GAME_CONSTANTS.DATA_DRIFT_SPEED * dt;
-            d.img.setPosition(d.x, d.y);
-
-            // Decay
-            d.life -= delta;
-            const alpha = Math.max(0, d.life / d.maxLife);
-            d.img.setAlpha(alpha);
-            if (d.life <= 0) {
-                _deactivate(d);
-                activeDrops.splice(i, 1);
-                continue;
-            }
-
             // Cursor pickup
             const dx = d.x - cx;
             const dy = d.y - cy;
@@ -191,9 +174,9 @@ const resourceManager = (() => {
     }
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             resetSession();
-        } else if (phase === 'WAVE_COMPLETE' || phase === 'UPGRADE_PHASE') {
+        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             clearDrops();
         }
     }

@@ -12,7 +12,7 @@ const transitionManager = (() => {
 
     /**
      * Animate the visual transition via camera slide, then call gameStateMachine.goTo(targetPhase).
-     * @param {'WAVE_ACTIVE'|'UPGRADE_PHASE'} targetPhase
+     * @param {'COMBAT_PHASE'|'UPGRADE_PHASE'} targetPhase
      */
     function transitionTo(targetPhase) {
         if (transitioning) return;
@@ -36,9 +36,10 @@ const transitionManager = (() => {
 
         const duration = GAME_CONSTANTS.TRANSITION_DURATION;
 
-        if (targetPhase === 'WAVE_ACTIVE') {
+        if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
+            gameHUD.showTransitionMessage('SYSTEM ANOMALY DETECTED');
             // First switch phase so game logic activates, then slide camera
-            gameStateMachine.goTo('WAVE_ACTIVE');
+            gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
             const targetX = -GAME_CONSTANTS.halfWidth - 10;
 
             _tweenTreeGroup(targetX, duration);
@@ -48,9 +49,9 @@ const transitionManager = (() => {
                     neuralTree.hide();
                 }
             });
-        } else if (targetPhase === 'UPGRADE_PHASE') {
+        } else if (targetPhase === GAME_CONSTANTS.PHASE_UPGRADE) {
             // First switch phase so tree UI appears, then slide camera
-            gameStateMachine.goTo('UPGRADE_PHASE');
+            gameStateMachine.goTo(GAME_CONSTANTS.PHASE_UPGRADE);
 
             const targetX = 0;
             _tweenTreeGroup(targetX, duration);

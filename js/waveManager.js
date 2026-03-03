@@ -32,7 +32,7 @@ const waveManager = (() => {
     }
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _startWave();
         } else {
             _stopWave();
@@ -52,7 +52,7 @@ const waveManager = (() => {
         // Listen for tower death
         towerDiedSub = messageBus.subscribe('towerDied', _onTowerDied);
 
-        // enemyManager picks up WAVE_ACTIVE from phaseChanged and begins spawning
+        // enemyManager picks up COMBAT_PHASE from phaseChanged and begins spawning
     }
 
     function _stopWave() {
@@ -112,16 +112,16 @@ const waveManager = (() => {
         if (deathOverlay) { deathOverlay.destroy(); deathOverlay = null; }
         helper.hideGlobalClickBlocker();
         messageBus.publish('unfreezeEnemies');
-        gameStateMachine.goTo('WAVE_COMPLETE');
+        gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
         debugLog('Death sequence complete — entering WAVE_COMPLETE');
     }
 
     /** Called via 'endIterationRequested' — voluntarily end combat. */
     function endIteration() {
-        if (!gameStateMachine.is('WAVE_ACTIVE')) return;
+        if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) return;
         waveProgress = 0;
         debugLog('Player ended iteration manually');
-        gameStateMachine.goTo('WAVE_COMPLETE');
+        gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
     }
 
     // ── per-frame update ────────────────────────────────────────────────────────

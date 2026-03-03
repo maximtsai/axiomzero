@@ -94,7 +94,7 @@ const milestoneTracker = (() => {
     }
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             waveStartTime = Date.now();
         }
     }

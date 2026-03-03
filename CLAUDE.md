@@ -30,7 +30,7 @@ js/
   main.js               # Phaser game config + MainScene (preload/create/update hooks only)
   loadingScreen.js      # Two-phase loading screen (preload UI + asset loading)
   uibuttons.js          # UI button definitions (mute buttons, etc.)
-  gameStateMachine.js   # Phase state machine: UPGRADE_PHASE / WAVE_ACTIVE / WAVE_COMPLETE / GAME_OVER
+  gameStateMachine.js   # Phase state machine: UPGRADE_PHASE / COMBAT_PHASE / WAVE_COMPLETE / GAME_OVER
   waveManager.js        # Wave lifecycle: spawning, tower death sequence, END ITERATION
   upgradeManager.js     # Upgrade definitions and purchase logic (stub)
   node.js               # Node class — individual upgrade button in neural tree
@@ -258,10 +258,10 @@ The game starts immediately after assets load — there is no main menu.
 ```js
 gameStateMachine.goTo('UPGRADE_PHASE');   // transition to a phase
 gameStateMachine.getPhase();              // returns current phase string
-gameStateMachine.is('WAVE_ACTIVE');       // boolean check
+gameStateMachine.is('COMBAT_PHASE');       // boolean check
 ```
 
-Phases: `'UPGRADE_PHASE'` → `'WAVE_ACTIVE'` → `'WAVE_COMPLETE'` → `'UPGRADE_PHASE'` (or `'GAME_OVER'`)
+Phases: `'UPGRADE_PHASE'` → `'COMBAT_PHASE'` → `'WAVE_COMPLETE'` → `'UPGRADE_PHASE'` (or `'GAME_OVER'`)
 
 Every transition publishes `messageBus.publish('phaseChanged', phase)`. Systems react to this topic — **they never call each other directly**.
 

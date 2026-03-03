@@ -281,11 +281,11 @@ const enemyManager = (() => {
     // ── event handlers ───────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _startSpawning();
         } else {
             _stopSpawning();
-            if (phase === 'WAVE_COMPLETE' || phase === 'UPGRADE_PHASE') {
+            if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE) {
                 clearAllEnemies();
             }
         }

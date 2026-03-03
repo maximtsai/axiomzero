@@ -30,7 +30,7 @@ const tower = (() => {
     let exp = 0;
 
     let alive = false;
-    let active = false;       // true only during WAVE_ACTIVE
+    let active = false;       // true only during COMBAT_PHASE
     let isInvincible = false;       // true briefly after a boss is defeated
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -389,11 +389,11 @@ const tower = (() => {
     // ── event handlers ───────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
-        if (phase === 'WAVE_ACTIVE') {
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             active = true;
             attackTimer = 0;
             // Camera handles the slide — tower stays at screen center
-        } else if (phase === 'UPGRADE_PHASE') {
+        } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             active = false;
             // Show range sprite during upgrade view
             if (rangeSprite) {
