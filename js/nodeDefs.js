@@ -2,6 +2,14 @@
 // Centralized node data for the upgrade tree.
 // Tree center X is at 400 (half of 800px panel width)
 
+/** Recalculates total pulse damage from all pulse upgrade nodes. */
+function _recalcPulseDamage() {
+    const ups = gameState.upgrades || {};
+    const ampLv = ups.pulse_damage || 0;
+    const surgeLv = ups.pulse_damage_2 || 0;
+    pulseAttack.setDamage(5 + 2 * ampLv + 10 * surgeLv);
+}
+
 const NODE_DEFS = [
     {
         id: 'awaken',
@@ -57,12 +65,31 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 4,
         parentId: 'basic_pulse',
-        childIds: [],
+        childIds: ['pulse_damage_2'],
         treeX: 250,
         treeY: 287,
         effect: function () {
-            const lvl = (gameState.upgrades && gameState.upgrades.pulse_damage) || 0;
-            pulseAttack.setDamage(5 + 2 * lvl);
+            _recalcPulseDamage();
+        },
+    },
+    {
+        id: 'pulse_damage_2',
+        name: 'SURGE',
+        icon: 'Skillicon14_07.png',
+        description: '+10 pulse damage',
+        popupText: '+10 PULSE DMG',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 40,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'pulse_damage',
+        childIds: [],
+        treeX: 250,
+        treeY: 149,
+        effect: function () {
+            _recalcPulseDamage();
         },
     },
     {

@@ -409,7 +409,7 @@ class Node {
         this._hideHover();
 
         const x = this.treeX;  // center of node
-        const y = this.treeY - 63;  // directly above
+        const y = this.treeY - 23;  // directly above
         const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
         const bgWidth = 300;
         const bgHeight = 138;
