@@ -46,6 +46,7 @@ class Miniboss1 extends Miniboss {
         this.damage = 0; // miniboss does NOT deal contact damage
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB1.SPEED_MULT;
         this.knockBackModifier = MB1.KNOCKBACK_MOD;
+        this.size = 25;
 
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0; // starts at 0 so first shot fires immediately on entering range

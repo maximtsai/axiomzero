@@ -20,6 +20,7 @@ class Enemy {
         this.health = 0;
         this.maxHealth = 0;
         this.damage = 0;   // damage dealt to the tower on contact
+        this.size = 0;   // hitbox extent in px — added to AOE range checks
         this.speed = 0;   // movement speed in px/sec
         this.isBoss = false; // if true, knockback does not apply
         this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1

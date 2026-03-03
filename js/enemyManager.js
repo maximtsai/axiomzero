@@ -184,6 +184,29 @@ const enemyManager = (() => {
         return activeEnemies;
     }
 
+    /**
+     * Get all alive enemies whose hitbox overlaps a square AOE.
+     * Uses simple abs-based box overlap — no sqrt.
+     * @param {number} cx        Center X of the AOE square
+     * @param {number} cy        Center Y of the AOE square
+     * @param {number} halfSize  Half-width of the AOE square
+     * @param {Array}  [out]     Optional reusable array to avoid GC
+     * @returns {Array} Enemies in range
+     */
+    function getEnemiesInSquareRange(cx, cy, halfSize, out) {
+        const result = out || [];
+        result.length = 0;
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const e = activeEnemies[i];
+            if (!e.alive) continue;
+            const reach = halfSize + e.size;
+            if (Math.abs(e.x - cx) <= reach && Math.abs(e.y - cy) <= reach) {
+                result.push(e);
+            }
+        }
+        return result;
+    }
+
     // ── damage ───────────────────────────────────────────────────────────────
 
     function damageEnemy(enemy, amount) {
@@ -299,5 +322,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, damageEnemy };
+    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getEnemiesInSquareRange, damageEnemy };
 })();

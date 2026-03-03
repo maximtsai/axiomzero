@@ -40,8 +40,8 @@ const NODE_DEFS = [
         treeX: 250,
         treeY: 425,
         effect: function () {
-            // Stub — cursor pulse implemented in Phase 2
-            debugLog('Basic Pulse unlocked (stub)');
+            pulseAttack.unlock();
+            debugLog('Basic Pulse unlocked');
         },
     },
     {
