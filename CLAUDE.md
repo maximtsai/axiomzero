@@ -39,10 +39,11 @@ js/
   neuralTree.js         # Neural Tree UI (left panel during UPGRADE_PHASE)
   gameHUD.js            # In-game HUD: health/EXP bars, currency, END ITERATION button
   gameInit.js           # Bootstrapper — subscribes to 'assetsLoaded', inits all systems
-  util/                 # Utility modules (source files — see Build section)
+  milestoneTracker.js   # Axiom Zero achievement/stat tracking (game-specific — lives here intentionally)
+  util/                 # Utility modules — fully reusable, project-agnostic (see Util section)
     globals.js          # GAME_CONSTANTS, GAME_VARS, globalObjects
     loadingManager.js   # Asset loading with retry, stall detection, timeout
-    gameState.js        # gameState object + get/set helpers
+    gameState.js        # Generic save/load engine (gameState, saveGame, loadGame, hasSave, clearSave)
     messageBus.js       # Pub/sub event system
     button.js           # Button class (state machine)
     buttonManager.js    # Button lifecycle/input routing
@@ -98,8 +99,14 @@ Order is critical — each file depends on globals defined by files above it:
 25. `js/util/virtualGroup.js` — virtual display-list grouping
 26. `js/util/debugManager.js` — `initDebug`
 27. `js/util/notificationManager.js` — `notificationManager` singleton
-13. `js/uibuttons.js` — mute/SFX button factories
-14. `js/gameStateMachine.js` — phase state machine
+28. `js/util/cameraManager.js` — camera pan helpers
+29. `js/util/glitchFX.js` — sprite-based glitch effects (call `setColors()` from game code)
+
+**Game-specific scripts (loaded after util):**
+
+30. `js/uibuttons.js` — mute/SFX button factories
+31. `js/milestoneTracker.js` — Axiom Zero achievement/stat tracking
+32. `js/gameStateMachine.js` — phase state machine
 15. `js/waveManager.js` — wave logic (subscribes to `'phaseChanged'`)
 16. `js/upgradeManager.js` — upgrade logic (subscribes to `'phaseChanged'`)
 17. `js/node.js` — Node class for individual upgrades
@@ -114,12 +121,13 @@ Order is critical — each file depends on globals defined by files above it:
 
 All files in `js/util/` are loaded individually and can be edited directly.
 
-> **Design intent**: `js/util/` is meant to be a **fully reusable, project-agnostic library** of Phaser helpers. Nothing in this folder should reference Axiom Zero–specific concepts (enemy types, currency names, phase names, etc.). Game-specific wiring belongs in `js/` root files.
+> **Design intent**: `js/util/` is a **fully reusable, project-agnostic library** of Phaser helpers. Nothing in this folder references Axiom Zero-specific concepts. Game-specific wiring belongs in `js/` root files or `js/gameConfig.js`.
 
-Currently the following files contain game-specific code that partially violates this rule:
-
-- **`gameState.js`** — `GAME_STATE_DEFAULTS` contains Axiom Zero gameplay fields (tower stats, resource types, upgrade schema). The persistence helpers are generic; only the schema needs to move.
-- **`milestoneTracker.js`** — subscribes to game-specific messageBus topics and defines Axiom Zero achievement data. This is the most tightly coupled file; it should be moved to `js/` root or split into a generic engine + game data layer.
+All util files are currently clean and generic. Game-specific data that was previously in util has been moved:
+- `GAME_CONSTANTS` gameplay fields → `js/gameConfig.js`
+- `GAME_STATE_DEFAULTS`, `SAVE_KEY`, `SAVE_VERSION` → `js/gameConfig.js`
+- `milestoneTracker.js` → `js/milestoneTracker.js` (game-specific, no longer in util/)
+- `glitchFX.js` colors → set via `glitchFX.setColors()` from `gameInit.js`
 
 All other util files are clean and fully generic:
 

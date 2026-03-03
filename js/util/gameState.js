@@ -1,38 +1,14 @@
 /**
- * @fileoverview Game state management and save/load persistence.
+ * @fileoverview Generic game state management and save/load persistence.
  * Defines: gameState, getGameState, setGameState, saveGame, loadGame, hasSave, clearSave.
  * Uses localStorage with versioned save format for migration support.
+ *
+ * Game-specific data (GAME_STATE_DEFAULTS, SAVE_KEY, SAVE_VERSION) is defined
+ * in js/gameConfig.js, which must be loaded before this file.
  * @module gameState
  */
-// ─── Default state shape — all Phase 1 fields ───────────────────────────────
-const GAME_STATE_DEFAULTS = {
-    // Tower
-    towerMaxHealth: 20,
-    towerDamage: 6,
-    towerAttackRange: 200,
-    towerHealthRegen: -0.4,   // HP/sec (negative = drain)
-
-    // Resources
-    data: 0,
-    insight: 0,
-
-    // EXP (0–100, awards INSIGHT at 100)
-    exp: 0,
-
-    // Wave / progression
-    currentWave: 1,
-    currentTier: 1,
-
-    // First-launch flag — drives AWAKEN-only tree state
-    isFirstLaunch: true,
-
-    // Purchased upgrade levels  { nodeId: level }
-    upgrades: {},
-};
 
 const gameState = {};
-
-const SAVE_VERSION = 1;
 
 /** @returns {Object} The current game state object. */
 function getGameState() {
@@ -46,13 +22,12 @@ function setGameState(key, value) {
 
 // ─── Persistence ──────────────────────────────────────────────────────────────
 
-const SAVE_KEY = 'axiomzero_save';
-
 function _migrateState(fromVersion, data) {
     // Add cases here as the save format evolves.
     // Example: if (fromVersion < 2) { data.newField = defaultValue; }
     return data;
 }
+
 
 /** Serialize game state to localStorage. */
 function saveGame() {

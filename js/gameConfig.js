@@ -86,3 +86,38 @@ GAME_CONSTANTS.DEPTH_POPUPS = 10000;
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.TRANSITION_DURATION = 600;  // ms — camera slide duration
+
+// ─── Save / persistence keys ──────────────────────────────────────────────────
+// Consumed by js/util/gameState.js — kept here so renaming for a new project
+// only requires editing this file.
+
+const SAVE_KEY = 'axiomzero_save';
+const SAVE_VERSION = 1;
+
+// ─── Default game state shape ─────────────────────────────────────────────────
+// Consumed by js/util/gameState.js and gameInit.js.
+
+const GAME_STATE_DEFAULTS = {
+    // Tower
+    towerMaxHealth: 20,
+    towerDamage: 6,
+    towerAttackRange: 200,
+    towerHealthRegen: -0.4,   // HP/sec (negative = drain)
+
+    // Resources
+    data: 0,
+    insight: 0,
+
+    // EXP (0–100, awards INSIGHT at 100)
+    exp: 0,
+
+    // Wave / progression
+    currentWave: 1,
+    currentTier: 1,
+
+    // First-launch flag — drives AWAKEN-only tree state
+    isFirstLaunch: true,
+
+    // Purchased upgrade levels  { nodeId: level }
+    upgrades: {},
+};
