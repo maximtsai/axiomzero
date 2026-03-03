@@ -174,7 +174,18 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">attacks/glow_box.png</key>
-            <key type="filename">attacks/hit_circle.png</key>
+            <key type="filename">attacks/hit_circle1.png</key>
+            <key type="filename">attacks/hit_circle10.png</key>
+            <key type="filename">attacks/hit_circle11.png</key>
+            <key type="filename">attacks/hit_circle12.png</key>
+            <key type="filename">attacks/hit_circle2.png</key>
+            <key type="filename">attacks/hit_circle3.png</key>
+            <key type="filename">attacks/hit_circle4.png</key>
+            <key type="filename">attacks/hit_circle5.png</key>
+            <key type="filename">attacks/hit_circle6.png</key>
+            <key type="filename">attacks/hit_circle7.png</key>
+            <key type="filename">attacks/hit_circle8.png</key>
+            <key type="filename">attacks/hit_circle9.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
