@@ -17,10 +17,8 @@ const NODE_DEFS = [
         childIds: ['basic_pulse', 'reinforce', 'sharpen'],
         treeX: 400,
         treeY: 563,
-        effect: function() {
+        effect: function () {
             tower.awaken();
-            // Reveal children
-            neuralTree._revealChildren('awaken');
             // Show the deploy button immediately
             if (neuralTree.isVisible()) {
                 neuralTree._showDeployButton();
@@ -41,7 +39,7 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 250,
         treeY: 425,
-        effect: function() {
+        effect: function () {
             // Stub — cursor pulse implemented in Phase 2
             debugLog('Basic Pulse unlocked (stub)');
         },
@@ -59,10 +57,10 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 2,
         parentId: 'awaken',
-        childIds: [],
+        childIds: ['regen'],
         treeX: 400,
         treeY: 425,
-        effect: function() {
+        effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
@@ -82,7 +80,27 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 550,
         treeY: 425,
-        effect: function() {
+        effect: function () {
+            // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'regen',
+        name: 'REGEN',
+        icon: 'Skillicon14_05.png',
+        description: '+0.2 health regen',
+        popupText: '+0.2 REGEN',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        maxLevel: 5,
+        baseCost: 2,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 2,
+        parentId: 'reinforce',
+        childIds: [],
+        treeX: 400,
+        treeY: 287,
+        effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },

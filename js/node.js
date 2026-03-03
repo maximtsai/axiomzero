@@ -172,6 +172,11 @@ class Node {
         // Apply effect
         this.effect(this.level);
 
+        // Reveal children — any HIDDEN children become at least visible
+        if (this.childIds.length > 0) {
+            neuralTree._revealChildren(this.id);
+        }
+
         // Floating text popup (if defined on this node)
         if (this.popupText) {
             const pos = tower.getPosition();

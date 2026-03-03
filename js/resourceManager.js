@@ -5,8 +5,8 @@
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
-    const FLY_SPEED = 60;  // px/sec while flying toward cursor
-    const FLY_COLLECT_DIST = 9;   // Manhattan distance (px) — no sqrt needed
+    const FLY_SPEED = 250;  // px/sec while flying toward cursor
+    const FLY_COLLECT_DIST = 14;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
@@ -40,6 +40,7 @@ const resourceManager = (() => {
                 img: img,
                 alive: false,
                 flying: false,
+                readyToCollect: false,
                 x: 0, y: 0,
                 spawnTween: null,
             });
@@ -60,6 +61,8 @@ const resourceManager = (() => {
         d.dy = 0;
         d.alive = true;
         d.flying = false;
+        d.readyToCollect = false;
+        d.inertia = 0.12;
         d.img.setPosition(x, y);
 
         // Visibility logic based on total drops spawned
@@ -164,6 +167,8 @@ const resourceManager = (() => {
         if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
         d.alive = false;
         d.flying = false;
+        d.readyToCollect = false;
+        d.inertia = 0.12;
         d.img.setVisible(false);
         d.img.setActive(false);
     }
@@ -213,20 +218,25 @@ const resourceManager = (() => {
 
         for (let i = flyingDrops.length - 1; i >= 0; i--) {
             const d = flyingDrops[i];
-            const dx = cx - d.x;
-            const dy = cy - d.y;
 
-            // Collect check — Manhattan distance, no sqrt needed
-            if (Math.abs(dx) + Math.abs(dy) <= FLY_COLLECT_DIST) {
+            if (d.readyToCollect) {
                 _deactivate(d);
                 addData(1);
                 flyingDrops.splice(i, 1);
                 continue;
             }
 
+            const dx = cx - d.x;
+            const dy = cy - d.y;
+
+            // Collect check — Manhattan distance, no sqrt needed
+            if (Math.abs(dx) + Math.abs(dy) <= FLY_COLLECT_DIST * d.inertia) {
+                d.readyToCollect = true;
+            }
+
             // Move: normalize with sqrt (small array, fine here) then step
             const len = Math.sqrt(dx * dx + dy * dy);
-            const move = Math.min(flyStep, len);  // don't overshoot cursor
+            const move = Math.min(flyStep * d.inertia, len);  // don't overshoot cursor
 
             const moveAmtX = (dx / len) * move;
             const moveAmtY = (dy / len) * move;
@@ -234,8 +244,12 @@ const resourceManager = (() => {
             d.dy += moveAmtY;
             d.x += moveAmtX + d.dx;
             d.y += moveAmtY + d.dy;
-            d.dx *= 0.95;
-            d.dy *= 0.95;
+            d.dx *= 0.95 - 0.05 * d.inertia;
+            d.dy *= 0.95 - 0.05 * d.inertia;
+
+            if (d.inertia < 1) {
+                d.inertia = Math.min(1, d.inertia + 0.5 * dt);
+            }
             d.img.setPosition(d.x, d.y);
         }
     }

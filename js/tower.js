@@ -91,11 +91,12 @@ const tower = (() => {
         const ups = gameState.upgrades || {};
         const reinforceLv = ups.reinforce || 0;
         const sharpenLv = ups.sharpen || 0;
+        const regenLv = ups.regen || 0;
 
         maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * reinforceLv;
         damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
         attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE;
-        healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN;
+        healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
         attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN;
     }
 
@@ -344,6 +345,7 @@ const tower = (() => {
 
         // Negative health regen
         health += healthRegen * dt;
+        if (health > maxHealth) health = maxHealth;
         if (health <= 0) {
             health = 0;
             messageBus.publish('healthChanged', health, maxHealth);
