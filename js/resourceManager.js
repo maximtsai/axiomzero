@@ -1,12 +1,17 @@
 // resourceManager.js — Currency state and DATA drop objects.
-// DATA drops spawn at enemy death positions, drift downward,
-// and are collected when the cursor passes within pickup radius.
+// DATA drops spawn at enemy death positions, drift to a resting spot,
+// then "fly" toward the cursor when within pickup radius.
+// When close enough (Manhattan ≤ FLY_COLLECT_DIST), they are collected.
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
+    const FLY_SPEED = 200;  // px/sec while flying toward cursor
+    const FLY_COLLECT_DIST = 10;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
-    let activeDrops = [];
+    let activeDrops = [];   // resting drops waiting for cursor proximity
+    let flyingDrops = [];   // drops currently flying toward cursor
+
     let totalDropsSpawned = 0;
 
     // Session tracking — reset each combat session for the summary screen
@@ -34,6 +39,7 @@ const resourceManager = (() => {
             dropPool.push({
                 img: img,
                 alive: false,
+                flying: false,
                 x: 0, y: 0,
                 spawnTween: null,
             });
@@ -51,15 +57,14 @@ const resourceManager = (() => {
         d.x = x;
         d.y = y;
         d.alive = true;
+        d.flying = false;
         d.img.setPosition(x, y);
 
         // Visibility logic based on total drops spawned
         let visible = true;
         if (totalDropsSpawned > 600) {
-            // After 600: 2 of every 3 drops invisible
             visible = (totalDropsSpawned % 3) === 1;
         } else if (totalDropsSpawned > 300) {
-            // After 300: every 3rd drop invisible
             visible = (totalDropsSpawned % 3) !== 0;
         }
 
@@ -71,7 +76,6 @@ const resourceManager = (() => {
         const angle = Math.random() * Math.PI * 2;
         const dist = 4 + Math.random() * 6;
 
-        // Direction away from tower center
         const awayDx = x - GAME_CONSTANTS.halfWidth;
         const awayDy = y - GAME_CONSTANTS.halfHeight;
         const awayLen = Math.sqrt(awayDx * awayDx + awayDy * awayDy) || 1;
@@ -79,7 +83,6 @@ const resourceManager = (() => {
         let endX = x + Math.cos(angle) * dist + (awayDx / awayLen) * 5;
         let endY = y + Math.sin(angle) * dist + (awayDy / awayLen) * 5;
 
-        // Clamp to within 2px of game bounds
         endX = Math.max(-1, Math.min(GAME_CONSTANTS.WIDTH + 1, endX));
         endY = Math.max(-1, Math.min(GAME_CONSTANTS.HEIGHT + 1, endY));
 
@@ -131,7 +134,15 @@ const resourceManager = (() => {
         totalDropsSpawned = 0;
     }
 
+    /**
+     * Silently removes all resting drops from the scene.
+     * Flying drops are collected (added to currency) before being removed,
+     * so resources in transit are never lost on phase change or death.
+     */
     function clearDrops() {
+        // Cash out any flying resources before clearing
+        _collectAllFlying();
+
         for (let i = activeDrops.length - 1; i >= 0; i--) {
             _deactivate(activeDrops[i]);
         }
@@ -150,48 +161,74 @@ const resourceManager = (() => {
     function _deactivate(d) {
         if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
         d.alive = false;
+        d.flying = false;
         d.img.setVisible(false);
         d.img.setActive(false);
+    }
+
+    /** Instantly collect all flying drops and credit their value. */
+    function _collectAllFlying() {
+        for (let i = 0; i < flyingDrops.length; i++) {
+            _deactivate(flyingDrops[i]);
+            addData(1);
+        }
+        flyingDrops.length = 0;
     }
 
     // ── per-frame ────────────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (activeDrops.length === 0) return;
+        if (activeDrops.length === 0 && flyingDrops.length === 0) return;
 
         const dt = delta / 1000;
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
         const pickupR2 = GAME_CONSTANTS.DATA_PICKUP_RADIUS * GAME_CONSTANTS.DATA_PICKUP_RADIUS;
 
+        // ── Resting drops: check if cursor entered pickup radius → start flying ──
         for (let i = activeDrops.length - 1; i >= 0; i--) {
             const d = activeDrops[i];
             if (!d.alive) { activeDrops.splice(i, 1); continue; }
 
-            // Cursor pickup
             const dx = d.x - cx;
             const dy = d.y - cy;
             if (dx * dx + dy * dy < pickupR2) {
-                _collectDrop(d);
+                // Stop any spawn tween — we'll drive position manually from here
+                if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
+
+                // Sync logical position from sprite in case spawn tween was mid-flight
+                d.x = d.img.x;
+                d.y = d.img.y;
+                d.flying = true;
+
                 activeDrops.splice(i, 1);
+                flyingDrops.push(d);
             }
         }
-    }
 
-    function _collectDrop(d) {
-        if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
-        // Quick tween toward cursor then destroy
-        PhaserScene.tweens.add({
-            targets: d.img,
-            x: GAME_VARS.mouseposx,
-            y: GAME_VARS.mouseposy,
-            alpha: 0,
-            duration: 150,
-            ease: 'Cubic.easeIn',
-            onComplete: () => { _deactivate(d); },
-        });
-        d.alive = false; // mark dead immediately to prevent double-collect
-        addData(1);
+        // ── Flying drops: move toward current cursor position each frame ──
+        const flyStep = FLY_SPEED * dt;
+
+        for (let i = flyingDrops.length - 1; i >= 0; i--) {
+            const d = flyingDrops[i];
+            const dx = cx - d.x;
+            const dy = cy - d.y;
+
+            // Collect check — Manhattan distance, no sqrt needed
+            if (Math.abs(dx) + Math.abs(dy) <= FLY_COLLECT_DIST) {
+                _deactivate(d);
+                addData(1);
+                flyingDrops.splice(i, 1);
+                continue;
+            }
+
+            // Move: normalize with sqrt (small array, fine here) then step
+            const len = Math.sqrt(dx * dx + dy * dy);
+            const move = Math.min(flyStep, len);  // don't overshoot cursor
+            d.x += (dx / len) * move;
+            d.y += (dy / len) * move;
+            d.img.setPosition(d.x, d.y);
+        }
     }
 
     // ── event handlers ───────────────────────────────────────────────────────
@@ -209,8 +246,9 @@ const resourceManager = (() => {
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             resetSession();
-        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE) {
-            clearDrops();
+        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE
+            || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
+            clearDrops();  // flying drops are cashed out inside clearDrops()
         }
     }
 
