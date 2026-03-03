@@ -36,12 +36,33 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: 'awaken',
-        childIds: [],
+        childIds: ['pulse_damage'],
         treeX: 250,
         treeY: 425,
         effect: function () {
             pulseAttack.unlock();
             debugLog('Basic Pulse unlocked');
+        },
+    },
+    {
+        id: 'pulse_damage',
+        name: 'AMPLIFY',
+        icon: 'Skillicon14_06.png',
+        description: '+2 pulse damage',
+        popupText: '+2 PULSE DMG',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 3,
+        baseCost: 4,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 4,
+        parentId: 'basic_pulse',
+        childIds: [],
+        treeX: 250,
+        treeY: 287,
+        effect: function () {
+            const lvl = (gameState.upgrades && gameState.upgrades.pulse_damage) || 0;
+            pulseAttack.setDamage(5 + 2 * lvl);
         },
     },
     {

@@ -6,7 +6,7 @@
 const pulseAttack = (() => {
     // ── Config ───────────────────────────────────────────────────────────────
     const FIRE_INTERVAL = 2000;  // ms between pulses
-    const DAMAGE = 5;
+    const BASE_DAMAGE = 5;
     const BASE_SIZE = 90;    // px — AOE square side length
     const IDLE_ALPHA = 0.3;
     const FLASH_ALPHA = 1.0;
@@ -18,6 +18,7 @@ const pulseAttack = (() => {
     let unlocked = false;  // true after basic_pulse purchased
     let fireTimer = 0;
     let size = BASE_SIZE;  // current square side length (upgradeable)
+    let damage = BASE_DAMAGE; // current damage per pulse (upgradeable)
 
     // Reusable array for enemy queries — avoids GC
     const _hitBuffer = [];
@@ -54,6 +55,11 @@ const pulseAttack = (() => {
         }
     }
 
+    /** Set the damage per pulse. */
+    function setDamage(newDamage) {
+        damage = newDamage;
+    }
+
     // ── per-frame ────────────────────────────────────────────────────────────
 
     function _update(delta) {
@@ -87,7 +93,7 @@ const pulseAttack = (() => {
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(cx, cy, halfSize, _hitBuffer);
         for (let i = 0; i < hits.length; i++) {
-            enemyManager.damageEnemy(hits[i], DAMAGE);
+            enemyManager.damageEnemy(hits[i], damage);
         }
     }
 
@@ -105,5 +111,5 @@ const pulseAttack = (() => {
         }
     }
 
-    return { init, unlock, setSize };
+    return { init, unlock, setSize, setDamage };
 })();
