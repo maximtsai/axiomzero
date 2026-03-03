@@ -36,6 +36,7 @@ const pulseAttack = (() => {
         sprite.setOrigin(0.5, 0.5);
         sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         sprite.setAlpha(IDLE_ALPHA);
+        sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
         sprite.setVisible(false);
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -80,7 +81,7 @@ const pulseAttack = (() => {
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
         const halfSize = size / 2;
-
+        const damageSize = halfSize + 5;
         // Flash visual — alpha
         sprite.setAlpha(FLASH_ALPHA);
         PhaserScene.tweens.add({
@@ -90,21 +91,28 @@ const pulseAttack = (() => {
             ease: 'Quart.easeOut',
         });
 
+        // Color flash — white burst, tween back to friendly cyan
+        sprite.setTint(0xffffff);
+        PhaserScene.time.delayedCall(80, () => {
+            sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        });
+
         // Scale punch — pop out then snap back
-        sprite.setScale(1.15);
+        sprite.setScale(1.25);
         PhaserScene.tweens.add({
             targets: sprite,
             scaleX: 1,
             scaleY: 1,
-            duration: 200,
+            duration: 240,
             ease: 'Cubic.easeOut',
         });
 
         // Micro camera shake
-        PhaserScene.cameras.main.shake(80, 0.003);
+        zoomShake();
+        //PhaserScene.cameras.main.shake(80, 0.003);
 
         // Damage all enemies in range
-        const hits = enemyManager.getEnemiesInSquareRange(cx, cy, halfSize, _hitBuffer);
+        const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
         for (let i = 0; i < hits.length; i++) {
             enemyManager.damageEnemy(hits[i], damage);
         }

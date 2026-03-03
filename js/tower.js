@@ -70,7 +70,7 @@ const tower = (() => {
                     ease: 'Cubic.easeIn',
                     onComplete: () => {
                         // add a tiny brief zoom in here
-                        zoomShake();
+                        PhaserScene.cameras.main.shake(80, 0.003);
                         rangeSprite.setAlpha(1);
                         rangeSprite.currAnim = PhaserScene.tweens.add({
                             targets: rangeSprite,
