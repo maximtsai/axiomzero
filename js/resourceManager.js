@@ -35,6 +35,7 @@ const resourceManager = (() => {
                 img: img,
                 alive: false,
                 x: 0, y: 0,
+                spawnTween: null,
             });
         }
     }
@@ -65,6 +66,36 @@ const resourceManager = (() => {
         d.img.setAlpha(visible ? 1 : 0);
         d.img.setVisible(visible);
         d.img.setActive(true);
+
+        // Spawn nudge: tween 4–9px in random dir + 4px away from tower, clamped to bounds
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 4 + Math.random() * 6;
+
+        // Direction away from tower center
+        const awayDx = x - GAME_CONSTANTS.halfWidth;
+        const awayDy = y - GAME_CONSTANTS.halfHeight;
+        const awayLen = Math.sqrt(awayDx * awayDx + awayDy * awayDy) || 1;
+
+        let endX = x + Math.cos(angle) * dist + (awayDx / awayLen) * 5;
+        let endY = y + Math.sin(angle) * dist + (awayDy / awayLen) * 5;
+
+        // Clamp to within 2px of game bounds
+        endX = Math.max(-1, Math.min(GAME_CONSTANTS.WIDTH + 1, endX));
+        endY = Math.max(-1, Math.min(GAME_CONSTANTS.HEIGHT + 1, endY));
+
+        d.spawnTween = PhaserScene.tweens.add({
+            targets: d.img,
+            x: endX,
+            y: endY,
+            duration: 220 + dist * 13,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                d.x = d.img.x;
+                d.y = d.img.y;
+                d.spawnTween = null;
+            }
+        });
+
         activeDrops.push(d);
     }
 
@@ -117,6 +148,7 @@ const resourceManager = (() => {
     }
 
     function _deactivate(d) {
+        if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
         d.alive = false;
         d.img.setVisible(false);
         d.img.setActive(false);
@@ -147,6 +179,7 @@ const resourceManager = (() => {
     }
 
     function _collectDrop(d) {
+        if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
         // Quick tween toward cursor then destroy
         PhaserScene.tweens.add({
             targets: d.img,
