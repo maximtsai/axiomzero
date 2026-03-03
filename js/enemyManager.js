@@ -114,6 +114,26 @@ const enemyManager = (() => {
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
+        // Visual warning before spawning
+        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
+        warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+        warningImg.setOrigin(0, 0.5);
+        warningImg.setScale(1.2, 1);
+        warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
+        warningImg.setAlpha(0);
+
+        PhaserScene.tweens.add({
+            targets: warningImg,
+            alpha: 1,
+            duration: 750,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+                warningImg.destroy();
+            }
+        });
+
         mb.activate(sx, sy);
         mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(mb);
@@ -211,8 +231,8 @@ const enemyManager = (() => {
             waveElapsed += dt;
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 1;
-            const secondThreshold = 0.85;
+            const firstThreshold = 0.9;
+            const secondThreshold = 1;
             if (waveElapsed < firstThreshold) {
                 spawnSpeedMultiplier = 27;
             } else if (waveElapsed < firstThreshold + secondThreshold) {
@@ -252,8 +272,7 @@ const enemyManager = (() => {
                     // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
                     // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;
-                    e.deactivate();
-                    activeEnemies.splice(i, 1);
+                    _killEnemy(e);
                 }
             }
         }

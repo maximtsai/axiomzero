@@ -7,7 +7,6 @@ const resourceManager = (() => {
 
     let dropPool = [];
     let activeDrops = [];
-    let dropTexKey = null;
     let totalDropsSpawned = 0;
 
     // Session tracking — reset each combat session for the summary screen
@@ -18,7 +17,6 @@ const resourceManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        _generateTexture();
         _buildPool();
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -26,25 +24,9 @@ const resourceManager = (() => {
         updateManager.addFunction(_update);
     }
 
-    function _generateTexture() {
-        // Small diamond shape for DATA drops
-        const size = 10;
-        const gfx = PhaserScene.add.graphics();
-        gfx.fillStyle(GAME_CONSTANTS.COLOR_FRIENDLY, 1);
-        gfx.fillPoints([
-            { x: size / 2, y: 0 },
-            { x: size, y: size / 2 },
-            { x: size / 2, y: size },
-            { x: 0, y: size / 2 },
-        ], true);
-        gfx.generateTexture('data_drop', size, size);
-        gfx.destroy();
-        dropTexKey = 'data_drop';
-    }
-
     function _buildPool() {
         for (let i = 0; i < DROP_POOL_SIZE; i++) {
-            const img = PhaserScene.add.image(0, 0, dropTexKey);
+            const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data.png');
             img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
             img.setVisible(false);
             img.setActive(false);
