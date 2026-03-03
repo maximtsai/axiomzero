@@ -10,7 +10,6 @@ const gameHUD = (() => {
     let expBarBg = null;
     let expBarFill = null;
     let expText = null;
-    let dataIcon = null;
     let dataText = null;
     let insightText = null;
 
@@ -78,10 +77,7 @@ const gameHUD = (() => {
         const currY = expY + 8 + BAR_GAP + 5;
         const insightY = currY + 26; // place it vertically below
 
-        dataIcon = PhaserScene.add.image(groupX, currY + DATA_ICON_SIZE / 2, 'player', 'resrc_data.png');
-        dataIcon.setOrigin(0, 0.5).setDisplaySize(DATA_ICON_SIZE, DATA_ICON_SIZE).setDepth(depth + 2).setScrollFactor(0);
-
-        dataText = PhaserScene.add.text(groupX + DATA_ICON_SIZE + DATA_ICON_GAP, currY, '0', {
+        dataText = PhaserScene.add.text(groupX, currY, '\u25C8 0', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '17px',
             color: '#00f5ff',
@@ -102,7 +98,6 @@ const gameHUD = (() => {
                 treeGroup.add(expBarBg);
                 treeGroup.add(expBarFill);
                 treeGroup.add(expText);
-                treeGroup.add(dataIcon);
                 treeGroup.add(dataText);
                 treeGroup.add(insightText);
             }
@@ -143,10 +138,10 @@ const gameHUD = (() => {
         // ── Progress bar ──
         waveProgressBar = new ProgressBar(PhaserScene, {
             x: GAME_CONSTANTS.halfWidth,
-            y: GAME_CONSTANTS.HEIGHT - 25,
+            y: GAME_CONSTANTS.HEIGHT - 22,
             width: GAME_CONSTANTS.WIDTH - 50,
-            height: 36,
-            padding: 8,
+            height: 30,
+            padding: 7,
             bgColor: 0x222233,
             fillColor: 0x00f5ff,
             depth: depth
@@ -164,7 +159,6 @@ const gameHUD = (() => {
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
-        dataIcon.setVisible(true);
         dataText.setVisible(true);
         insightText.setVisible(true);
         endIterationBtn.setVisible(true);
@@ -180,7 +174,6 @@ const gameHUD = (() => {
         expBarBg.setVisible(false);
         expBarFill.setVisible(false);
         expText.setVisible(false);
-        dataIcon.setVisible(false);
         dataText.setVisible(false);
         insightText.setVisible(false);
         endIterationBtn.setVisible(false);
@@ -211,7 +204,6 @@ const gameHUD = (() => {
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
-        dataIcon.setVisible(true);
         dataText.setVisible(true);
         insightText.setVisible(true);
 
@@ -246,7 +238,7 @@ const gameHUD = (() => {
     }
 
     function _onCurrencyChanged(type, amount) {
-        if (type === 'data') dataText.setText('' + Math.floor(amount));
+        if (type === 'data') dataText.setText('\u25C8 ' + Math.floor(amount));
         if (type === 'insight') insightText.setText('\u25C9 ' + Math.floor(amount));
     }
 
@@ -266,7 +258,7 @@ const gameHUD = (() => {
 
     function _onUpgradePurchased() {
         // Refresh currency display
-        dataText.setText('' + Math.floor(resourceManager.getData()));
+        dataText.setText('\u25C8 ' + Math.floor(resourceManager.getData()));
         insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
     }
 

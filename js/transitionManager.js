@@ -68,7 +68,7 @@ const transitionManager = (() => {
         if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
             const group = neuralTree.getGroup();
             if (group) {
-                group.tweenTo(targetX, 0, { duration, ease: 'Sine.easeInOut' });
+                group.tweenTo(targetX, 0, { duration, ease: 'Cubic.easeOut' });
             }
         }
     }

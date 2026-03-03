@@ -19,10 +19,10 @@ const cameraManager = (() => {
      * Smoothly scroll the camera to a target scrollX.
      * @param {number} targetX - Target scrollX value.
      * @param {number} [duration=GAME_CONSTANTS.TRANSITION_DURATION] - Transition duration in ms.
-     * @param {string} [ease='Sine.easeInOut'] - Easing function.
+     * @param {string} [ease='Cubic.easeOut'] - Easing function.
      * @param {Function} [onComplete] - Called when slide finishes.
      */
-    function slideTo(targetX, duration = GAME_CONSTANTS.TRANSITION_DURATION, ease = 'Sine.easeInOut', onComplete) {
+    function slideTo(targetX, duration = GAME_CONSTANTS.TRANSITION_DURATION, ease = 'Cubic.easeOut', onComplete) {
         if (!camera) return;
         sliding = true;
         PhaserScene.tweens.add({
@@ -39,12 +39,12 @@ const cameraManager = (() => {
 
     /** Scroll camera to Upgrade Phase view (tower in right half). */
     function toUpgradeView(duration = GAME_CONSTANTS.TRANSITION_DURATION, onComplete) {
-        slideTo(-GAME_CONSTANTS.halfWidth / 2, duration, 'Sine.easeInOut', onComplete);
+        slideTo(-GAME_CONSTANTS.halfWidth / 2, duration, 'Cubic.easeOut', onComplete);
     }
 
     /** Scroll camera to Combat view (tower centered). */
     function toCombatView(duration = GAME_CONSTANTS.TRANSITION_DURATION, onComplete) {
-        slideTo(0, duration, 'Sine.easeInOut', onComplete);
+        slideTo(0, duration, 'Cubic.easeOut', onComplete);
     }
 
     /**
