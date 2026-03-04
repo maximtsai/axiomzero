@@ -189,6 +189,7 @@
                 <false/>
             </struct>
             <key type="filename">player/player_attack_bright.png</key>
+            <key type="filename">player/player_attack_red.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -200,6 +201,21 @@
                 <rect>27,27,54,54</rect>
                 <key>scale9Paddings</key>
                 <rect>27,27,54,54</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/player_pointer.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>1,1,3,3</rect>
+                <key>scale9Paddings</key>
+                <rect>1,1,3,3</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -218,9 +234,11 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">player/resrc_coin.png</key>
             <key type="filename">player/resrc_data.png</key>
             <key type="filename">player/resrc_insight.png</key>
             <key type="filename">player/resrc_processor.png</key>
+            <key type="filename">player/resrc_shard.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

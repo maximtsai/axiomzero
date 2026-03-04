@@ -32,7 +32,7 @@ class PulseAttackModel {
 
 class PulseAttackView {
     constructor() {
-        this.IDLE_ALPHA = 0.4;
+        this.IDLE_ALPHA = 0.45;
         this.FLASH_ALPHA = 1.0;
         this.FLASH_DURATION = 500;  // ms — tween from flash back to idle
         this.CORNER_SIZE = 30;    // nine-slice corner size

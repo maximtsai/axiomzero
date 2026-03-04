@@ -113,7 +113,7 @@ const enemyManager = (() => {
 
         // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = _getValidSpawnAngle();
+        const angle = _getValidSpawnAngle(chosenType);
         const baseX = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const baseY = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
@@ -248,9 +248,35 @@ const enemyManager = (() => {
         return null;
     }
 
-    function _getValidSpawnAngle() {
-        // Just grabs a random angle and records it for now.
-        const angle = Math.random() * Math.PI * 2;
+    function _getValidSpawnAngle(chosenType) {
+        let angle = Math.random() * Math.PI * 2;
+
+        // If it's a swarmer, try to find an angle far from the last 4 spawns
+        if (chosenType === 'swarmer') {
+            const minSeparation = 0.45; // ~26 degrees minimum distance
+            let valid = false;
+            let attempts = 0;
+
+            while (!valid && attempts < 6) {
+                valid = true;
+                for (let i = 0; i < recentSpawnAngles.length; i++) {
+                    const diff = Phaser.Math.Angle.ShortestBetween(
+                        Phaser.Math.RadToDeg(angle),
+                        Phaser.Math.RadToDeg(recentSpawnAngles[i])
+                    );
+                    if (Math.abs(diff) < Phaser.Math.RadToDeg(minSeparation)) {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (!valid) {
+                    angle = Math.random() * Math.PI * 2;
+                    attempts++;
+                }
+            }
+        }
+
         recentSpawnAngles.push(angle);
         if (recentSpawnAngles.length > 4) {
             recentSpawnAngles.shift();

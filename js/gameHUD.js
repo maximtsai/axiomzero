@@ -270,7 +270,7 @@ const gameHUD = (() => {
     function showTransitionMessage(msg) {
         const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 340, msg, {
             fontFamily: 'VCR',
-            fontSize: '32px',
+            fontSize: '44px',
             color: '#ffffff',
             align: 'center'
         }).setOrigin(0, 0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
