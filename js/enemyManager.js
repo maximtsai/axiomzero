@@ -132,22 +132,37 @@ const enemyManager = (() => {
             let sy = baseY;
 
             if (numToSpawn > 1) {
-                // Ensure a fixed angular separation between each swarmer in the group
-                const angleStep = 0.09; // ~5.1 degrees
-                const angleOffset = (i - (numToSpawn - 1) / 2) * angleStep;
+                // Swarmers form layers of up to 4 to avoid overly wide arcs
+                const layer = Math.floor(i / 4);
+                const indexInLayer = i % 4;
+                const layerSize = Math.min(4, numToSpawn - (layer * 4));
+
+                // Spread them along the arc for this specific layer
+                const angleStep = 0.1; // ~5.7 degrees
+                let angleOffset = (indexInLayer - (layerSize - 1) / 2) * angleStep;
+
+                // Offset every second layer by 0.05 radians to break up straight lines
+                if (layer % 2 === 1) {
+                    angleOffset += 0.05;
+                }
 
                 const finalAngle = angle + angleOffset;
 
-                // Stagger spawn distance to offset their arrival times slightly
-                const distanceVariation = Phaser.Math.Between(-40, 40);
+                // Push each subsequent layer further away from the tower
+                const layerDistance = layer * 30;
 
-                // Recalculate spawn coordinates with the angular spread and distance variation
-                sx = GAME_CONSTANTS.halfWidth + Math.cos(finalAngle) * (distance + distanceVariation);
-                sy = GAME_CONSTANTS.halfHeight + Math.sin(finalAngle) * (distance + distanceVariation);
+                // Minor random distance staggering within the layer (increased by 33%)
+                const distanceVariation = Phaser.Math.Between(-12, 12);
 
-                // Add minor jitter so they don't form perfect mathematical lines
-                sx += Phaser.Math.Between(-15, 15);
-                sy += Phaser.Math.Between(-15, 15);
+                // Recalculate coordinate using base distance + layer push back + random stagger
+                const finalDist = distance + layerDistance + distanceVariation;
+
+                sx = GAME_CONSTANTS.halfWidth + Math.cos(finalAngle) * finalDist;
+                sy = GAME_CONSTANTS.halfHeight + Math.sin(finalAngle) * finalDist;
+
+                // Minor jitter (increased by 33%)
+                sx += Phaser.Math.Between(-8, 8);
+                sy += Phaser.Math.Between(-8, 8);
             }
 
             // Activate (sets stats and resets visuals inside Enemy subclass)

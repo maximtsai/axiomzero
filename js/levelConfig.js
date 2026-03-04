@@ -13,7 +13,7 @@ const LEVEL_CONFIG = {
             shooter: 0.6,
             swarmer: 0.2
         },
-        swarmerGroupSize: { min: 3, max: 6 },
+        swarmerGroupSize: { min: 6, max: 12 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
 
         mainBoss: null,        // Not yet implemented
