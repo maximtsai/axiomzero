@@ -25,6 +25,7 @@ class Enemy {
         this.isBoss = false; // if true, knockback does not apply
         this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1
         this.stunned = false;
+        this.baseResourceDrop = 0;
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -125,7 +126,7 @@ class Enemy {
         // White hit flash — applies to all enemy types/damage sources
         if (this.img && this.img.scene) {
             this.img.setTintFill(0xffffff);
-            PhaserScene.time.delayedCall(60, () => {
+            PhaserScene.time.delayedCall(135, () => {
                 this.refreshTint();
             });
         }

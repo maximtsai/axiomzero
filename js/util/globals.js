@@ -52,8 +52,6 @@ const GAME_VARS = {
     mouseJustDowned: false,
     mouseJustUpped: false,
     wasTouch: false,
-    canvasXOffset: 0,
-    canvasYOffset: 0,
     gameScale: 1,
     lastmousedown: { x: 0, y: 0 },
     scaleFactor: 1,

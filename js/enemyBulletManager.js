@@ -20,7 +20,6 @@ const enemyBulletManager = (() => {
             img.setScale(1);
             img.setVisible(false);
             img.setActive(false);
-            img.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
             pool.push({
                 img: img,
                 alive: false,

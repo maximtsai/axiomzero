@@ -48,7 +48,6 @@ GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 8; // seconds between scaling jumps
 
 // ─── DATA drops ───────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.DATA_DROP_CHANCE = 0.6;
 GAME_CONSTANTS.DATA_PICKUP_RADIUS = 100;  // px — cursor auto-collects within this
 
 // ─── Projectile ───────────────────────────────────────────────────────────────

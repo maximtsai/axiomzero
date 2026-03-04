@@ -13,6 +13,8 @@ const SHOOTER_STATE = {
 class ShooterEnemy extends Enemy {
     constructor() {
         super();
+        this.type = 'shooter';
+        this.baseResourceDrop = 2;
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'shooter.png');
         this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
         this.img.setVisible(false);

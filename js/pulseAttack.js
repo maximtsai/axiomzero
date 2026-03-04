@@ -39,6 +39,8 @@ class PulseAttackView {
 
         this.sprite = null;
         this.spriteBright = null;
+        this.spritePointer = null;
+        this.spriteRed = null;
 
         this.shakeVelX = 0;
         this.shakeVelY = 0;
@@ -60,6 +62,18 @@ class PulseAttackView {
         this.sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
         this.sprite.setVisible(false);
 
+        // Red background pulse
+        this.spriteRed = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_attack_red.png',
+            initialSize + 4, initialSize + 4,
+            this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE
+        );
+        this.spriteRed.setOrigin(0.5, 0.5);
+        this.spriteRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+        this.spriteRed.setAlpha(0);
+        this.spriteRed.setVisible(false);
+
         // Flash overlay sprite
         this.spriteBright = PhaserScene.add.nineslice(
             0, 0,
@@ -71,6 +85,13 @@ class PulseAttackView {
         this.spriteBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
         this.spriteBright.setAlpha(0);
         this.spriteBright.setVisible(false);
+
+        // Pointer sprite
+        this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
+        this.cursorX = 0;
+        this.cursorY = 0;
+        this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
+        this.spritePointer.setVisible(false);
     }
 
     setSize(newSize) {
@@ -80,6 +101,9 @@ class PulseAttackView {
         if (this.spriteBright) {
             this.spriteBright.setSize(newSize, newSize);
         }
+        if (this.spriteRed) {
+            this.spriteRed.setSize(newSize + 4, newSize + 4);
+        }
     }
 
     updatePosition(delta, targetX, targetY) {
@@ -87,6 +111,8 @@ class PulseAttackView {
 
         this.sprite.setPosition(targetX + this.shakeX, targetY + this.shakeY);
         this.spriteBright.setPosition(targetX, targetY);
+        this.spritePointer.setPosition(targetX, targetY);
+        this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
 
         this.shakeX += this.shakeVelX * delta;
         this.shakeY += this.shakeVelY * delta;
@@ -101,21 +127,25 @@ class PulseAttackView {
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
         this.spriteBright.setScale(1.25);
 
+        this.spriteRed.setAlpha(0.35);
+        this.spriteRed.setScale(1.35);
+        this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
+
         // Tween alpha back to 0
         PhaserScene.tweens.add({
-            targets: this.spriteBright,
+            targets: [this.spriteBright, this.spriteRed],
             alpha: 0,
             duration: this.FLASH_DURATION,
             ease: 'Quart.easeOut',
         });
 
-        // Scale punch for both sprites
         this.sprite.setScale(1.25);
 
         PhaserScene.tweens.add({
-            targets: [this.sprite, this.spriteBright],
+            targets: [this.sprite, this.spriteBright, this.spriteRed],
             scaleX: 1,
             scaleY: 1,
+            rotation: 0,
             duration: 240,
             ease: 'Cubic.easeOut',
         });
@@ -148,10 +178,13 @@ class PulseAttackView {
         if (!this.sprite) return;
         this.sprite.setVisible(visible);
         this.spriteBright.setVisible(visible);
+        this.spritePointer.setVisible(visible);
+        this.spriteRed.setVisible(visible);
 
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
             this.spriteBright.setAlpha(0);
+            this.spriteRed.setAlpha(0);
         }
     }
 }

@@ -366,7 +366,7 @@ const enemyManager = (() => {
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
         } else {
-            messageBus.publish('enemyKilled', ex, ey);
+            messageBus.publish('enemyKilled', ex, ey, enemy.baseResourceDrop);
         }
     }
 

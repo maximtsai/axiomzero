@@ -15,6 +15,7 @@ const LEVEL_CONFIG = {
         },
         swarmerGroupSize: { min: 6, max: 12 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
+        resourceMult: 1,
 
         mainBoss: null,        // Not yet implemented
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance

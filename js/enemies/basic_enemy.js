@@ -12,6 +12,8 @@
 class BasicEnemy extends Enemy {
     constructor() {
         super();
+        this.type = 'basic';
+        this.baseResourceDrop = 1;
         BasicEnemy._ensureTexture();
         this.img = PhaserScene.add.image(0, 0, BasicEnemy.TEX_KEY, 'basic.png');
         this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);

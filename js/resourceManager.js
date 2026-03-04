@@ -5,7 +5,7 @@
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
-    const FLY_SPEED = 250;  // px/sec while flying toward cursor
+    const FLY_SPEED = 320;  // px/sec while flying toward cursor
     const FLY_COLLECT_DIST = 14;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
@@ -62,7 +62,7 @@ const resourceManager = (() => {
         d.alive = true;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = 0.12;
+        d.inertia = 0.02;
         d.img.setPosition(x, y);
 
         // Visibility logic based on total drops spawned
@@ -168,7 +168,7 @@ const resourceManager = (() => {
         d.alive = false;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = 0.12;
+        d.inertia = 0.02;
         d.img.setVisible(false);
         d.img.setActive(false);
     }
@@ -243,8 +243,11 @@ const resourceManager = (() => {
             const len = Math.sqrt(dx * dx + dy * dy);
             const move = Math.min(flyStep * d.inertia, len);  // don't overshoot cursor
 
-            const moveAmtX = (dx / len) * move;
-            const moveAmtY = (dy / len) * move;
+            const predictDx = dx - d.dx * 2;
+            const predictDy = dy - d.dy * 2;
+
+            const moveAmtX = (predictDx / len) * move;
+            const moveAmtY = (predictDy / len) * move;
             d.dx += moveAmtX;
             d.dy += moveAmtY;
             d.x += moveAmtX + d.dx;
@@ -261,12 +264,23 @@ const resourceManager = (() => {
 
     // ── event handlers ───────────────────────────────────────────────────────
 
-    function _onEnemyKilled(x, y) {
+    let dropAccumulator = 0;
+
+    function _onEnemyKilled(x, y, baseResourceDrop) {
         const config = getCurrentLevelConfig();
-        const dropChance = GAME_CONSTANTS.DATA_DROP_CHANCE * (config.dataDropMultiplier || 1);
-        if (Math.random() < dropChance) {
+        const levelMult = config.resourceMult || 1;
+        const totalDrop = baseResourceDrop * levelMult;
+
+        // Add to the fractional drop accumulator
+        dropAccumulator += totalDrop;
+
+        // Spawn drops for any whole numbers gained
+        while (dropAccumulator >= 1) {
             spawnDataDrop(x, y);
+            dropAccumulator -= 1;
         }
+
+        // The remaining fraction is naturally preserved for future death checks
     }
 
     function _onMinibossDefeated(x, y) {

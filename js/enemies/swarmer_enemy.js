@@ -8,6 +8,8 @@
 class SwarmerEnemy extends Enemy {
     constructor() {
         super();
+        this.type = 'swarmer';
+        this.baseResourceDrop = 0.4;
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'swarmer.png');
         this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
         this.img.setVisible(false);

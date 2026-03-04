@@ -19,7 +19,7 @@ const gameHUD = (() => {
     // Layout
     const HUD_X = 20;
     const HUD_Y = 20;
-    const BAR_W = 250;
+    const BAR_W = 200;
     const BAR_H = 18;
     const BAR_GAP = 8;
     const DATA_ICON_SIZE = 18;
@@ -215,8 +215,18 @@ const gameHUD = (() => {
 
     function _onHealthChanged(current, max) {
         if (!visible) return;
+
+        // Logarithmic scaling: 200px at 20 health, ~800px at 10,000 health
+        // Formula: L = 222.3 * log10(max) - 89.2
+        const dynamicW = Math.max(BAR_W, 222.3 * Math.log10(max) - 89.2);
+
         const ratio = Math.max(0, current / max);
-        healthBarFill.setDisplaySize(BAR_W * ratio, BAR_H);
+
+        healthBarBg.setDisplaySize(dynamicW, BAR_H);
+        healthBarFill.setDisplaySize(dynamicW * ratio, BAR_H);
+
+        // Reposition text to the right of the dynamic bar
+        healthText.x = healthBarBg.x + dynamicW + 8;
 
         // Color shift: cyan → red as health drops
         if (ratio > 0.5) {
