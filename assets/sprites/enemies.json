@@ -335,7 +335,7 @@
 					}
 				},
 				{
-					"filename": "swarm.png",
+					"filename": "swarmer.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -390,6 +390,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:b3632ee04707c8908416f3fbff21d605:9fc81ea035276de920783c9d63e63ac2:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9fd55334d5ea3466738fac8b55030b91:9fc81ea035276de920783c9d63e63ac2:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }

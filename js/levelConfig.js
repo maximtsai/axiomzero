@@ -5,13 +5,17 @@ const LEVEL_CONFIG = {
     1: {
         spawnInterval: 900, // ms between regular spawns (base)
         initialWeights: {
-            basic: 0.9,
-            shooter: 0.1
+            basic: 0.8,
+            shooter: 0.1,
+            swarmer: 0.1
         },
         lateWeights: {
-            shooter: 0.9 // Overwrites shooter weight only (0.1 -> 0.9)
+            shooter: 0.6,
+            swarmer: 0.2
         },
+        swarmerGroupSize: { min: 3, max: 6 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
+
         mainBoss: null,        // Not yet implemented
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1 // Scales up *base* stats of enemies before wave scaling applies

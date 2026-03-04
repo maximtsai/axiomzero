@@ -184,7 +184,7 @@
             <key type="filename">enemies/protector.png</key>
             <key type="filename">enemies/shooter.png</key>
             <key type="filename">enemies/sniper.png</key>
-            <key type="filename">enemies/swarm.png</key>
+            <key type="filename">enemies/swarmer.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

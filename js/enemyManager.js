@@ -12,6 +12,7 @@ const enemyManager = (() => {
 
     let pool = [];          // pre-allocated BasicEnemy instances
     let shooterPool = [];   // pre-allocated ShooterEnemy instances
+    let swarmerPool = [];   // pre-allocated SwarmerEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -40,6 +41,9 @@ const enemyManager = (() => {
         for (let i = 0; i < POOL_SIZE; i++) {
             pool.push(new BasicEnemy());
             shooterPool.push(new ShooterEnemy());
+        }
+        for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
+            swarmerPool.push(new SwarmerEnemy());
         }
     }
 
@@ -86,35 +90,61 @@ const enemyManager = (() => {
 
     function _spawnOne() {
         const config = getCurrentLevelConfig(lastWaveProgress);
-        const pShooter = config.enemyProbabilities && config.enemyProbabilities.shooter ? config.enemyProbabilities.shooter : 0;
 
-        let e = null;
-        if (Math.random() < pShooter) { // chance for shooter enemy
-            e = _getShooterFromPool();
-            if (!e) e = _getFromPool(); // fallback
-        } else {
-            e = _getFromPool();
-            if (!e) e = _getShooterFromPool(); // fallback
+        let chosenType = 'basic';
+        if (config.enemyProbabilities) {
+            let r = Math.random();
+            for (const type in config.enemyProbabilities) {
+                if (r < config.enemyProbabilities[type]) {
+                    chosenType = type;
+                    break;
+                }
+                r -= config.enemyProbabilities[type];
+            }
         }
-        if (!e) return; // pools exhausted
 
+        let numToSpawn = 1;
+        if (chosenType === 'swarmer' && config.swarmerGroupSize) {
+            numToSpawn = Phaser.Math.Between(config.swarmerGroupSize.min, config.swarmerGroupSize.max);
+        }
 
-        // Determine spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
+        // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
         const angle = Math.random() * Math.PI * 2;
-        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
-        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
+        const baseX = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
+        const baseY = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
         // Scaling factor (calculated once per frame in _update) multiplied by level specific scalar
         const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
-        // Activate (sets stats and resets visuals inside BasicEnemy)
-        e.activate(sx, sy, currentScale);
+        for (let i = 0; i < numToSpawn; i++) {
+            let e = null;
+            if (chosenType === 'swarmer') {
+                e = _getSwarmerFromPool();
+            } else if (chosenType === 'shooter') {
+                e = _getShooterFromPool();
+            }
 
-        // Aim at tower center
-        e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+            if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
+            if (!e) continue;           // safety net: all fallback pools exhausted
 
-        activeEnemies.push(e);
+            let sx = baseX;
+            let sy = baseY;
+
+            if (numToSpawn > 1) {
+                // Add minor jitter so they don't exactly overlap
+                sx += Phaser.Math.Between(-35, 35);
+                sy += Phaser.Math.Between(-35, 35);
+            }
+
+            // Activate (sets stats and resets visuals inside Enemy subclass)
+            e.activate(sx, sy, currentScale);
+
+            // Aim at tower center
+            e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+
+            activeEnemies.push(e);
+        }
     }
 
     function _spawnMiniboss() {
@@ -168,6 +198,13 @@ const enemyManager = (() => {
     function _getShooterFromPool() {
         for (let i = 0; i < shooterPool.length; i++) {
             if (!shooterPool[i].alive) return shooterPool[i];
+        }
+        return null;
+    }
+
+    function _getSwarmerFromPool() {
+        for (let i = 0; i < swarmerPool.length; i++) {
+            if (!swarmerPool[i].alive) return swarmerPool[i];
         }
         return null;
     }
