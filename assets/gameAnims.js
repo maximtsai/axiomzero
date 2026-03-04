@@ -18,11 +18,11 @@ function createAnimations(scene) {
         frames: scene.anims.generateFrameNames('attacks', {
             prefix: 'enemy_strike',
             suffix: '.png',
-            start: 1,
+            start: 0,
             end: 7,
             zeroPad: 0,
         }),
-        frameRate: 30,
+        frameRate: 20,
         repeat: 0,
         yoyo: false
     });

@@ -262,54 +262,6 @@ const gameHUD = (() => {
         insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
     }
 
-    function applyChromaticGlitch(obj) {
-        if (!obj || !obj.scene) return;
-
-        let redCopy, cyanCopy;
-        if (obj.type === 'Text') {
-            redCopy = PhaserScene.add.text(obj.x - 2, obj.y + 1, obj.text, obj.style);
-            cyanCopy = PhaserScene.add.text(obj.x + 2, obj.y + 1, obj.text, obj.style);
-            redCopy.setOrigin(obj.originX, obj.originY);
-            cyanCopy.setOrigin(obj.originX, obj.originY);
-
-            const syncTimer = PhaserScene.time.addEvent({
-                delay: 16, loop: true,
-                callback: () => {
-                    if (obj.active && redCopy.active && cyanCopy.active) {
-                        redCopy.setText(obj.text);
-                        cyanCopy.setText(obj.text);
-                    }
-                }
-            });
-            PhaserScene.time.delayedCall(400, () => syncTimer.remove());
-        } else {
-            redCopy = PhaserScene.add.image(obj.x - 2, obj.y + 1, obj.texture.key, obj.frame.name);
-            cyanCopy = PhaserScene.add.image(obj.x + 2, obj.y + 1, obj.texture.key, obj.frame.name);
-            redCopy.setOrigin(obj.originX, obj.originY).setScale(obj.scaleX, obj.scaleY).setRotation(obj.rotation);
-            cyanCopy.setOrigin(obj.originX, obj.originY).setScale(obj.scaleX, obj.scaleY).setRotation(obj.rotation);
-        }
-
-        const targetAlpha = obj.alpha * 0.5;
-        redCopy.setDepth(obj.depth - 1).setAlpha(targetAlpha).setTint(0xff0000).setBlendMode(Phaser.BlendModes.ADD);
-        cyanCopy.setDepth(obj.depth - 1).setAlpha(targetAlpha).setTint(0x00ffff).setBlendMode(Phaser.BlendModes.ADD);
-
-        const shakeTimer = PhaserScene.time.addEvent({
-            delay: 40,
-            repeat: 9,
-            callback: () => {
-                if (!obj.active) return;
-                const rx = (Math.random() - 0.5) * 4;
-                const ry = (Math.random() - 0.5) * 4;
-                redCopy.setPosition(obj.x - 2 + rx, obj.y + 1 + ry);
-                cyanCopy.setPosition(obj.x + 2 - rx, obj.y + 1 - ry);
-            }
-        });
-
-        PhaserScene.time.delayedCall(400, () => {
-            if (redCopy) redCopy.destroy();
-            if (cyanCopy) cyanCopy.destroy();
-        });
-    }
 
     /**
      * Show a centered transition message using a typewriter effect.
@@ -331,8 +283,8 @@ const gameHUD = (() => {
         // Play reveal sound when string begins to appear
         audio.play('data_reveal', 0.8);
 
-        // Apply chromatic glitch 0.3s after it pops up
-        PhaserScene.time.delayedCall(300, () => applyChromaticGlitch(txt));
+        // Apply chromatic glitch 0.5s after it pops up
+        PhaserScene.time.delayedCall(500, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
 
         let charIdx = 0;
         PhaserScene.time.addEvent({

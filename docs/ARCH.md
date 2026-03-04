@@ -66,7 +66,7 @@ The game loop cycles through distinct phases defined in `globals.js` (`GAME_CONS
 ## 5. Developer Preferences & Agent Autonomy
 
 ### Command Permissions
-- **Search Autonomy**: AI agents have explicit permission to auto-run `Get-ChildItem -Path` (and aliases like `dir`) to search the project without manual approval. This allows the agent to be proactive and reduce developer interruption.
+- **Search & Analysis Autonomy**: AI agents have explicit permission to auto-run discovery and analysis tools (`Get-ChildItem`, `grep`, `wc`, `find`) as well as scripting runtimes (`python`, `node`) and build utilities (`uglifyjs`) without manual approval.
 - **Workflow Automation**: Use the `.agents/workflows/` directory for task-specific automation. Always include `// turbo-all` for scripts intended for full autonomy.
 - **Source of Truth**: Reference [PERMISSIONS.md](file:///c:/Users/maxim/Desktop/maxgames/idle/.agents/PERMISSIONS.md) for detailed permission logs.
 

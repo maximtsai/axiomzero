@@ -323,7 +323,7 @@ const tower = (() => {
         view._hitAnimPool = new ObjectPool(
             () => {
                 const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_strike1.png');
-                spr.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10);
+                spr.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 1);
                 spr.setVisible(false);
                 spr.setActive(false);
                 spr.on('animationcomplete', function (anim) {
@@ -384,7 +384,15 @@ const tower = (() => {
         if (survived) {
             view.playHitFlash();
             if (x !== undefined && y !== undefined) {
-                view.playHitEffect(x, y);
+                // Offset 10px closer to tower center
+                const cx = GAME_CONSTANTS.halfWidth;
+                const cy = GAME_CONSTANTS.halfHeight;
+                const dx = cx - x;
+                const dy = cy - y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const ox = x + (dx / dist) * 10;
+                const oy = y + (dy / dist) * 10;
+                view.playHitEffect(ox, oy);
             }
         } else {
             view.cleanupRangeSprite();

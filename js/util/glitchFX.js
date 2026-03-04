@@ -141,6 +141,65 @@ const glitchFX = (() => {
         });
     }
 
+    // ── Chromatic Aberration ─────────────────────────────────────────────
+
+    /**
+     * Briefly duplicate target with red/cyan tints and a jittering offset.
+     * @param {Phaser.GameObjects.GameObject} target - Sprite or Text object.
+     * @param {number} [duration=400] - Total effect duration in ms.
+     */
+    function triggerChromaticAberration(target, duration = 500, effectIntensity = 1) {
+        if (intensity <= 0 || !target || !target.active) return;
+
+        const combinedIntensity = intensity * effectIntensity;
+
+        let redCopy, cyanCopy;
+        if (target.type === 'Text') {
+            redCopy = PhaserScene.add.text(target.x - 3, target.y + 2, target.text, target.style);
+            cyanCopy = PhaserScene.add.text(target.x + 3, target.y + 2, target.text, target.style);
+            redCopy.setOrigin(target.originX, target.originY);
+            cyanCopy.setOrigin(target.originX, target.originY);
+
+            // Keep text in sync if the original is still typewriting
+            const syncTimer = PhaserScene.time.addEvent({
+                delay: 16, loop: true,
+                callback: () => {
+                    if (target.active && redCopy.active && cyanCopy.active) {
+                        redCopy.setText(target.text);
+                        cyanCopy.setText(target.text);
+                    }
+                }
+            });
+            PhaserScene.time.delayedCall(duration, () => syncTimer.remove());
+        } else {
+            redCopy = PhaserScene.add.image(target.x - 2, target.y + 1, target.texture.key, target.frame.name);
+            cyanCopy = PhaserScene.add.image(target.x + 2, target.y + 1, target.texture.key, target.frame.name);
+            redCopy.setOrigin(target.originX, target.originY).setScale(target.scaleX, target.scaleY).setRotation(target.rotation);
+            cyanCopy.setOrigin(target.originX, target.originY).setScale(target.scaleX, target.scaleY).setRotation(target.rotation);
+        }
+
+        const alphaMult = 0.8 * combinedIntensity;
+        redCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult).setTint(0xff0000).setBlendMode(Phaser.BlendModes.ADD);
+        cyanCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult).setTint(0x00ffff).setBlendMode(Phaser.BlendModes.ADD);
+
+        const shakeTimer = PhaserScene.time.addEvent({
+            delay: 40,
+            repeat: Math.floor(duration / 40) - 1,
+            callback: () => {
+                if (!target.active) return;
+                const rx = (Math.random() - 0.5) * 9 * combinedIntensity;
+                const ry = (Math.random() - 0.5) * 6 * combinedIntensity;
+                redCopy.setPosition(target.x - 2 + rx, target.y + 1 + ry);
+                cyanCopy.setPosition(target.x + 2 - rx, target.y + 1 - ry);
+            }
+        });
+
+        PhaserScene.time.delayedCall(duration, () => {
+            if (redCopy.active) redCopy.destroy();
+            if (cyanCopy.active) cyanCopy.destroy();
+        });
+    }
+
     // ── Intensity control ────────────────────────────────────────────────
 
     /**
@@ -151,5 +210,5 @@ const glitchFX = (() => {
         intensity = Math.max(0, Math.min(1, level));
     }
 
-    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost };
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration };
 })();
