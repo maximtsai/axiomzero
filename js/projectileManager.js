@@ -110,8 +110,8 @@ const projectileManager = (() => {
         if (activeProjectiles.length === 0) return;
 
         const dt = delta / 1000;
-        const hitR2 = GAME_CONSTANTS.PROJECTILE_HIT_RADIUS * GAME_CONSTANTS.PROJECTILE_HIT_RADIUS;
         const enemies = enemyManager.getActiveEnemies();
+        const hitRadiusRatio = GAME_CONSTANTS.PROJECTILE_HIT_RADIUS / 12;
 
         for (let i = activeProjectiles.length - 1; i >= 0; i--) {
             const p = activeProjectiles[i];
@@ -135,9 +135,13 @@ const projectileManager = (() => {
             for (let j = 0; j < enemies.length; j++) {
                 const e = enemies[j];
                 if (!e.alive) continue;
+
+                // Scale hit detection by enemy size (Standard basic size is 12)
+                const hitRadius = (e.size || 12) * hitRadiusRatio;
+
                 const dx = p.x - e.x;
                 const dy = p.y - e.y;
-                if (dx * dx + dy * dy < hitR2) {
+                if (dx * dx + dy * dy < hitRadius * hitRadius) {
                     // Spark burst pointing from enemy toward tower
                     const tPos = tower.getPosition();
                     const hitAngle = Math.atan2(tPos.y - e.y, tPos.x - e.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;

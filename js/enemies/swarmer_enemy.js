@@ -1,7 +1,7 @@
 // js/enemies/swarmer_enemy.js — Enemy that spawns in clusters.
 //
 // Behaviour:
-//   • Speeds is 1.25x of basic enemy, health is 1.
+//   • Speeds is 1.25x of basic enemy, health is 3.
 //   • Spawned in groups to overwhelm the tower.
 //   • Deals same base damage as basic enemy.
 
@@ -17,7 +17,7 @@ class SwarmerEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = 2; // Always 2
+        this.maxHealth = 3; // Always 3
         this.health = this.maxHealth;
         this.selfDamage = this.maxHealth * 3;
         this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;

@@ -6,7 +6,7 @@
 class PulseAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 2000;  // ms between pulses
-        this.BASE_DAMAGE = 5;
+        this.BASE_DAMAGE = 4;
         this.BASE_SIZE = 90;    // px — AOE square side length
 
         this.active = false;  // true when combat phase AND node purchased

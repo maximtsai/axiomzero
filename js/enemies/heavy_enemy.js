@@ -23,11 +23,11 @@ class HeavyEnemy extends Enemy {
         this.selfDamage = this.maxHealth * 0.201;
         this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5;
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75;
-        this.size = 18;
+        this.size = 24;
 
         if (this.img) {
             this.img.setAlpha(1);
-            this.img.setScale(1.2);
+            this.img.setScale(1);
             this.img.setTint(0xffffff); // Reset tint
         }
 
