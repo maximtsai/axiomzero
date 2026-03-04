@@ -180,6 +180,7 @@
             <key type="filename">enemies/fast.png</key>
             <key type="filename">enemies/heavy.png</key>
             <key type="filename">enemies/logic_stray.png</key>
+            <key type="filename">enemies/projectile.png</key>
             <key type="filename">enemies/protector.png</key>
             <key type="filename">enemies/shooter.png</key>
             <key type="filename">enemies/sniper.png</key>
