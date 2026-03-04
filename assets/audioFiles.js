@@ -4,4 +4,9 @@ const audioFiles = [
     { name: 'levelup', src: 'audio/levelup.mp3' },
     { name: 'digital_typewriter', src: 'audio/digital_typewriter.mp3' },
     { name: 'digital_typewriter_short', src: 'audio/digital_typewriter_short.mp3' },
+    { name: 'pop1', src: 'audio/pop1.mp3' },
+    { name: 'pop2', src: 'audio/pop2.mp3' },
+    { name: 'pop3', src: 'audio/pop3.mp3' },
+    { name: 'click', src: 'audio/click.mp3' },
+    { name: 'data_reveal', src: 'audio/data_reveal.mp3' },
 ]

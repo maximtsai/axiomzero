@@ -279,6 +279,9 @@ const gameHUD = (() => {
         txt.text = '';
         txt.x = GAME_CONSTANTS.halfWidth - (fullWidth / 2);
 
+        // Play reveal sound when string begins to appear
+        audio.play('data_reveal', 0.8);
+
         let charIdx = 0;
         PhaserScene.time.addEvent({
             delay: 25,

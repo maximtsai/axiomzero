@@ -4,130 +4,30 @@
 			"image": "player-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 512,
-				"h": 573
+				"w": 457,
+				"h": 816
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "range.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 400,
-						"h": 400
+						"w": 600,
+						"h": 600
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 400,
-						"h": 400
+						"x": 77,
+						"y": 39,
+						"w": 455,
+						"h": 544
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 400,
-						"h": 400
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "player_attack_bright.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 108,
-						"h": 108
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 108,
-						"h": 108
-					},
-					"frame": {
-						"x": 403,
-						"y": 1,
-						"w": 108,
-						"h": 108
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "player_attack.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 108,
-						"h": 108
-					},
-					"spriteSourceSize": {
-						"x": 3,
-						"y": 3,
-						"w": 102,
-						"h": 102
-					},
-					"frame": {
-						"x": 403,
-						"y": 111,
-						"w": 102,
-						"h": 102
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 13,
-						"y": 13,
-						"w": 93,
-						"h": 93
-					},
-					"frame": {
-						"x": 403,
-						"y": 215,
-						"w": 93,
-						"h": 93
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 14,
-						"y": 14,
-						"w": 91,
-						"h": 91
-					},
-					"frame": {
-						"x": 403,
-						"y": 310,
-						"w": 91,
-						"h": 91
+						"w": 455,
+						"h": 544
 					},
 					"anchor": {
 						"x": 0.5,
@@ -150,7 +50,7 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 403,
+						"y": 547,
 						"w": 119,
 						"h": 119
 					},
@@ -174,8 +74,8 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 122,
-						"y": 403,
+						"x": 1,
+						"y": 668,
 						"w": 119,
 						"h": 119
 					},
@@ -199,10 +99,110 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 243,
-						"y": 403,
+						"x": 122,
+						"y": 547,
 						"w": 119,
 						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "player_attack_bright.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 108,
+						"h": 108
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 108,
+						"h": 108
+					},
+					"frame": {
+						"x": 122,
+						"y": 668,
+						"w": 108,
+						"h": 108
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "player_attack.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 108,
+						"h": 108
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 102,
+						"h": 102
+					},
+					"frame": {
+						"x": 243,
+						"y": 547,
+						"w": 102,
+						"h": 102
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 13,
+						"w": 93,
+						"h": 93
+					},
+					"frame": {
+						"x": 347,
+						"y": 547,
+						"w": 93,
+						"h": 93
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 91,
+						"h": 91
+					},
+					"frame": {
+						"x": 243,
+						"y": 651,
+						"w": 91,
+						"h": 91
 					},
 					"anchor": {
 						"x": 0.5,
@@ -224,10 +224,35 @@
 						"h": 96
 					},
 					"frame": {
-						"x": 364,
-						"y": 403,
+						"x": 336,
+						"y": 651,
 						"w": 78,
 						"h": 96
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_data.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 15,
+						"w": 71,
+						"h": 71
+					},
+					"frame": {
+						"x": 232,
+						"y": 744,
+						"w": 71,
+						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -249,8 +274,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 444,
-						"y": 403,
+						"x": 305,
+						"y": 749,
 						"w": 63,
 						"h": 64
 					},
@@ -274,35 +299,10 @@
 						"h": 59
 					},
 					"frame": {
-						"x": 444,
-						"y": 469,
+						"x": 370,
+						"y": 749,
 						"w": 59,
 						"h": 59
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_data.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 15,
-						"w": 71,
-						"h": 71
-					},
-					"frame": {
-						"x": 364,
-						"y": 501,
-						"w": 71,
-						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -315,6 +315,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8b2af4ebd334160ee100a9ca4475c188:6f5e0338373ae254944040cc6a9e0326:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:56a1b27556eada4db42adcca87796f9a:a02a2a46d125f2e9c9465a1718569b4c:e2b4716e83edbfec9c3741f281601216$"
 	}
 }
