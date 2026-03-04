@@ -25,6 +25,8 @@ const enemyManager = (() => {
     let minibossSpawned = false;  // has a miniboss spawned this wave?
     let minibossAlive = false;    // is the current miniboss still alive?
     let lastWaveProgress = 0;     // current progress 0-1
+    let recentSpawnAngles = [];   // tracks the last 4 spawn angles (in radians)
+
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -64,6 +66,7 @@ const enemyManager = (() => {
         minibossSpawned = false;
         minibossAlive = false;
         lastWaveProgress = 0;
+        recentSpawnAngles = [];
     }
 
     function _stopSpawning() {
@@ -110,9 +113,10 @@ const enemyManager = (() => {
 
         // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = Math.random() * Math.PI * 2;
+        const angle = _getValidSpawnAngle();
         const baseX = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const baseY = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
+
 
         // Scaling factor (calculated once per frame in _update) multiplied by level specific scalar
         const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
@@ -242,6 +246,16 @@ const enemyManager = (() => {
             if (!minibossPool[i].alive) return minibossPool[i];
         }
         return null;
+    }
+
+    function _getValidSpawnAngle() {
+        // Just grabs a random angle and records it for now.
+        const angle = Math.random() * Math.PI * 2;
+        recentSpawnAngles.push(angle);
+        if (recentSpawnAngles.length > 4) {
+            recentSpawnAngles.shift();
+        }
+        return angle;
     }
 
     // ── public queries ───────────────────────────────────────────────────────
