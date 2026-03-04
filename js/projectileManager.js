@@ -7,10 +7,32 @@ const projectileManager = (() => {
     let pool = [];
     let activeProjectiles = [];
 
+    let hitAnimPool = null;
+
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
         _buildPool();
+
+        hitAnimPool = new ObjectPool(
+            () => {
+                const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'hit_circle1.png');
+                spr.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES + 1);
+                spr.setVisible(false);
+                spr.setActive(false);
+                spr.on('animationcomplete', function (anim) {
+                    if (anim.key === 'hit_circle') {
+                        hitAnimPool.release(spr);
+                        spr.setVisible(false);
+                        spr.setActive(false);
+                    }
+                });
+                return spr;
+            },
+            (spr) => { },
+            40 // Size matching projectile pool size
+        );
+
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
     }
 
@@ -125,6 +147,14 @@ const projectileManager = (() => {
                     const projDirX = p.vx / projDirDist;
                     const projDirY = p.vy / projDirDist;
                     e.applyKnockback(projDirX, projDirY, 10);
+
+                    if (hitAnimPool) {
+                        const hitSpr = hitAnimPool.get();
+                        hitSpr.setPosition(p.x, p.y);
+                        hitSpr.setActive(true);
+                        hitSpr.setVisible(true);
+                        hitSpr.play('hit_circle');
+                    }
 
                     enemyManager.damageEnemy(e, p.damage);
                     hit = true;

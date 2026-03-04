@@ -26,6 +26,9 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
 
+    // Global Animations
+    createAnimations(PhaserScene);
+
     // Floating text pool — requires PhaserScene, no other deps
     floatingText.init(PhaserScene);
 
