@@ -16,7 +16,7 @@ const enemyManager = (() => {
     let spawnTimer = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
-    let combatTime = 0;    // seconds since wave start — drives scaling
+    let combatTime = 4;    // seconds since wave start — drives scaling
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
     // Miniboss tracking
@@ -52,8 +52,8 @@ const enemyManager = (() => {
         spawning = true;
         frozen = false;
         spawnTimer = -950;
-        combatTime = 0;
-        GAME_VARS.scaleFactor = 1;
+        combatTime = 4;
+        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         minibossSpawned = false;
         minibossAlive = false;
     }
@@ -253,11 +253,11 @@ const enemyManager = (() => {
 
         if (spawning) {
             combatTime += dt;
-            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / 10));
+            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 1.25;
-            const secondThreshold = 1;
+            const firstThreshold = 5.25;
+            const secondThreshold = 1.25;
             if (combatTime < firstThreshold) {
                 spawnSpeedMultiplier = 27;
             } else if (combatTime < firstThreshold + secondThreshold) {
