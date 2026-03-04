@@ -83,8 +83,11 @@ const enemyManager = (() => {
     }
 
     function _spawnOne() {
+        const config = getCurrentLevelConfig();
+        const pShooter = config.enemyProbabilities && config.enemyProbabilities.shooter ? config.enemyProbabilities.shooter : 0;
+
         let e = null;
-        if (Math.random() < 0.25) { // 25% chance for shooter enemy
+        if (Math.random() < pShooter) { // chance for shooter enemy
             e = _getShooterFromPool();
             if (!e) e = _getFromPool(); // fallback
         } else {
@@ -93,14 +96,15 @@ const enemyManager = (() => {
         }
         if (!e) return; // pools exhausted
 
+
         // Determine spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
         const angle = Math.random() * Math.PI * 2;
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
-        // Scaling factor (calculated once per frame in _update)
-        const currentScale = GAME_VARS.scaleFactor || 1;
+        // Scaling factor (calculated once per frame in _update) multiplied by level specific scalar
+        const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
         // Activate (sets stats and resets visuals inside BasicEnemy)
         e.activate(sx, sy, currentScale);
@@ -286,7 +290,8 @@ const enemyManager = (() => {
 
             // Spawn timer
             spawnTimer += delta;
-            const trueSpawnInterval = GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL / spawnSpeedMultiplier
+            const config = getCurrentLevelConfig();
+            const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
             if (spawnTimer >= trueSpawnInterval) {
                 spawnTimer -= trueSpawnInterval;
                 _spawnOne();

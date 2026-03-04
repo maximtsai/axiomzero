@@ -262,7 +262,9 @@ const resourceManager = (() => {
     // ── event handlers ───────────────────────────────────────────────────────
 
     function _onEnemyKilled(x, y) {
-        if (Math.random() < GAME_CONSTANTS.DATA_DROP_CHANCE) {
+        const config = getCurrentLevelConfig();
+        const dropChance = GAME_CONSTANTS.DATA_DROP_CHANCE * (config.dataDropMultiplier || 1);
+        if (Math.random() < dropChance) {
             spawnDataDrop(x, y);
         }
     }

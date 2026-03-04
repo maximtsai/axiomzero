@@ -24,6 +24,11 @@ All audio must be pre-registered and triggered via the global helper.
 - **Playback**: Use `audio.play('id', volume)` or `audio.playMusic('id')`.
 - **UI Feedback**: The base `Button` class automatically plays a `click` sound on `PRESS`.
 
+### Level Configuration (`levelConfig.js`)
+Centralized data structure (`LEVEL_CONFIG`) that defines settings per level.
+- **Usage**: Use `getCurrentLevelConfig()` to safely fetch the configuration for `gameState.currentLevel`.
+- **Features**: Modifies enemy spawn rates (`spawnInterval`), specific enemy type spawn probabilities (`enemyProbabilities`), miniboss types, global stat modifiers (`levelScalingModifier`), and drop multipliers (`dataDropMultiplier`).
+
 ### Animation & Visual Effects (`gameAnims.js`)
 Animations are centralized and pooled for performance.
 - **Centralization**: All global animations are defined in `gameAnims.js`.

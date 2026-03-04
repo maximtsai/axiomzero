@@ -42,9 +42,9 @@ GAME_CONSTANTS.ENEMY_BASE_HEALTH = 6;
 GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
 GAME_CONSTANTS.ENEMY_BASE_SPEED = 30;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
-GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL = 900;   // ms between spawns
 GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.1;  // Multiplicative multiplier applied every interval
 GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 8; // seconds between scaling jumps
+
 
 // ─── DATA drops ───────────────────────────────────────────────────────────────
 
@@ -114,6 +114,7 @@ const GAME_STATE_DEFAULTS = {
     exp: 0,
 
     // Wave / progression
+    currentLevel: 1,
     currentWave: 1,
     currentTier: 1,
 

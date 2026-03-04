@@ -93,6 +93,24 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         },
 
         /**
+         * moveBy: Purely relative movement. 
+         * Shits the group center AND all children by a delta.
+         * If an object is in multiple groups, calling moveBy on any of them 
+         * will stack the movement additively on the child.
+         */
+        moveBy: (dx, dy) => {
+            _x += dx;
+            _y += dy;
+            children.forEach(c => {
+                if (c.ref.scene) {
+                    c.ref.x += dx;
+                    c.ref.y += dy;
+                }
+            });
+            return group;
+        },
+
+        /**
          * tweenBy: Relative movement using Absolute Offset updates
          */
         tweenBy: (deltaX, deltaY, config = {}) => {
