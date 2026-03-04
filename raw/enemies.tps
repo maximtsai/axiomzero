@@ -176,6 +176,7 @@
             <key type="filename">enemies/basic.png</key>
             <key type="filename">enemies/bomb.png</key>
             <key type="filename">enemies/bullet.png</key>
+            <key type="filename">enemies/chargeup.png</key>
             <key type="filename">enemies/enemy_glow.png</key>
             <key type="filename">enemies/fast.png</key>
             <key type="filename">enemies/heavy.png</key>
@@ -184,6 +185,7 @@
             <key type="filename">enemies/protector.png</key>
             <key type="filename">enemies/shooter.png</key>
             <key type="filename">enemies/sniper.png</key>
+            <key type="filename">enemies/sniper_projectile.png</key>
             <key type="filename">enemies/swarmer.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

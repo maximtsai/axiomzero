@@ -15,6 +15,7 @@ const enemyManager = (() => {
     let swarmerPool = [];   // pre-allocated SwarmerEnemy instances
     let heavyPool = [];     // pre-allocated HeavyEnemy instances
     let fastPool = [];      // pre-allocated FastEnemy instances
+    let sniperPool = [];    // pre-allocated SniperEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -47,6 +48,7 @@ const enemyManager = (() => {
             shooterPool.push(new ShooterEnemy());
             heavyPool.push(new HeavyEnemy());
             fastPool.push(new FastEnemy());
+            sniperPool.push(new SniperEnemy());
         }
         for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
             swarmerPool.push(new SwarmerEnemy());
@@ -140,6 +142,8 @@ const enemyManager = (() => {
                 e = _getHeavyFromPool();
             } else if (chosenType === 'fast') {
                 e = _getFastFromPool();
+            } else if (chosenType === 'sniper') {
+                e = _getSniperFromPool();
             }
 
             if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
@@ -264,6 +268,13 @@ const enemyManager = (() => {
     function _getFastFromPool() {
         for (let i = 0; i < fastPool.length; i++) {
             if (!fastPool[i].alive) return fastPool[i];
+        }
+        return null;
+    }
+
+    function _getSniperFromPool() {
+        for (let i = 0; i < sniperPool.length; i++) {
+            if (!sniperPool[i].alive) return sniperPool[i];
         }
         return null;
     }

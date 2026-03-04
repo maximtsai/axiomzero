@@ -4,8 +4,8 @@
 			"image": "enemies-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 452,
-				"h": 708
+				"w": 507,
+				"h": 617
 			},
 			"scale": 1,
 			"frames": [
@@ -85,57 +85,7 @@
 					}
 				},
 				{
-					"filename": "bullet.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 101,
-						"h": 101
-					},
-					"frame": {
-						"x": 1,
-						"y": 535,
-						"w": 101,
-						"h": 101
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_glow.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 101,
-						"h": 101
-					},
-					"frame": {
-						"x": 104,
-						"y": 535,
-						"w": 101,
-						"h": 101
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sniper.png",
+					"filename": "heavy.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -143,16 +93,16 @@
 						"h": 101
 					},
 					"spriteSourceSize": {
-						"x": 7,
-						"y": 7,
-						"w": 87,
-						"h": 87
+						"x": 8,
+						"y": 11,
+						"w": 83,
+						"h": 73
 					},
 					"frame": {
-						"x": 207,
+						"x": 1,
 						"y": 535,
-						"w": 87,
-						"h": 87
+						"w": 83,
+						"h": 73
 					},
 					"anchor": {
 						"x": 0.5,
@@ -174,8 +124,8 @@
 						"h": 81
 					},
 					"frame": {
-						"x": 296,
-						"y": 537,
+						"x": 86,
+						"y": 535,
 						"w": 81,
 						"h": 81
 					},
@@ -185,7 +135,7 @@
 					}
 				},
 				{
-					"filename": "heavy.png",
+					"filename": "fast.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -193,16 +143,41 @@
 						"h": 101
 					},
 					"spriteSourceSize": {
-						"x": 8,
-						"y": 11,
-						"w": 83,
-						"h": 73
+						"x": 13,
+						"y": 19,
+						"w": 76,
+						"h": 63
 					},
 					"frame": {
-						"x": 296,
-						"y": 620,
-						"w": 83,
-						"h": 73
+						"x": 169,
+						"y": 535,
+						"w": 76,
+						"h": 63
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "swarmer.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 25,
+						"y": 25,
+						"w": 51,
+						"h": 51
+					},
+					"frame": {
+						"x": 247,
+						"y": 535,
+						"w": 51,
+						"h": 51
 					},
 					"anchor": {
 						"x": 0.5,
@@ -224,7 +199,7 @@
 						"h": 69
 					},
 					"frame": {
-						"x": 379,
+						"x": 300,
 						"y": 537,
 						"w": 69,
 						"h": 69
@@ -249,10 +224,110 @@
 						"h": 69
 					},
 					"frame": {
-						"x": 207,
-						"y": 624,
+						"x": 371,
+						"y": 537,
 						"w": 69,
 						"h": 69
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "bullet.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 404,
+						"y": 1,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_glow.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 404,
+						"y": 104,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sniper.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 7,
+						"w": 87,
+						"h": 87
+					},
+					"frame": {
+						"x": 404,
+						"y": 207,
+						"w": 87,
+						"h": 87
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "chargeup.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 7,
+						"w": 83,
+						"h": 87
+					},
+					"frame": {
+						"x": 404,
+						"y": 296,
+						"w": 83,
+						"h": 87
 					},
 					"anchor": {
 						"x": 0.5,
@@ -274,35 +349,10 @@
 						"h": 69
 					},
 					"frame": {
-						"x": 381,
-						"y": 608,
+						"x": 437,
+						"y": 385,
 						"w": 69,
 						"h": 69
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "fast.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 13,
-						"y": 19,
-						"w": 76,
-						"h": 63
-					},
-					"frame": {
-						"x": 1,
-						"y": 638,
-						"w": 76,
-						"h": 63
 					},
 					"anchor": {
 						"x": 0.5,
@@ -324,8 +374,8 @@
 						"h": 69
 					},
 					"frame": {
-						"x": 79,
-						"y": 638,
+						"x": 437,
+						"y": 456,
 						"w": 69,
 						"h": 69
 					},
@@ -335,7 +385,7 @@
 					}
 				},
 				{
-					"filename": "swarmer.png",
+					"filename": "sniper_projectile.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -344,15 +394,15 @@
 					},
 					"spriteSourceSize": {
 						"x": 25,
-						"y": 25,
-						"w": 51,
-						"h": 51
+						"y": 31,
+						"w": 48,
+						"h": 39
 					},
 					"frame": {
-						"x": 150,
-						"y": 638,
-						"w": 51,
-						"h": 51
+						"x": 442,
+						"y": 527,
+						"w": 48,
+						"h": 39
 					},
 					"anchor": {
 						"x": 0.5,
@@ -374,8 +424,8 @@
 						"h": 39
 					},
 					"frame": {
-						"x": 404,
-						"y": 1,
+						"x": 442,
+						"y": 568,
 						"w": 47,
 						"h": 39
 					},
@@ -390,6 +440,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:82e56ecdf896d96508ac45d89ce53798:c39e6ebcfdd182929c81e2d11df94fec:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:5da88a88f5a4a50a3ec8c17209d6613c:2b0fbdb7eab1cadb27cbab33d5bf917d:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }

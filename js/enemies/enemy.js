@@ -27,6 +27,7 @@ class Enemy {
         this.stunned = false;
         this.baseResourceDrop = 0;
         this.selfDamage = 0;
+        this.cannotRotate = false;
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -52,10 +53,16 @@ class Enemy {
             this.img.setPosition(x, y);
             this.img.setVisible(true);
             this.img.setActive(true);
-            const distToTowerX = GAME_CONSTANTS.halfWidth - x;
-            const distToTowerY = GAME_CONSTANTS.halfHeight - y;
-            this.baseRotation = Math.atan2(distToTowerY, distToTowerX);
-            this.setRotation(this.baseRotation);
+
+            if (this.cannotRotate) {
+                this.baseRotation = 0;
+                this.setRotation(0);
+            } else {
+                const distToTowerX = GAME_CONSTANTS.halfWidth - x;
+                const distToTowerY = GAME_CONSTANTS.halfHeight - y;
+                this.baseRotation = Math.atan2(distToTowerY, distToTowerX);
+                this.setRotation(this.baseRotation);
+            }
         }
     }
 
@@ -75,6 +82,7 @@ class Enemy {
     // ── Movement ──────────────────────────────────────────────────────────────
 
     setRotation(rot) {
+        if (this.cannotRotate) return;
         this.img.setRotation(rot);
     }
 

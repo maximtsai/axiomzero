@@ -5,17 +5,16 @@ const LEVEL_CONFIG = {
     1: {
         spawnInterval: 900, // ms between regular spawns (base)
         initialWeights: {
-            basic: 0.2,
-            shooter: 0.1,
-            swarmer: 0.1,
-            heavy: 0.2,
-            fast: 0.4
+            basic: 0.3,
+            fast: 0.5,
+            sniper: 0.2
         },
         lateWeights: {
             shooter: 0.2,
             swarmer: 0.1,
-            heavy: 0.3,
-            fast: 0.4
+            heavy: 0.25,
+            fast: 0.3,
+            sniper: 0.15
         },
         swarmerGroupSize: { min: 6, max: 12 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type

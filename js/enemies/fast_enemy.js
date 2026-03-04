@@ -39,20 +39,22 @@ class FastEnemy extends Enemy {
 
         if (this.img) {
             // Fast, jittery wobble
-            const wobble = Phaser.Math.FloatBetween(-0.4, 0.4);
-            this.img.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 40,
-                targets: this.img,
-                rotation: '-=' + wobble,
-                duration: 200, // Short duration for fast feel
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.img.setRotation(this.baseRotation || 0);
-                    this.wobbleAnim = null;
-                }
-            });
+            if (!this.cannotRotate) {
+                const wobble = Phaser.Math.FloatBetween(-0.4, 0.4);
+                this.setRotation(this.baseRotation + wobble);
+                if (this.wobbleAnim) this.wobbleAnim.stop();
+                this.wobbleAnim = PhaserScene.tweens.add({
+                    delay: 40,
+                    targets: this.img,
+                    rotation: '-=' + wobble,
+                    duration: 200, // Short duration for fast feel
+                    ease: 'Cubic.easeInOut',
+                    onComplete: () => {
+                        this.setRotation(this.baseRotation || 0);
+                        this.wobbleAnim = null;
+                    }
+                });
+            }
 
             // Alpha flicker
             if (this.img.scene) {
