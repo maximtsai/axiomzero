@@ -32,6 +32,8 @@ class SniperEnemy extends Enemy {
         this.baseAttackInterval = 5000; // 5 seconds
         this.isCharging = false;
         this.cannotRotate = true;
+        this._isRampingUp = false;
+        this._chargeWobbleTime = 0;
     }
 
     activate(x, y, scaleFactor) {
@@ -46,6 +48,8 @@ class SniperEnemy extends Enemy {
         this.state = SNIPER_STATE.MOVING;
         this.fireCooldown = 0;
         this.isCharging = false;
+        this._isRampingUp = false;
+        this._chargeWobbleTime = 0;
 
         if (this.img) {
             this.img.setAlpha(1);
@@ -83,6 +87,16 @@ class SniperEnemy extends Enemy {
         if (this.chargeSprite && this.chargeSprite.visible) {
             this.chargeSprite.setPosition(this.x, this.y);
             this.chargeSprite.setRotation(0);
+
+            if (this._isRampingUp) {
+                this._chargeWobbleTime += dt;
+                const wx = Math.sin(this._chargeWobbleTime * 25) * 0.06;
+                const wy = Math.cos(this._chargeWobbleTime * 21) * 0.06;
+                // Add wobble on top of current base scale
+                const baseScale = this.chargeSprite.scaleX;
+                this.chargeSprite.scaleX = baseScale + wx;
+                this.chargeSprite.scaleY = baseScale + wy;
+            }
         }
 
         if (this.state === SNIPER_STATE.MOVING) {
@@ -141,9 +155,9 @@ class SniperEnemy extends Enemy {
         // Stage 1: Pop up
         PhaserScene.tweens.add({
             targets: this.chargeSprite,
-            scale: 1,
-            duration: 300,
-            ease: 'Quad.easeOut',
+            scale: 1.1,
+            duration: 250,
+            ease: 'Quad.easeIn',
             onComplete: () => {
                 if (!this.isCharging) return;
                 // Stage 2: Shrink and fade
@@ -151,17 +165,26 @@ class SniperEnemy extends Enemy {
                     targets: this.chargeSprite,
                     scale: 0.4,
                     alpha: 0.7,
-                    duration: 400,
-                    ease: 'Quad.easeInOut',
+                    duration: 350,
+                    ease: 'Quad.easeOut',
                     onComplete: () => {
                         if (!this.isCharging) return;
                         // Stage 3: Slow build-up
+                        this._isRampingUp = true;
+                        this._chargeWobbleTime = 0;
                         PhaserScene.tweens.add({
                             targets: this.chargeSprite,
-                            scale: 1.25,
+                            scale: 1.2,
                             alpha: 1,
-                            duration: 2300,
-                            ease: 'Linear'
+                            duration: 2200,
+                            ease: 'Linear',
+                            onComplete: () => {
+                                if (!this.isCharging) return;
+                                // Stage 4: Final jump
+                                this._isRampingUp = false;
+                                this.chargeSprite.setScale(1.35);
+                                this.chargeSprite.setAlpha(1);
+                            }
                         });
                     }
                 });
@@ -171,6 +194,7 @@ class SniperEnemy extends Enemy {
 
     _stopCharge() {
         this.isCharging = false;
+        this._isRampingUp = false;
         if (this.chargeSprite) {
             this.chargeSprite.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.chargeSprite);
