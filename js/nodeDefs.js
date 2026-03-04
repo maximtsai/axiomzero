@@ -24,7 +24,7 @@ const NODE_DEFS = [
         parentId: null,
         childIds: ['basic_pulse', 'reinforce', 'sharpen'],
         treeX: 400,
-        treeY: 563,
+        treeY: 863,
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
@@ -46,7 +46,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['pulse_damage'],
         treeX: 250,
-        treeY: 425,
+        treeY: 725,
         effect: function () {
             pulseAttack.unlock();
             debugLog('Basic Pulse unlocked');
@@ -67,7 +67,7 @@ const NODE_DEFS = [
         parentId: 'basic_pulse',
         childIds: ['pulse_damage_2'],
         treeX: 250,
-        treeY: 287,
+        treeY: 587,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -87,7 +87,7 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         childIds: [],
         treeX: 250,
-        treeY: 149,
+        treeY: 449,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -107,7 +107,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['regen'],
         treeX: 400,
-        treeY: 425,
+        treeY: 725,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -127,7 +127,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: [],
         treeX: 550,
-        treeY: 425,
+        treeY: 725,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -147,7 +147,7 @@ const NODE_DEFS = [
         parentId: 'reinforce',
         childIds: [],
         treeX: 400,
-        treeY: 287,
+        treeY: 587,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

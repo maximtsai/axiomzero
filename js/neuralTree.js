@@ -17,6 +17,9 @@ const neuralTree = (() => {
     let treeGroup = null;
     let draggableGroup = null;
 
+    let lastDragX = 0;
+    let lastDragY = 0;
+
     let visible = false;
 
     // Tree layout constants (within the 800px left-half panel)
@@ -39,17 +42,40 @@ const neuralTree = (() => {
     }
 
     function _createPanel() {
-        // Semi-transparent dark background for the left half
-        panelBg = PhaserScene.add.image(0, 0, 'white_pixel');
-        panelBg.setOrigin(0, 0);
-        panelBg.setDisplaySize(PANEL_W, GAME_CONSTANTS.HEIGHT);
-        panelBg.setTint(0x12122a);
-        panelBg.setAlpha(0.9);
-        panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
-        panelBg.setScrollFactor(0);
-        // Flat depth layering (scrollFactor(0)) keeps UI elements fixed and reduces rendering overhead, improving performance.
+        // Semi-transparent dark background for the left half — now a Button for drag support
+        panelBg = new Button({
+            normal: {
+                ref: 'white_pixel',
+                x: 0,
+                y: 0,
+                scaleX: PANEL_W,
+                scaleY: GAME_CONSTANTS.HEIGHT,
+                tint: 0x12122a,
+                alpha: 0.9,
+                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE
+            },
+            onMouseDown: (x, y) => {
+                lastDragX = x;
+                lastDragY = y;
+                // Manually tell the manager we are dragging this background
+                // We don't use isDraggable: true to avoid the button auto-snapping its center to the mouse
+                buttonManager.setDraggedObj(panelBg);
+            },
+            onDrag: (x, y) => {
+                const dx = x - lastDragX;
+                const dy = y - lastDragY;
 
+                // Move the entire tree network and background relative to the drag
+                draggableGroup.moveBy(dx, dy);
+
+                lastDragX = x;
+                lastDragY = y;
+            }
+        });
+
+        panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
+
         treeGroup.add(panelBg);
         draggableGroup.add(panelBg);
 
