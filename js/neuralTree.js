@@ -65,8 +65,19 @@ const neuralTree = (() => {
                 const dx = x - lastDragX;
                 const dy = y - lastDragY;
 
-                // Move the entire tree network and background relative to the drag
-                draggableGroup.moveBy(dx, dy);
+                // Relative clamps from start: X=(-22 to 22), Y=(0 to 600)
+                const currentX = draggableGroup.x;
+                const currentY = draggableGroup.y;
+
+                const nextX = Phaser.Math.Clamp(currentX + dx, GAME_CONSTANTS.TREE_DRAG_MIN_X, GAME_CONSTANTS.TREE_DRAG_MAX_X);
+                const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
+
+                const finalDx = nextX - currentX;
+                const finalDy = nextY - currentY;
+
+                if (finalDx !== 0 || finalDy !== 0) {
+                    draggableGroup.moveBy(finalDx, finalDy);
+                }
 
                 lastDragX = x;
                 lastDragY = y;

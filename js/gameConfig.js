@@ -58,6 +58,13 @@ GAME_CONSTANTS.PROJECTILE_HIT_RADIUS = 15;
 
 // ─── Miniboss / Boss ──────────────────────────────────────────────────────────
 
+// ─── Neural Tree ──────────────────────────────────────────────────────────────
+
+GAME_CONSTANTS.TREE_DRAG_MIN_X = 0;
+GAME_CONSTANTS.TREE_DRAG_MAX_X = 0;
+GAME_CONSTANTS.TREE_DRAG_MIN_Y = 0;
+GAME_CONSTANTS.TREE_DRAG_MAX_Y = 100;
+
 GAME_CONSTANTS.MINIBOSS_SPAWN_DISTANCE = 1000;  // px from center
 GAME_CONSTANTS.MINIBOSS_SPAWN_ANGLE = 60;    // degrees — ±30° from horizontal
 

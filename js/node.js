@@ -242,7 +242,7 @@ class Node {
 
         // Node icon
         if (this.icon) {
-            this.iconSprite = PhaserScene.add.sprite(x, y - 5, 'buttons', this.icon)
+            this.iconSprite = PhaserScene.add.sprite(x, y, 'buttons', this.icon)
                 .setOrigin(0.5, 0.5)
                 .setDepth(nodeDepth + 1)
                 .setScrollFactor(0);
