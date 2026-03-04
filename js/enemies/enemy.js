@@ -26,6 +26,7 @@ class Enemy {
         this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1
         this.stunned = false;
         this.baseResourceDrop = 0;
+        this.selfDamage = 0;
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;

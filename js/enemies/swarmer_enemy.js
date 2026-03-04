@@ -19,6 +19,7 @@ class SwarmerEnemy extends Enemy {
     activate(x, y, scaleFactor) {
         this.maxHealth = 2; // Always 2
         this.health = this.maxHealth;
+        this.selfDamage = this.maxHealth * 3;
         this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25;
         this.size = 10; // Slightly smaller contact radius

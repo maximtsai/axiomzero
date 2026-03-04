@@ -422,10 +422,16 @@ const enemyManager = (() => {
                 const dy = e.y - tPos.y;
                 if (dx * dx + dy * dy < contactR2) {
                     tower.takeDamage(e.damage, e.x, e.y);
+
+                    // Apply self-damage on contact
+                    if (e.takeDamage(e.selfDamage)) {
+                        // Only kill if the self-damage was lethal
+                        _killEnemy(e);
+                    }
+
                     // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
                     // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;
-                    _killEnemy(e);
                 }
             }
         }
