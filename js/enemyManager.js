@@ -14,6 +14,7 @@ const enemyManager = (() => {
     let shooterPool = [];   // pre-allocated ShooterEnemy instances
     let swarmerPool = [];   // pre-allocated SwarmerEnemy instances
     let heavyPool = [];     // pre-allocated HeavyEnemy instances
+    let fastPool = [];      // pre-allocated FastEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -45,6 +46,7 @@ const enemyManager = (() => {
             pool.push(new BasicEnemy());
             shooterPool.push(new ShooterEnemy());
             heavyPool.push(new HeavyEnemy());
+            fastPool.push(new FastEnemy());
         }
         for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
             swarmerPool.push(new SwarmerEnemy());
@@ -108,6 +110,11 @@ const enemyManager = (() => {
             }
         }
 
+        // Special case: No fast enemies in the first few seconds
+        if (chosenType === 'fast' && combatTime < 9) {
+            chosenType = 'basic';
+        }
+
         let numToSpawn = 1;
         if (chosenType === 'swarmer' && config.swarmerGroupSize) {
             numToSpawn = Phaser.Math.Between(config.swarmerGroupSize.min, config.swarmerGroupSize.max);
@@ -131,6 +138,8 @@ const enemyManager = (() => {
                 e = _getShooterFromPool();
             } else if (chosenType === 'heavy') {
                 e = _getHeavyFromPool();
+            } else if (chosenType === 'fast') {
+                e = _getFastFromPool();
             }
 
             if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
@@ -248,6 +257,13 @@ const enemyManager = (() => {
     function _getHeavyFromPool() {
         for (let i = 0; i < heavyPool.length; i++) {
             if (!heavyPool[i].alive) return heavyPool[i];
+        }
+        return null;
+    }
+
+    function _getFastFromPool() {
+        for (let i = 0; i < fastPool.length; i++) {
+            if (!fastPool[i].alive) return fastPool[i];
         }
         return null;
     }
@@ -431,7 +447,9 @@ const enemyManager = (() => {
             if (!e.isMiniboss) {
                 const dx = e.x - tPos.x;
                 const dy = e.y - tPos.y;
-                if (dx * dx + dy * dy < contactR2) {
+                // Attack range based on size (Basic size 12 * 2 = 24px)
+                const contactR = (e.size || 12) * 2;
+                if (dx * dx + dy * dy < contactR * contactR) {
                     tower.takeDamage(e.damage, e.x, e.y);
 
                     // Apply self-damage on contact

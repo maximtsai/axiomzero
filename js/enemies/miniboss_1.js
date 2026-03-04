@@ -12,8 +12,8 @@
 const MB1 = {
     HEALTH: 50,
     SPEED_MULT: 1.5,   // × ENEMY_BASE_SPEED
-    ATTACK_RANGE: 200,   // px — stop and attack
-    RETREAT_RANGE: 240,   // px — resume movement if pushed past this
+    ATTACK_RANGE: 180,   // px — stop and attack
+    RETREAT_RANGE: 220,   // px — resume movement if pushed past this
     FIRE_INTERVAL: 3000,  // ms between shots
     BULLET_DAMAGE: 4,
     KNOCKBACK_MOD: 0.4,   // 60% knockback reduction
@@ -46,7 +46,7 @@ class Miniboss1 extends Miniboss {
         this.damage = 0; // miniboss does NOT deal contact damage
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB1.SPEED_MULT;
         this.knockBackModifier = MB1.KNOCKBACK_MOD;
-        this.size = 25;
+        this.size = 24;
 
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0; // starts at 0 so first shot fires immediately on entering range

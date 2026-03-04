@@ -55,14 +55,14 @@ class ShooterEnemy extends Enemy {
         if (this.state === SHOOTER_STATE.MOVING) {
             super.update(dt);
 
-            if (distToTower <= 120) {
+            if (distToTower <= 110) {
                 this.state = SHOOTER_STATE.ATTACKING;
                 this.vx = 0;
                 this.vy = 0;
                 this.fireCooldown = 0;
             }
         } else if (this.state === SHOOTER_STATE.ATTACKING) {
-            if (distToTower > 120) {
+            if (distToTower > 110) {
                 this.state = SHOOTER_STATE.MOVING;
                 this.aimAt(tPos.x, tPos.y);
                 return;
