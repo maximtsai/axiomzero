@@ -24,7 +24,7 @@ class BasicEnemy extends Enemy {
     /**
      * @param {number} x           Spawn x position (world coords)
      * @param {number} y           Spawn y position (world coords)
-     * @param {number} scaleFactor Wave-progression multiplier: 1 + waveElapsed * SCALE_RATE
+     * @param {number} scaleFactor Wave-progression multiplier: 1.1 ^ floor(combatTime / 10)
      */
     activate(x, y, scaleFactor) {
         this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor;

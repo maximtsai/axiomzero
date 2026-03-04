@@ -56,6 +56,7 @@ const GAME_VARS = {
     canvasYOffset: 0,
     gameScale: 1,
     lastmousedown: { x: 0, y: 0 },
+    scaleFactor: 1,
 };
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────

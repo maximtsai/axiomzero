@@ -43,7 +43,7 @@ GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
 GAME_CONSTANTS.ENEMY_BASE_SPEED = 30;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
 GAME_CONSTANTS.ENEMY_SPAWN_INTERVAL = 900;   // ms between spawns
-GAME_CONSTANTS.ENEMY_SCALE_RATE = 0.02;  // health/damage multiplier increase per second
+GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.1;  // Multiplicative multiplier applied every 10 seconds
 
 // ─── DATA drops ───────────────────────────────────────────────────────────────
 

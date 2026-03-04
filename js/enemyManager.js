@@ -16,7 +16,7 @@ const enemyManager = (() => {
     let spawnTimer = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
-    let waveElapsed = 0;    // seconds since wave start — drives scaling
+    let combatTime = 0;    // seconds since wave start — drives scaling
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
     // Miniboss tracking
@@ -52,7 +52,8 @@ const enemyManager = (() => {
         spawning = true;
         frozen = false;
         spawnTimer = -950;
-        waveElapsed = 0;
+        combatTime = 0;
+        GAME_VARS.scaleFactor = 1;
         minibossSpawned = false;
         minibossAlive = false;
     }
@@ -89,11 +90,11 @@ const enemyManager = (() => {
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
-        // Scaling factor
-        const scaleFactor = 1 + waveElapsed * GAME_CONSTANTS.ENEMY_SCALE_RATE;
+        // Scaling factor (calculated once per frame in _update)
+        const currentScale = GAME_VARS.scaleFactor || 1;
 
         // Activate (sets stats and resets visuals inside BasicEnemy)
-        e.activate(sx, sy, scaleFactor);
+        e.activate(sx, sy, currentScale);
 
         // Aim at tower center
         e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
@@ -251,16 +252,17 @@ const enemyManager = (() => {
         const dt = delta / 1000;
 
         if (spawning) {
-            waveElapsed += dt;
+            combatTime += dt;
+            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / 10));
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
             const firstThreshold = 1.25;
             const secondThreshold = 1;
-            if (waveElapsed < firstThreshold) {
+            if (combatTime < firstThreshold) {
                 spawnSpeedMultiplier = 27;
-            } else if (waveElapsed < firstThreshold + secondThreshold) {
+            } else if (combatTime < firstThreshold + secondThreshold) {
                 // Linear interpolation from 5 to 1 over 0.8 seconds
-                const progress = (waveElapsed - firstThreshold) / secondThreshold;
+                const progress = (combatTime - firstThreshold) / secondThreshold;
                 spawnSpeedMultiplier = 27 - 26 * progress;
             } else {
                 spawnSpeedMultiplier = 1;
@@ -322,5 +324,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getEnemiesInSquareRange, damageEnemy };
+    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
 })();
