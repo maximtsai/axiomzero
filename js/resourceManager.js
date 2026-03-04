@@ -18,6 +18,8 @@ const resourceManager = (() => {
     let sessionData = 0;
     let sessionInsight = 0;
     let sessionShards = 0;
+    let sessionProcessors = 0;
+    let sessionCoins = 0;
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -120,22 +122,40 @@ const resourceManager = (() => {
     }
 
     function addShard(amount) {
-        gameState.shards = (gameState.shards || 0) + amount;
+        gameState.shard = (gameState.shard || 0) + amount;
         sessionShards += amount;
-        messageBus.publish('currencyChanged', 'shard', gameState.shards);
+        messageBus.publish('currencyChanged', 'shard', gameState.shard);
+    }
+
+    function addProcessor(amount) {
+        gameState.processor = (gameState.processor || 0) + amount;
+        sessionProcessors += amount;
+        messageBus.publish('currencyChanged', 'processor', gameState.processor);
+    }
+
+    function addCoin(amount) {
+        gameState.coin = (gameState.coin || 0) + amount;
+        sessionCoins += amount;
+        messageBus.publish('currencyChanged', 'coin', gameState.coin);
     }
 
     function getData() { return gameState.data || 0; }
     function getInsight() { return gameState.insight || 0; }
-    function getShards() { return gameState.shards || 0; }
+    function getShards() { return gameState.shard || 0; }
+    function getProcessors() { return gameState.processor || 0; }
+    function getCoins() { return gameState.coin || 0; }
     function getSessionData() { return sessionData; }
     function getSessionInsight() { return sessionInsight; }
     function getSessionShards() { return sessionShards; }
+    function getSessionProcessors() { return sessionProcessors; }
+    function getSessionCoins() { return sessionCoins; }
 
     function resetSession() {
         sessionData = 0;
         sessionInsight = 0;
         sessionShards = 0;
+        sessionProcessors = 0;
+        sessionCoins = 0;
         totalDropsSpawned = 0;
     }
 
@@ -297,9 +317,9 @@ const resourceManager = (() => {
     }
 
     return {
-        init, spawnDataDrop, addData, addInsight, addShard,
-        getData, getInsight, getShards,
-        getSessionData, getSessionInsight, getSessionShards, resetSession,
-        clearDrops,
+        init, spawnDataDrop, addData, addInsight, addShard, addProcessor, addCoin,
+        getData, getInsight, getShards, getProcessors, getCoins,
+        getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
+        resetSession, clearDrops,
     };
 })();

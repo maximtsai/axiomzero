@@ -10,8 +10,7 @@ const gameHUD = (() => {
     let expBarBg = null;
     let expBarFill = null;
     let expText = null;
-    let dataText = null;
-    let insightText = null;
+    let resourceUI = {}; // { data: { icon, text }, ... }
 
     let endIterationBtn = null;
     let waveProgressBar = null;
@@ -75,19 +74,26 @@ const gameHUD = (() => {
 
         // ── Currency counters ──
         const currY = expY + 10 + BAR_GAP + 5;
-        const insightY = currY + 28; // place it vertically below
+        const resourceTypes = [
+            { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
+            { id: 'insight', icon: 'resrc_insight.png', color: '#ffffff' },
+            { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
+            { id: 'processor', icon: 'resrc_processor.png', color: '#ff33ff' },
+            { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' }
+        ];
 
-        dataText = PhaserScene.add.text(groupX, currY, '\u25C8 0', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '21px',
-            color: '#00f5ff',
-        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
+        resourceTypes.forEach((type, i) => {
+            const icon = PhaserScene.add.image(groupX + 11, currY, 'player', type.icon);
+            icon.setOrigin(0.5, 0.5).setDepth(depth + 2).setScrollFactor(0).setVisible(false).setScale(1.2);
 
-        insightText = PhaserScene.add.text(groupX, insightY, '\u25C9 0', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '21px',
-            color: '#ffffff',
-        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
+            const text = PhaserScene.add.text(groupX + 28, currY - 11, '0', {
+                fontFamily: 'JetBrainsMono_Regular',
+                fontSize: '21px',
+                color: type.color,
+            }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
+
+            resourceUI[type.id] = { icon, text, baseY: currY };
+        });
 
         if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
             const treeGroup = neuralTree.getGroup();
@@ -98,8 +104,10 @@ const gameHUD = (() => {
                 treeGroup.add(expBarBg);
                 treeGroup.add(expBarFill);
                 treeGroup.add(expText);
-                treeGroup.add(dataText);
-                treeGroup.add(insightText);
+                Object.values(resourceUI).forEach(res => {
+                    treeGroup.add(res.icon);
+                    treeGroup.add(res.text);
+                });
             }
         }
 
@@ -159,8 +167,7 @@ const gameHUD = (() => {
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
-        dataText.setVisible(true);
-        insightText.setVisible(true);
+        _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
         waveProgressBar.setVisible(true);
@@ -174,8 +181,10 @@ const gameHUD = (() => {
         expBarBg.setVisible(false);
         expBarFill.setVisible(false);
         expText.setVisible(false);
-        dataText.setVisible(false);
-        insightText.setVisible(false);
+        Object.values(resourceUI).forEach(res => {
+            res.icon.setVisible(false);
+            res.text.setVisible(false);
+        });
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -204,8 +213,8 @@ const gameHUD = (() => {
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
-        dataText.setVisible(true);
-        insightText.setVisible(true);
+
+        _updateResourceLayout();
 
         // Hide combat-only elements
         endIterationBtn.setVisible(false);
@@ -248,8 +257,43 @@ const gameHUD = (() => {
     }
 
     function _onCurrencyChanged(type, amount) {
-        if (type === 'data') dataText.setText('\u25C8 ' + Math.floor(amount));
-        if (type === 'insight') insightText.setText('\u25C9 ' + Math.floor(amount));
+        if (resourceUI[type]) {
+            resourceUI[type].text.setText(Math.floor(amount));
+            _updateResourceLayout();
+        }
+    }
+
+    function _updateResourceLayout() {
+        if (!visible) return;
+
+        let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + 10 + BAR_GAP + 15;
+        const spacing = 28;
+
+        const order = ['data', 'insight', 'shard', 'processor', 'coin'];
+        order.forEach(id => {
+            const ui = resourceUI[id];
+            const val = _getResourceValue(id);
+
+            if (val > 0) {
+                ui.icon.setVisible(true);
+                ui.text.setVisible(true);
+                ui.icon.y = currentY;
+                ui.text.y = currentY - 11;
+                currentY += spacing;
+            } else {
+                ui.icon.setVisible(false);
+                ui.text.setVisible(false);
+            }
+        });
+    }
+
+    function _getResourceValue(id) {
+        if (id === 'data') return resourceManager.getData();
+        if (id === 'insight') return resourceManager.getInsight();
+        if (id === 'shard') return resourceManager.getShards();
+        if (id === 'processor') return resourceManager.getProcessors();
+        if (id === 'coin') return resourceManager.getCoins();
+        return 0;
     }
 
     function _onEnemyKilled() {
@@ -267,9 +311,12 @@ const gameHUD = (() => {
     }
 
     function _onUpgradePurchased() {
-        // Refresh currency display
-        dataText.setText('\u25C8 ' + Math.floor(resourceManager.getData()));
-        insightText.setText('\u25C9 ' + Math.floor(resourceManager.getInsight()));
+        // Refresh currency display labels
+        Object.keys(resourceUI).forEach(id => {
+            const val = _getResourceValue(id);
+            resourceUI[id].text.setText(Math.floor(val));
+        });
+        _updateResourceLayout();
     }
 
 
