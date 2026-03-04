@@ -34,7 +34,7 @@ const enemyBulletManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg) {
+    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png') {
         const b = _getFromPool();
         if (!b) return;
 
@@ -51,6 +51,7 @@ const enemyBulletManager = (() => {
         b.alive = true;
         b.life = 5000; // auto-expire after 5s
 
+        b.img.setFrame(frameName);
         b.img.setPosition(fromX, fromY);
         b.img.setRotation(Math.atan2(dy, dx));
         b.img.setVisible(true);
@@ -58,6 +59,7 @@ const enemyBulletManager = (() => {
 
         activeBullets.push(b);
     }
+
 
     function clearAll() {
         for (let i = activeBullets.length - 1; i >= 0; i--) {

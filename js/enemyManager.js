@@ -10,7 +10,8 @@ const enemyManager = (() => {
     const POOL_SIZE = 80;
     const MINIBOSS_POOL_SIZE = 2;
 
-    let pool = [];          // pre-allocated Enemy instances
+    let pool = [];          // pre-allocated BasicEnemy instances
+    let shooterPool = [];   // pre-allocated ShooterEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -37,6 +38,7 @@ const enemyManager = (() => {
     function _buildPool() {
         for (let i = 0; i < POOL_SIZE; i++) {
             pool.push(new BasicEnemy());
+            shooterPool.push(new ShooterEnemy());
         }
     }
 
@@ -81,8 +83,15 @@ const enemyManager = (() => {
     }
 
     function _spawnOne() {
-        const e = _getFromPool();
-        if (!e) return; // pool exhausted
+        let e = null;
+        if (Math.random() < 0.25) { // 25% chance for shooter enemy
+            e = _getShooterFromPool();
+            if (!e) e = _getFromPool(); // fallback
+        } else {
+            e = _getFromPool();
+            if (!e) e = _getShooterFromPool(); // fallback
+        }
+        if (!e) return; // pools exhausted
 
         // Determine spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
@@ -146,6 +155,13 @@ const enemyManager = (() => {
     function _getFromPool() {
         for (let i = 0; i < pool.length; i++) {
             if (!pool[i].alive) return pool[i];
+        }
+        return null;
+    }
+
+    function _getShooterFromPool() {
+        for (let i = 0; i < shooterPool.length; i++) {
+            if (!shooterPool[i].alive) return shooterPool[i];
         }
         return null;
     }
