@@ -142,7 +142,7 @@ class SniperEnemy extends Enemy {
         PhaserScene.tweens.add({
             targets: this.chargeSprite,
             scale: 1,
-            duration: 500,
+            duration: 300,
             ease: 'Quad.easeOut',
             onComplete: () => {
                 if (!this.isCharging) return;
@@ -151,16 +151,16 @@ class SniperEnemy extends Enemy {
                     targets: this.chargeSprite,
                     scale: 0.4,
                     alpha: 0.7,
-                    duration: 500,
+                    duration: 400,
                     ease: 'Quad.easeInOut',
                     onComplete: () => {
                         if (!this.isCharging) return;
                         // Stage 3: Slow build-up
                         PhaserScene.tweens.add({
                             targets: this.chargeSprite,
-                            scale: 1,
+                            scale: 1.25,
                             alpha: 1,
-                            duration: 2000,
+                            duration: 2300,
                             ease: 'Linear'
                         });
                     }
