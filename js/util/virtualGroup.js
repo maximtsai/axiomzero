@@ -16,8 +16,13 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
     let children = [];
     let _x = x;
     let _y = y;
+    let _active = true;
 
     const group = {
+        activate: () => { _active = true; return group; },
+        deactivate: () => { _active = false; return group; },
+        isActive: () => _active,
+
         add: (gameObject) => {
             // Auto-clean any dead references to prevent memory leaks from destroyed objects
             children = children.filter(c => c.ref && c.ref.scene);
@@ -69,6 +74,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         // --- POSITIONING ENGINE (Absolute Offset Logic) ---
 
         set x(val) {
+            if (!_active) return;
             _x = val;
             children.forEach(c => {
                 if (c.ref.scene) c.ref.setPosition(_x + c.offsetX, c.ref.y);
@@ -77,6 +83,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         get x() { return _x; },
 
         set y(val) {
+            if (!_active) return;
             _y = val;
             children.forEach(c => {
                 if (c.ref.scene) c.ref.setPosition(c.ref.x, _y + c.offsetY);
@@ -85,6 +92,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         get y() { return _y; },
 
         setPosition: (newX, newY) => {
+            if (!_active) return;
             _x = newX;
             _y = newY;
             children.forEach(c => {
@@ -99,6 +107,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
          * will stack the movement additively on the child.
          */
         moveBy: (dx, dy) => {
+            if (!_active) return;
             _x += dx;
             _y += dy;
             children.forEach(c => {
@@ -114,6 +123,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
          * tweenBy: Relative movement using Absolute Offset updates
          */
         tweenBy: (deltaX, deltaY, config = {}) => {
+            if (!_active) return;
             const startX = _x;
             const startY = _y;
 
@@ -140,6 +150,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
          * tweenTo: Absolute movement using Absolute Offset updates
          */
         tweenTo: (targetX, targetY, config = {}) => {
+            if (!_active) return;
             const startX = _x;
             const startY = _y;
             const distanceX = targetX - startX;

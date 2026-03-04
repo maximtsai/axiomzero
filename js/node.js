@@ -266,11 +266,20 @@ class Node {
             .setScrollFactor(0);
 
         const treeGroup = neuralTree.getGroup();
+        const draggableGroup = neuralTree.getDraggableGroup();
         if (treeGroup) {
-            treeGroup.add(this.btn.getContainer ? this.btn.getContainer() : this.btn);
+            const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
+            treeGroup.add(btnObj);
             if (this.iconSprite) treeGroup.add(this.iconSprite);
             if (this.label) treeGroup.add(this.label);
             treeGroup.add(this.fadeoutSprite);
+
+            if (draggableGroup) {
+                draggableGroup.add(btnObj);
+                if (this.iconSprite) draggableGroup.add(this.iconSprite);
+                if (this.label) draggableGroup.add(this.label);
+                draggableGroup.add(this.fadeoutSprite);
+            }
         }
 
         this._updateVisual();
@@ -408,12 +417,13 @@ class Node {
         if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
         this._hideHover();
 
-        const x = this.treeX;  // center of node
-        const y = this.treeY - 23;  // directly above
+        const x = this.btn.x;  // actual position of node (handles group offsets)
+        const y = this.btn.y - 23;  // directly above
         const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
         const bgWidth = 300;
         const bgHeight = 138;
         const treeGroup = neuralTree.getGroup();
+        const draggableGroup = neuralTree.getDraggableGroup();
 
         this.hoverGroup = [];
 
@@ -471,6 +481,14 @@ class Node {
                 align: 'center',
             }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
             this.hoverGroup.push(infoT);
+        }
+
+        // Add all tooltip elements to the groups so they move if the tree moves
+        if (treeGroup) {
+            this.hoverGroup.forEach(obj => treeGroup.add(obj));
+        }
+        if (draggableGroup) {
+            this.hoverGroup.forEach(obj => draggableGroup.add(obj));
         }
     }
 

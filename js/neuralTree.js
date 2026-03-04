@@ -15,6 +15,7 @@ const neuralTree = (() => {
     let deployBtn = null;
     let lines = [];  // Phaser Graphics lines connecting parent → child
     let treeGroup = null;
+    let draggableGroup = null;
 
     let visible = false;
 
@@ -26,6 +27,7 @@ const neuralTree = (() => {
 
     function init() {
         treeGroup = createVirtualGroup(PhaserScene, 0, 0);
+        draggableGroup = createVirtualGroup(PhaserScene, 0, 0);
 
         _createPanel();
         _createNodes();
@@ -49,6 +51,7 @@ const neuralTree = (() => {
 
         panelBg.setVisible(false);
         treeGroup.add(panelBg);
+        draggableGroup.add(panelBg);
 
         // Title
         titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
@@ -206,10 +209,10 @@ const neuralTree = (() => {
                 if (n.parentId && nodes[n.parentId]) {
                     const p = nodes[n.parentId];
 
-                    const px = p.treeX;
-                    const py = p.treeY;
-                    const cx = n.treeX;
-                    const cy = n.treeY;
+                    const px = p.btn.x;
+                    const py = p.btn.y;
+                    const cx = n.btn.x;
+                    const cy = n.btn.y;
 
                     const dx = cx - px;
                     const dy = cy - py;
@@ -229,6 +232,7 @@ const neuralTree = (() => {
 
                     lines.push(line);
                     treeGroup.add(line);
+                    draggableGroup.add(line);
                 }
             }
         }
@@ -260,7 +264,9 @@ const neuralTree = (() => {
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             show();
+            if (draggableGroup) draggableGroup.activate();
         } else {
+            if (draggableGroup) draggableGroup.deactivate();
             if (typeof transitionManager === 'undefined' || !transitionManager.isTransitioning()) {
                 hide();
             }
@@ -309,6 +315,7 @@ const neuralTree = (() => {
     }
 
     function getGroup() { return treeGroup; }
+    function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, getGroup };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, getGroup, getDraggableGroup };
 })();

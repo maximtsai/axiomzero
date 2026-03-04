@@ -283,8 +283,8 @@ const gameHUD = (() => {
         // Play reveal sound when string begins to appear
         audio.play('data_reveal', 0.8);
 
-        // Apply chromatic glitch 0.5s after it pops up
-        PhaserScene.time.delayedCall(500, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
+        // Apply chromatic glitch 0.58s after it pops up
+        PhaserScene.time.delayedCall(700, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
 
         let charIdx = 0;
         PhaserScene.time.addEvent({
