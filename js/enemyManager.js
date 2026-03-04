@@ -291,7 +291,7 @@ const enemyManager = (() => {
                 const dx = e.x - tPos.x;
                 const dy = e.y - tPos.y;
                 if (dx * dx + dy * dy < contactR2) {
-                    tower.takeDamage(e.damage);
+                    tower.takeDamage(e.damage, e.x, e.y);
                     // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
                     // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;

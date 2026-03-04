@@ -215,6 +215,16 @@ class TowerView {
         }
     }
 
+    playHitEffect(x, y) {
+        if (!this._hitAnimPool) return;
+        const fx = this._hitAnimPool.get();
+        fx.setPosition(x, y);
+        fx.setActive(true);
+        fx.setVisible(true);
+        fx.setRotation(Math.random() * Math.PI * 2);
+        fx.play('enemy_strike');
+    }
+
     playUpgradePhaseAnimation(attackRange) {
         if (this.rangeSprite) {
             if (this.rangeSprite.currAnim) {
@@ -310,6 +320,25 @@ const tower = (() => {
     const view = new TowerView();
 
     function init() {
+        view._hitAnimPool = new ObjectPool(
+            () => {
+                const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_strike1.png');
+                spr.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10);
+                spr.setVisible(false);
+                spr.setActive(false);
+                spr.on('animationcomplete', function (anim) {
+                    if (anim.key === 'enemy_strike') {
+                        view._hitAnimPool.release(spr);
+                        spr.setVisible(false);
+                        spr.setActive(false);
+                    }
+                });
+                return spr;
+            },
+            (spr) => { },
+            30
+        );
+
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
@@ -350,10 +379,13 @@ const tower = (() => {
         }
     }
 
-    function takeDamage(amount) {
+    function takeDamage(amount, x, y) {
         const survived = model.takeDamage(amount);
         if (survived) {
             view.playHitFlash();
+            if (x !== undefined && y !== undefined) {
+                view.playHitEffect(x, y);
+            }
         } else {
             view.cleanupRangeSprite();
             debugLog('Tower destroyed');

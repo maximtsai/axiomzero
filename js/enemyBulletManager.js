@@ -111,7 +111,7 @@ const enemyBulletManager = (() => {
             const dx = b.x - tPos.x;
             const dy = b.y - tPos.y;
             if (dx * dx + dy * dy < hitR2) {
-                tower.takeDamage(b.damage);
+                tower.takeDamage(b.damage, b.x, b.y);
                 _deactivate(b);
                 activeBullets.splice(i, 1);
             }

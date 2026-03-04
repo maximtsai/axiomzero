@@ -4,15 +4,15 @@
 			"image": "attacks-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 562,
-				"h": 62
+				"w": 62,
+				"h": 894
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "glow_box.png",
+					"filename": "enemy_strike7.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
 						"w": 60,
 						"h": 60
@@ -20,14 +20,14 @@
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 60,
-						"h": 60
+						"w": 3,
+						"h": 3
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 60,
-						"h": 60
+						"w": 3,
+						"h": 3
 					},
 					"anchor": {
 						"x": 0.5,
@@ -35,32 +35,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 63,
-						"y": 1,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle2.png",
+					"filename": "hit_circle10.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -68,91 +43,16 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 59,
-						"h": 60
+						"x": 33,
+						"y": 35,
+						"w": 20,
+						"h": 18
 					},
 					"frame": {
-						"x": 125,
-						"y": 1,
-						"w": 59,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle3.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 2,
-						"y": 0,
-						"w": 58,
-						"h": 60
-					},
-					"frame": {
-						"x": 186,
-						"y": 1,
-						"w": 58,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle4.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 1,
-						"w": 56,
-						"h": 59
-					},
-					"frame": {
-						"x": 246,
-						"y": 1,
-						"w": 56,
-						"h": 59
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle5.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
 						"x": 6,
-						"y": 6,
-						"w": 51,
-						"h": 51
-					},
-					"frame": {
-						"x": 304,
 						"y": 1,
-						"w": 51,
-						"h": 51
+						"w": 20,
+						"h": 18
 					},
 					"anchor": {
 						"x": 0.5,
@@ -160,7 +60,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle6.png",
+					"filename": "hit_circle9.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -168,16 +68,16 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 9,
-						"y": 6,
-						"w": 47,
-						"h": 50
+						"x": 22,
+						"y": 23,
+						"w": 33,
+						"h": 32
 					},
 					"frame": {
-						"x": 357,
+						"x": 28,
 						"y": 1,
-						"w": 47,
-						"h": 50
+						"w": 33,
+						"h": 32
 					},
 					"anchor": {
 						"x": 0.5,
@@ -199,8 +99,8 @@
 						"h": 41
 					},
 					"frame": {
-						"x": 406,
-						"y": 1,
+						"x": 1,
+						"y": 35,
 						"w": 40,
 						"h": 41
 					},
@@ -224,8 +124,8 @@
 						"h": 41
 					},
 					"frame": {
-						"x": 448,
-						"y": 1,
+						"x": 1,
+						"y": 78,
 						"w": 39,
 						"h": 41
 					},
@@ -235,7 +135,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle9.png",
+					"filename": "hit_circle6.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -243,16 +143,66 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 18,
-						"y": 23,
-						"w": 37,
-						"h": 32
+						"x": 9,
+						"y": 6,
+						"w": 47,
+						"h": 50
 					},
 					"frame": {
-						"x": 489,
+						"x": 1,
+						"y": 121,
+						"w": 47,
+						"h": 50
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 51,
+						"h": 51
+					},
+					"frame": {
+						"x": 1,
+						"y": 173,
+						"w": 51,
+						"h": 51
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
 						"y": 1,
-						"w": 37,
-						"h": 32
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 226,
+						"w": 58,
+						"h": 58
 					},
 					"anchor": {
 						"x": 0.5,
@@ -260,7 +210,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle10.png",
+					"filename": "enemy_strike2.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -268,16 +218,16 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 22,
-						"y": 23,
-						"w": 33,
-						"h": 32
-					},
-					"frame": {
-						"x": 528,
+						"x": 1,
 						"y": 1,
-						"w": 33,
-						"h": 32
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 286,
+						"w": 58,
+						"h": 58
 					},
 					"anchor": {
 						"x": 0.5,
@@ -285,7 +235,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle11.png",
+					"filename": "enemy_strike3.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -293,16 +243,16 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 27,
-						"y": 30,
-						"w": 28,
-						"h": 25
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
 					},
 					"frame": {
-						"x": 489,
-						"y": 35,
-						"w": 28,
-						"h": 25
+						"x": 1,
+						"y": 346,
+						"w": 58,
+						"h": 58
 					},
 					"anchor": {
 						"x": 0.5,
@@ -310,7 +260,7 @@
 					}
 				},
 				{
-					"filename": "hit_circle12.png",
+					"filename": "enemy_strike4.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -318,16 +268,216 @@
 						"h": 60
 					},
 					"spriteSourceSize": {
-						"x": 33,
-						"y": 35,
-						"w": 20,
-						"h": 18
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
 					},
 					"frame": {
-						"x": 519,
-						"y": 35,
-						"w": 20,
-						"h": 18
+						"x": 1,
+						"y": 406,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 466,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1,
+						"y": 526,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 1,
+						"w": 56,
+						"h": 59
+					},
+					"frame": {
+						"x": 1,
+						"y": 586,
+						"w": 56,
+						"h": 59
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 647,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 647,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "glow_box.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 709,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 59,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 771,
+						"w": 59,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 58,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 833,
+						"w": 58,
+						"h": 60
 					},
 					"anchor": {
 						"x": 0.5,
@@ -340,6 +490,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:1c951b3771863f2e6b3d047893e62dfe:9afa25a72b9c2adffb438e6ba76ce8c1:824c311b23d45c8185d8536d4540223d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:dd28bad337c986cbf7b499e8c32cb389:4c5e9bdba7ac4d588c3db84290946bf8:824c311b23d45c8185d8536d4540223d$"
 	}
 }

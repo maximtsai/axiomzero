@@ -173,11 +173,17 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">attacks/enemy_strike.png</key>
+            <key type="filename">attacks/enemy_strike1.png</key>
+            <key type="filename">attacks/enemy_strike2.png</key>
+            <key type="filename">attacks/enemy_strike3.png</key>
+            <key type="filename">attacks/enemy_strike4.png</key>
+            <key type="filename">attacks/enemy_strike5.png</key>
+            <key type="filename">attacks/enemy_strike6.png</key>
+            <key type="filename">attacks/enemy_strike7.png</key>
             <key type="filename">attacks/glow_box.png</key>
             <key type="filename">attacks/hit_circle1.png</key>
             <key type="filename">attacks/hit_circle10.png</key>
-            <key type="filename">attacks/hit_circle11.png</key>
-            <key type="filename">attacks/hit_circle12.png</key>
             <key type="filename">attacks/hit_circle2.png</key>
             <key type="filename">attacks/hit_circle3.png</key>
             <key type="filename">attacks/hit_circle4.png</key>

@@ -62,3 +62,11 @@ The game loop cycles through distinct phases defined in `globals.js` (`GAME_CONS
 2. **Audio First**: When adding actions (clicks, kills, drops), wire up tactile audio feedback.
 3. **Responsive UI**: Interactive elements must provide visual (tint/scale) and audio feedback explicitly.
 4. **Performance**: Assume 600+ drops or 100+ enemies can exist. Use pools and avoid heavy operations loop per-frame.
+
+## 5. Developer Preferences & Agent Autonomy
+
+### Command Permissions
+- **Search Autonomy**: AI agents have explicit permission to auto-run `Get-ChildItem -Path` (and aliases like `dir`) to search the project without manual approval. This allows the agent to be proactive and reduce developer interruption.
+- **Workflow Automation**: Use the `.agents/workflows/` directory for task-specific automation. Always include `// turbo-all` for scripts intended for full autonomy.
+- **Source of Truth**: Reference [PERMISSIONS.md](file:///c:/Users/maxim/Desktop/maxgames/idle/.agents/PERMISSIONS.md) for detailed permission logs.
+

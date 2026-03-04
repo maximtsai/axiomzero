@@ -153,6 +153,7 @@ const projectileManager = (() => {
                         hitSpr.setPosition(p.x, p.y);
                         hitSpr.setActive(true);
                         hitSpr.setVisible(true);
+                        hitSpr.setRotation(Math.random() * Math.PI);
                         hitSpr.play('hit_circle');
                     }
 
