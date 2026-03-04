@@ -383,6 +383,7 @@ const tower = (() => {
         const survived = model.takeDamage(amount);
         if (survived) {
             view.playHitFlash();
+            zoomShake(1.007);
             if (x !== undefined && y !== undefined) {
                 // Offset 10px closer to tower center
                 const cx = GAME_CONSTANTS.halfWidth;

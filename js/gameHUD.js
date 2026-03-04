@@ -284,7 +284,7 @@ const gameHUD = (() => {
         audio.play('data_reveal', 0.8);
 
         // Apply chromatic glitch 0.58s after it pops up
-        PhaserScene.time.delayedCall(700, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
+        PhaserScene.time.delayedCall(750, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
 
         let charIdx = 0;
         PhaserScene.time.addEvent({
