@@ -174,6 +174,7 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">attacks/enemy_strike.png</key>
+            <key type="filename">attacks/enemy_strike0.png</key>
             <key type="filename">attacks/enemy_strike1.png</key>
             <key type="filename">attacks/enemy_strike2.png</key>
             <key type="filename">attacks/enemy_strike3.png</key>

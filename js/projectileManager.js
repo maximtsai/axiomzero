@@ -40,7 +40,7 @@ const projectileManager = (() => {
         for (let i = 0; i < POOL_SIZE; i++) {
             const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
             img.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES);
-            img.setScale(3);
+            img.setScale(6);
             img.setVisible(false);
             img.setActive(false);
             img.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
@@ -75,6 +75,7 @@ const projectileManager = (() => {
         p.life = 3000; // auto-expire after 3s
 
         p.img.setPosition(fromX, fromY);
+        p.img.setRotation(Math.atan2(dy, dx));
         p.img.setVisible(true);
         p.img.setActive(true);
 

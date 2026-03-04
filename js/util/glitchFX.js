@@ -148,7 +148,7 @@ const glitchFX = (() => {
      * @param {Phaser.GameObjects.GameObject} target - Sprite or Text object.
      * @param {number} [duration=400] - Total effect duration in ms.
      */
-    function triggerChromaticAberration(target, duration = 500, effectIntensity = 1) {
+    function triggerChromaticAberration(target, duration = 400, effectIntensity = 1) {
         if (intensity <= 0 || !target || !target.active) return;
 
         const combinedIntensity = intensity * effectIntensity;
