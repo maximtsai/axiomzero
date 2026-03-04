@@ -13,6 +13,7 @@ const enemyManager = (() => {
     let pool = [];          // pre-allocated BasicEnemy instances
     let shooterPool = [];   // pre-allocated ShooterEnemy instances
     let swarmerPool = [];   // pre-allocated SwarmerEnemy instances
+    let heavyPool = [];     // pre-allocated HeavyEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -43,6 +44,7 @@ const enemyManager = (() => {
         for (let i = 0; i < POOL_SIZE; i++) {
             pool.push(new BasicEnemy());
             shooterPool.push(new ShooterEnemy());
+            heavyPool.push(new HeavyEnemy());
         }
         for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
             swarmerPool.push(new SwarmerEnemy());
@@ -127,6 +129,8 @@ const enemyManager = (() => {
                 e = _getSwarmerFromPool();
             } else if (chosenType === 'shooter') {
                 e = _getShooterFromPool();
+            } else if (chosenType === 'heavy') {
+                e = _getHeavyFromPool();
             }
 
             if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
@@ -237,6 +241,13 @@ const enemyManager = (() => {
     function _getSwarmerFromPool() {
         for (let i = 0; i < swarmerPool.length; i++) {
             if (!swarmerPool[i].alive) return swarmerPool[i];
+        }
+        return null;
+    }
+
+    function _getHeavyFromPool() {
+        for (let i = 0; i < heavyPool.length; i++) {
+            if (!heavyPool[i].alive) return heavyPool[i];
         }
         return null;
     }

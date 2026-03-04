@@ -10,8 +10,9 @@ const LEVEL_CONFIG = {
             swarmer: 0.1
         },
         lateWeights: {
-            shooter: 0.6,
-            swarmer: 0.2
+            shooter: 0.5,
+            swarmer: 0.2,
+            heavy: 0.15
         },
         swarmerGroupSize: { min: 6, max: 12 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
