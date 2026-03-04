@@ -132,9 +132,22 @@ const enemyManager = (() => {
             let sy = baseY;
 
             if (numToSpawn > 1) {
-                // Add minor jitter so they don't exactly overlap
-                sx += Phaser.Math.Between(-35, 35);
-                sy += Phaser.Math.Between(-35, 35);
+                // Ensure a fixed angular separation between each swarmer in the group
+                const angleStep = 0.09; // ~5.1 degrees
+                const angleOffset = (i - (numToSpawn - 1) / 2) * angleStep;
+
+                const finalAngle = angle + angleOffset;
+
+                // Stagger spawn distance to offset their arrival times slightly
+                const distanceVariation = Phaser.Math.Between(-40, 40);
+
+                // Recalculate spawn coordinates with the angular spread and distance variation
+                sx = GAME_CONSTANTS.halfWidth + Math.cos(finalAngle) * (distance + distanceVariation);
+                sy = GAME_CONSTANTS.halfHeight + Math.sin(finalAngle) * (distance + distanceVariation);
+
+                // Add minor jitter so they don't form perfect mathematical lines
+                sx += Phaser.Math.Between(-15, 15);
+                sy += Phaser.Math.Between(-15, 15);
             }
 
             // Activate (sets stats and resets visuals inside Enemy subclass)
@@ -315,7 +328,7 @@ const enemyManager = (() => {
             GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
             // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 5.25;
+            const firstThreshold = 5.1;
             const secondThreshold = 1.25;
             if (combatTime < firstThreshold) {
                 spawnSpeedMultiplier = 27;
