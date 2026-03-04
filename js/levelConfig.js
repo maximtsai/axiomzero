@@ -4,9 +4,12 @@
 const LEVEL_CONFIG = {
     1: {
         spawnInterval: 900, // ms between regular spawns (base)
-        enemyProbabilities: {
-            basic: 0.75,
-            shooter: 0.25
+        initialWeights: {
+            basic: 0.9,
+            shooter: 0.1
+        },
+        lateWeights: {
+            shooter: 0.9 // Overwrites shooter weight only (0.1 -> 0.9)
         },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
         mainBoss: null,        // Not yet implemented
@@ -17,14 +20,51 @@ const LEVEL_CONFIG = {
 
 /**
  * Helper to get the config for the current level.
- * Fallbacks to level 1 (or the highest defined level).
+ * @param {number} progress - Current wave progress (0 to 1). If > 0.51, lateWeights are used.
  */
-function getCurrentLevelConfig() {
+function getCurrentLevelConfig(progress = 0) {
     let level = gameState.currentLevel || 1;
     if (!LEVEL_CONFIG[level]) {
-        // Fallback to max defined level if we go boundless
         const maxLevel = Math.max(...Object.keys(LEVEL_CONFIG).map(Number));
         level = maxLevel;
     }
-    return LEVEL_CONFIG[level];
+    const config = LEVEL_CONFIG[level];
+
+    // Swap the public probabilities based on wave progress
+    config.enemyProbabilities = (progress > 0.51 && config._probs2) ? config._probs2 : config._probs1;
+
+    return config;
 }
+
+// ── Normalize Probabilities ──────────────────────────────────────────────
+// This runs once at load-time to ensure all weight sets sum to 1.0.
+(function _normalizeAllLevels() {
+    for (const levelID in LEVEL_CONFIG) {
+        const config = LEVEL_CONFIG[levelID];
+
+        // 1. Initial State (Calculated from initialWeights)
+        const w1 = config.initialWeights || { basic: 1 };
+        config._probs1 = _normalize(w1);
+
+        // 2. Late State (Merge lateWeights over initialWeights, then normalize)
+        if (config.lateWeights) {
+            const w2 = { ...w1, ...config.lateWeights };
+            config._probs2 = _normalize(w2);
+        } else {
+            config._probs2 = config._probs1;
+        }
+    }
+
+    function _normalize(weights) {
+        let total = 0;
+        const result = {};
+        for (const key in weights) { total += weights[key] || 0; }
+
+        if (total > 0) {
+            for (const key in weights) { result[key] = (weights[key] || 0) / total; }
+        } else {
+            result.basic = 1;
+        }
+        return result;
+    }
+})();

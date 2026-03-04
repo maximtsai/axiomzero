@@ -23,6 +23,7 @@ const enemyManager = (() => {
     // Miniboss tracking
     let minibossSpawned = false;  // has a miniboss spawned this wave?
     let minibossAlive = false;    // is the current miniboss still alive?
+    let lastWaveProgress = 0;     // current progress 0-1
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,7 @@ const enemyManager = (() => {
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         minibossSpawned = false;
         minibossAlive = false;
+        lastWaveProgress = 0;
     }
 
     function _stopSpawning() {
@@ -83,7 +85,7 @@ const enemyManager = (() => {
     }
 
     function _spawnOne() {
-        const config = getCurrentLevelConfig();
+        const config = getCurrentLevelConfig(lastWaveProgress);
         const pShooter = config.enemyProbabilities && config.enemyProbabilities.shooter ? config.enemyProbabilities.shooter : 0;
 
         let e = null;
@@ -338,6 +340,7 @@ const enemyManager = (() => {
     }
 
     function _onWaveProgress(progress) {
+        lastWaveProgress = progress;
         if (progress >= 0.5 && !minibossSpawned && spawning) {
             _spawnMiniboss();
         }
