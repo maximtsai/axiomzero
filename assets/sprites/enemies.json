@@ -210,6 +210,31 @@
 					}
 				},
 				{
+					"filename": "basic_enemy_hp.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 22,
+						"h": 22
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 247,
+						"y": 588,
+						"w": 22,
+						"h": 22
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "logic_stray.png",
 					"rotated": false,
 					"trimmed": true,
@@ -440,6 +465,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5da88a88f5a4a50a3ec8c17209d6613c:2b0fbdb7eab1cadb27cbab33d5bf917d:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:8b954147c2919fbc789d9026741b0ce6:66bb35159c0c9a960f34dc593b6df205:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }
