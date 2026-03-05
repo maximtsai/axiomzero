@@ -118,6 +118,9 @@ const enemyManager = (() => {
         if ((chosenType === 'fast' || chosenType === 'logic_stray') && combatTime < 9) {
             chosenType = 'basic';
         }
+        if ((chosenType === 'swarmer' || chosenType === 'sniper') && combatTime < 6) {
+            chosenType = 'basic';
+        }
 
         let numToSpawn = 1;
         if (chosenType === 'swarmer' && config.swarmerGroupSize) {

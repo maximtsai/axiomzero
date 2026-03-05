@@ -62,18 +62,18 @@ const config = {
 // ─── Host guard ───────────────────────────────────────────────────────────────
 
 function isAllowedRuntimeHost() {
-    const host     = (window.location.hostname || '').toLowerCase();
-    const referrer = (document.referrer       || '').toLowerCase();
+    const host = (window.location.hostname || '').toLowerCase();
+    const referrer = (document.referrer || '').toLowerCase();
 
-    const isLocalhost      = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
+    const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
     const isCrazyGamesHost = host === 'crazygames.com' || host.endsWith('.crazygames.com');
-    const isItchHost       = host.endsWith('.itch.io') || host.endsWith('.itch.zone') || host.endsWith('.hwcdn.net');
-    const hasItchReferrer  = /https?:\/\/([a-z0-9-]+\.)*itch\.io\//.test(referrer);
+    const isItchHost = host.endsWith('.itch.io') || host.endsWith('.itch.zone') || host.endsWith('.hwcdn.net');
+    const isPersonalHost = host === 'maximtsai.com' || host.endsWith('.maximtsai.com');
 
-    return isLocalhost || isCrazyGamesHost || isItchHost || hasItchReferrer;
+    return isLocalhost || isCrazyGamesHost || isItchHost || isPersonalHost;
 }
 
-function onloadFunc() {}
+function onloadFunc() { }
 
 function applyCrazyGamesMuteSetting(settings) {
     if (!settings || typeof settings.muteAudio !== 'boolean') return;
@@ -112,7 +112,7 @@ if (isAllowedRuntimeHost()) {
 } else {
     document.body.insertAdjacentHTML('beforeend',
         '<div style="color:#fff;background:#111;padding:18px 20px;border:1px solid #333;' +
-        'font-family:Comfortaa,sans-serif;max-width:520px;margin:40px auto;text-align:center;">' +
-        'This build is only allowed on localhost, crazygames.com, or itch.io.</div>'
+        'font-family:Comfortaa,sans-serif;max-width:520px;margin:-10px auto 40px auto;text-align:center;">' +
+        'This build is only allowed on localhost, maximtsai.com, or itch.io.</div>'
     );
 }
