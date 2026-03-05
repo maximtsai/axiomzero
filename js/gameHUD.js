@@ -78,7 +78,7 @@ const gameHUD = (() => {
             { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
             { id: 'insight', icon: 'resrc_insight.png', color: '#ffffff' },
             { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
-            { id: 'processor', icon: 'resrc_processor.png', color: '#ff33ff' },
+            { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' },
             { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' }
         ];
 

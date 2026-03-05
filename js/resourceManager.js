@@ -98,7 +98,6 @@ const resourceManager = (() => {
         d.flying = false;
         d.readyToCollect = false;
         d.inertia = -0.1;
-        d.img.setPosition(x, y);
 
         // Visibility logic
         let visible = true;
@@ -115,23 +114,30 @@ const resourceManager = (() => {
         d.img.setActive(true);
 
         const angle = Math.random() * Math.PI * 2;
-        const dist = 4 + Math.random() * 6;
+        const dist = 3 + Math.random() * 38;
 
         const awayDx = x - GAME_CONSTANTS.halfWidth;
         const awayDy = y - GAME_CONSTANTS.halfHeight;
         const awayLen = Math.sqrt(awayDx * awayDx + awayDy * awayDy) || 1;
 
-        let endX = x + Math.cos(angle) * dist + (awayDx / awayLen) * 5;
-        let endY = y + Math.sin(angle) * dist + (awayDy / awayLen) * 5;
+        const distAwayX = Math.cos(angle) * dist + (awayDx / awayLen) * 5;
+        const distAwayY = Math.sin(angle) * dist + (awayDy / awayLen) * 5;
+        let endX = x + distAwayX;
+        let endY = y + distAwayY;
+
+        d.img.setPosition(x + 0.6 * distAwayX, y + 0.6 * distAwayY);
+
 
         endX = Math.max(-1, Math.min(GAME_CONSTANTS.WIDTH + 1, endX));
         endY = Math.max(-1, Math.min(GAME_CONSTANTS.HEIGHT + 1, endY));
+
+
 
         d.spawnTween = PhaserScene.tweens.add({
             targets: d.img,
             x: endX,
             y: endY,
-            duration: 220 + dist * 13,
+            duration: 220 + dist * 12,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 d.x = d.img.x;
