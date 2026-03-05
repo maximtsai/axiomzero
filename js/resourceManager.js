@@ -364,7 +364,7 @@ const resourceManager = (() => {
     }
 
     return {
-        init, spawnDataDrop, addData, addInsight, addShard, addProcessor, addCoin,
+        init, spawnDataDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
         getData, getInsight, getShards, getProcessors, getCoins,
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
         resetSession, clearDrops,

@@ -24,6 +24,7 @@ class SniperEnemy extends Enemy {
         // UI: Health sprite overlay
         this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'sniper_enemy_hp.png');
         this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
+        this.hpImg.setRotation(-Math.PI / 2); // 90 deg CCW
         this.hpImg.setVisible(false);
         this.hpImg.setActive(false);
 

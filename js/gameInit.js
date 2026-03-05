@@ -12,7 +12,18 @@
 
 messageBus.subscribeOnce('assetsLoaded', () => {
 
+    audio.init(PhaserScene);
     audio.recheckMuteState();
+
+    // Browser autoplay policy: play music on the first interaction
+    messageBus.subscribeOnce('pointerDown', () => {
+        debugLog('First interaction detected, starting music...');
+        audio.muteMusic(false); // Force unmute to ensure visibility
+        audio.muteSFX(false);
+        if (!audio.getMusicName()) {
+            audio.playMusic('bg_music1');
+        }
+    });
 
     // ── Restore or initialise game state ────────────────────────────────
     if (hasSave()) {
