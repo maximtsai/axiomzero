@@ -67,7 +67,9 @@ class InternalButtonManager {
 
     onPointerMove(mouseX, mouseY) {
         if (this.draggedObj) {
-            this.draggedObj.setPos(mouseX, mouseY);
+            if (this.draggedObj.isDraggable) {
+                this.draggedObj.setPos(mouseX, mouseY);
+            }
             if (this.draggedObj.onDrag) {
                 this.draggedObj.onDrag(mouseX, mouseY);
             }

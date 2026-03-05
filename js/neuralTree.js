@@ -87,8 +87,24 @@ const neuralTree = (() => {
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
 
+        // Add to treeGroup so it slides in/out with the panel
         treeGroup.add(panelBg);
         draggableGroup.add(panelBg);
+
+        // Use a custom hit area to restrict draggability to the 800px wide panel area
+        // The background sprite is 728px wide * 1.25 scale = 910px total. 
+        // We want 800px interaction width. 800 / 1.25 = 640px internal width.
+        const hitWidth = 800 / 1.25;
+        const hitHeight = GAME_CONSTANTS.HEIGHT / 1.25;
+        const sprite = panelBg.imageRefs['upgrade_background.png'];
+        if (sprite) {
+            sprite.setInteractive(new Phaser.Geom.Rectangle(
+                (sprite.width - hitWidth) / 2,
+                0,
+                hitWidth,
+                sprite.height
+            ), Phaser.Geom.Rectangle.Contains);
+        }
 
         // Title
         titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
