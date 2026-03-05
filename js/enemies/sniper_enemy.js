@@ -37,7 +37,7 @@ class SniperEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor;
+        this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 2;
         this.health = this.maxHealth;
         this.selfDamage = 0;
         this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;

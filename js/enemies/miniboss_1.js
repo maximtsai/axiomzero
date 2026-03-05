@@ -36,6 +36,14 @@ class Miniboss1 extends Miniboss {
 
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0;
+
+        // Charge-up visual indicator
+        this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
+        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
+        this.chargeSprite.setVisible(false);
+        this.isCharging = false;
+        this._isRampingUp = false;
+        this._chargeWobbleTime = 0;
     }
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -49,7 +57,7 @@ class Miniboss1 extends Miniboss {
         this.size = 24;
 
         this.state = MINIBOSS_STATE.MOVING;
-        this.fireCooldown = 0; // starts at 0 so first shot fires immediately on entering range
+        this.fireCooldown = MB1.FIRE_INTERVAL; // Give full cooldown instead of 0
         this._spawnBurstElapsed = 0; // seconds elapsed since spawn — drives the speed burst
 
         // Reset visuals
@@ -59,7 +67,26 @@ class Miniboss1 extends Miniboss {
             this.img.clearTint();
         }
 
+        if (this.chargeSprite) {
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.setVisible(false);
+            this.chargeSprite.setScale(0.2);
+            this.chargeSprite.setAlpha(1);
+        }
+        this.isCharging = false;
+        this._isRampingUp = false;
+
         super.activate(x, y);
+    }
+
+    deactivate() {
+        super.deactivate();
+        if (this.chargeSprite) {
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.setVisible(false);
+        }
+        this.isCharging = false;
+        this._isRampingUp = false;
     }
 
     // ── Per-frame ─────────────────────────────────────────────────────────────
@@ -90,21 +117,105 @@ class Miniboss1 extends Miniboss {
                 this.fireTimer = 0;
             }
         } else if (this.state === MINIBOSS_STATE.ATTACKING) {
+            this.baseRotation = Math.atan2(dy, dx);
+            this.setRotation(this.baseRotation);
+
+            // Sync charge sprite position if it's active
+            if (this.chargeSprite && this.chargeSprite.visible) {
+                const dist = Math.max(1, distToTower);
+                const ux = dx / dist;
+                const uy = dy / dist;
+                // Offset 36px towards player
+                this.chargeSprite.setPosition(this.x + ux * 36, this.y + uy * 36);
+                this.chargeSprite.setRotation(0); // Forced to 0 rotation
+
+                if (this._isRampingUp) {
+                    this._chargeWobbleTime += dt;
+                    const wx = Math.sin(this._chargeWobbleTime * 25) * 0.06;
+                    const wy = Math.cos(this._chargeWobbleTime * 21) * 0.06;
+                    const baseScale = this.chargeSprite.scaleX;
+                    this.chargeSprite.scaleX = baseScale + wx;
+                    this.chargeSprite.scaleY = baseScale + wy;
+                }
+            }
+
             // Check if pushed out of range
             if (distToTower > MB1.RETREAT_RANGE) {
                 this.state = MINIBOSS_STATE.MOVING;
+                this._stopCharge();
                 this.aimAt(tPos.x, tPos.y);
                 return;
             }
 
-            // Fire cooldown: counts down to 0, fires immediately when ready
             const dtMs = dt * 1000;
+            this.fireCooldown -= dtMs;
+
+            // Trigger charge up at 2.25s (250ms pop + 350ms shrink + 1600ms build + 50ms peak)
+            if (this.fireCooldown <= 2250 && !this.isCharging && this.fireCooldown > 0) {
+                this._startCharge();
+            }
+
             if (this.fireCooldown <= 0) {
                 this._fireBullet(tPos.x, tPos.y);
+                this._stopCharge();
                 this.fireCooldown = MB1.FIRE_INTERVAL;
-            } else {
-                this.fireCooldown -= dtMs;
             }
+        }
+    }
+
+    _startCharge() {
+        if (!this.chargeSprite) return;
+        this.isCharging = true;
+        this.chargeSprite.setVisible(true);
+        this.chargeSprite.setScale(0.2);
+        this.chargeSprite.setAlpha(1);
+
+        PhaserScene.tweens.killTweensOf(this.chargeSprite);
+
+        // Match specialized Sniper timings updated by user
+        PhaserScene.tweens.add({
+            targets: this.chargeSprite,
+            scale: 1.1,
+            duration: 250,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                if (!this.isCharging) return;
+                PhaserScene.tweens.add({
+                    targets: this.chargeSprite,
+                    scale: 0.4,
+                    alpha: 0.7,
+                    duration: 350,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => {
+                        if (!this.isCharging) return;
+                        this._isRampingUp = true;
+                        this._chargeWobbleTime = 0;
+                        PhaserScene.tweens.add({
+                            targets: this.chargeSprite,
+                            scale: 1.2,
+                            alpha: 1,
+                            duration: 1600,
+                            ease: 'Linear',
+                            onComplete: () => {
+                                if (!this.isCharging) return;
+                                // Stage 4: Final jump (duration is approx 0.05s based on trigger)
+                                this._isRampingUp = false;
+                                this.chargeSprite.setScale(1.4);
+                                this.chargeSprite.setAlpha(1);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    _stopCharge() {
+        this.isCharging = false;
+        this._isRampingUp = false;
+        if (this.chargeSprite) {
+            this.chargeSprite.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
         }
     }
 
