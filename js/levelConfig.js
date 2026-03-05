@@ -5,10 +5,11 @@ const LEVEL_CONFIG = {
     1: {
         spawnInterval: 900, // ms between regular spawns (base)
         initialWeights: {
-            basic: 0.25,
-            fast: 0.35,
-            sniper: 0.2,
-            swarmer: 0.2
+            basic: 0.2,
+            fast: 0.3,
+            sniper: 0.15,
+            swarmer: 0.2,
+            logic_stray: 0.15
         },
         lateWeights: {
             shooter: 0.2,

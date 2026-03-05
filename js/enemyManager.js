@@ -16,6 +16,7 @@ const enemyManager = (() => {
     let heavyPool = [];     // pre-allocated HeavyEnemy instances
     let fastPool = [];      // pre-allocated FastEnemy instances
     let sniperPool = [];    // pre-allocated SniperEnemy instances
+    let logicStrayPool = []; // pre-allocated LogicStrayEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -49,6 +50,7 @@ const enemyManager = (() => {
             heavyPool.push(new HeavyEnemy());
             fastPool.push(new FastEnemy());
             sniperPool.push(new SniperEnemy());
+            logicStrayPool.push(new LogicStrayEnemy());
         }
         for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
             swarmerPool.push(new SwarmerEnemy());
@@ -144,6 +146,8 @@ const enemyManager = (() => {
                 e = _getFastFromPool();
             } else if (chosenType === 'sniper') {
                 e = _getSniperFromPool();
+            } else if (chosenType === 'logic_stray') {
+                e = _getLogicStrayFromPool();
             }
 
             if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
@@ -279,6 +283,13 @@ const enemyManager = (() => {
         return null;
     }
 
+    function _getLogicStrayFromPool() {
+        for (let i = 0; i < logicStrayPool.length; i++) {
+            if (!logicStrayPool[i].alive) return logicStrayPool[i];
+        }
+        return null;
+    }
+
     function _getMinibossFromPool() {
         for (let i = 0; i < minibossPool.length; i++) {
             if (!minibossPool[i].alive) return minibossPool[i];
@@ -400,10 +411,12 @@ const enemyManager = (() => {
         if (idx !== -1) activeEnemies.splice(idx, 1);
 
         if (wasMiniboss) {
-            minibossAlive = false;
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
         } else {
+            if (enemy.type === 'logic_stray') {
+                resourceManager.spawnProcessorDrop(ex, ey);
+            }
             messageBus.publish('enemyKilled', ex, ey, enemy.baseResourceDrop);
         }
     }

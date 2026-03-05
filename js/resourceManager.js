@@ -11,6 +11,7 @@ const resourceManager = (() => {
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
     let flyingDrops = [];   // drops currently flying toward cursor
+    let processorPool = []; // Pool for processor resources
 
     let totalDropsSpawned = 0;
 
@@ -25,6 +26,7 @@ const resourceManager = (() => {
 
     function init() {
         _buildPool();
+        _buildProcessorPool();
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
@@ -44,6 +46,27 @@ const resourceManager = (() => {
                 flying: false,
                 readyToCollect: false,
                 x: 0, y: 0,
+                type: 'data',
+                spawnTween: null,
+            });
+        }
+    }
+
+    function _buildProcessorPool() {
+        const PROCESSOR_POOL_SIZE = 100;
+        for (let i = 0; i < PROCESSOR_POOL_SIZE; i++) {
+            const img = PhaserScene.add.image(0, 0, 'player', 'resrc_processor.png');
+            img.setScale(0.85);
+            img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+            img.setVisible(false);
+            img.setActive(false);
+            processorPool.push({
+                img: img,
+                alive: false,
+                flying: false,
+                readyToCollect: false,
+                x: 0, y: 0,
+                type: 'processor',
                 spawnTween: null,
             });
         }
@@ -51,10 +74,20 @@ const resourceManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
+    function spawnProcessorDrop(x, y) {
+        const d = _getProcessorFromPool();
+        if (!d) return;
+        _setupDrop(d, x, y);
+    }
+
     function spawnDataDrop(x, y) {
         const d = _getFromPool();
         if (!d) return;
 
+        _setupDrop(d, x, y);
+    }
+
+    function _setupDrop(d, x, y) {
         totalDropsSpawned++;
 
         d.x = x;
@@ -67,19 +100,20 @@ const resourceManager = (() => {
         d.inertia = 0.02;
         d.img.setPosition(x, y);
 
-        // Visibility logic based on total drops spawned
+        // Visibility logic
         let visible = true;
-        if (totalDropsSpawned > 600) {
-            visible = (totalDropsSpawned % 3) === 1;
-        } else if (totalDropsSpawned > 300) {
-            visible = (totalDropsSpawned % 3) !== 0;
+        if (d.type === 'data') {
+            if (totalDropsSpawned > 600) {
+                visible = (totalDropsSpawned % 3) === 1;
+            } else if (totalDropsSpawned > 300) {
+                visible = (totalDropsSpawned % 3) !== 0;
+            }
         }
 
         d.img.setAlpha(visible ? 1 : 0);
         d.img.setVisible(visible);
         d.img.setActive(true);
 
-        // Spawn nudge: tween 4–9px in random dir + 4px away from tower, clamped to bounds
         const angle = Math.random() * Math.PI * 2;
         const dist = 4 + Math.random() * 6;
 
@@ -178,7 +212,17 @@ const resourceManager = (() => {
 
     function _getFromPool() {
         for (let i = 0; i < dropPool.length; i++) {
-            if (!dropPool[i].alive) return dropPool[i];
+            if (!dropPool[i].alive) {
+                dropPool[i].type = 'data';
+                return dropPool[i];
+            }
+        }
+        return null;
+    }
+
+    function _getProcessorFromPool() {
+        for (let i = 0; i < processorPool.length; i++) {
+            if (!processorPool[i].alive) return processorPool[i];
         }
         return null;
     }
@@ -196,8 +240,10 @@ const resourceManager = (() => {
     /** Instantly collect all flying drops and credit their value. */
     function _collectAllFlying() {
         for (let i = 0; i < flyingDrops.length; i++) {
-            _deactivate(flyingDrops[i]);
-            addData(1);
+            const d = flyingDrops[i];
+            _deactivate(d);
+            if (d.type === 'processor') addProcessor(1);
+            else addData(1);
         }
         flyingDrops.length = 0;
     }
@@ -241,7 +287,8 @@ const resourceManager = (() => {
 
             if (d.readyToCollect) {
                 _deactivate(d);
-                addData(1);
+                if (d.type === 'processor') addProcessor(1);
+                else addData(1);
 
                 // Play random pop sound on collection
                 const popNum = Math.floor(Math.random() * 3) + 1;

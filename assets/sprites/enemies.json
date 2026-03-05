@@ -4,8 +4,8 @@
 			"image": "enemies-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 507,
-				"h": 642
+				"w": 504,
+				"h": 807
 			},
 			"scale": 1,
 			"frames": [
@@ -35,6 +35,31 @@
 					}
 				},
 				{
+					"filename": "protector_aoe.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 271,
+						"h": 271
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 271,
+						"h": 271
+					},
+					"frame": {
+						"x": 1,
+						"y": 404,
+						"w": 271,
+						"h": 271
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "warning.png",
 					"rotated": false,
 					"trimmed": true,
@@ -50,7 +75,7 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 404,
+						"y": 677,
 						"w": 301,
 						"h": 129
 					},
@@ -74,7 +99,7 @@
 						"h": 131
 					},
 					"frame": {
-						"x": 304,
+						"x": 274,
 						"y": 404,
 						"w": 131,
 						"h": 131
@@ -99,8 +124,8 @@
 						"h": 101
 					},
 					"frame": {
-						"x": 404,
-						"y": 1,
+						"x": 274,
+						"y": 537,
 						"w": 101,
 						"h": 101
 					},
@@ -124,385 +149,10 @@
 						"h": 101
 					},
 					"frame": {
-						"x": 1,
-						"y": 535,
+						"x": 304,
+						"y": 640,
 						"w": 101,
 						"h": 101
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sniper.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 101,
-						"h": 101
-					},
-					"frame": {
-						"x": 404,
-						"y": 104,
-						"w": 101,
-						"h": 101
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "chargeup.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 99,
-						"h": 101
-					},
-					"frame": {
-						"x": 104,
-						"y": 535,
-						"w": 99,
-						"h": 101
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "bomb.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 10,
-						"w": 81,
-						"h": 81
-					},
-					"frame": {
-						"x": 404,
-						"y": 207,
-						"w": 81,
-						"h": 81
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "heavy.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 11,
-						"w": 83,
-						"h": 73
-					},
-					"frame": {
-						"x": 205,
-						"y": 535,
-						"w": 83,
-						"h": 73
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "logic_stray.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 13,
-						"y": 13,
-						"w": 75,
-						"h": 75
-					},
-					"frame": {
-						"x": 404,
-						"y": 290,
-						"w": 75,
-						"h": 75
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "fast.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 13,
-						"y": 19,
-						"w": 76,
-						"h": 63
-					},
-					"frame": {
-						"x": 290,
-						"y": 537,
-						"w": 76,
-						"h": 63
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "basic.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 69,
-						"h": 69
-					},
-					"frame": {
-						"x": 368,
-						"y": 537,
-						"w": 69,
-						"h": 69
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sniper_projectile.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 25,
-						"y": 31,
-						"w": 48,
-						"h": 39
-					},
-					"frame": {
-						"x": 290,
-						"y": 602,
-						"w": 48,
-						"h": 39
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "protector.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 69,
-						"h": 69
-					},
-					"frame": {
-						"x": 437,
-						"y": 367,
-						"w": 69,
-						"h": 69
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "shooter.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 69,
-						"h": 69
-					},
-					"frame": {
-						"x": 437,
-						"y": 438,
-						"w": 69,
-						"h": 69
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "swarmer.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 25,
-						"y": 25,
-						"w": 51,
-						"h": 51
-					},
-					"frame": {
-						"x": 439,
-						"y": 509,
-						"w": 51,
-						"h": 51
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "projectile.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 25,
-						"y": 31,
-						"w": 47,
-						"h": 39
-					},
-					"frame": {
-						"x": 439,
-						"y": 562,
-						"w": 47,
-						"h": 39
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sniper_enemy_hp.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 33,
-						"h": 33
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 33,
-						"h": 33
-					},
-					"frame": {
-						"x": 340,
-						"y": 608,
-						"w": 33,
-						"h": 33
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "fast_enemy_hp.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 40,
-						"h": 25
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 39,
-						"h": 25
-					},
-					"frame": {
-						"x": 205,
-						"y": 610,
-						"w": 39,
-						"h": 25
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "logic_stray_enemy_hp.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 30,
-						"h": 29
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 30,
-						"h": 29
-					},
-					"frame": {
-						"x": 404,
-						"y": 367,
-						"w": 30,
-						"h": 29
 					},
 					"anchor": {
 						"x": 0.5,
@@ -524,8 +174,8 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 375,
-						"y": 608,
+						"x": 274,
+						"y": 640,
 						"w": 23,
 						"h": 23
 					},
@@ -549,10 +199,110 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 375,
-						"y": 608,
+						"x": 274,
+						"y": 640,
 						"w": 23,
 						"h": 23
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sniper.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 101,
+						"h": 101
+					},
+					"frame": {
+						"x": 377,
+						"y": 537,
+						"w": 101,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "bomb.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 10,
+						"w": 81,
+						"h": 81
+					},
+					"frame": {
+						"x": 407,
+						"y": 640,
+						"w": 81,
+						"h": 81
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "heavy.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 11,
+						"w": 83,
+						"h": 73
+					},
+					"frame": {
+						"x": 407,
+						"y": 723,
+						"w": 83,
+						"h": 73
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "fast.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 19,
+						"w": 76,
+						"h": 63
+					},
+					"frame": {
+						"x": 304,
+						"y": 743,
+						"w": 76,
+						"h": 63
 					},
 					"anchor": {
 						"x": 0.5,
@@ -574,10 +324,285 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 487,
-						"y": 207,
+						"x": 382,
+						"y": 743,
 						"w": 16,
 						"h": 16
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "chargeup.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 99,
+						"h": 101
+					},
+					"frame": {
+						"x": 404,
+						"y": 1,
+						"w": 99,
+						"h": 101
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "logic_stray.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 13,
+						"w": 75,
+						"h": 75
+					},
+					"frame": {
+						"x": 404,
+						"y": 104,
+						"w": 75,
+						"h": 75
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "basic.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 16,
+						"w": 69,
+						"h": 69
+					},
+					"frame": {
+						"x": 404,
+						"y": 181,
+						"w": 69,
+						"h": 69
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "protector.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 16,
+						"w": 69,
+						"h": 69
+					},
+					"frame": {
+						"x": 404,
+						"y": 252,
+						"w": 69,
+						"h": 69
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "shooter.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 16,
+						"w": 69,
+						"h": 69
+					},
+					"frame": {
+						"x": 404,
+						"y": 323,
+						"w": 69,
+						"h": 69
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "swarmer.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 25,
+						"y": 25,
+						"w": 51,
+						"h": 51
+					},
+					"frame": {
+						"x": 407,
+						"y": 394,
+						"w": 51,
+						"h": 51
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sniper_projectile.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 25,
+						"y": 31,
+						"w": 48,
+						"h": 39
+					},
+					"frame": {
+						"x": 407,
+						"y": 447,
+						"w": 48,
+						"h": 39
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "projectile.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 25,
+						"y": 31,
+						"w": 47,
+						"h": 39
+					},
+					"frame": {
+						"x": 407,
+						"y": 488,
+						"w": 47,
+						"h": 39
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sniper_enemy_hp.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 33
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 33
+					},
+					"frame": {
+						"x": 456,
+						"y": 488,
+						"w": 33,
+						"h": 33
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "fast_enemy_hp.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 39,
+						"h": 25
+					},
+					"frame": {
+						"x": 457,
+						"y": 447,
+						"w": 39,
+						"h": 25
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "logic_stray_enemy_hp.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 31
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 31
+					},
+					"frame": {
+						"x": 460,
+						"y": 394,
+						"w": 32,
+						"h": 31
 					},
 					"anchor": {
 						"x": 0.5,
@@ -590,6 +615,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:6d13f454794dedfd43c2310470e0575b:8dff42bd6915ed19471d945d47b8152f:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ceee0a3db51638836e66878864952a16:501db305e99c29a8ed2568bf5e54917b:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }
