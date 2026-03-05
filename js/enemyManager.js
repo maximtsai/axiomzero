@@ -120,7 +120,7 @@ const enemyManager = (() => {
         if ((chosenType === 'fast' || chosenType === 'logic_stray') && combatTime < 9) {
             chosenType = 'basic';
         }
-        if ((chosenType === 'swarmer' || chosenType === 'sniper') && combatTime < 6) {
+        if ((chosenType === 'swarmer' || chosenType === 'sniper' || chosenType === 'protector') && combatTime < 6) {
             chosenType = 'basic';
         }
 
@@ -416,10 +416,18 @@ const enemyManager = (() => {
         if (!enemy || !enemy.alive) return;
 
         const died = enemy.takeDamage(amount);
-        floatingText.show(enemy.x, enemy.y - 14, Math.round(amount).toString(), {
+
+        // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
+        const finalAmount = enemy.lastDamageAmount !== undefined ? enemy.lastDamageAmount : Math.round(amount);
+        const isProtected = enemy.lastDamageWasProtected || false;
+
+        // Color is HOSTILE (pink) normally, or grey-red if protected
+        const textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
+
+        floatingText.show(enemy.x, enemy.y - 14, finalAmount.toString(), {
             fontFamily: 'VCR',
             fontSize: 28,
-            color: helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE),
+            color: textColor,
             depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
             duration: 1000,
         });

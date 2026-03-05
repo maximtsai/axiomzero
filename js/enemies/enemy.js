@@ -173,6 +173,8 @@ class Enemy {
      * @returns {boolean} true if the enemy died
      */
     takeDamage(amount) {
+        this.lastDamageWasProtected = false;
+
         // Protector aura logic
         if (this.type !== 'protector') {
             const protectors = typeof enemyManager !== 'undefined' ? enemyManager.getActiveProtectors() : [];
@@ -188,11 +190,13 @@ class Enemy {
             }
 
             if (protectedBy) {
-                amount *= 0.5;
+                amount = Math.ceil(amount * 0.5);
+                this.lastDamageWasProtected = true;
                 protectedBy.triggerAuraDefend();
             }
         }
 
+        this.lastDamageAmount = amount;
         this.health -= amount;
 
         // White hit flash — applies to all enemy types/damage sources

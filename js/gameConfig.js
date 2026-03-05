@@ -32,7 +32,7 @@ GAME_CONSTANTS.TOWER_BASE_REGEN = -0.4;   // HP/sec (negative = drain)
 
 // ─── EXP ──────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.EXP_FILL_RATE = 0.5;   // per second during combat
+GAME_CONSTANTS.EXP_FILL_RATE = 1.0;   // per second during combat
 GAME_CONSTANTS.EXP_TO_INSIGHT = 100;  // EXP needed to award 1 INSIGHT
 
 // ─── Enemy — Basic type (Phase 1) ─────────────────────────────────────────────
