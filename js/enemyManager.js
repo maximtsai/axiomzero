@@ -17,6 +17,7 @@ const enemyManager = (() => {
     let fastPool = [];      // pre-allocated FastEnemy instances
     let sniperPool = [];    // pre-allocated SniperEnemy instances
     let logicStrayPool = []; // pre-allocated LogicStrayEnemy instances
+    let protectorPool = []; // pre-allocated ProtectorEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
@@ -51,6 +52,7 @@ const enemyManager = (() => {
             fastPool.push(new FastEnemy());
             sniperPool.push(new SniperEnemy());
             logicStrayPool.push(new LogicStrayEnemy());
+            protectorPool.push(new ProtectorEnemy());
         }
         for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
             swarmerPool.push(new SwarmerEnemy());
@@ -151,6 +153,8 @@ const enemyManager = (() => {
                 e = _getSniperFromPool();
             } else if (chosenType === 'logic_stray') {
                 e = _getLogicStrayFromPool();
+            } else if (chosenType === 'protector') {
+                e = _getProtectorFromPool();
             }
 
             if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
@@ -293,6 +297,13 @@ const enemyManager = (() => {
         return null;
     }
 
+    function _getProtectorFromPool() {
+        for (let i = 0; i < protectorPool.length; i++) {
+            if (!protectorPool[i].alive) return protectorPool[i];
+        }
+        return null;
+    }
+
     function _getMinibossFromPool() {
         for (let i = 0; i < minibossPool.length; i++) {
             if (!minibossPool[i].alive) return minibossPool[i];
@@ -362,6 +373,18 @@ const enemyManager = (() => {
     /** Returns all active enemy objects (read-only iteration by projectileManager). */
     function getActiveEnemies() {
         return activeEnemies;
+    }
+
+    /** Returns all active, fully-spawned protectors for aura checks. */
+    function getActiveProtectors() {
+        const activeProts = [];
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const e = activeEnemies[i];
+            if (e.alive && e.type === 'protector' && e.auraActive) {
+                activeProts.push(e);
+            }
+        }
+        return activeProts;
     }
 
     /**
@@ -515,5 +538,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
+    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
 })();
