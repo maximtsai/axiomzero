@@ -97,7 +97,7 @@ const resourceManager = (() => {
         d.alive = true;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = 0.02;
+        d.inertia = -0.1;
         d.img.setPosition(x, y);
 
         // Visibility logic
@@ -232,7 +232,7 @@ const resourceManager = (() => {
         d.alive = false;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = 0.02;
+        d.inertia = -0.1;
         d.img.setVisible(false);
         d.img.setActive(false);
     }
@@ -323,7 +323,7 @@ const resourceManager = (() => {
             d.dy *= 0.95 - 0.05 * d.inertia;
 
             if (d.inertia < 1) {
-                d.inertia = Math.min(1, d.inertia + 0.5 * dt);
+                d.inertia = Math.min(1, d.inertia + 0.75 * dt);
             }
             d.img.setPosition(d.x, d.y);
         }

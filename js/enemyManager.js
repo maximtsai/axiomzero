@@ -114,8 +114,8 @@ const enemyManager = (() => {
             }
         }
 
-        // Special case: No fast enemies in the first few seconds
-        if (chosenType === 'fast' && combatTime < 9) {
+        // Special case: No fast or logic stray enemies in the first few seconds
+        if ((chosenType === 'fast' || chosenType === 'logic_stray') && combatTime < 9) {
             chosenType = 'basic';
         }
 

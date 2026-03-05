@@ -4,8 +4,8 @@
 //   • Steady 1 rotation / 3 seconds (manual rotation).
 //   • 2x basic enemy health.
 //   • 0 damage, 0 self-damage.
-//   • Angles its flight path 1.0 radians away from the tower.
-//   • Once damaged: 2x speed and 2x rotation speed.
+//   • Angles its flight path 0.3 radians away from the tower.
+//   • Once damaged: 3x speed and 1 rotation per second (3x rotation speed).
 //   • Deactivates if > 1150px from tower (X or Y).
 //   • Drops PROCESSOR resources instead of DATA.
 
@@ -51,25 +51,13 @@ class LogicStrayEnemy extends Enemy {
         }
 
         super.activate(x, y);
-
-        // Movement logic: angle 0.25 rad away from tower
-        const dx = GAME_CONSTANTS.halfWidth - x;
-        const dy = GAME_CONSTANTS.halfHeight - y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-        const baseAngle = Math.atan2(dy, dx);
-        const deviation = (Math.random() < 0.5 ? -1 : 1) * 1.0;
-        const finalAngle = baseAngle + deviation;
-
-        this.vx = Math.cos(finalAngle) * this.speed;
-        this.vy = Math.sin(finalAngle) * this.speed;
     }
 
     update(dt) {
-        // Enrage check: double speed and rotation speed if health < maxHealth
+        // Enrage check: triple speed and 1 rot/sec rotation speed if health < maxHealth
         if (!this.isEnraged && this.health < this.maxHealth) {
             this.isEnraged = true;
-            this.speed *= 2;
+            this.speed *= 3;
             // Update velocity to match new speed
             const mag = Math.sqrt(this.vx * this.vx + this.vy * this.vy) || 1;
             this.vx = (this.vx / mag) * this.speed;
@@ -77,7 +65,7 @@ class LogicStrayEnemy extends Enemy {
         }
 
         // Manual rotation
-        const rotMult = this.isEnraged ? 2 : 1;
+        const rotMult = this.isEnraged ? 3 : 1;
         this.rotationTime += dt * rotMult;
         const currentRot = this.rotationTime * this.baseRotationSpeed;
 
@@ -93,6 +81,19 @@ class LogicStrayEnemy extends Enemy {
         if (dx > 1150 || dy > 1150) {
             this.deactivate();
         }
+    }
+
+    aimAt(tx, ty) {
+        // Divert flight path by 0.3 rad away from target
+        const dx = tx - this.x;
+        const dy = ty - this.y;
+
+        const baseAngle = Math.atan2(dy, dx);
+        const deviation = (Math.random() < 0.5 ? -1 : 1) * 0.3;
+        const finalAngle = baseAngle + deviation;
+
+        this.vx = Math.cos(finalAngle) * this.speed;
+        this.vy = Math.sin(finalAngle) * this.speed;
     }
 
     takeDamage(amount) {
