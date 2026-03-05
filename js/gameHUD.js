@@ -119,20 +119,20 @@ const gameHUD = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 72,
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 34,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 72,
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 34,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 72,
+                x: GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - 34,
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
@@ -148,9 +148,9 @@ const gameHUD = (() => {
 
         // ── Progress bar ──
         waveProgressBar = new ProgressBar(PhaserScene, {
-            x: GAME_CONSTANTS.halfWidth,
+            x: 705,
             y: GAME_CONSTANTS.HEIGHT - 22,
-            width: GAME_CONSTANTS.WIDTH - 50,
+            width: GAME_CONSTANTS.WIDTH - 220,
             height: 27,
             padding: 7,
             bgColor: 0x222233,

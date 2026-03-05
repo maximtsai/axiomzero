@@ -12,6 +12,7 @@ const neuralTree = (() => {
     // Tree visual elements
     let panelBg = null;
     let panelOutline = null;
+    let panelOutlineGlitch = null;
     let dragSurface = null;
     let titleText = null;
     let deployBtn = null;
@@ -48,7 +49,7 @@ const neuralTree = (() => {
     function _createPanel() {
         // Pretty background image - moves with the nodes
         panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_background.png');
-        panelBg.setScale(1.25);
+        panelBg.setScale(1.2);
         panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
@@ -63,6 +64,49 @@ const neuralTree = (() => {
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
+
+        // Second copy of the outline frame for a glitch effect
+        panelOutlineGlitch = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
+        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 4);
+        panelOutlineGlitch.setScrollFactor(0);
+        panelOutlineGlitch.setTint(0x888888); // Grey tint
+        panelOutlineGlitch.setVisible(false);
+        treeGroup.add(panelOutlineGlitch);
+
+        // Animation sequence for glitch outline
+        const startGlitch = () => {
+            panelOutlineGlitch.setVisible(true);
+            panelOutlineGlitch.setAlpha(1);
+
+            PhaserScene.time.delayedCall(200, () => {
+                panelOutlineGlitch.setAlpha(0.4);
+                PhaserScene.time.delayedCall(40, () => {
+                    panelOutlineGlitch.setAlpha(1);
+                    PhaserScene.time.delayedCall(100, () => {
+                        panelOutlineGlitch.setAlpha(0.25);
+                        PhaserScene.time.delayedCall(40, () => {
+                            panelOutlineGlitch.setAlpha(1);
+                            PhaserScene.time.delayedCall(300, () => {
+                                panelOutlineGlitch.setAlpha(0.25);
+                                PhaserScene.time.delayedCall(150, () => {
+                                    panelOutlineGlitch.setAlpha(0.5);
+                                    PhaserScene.time.delayedCall(100, () => {
+                                        panelOutlineGlitch.setVisible(false);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        };
+
+        // Start the glitch animation (one-time upon creation)
+        if (panelOutlineGlitch) {
+            // We use a slightly longer delay to ensure the panel might be visible if it was opened immediately
+            // but the prompt says 0.3s after creation.
+            startGlitch();
+        }
 
         // Invisible drag surface - covers the 800px wide panel
         dragSurface = new Button({
@@ -109,10 +153,11 @@ const neuralTree = (() => {
         // Title
         titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
             fontFamily: 'Michroma',
-            fontSize: '22px',
+            fontSize: '28px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20).setScrollFactor(0).setVisible(false);
+        titleText.setShadow(0, 0, '#00f5ff', 12, true, true);
 
         treeGroup.add(titleText);
     }
@@ -372,7 +417,7 @@ const neuralTree = (() => {
         const minVisY = 22;
         const maxVisY = GAME_CONSTANTS.HEIGHT - 22;
 
-        const scale = 1.25;
+        const scale = 1.2;
         const texW = 728;
         const texH = 1024;
 
