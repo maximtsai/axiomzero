@@ -34,6 +34,12 @@ class Miniboss1 extends Miniboss {
         this.img.setVisible(false);
         this.img.setActive(false);
 
+        // TODO: Swap out special HP sprite per enemy type
+        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'basic_enemy_hp.png');
+        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+        this.hpImg.setVisible(false);
+        this.hpImg.setActive(false);
+
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0;
 
@@ -65,6 +71,10 @@ class Miniboss1 extends Miniboss {
             this.img.setAlpha(1);
             this.img.setScale(1);
             this.img.clearTint();
+        }
+        if (this.hpImg) {
+            this.hpImg.setAlpha(1);
+            this.hpImg.setScale(1);
         }
 
         if (this.chargeSprite) {
@@ -241,12 +251,12 @@ class Miniboss1 extends Miniboss {
             if (this.wobbleAnim) this.wobbleAnim.stop();
             this.wobbleAnim = PhaserScene.tweens.add({
                 delay: 75,
-                targets: this.img,
+                targets: this.hpImg ? [this.img, this.hpImg] : this.img,
                 rotation: '-=' + wobble,
                 duration: 370,
                 ease: 'Cubic.easeInOut',
                 onComplete: () => {
-                    this.img.setRotation(this.baseRotation);
+                    this.setRotation(this.baseRotation);
                     this.wobbleAnim = null;
                 }
             });
@@ -259,6 +269,14 @@ class Miniboss1 extends Miniboss {
                     duration: 80,
                     ease: 'Linear',
                 });
+                if (this.hpImg) {
+                    PhaserScene.tweens.add({
+                        targets: this.hpImg,
+                        alpha: { from: 0.5, to: 1 },
+                        duration: 80,
+                        ease: 'Linear',
+                    });
+                }
             }
         }
 

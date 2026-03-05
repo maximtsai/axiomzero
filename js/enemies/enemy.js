@@ -28,6 +28,7 @@ class Enemy {
         this.baseResourceDrop = 0;
         this.selfDamage = 0;
         this.cannotRotate = false;
+        this.hpImg = null; // Health representing sprite
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -54,6 +55,13 @@ class Enemy {
             this.img.setVisible(true);
             this.img.setActive(true);
 
+            if (this.hpImg) {
+                this.hpImg.setPosition(x, y);
+                this.hpImg.setVisible(true);
+                this.hpImg.setActive(true);
+                this._updateHPCrop();
+            }
+
             if (this.cannotRotate) {
                 this.baseRotation = 0;
                 this.setRotation(0);
@@ -77,6 +85,11 @@ class Enemy {
             this.img.setVisible(false);
             this.img.setActive(false);
         }
+        if (this.hpImg) {
+            PhaserScene.tweens.killTweensOf(this.hpImg);
+            this.hpImg.setVisible(false);
+            this.hpImg.setActive(false);
+        }
     }
 
     // ── Movement ──────────────────────────────────────────────────────────────
@@ -84,6 +97,7 @@ class Enemy {
     setRotation(rot) {
         if (this.cannotRotate) return;
         this.img.setRotation(rot);
+        if (this.hpImg) this.hpImg.setRotation(rot);
     }
 
     /**
@@ -109,6 +123,32 @@ class Enemy {
             this.y += this.vy * dt;
         }
         if (this.img) this.img.setPosition(this.x, this.y);
+        if (this.hpImg) {
+            this.hpImg.setPosition(this.x, this.y);
+            this._updateHPCrop();
+        }
+    }
+
+    /**
+     * Updates the health sprite's cropping based on health percentage.
+     * 100% health = full bar
+     * < 100% -> scales from 95% down to 5% visible at near-zero.
+     */
+    _updateHPCrop() {
+        if (!this.hpImg) return;
+
+        let pct = this.health / this.maxHealth;
+        let cropPct = 1.0;
+
+        if (pct < 1.0) {
+            // Map [0.0, 1.0] health to [0.05, 0.95] crop
+            cropPct = 0.05 + (pct * 0.90);
+        }
+
+        // Apply crop: x, y, width, height (width is based on full texture width)
+        const fullWidth = this.hpImg.width;
+        const fullHeight = this.hpImg.height;
+        this.hpImg.setCrop(0, 0, fullWidth * cropPct, fullHeight);
     }
 
     /**
@@ -118,6 +158,9 @@ class Enemy {
     refreshTint() {
         if (this.img && this.img.scene) {
             this.img.clearTint();
+        }
+        if (this.hpImg && this.hpImg.scene) {
+            this.hpImg.clearTint();
         }
     }
 
@@ -135,10 +178,14 @@ class Enemy {
         // White hit flash — applies to all enemy types/damage sources
         if (this.img && this.img.scene) {
             this.img.setTintFill(0xffffff);
+            if (this.hpImg) this.hpImg.setTintFill(0xffffff);
+
             PhaserScene.time.delayedCall(135, () => {
                 this.refreshTint();
             });
         }
+
+        this._updateHPCrop();
 
         if (this.health <= 0) {
             this.health = 0;
@@ -162,6 +209,9 @@ class Enemy {
         this.y += dirY * knockDist;
         if (this.img) {
             this.img.setPosition(this.x, this.y);
+        }
+        if (this.hpImg) {
+            this.hpImg.setPosition(this.x, this.y);
         }
 
         this.stunned = true;

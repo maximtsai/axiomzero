@@ -18,9 +18,14 @@ class SniperEnemy extends Enemy {
         this.type = 'sniper';
         this.baseResourceDrop = 5;
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'sniper.png');
-        this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
         this.img.setVisible(false);
         this.img.setActive(false);
+
+        // TODO: Swap out special HP sprite per enemy type
+        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'basic_enemy_hp.png');
+        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
+        this.hpImg.setVisible(false);
+        this.hpImg.setActive(false);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
@@ -55,6 +60,11 @@ class SniperEnemy extends Enemy {
             this.img.setAlpha(1);
             this.img.setScale(1);
             this.img.setTint(0xffffff);
+        }
+
+        if (this.hpImg) {
+            this.hpImg.setAlpha(1);
+            this.hpImg.setScale(1);
         }
 
         if (this.chargeSprite) {
@@ -224,6 +234,14 @@ class SniperEnemy extends Enemy {
                     duration: 100,
                     ease: 'Linear',
                 });
+                if (this.hpImg) {
+                    PhaserScene.tweens.add({
+                        targets: this.hpImg,
+                        alpha: { from: 0.5, to: 1 },
+                        duration: 100,
+                        ease: 'Linear',
+                    });
+                }
             }
         }
 

@@ -15,6 +15,12 @@ class HeavyEnemy extends Enemy {
         this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
         this.img.setVisible(false);
         this.img.setActive(false);
+
+        // TODO: Swap out special HP sprite per enemy type
+        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'basic_enemy_hp.png');
+        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
+        this.hpImg.setVisible(false);
+        this.hpImg.setActive(false);
     }
 
     activate(x, y, scaleFactor) {
@@ -30,6 +36,10 @@ class HeavyEnemy extends Enemy {
             this.img.setScale(1);
             this.img.setTint(0xffffff); // Reset tint
         }
+        if (this.hpImg) {
+            this.hpImg.setAlpha(1);
+            this.hpImg.setScale(1);
+        }
 
         super.activate(x, y);
     }
@@ -44,12 +54,12 @@ class HeavyEnemy extends Enemy {
             if (this.wobbleAnim) this.wobbleAnim.stop();
             this.wobbleAnim = PhaserScene.tweens.add({
                 delay: 75,
-                targets: this.img,
+                targets: this.hpImg ? [this.img, this.hpImg] : this.img,
                 rotation: '-=' + wobble,
                 duration: 500, // Longer duration for heavy feel
                 ease: 'Cubic.easeInOut',
                 onComplete: () => {
-                    this.img.setRotation(this.baseRotation || 0);
+                    this.setRotation(this.baseRotation || 0);
                     this.wobbleAnim = null;
                 }
             });
@@ -62,6 +72,14 @@ class HeavyEnemy extends Enemy {
                     duration: 100,
                     ease: 'Linear',
                 });
+                if (this.hpImg) {
+                    PhaserScene.tweens.add({
+                        targets: this.hpImg,
+                        alpha: { from: 0.6, to: 1 },
+                        duration: 100,
+                        ease: 'Linear',
+                    });
+                }
             }
         }
 
