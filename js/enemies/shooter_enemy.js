@@ -112,11 +112,11 @@ class ShooterEnemy extends Enemy {
         if (this.img) {
             // Rotation wobble on hit
             const wobble = Phaser.Math.FloatBetween(-0.3, 0.3);
-            this.img.setRotation(this.baseRotation + wobble);
+            this.setRotation(this.baseRotation + wobble);
             if (this.wobbleAnim) this.wobbleAnim.stop();
             this.wobbleAnim = PhaserScene.tweens.add({
                 delay: 75,
-                targets: this.hpImg ? [this.img, this.hpImg] : this.img,
+                targets: [this.img, this.hpImg],
                 rotation: '-=' + wobble,
                 duration: 370,
                 ease: 'Cubic.easeInOut',

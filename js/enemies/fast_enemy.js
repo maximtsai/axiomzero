@@ -56,7 +56,7 @@ class FastEnemy extends Enemy {
                 if (this.wobbleAnim) this.wobbleAnim.stop();
                 this.wobbleAnim = PhaserScene.tweens.add({
                     delay: 40,
-                    targets: this.hpImg ? [this.img, this.hpImg] : this.img,
+                    targets: [this.img, this.hpImg],
                     rotation: '-=' + wobble,
                     duration: 200, // Short duration for fast feel
                     ease: 'Cubic.easeInOut',

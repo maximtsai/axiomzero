@@ -74,7 +74,7 @@ class BasicEnemy extends Enemy {
                 }
                 this.wobbleAnim = PhaserScene.tweens.add({
                     delay: 75,
-                    targets: this.hpImg ? [this.img, this.hpImg] : this.img,
+                    targets: [this.img, this.hpImg],
                     rotation: '-=' + wobble,
                     duration: 370,
                     ease: 'Cubic.easeInOut',

@@ -125,7 +125,7 @@ const neuralTree = (() => {
         if (isFirst) {
             // First launch: only AWAKEN visible and unlocked
             nodes.awaken.setState(NODE_STATE.UNLOCKED);
-            nodes.basic_pulse.setState(NODE_STATE.HIDDEN);
+            nodes.pulse_damage.setState(NODE_STATE.HIDDEN);
             nodes.reinforce.setState(NODE_STATE.HIDDEN);
             nodes.sharpen.setState(NODE_STATE.HIDDEN);
         } else {

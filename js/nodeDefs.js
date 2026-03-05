@@ -22,7 +22,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: null,
-        childIds: ['basic_pulse', 'reinforce', 'sharpen'],
+        childIds: ['pulse_damage', 'reinforce', 'sharpen'],
         treeX: 400,
         treeY: 800,
         effect: function () {
@@ -31,25 +31,6 @@ const NODE_DEFS = [
             if (neuralTree.isVisible()) {
                 neuralTree._showDeployButton();
             }
-        },
-    },
-    {
-        id: 'basic_pulse',
-        name: 'FOCUS',
-        icon: 'Skillicon14_02.png',
-        description: 'Your cursor also deals damage now.',
-        maxLevel: 1,
-        baseCost: 1,
-        costType: 'data',
-        costScaling: 'static',
-        costStep: 0,
-        parentId: 'awaken',
-        childIds: ['pulse_damage'],
-        treeX: 300,
-        treeY: 700,
-        effect: function () {
-            pulseAttack.unlock();
-            debugLog('Basic Pulse unlocked');
         },
     },
     {
@@ -64,10 +45,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 4,
-        parentId: 'basic_pulse',
+        parentId: 'awaken',
         childIds: ['pulse_damage_2'],
         treeX: 300,
-        treeY: 600,
+        treeY: 700,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -87,7 +68,7 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         childIds: [],
         treeX: 300,
-        treeY: 500,
+        treeY: 600,
         effect: function () {
             _recalcPulseDamage();
         },

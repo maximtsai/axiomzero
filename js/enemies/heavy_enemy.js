@@ -50,11 +50,11 @@ class HeavyEnemy extends Enemy {
         if (this.img) {
             // Slower, heavier wobble
             const wobble = Phaser.Math.FloatBetween(-0.2, 0.2);
-            this.img.setRotation(this.baseRotation + wobble);
+            this.setRotation(this.baseRotation + wobble);
             if (this.wobbleAnim) this.wobbleAnim.stop();
             this.wobbleAnim = PhaserScene.tweens.add({
                 delay: 75,
-                targets: this.hpImg ? [this.img, this.hpImg] : this.img,
+                targets: [this.img, this.hpImg],
                 rotation: '-=' + wobble,
                 duration: 500, // Longer duration for heavy feel
                 ease: 'Cubic.easeInOut',
