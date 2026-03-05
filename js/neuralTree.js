@@ -11,6 +11,8 @@ const neuralTree = (() => {
 
     // Tree visual elements
     let panelBg = null;
+    let panelOutline = null;
+    let dragSurface = null;
     let titleText = null;
     let deployBtn = null;
     let lines = [];  // Phaser Graphics lines connecting parent → child
@@ -42,33 +44,48 @@ const neuralTree = (() => {
     }
 
     function _createPanel() {
-        // Semi-transparent dark background for the left half — now a Button for drag support
-        panelBg = new Button({
+        // Pretty background image - moves with the nodes
+        panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_background.png');
+        panelBg.setScale(1.25);
+        panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
+        panelBg.setScrollFactor(0);
+        panelBg.setVisible(false);
+
+        // Add to treeGroup for panel transitions, and draggableGroup for scrolling sync
+        treeGroup.add(panelBg);
+        draggableGroup.add(panelBg);
+
+        // Static outline frame for the left half
+        panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
+        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+        panelOutline.setScrollFactor(0);
+        panelOutline.setVisible(false);
+        treeGroup.add(panelOutline);
+
+        // Invisible drag surface - covers the 800px wide panel
+        dragSurface = new Button({
             normal: {
-                ref: 'upgrade_background.png',
-                atlas: 'backgrounds',
+                ref: 'white_pixel',
                 x: TREE_CENTER_X,
                 y: GAME_CONSTANTS.halfHeight,
-                scaleX: 1.25,
-                scaleY: 1.25,
-                alpha: 1,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE
+                scaleX: PANEL_W / 2, // 2x2 pixel -> 800px
+                scaleY: GAME_CONSTANTS.HEIGHT / 2, // 2x2 pixel -> 900px
+                alpha: 0.001,
+                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 0.1
             },
             onMouseDown: (x, y) => {
                 lastDragX = x;
                 lastDragY = y;
-                // Manually tell the manager we are dragging this background
-                // We don't use isDraggable: true to avoid the button auto-snapping its center to the mouse
-                buttonManager.setDraggedObj(panelBg);
+                buttonManager.setDraggedObj(dragSurface);
             },
             onDrag: (x, y) => {
                 const dx = x - lastDragX;
                 const dy = y - lastDragY;
 
-                // Relative clamps from start: X=(-22 to 22), Y=(0 to 600)
                 const currentX = draggableGroup.x;
                 const currentY = draggableGroup.y;
 
+                // Restrict movement based on global tree drag constants
                 const nextX = Phaser.Math.Clamp(currentX + dx, GAME_CONSTANTS.TREE_DRAG_MIN_X, GAME_CONSTANTS.TREE_DRAG_MAX_X);
                 const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
 
@@ -83,28 +100,9 @@ const neuralTree = (() => {
                 lastDragY = y;
             }
         });
-
-        panelBg.setScrollFactor(0);
-        panelBg.setVisible(false);
-
-        // Add to treeGroup so it slides in/out with the panel
-        treeGroup.add(panelBg);
-        draggableGroup.add(panelBg);
-
-        // Use a custom hit area to restrict draggability to the 800px wide panel area
-        // The background sprite is 728px wide * 1.25 scale = 910px total. 
-        // We want 800px interaction width. 800 / 1.25 = 640px internal width.
-        const hitWidth = 800 / 1.25;
-        const hitHeight = GAME_CONSTANTS.HEIGHT / 1.25;
-        const sprite = panelBg.imageRefs['upgrade_background.png'];
-        if (sprite) {
-            sprite.setInteractive(new Phaser.Geom.Rectangle(
-                (sprite.width - hitWidth) / 2,
-                0,
-                hitWidth,
-                sprite.height
-            ), Phaser.Geom.Rectangle.Contains);
-        }
+        dragSurface.setScrollFactor(0);
+        dragSurface.setVisible(false);
+        treeGroup.add(dragSurface);
 
         // Title
         titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
@@ -221,6 +219,8 @@ const neuralTree = (() => {
     function show() {
         visible = true;
         panelBg.setVisible(true);
+        panelOutline.setVisible(true);
+        dragSurface.setVisible(true);
         titleText.setVisible(true);
 
         // Show all nodes and refresh affordability state
@@ -245,6 +245,8 @@ const neuralTree = (() => {
     function hide() {
         visible = false;
         panelBg.setVisible(false);
+        panelOutline.setVisible(false);
+        dragSurface.setVisible(false);
         titleText.setVisible(false);
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
