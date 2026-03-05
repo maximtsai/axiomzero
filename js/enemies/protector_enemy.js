@@ -7,10 +7,10 @@
 //   • Cannot rotate.
 //   • Stops at 200px from tower.
 //   • No attack, no self damage.
-//   • Aura reduces damage by half to non-protectors within 130px.
+//   • Aura reduces damage by half to non-protectors within 185px.
 //   • Initial spawn: aura starts at 0.75 alpha, 0.25 scale. Tweens to scale 1 over 0.75s (cubic.easeOut).
-//     Then alpha to 0.95, and fades to 0.3 over 0.75s (cubic.easeOut). Aura becomes active.
-//   • Aura effect trigger turns aura to 0.7 alpha, then fades to 0.3 over 0.75s (cubic.easeOut).
+//     Then alpha to 0.95, and fades to 0.22 over 0.75s (cubic.easeOut). Aura becomes active.
+//   • Aura effect trigger turns aura to 0.95 alpha, then fades to 0.22 over 0.85s (cubic.easeOut).
 
 const PROTECTOR_STATE = {
     MOVING: 'MOVING',
@@ -84,7 +84,7 @@ class ProtectorEnemy extends Enemy {
                     if (!this.img || !this.img.scene) return;
                     this.auraImg.setAlpha(0.95);
                     this.auraActive = true;
-                    this._playAuraFade(0.3, 750);
+                    this._playAuraFade(0.22, 750);
                 }
             });
         }
@@ -137,8 +137,8 @@ class ProtectorEnemy extends Enemy {
         if (!this.auraActive || !this.auraImg) return;
 
         PhaserScene.tweens.killTweensOf(this.auraImg);
-        this.auraImg.setAlpha(0.7);
-        this._playAuraFade(0.3, 750);
+        this.auraImg.setAlpha(0.95);
+        this._playAuraFade(0.22, 850);
     }
 
     _playAuraFade(targetAlpha, duration) {

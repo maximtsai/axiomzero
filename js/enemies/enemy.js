@@ -181,7 +181,7 @@ class Enemy {
                 const p = protectors[i];
                 const dx = this.x - p.x;
                 const dy = this.y - p.y;
-                if ((dx * dx + dy * dy) <= 130 * 130) {
+                if ((dx * dx + dy * dy) <= GAME_CONSTANTS.PROTECTOR_AURA_SQUARED) {
                     protectedBy = p;
                     break; // Just need one
                 }
