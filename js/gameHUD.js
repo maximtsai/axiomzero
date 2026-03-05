@@ -42,7 +42,7 @@ const gameHUD = (() => {
     }
 
     function _createElements() {
-        const depth = GAME_CONSTANTS.DEPTH_HUD;
+        const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
         // ── Health bar ──
@@ -287,6 +287,14 @@ const gameHUD = (() => {
                 ui.text.setVisible(false);
             }
         });
+
+        // Tell the virtualGroup that its children have moved so they don't snap back to overlapping positions
+        if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
+            const treeGroup = neuralTree.getGroup();
+            if (treeGroup && treeGroup.recalculateOffsets) {
+                treeGroup.recalculateOffsets();
+            }
+        }
     }
 
     function _getResourceValue(id) {

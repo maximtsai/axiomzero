@@ -125,7 +125,7 @@ class PulseAttackView {
 
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale(1.25);
+        this.spriteBright.setScale(1.2);
 
         this.spriteRed.setAlpha(0.35);
         this.spriteRed.setScale(1.35);
@@ -133,6 +133,7 @@ class PulseAttackView {
 
         // Tween alpha back to 0
         PhaserScene.tweens.add({
+            delay: 75,
             targets: [this.spriteBright, this.spriteRed],
             alpha: 0,
             duration: this.FLASH_DURATION,

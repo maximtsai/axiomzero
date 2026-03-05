@@ -171,6 +171,20 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                     });
                 }
             });
+        },
+
+        /**
+         * recalculateOffsets: Update stored absolute offsets based on children's current positions.
+         * Use this if you manually move a child object and want the group to respect its new position.
+         */
+        recalculateOffsets: () => {
+            children.forEach(c => {
+                if (c.ref.scene) {
+                    c.offsetX = c.ref.x - _x;
+                    c.offsetY = c.ref.y - _y;
+                }
+            });
+            return group;
         }
     };
 
