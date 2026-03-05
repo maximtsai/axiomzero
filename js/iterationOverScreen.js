@@ -228,6 +228,11 @@ const iterationOverScreen = (() => {
         tower.reset();
         // Go straight back to combat
         gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
+
+        // Explicitly show the progress bar (and trigger its animation) since we skipped the transitionManager
+        if (typeof gameHUD !== 'undefined') {
+            gameHUD.setWaveProgressBarVisible(true);
+        }
     }
 
     // ── events ───────────────────────────────────────────────────────────

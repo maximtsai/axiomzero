@@ -74,12 +74,21 @@ class ProgressBar {
     }
 
     /**
-     * Show or hide the whole component.
+     * Set the visibility of the whole component.
      * @param {boolean} visible 
      */
     setVisible(visible) {
         this.bg.setVisible(visible);
         this.fill.setVisible(visible);
+    }
+
+    /**
+     * Set the alpha of the whole component.
+     * @param {number} alpha - Value between 0 and 1.
+     */
+    setAlpha(alpha) {
+        this.bg.setAlpha(alpha);
+        this.fill.setAlpha(alpha);
     }
 
     /**

@@ -48,6 +48,7 @@ const transitionManager = (() => {
                 if (typeof neuralTree !== 'undefined') {
                     neuralTree.hide();
                 }
+                gameHUD.setWaveProgressBarVisible(true);
             });
         } else if (targetPhase === GAME_CONSTANTS.PHASE_UPGRADE) {
             // First switch phase so tree UI appears, then slide camera
@@ -62,6 +63,9 @@ const transitionManager = (() => {
             // Fallback — instant transition
             gameStateMachine.goTo(targetPhase);
             _endTransition();
+            if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
+                gameHUD.setWaveProgressBarVisible(true);
+            }
         }
     }
 

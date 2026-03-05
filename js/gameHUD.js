@@ -120,19 +120,19 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 125,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
@@ -151,7 +151,7 @@ const gameHUD = (() => {
             x: GAME_CONSTANTS.halfWidth,
             y: GAME_CONSTANTS.HEIGHT - 22,
             width: GAME_CONSTANTS.WIDTH - 50,
-            height: 30,
+            height: 27,
             padding: 7,
             bgColor: 0x222233,
             fillColor: 0x00f5ff,
@@ -173,7 +173,6 @@ const gameHUD = (() => {
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
-        waveProgressBar.setVisible(true);
     }
 
     function _hideAll() {
@@ -424,5 +423,38 @@ const gameHUD = (() => {
         });
     }
 
-    return { init, showTransitionMessage };
+    function setWaveProgressBarVisible(vis) {
+        if (!waveProgressBar) return;
+        waveProgressBar.setVisible(vis);
+
+        if (vis) {
+            // Animation sequence:
+            // 0.5 alpha, wait 0.05s (50ms), 0 alpha, wait 0.2s (200ms), 0.5 alpha, wait 0.1s (100ms), 0 alpha, wait 0.75s (750ms), 1 alpha.
+            waveProgressBar.setAlpha(0.5);
+
+            PhaserScene.time.delayedCall(40, () => {
+                waveProgressBar.setAlpha(0);
+
+                PhaserScene.time.delayedCall(100, () => {
+                    waveProgressBar.setAlpha(0.6);
+
+                    PhaserScene.time.delayedCall(40, () => {
+                        waveProgressBar.setAlpha(0);
+
+                        PhaserScene.time.delayedCall(350, () => {
+                            waveProgressBar.setAlpha(0.7);
+                            PhaserScene.time.delayedCall(250, () => {
+                                waveProgressBar.setAlpha(0.4);
+                                PhaserScene.time.delayedCall(100, () => {
+                                    waveProgressBar.setAlpha(1);
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        }
+    }
+
+    return { init, showTransitionMessage, setWaveProgressBarVisible };
 })();
