@@ -1,0 +1,70 @@
+{
+	"textures": [
+		{
+			"image": "ui-0.webp",
+			"format": "RGBA8888",
+			"size": {
+				"w": 793,
+				"h": 1911
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "upgrade_outline.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 800,
+						"h": 900
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 8,
+						"w": 791,
+						"h": 883
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 791,
+						"h": 883
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "upgrade_background.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 728,
+						"h": 1024
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 728,
+						"h": 1024
+					},
+					"frame": {
+						"x": 1,
+						"y": 886,
+						"w": 728,
+						"h": 1024
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:cf09fed43d3080e9b71d3790809272a6:f806ccb95a8cfe49631177ac661b47c0:6af6d199855d1c5980a61db04791f8fb$"
+	}
+}

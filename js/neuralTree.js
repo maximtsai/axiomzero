@@ -45,13 +45,13 @@ const neuralTree = (() => {
         // Semi-transparent dark background for the left half — now a Button for drag support
         panelBg = new Button({
             normal: {
-                ref: 'white_pixel',
-                x: 0,
-                y: 0,
-                scaleX: PANEL_W / 2,
-                scaleY: GAME_CONSTANTS.halfHeight,
-                tint: 0x12122a,
-                alpha: 0.9,
+                ref: 'upgrade_background.png',
+                atlas: 'backgrounds',
+                x: TREE_CENTER_X,
+                y: GAME_CONSTANTS.halfHeight,
+                scaleX: 1.25,
+                scaleY: 1.25,
+                alpha: 1,
                 depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE
             },
             onMouseDown: (x, y) => {
