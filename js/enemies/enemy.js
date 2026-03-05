@@ -23,8 +23,10 @@ class Enemy {
         this.size = 0;   // hitbox extent in px — added to AOE range checks
         this.speed = 0;   // movement speed in px/sec
         this.isBoss = false; // if true, knockback does not apply
+        this.isMiniboss = false; // identification flag
         this.knockBackModifier = 1; // multiplier for knockback distance (0-1), default 1
         this.stunned = false;
+        this.hitStopTimer = 0;
         this.baseResourceDrop = 0;
         this.selfDamage = 0;
         this.cannotRotate = false;
@@ -134,8 +136,14 @@ class Enemy {
      */
     update(dt) {
         if (!this.stunned) {
-            this.x += this.vx * dt;
-            this.y += this.vy * dt;
+            let moveMult = 1;
+            if (this.hitStopTimer > 0) {
+                moveMult = 0.1;
+                this.hitStopTimer -= dt;
+            }
+
+            this.x += this.vx * dt * moveMult;
+            this.y += this.vy * dt * moveMult;
         }
         if (this.img) this.img.setPosition(this.x, this.y);
         if (this.hpImg) {
@@ -222,6 +230,11 @@ class Enemy {
             PhaserScene.time.delayedCall(135, () => {
                 this.refreshTint();
             });
+        }
+
+        // Hit-stop scaling: x0.1 speed for 0.15s (reduced by knockback resistance)
+        if (!this.isBoss && !this.isMiniboss) {
+            this.hitStopTimer = 0.15 * this.knockBackModifier;
         }
 
         this._updateHPCrop();
