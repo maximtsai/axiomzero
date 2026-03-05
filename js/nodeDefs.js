@@ -66,6 +66,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: 'pulse_damage',
+        requiresMaxParent: true,
         childIds: [],
         treeX: 300,
         treeY: 600,

@@ -35,7 +35,7 @@ class Miniboss1 extends Miniboss {
         this.img.setActive(false);
 
         // TODO: Swap out special HP sprite per enemy type
-        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'basic_enemy_hp.png');
+        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'miniboss_1_enemy_hp.png');
         this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 2);
         this.hpImg.setVisible(false);
         this.hpImg.setActive(false);

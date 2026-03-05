@@ -54,6 +54,7 @@ class Node {
         this.tier = def.tier || 1;
         this.isDuoBox = def.isDuoBox || false;
         this.shardId = def.shardId || null;
+        this.requiresMaxParent = def.requiresMaxParent || false;
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
@@ -330,8 +331,7 @@ class Node {
                     this.label.setAlpha(0.25);
                 }
                 if (this.iconSprite) {
-                    this.iconSprite.setVisible(true);
-                    this.iconSprite.setAlpha(0.2);
+                    this.iconSprite.setVisible(false);
                 }
                 currentSpriteRef = 'node_ghost.png';
                 break;

@@ -43,7 +43,7 @@ const neuralTree = (() => {
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
 
-        updateManager.addFunction(_updateBackgroundCrop);
+        PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
 
     function _createPanel() {
@@ -200,12 +200,32 @@ const neuralTree = (() => {
                     n.setState(NODE_STATE.UNLOCKED);
                 } else {
                     // Check if parent is purchased
-                    if (n.parentId && ups[n.parentId] && ups[n.parentId] > 0) {
-                        n.setState(NODE_STATE.UNLOCKED);
+                    if (n.parentId && ups[n.parentId]) {
+                        const parentDef = NODE_DEFS.find(d => d.id === n.parentId);
+                        const requiresMax = n.requiresMaxParent;
+                        const parentLv = ups[n.parentId];
+                        const parentMax = parentDef ? parentDef.maxLevel : 1;
+
+                        if (requiresMax) {
+                            if (parentLv >= parentMax) {
+                                n.setState(NODE_STATE.UNLOCKED);
+                            } else if (parentLv > 0) {
+                                n.setState(NODE_STATE.GHOST);
+                            } else {
+                                n.setState(NODE_STATE.HIDDEN);
+                            }
+                        } else {
+                            // Default: unlock if parent has at least 1 point
+                            if (parentLv > 0) {
+                                n.setState(NODE_STATE.UNLOCKED);
+                            } else {
+                                n.setState(NODE_STATE.HIDDEN);
+                            }
+                        }
                     } else if (!n.parentId) {
                         n.setState(ups[id] > 0 ? NODE_STATE.MAXED : NODE_STATE.UNLOCKED);
                     } else {
-                        n.setState(NODE_STATE.GHOST);
+                        n.setState(NODE_STATE.HIDDEN);
                     }
                 }
             }
@@ -218,7 +238,18 @@ const neuralTree = (() => {
         for (let i = 0; i < parent.childIds.length; i++) {
             const child = nodes[parent.childIds[i]];
             if (child && (child.state === NODE_STATE.HIDDEN || child.state === NODE_STATE.GHOST)) {
-                child.setState(NODE_STATE.UNLOCKED);
+                if (child.requiresMaxParent) {
+                    if (parent.isMaxed()) {
+                        child.setState(NODE_STATE.UNLOCKED);
+                    } else if (parent.level > 0 && child.state === NODE_STATE.HIDDEN) {
+                        child.setState(NODE_STATE.GHOST);
+                    }
+                } else {
+                    // Default logic
+                    if (parent.level > 0) {
+                        child.setState(NODE_STATE.UNLOCKED);
+                    }
+                }
             }
         }
         // Redraw lines to reflect new child states
@@ -349,7 +380,7 @@ const neuralTree = (() => {
                 line.setVisible(false);
             } else {
                 line.setVisible(true);
-                const alpha = n.state === NODE_STATE.GHOST ? 0.6 : 1.0;
+                const alpha = n.state === NODE_STATE.GHOST ? 0.25 : 1.0;
                 line.setAlpha(alpha);
             }
         }
@@ -412,10 +443,13 @@ const neuralTree = (() => {
     function _updateBackgroundCrop() {
         if (!panelBg || !visible) return;
 
-        const minVisX = 0;
-        const maxVisX = GAME_CONSTANTS.halfWidth - 20;
-        const minVisY = 22;
-        const maxVisY = GAME_CONSTANTS.HEIGHT - 22;
+        const groupX = treeGroup ? treeGroup.x : 0;
+        const groupY = treeGroup ? treeGroup.y : 0;
+
+        const minVisX = groupX;
+        const maxVisX = groupX + GAME_CONSTANTS.halfWidth - 20;
+        const minVisY = groupY + 22;
+        const maxVisY = groupY + GAME_CONSTANTS.HEIGHT - 22;
 
         const scale = 1.2;
         const texW = 728;
