@@ -59,6 +59,8 @@ GAME_CONSTANTS.PROJECTILE_HIT_RADIUS = 15;
 
 // ─── Miniboss / Boss ──────────────────────────────────────────────────────────
 
+GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS = 0.5651; // wave percentage (0-1)
+
 // ─── Neural Tree ──────────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.TREE_DRAG_MIN_X = 0;

@@ -539,7 +539,7 @@ const enemyManager = (() => {
 
     function _onWaveProgress(progress) {
         lastWaveProgress = progress;
-        if (progress >= 0.5 && !minibossSpawned && spawning) {
+        if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !minibossSpawned && spawning) {
             _spawnMiniboss();
         }
     }

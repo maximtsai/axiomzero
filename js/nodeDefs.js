@@ -47,8 +47,8 @@ const NODE_DEFS = [
         costStep: 4,
         parentId: 'awaken',
         childIds: ['pulse_damage_2'],
-        treeX: 300,
-        treeY: 700,
+        treeX: 325,
+        treeY: 725,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -68,8 +68,8 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         requiresMaxParent: true,
         childIds: [],
-        treeX: 300,
-        treeY: 600,
+        treeX: 325,
+        treeY: 650,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -89,7 +89,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['regen'],
         treeX: 400,
-        treeY: 700,
+        treeY: 725,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -108,8 +108,8 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'awaken',
         childIds: [],
-        treeX: 500,
-        treeY: 700,
+        treeX: 475,
+        treeY: 725,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -129,7 +129,7 @@ const NODE_DEFS = [
         parentId: 'reinforce',
         childIds: [],
         treeX: 400,
-        treeY: 600,
+        treeY: 650,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

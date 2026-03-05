@@ -34,7 +34,7 @@ const LEVEL_CONFIG = {
 
 /**
  * Helper to get the config for the current level.
- * @param {number} progress - Current wave progress (0 to 1). If > 0.51, lateWeights are used.
+ * @param {number} progress - Current wave progress (0 to 1). If > MINIBOSS_SPAWN_PROGRESS + 0.01, lateWeights are used.
  */
 function getCurrentLevelConfig(progress = 0) {
     let level = gameState.currentLevel || 1;
@@ -45,7 +45,7 @@ function getCurrentLevelConfig(progress = 0) {
     const config = LEVEL_CONFIG[level];
 
     // Swap the public probabilities based on wave progress
-    config.enemyProbabilities = (progress > 0.51 && config._probs2) ? config._probs2 : config._probs1;
+    config.enemyProbabilities = (progress > GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS + 0.01 && config._probs2) ? config._probs2 : config._probs1;
 
     return config;
 }

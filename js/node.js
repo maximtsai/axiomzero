@@ -249,16 +249,6 @@ class Node {
                 .setScrollFactor(0);
         }
 
-        // Node name label
-        this.label = PhaserScene.add.text(x, y + 32, this.name, {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '17px',
-            color: '#ffffff',
-            align: 'center',
-            stroke: '#000000',
-            strokeThickness: 6,
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2).setScrollFactor(0);
-
         // Fadeout sprite — overlays button, starts invisible
         this.fadeoutSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_ghost.png')
             .setOrigin(0.5, 0.5)
@@ -272,13 +262,11 @@ class Node {
             const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
             treeGroup.add(btnObj);
             if (this.iconSprite) treeGroup.add(this.iconSprite);
-            if (this.label) treeGroup.add(this.label);
             treeGroup.add(this.fadeoutSprite);
 
             if (draggableGroup) {
                 draggableGroup.add(btnObj);
                 if (this.iconSprite) draggableGroup.add(this.iconSprite);
-                if (this.label) draggableGroup.add(this.label);
                 draggableGroup.add(this.fadeoutSprite);
             }
         }
@@ -315,7 +303,6 @@ class Node {
             case NODE_STATE.HIDDEN:
                 this.btn.setVisible(false);
                 this.btn.setState(DISABLE);
-                if (this.label) this.label.setVisible(false);
                 if (this.iconSprite) this.iconSprite.setVisible(false);
                 currentSpriteRef = null;
                 break;
@@ -325,11 +312,7 @@ class Node {
                 this.btn.disable = { ref: 'node_ghost.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-                this.btn.setAlpha(1);
-                if (this.label) {
-                    this.label.setVisible(true);
-                    this.label.setAlpha(0.25);
-                }
+                this.btn.setAlpha(0.4);
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(false);
                 }
@@ -349,11 +332,6 @@ class Node {
                     this.btn.setState(DISABLE);
                     currentSpriteRef = 'node_unlocked_disabled.png';
                 }
-                if (this.label) {
-                    this.label.setVisible(true);
-                    this.label.setAlpha(1);
-                    this.label.setColor('#00f5ff');
-                }
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(true);
                     this.iconSprite.setAlpha(1);
@@ -366,11 +344,6 @@ class Node {
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
                 this.btn.setAlpha(1);
-                if (this.label) {
-                    this.label.setVisible(true);
-                    this.label.setAlpha(0.8);
-                    this.label.setColor('#ffe600');
-                }
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(true);
                     this.iconSprite.setAlpha(1);
@@ -536,7 +509,6 @@ class Node {
 
     setVisible(vis) {
         if (this.btn) this.btn.setVisible(vis);
-        if (this.label) this.label.setVisible(vis);
         if (this.iconSprite) this.iconSprite.setVisible(vis);
         if (!vis) this._hideHover();
     }
@@ -552,7 +524,6 @@ class Node {
             this.fadeoutSprite = null;
         }
         if (this.btn) { this.btn.destroy(); this.btn = null; }
-        if (this.label) { this.label.destroy(); this.label = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
     }
 }
