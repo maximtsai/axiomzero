@@ -50,34 +50,26 @@ class ProtectorEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3;
-        this.health = this.maxHealth;
-        this.selfDamage = 0;
-        this.damage = 0;
-        this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.5;
-        this.size = 18;
+        super.activate(x, y, {
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
+            damage: 0,
+            selfDamage: 0,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.5,
+            size: 18
+        });
 
         this.state = PROTECTOR_STATE.RUSHING;
         this.rushElapsed = 0;
         this.auraActive = false;
 
-        if (this.img) {
-            this.img.setAlpha(1);
-            this.img.setScale(1);
-            this.img.setTint(0xffffff); // clear tint
-        }
-        if (this.hpImg) {
-            this.hpImg.setAlpha(1);
-            this.hpImg.setScale(1);
-        }
-
         if (this.auraImg) {
-            PhaserScene.tweens.killTweensOf(this.auraImg);
             this.auraImg.setVisible(false);
             this.auraImg.setScale(0);
+            this.auraImg.setAlpha(0);
+            PhaserScene.tweens.killTweensOf(this.auraImg);
         }
 
-        super.activate(x, y);
+        if (this.img) this.img.setTint(0xffffff);
     }
 
     deactivate() {
@@ -175,44 +167,12 @@ class ProtectorEnemy extends Enemy {
         });
     }
 
-    takeDamage(amount) {
-        const died = super.takeDamage(amount);
-
-        if (this.img) {
-            const wobble = Phaser.Math.FloatBetween(-0.15, 0.15);
-            this.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 75,
-                targets: [this.img, this.hpImg],
-                rotation: '-=' + wobble,
-                duration: 400,
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.setRotation(this.baseRotation || 0);
-                    this.wobbleAnim = null;
-                }
-            });
-
-            // Alpha flicker
-            if (this.img.scene) {
-                PhaserScene.tweens.add({
-                    targets: this.img,
-                    alpha: { from: 0.6, to: 1 },
-                    duration: 100,
-                    ease: 'Linear',
-                });
-                if (this.hpImg) {
-                    PhaserScene.tweens.add({
-                        targets: this.hpImg,
-                        alpha: { from: 0.6, to: 1 },
-                        duration: 100,
-                        ease: 'Linear',
-                    });
-                }
-            }
-        }
-
-        return died;
+    getHitFeedbackConfig() {
+        return {
+            wobbleIntensity: 0.15,
+            wobbleDuration: 400,
+            flickerAlpha: 0.6,
+            flickerDuration: 100
+        };
     }
 }

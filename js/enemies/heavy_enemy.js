@@ -24,65 +24,23 @@ class HeavyEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5;
-        this.health = this.maxHealth;
-        this.selfDamage = this.maxHealth * 0.201;
-        this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5;
-        this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75;
-        this.size = 24;
+        super.activate(x, y, {
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
+            selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5 * 0.201,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
+            size: 24
+        });
 
-        if (this.img) {
-            this.img.setAlpha(1);
-            this.img.setScale(1);
-            this.img.setTint(0xffffff); // Reset tint
-        }
-        if (this.hpImg) {
-            this.hpImg.setAlpha(1);
-            this.hpImg.setScale(1);
-        }
-
-        super.activate(x, y);
+        if (this.img) this.img.setTint(0xffffff);
     }
 
-    takeDamage(amount) {
-        const died = super.takeDamage(amount);
-
-        if (this.img) {
-            // Slower, heavier wobble
-            const wobble = Phaser.Math.FloatBetween(-0.2, 0.2);
-            this.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 75,
-                targets: [this.img, this.hpImg],
-                rotation: '-=' + wobble,
-                duration: 500, // Longer duration for heavy feel
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.setRotation(this.baseRotation || 0);
-                    this.wobbleAnim = null;
-                }
-            });
-
-            // Alpha flicker
-            if (this.img.scene) {
-                PhaserScene.tweens.add({
-                    targets: this.img,
-                    alpha: { from: 0.6, to: 1 },
-                    duration: 100,
-                    ease: 'Linear',
-                });
-                if (this.hpImg) {
-                    PhaserScene.tweens.add({
-                        targets: this.hpImg,
-                        alpha: { from: 0.6, to: 1 },
-                        duration: 100,
-                        ease: 'Linear',
-                    });
-                }
-            }
-        }
-
-        return died;
+    getHitFeedbackConfig() {
+        return {
+            wobbleIntensity: 0.2,
+            wobbleDuration: 500,
+            flickerAlpha: 0.6,
+            flickerDuration: 100
+        };
     }
 }

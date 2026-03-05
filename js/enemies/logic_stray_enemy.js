@@ -96,16 +96,4 @@ class LogicStrayEnemy extends Enemy {
         this.vy = Math.sin(finalAngle) * this.speed;
     }
 
-    takeDamage(amount) {
-        const died = super.takeDamage(amount);
-
-        if (this.img && this.img.scene) {
-            // Standard hit flicker already handled by super? 
-            // Actually subclasses often add their own wobble.
-            // USER specified: "Once damaged, starts spinning twice as fast and moves twice as fast"
-            // This is handled in update to avoid state issues mid-damage-calc.
-        }
-
-        return died;
-    }
 }

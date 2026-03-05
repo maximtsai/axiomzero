@@ -45,20 +45,35 @@ class Enemy {
      * Activate at (x, y) and make the display object visible.
      * Subclasses set stats and reset visuals BEFORE calling super.activate().
      */
-    activate(x, y) {
+    activate(x, y, config = {}) {
         this.x = x;
         this.y = y;
         this.alive = true;
         this.stunned = false;
+
+        // Reset core stats if provided, or use defaults
+        if (config.maxHealth !== undefined) {
+            this.maxHealth = config.maxHealth;
+            this.health = config.maxHealth;
+        }
+        if (config.speed !== undefined) this.speed = config.speed;
+        if (config.damage !== undefined) this.damage = config.damage;
+        if (config.size !== undefined) this.size = config.size;
+        if (config.selfDamage !== undefined) this.selfDamage = config.selfDamage;
+
         if (this.img) {
             this.img.setPosition(x, y);
             this.img.setVisible(true);
             this.img.setActive(true);
+            this.img.setAlpha(1);
+            this.img.setScale(1);
 
             if (this.hpImg) {
                 this.hpImg.setPosition(x, y);
                 this.hpImg.setVisible(true);
                 this.hpImg.setActive(true);
+                this.hpImg.setAlpha(1);
+                this.hpImg.setScale(1);
                 this._updateHPCrop();
             }
 
@@ -211,11 +226,58 @@ class Enemy {
 
         this._updateHPCrop();
 
+        this.playHitFeedback(this.getHitFeedbackConfig?.() || {});
+
         if (this.health <= 0) {
             this.health = 0;
             return true;
         }
         return false;
+    }
+
+    /**
+     * Plays visual hit feedback (wobble and flicker).
+     * @param {Object} config
+     * @param {number} [config.wobbleIntensity=0.3]
+     * @param {number} [config.wobbleDuration=370]
+     * @param {number} [config.flickerAlpha=0.5]
+     * @param {number} [config.flickerDuration=80]
+     */
+    playHitFeedback(config = {}) {
+        if (!this.img || !this.img.scene) return;
+
+        const {
+            wobbleIntensity = 0.3,
+            wobbleDuration = 370,
+            flickerAlpha = 0.5,
+            flickerDuration = 80
+        } = config;
+
+        // Rotation wobble
+        if (!this.cannotRotate) {
+            const wobble = Phaser.Math.FloatBetween(-wobbleIntensity, wobbleIntensity);
+            this.setRotation(this.baseRotation + wobble);
+            if (this.wobbleAnim) this.wobbleAnim.stop();
+            this.wobbleAnim = PhaserScene.tweens.add({
+                delay: 75,
+                targets: [this.img, this.hpImg],
+                rotation: '-=' + wobble,
+                duration: wobbleDuration,
+                ease: 'Cubic.easeInOut',
+                onComplete: () => {
+                    this.setRotation(this.baseRotation || 0);
+                    this.wobbleAnim = null;
+                }
+            });
+        }
+
+        // Alpha flicker
+        PhaserScene.tweens.add({
+            targets: [this.img, this.hpImg].filter(i => i && i.scene),
+            alpha: { from: flickerAlpha, to: 1 },
+            duration: flickerDuration,
+            ease: 'Linear'
+        });
     }
 
     /**

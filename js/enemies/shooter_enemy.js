@@ -33,27 +33,16 @@ class ShooterEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor;
-        this.health = this.maxHealth;
-        this.selfDamage = 0;
-        this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor; // Deals damage if it touches base
-        this.projectileDamage = this.baseProjectileDamage * scaleFactor;
-        this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED;
-        this.size = 12;
+        super.activate(x, y, {
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
+            selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
+            size: 15
+        });
 
-        this.state = SHOOTER_STATE.MOVING;
         this.fireCooldown = 0;
-
-        if (this.img) {
-            this.img.setAlpha(1);
-            this.img.setScale(1);
-        }
-        if (this.hpImg) {
-            this.hpImg.setAlpha(1);
-            this.hpImg.setScale(1);
-        }
-
-        super.activate(x, y);
+        this.baseAttackInterval = 2500;
     }
 
     update(dt) {
@@ -106,45 +95,4 @@ class ShooterEnemy extends Enemy {
         }
     }
 
-    takeDamage(amount) {
-        const died = super.takeDamage(amount);
-
-        if (this.img) {
-            // Rotation wobble on hit
-            const wobble = Phaser.Math.FloatBetween(-0.3, 0.3);
-            this.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 75,
-                targets: [this.img, this.hpImg],
-                rotation: '-=' + wobble,
-                duration: 370,
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.setRotation(this.baseRotation);
-                    this.wobbleAnim = null;
-                }
-            });
-
-            // Alpha flicker
-            if (this.img.scene) {
-                PhaserScene.tweens.add({
-                    targets: this.img,
-                    alpha: { from: 0.5, to: 1 },
-                    duration: 80,
-                    ease: 'Linear',
-                });
-                if (this.hpImg) {
-                    PhaserScene.tweens.add({
-                        targets: this.hpImg,
-                        alpha: { from: 0.5, to: 1 },
-                        duration: 80,
-                        ease: 'Linear',
-                    });
-                }
-            }
-        }
-
-        return died;
-    }
 }
