@@ -135,8 +135,8 @@ class Miniboss1 extends Miniboss {
                 const dist = Math.max(1, distToTower);
                 const ux = dx / dist;
                 const uy = dy / dist;
-                // Offset 36px towards player
-                this.chargeSprite.setPosition(this.x + ux * 36, this.y + uy * 36);
+                // Offset 41px towards player
+                this.chargeSprite.setPosition(this.x + ux * 41, this.y + uy * 41);
                 this.chargeSprite.setRotation(0); // Forced to 0 rotation
 
                 if (this._isRampingUp) {
@@ -231,8 +231,14 @@ class Miniboss1 extends Miniboss {
 
     _fireBullet(targetX, targetY) {
         if (typeof enemyBulletManager !== 'undefined') {
+            const dx = targetX - this.x;
+            const dy = targetY - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const ux = dx / dist;
+            const uy = dy / dist;
+
             enemyBulletManager.fire(
-                this.x, this.y,
+                this.x + ux * 20, this.y + uy * 20,
                 targetX, targetY,
                 MB1.BULLET_DAMAGE
             );

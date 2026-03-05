@@ -50,7 +50,7 @@ GAME_CONSTANTS.PROTECTOR_AURA_SQUARED = 34225; // 185 * 185
 
 // ─── DATA drops ───────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.DATA_PICKUP_RADIUS = 60;  // px — cursor auto-collects within this
+GAME_CONSTANTS.DATA_PICKUP_RADIUS = 75;  // px — cursor auto-collects within this
 
 // ─── Projectile ───────────────────────────────────────────────────────────────
 

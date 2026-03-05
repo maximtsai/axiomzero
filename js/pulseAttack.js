@@ -7,7 +7,7 @@ class PulseAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 2000;  // ms between pulses
         this.BASE_DAMAGE = 4;
-        this.BASE_SIZE = 90;    // px — AOE square side length
+        this.BASE_SIZE = 100;    // px — AOE square side length
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false;  // true after basic_pulse purchased
@@ -60,6 +60,7 @@ class PulseAttackView {
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         this.sprite.setAlpha(this.IDLE_ALPHA);
         this.sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.sprite.setScrollFactor(0);
         this.sprite.setVisible(false);
 
         // Red background pulse
@@ -72,6 +73,7 @@ class PulseAttackView {
         this.spriteRed.setOrigin(0.5, 0.5);
         this.spriteRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.spriteRed.setAlpha(0);
+        this.spriteRed.setScrollFactor(0);
         this.spriteRed.setVisible(false);
 
         // Flash overlay sprite
@@ -84,6 +86,7 @@ class PulseAttackView {
         this.spriteBright.setOrigin(0.5, 0.5);
         this.spriteBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
         this.spriteBright.setAlpha(0);
+        this.spriteBright.setScrollFactor(0);
         this.spriteBright.setVisible(false);
 
         // Pointer sprite
@@ -91,6 +94,7 @@ class PulseAttackView {
         this.cursorX = 0;
         this.cursorY = 0;
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
+        this.spritePointer.setScrollFactor(0);
         this.spritePointer.setVisible(false);
     }
 
