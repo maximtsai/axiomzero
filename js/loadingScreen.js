@@ -41,7 +41,7 @@ class LoadingScreen {
             () => { this._onComplete(); },
             (progress, statusText) => {
                 if (progress !== null && progress !== undefined) {
-                    this._bar.scaleX = GAME_CONSTANTS.LOADING_BAR_WIDTH * progress;
+                    this._bar.scaleX = (GAME_CONSTANTS.LOADING_BAR_WIDTH / 2) * progress;
                 }
                 if (statusText) {
                     this._text.setText('Loading... (' + statusText + ')');
@@ -55,8 +55,8 @@ class LoadingScreen {
     // ─── Private ──────────────────────────────────────────────────────────────
 
     _buildUI(scene) {
-        const cx   = GAME_CONSTANTS.halfWidth;
-        const cy   = GAME_CONSTANTS.halfHeight;
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
         const barW = GAME_CONSTANTS.LOADING_BAR_WIDTH;
         const barH = GAME_CONSTANTS.LOADING_BAR_HEIGHT;
 
@@ -65,20 +65,20 @@ class LoadingScreen {
         // Bar track
         this._barTrack = scene.add.image(cx, cy + 50, 'white_pixel')
             .setAlpha(0.3)
-            .setScale(barW, barH)
+            .setScale(barW / 2, barH / 2)
             .setDepth(1);
 
         // Bar fill – grows rightward from the left edge
         this._bar = scene.add.image(cx - barW / 2, cy + 50, 'white_pixel')
             .setOrigin(0, 0.5)
-            .setScale(1, barH)
+            .setScale(0.5, barH / 2)
             .setDepth(2);
 
         this._text = scene.add.text(cx, cy - 25, 'Loading...', {
             fontFamily: 'Times New Roman',
-            fontSize:   29,
-            color:      '#ffffff',
-            align:      'center',
+            fontSize: 29,
+            color: '#ffffff',
+            align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(2);
     }
 
@@ -110,39 +110,39 @@ class LoadingScreen {
 
     _showRunAnywaysButton(forceFinish) {
         const scene = this._scene;
-        const cx    = GAME_CONSTANTS.halfWidth;
-        const btnY  = GAME_CONSTANTS.halfHeight + 125;  // below bar (bar is at cy+50)
+        const cx = GAME_CONSTANTS.halfWidth;
+        const btnY = GAME_CONSTANTS.halfHeight + 125;  // below bar (bar is at cy+50)
 
         this._runBtnBg = scene.add.image(cx, btnY, 'black_pixel')
-            .setScale(238, 43)
+            .setScale(238 / 2, 43 / 2)
             .setAlpha(0.85)
             .setDepth(3)
             .setInteractive({ useHandCursor: true });
 
         this._runBtnText = scene.add.text(cx, btnY, 'RUN ANYWAYS', {
             fontFamily: 'Times New Roman',
-            fontSize:   24,
-            color:      '#ffffff',
-            align:      'center',
+            fontSize: 24,
+            color: '#ffffff',
+            align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(4);
 
         this._runBtnBg.on('pointerover', () => this._runBtnBg.setAlpha(1));
-        this._runBtnBg.on('pointerout',  () => this._runBtnBg.setAlpha(0.85));
-        this._runBtnBg.on('pointerup',   () => forceFinish());
+        this._runBtnBg.on('pointerout', () => this._runBtnBg.setAlpha(0.85));
+        this._runBtnBg.on('pointerup', () => forceFinish());
     }
 
     _onComplete() {
-        if (this._bg)         { this._bg.destroy();         this._bg = null; }
-        if (this._barTrack)   { this._barTrack.destroy();   this._barTrack = null; }
-        if (this._bar)        { this._bar.destroy();        this._bar = null; }
-        if (this._runBtnBg)   { this._runBtnBg.destroy();   this._runBtnBg = null; }
-        if (this._runBtnText) { this._runBtnText.destroy();  this._runBtnText = null; }
+        if (this._bg) { this._bg.destroy(); this._bg = null; }
+        if (this._barTrack) { this._barTrack.destroy(); this._barTrack = null; }
+        if (this._bar) { this._bar.destroy(); this._bar = null; }
+        if (this._runBtnBg) { this._runBtnBg.destroy(); this._runBtnBg = null; }
+        if (this._runBtnText) { this._runBtnText.destroy(); this._runBtnText = null; }
         if (this._text) {
             this._text.setText('Done');
             PhaserScene.tweens.add({
-                targets:  this._text,
-                alpha:    0,
-                delay:    300,
+                targets: this._text,
+                alpha: 0,
+                delay: 300,
                 duration: 400,
                 onComplete: () => {
                     if (this._text) { this._text.destroy(); this._text = null; }

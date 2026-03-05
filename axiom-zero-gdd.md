@@ -475,6 +475,7 @@ Optional modifiers:
 
 - **Resolution:** 1600×900, fixed
 - **Glow effects:** Traditional sprite methods only (pre-rendered glow sprites, additive blending on layered sprites). The Phaser FX pipeline is not used anywhere in the codebase.
+- **Pixel Sprites:** All `white_pixel` and `black_pixel` assets are **2x2 pixels**. Prefer sizing via **`.setScale()`** using a factor of **0.5 × target pixels** (e.g., `.setScale(125)` for 250px target width).
 - **Depth/layering:** All game objects use flat depth values via `setDepth()`. Phaser Containers are not used anywhere in the codebase.
 - **Enemy collision:** No collision detection between enemies. Enemies may fully overlap one another.
 - **Enemy spawning:** Enemies spawn 900px from the center of the screen at random angles. They then travel in a straight fixed-path line directly to the tower. No dynamic pathfinding.

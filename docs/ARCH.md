@@ -61,7 +61,15 @@ The game loop cycles through distinct phases defined in `globals.js` (`GAME_CONS
 - **Phases**: Combat, Upgrade, Wave Complete, Game Over.
 - **Transitions**: Controlled by `transitionManager.js`, which handles camera slides and UI messages (e.g., the TYPEWRITER effect for anomalies).
 
-## 4. Development Guidelines
+## 4. Asset Standards
+
+### Pixel Textures
+The project uses `white_pixel` and `black_pixel` textures for geometry and overlays.
+- **Dimensions**: All "pixel" sprites are **2x2 pixels**.
+- **Sizing Rule**: Sizing via **`.setScale()`** is preferred. However, because the base texture is **2x2**, the scale factor must be **50% of the target pixel dimension** (e.g., for a 250px width, use `.setScale(125)`).
+- **Reasoning**: This maintains consistency with standard Phaser scaling patterns while accounting for the non-1x1 asset dimensions.
+
+## 5. Development Guidelines
 
 1. **Strict Phaser Separation**: Keep core logic mathematically pure; pass visual updates to View classes.
 2. **Audio First**: When adding actions (clicks, kills, drops), wire up tactile audio feedback.

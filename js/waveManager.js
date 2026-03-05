@@ -87,14 +87,14 @@ const waveManager = (() => {
         deathOverlay = PhaserScene.add.image(
             GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel'
         );
-        deathOverlay.setScale(0);
+        deathOverlay.setScale(0, 0);
         deathOverlay.setAlpha(0);
         deathOverlay.setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY);
 
         PhaserScene.tweens.add({
             targets: deathOverlay,
-            scaleX: GAME_CONSTANTS.WIDTH,
-            scaleY: GAME_CONSTANTS.HEIGHT,
+            scaleX: GAME_CONSTANTS.halfWidth,
+            scaleY: GAME_CONSTANTS.halfHeight,
             alpha: 0.3,
             duration: 350,
             ease: 'Quad.easeOut',

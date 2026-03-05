@@ -84,7 +84,10 @@ const gameHUD = (() => {
 
         resourceTypes.forEach((type, i) => {
             const icon = PhaserScene.add.image(groupX + 11, currY, 'player', type.icon);
-            icon.setOrigin(0.5, 0.5).setDepth(depth + 2).setScrollFactor(0).setVisible(false).setScale(1.2);
+            icon.setOrigin(0.5, 0.5).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
+
+            const scale = (type.id === 'data') ? 1 : 1.12;
+            icon.setScale(scale);
 
             const text = PhaserScene.add.text(groupX + 28, currY - 11, '0', {
                 fontFamily: 'JetBrainsMono_Regular',

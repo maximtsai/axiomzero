@@ -48,8 +48,8 @@ const neuralTree = (() => {
                 ref: 'white_pixel',
                 x: 0,
                 y: 0,
-                scaleX: PANEL_W,
-                scaleY: GAME_CONSTANTS.HEIGHT,
+                scaleX: PANEL_W / 2,
+                scaleY: GAME_CONSTANTS.halfHeight,
                 tint: 0x12122a,
                 alpha: 0.9,
                 depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE

@@ -4,8 +4,8 @@
 			"image": "enemies-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 507,
-				"h": 992
+				"w": 506,
+				"h": 997
 			},
 			"scale": 1,
 			"frames": [
@@ -360,74 +360,24 @@
 					}
 				},
 				{
-					"filename": "miniboss_1.png",
+					"filename": "shooter.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 201,
-						"h": 201
+						"w": 101,
+						"h": 101
 					},
 					"spriteSourceSize": {
-						"x": 35,
-						"y": 35,
-						"w": 131,
-						"h": 131
-					},
-					"frame": {
-						"x": 304,
-						"y": 855,
-						"w": 131,
-						"h": 131
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "logic_stray_enemy_hp.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 31
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 31
+						"x": 16,
+						"y": 16,
+						"w": 69,
+						"h": 69
 					},
 					"frame": {
 						"x": 304,
 						"y": 821,
-						"w": 32,
-						"h": 31
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "fast_enemy_hp.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 40,
-						"h": 25
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 39,
-						"h": 25
-					},
-					"frame": {
-						"x": 338,
-						"y": 821,
-						"w": 39,
-						"h": 25
+						"w": 69,
+						"h": 69
 					},
 					"anchor": {
 						"x": 0.5,
@@ -449,7 +399,7 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 379,
+						"x": 375,
 						"y": 821,
 						"w": 23,
 						"h": 23
@@ -474,7 +424,7 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 379,
+						"x": 375,
 						"y": 821,
 						"w": 23,
 						"h": 23
@@ -485,24 +435,24 @@
 					}
 				},
 				{
-					"filename": "shooter.png",
+					"filename": "miniboss_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 101,
-						"h": 101
+						"w": 141,
+						"h": 121
 					},
 					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 69,
-						"h": 69
+						"x": 27,
+						"y": 13,
+						"w": 108,
+						"h": 95
 					},
 					"frame": {
-						"x": 437,
+						"x": 375,
 						"y": 855,
-						"w": 69,
-						"h": 69
+						"w": 108,
+						"h": 95
 					},
 					"anchor": {
 						"x": 0.5,
@@ -524,9 +474,34 @@
 						"h": 51
 					},
 					"frame": {
-						"x": 437,
-						"y": 926,
+						"x": 304,
+						"y": 892,
 						"w": 51,
+						"h": 51
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "miniboss_1_enemy_hp.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 43,
+						"h": 51
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 43,
+						"h": 51
+					},
+					"frame": {
+						"x": 304,
+						"y": 945,
+						"w": 43,
 						"h": 51
 					},
 					"anchor": {
@@ -549,7 +524,7 @@
 						"h": 39
 					},
 					"frame": {
-						"x": 1,
+						"x": 349,
 						"y": 952,
 						"w": 48,
 						"h": 39
@@ -574,7 +549,7 @@
 						"h": 39
 					},
 					"frame": {
-						"x": 51,
+						"x": 399,
 						"y": 952,
 						"w": 47,
 						"h": 39
@@ -599,10 +574,60 @@
 						"h": 33
 					},
 					"frame": {
-						"x": 100,
+						"x": 448,
 						"y": 952,
 						"w": 33,
 						"h": 33
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "logic_stray_enemy_hp.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 31
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 31
+					},
+					"frame": {
+						"x": 1,
+						"y": 952,
+						"w": 32,
+						"h": 31
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "fast_enemy_hp.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 39,
+						"h": 25
+					},
+					"frame": {
+						"x": 35,
+						"y": 952,
+						"w": 39,
+						"h": 25
 					},
 					"anchor": {
 						"x": 0.5,
@@ -624,7 +649,7 @@
 						"h": 31
 					},
 					"frame": {
-						"x": 135,
+						"x": 76,
 						"y": 952,
 						"w": 31,
 						"h": 31
@@ -640,6 +665,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8f6823ab7594414df921d425325b855c:214417fe36a2dd5eee24940b7e365414:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c640d69616f66b1b9f35173466c0ccc2:e161bb6d7a7d61ca145057fd4a1a0a96:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }
