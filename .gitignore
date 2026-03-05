@@ -2,3 +2,5 @@
 *.zip
 *.exe
 nul
+assets/backgrounds/**
+assets/sprites/**

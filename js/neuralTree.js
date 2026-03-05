@@ -41,6 +41,8 @@ const neuralTree = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
+
+        updateManager.addFunction(_updateBackgroundCrop);
     }
 
     function _createPanel() {
@@ -57,7 +59,7 @@ const neuralTree = (() => {
 
         // Static outline frame for the left half
         panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 4);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
@@ -110,7 +112,7 @@ const neuralTree = (() => {
             fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5).setScrollFactor(0).setVisible(false);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20).setScrollFactor(0).setVisible(false);
 
         treeGroup.add(titleText);
     }
@@ -361,6 +363,42 @@ const neuralTree = (() => {
     function getNode(id) { return nodes[id] || null; }
 
     function isVisible() { return visible; }
+
+    function _updateBackgroundCrop() {
+        if (!panelBg || !visible) return;
+
+        const minVisX = 0;
+        const maxVisX = GAME_CONSTANTS.halfWidth - 20;
+        const minVisY = 22;
+        const maxVisY = GAME_CONSTANTS.HEIGHT - 22;
+
+        const scale = 1.25;
+        const texW = 728;
+        const texH = 1024;
+
+        // Bounds of the scaled sprite
+        const spriteLeft = panelBg.x - (texW * scale) / 2;
+        const spriteRight = panelBg.x + (texW * scale) / 2;
+        const spriteTop = panelBg.y - (texH * scale) / 2;
+        const spriteBottom = panelBg.y + (texH * scale) / 2;
+
+        // Calculate visible portion
+        const cropLeft = Math.max(spriteLeft, minVisX);
+        const cropRight = Math.min(spriteRight, maxVisX);
+        const cropTop = Math.max(spriteTop, minVisY);
+        const cropBottom = Math.min(spriteBottom, maxVisY);
+
+        const cropW = (cropRight - cropLeft) / scale;
+        const cropH = (cropBottom - cropTop) / scale;
+
+        if (cropW <= 0 || cropH <= 0) {
+            panelBg.setCrop(0, 0, 0.1, 0.1);
+        } else {
+            const cropX = (cropLeft - spriteLeft) / scale;
+            const cropY = (cropTop - spriteTop) / scale;
+            panelBg.setCrop(cropX, cropY, cropW, cropH);
+        }
+    }
 
     function _showDeployButton() {
         if (deployBtn) {
