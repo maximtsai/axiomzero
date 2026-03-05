@@ -20,7 +20,7 @@ function createOptionsButton(x, y) {
             x: x,
             y: y
         },
-        onMouseUp: function() {
+        onMouseUp: function () {
             _showOptionsPopup();
         }
     });
@@ -35,8 +35,8 @@ function _showOptionsPopup() {
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
-    const width = 550;
-    const height = 630;
+    const width = 450;
+    const height = 300;
 
     const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
@@ -53,20 +53,20 @@ function _showOptionsPopup() {
     blocker.setDepth(depth + 1);
     blocker.setScrollFactor(0);
 
-    const popupBG = PhaserScene.add.nineslice(W, H, 'buttons', 'popup.png', width, height, 50, 50, 50, 50);
+    const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, 60, 60, 60, 60);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
 
-    const titleObj = PhaserScene.add.text(W, H - height/2 + 35, 'Options', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff',
-    }).setOrigin(0.5, 0).setDepth(depth + 3).setScrollFactor(0);
+    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 35, '// OPTIONS', {
+        fontFamily: 'VCR', fontSize: '24px', color: '#ffffff',
+    }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0);
 
     const sfxLabel = PhaserScene.add.text(W - 120, H - 40, 'SFX', {
-        fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#ffffff',
+        fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
 
-    const musicLabel = PhaserScene.add.text(W - 120, H + 20, 'Music', {
-        fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#ffffff',
+    const musicLabel = PhaserScene.add.text(W - 120, H + 20, 'MUSIC', {
+        fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
 
     const sfxSliderWidth = 200;
@@ -97,9 +97,9 @@ function _showOptionsPopup() {
     );
 
     const closeBtn = new Button({
-        normal: { ref: 'closebtn.png', atlas: 'buttons', x: W + width/2 - 35, y: H - height/2 + 35 },
-        hover: { ref: 'closebtn_hover.png', atlas: 'buttons' },
-        press: { ref: 'closebtn_press.png', atlas: 'buttons' },
+        normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 33, y: H - height / 2 + 34 },
+        hover: { ref: 'close_button_hover.png', atlas: 'ui' },
+        press: { ref: 'close_button_press.png', atlas: 'ui' },
         onMouseUp: () => closePopup()
     });
     closeBtn.setDepth(depth + 3);

@@ -173,7 +173,33 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">ui/checkbox_off_hover.png</key>
+            <key type="filename">ui/checkbox_off_normal.png</key>
+            <key type="filename">ui/checkbox_off_press.png</key>
+            <key type="filename">ui/checkbox_on_hover.png</key>
+            <key type="filename">ui/checkbox_on_normal.png</key>
+            <key type="filename">ui/checkbox_on_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,12,24,24</rect>
+                <key>scale9Paddings</key>
+                <rect>12,12,24,24</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">ui/close_button_hover.png</key>
+            <key type="filename">ui/close_button_normal.png</key>
+            <key type="filename">ui/close_button_press.png</key>
+            <key type="filename">ui/glow_btn_9slice.png</key>
+            <key type="filename">ui/glow_max.png</key>
             <key type="filename">ui/progress_container.png</key>
+            <key type="filename">ui/warning_btn_9slice.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -185,6 +211,36 @@
                 <rect>15,15,30,30</rect>
                 <key>scale9Paddings</key>
                 <rect>15,15,30,30</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">ui/popup_nineslice.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>53,53,105,105</rect>
+                <key>scale9Paddings</key>
+                <rect>53,53,105,105</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">ui/ui_background.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,3,5,5</rect>
+                <key>scale9Paddings</key>
+                <rect>3,3,5,5</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
