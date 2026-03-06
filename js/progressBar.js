@@ -35,7 +35,7 @@ class ProgressBar {
     _create() {
         // Container (the "tray")
         this.bg = this.scene.add.image(this.x, this.y, 'white_pixel');
-        this.bg.setDisplaySize(this.width, this.height);
+        this.bg.setDisplaySize(this.width - 2, this.height - 2);
         this.bg.setTint(this.bgColor);
         this.bg.setDepth(this.depth);
         this.bg.setScrollFactor(0);
@@ -45,7 +45,8 @@ class ProgressBar {
         const fillWidth = this.width - (this.padding * 2);
         const fillHeight = this.height - (this.padding * 2);
 
-        this.fill = this.scene.add.image(this.x - this.width / 2 + this.padding, this.y, 'white_pixel');
+        // Position adjusted for the 2px smaller backing to keep fill centered
+        this.fill = this.scene.add.image(this.x - (this.width - 2) / 2 + (this.padding - 1), this.y, 'white_pixel');
         this.fill.setOrigin(0, 0.5);
         this.fill.setDisplaySize(0, fillHeight); // Start at scale 0
         this.fill.setTint(this.fillColor);

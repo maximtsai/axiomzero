@@ -16,7 +16,7 @@ const MB1 = {
     RETREAT_RANGE: 220,   // px — resume movement if pushed past this
     FIRE_INTERVAL: 3000,  // ms between shots
     BULLET_DAMAGE: 4,
-    KNOCKBACK_MOD: 0.4,   // 60% knockback reduction
+    KNOCKBACK_MOD: 0,   // 0 knockback
     SPAWN_BURST_DURATION: 2,    // seconds — speed burst on spawn
     SPAWN_BURST_MULT: 7,    // initial speed multiplier at spawn (fades to 1×)
 };
@@ -249,45 +249,7 @@ class Miniboss1 extends Miniboss {
     // ── Damage ────────────────────────────────────────────────────────────────
 
     takeDamage(amount) {
-        const died = super.takeDamage(amount);
-
-        if (this.img) {
-            // Rotation wobble on hit
-            const wobble = Phaser.Math.FloatBetween(-0.3, 0.3);
-            this.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 75,
-                targets: [this.img, this.hpImg],
-                rotation: '-=' + wobble,
-                duration: 370,
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.setRotation(this.baseRotation);
-                    this.wobbleAnim = null;
-                }
-            });
-
-            // Alpha flicker
-            if (this.img.scene) {
-                PhaserScene.tweens.add({
-                    targets: this.img,
-                    alpha: { from: 0.5, to: 1 },
-                    duration: 80,
-                    ease: 'Linear',
-                });
-                if (this.hpImg) {
-                    PhaserScene.tweens.add({
-                        targets: this.hpImg,
-                        alpha: { from: 0.5, to: 1 },
-                        duration: 80,
-                        ease: 'Linear',
-                    });
-                }
-            }
-        }
-
-        return died;
+        return super.takeDamage(amount);
     }
 
     // ── Knockback override ────────────────────────────────────────────────────

@@ -72,7 +72,7 @@ const projectileManager = (() => {
         p.y = fromY;
         p.damage = dmg;
         p.alive = true;
-        p.life = 3000; // auto-expire after 3s
+        p.life = 3000; // auto-expire after 5s
 
         p.img.setPosition(fromX, fromY);
         p.img.setRotation(Math.atan2(dy, dx));

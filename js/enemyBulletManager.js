@@ -33,14 +33,14 @@ const enemyBulletManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png') {
+    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null) {
         const b = _getFromPool();
         if (!b) return;
 
         const dx = toX - fromX;
         const dy = toY - fromY;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const speed = GAME_CONSTANTS.PROJECTILE_SPEED; // same speed as tower projectiles
+        const speed = speedOverride !== null ? speedOverride : GAME_CONSTANTS.PROJECTILE_SPEED; // same speed as tower projectiles by default
 
         b.vx = (dx / dist) * speed;
         b.vy = (dy / dist) * speed;

@@ -11,9 +11,9 @@
 class Miniboss extends Enemy {
     constructor() {
         super();
-        this.isBoss = false;        // minibosses are NOT knockback-immune
-        this.isMiniboss = true;     // identification flag
-        this.knockBackModifier = 0.35; // default; subclasses override via their own config
+        this.isBoss = true;        // minibosses are now knockback-immune
+        this.isMiniboss = true;
+        this.knockBackModifier = 0; // 0 knockback
     }
 
     /**

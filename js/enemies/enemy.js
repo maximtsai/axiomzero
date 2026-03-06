@@ -266,8 +266,8 @@ class Enemy {
             flickerDuration = 80
         } = config;
 
-        // Rotation wobble
-        if (!this.cannotRotate) {
+        // Rotation wobble (Bosses and minibosses do not wobble)
+        if (!this.cannotRotate && !this.isBoss && !this.isMiniboss) {
             const wobble = Phaser.Math.FloatBetween(-wobbleIntensity, wobbleIntensity);
             this.setRotation(this.baseRotation + wobble);
             if (this.wobbleAnim) this.wobbleAnim.stop();
