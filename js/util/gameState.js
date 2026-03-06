@@ -12,13 +12,16 @@ const gameState = {};
 
 /** Initialise game state from save or fresh defaults. Catch legacy standalone saves here too. */
 function initGameState() {
+    // Stage 1: Always populate with absolute fresh defaults
+    Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
+
+    // Stage 2: Restore from save if it exists
     if (hasSave()) {
         loadGame();
-        debugLog('Save restored via initGameState');
     } else {
-        let freshState = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS));
-        freshState = _migrateState(0, freshState); // migrate standalone legacy keys properly
-        Object.assign(gameState, freshState);
+        // If no full save, check for legacy individual keys to absorb during fresh init
+        const migrated = _migrateState(0, gameState);
+        Object.assign(gameState, migrated);
         debugLog('Fresh game state initialised with legacy migration check');
     }
 }
@@ -113,7 +116,9 @@ function loadGame() {
             data = _migrateState(0, parsed);
         }
 
+        // Deep merge data into current gameState to avoid losing fields that weren't in the save
         Object.assign(gameState, data);
+
         debugLog('Game loaded');
         return true;
     } catch (e) {

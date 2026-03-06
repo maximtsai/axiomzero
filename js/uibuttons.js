@@ -129,7 +129,6 @@ function _showOptionsPopup() {
         onMouseUp: () => {
             isChromaEnabled = !isChromaEnabled;
             gameState.settings.chromaticAberration = isChromaEnabled;
-            saveGame();
             chromaCheckbox.normal.ref = isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
             chromaCheckbox.hover.ref = isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
             chromaCheckbox.setState(chromaCheckbox.state);
@@ -205,6 +204,8 @@ function _showOptionsPopup() {
     }).setOrigin(0.5, 0.5).setDepth(depth + 3).setScrollFactor(0).setAlpha(0.5);
     elements.push(resetText);
 
+    let confirmReset = false;
+
     const resetBtn = new Button({
         normal: { ref: 'white_pixel', x: W, y: dataHeaderY + 32, alpha: 0.001, scaleX: width * 0.5 - 50, scaleY: 24 },
         hover: { ref: 'white_pixel', x: W, y: dataHeaderY + 32, alpha: 0.001, scaleX: width * 0.5 - 50, scaleY: 24 },
@@ -218,7 +219,23 @@ function _showOptionsPopup() {
             resetText.setAlpha(0.5);
         },
         onMouseUp: () => {
-            console.log("Reset Progress clicked");
+            if (!confirmReset) {
+                confirmReset = true;
+                resetText.setText('[ CLICK AGAIN TO CONFIRM ]');
+                resetText.setColor('#ffae00');
+
+                // Cancel confirmation after 3 seconds
+                PhaserScene.time.delayedCall(3000, () => {
+                    if (confirmReset && resetText && resetText.active) {
+                        confirmReset = false;
+                        resetText.setText('[ \u26A0 RESET PROGRESS !! ]');
+                        resetText.setColor('#ff3366');
+                    }
+                });
+            } else {
+                clearSave();
+                window.location.reload();
+            }
         }
     });
 

@@ -89,7 +89,9 @@ const gameHUD = (() => {
             const scale = (type.id === 'data') ? 1 : 1.06;
             icon.setScale(scale);
 
-            const text = PhaserScene.add.text(groupX + 28, currY - 11, '0', {
+            // Fetch initial value from resourceManager
+            const initialVal = _getResourceValue(type.id);
+            const text = PhaserScene.add.text(groupX + 28, currY - 11, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: '21px',
                 color: type.color,
@@ -97,6 +99,8 @@ const gameHUD = (() => {
 
             resourceUI[type.id] = { icon, text, baseY: currY };
         });
+
+        _updateResourceLayout();
 
         if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
             const treeGroup = neuralTree.getGroup();
