@@ -290,10 +290,10 @@ const enemyManager = (() => {
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
         // Visual warning before spawning
-        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
+        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning_big.png');
         warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         warningImg.setOrigin(0, 0.5);
-        warningImg.setScale(1.6, 1.4);
+        warningImg.setScale(1.5, 1.4);
         warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
         warningImg.setAlpha(0);
 
@@ -523,17 +523,17 @@ const enemyManager = (() => {
         const idx = activeEnemies.indexOf(enemy);
         if (idx !== -1) activeEnemies.splice(idx, 1);
 
-        if (wasBoss) {
-            bossAlive = false;
-            messageBus.publish('bossDefeated', ex, ey);
-            debugLog('Boss defeated');
-        } else if (wasMiniboss) {
+        if (wasMiniboss) {
             minibossAlive = false;
             if (enemy.img) {
                 customEmitters.minibossExplosion(enemy.img);
             }
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
+        } else if (wasBoss) {
+            bossAlive = false;
+            messageBus.publish('bossDefeated', ex, ey);
+            debugLog('Boss defeated');
         } else {
             if (enemy.type === 'logic_stray') {
                 resourceManager.spawnProcessorDrop(ex, ey);

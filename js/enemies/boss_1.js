@@ -9,8 +9,8 @@ class Boss1 extends Boss {
         this.initialSpeedMult = 7.0; // Initial burst speed scale
         this.rampDuration = 1.25;
 
-        // Double the base boss size (14 * 2 = 28)
-        this.size = 28;
+        // Set specialized size for Boss 1
+        this.size = 40;
 
         // Visuals
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_1.png');
