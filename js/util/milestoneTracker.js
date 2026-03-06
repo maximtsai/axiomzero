@@ -19,6 +19,9 @@ const milestoneTracker = (() => {
         totalKills: 0,
         totalDataCollected: 0,
         totalInsightEarned: 0,
+        totalShardsCollected: 0,
+        totalProcessorsCollected: 0,
+        totalCoinsCollected: 0,
         totalWavesCompleted: 0,
         totalNodesPurchased: 0,
         longestWaveMs: 0,  // longest single wave duration in ms
@@ -70,6 +73,18 @@ const milestoneTracker = (() => {
         }
         if (type === 'insight' && delta > 0) {
             stats.totalInsightEarned += delta;
+            _autoSave();
+        }
+        if (type === 'shard' && delta > 0) {
+            stats.totalShardsCollected += delta;
+            _autoSave();
+        }
+        if (type === 'processor' && delta > 0) {
+            stats.totalProcessorsCollected += delta;
+            _autoSave();
+        }
+        if (type === 'coin' && delta > 0) {
+            stats.totalCoinsCollected += delta;
             _autoSave();
         }
     }

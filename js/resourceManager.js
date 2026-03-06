@@ -152,31 +152,31 @@ const resourceManager = (() => {
     function addData(amount) {
         gameState.data = (gameState.data || 0) + amount;
         sessionData += amount;
-        messageBus.publish('currencyChanged', 'data', gameState.data);
+        messageBus.publish('currencyChanged', 'data', gameState.data, amount);
     }
 
     function addInsight(amount) {
         gameState.insight = (gameState.insight || 0) + amount;
         sessionInsight += amount;
-        messageBus.publish('currencyChanged', 'insight', gameState.insight);
+        messageBus.publish('currencyChanged', 'insight', gameState.insight, amount);
     }
 
     function addShard(amount) {
         gameState.shard = (gameState.shard || 0) + amount;
         sessionShards += amount;
-        messageBus.publish('currencyChanged', 'shard', gameState.shard);
+        messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
     }
 
     function addProcessor(amount) {
         gameState.processor = (gameState.processor || 0) + amount;
         sessionProcessors += amount;
-        messageBus.publish('currencyChanged', 'processor', gameState.processor);
+        messageBus.publish('currencyChanged', 'processor', gameState.processor, amount);
     }
 
     function addCoin(amount) {
         gameState.coin = (gameState.coin || 0) + amount;
         sessionCoins += amount;
-        messageBus.publish('currencyChanged', 'coin', gameState.coin);
+        messageBus.publish('currencyChanged', 'coin', gameState.coin, amount);
     }
 
     function getData() { return gameState.data || 0; }

@@ -40,9 +40,8 @@ class TowerModel {
         this.health = this.maxHealth;
         this.alive = true;
         this.attackTimer = 0;
-        this.exp = 0;
+        // EXP no longer resets between waves
         this.isInvincible = false;
-        // Output change events
         messageBus.publish('healthChanged', this.health, this.maxHealth);
         messageBus.publish('expChanged', this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
@@ -352,7 +351,7 @@ const tower = (() => {
         model.recalcStats();
         model.health = model.maxHealth;
         model.alive = true;
-        model.exp = 0;
+        model.exp = gameState.exp || 0;
 
         view.spawn(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
 
@@ -454,6 +453,7 @@ const tower = (() => {
                 depth: GAME_CONSTANTS.DEPTH_TOWER,
             });
         }
+        gameState.exp = model.exp;
         messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
 
         // Auto-attack
