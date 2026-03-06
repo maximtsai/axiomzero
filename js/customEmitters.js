@@ -16,7 +16,7 @@ const customEmitters = (() => {
     // guaranteeing PhaserScene is ready without needing an explicit init().
     function _make(texture, config, depth) {
         let emitter = null;
-        return function() {
+        return function () {
             if (!emitter) {
                 emitter = PhaserScene.add.particles(0, 0, texture, config);
                 emitter.setDepth(depth);
@@ -51,15 +51,15 @@ const customEmitters = (() => {
     let _strikeAngle = 0;
 
     const strikeParams = {
-        frame:    'blue_pixel.png',
-        speed:    { min: 80, max: 230, ease: 'Cubic.easeOut' },
+        frame: 'blue_pixel.png',
+        speed: { min: 80, max: 230, ease: 'Cubic.easeOut' },
         lifespan: { min: 200, max: 400 },
-        scaleX:   { start: 12, end: 0, ease: 'Quad.easeIn' },
-        scaleY:   2,
-        alpha:    1,
+        scaleX: { start: 12, end: 0, ease: 'Quad.easeIn' },
+        scaleY: 2,
+        alpha: 1,
         gravityY: 0,
         emitting: false,
-        angle:    { min: -180, max: 180 },
+        angle: { min: -180, max: 180 },
     }
 
     const _strike = _make('pixels', strikeParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
@@ -135,11 +135,11 @@ const customEmitters = (() => {
 
     // tower death 
     const towerDeathParams = {
-        frame:    'white_pixel.png',
-        speed:    { min: 100, max: 200, ease: 'Cubic.easeOut' },
+        frame: 'white_pixel.png',
+        speed: { min: 100, max: 200, ease: 'Cubic.easeOut' },
         lifespan: { min: 400, max: 1000 },
-        scale:   { start: 25, end: 5, ease: 'Quad.easeIn' },
-        alpha:    { start: 0.4, end: 0, ease: 'Quad.easeIn' },
+        scale: { start: 25, end: 5, ease: 'Quad.easeIn' },
+        alpha: { start: 0.4, end: 0, ease: 'Quad.easeIn' },
         gravityY: 0,
         emitting: false,
     }
@@ -152,6 +152,49 @@ const customEmitters = (() => {
         e.explode(count, x, y);
     }
 
+    // ── Logic Stray Ghost ──────────────────────────────────────────────────────────
+    const logicStrayGhostPool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.sprite(0, 0, 'enemies', 'logic_stray.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.setAlpha(0.4);
+            sprite.setTint(0xffffff);
+        },
+        30
+    );
+
+    /**
+     * Creates a stationary fading ghost of the logic stray.
+     */
+    function logicStrayGhost(x, y, rotation, scale) {
+        const sprite = logicStrayGhostPool.get();
+        sprite.setPosition(x, y);
+        sprite.setRotation(rotation);
+        sprite.setScale(scale * 0.95);
+        sprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+        sprite.setVisible(true);
+        sprite.setActive(true);
+        sprite.setAlpha(0.4);
+
+        PhaserScene.tweens.add({
+            targets: sprite,
+            alpha: 0,
+            duration: 2500,
+            ease: 'Linear',
+            onComplete: () => {
+                sprite.setActive(false);
+                sprite.setVisible(false);
+                logicStrayGhostPool.release(sprite);
+            }
+        });
+    }
+
     // ── public API ───────────────────────────────────────────────────────────
-    return { basicStrike, basicStrikeManual, towerDeath };
+    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost };
 })();

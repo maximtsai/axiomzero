@@ -28,6 +28,7 @@ class LogicStrayEnemy extends Enemy {
         this.isEnraged = false;
         this.rotationTime = 0;
         this.baseRotationSpeed = (Math.PI * 2) / 3; // 1 rotation per 3s
+        this.ghostTimer = 0;
     }
 
     activate(x, y, scaleFactor) {
@@ -39,6 +40,7 @@ class LogicStrayEnemy extends Enemy {
         this.size = 14;
         this.isEnraged = false;
         this.rotationTime = Math.random() * 3; // Random start phase
+        this.ghostTimer = 0;
 
         if (this.img) {
             this.img.setAlpha(1);
@@ -72,6 +74,15 @@ class LogicStrayEnemy extends Enemy {
         // Apply rotation to both images (override setRotation bypass)
         if (this.img) this.img.setRotation(currentRot);
         if (this.hpImg) this.hpImg.setRotation(currentRot);
+
+        // Ghost trail every 0.8s
+        this.ghostTimer += dt;
+        if (this.ghostTimer >= 0.8) {
+            this.ghostTimer %= 0.8;
+            if (this.img) {
+                customEmitters.logicStrayGhost(this.x, this.y, this.img.rotation, this.img.scaleX);
+            }
+        }
 
         super.update(dt);
 
