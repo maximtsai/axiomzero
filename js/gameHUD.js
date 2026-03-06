@@ -86,7 +86,7 @@ const gameHUD = (() => {
             const icon = PhaserScene.add.image(groupX + 11, currY, 'player', type.icon);
             icon.setOrigin(0.5, 0.5).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
 
-            const scale = (type.id === 'data') ? 1 : 1.12;
+            const scale = (type.id === 'data') ? 1 : 1.06;
             icon.setScale(scale);
 
             const text = PhaserScene.add.text(groupX + 28, currY - 11, '0', {
@@ -229,7 +229,7 @@ const gameHUD = (() => {
 
         // Logarithmic scaling: 200px at 20 health, ~800px at 10,000 health
         // Formula: L = 222.3 * log10(max) - 89.2
-        const dynamicW = Math.max(BAR_W, 222.3 * Math.log10(max) - 89.2);
+        const dynamicW = Math.max(BAR_W, BAR_W + 222.3 * (Math.log10(max) - Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH)));
 
         const ratio = Math.max(0, current / max);
 

@@ -285,7 +285,7 @@ const enemyManager = (() => {
         bossAlive = true;
 
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = Math.random() * Math.PI * 2;
+        const angle = Miniboss.getSpawnAngle();
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 

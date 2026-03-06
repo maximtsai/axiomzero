@@ -199,7 +199,6 @@ class Node {
         }
 
         messageBus.publish('upgradePurchased', this.id, this.level);
-        debugLog('Purchased node:', this.id, 'Lv', this.level);
         return true;
     }
 

@@ -220,7 +220,7 @@ const customEmitters = (() => {
         // 2. Flash white 3 times over 0.6 seconds
         PhaserScene.tweens.add({
             targets: copy,
-            duration: 100,
+            duration: 150,
             repeat: 2,
             yoyo: true,
             onStart: () => { if (copy.active) copy.setTintFill(0xffffff); },
@@ -242,7 +242,7 @@ const customEmitters = (() => {
             targets: warning,
             alpha: 0.8,
             scale: 1.0 * effectScale,
-            duration: 600,
+            duration: 900,
             ease: 'Quad.easeOut',
             onComplete: () => {
                 // At the end of 0.6s:
