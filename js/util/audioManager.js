@@ -57,6 +57,7 @@ const audio = {
     muteSFX: function (shouldMute) {
         isSFXMuted = shouldMute;
         gameState.settings.sfxMuted = shouldMute;
+        saveGame();
         for (let i in soundList) {
             if (!soundList[i].isMusic && soundList[i].isPlaying) {
                 soundList[i].setVolume(shouldMute ? 0 : soundList[i].fullVolume * globalVolume);
@@ -68,6 +69,7 @@ const audio = {
     muteMusic: function (shouldMute) {
         isMusicMuted = shouldMute;
         gameState.settings.musicMuted = shouldMute;
+        saveGame();
         if (shouldMute) {
             if (globalMusic) globalMusic.setVolume(0);
             if (globalTempMusic) globalTempMusic.setVolume(0);
@@ -170,6 +172,7 @@ const audio = {
     setVolume: function (newVol = 1) {
         globalVolume = newVol;
         gameState.settings.globalVolume = newVol;
+        saveGame();
         for (let i in soundList) {
             if (soundList[i].isPlaying && soundList[i] !== globalMusic) {
                 soundList[i].volume = soundList[i].fullVolume * globalVolume;
@@ -181,6 +184,7 @@ const audio = {
     setMusicVolume: function (newVol = 1) {
         globalMusicVol = newVol;
         gameState.settings.globalMusicVol = newVol;
+        saveGame();
         if (globalMusic) globalMusic.volume = globalMusic.fullVolume * newVol;
         if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
         if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;

@@ -129,6 +129,7 @@ function _showOptionsPopup() {
         onMouseUp: () => {
             isChromaEnabled = !isChromaEnabled;
             gameState.settings.chromaticAberration = isChromaEnabled;
+            saveGame();
             chromaCheckbox.normal.ref = isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
             chromaCheckbox.hover.ref = isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
             chromaCheckbox.setState(chromaCheckbox.state);
