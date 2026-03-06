@@ -152,6 +152,16 @@ const enemyManager = (() => {
             chosenType = 'basic';
         }
 
+        // Limit active Protectors to prevent overwhelming defense
+        if (chosenType === 'protector') {
+            const activeProtectors = activeEnemies.filter(e => e.alive && e.type === 'protector').length;
+            if (activeProtectors >= 3) {
+                if (Math.random() < 0.8) chosenType = 'basic';
+            } else if (activeProtectors >= 2) {
+                if (Math.random() < 0.4) chosenType = 'basic';
+            }
+        }
+
         let numToSpawn = 1;
         if (chosenType === 'swarmer' && config.swarmerGroupSize) {
             numToSpawn = Phaser.Math.Between(config.swarmerGroupSize.min, config.swarmerGroupSize.max);

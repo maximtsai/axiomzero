@@ -14,6 +14,7 @@ const resourceManager = (() => {
     let processorPool = []; // Pool for processor resources
 
     let totalDropsSpawned = 0;
+    let currentPickupRadius2 = 0;
 
     // Session tracking — reset each combat session for the summary screen
     let sessionData = 0;
@@ -31,6 +32,7 @@ const resourceManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
         messageBus.subscribe('triggerResourceVacuum', _vacuumAllDrops);
+        _recalcPickupRadius();
         updateManager.addFunction(_update);
     }
 
@@ -215,6 +217,15 @@ const resourceManager = (() => {
         activeDrops.length = 0;
     }
 
+    function _recalcPickupRadius() {
+        const ups = gameState.upgrades || {};
+        const magnetLv = ups.magnet || 0;
+        const base = GAME_CONSTANTS.DATA_PICKUP_RADIUS;
+        const mult = 1 + (0.4 * magnetLv);
+        const finalR = base * mult;
+        currentPickupRadius2 = finalR * finalR;
+    }
+
     // ── internals ────────────────────────────────────────────────────────────
 
     function _getFromPool() {
@@ -285,7 +296,7 @@ const resourceManager = (() => {
         const dt = delta / 1000;
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
-        const pickupR2 = GAME_CONSTANTS.DATA_PICKUP_RADIUS * GAME_CONSTANTS.DATA_PICKUP_RADIUS;
+        const pickupR2 = currentPickupRadius2;
 
         // ── Resting drops: check if cursor entered pickup radius → start flying ──
         for (let i = activeDrops.length - 1; i >= 0; i--) {
@@ -396,6 +407,6 @@ const resourceManager = (() => {
         init, spawnDataDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
         getData, getInsight, getShards, getProcessors, getCoins,
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
-        resetSession, clearDrops,
+        resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
     };
 })();

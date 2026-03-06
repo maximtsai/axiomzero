@@ -52,7 +52,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 4,
         parentId: 'awaken',
-        childIds: ['pulse_damage_2'],
+        childIds: ['pulse_damage_2', 'magnet'],
         treeX: 325,
         treeY: 725,
         effect: function () {
@@ -60,8 +60,28 @@ const NODE_DEFS = [
         },
     },
     {
+        id: 'magnet',
+        name: 'ATTRACT',
+        icon: 'Skillicon14_10.png',
+        description: '+40% resource pickup range',
+        popupText: '+40% RANGE',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'pulse_damage',
+        childIds: [],
+        treeX: 250,
+        treeY: 650,
+        effect: function () {
+            resourceManager.recalcPickupRadius();
+        },
+    },
+    {
         id: 'pulse_damage_2',
-        name: 'SURGE',
+        name: 'NOVA',
         icon: 'Skillicon14_07.png',
         description: '+40 pulse attack size',
         popupText: '+40 PULSE SIZE',
