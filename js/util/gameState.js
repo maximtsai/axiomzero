@@ -117,7 +117,14 @@ function loadGame() {
         }
 
         // Deep merge data into current gameState to avoid losing fields that weren't in the save
-        Object.assign(gameState, data);
+        for (const key in data) {
+            if (data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
+                if (!gameState[key]) gameState[key] = {};
+                Object.assign(gameState[key], data[key]);
+            } else {
+                gameState[key] = data[key];
+            }
+        }
 
         debugLog('Game loaded');
         return true;
