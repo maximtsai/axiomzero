@@ -113,9 +113,30 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 2,
         parentId: 'awaken',
-        childIds: [],
+        childIds: ['focus'],
         treeX: 475,
         treeY: 725,
+        effect: function () {
+            // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'focus',
+        name: 'FOCUS',
+        icon: 'Skillicon14_15.png',
+        description: '+20 tower attack range',
+        popupText: '+20 RANGE',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 10,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'sharpen',
+        requiresMaxParent: true,
+        childIds: [],
+        treeX: 475,
+        treeY: 650,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

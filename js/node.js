@@ -102,6 +102,8 @@ class Node {
         if (this.parentId) {
             const p = neuralTree.getNode(this.parentId);
             if (!p || p.level < 1 || !p.branchActive) return false;
+            // NEW: Check for full upgrade if required
+            if (this.requiresMaxParent && p.level < p.maxLevel) return false;
         }
         return true;
     }

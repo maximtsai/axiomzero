@@ -204,6 +204,8 @@ const pulseAttack = (() => {
 
     function init() {
         view.init(model.size);
+        if (typeof _recalcPulseDamage === 'function') _recalcPulseDamage();
+        if (typeof _recalcPulseSize === 'function') _recalcPulseSize();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         updateManager.addFunction(_update);
     }
