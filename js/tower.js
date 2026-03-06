@@ -31,7 +31,7 @@ class TowerModel {
 
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * reinforceLv;
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
-        this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE + 100 * focusLv;
+        this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN;
     }

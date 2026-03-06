@@ -30,7 +30,7 @@ const NODE_DEFS = [
         parentId: null,
         childIds: ['pulse_damage', 'reinforce', 'sharpen'],
         treeX: 400,
-        treeY: 800,
+        treeY: 750,
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
@@ -54,7 +54,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['pulse_damage_2', 'magnet'],
         treeX: 325,
-        treeY: 725,
+        treeY: 750,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -74,7 +74,7 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         childIds: [],
         treeX: 250,
-        treeY: 650,
+        treeY: 750,
         effect: function () {
             resourceManager.recalcPickupRadius();
         },
@@ -94,8 +94,8 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         requiresMaxParent: true,
         childIds: [],
-        treeX: 325,
-        treeY: 650,
+        treeX: 250,
+        treeY: 675,
         effect: function () {
             _recalcPulseSize();
         },
@@ -115,7 +115,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['regen'],
         treeX: 400,
-        treeY: 725,
+        treeY: 675,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -135,17 +135,17 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['focus'],
         treeX: 475,
-        treeY: 725,
+        treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
     {
         id: 'focus',
-        name: 'FOCUS',
+        name: 'INFLUENCE',
         icon: 'Skillicon14_15.png',
-        description: '+100 tower attack range',
-        popupText: '+100 RANGE',
+        description: '+20% tower attack range',
+        popupText: '+20% RANGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
         baseCost: 10,
@@ -155,8 +155,8 @@ const NODE_DEFS = [
         parentId: 'sharpen',
         requiresMaxParent: true,
         childIds: [],
-        treeX: 475,
-        treeY: 650,
+        treeX: 550,
+        treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -175,8 +175,8 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'reinforce',
         childIds: [],
-        treeX: 400,
-        treeY: 650,
+        treeX: 475,
+        treeY: 675,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

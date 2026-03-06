@@ -199,6 +199,12 @@ class Node {
         }
 
         messageBus.publish('upgradePurchased', this.id, this.level);
+
+        // Refresh hover text if it was visible
+        if (this.hoverGroup) {
+            this._showHover();
+        }
+
         return true;
     }
 
@@ -291,7 +297,6 @@ class Node {
 
     _updateVisual() {
         if (!this.btn) return;
-        this._hideHover(); // Clear any lingering tooltip when state changes
 
         // Trigger fadeout if state changed
         if (this.lastVisualState !== this.state && this.lastSpriteRef) {
