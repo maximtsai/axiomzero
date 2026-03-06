@@ -173,6 +173,7 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">pixels/black_pixel.png</key>
             <key type="filename">pixels/blank_pixel.png</key>
             <key type="filename">pixels/blue_pixel.png</key>
             <key type="filename">pixels/green_pixel.png</key>

@@ -57,15 +57,15 @@ function _showOptionsPopup() {
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
 
-    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 35, '// OPTIONS', {
+    const titleObj = PhaserScene.add.text(W - width / 2 + 25, H - height / 2 + 25, '// OPTIONS', {
         fontFamily: 'VCR', fontSize: '24px', color: '#ffffff',
     }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0);
 
-    const sfxLabel = PhaserScene.add.text(W - 120, H - 40, 'SFX', {
+    const sfxLabel = PhaserScene.add.text(W - 160, H - 40, 'SFX', {
         fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
 
-    const musicLabel = PhaserScene.add.text(W - 120, H + 20, 'MUSIC', {
+    const musicLabel = PhaserScene.add.text(W - 160, H + 20, 'MUSIC', {
         fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
 
@@ -73,8 +73,8 @@ function _showOptionsPopup() {
     const musicSliderWidth = 200;
 
     const sfxSlider = new Slider(
-        W + 20, H - 40, sfxSliderWidth, 20,
-        'sound_on.png', 'buttons',
+        W + 20, H - 40, sfxSliderWidth, 30,
+        'slider_knob.png', 'buttons',
         (value) => {
             const volume = Math.max(0, Math.min(1, value));
             localStorage.setItem('sfxVolume', volume);
@@ -85,8 +85,8 @@ function _showOptionsPopup() {
     );
 
     const musicSlider = new Slider(
-        W + 20, H + 20, musicSliderWidth, 20,
-        'music_on.png', 'buttons',
+        W + 20, H + 20, musicSliderWidth, 30,
+        'slider_knob.png', 'buttons',
         (value) => {
             const volume = Math.max(0, Math.min(1, value));
             localStorage.setItem('musicVolume', volume);
@@ -112,10 +112,8 @@ function _showOptionsPopup() {
         titleObj.destroy();
         sfxLabel.destroy();
         musicLabel.destroy();
-        sfxSlider.knob.destroy();
-        sfxSlider.hitArea.destroy();
-        musicSlider.knob.destroy();
-        musicSlider.hitArea.destroy();
+        sfxSlider.destroy();
+        musicSlider.destroy();
         closeBtn.destroy();
     }
 }

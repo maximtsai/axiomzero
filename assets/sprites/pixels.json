@@ -4,13 +4,13 @@
 			"image": "pixels-0.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 32,
+				"w": 36,
 				"h": 4
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "blank_pixel.png",
+					"filename": "black_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -35,7 +35,7 @@
 					}
 				},
 				{
-					"filename": "blue_pixel.png",
+					"filename": "blank_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -60,7 +60,7 @@
 					}
 				},
 				{
-					"filename": "green_pixel.png",
+					"filename": "blue_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -85,7 +85,7 @@
 					}
 				},
 				{
-					"filename": "grey_pixel.png",
+					"filename": "green_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -110,7 +110,7 @@
 					}
 				},
 				{
-					"filename": "purple_pixel.png",
+					"filename": "grey_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -135,7 +135,7 @@
 					}
 				},
 				{
-					"filename": "red_pixel.png",
+					"filename": "purple_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -160,7 +160,7 @@
 					}
 				},
 				{
-					"filename": "white_pixel.png",
+					"filename": "red_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -185,7 +185,7 @@
 					}
 				},
 				{
-					"filename": "yellow_pixel.png",
+					"filename": "white_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -208,6 +208,31 @@
 						"x": 0.5,
 						"y": 0.5
 					}
+				},
+				{
+					"filename": "yellow_pixel.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 2,
+						"h": 2
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 2,
+						"h": 2
+					},
+					"frame": {
+						"x": 33,
+						"y": 1,
+						"w": 2,
+						"h": 2
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
 				}
 			]
 		}
@@ -215,6 +240,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a98e3db9b34685a01d06bb935852f388:87b79b5061288ede7195286e4c862f38:da1b59a2d25fe408f8d6d6014a79ae23$"
+		"smartupdate": "$TexturePacker:SmartUpdate:93c2e81baf9b0e6484f59f4d3dc32468:b0285f4edb895db2b25c4bb5d83b9d76:da1b59a2d25fe408f8d6d6014a79ae23$"
 	}
 }
