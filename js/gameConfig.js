@@ -104,7 +104,7 @@ GAME_CONSTANTS.COMBAT_INTRO_TEXT = 'SYSTEM ANOMALY DETECTED';
 // only requires editing this file.
 
 const SAVE_KEY = 'axiomzero_save';
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 
 // ─── Default game state shape ─────────────────────────────────────────────────
 // Consumed by js/util/gameState.js and gameInit.js.
@@ -133,4 +133,30 @@ const GAME_STATE_DEFAULTS = {
 
     // Purchased upgrade levels  { nodeId: level }
     upgrades: {},
+
+    // Lifetime Stats
+    stats: {
+        totalKills: 0,
+        totalDataCollected: 0,
+        totalInsightEarned: 0,
+        totalShardsCollected: 0,
+        totalProcessorsCollected: 0,
+        totalCoinsCollected: 0,
+        totalWavesCompleted: 0,
+        totalNodesPurchased: 0,
+        longestWaveMs: 0,
+        bossesDefeated: 0,
+    },
+
+    // Claimed Milestones
+    claimed: {},
+
+    // Settings
+    settings: {
+        globalVolume: 1.0,
+        globalMusicVol: 1.0,
+        sfxMuted: false,
+        musicMuted: false,
+        chromaticAberration: true
+    }
 };

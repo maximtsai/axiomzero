@@ -1,9 +1,9 @@
 /**
  * @fileoverview Sound and music management singleton.
  * All audio functions live on the `audio` namespace object.
- * Settings (mute state, volumes) persist via localStorage.
+ * Settings (mute state, volumes) persist via gameState.
  *
- * Depends on: PhaserScene (global), localStorage
+ * Depends on: PhaserScene (global), gameState
  * @module audioManager
  */
 
@@ -25,14 +25,14 @@ let lastLongSound = null;
 let lastLongSound2 = null;
 let useSecondLongSound = false;
 let isMuted = false;
-let isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
-let isMusicMuted = localStorage.getItem('musicMuted') === 'true';
+let isSFXMuted = false;
+let isMusicMuted = false;
 
 const audio = {
-    /** Re-read mute flags from localStorage (call after external settings change). */
+    /** Re-read mute flags from gameState (call after external settings change). */
     recheckMuteState: function () {
-        isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
-        isMusicMuted = localStorage.getItem('musicMuted') === 'true';
+        isSFXMuted = gameState.settings.sfxMuted;
+        isMusicMuted = gameState.settings.musicMuted;
     },
 
     /** Mute all audio (music + SFX). */
@@ -53,10 +53,11 @@ const audio = {
         if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * globalMusicVol;
     },
 
-    /** @param {boolean} shouldMute - Mute/unmute SFX; persists to localStorage. */
+    /** @param {boolean} shouldMute - Mute/unmute SFX; persists to gameState. */
     muteSFX: function (shouldMute) {
         isSFXMuted = shouldMute;
-        localStorage.setItem('sfxMuted', shouldMute.toString());
+        gameState.settings.sfxMuted = shouldMute;
+        saveGame();
         for (let i in soundList) {
             if (!soundList[i].isMusic && soundList[i].isPlaying) {
                 soundList[i].setVolume(shouldMute ? 0 : soundList[i].fullVolume * globalVolume);
@@ -64,10 +65,11 @@ const audio = {
         }
     },
 
-    /** @param {boolean} shouldMute - Mute/unmute music; persists to localStorage. */
+    /** @param {boolean} shouldMute - Mute/unmute music; persists to gameState. */
     muteMusic: function (shouldMute) {
         isMusicMuted = shouldMute;
-        localStorage.setItem('musicMuted', shouldMute.toString());
+        gameState.settings.musicMuted = shouldMute;
+        saveGame();
         if (shouldMute) {
             if (globalMusic) globalMusic.setVolume(0);
             if (globalTempMusic) globalTempMusic.setVolume(0);
@@ -77,12 +79,12 @@ const audio = {
         }
     },
 
-    /** Initialize audio system — reads persisted volume/mute settings. */
+    /** Initialize audio system — reads persisted volume/mute settings from gameState. */
     init: function (scene) {
-        globalVolume = parseFloat(localStorage.getItem('globalVolume')) || 1;
-        globalMusicVol = parseFloat(localStorage.getItem('globalMusicVol')) || 1;
-        isSFXMuted = localStorage.getItem('sfxMuted') === 'true';
-        isMusicMuted = localStorage.getItem('musicMuted') === 'true';
+        globalVolume = gameState.settings.globalVolume;
+        globalMusicVol = gameState.settings.globalMusicVol;
+        isSFXMuted = gameState.settings.sfxMuted;
+        isMusicMuted = gameState.settings.musicMuted;
     },
 
     /**
@@ -166,10 +168,11 @@ const audio = {
         return s;
     },
 
-    /** Set global SFX volume (0–1). Persists to localStorage. */
+    /** Set global SFX volume (0–1). Persists to gameState. */
     setVolume: function (newVol = 1) {
         globalVolume = newVol;
-        localStorage.setItem('globalVolume', newVol.toString());
+        gameState.settings.globalVolume = newVol;
+        saveGame();
         for (let i in soundList) {
             if (soundList[i].isPlaying && soundList[i] !== globalMusic) {
                 soundList[i].volume = soundList[i].fullVolume * globalVolume;
@@ -177,10 +180,11 @@ const audio = {
         }
     },
 
-    /** Set global music volume (0–1). Persists to localStorage. */
+    /** Set global music volume (0–1). Persists to gameState. */
     setMusicVolume: function (newVol = 1) {
         globalMusicVol = newVol;
-        localStorage.setItem('globalMusicVol', newVol.toString());
+        gameState.settings.globalMusicVol = newVol;
+        saveGame();
         if (globalMusic) globalMusic.volume = globalMusic.fullVolume * newVol;
         if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
         if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;

@@ -2,7 +2,7 @@
  * @fileoverview Cumulative stat tracking and milestone system.
  * Subscribes to messageBus events and increments counters automatically.
  * Milestones can be claimed once their target is met.
- * Stats and claimed state persist via localStorage.
+ * Stats and claimed state persist via gameState.
  * @module milestoneTracker
  *
  * Usage:
@@ -12,35 +12,20 @@
  *   milestoneTracker.claim('kill_500');             // → reward object or null
  */
 const milestoneTracker = (() => {
-    const SAVE_KEY = 'axiomzero_milestones';
-
-    // ── Tracked stats ────────────────────────────────────────────────────
-    let stats = {
-        totalKills: 0,
-        totalDataCollected: 0,
-        totalInsightEarned: 0,
-        totalShardsCollected: 0,
-        totalProcessorsCollected: 0,
-        totalCoinsCollected: 0,
-        totalWavesCompleted: 0,
-        totalNodesPurchased: 0,
-        longestWaveMs: 0,  // longest single wave duration in ms
-        bossesDefeated: 0,
-    };
 
     // ── Milestone definitions ────────────────────────────────────────────
-    // Each milestone: { id, name, description, statKey, target, reward: {type, amount}, claimed }
+    // Each milestone: { id, name, description, statKey, target, reward: {type, amount} }
     const milestones = [
-        { id: 'kill_100', name: 'First Hundred', description: 'Kill 100 enemies', statKey: 'totalKills', target: 100, reward: { type: 'data', amount: 50 }, claimed: false },
-        { id: 'kill_500', name: 'Exterminator', description: 'Kill 500 enemies', statKey: 'totalKills', target: 500, reward: { type: 'data', amount: 200 }, claimed: false },
-        { id: 'kill_2000', name: 'Annihilator', description: 'Kill 2000 enemies', statKey: 'totalKills', target: 2000, reward: { type: 'insight', amount: 2 }, claimed: false },
-        { id: 'data_1000', name: 'Data Hoarder', description: 'Collect 1,000 DATA total', statKey: 'totalDataCollected', target: 1000, reward: { type: 'data', amount: 100 }, claimed: false },
-        { id: 'data_10000', name: 'Data Vault', description: 'Collect 10,000 DATA total', statKey: 'totalDataCollected', target: 10000, reward: { type: 'insight', amount: 3 }, claimed: false },
-        { id: 'waves_10', name: 'Veteran', description: 'Complete 10 waves', statKey: 'totalWavesCompleted', target: 10, reward: { type: 'data', amount: 75 }, claimed: false },
-        { id: 'waves_50', name: 'Seasoned', description: 'Complete 50 waves', statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 }, claimed: false },
-        { id: 'nodes_5', name: 'Branching Out', description: 'Purchase 5 nodes', statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 }, claimed: false },
-        { id: 'nodes_15', name: 'Neural Network', description: 'Purchase 15 nodes', statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 }, claimed: false },
-        { id: 'boss_1', name: 'System Override', description: 'Defeat a boss', statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 }, claimed: false },
+        { id: 'kill_100', name: 'First Hundred', description: 'Kill 100 enemies', statKey: 'totalKills', target: 100, reward: { type: 'data', amount: 50 } },
+        { id: 'kill_500', name: 'Exterminator', description: 'Kill 500 enemies', statKey: 'totalKills', target: 500, reward: { type: 'data', amount: 200 } },
+        { id: 'kill_2000', name: 'Annihilator', description: 'Kill 2000 enemies', statKey: 'totalKills', target: 2000, reward: { type: 'insight', amount: 2 } },
+        { id: 'data_1000', name: 'Data Hoarder', description: 'Collect 1,000 DATA total', statKey: 'totalDataCollected', target: 1000, reward: { type: 'data', amount: 100 } },
+        { id: 'data_10000', name: 'Data Vault', description: 'Collect 10,000 DATA total', statKey: 'totalDataCollected', target: 10000, reward: { type: 'insight', amount: 3 } },
+        { id: 'waves_10', name: 'Veteran', description: 'Complete 10 waves', statKey: 'totalWavesCompleted', target: 10, reward: { type: 'data', amount: 75 } },
+        { id: 'waves_50', name: 'Seasoned', description: 'Complete 50 waves', statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 } },
+        { id: 'nodes_5', name: 'Branching Out', description: 'Purchase 5 nodes', statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 } },
+        { id: 'nodes_15', name: 'Neural Network', description: 'Purchase 15 nodes', statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 } },
+        { id: 'boss_1', name: 'System Override', description: 'Defeat a boss', statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
     ];
 
     // ── Wave timing ──────────────────────────────────────────────────────
@@ -49,8 +34,6 @@ const milestoneTracker = (() => {
     // ── Init ─────────────────────────────────────────────────────────────
 
     function init() {
-        _load();
-
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('waveCompleted', _onWaveCompleted);
@@ -62,49 +45,49 @@ const milestoneTracker = (() => {
     // ── Event handlers ───────────────────────────────────────────────────
 
     function _onEnemyKilled() {
-        stats.totalKills++;
+        gameState.stats.totalKills++;
         _autoSave();
     }
 
     function _onCurrencyChanged(type, amount, delta) {
         if (type === 'data' && delta > 0) {
-            stats.totalDataCollected += delta;
+            gameState.stats.totalDataCollected += delta;
             _autoSave();
         }
         if (type === 'insight' && delta > 0) {
-            stats.totalInsightEarned += delta;
+            gameState.stats.totalInsightEarned += delta;
             _autoSave();
         }
         if (type === 'shard' && delta > 0) {
-            stats.totalShardsCollected += delta;
+            gameState.stats.totalShardsCollected += delta;
             _autoSave();
         }
         if (type === 'processor' && delta > 0) {
-            stats.totalProcessorsCollected += delta;
+            gameState.stats.totalProcessorsCollected += delta;
             _autoSave();
         }
         if (type === 'coin' && delta > 0) {
-            stats.totalCoinsCollected += delta;
+            gameState.stats.totalCoinsCollected += delta;
             _autoSave();
         }
     }
 
     function _onWaveCompleted() {
-        stats.totalWavesCompleted++;
+        gameState.stats.totalWavesCompleted++;
         const elapsed = Date.now() - waveStartTime;
-        if (elapsed > stats.longestWaveMs) {
-            stats.longestWaveMs = elapsed;
+        if (elapsed > gameState.stats.longestWaveMs) {
+            gameState.stats.longestWaveMs = elapsed;
         }
         _autoSave();
     }
 
     function _onUpgradePurchased() {
-        stats.totalNodesPurchased++;
+        gameState.stats.totalNodesPurchased++;
         _autoSave();
     }
 
     function _onBossDefeated() {
-        stats.bossesDefeated++;
+        gameState.stats.bossesDefeated++;
         _autoSave();
     }
 
@@ -118,13 +101,13 @@ const milestoneTracker = (() => {
 
     /** @returns {number} Value of a tracked stat, or 0 if unknown key. */
     function getStat(key) {
-        return stats[key] || 0;
+        return gameState.stats[key] || 0;
     }
 
     /** Manually increment a stat (for stats not auto-tracked). */
     function incrementStat(key, amount = 1) {
-        if (stats[key] !== undefined) {
-            stats[key] += amount;
+        if (gameState.stats[key] !== undefined) {
+            gameState.stats[key] += amount;
             _autoSave();
         }
     }
@@ -133,8 +116,9 @@ const milestoneTracker = (() => {
     function getMilestones() {
         return milestones.map(m => ({
             ...m,
-            current: stats[m.statKey] || 0,
-            isComplete: (stats[m.statKey] || 0) >= m.target,
+            current: gameState.stats[m.statKey] || 0,
+            isComplete: (gameState.stats[m.statKey] || 0) >= m.target,
+            claimed: !!gameState.claimed[m.id],
         }));
     }
 
@@ -145,11 +129,11 @@ const milestoneTracker = (() => {
      */
     function claim(milestoneId) {
         const m = milestones.find(ms => ms.id === milestoneId);
-        if (!m || m.claimed) return null;
-        if ((stats[m.statKey] || 0) < m.target) return null;
+        if (!m || gameState.claimed[m.id]) return null;
+        if ((gameState.stats[m.statKey] || 0) < m.target) return null;
 
-        m.claimed = true;
-        _save();
+        gameState.claimed[m.id] = true;
+        saveGame();
         return m.reward;
     }
 
@@ -161,33 +145,7 @@ const milestoneTracker = (() => {
         const now = Date.now();
         if (now - saveTimer < 2000) return;
         saveTimer = now;
-        _save();
-    }
-
-    function _save() {
-        try {
-            const claimed = {};
-            milestones.forEach(m => { if (m.claimed) claimed[m.id] = true; });
-            localStorage.setItem(SAVE_KEY, JSON.stringify({ stats, claimed }));
-        } catch (e) {
-            console.error('milestoneTracker save failed:', e);
-        }
-    }
-
-    function _load() {
-        try {
-            const raw = localStorage.getItem(SAVE_KEY);
-            if (!raw) return;
-            const data = JSON.parse(raw);
-            if (data.stats) Object.assign(stats, data.stats);
-            if (data.claimed) {
-                milestones.forEach(m => {
-                    if (data.claimed[m.id]) m.claimed = true;
-                });
-            }
-        } catch (e) {
-            console.error('milestoneTracker load failed:', e);
-        }
+        saveGame();
     }
 
     return { init, getStat, incrementStat, getMilestones, claim };

@@ -12,28 +12,19 @@
 
 messageBus.subscribeOnce('assetsLoaded', () => {
 
+    // ── Restore or initialise game state ────────────────────────────────
+    initGameState();
+
     audio.init(PhaserScene);
-    audio.recheckMuteState();
 
     // Browser autoplay policy: play music on the first interaction
     messageBus.subscribeOnce('pointerDown', () => {
         debugLog('First interaction detected, starting music...');
-        audio.muteMusic(false); // Force unmute to ensure visibility
-        audio.muteSFX(false);
-        if (!audio.getMusicName()) {
+        // Only start if not muted in settings
+        if (!gameState.settings.musicMuted && !audio.getMusicName()) {
             audio.playMusic('bg_music1');
         }
     });
-
-    // ── Restore or initialise game state ────────────────────────────────
-    if (hasSave()) {
-        loadGame();
-        debugLog('Save restored');
-    } else {
-        // Apply defaults for a fresh game
-        Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
-        debugLog('Fresh game state initialised');
-    }
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
 

@@ -10,6 +10,19 @@
 
 const gameState = {};
 
+/** Initialise game state from save or fresh defaults. Catch legacy standalone saves here too. */
+function initGameState() {
+    if (hasSave()) {
+        loadGame();
+        debugLog('Save restored via initGameState');
+    } else {
+        let freshState = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS));
+        freshState = _migrateState(0, freshState); // migrate standalone legacy keys properly
+        Object.assign(gameState, freshState);
+        debugLog('Fresh game state initialised with legacy migration check');
+    }
+}
+
 /** @returns {Object} The current game state object. */
 function getGameState() {
     return gameState;
@@ -23,8 +36,52 @@ function setGameState(key, value) {
 // ─── Persistence ──────────────────────────────────────────────────────────────
 
 function _migrateState(fromVersion, data) {
-    // Add cases here as the save format evolves.
-    // Example: if (fromVersion < 2) { data.newField = defaultValue; }
+    // Starting with v2, state incorporates stats, claims, and settings.
+    if (!data.stats) data.stats = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS.stats));
+    if (!data.claimed) data.claimed = {};
+    if (!data.settings) data.settings = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS.settings));
+
+    if (fromVersion < 2) {
+        // Attempt to absorb legacy settings
+        try {
+            if (localStorage.getItem('globalVolume') !== null) {
+                data.settings.globalVolume = parseFloat(localStorage.getItem('globalVolume'));
+                localStorage.removeItem('globalVolume');
+            }
+            if (localStorage.getItem('globalMusicVol') !== null) {
+                data.settings.globalMusicVol = parseFloat(localStorage.getItem('globalMusicVol'));
+                localStorage.removeItem('globalMusicVol');
+            }
+            if (localStorage.getItem('sfxMuted') !== null) {
+                data.settings.sfxMuted = localStorage.getItem('sfxMuted') === 'true';
+                localStorage.removeItem('sfxMuted');
+            }
+            if (localStorage.getItem('musicMuted') !== null) {
+                data.settings.musicMuted = localStorage.getItem('musicMuted') === 'true';
+                localStorage.removeItem('musicMuted');
+            }
+            if (localStorage.getItem('chromaticAberration') !== null) {
+                data.settings.chromaticAberration = localStorage.getItem('chromaticAberration') === 'true';
+                localStorage.removeItem('chromaticAberration');
+            }
+        } catch (e) {
+            console.error('Failed to migrate legacy settings', e);
+        }
+
+        // Attempt to absorb legacy milestones
+        try {
+            const oldMilestonesRaw = localStorage.getItem('axiomzero_milestones');
+            if (oldMilestonesRaw) {
+                const parsedMilestones = JSON.parse(oldMilestonesRaw);
+                if (parsedMilestones.stats) Object.assign(data.stats, parsedMilestones.stats);
+                if (parsedMilestones.claimed) Object.assign(data.claimed, parsedMilestones.claimed);
+                localStorage.removeItem('axiomzero_milestones');
+            }
+        } catch (e) {
+            console.error('Failed to migrate legacy milestones', e);
+        }
+    }
+
     return data;
 }
 

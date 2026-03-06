@@ -88,7 +88,7 @@ function _showOptionsPopup() {
         W + 70, audioHeaderY + 51, 400, 50,
         'slider_knob.png', 'buttons',
         (val) => audio.setMusicVolume(val),
-        parseFloat(localStorage.getItem('globalMusicVol')) || 1.0,
+        gameState.settings.globalMusicVol,
         depth + 3
     );
     elements.push(musicSlider);
@@ -102,7 +102,7 @@ function _showOptionsPopup() {
         W + 70, audioHeaderY + 89, 400, 40,
         'slider_knob.png', 'buttons',
         (val) => audio.setVolume(val),
-        parseFloat(localStorage.getItem('globalVolume')) || 1.0,
+        gameState.settings.globalVolume,
         depth + 3
     );
     elements.push(sfxSlider);
@@ -122,13 +122,14 @@ function _showOptionsPopup() {
     elements.push(visualLine);
 
     // Chromatic Aberration Checkbox
-    let isChromaEnabled = localStorage.getItem('chromaticAberration') !== 'false'; // Default to true
+    let isChromaEnabled = gameState.settings.chromaticAberration; // Default to true
     const chromaCheckbox = new Button({
         normal: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 65, y: visualHeaderY + 35 },
         hover: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
         onMouseUp: () => {
             isChromaEnabled = !isChromaEnabled;
-            localStorage.setItem('chromaticAberration', isChromaEnabled.toString());
+            gameState.settings.chromaticAberration = isChromaEnabled;
+            saveGame();
             chromaCheckbox.normal.ref = isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
             chromaCheckbox.hover.ref = isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
             chromaCheckbox.setState(chromaCheckbox.state);
@@ -245,8 +246,8 @@ function _showOptionsPopup() {
 
 // Create a mute SFX button at position x, y
 function createMuteSFXButton(x, y) {
-    // Get current mute state from localStorage or default to false
-    let isMuted = localStorage.getItem('sfxMuted') === 'true';
+    // Get current mute state from gameState
+    let isMuted = gameState.settings.sfxMuted;
 
     // Determine which sprites to use based on current state
     const getSprites = () => {
@@ -308,8 +309,8 @@ function createMuteSFXButton(x, y) {
 
 // Create a mute music button at position x, y
 function createMuteMusicButton(x, y) {
-    // Get current mute state from localStorage or default to false
-    let isMuted = localStorage.getItem('musicMuted') === 'true';
+    // Get current mute state from gameState
+    let isMuted = gameState.settings.musicMuted;
 
     // Determine which sprites to use based on current state
     const getSprites = () => {
