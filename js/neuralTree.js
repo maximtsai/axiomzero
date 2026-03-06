@@ -24,6 +24,7 @@ const neuralTree = (() => {
     let lastDragY = 0;
 
     let visible = false;
+    let hasShownThisSession = false;
 
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
@@ -297,15 +298,28 @@ const neuralTree = (() => {
     function show() {
         visible = true;
         panelBg.setVisible(true);
+
+        if (!hasShownThisSession) {
+            hasShownThisSession = true;
+            panelBg.setAlpha(0.15);
+            PhaserScene.tweens.add({
+                targets: panelBg,
+                alpha: 1,
+                duration: 1000,
+                ease: 'Linear'
+            });
+        } else {
+            panelBg.setAlpha(1);
+        }
+
         panelOutline.setVisible(true);
         dragSurface.setVisible(true);
         titleText.setVisible(true);
 
-        // Show all nodes and refresh affordability state
         for (const id in nodes) {
             const n = nodes[id];
             n.setVisible(n.state !== NODE_STATE.HIDDEN);
-            if (n.state === NODE_STATE.UNLOCKED) {
+            if (n.state !== NODE_STATE.HIDDEN) {
                 n._updateVisual();
             }
         }
