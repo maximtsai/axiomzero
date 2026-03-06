@@ -1,1 +1,114 @@
-2026-03-06 16:24:08
+AXIOM ZERO - IMPLEMENTATION NEXT STEPS
+=======================================
+
+## PHASE 1 COMPLETION / IMMEDIATE WINS
+[ ] Verify loading screen terminal text is synchronized to actual asset load progress
+[ ] Confirm tower sprite has working breathe/pulse animation with glow effect
+[ ] Test tower basic auto-attack against spawned enemies
+[ ] Verify DATA drops appear as cyan geometric shards and decay properly
+[ ] Test negative health regen is reducing tower HP during combat
+
+## PHASE 2 - CORE LOOP (Resource Economy)
+[ ] Implement full 5-currency display in HUD (DATA, INSIGHT, PROCESSORS, SHARDS, NETCOIN)
+[ ] Add cursor-based resource collection (manual click to collect DATA drops)
+[ ] Implement INSIGHT generation when EXP bar reaches 100%
+[ ] Spawn Logic Strays (yellow diamonds) during mid-wave
+[ ] Implement PROCESSORS drops from destroyed Logic Strays
+[ ] Implement SHARDS auto-collection after boss/miniboss waves
+
+## NEURAL TREE - TIER 1 SETUP
+[ ] Build AWAKEN node with visual feedback (sparkle → tower transform)
+[ ] Implement 3 initial child nodes (Basic Pulse, Reinforce, Sharpen)
+[ ] Set up node state machine (Hidden → Ghost → Unlocked → Maxed)
+[ ] Test node cost scaling (static vs linear)
+[ ] Add hover tooltips showing Name, Effect, Level, Cost
+
+## CURSOR & BASIC ATTACKS
+[ ] Implement cursor attack (Basic Pulse node) - fires every 2 seconds, AoE around cursor
+[ ] Add cursor visual indicator (glow or crosshair)
+[ ] Test cursor pulse damage against enemies
+[ ] Implement cursor projectile detonation mechanic
+[ ] Add +Cursor Pulse Damage upgrade node
+
+## BOSSES - MINIBOSS & TIER BOSS (Tier 1)
+[ ] Design & implement Tier 1 Miniboss (drop 1 SHARD)
+[ ] Design & implement Tier 1 Tier Boss "THE WATCHDOG" (rotating octagon + packet-wave bursts)
+[ ] Verify boss invincibility window (2 seconds) after defeat
+[ ] Test resource auto-vacuum to player cursor during boss defeat sequence
+[ ] Confirm 1 INSIGHT awarded on Tier Boss defeat
+
+## TIER 1 DUO-BOX SYSTEM
+[ ] Create first Duo-Box (2-node choice gate requiring 1 SHARD)
+[ ] Implement free swap mechanic (deactivate one, activate other at no cost)
+[ ] Display first-purchase notification explaining free swap
+[ ] Test sub-upgrade nodes become Ghost when parent Duo-Box is swapped away
+
+## UI & STATE TRANSITIONS
+[ ] Verify ITERATION COMPLETE screen appears after wave end / boss defeat
+[ ] Test UPGRADES button triggers Transition Phase (0.8s linear slide)
+[ ] Test RETRY SESSION resets combat without leaving wave
+[ ] Ensure END ITERATION button locks tower and secures resources
+[ ] Confirm OPTIONS button appears in all phases and pauses game
+
+## ENEMY ROSTER (Phase 1-2)
+[ ] Implement Basic enemy (red-violet square, 1x speed, 1x health)
+[ ] Implement Mini enemy (white square, 1.1x speed, 0.4x health, swarms)
+[ ] Add enemy visual degradation on damage (cracking, flickering)
+[ ] Verify enemy scaling (health/damage increase longer wave continues)
+[ ] Test 900px spawn radius with random angle, straight-line pathing
+
+## GLITCH EFFECTS (Phase 3 prep)
+[ ] Create sprite-based glitch FX system (not Phaser FX pipeline)
+[ ] Implement RGB channel separation effect
+[ ] Add screen-space scan-line tear
+[ ] Test UI element flicker (2-4px offset)
+[ ] Hook glitch triggers to health < 30%, boss presence, large enemy swarms
+
+## HEALTH REGEN - CORE MECHANIC
+[ ] Implement negative base regen rate increasing by Tier
+[ ] Create Health Regen node to counteract negative regen
+[ ] Add +HP on Kill family of nodes
+[ ] Verify regen can become positive with sufficient investment
+[ ] Test time-pressure scaling per Tier
+
+## MILESTONES TAB (Phase 2-3)
+[ ] Implement Milestones Tab unlock node in Neural Tree
+[ ] Create sample milestones (Kill 500 Basic, Collect 10k DATA, etc.)
+[ ] Add milestone progress tracker (shows current / target)
+[ ] Implement CLAIM button → reward distribution
+[ ] Persist milestone state across sessions
+
+## CRYPTO MINE PREP (Phase 3)
+[ ] Create Crypto Mine unlock node in Neural Tree (mid-late Tier 3)
+[ ] Design DATA → NETCOIN conversion UI
+[ ] Implement passive conversion while game is open
+[ ] Add PROCESSORS upgrade for conversion speed
+[ ] Display NETCOIN to 4 decimal places (0.0047 ₦)
+
+## ACTIVE ABILITIES (Shard Node feature)
+[ ] Create ability button UI (bottom-left, shifts to right half in Upgrade Phase)
+[ ] Implement dry-fire visual test during Upgrade Phase
+[ ] Refresh all cooldowns to 100% when DEPLOY is clicked
+[ ] Design first 2 example abilities (screen-wide shockwave, 2x damage buff)
+[ ] Test ability presence in both Combat and Upgrade phases
+
+## SAVE/LOAD & PERSISTENCE
+[ ] Verify gameState save/load engine works with localStorage
+[ ] Test progression persists across browser refresh
+[ ] Ensure resource economy state saves correctly
+[ ] Test milestone claim state persists
+
+## PERFORMANCE & OPTIMIZATION
+[ ] Profile frame rate during high-enemy waves
+[ ] Verify glow effects don't cause performance dips on lower-end devices
+[ ] Test enemy pooling is efficient
+[ ] Confirm depth-based rendering performs better than Containers
+[ ] Optimize asset load timing
+
+=======================================
+NOTES:
+- Refer to axiom-zero-gdd.md §20 (DEVELOPMENT PHASES) for Phase structure
+- Phase 1 focus: Playable foundation with basic tower defense loop
+- Phase 2 focus: Full resource economy and first boss
+- Phase 3 focus: All enemy types, all bosses, deep mechanics (Crypto Mine, Glitch FX)
+- Phase 4 focus: Final boss (Tier 8), polish, audio, Cheat Mode
