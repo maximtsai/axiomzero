@@ -155,9 +155,9 @@ const enemyManager = (() => {
         // Limit active Protectors to prevent overwhelming defense
         if (chosenType === 'protector') {
             const activeProtectors = activeEnemies.filter(e => e.alive && e.type === 'protector').length;
-            if (activeProtectors >= 3) {
+            if (activeProtectors >= 2) {
                 if (Math.random() < 0.8) chosenType = 'basic';
-            } else if (activeProtectors >= 2) {
+            } else if (activeProtectors >= 1) {
                 if (Math.random() < 0.4) chosenType = 'basic';
             }
         }
@@ -640,7 +640,6 @@ const enemyManager = (() => {
             _spawnMiniboss();
         }
         if (progress >= 1.0 && !bossSpawned && spawning) {
-            _stopSpawning(); // Prevent endless swarms when boss appears
             _spawnBoss();
         }
     }

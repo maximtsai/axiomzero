@@ -10,7 +10,7 @@ class Boss1 extends Boss {
         this.rampDuration = 1.25;
 
         // Set specialized size for Boss 1
-        this.size = 40;
+        this.size = 70;
 
         // Visuals
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_1.png');

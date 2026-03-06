@@ -6,7 +6,8 @@
 function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
-    pulseAttack.setDamage(5 + 2 * ampLv);
+    const overchargeLv = ups.pulse_damage_3 || 0;
+    pulseAttack.setDamage(5 + 2 * ampLv + 4 * overchargeLv);
 }
 
 /** Recalculates total pulse size from all pulse upgrade nodes. */
@@ -93,11 +94,32 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'pulse_damage',
         requiresMaxParent: true,
-        childIds: [],
+        childIds: ['pulse_damage_3'],
         treeX: 250,
         treeY: 675,
         effect: function () {
             _recalcPulseSize();
+        },
+    },
+    {
+        id: 'pulse_damage_3',
+        name: 'OVERCHARGE',
+        icon: 'Skillicon14_08.png',
+        description: '+4 pulse damage',
+        popupText: '+4 PULSE DMG',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 2,
+        baseCost: 10,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 5,
+        tier: 2,
+        parentId: 'pulse_damage_2',
+        childIds: [],
+        treeX: 250,
+        treeY: 600,
+        effect: function () {
+            _recalcPulseDamage();
         },
     },
     {

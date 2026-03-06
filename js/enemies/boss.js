@@ -22,7 +22,7 @@ class Boss extends Enemy {
         this.rampDuration = 1.25;   // Seconds to ramp down to 1.0
 
         // Base size for boss class (Subclasses expected to double this per GDD)
-        this.size = 14;
+        this.size = 44;
     }
 
     _applyAimedVelocity() {

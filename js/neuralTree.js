@@ -182,54 +182,10 @@ const neuralTree = (() => {
     }
 
     function _applyInitialStates() {
-        const isFirst = gameState.isFirstLaunch !== false;
-
-        if (isFirst) {
-            // First launch: only AWAKEN visible and unlocked
-            nodes.awaken.setState(NODE_STATE.UNLOCKED);
-            nodes.pulse_damage.setState(NODE_STATE.HIDDEN);
-            nodes.reinforce.setState(NODE_STATE.HIDDEN);
-            nodes.sharpen.setState(NODE_STATE.HIDDEN);
-        } else {
-            // Returning player — restore states from saved levels
-            const ups = gameState.upgrades || {};
-            for (const id in nodes) {
-                const n = nodes[id];
-                if (ups[id] && ups[id] >= n.maxLevel) {
-                    n.setState(NODE_STATE.MAXED);
-                } else if (ups[id] && ups[id] > 0) {
-                    n.setState(NODE_STATE.UNLOCKED);
-                } else {
-                    // Check if parent is purchased
-                    if (n.parentId && ups[n.parentId]) {
-                        const parentDef = NODE_DEFS.find(d => d.id === n.parentId);
-                        const requiresMax = n.requiresMaxParent;
-                        const parentLv = ups[n.parentId];
-                        const parentMax = parentDef ? parentDef.maxLevel : 1;
-
-                        if (requiresMax) {
-                            if (parentLv >= parentMax) {
-                                n.setState(NODE_STATE.UNLOCKED);
-                            } else if (parentLv > 0) {
-                                n.setState(NODE_STATE.GHOST);
-                            } else {
-                                n.setState(NODE_STATE.HIDDEN);
-                            }
-                        } else {
-                            // Default: unlock if parent has at least 1 point
-                            if (parentLv > 0) {
-                                n.setState(NODE_STATE.UNLOCKED);
-                            } else {
-                                n.setState(NODE_STATE.HIDDEN);
-                            }
-                        }
-                    } else if (!n.parentId) {
-                        n.setState(ups[id] > 0 ? NODE_STATE.MAXED : NODE_STATE.UNLOCKED);
-                    } else {
-                        n.setState(NODE_STATE.HIDDEN);
-                    }
-                }
-            }
+        // Refresh all nodes. Parents refresh their children recursively,
+        // so we just need to hit lahat (all) root nodes or just all nodes to be safe.
+        for (const id in nodes) {
+            nodes[id].refreshState();
         }
     }
 
