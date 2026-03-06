@@ -20,12 +20,11 @@ class Slider {
         this.minX = x - width / 2;
         this.maxX = x + width / 2;
 
-        // Background guide line (0.6 alpha black pixel)
-        this.guide = PhaserScene.add.image(x, y, 'pixels', 'black_pixel.png');
+        // Background guide line
+        this.guide = PhaserScene.add.image(x, y, 'pixels', 'tan_pixel.png');
         this.guide.setDepth(depth);
         this.guide.setScrollFactor(0);
         this.guide.setDisplaySize(width, 4);
-        this.guide.setAlpha(0.6);
 
         // Progress fill (slider_glow.png)
         if (trackSprite) {
@@ -34,10 +33,17 @@ class Slider {
             this.track.setDepth(depth + 1);
             this.track.setScrollFactor(0);
             this.track.height = 10;
+
+            // Left edge cap (slider_glow_edge.png)
+            this.edge = PhaserScene.add.image(this.minX, y, atlas, 'slider_glow_edge.png');
+            this.edge.setOrigin(1, 0.5);
+            this.edge.setDepth(depth + 1);
+            this.edge.setScrollFactor(0);
+            this.edge.height = 10;
         }
 
         this.hitArea = new Button({
-            normal: { ref: 'black_pixel.png', atlas: 'pixels', x: x, y: y, alpha: 0.001, scaleX: width, scaleY: height },
+            normal: { ref: 'black_pixel.png', atlas: 'pixels', x: x, y: y, alpha: 0.001, scaleX: width * 0.6, scaleY: height * 0.5 },
             onMouseDown: (mx, my) => {
                 this._startDrag(mx);
                 this._updateKnobTexture('press');
@@ -100,11 +106,19 @@ class Slider {
         const clampedX = Math.max(this.minX, Math.min(this.maxX, mx));
         this.knob.x = clampedX;
 
+        const value = (this.knob.x - this.minX) / this.width;
+
         // Update fill width
         if (this.track) {
             const progressWidth = clampedX - this.minX;
             this.track.displayWidth = Math.max(1, progressWidth);
+
+            if (this.edge) {
+                this.edge.visible = (value > 0);
+            }
         }
+
+        if (this.onChange) this.onChange(value);
     }
 
     _endDrag() {
@@ -112,13 +126,12 @@ class Slider {
         this.isDragging = false;
         PhaserScene.input.off('pointermove', this._boundMove);
         PhaserScene.input.off('pointerup', this._boundUp);
-        const value = (this.knob.x - this.minX) / this.width;
-        if (this.onChange) this.onChange(value);
     }
 
     destroy() {
         if (this.guide) this.guide.destroy();
         if (this.track) this.track.destroy();
+        if (this.edge) this.edge.destroy();
         if (this.knob) this.knob.destroy();
         if (this.hitArea) this.hitArea.destroy();
     }

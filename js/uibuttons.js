@@ -35,8 +35,9 @@ function _showOptionsPopup() {
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
-    const width = 450;
-    const height = 300;
+    const width = 600;
+    const height = 450;
+    const elements = [];
 
     const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
@@ -45,56 +46,103 @@ function _showOptionsPopup() {
     darkBG.setDepth(depth);
     darkBG.setScrollFactor(0);
     PhaserScene.tweens.add({ targets: darkBG, alpha: 0.75, duration: 60 });
+    elements.push(darkBG);
 
     const blocker = new Button({
-        normal: { ref: 'white_pixel', x: W, y: H, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT },
-        onMouseUp: () => closePopup()
+        normal: { ref: 'white_pixel', x: W, y: H, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT }
     });
     blocker.setDepth(depth + 1);
     blocker.setScrollFactor(0);
+    elements.push(blocker);
 
     const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, 60, 60, 60, 60);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
+    elements.push(popupBG);
 
-    const titleObj = PhaserScene.add.text(W - width / 2 + 25, H - height / 2 + 25, '// OPTIONS', {
-        fontFamily: 'VCR', fontSize: '24px', color: '#ffffff',
+    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 30, '// SYSTEM CONFIGURATION v0.7.3', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#ffffff',
     }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(titleObj);
 
-    const sfxLabel = PhaserScene.add.text(W - 160, H - 40, 'SFX', {
-        fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
+    // --- AUDIO SECTION ---
+    const audioHeaderY = H - height / 2 + 80;
+    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY, 'AUDIO', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#000000',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(audioLabel);
 
-    const musicLabel = PhaserScene.add.text(W - 160, H + 20, 'MUSIC', {
-        fontFamily: 'VCR', fontSize: '18px', color: '#ffffff',
+    const audioLine = PhaserScene.add.image(W, audioHeaderY + 15, 'pixels', 'black_pixel.png');
+    audioLine.setDisplaySize(width - 80, 2);
+    audioLine.setAlpha(1);
+    audioLine.setDepth(depth + 3);
+    audioLine.setScrollFactor(0);
+    elements.push(audioLine);
+
+    const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 45, 'MUSIC VOLUME', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
-
-    const sfxSliderWidth = 200;
-    const musicSliderWidth = 200;
-
-    const sfxSlider = new Slider(
-        W + 20, H - 40, sfxSliderWidth, 30,
-        'slider_knob.png', 'buttons',
-        (value) => {
-            const volume = Math.max(0, Math.min(1, value));
-            localStorage.setItem('sfxVolume', volume);
-            audio.recheckMuteState();
-        },
-        parseFloat(localStorage.getItem('sfxVolume')) || 1.0,
-        depth + 3
-    );
+    elements.push(musicLabel);
 
     const musicSlider = new Slider(
-        W + 20, H + 20, musicSliderWidth, 30,
+        W + 110, audioHeaderY + 45, 300, 50,
         'slider_knob.png', 'buttons',
-        (value) => {
-            const volume = Math.max(0, Math.min(1, value));
-            localStorage.setItem('musicVolume', volume);
-            audio.recheckMuteState();
-        },
-        parseFloat(localStorage.getItem('musicVolume')) || 1.0,
+        (val) => audio.setMusicVolume(val),
+        parseFloat(localStorage.getItem('globalMusicVol')) || 1.0,
         depth + 3
     );
+    elements.push(musicSlider);
+
+    const sfxLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 80, 'SFX VOLUME', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(sfxLabel);
+
+    const sfxSlider = new Slider(
+        W + 110, audioHeaderY + 80, 300, 40,
+        'slider_knob.png', 'buttons',
+        (val) => audio.setVolume(val),
+        parseFloat(localStorage.getItem('globalVolume')) || 1.0,
+        depth + 3
+    );
+    elements.push(sfxSlider);
+
+    // --- VISUAL SECTION ---
+    const visualHeaderY = audioHeaderY + 125;
+    const visualLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY, 'VISUAL', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#000000',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(visualLabel);
+
+    const visualLine = PhaserScene.add.image(W, visualHeaderY + 15, 'pixels', 'black_pixel.png');
+    visualLine.setDisplaySize(width - 80, 2);
+    visualLine.setAlpha(1);
+    visualLine.setDepth(depth + 3);
+    visualLine.setScrollFactor(0);
+    elements.push(visualLine);
+
+    // Chromatic Aberration Checkbox
+    let isChromaEnabled = localStorage.getItem('chromaticAberration') !== 'false'; // Default to true
+    const chromaCheckbox = new Button({
+        normal: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 55, y: visualHeaderY + 45 },
+        hover: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
+        onMouseUp: () => {
+            isChromaEnabled = !isChromaEnabled;
+            localStorage.setItem('chromaticAberration', isChromaEnabled.toString());
+            chromaCheckbox.normal.ref = isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
+            chromaCheckbox.hover.ref = isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
+            chromaCheckbox.setState(chromaCheckbox.state);
+        }
+    });
+    chromaCheckbox.setDepth(depth + 3);
+    chromaCheckbox.setScrollFactor(0);
+    chromaCheckbox.setScale(0.8);
+    elements.push(chromaCheckbox);
+
+    const chromaLabel = PhaserScene.add.text(W - width / 2 + 90, visualHeaderY + 45, 'CHROMATIC ABERRATION', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(chromaLabel);
 
     const closeBtn = new Button({
         normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 33, y: H - height / 2 + 34 },
@@ -104,17 +152,12 @@ function _showOptionsPopup() {
     });
     closeBtn.setDepth(depth + 3);
     closeBtn.setScrollFactor(0);
+    elements.push(closeBtn);
 
     function closePopup() {
-        darkBG.destroy();
-        blocker.destroy();
-        popupBG.destroy();
-        titleObj.destroy();
-        sfxLabel.destroy();
-        musicLabel.destroy();
-        sfxSlider.destroy();
-        musicSlider.destroy();
-        closeBtn.destroy();
+        elements.forEach(el => {
+            if (el && el.destroy) el.destroy();
+        });
     }
 }
 
