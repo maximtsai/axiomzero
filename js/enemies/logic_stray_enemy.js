@@ -75,10 +75,10 @@ class LogicStrayEnemy extends Enemy {
         if (this.img) this.img.setRotation(currentRot);
         if (this.hpImg) this.hpImg.setRotation(currentRot);
 
-        // Ghost trail every 0.8s
+        // Ghost trail every 1.25s
         this.ghostTimer += dt;
-        if (this.ghostTimer >= 0.8) {
-            this.ghostTimer %= 0.8;
+        if (this.ghostTimer >= 1.25) {
+            this.ghostTimer %= 1.25;
             if (this.img) {
                 customEmitters.logicStrayGhost(this.x, this.y, this.img.rotation, this.img.scaleX);
             }

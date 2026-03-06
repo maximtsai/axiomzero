@@ -185,7 +185,7 @@ const customEmitters = (() => {
         PhaserScene.tweens.add({
             targets: sprite,
             alpha: 0,
-            duration: 2500,
+            duration: 3250,
             ease: 'Linear',
             onComplete: () => {
                 sprite.setActive(false);
@@ -195,6 +195,105 @@ const customEmitters = (() => {
         });
     }
 
+    /**
+     * Creates a visually rich explosion on miniboss death.
+     * @param {Phaser.GameObjects.Image|Phaser.GameObjects.Sprite} originalSprite
+     * @param {number} effectScale - Overriding scale for the explosion (1.0 default)
+     */
+    function minibossExplosion(originalSprite, effectScale = 1.0) {
+        const x = originalSprite.x;
+        const y = originalSprite.y;
+        const rotation = originalSprite.rotation;
+        const scaleX = originalSprite.scaleX;
+        const scaleY = originalSprite.scaleY;
+        const depth = originalSprite.depth;
+        const texture = originalSprite.texture.key;
+        const frame = originalSprite.frame.name;
+
+        // 1. Create copy of the miniboss sprite (no tint)
+        const copy = PhaserScene.add.image(x, y, texture, frame);
+        copy.setRotation(rotation);
+        copy.setScale(scaleX, scaleY);
+        copy.setDepth(depth);
+        copy.clearTint();
+
+        // 2. Flash white 3 times over 0.6 seconds
+        PhaserScene.tweens.add({
+            targets: copy,
+            duration: 100,
+            repeat: 2,
+            yoyo: true,
+            onStart: () => { if (copy.active) copy.setTintFill(0xffffff); },
+            onYoyo: () => { if (copy.active) copy.clearTint(); },
+            onRepeat: () => { if (copy.active) copy.setTintFill(0xffffff); },
+            onComplete: () => {
+                copy.destroy();
+            }
+        });
+
+        // 3. Warning area centered at the miniboss
+        const warning = PhaserScene.add.sprite(x, y, 'enemies', 'warning_area.png');
+        warning.setDepth(depth + 1);
+        warning.setAlpha(0);
+        warning.setScale(0.8 * effectScale);
+
+        // 4. Tween warning area over 0.6 seconds
+        PhaserScene.tweens.add({
+            targets: warning,
+            alpha: 0.8,
+            scale: 1.0 * effectScale,
+            duration: 600,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                // At the end of 0.6s:
+                if (copy.active) copy.destroy();
+
+                // 5. Explosion sequence starts
+                warning.setFrame('explosion_white.png');
+                warning.setAlpha(1);
+
+                PhaserScene.time.delayedCall(50, () => {
+                    warning.setTint(0x000000); // Fully black
+
+                    PhaserScene.time.delayedCall(50, () => {
+                        warning.clearTint();
+                        warning.setScale(4 * effectScale);
+                        warning.play('explosion_anim');
+
+                        // 6. Camera shake and Deal 99 damage to all enemies within scaled 240px radius
+                        PhaserScene.cameras.main.shake(250, 0.015);
+                        if (typeof enemyManager !== 'undefined') {
+                            const enemies = enemyManager.getActiveEnemies();
+                            const radius = 240 * effectScale;
+                            const radiusSq = radius * radius;
+                            for (let i = enemies.length - 1; i >= 0; i--) {
+                                const e = enemies[i];
+                                if (e && e.alive) {
+                                    const dx = e.x - x;
+                                    const dy = e.y - y;
+                                    if (dx * dx + dy * dy <= radiusSq) {
+                                        enemyManager.damageEnemy(e, 99);
+                                    }
+                                }
+                            }
+                        }
+
+                        // 7. Fade out over 2 seconds
+                        PhaserScene.tweens.add({
+                            targets: warning,
+                            alpha: 0,
+                            duration: 2000,
+                            ease: 'Linear',
+                            onComplete: () => {
+                                warning.destroy();
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    }
+
     // ── public API ───────────────────────────────────────────────────────────
-    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost };
+    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost, minibossExplosion };
 })();

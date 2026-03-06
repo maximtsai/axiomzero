@@ -529,6 +529,9 @@ const enemyManager = (() => {
             debugLog('Boss defeated');
         } else if (wasMiniboss) {
             minibossAlive = false;
+            if (enemy.img) {
+                customEmitters.minibossExplosion(enemy.img);
+            }
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
         } else {

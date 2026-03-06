@@ -29,6 +29,7 @@ const MINIBOSS_STATE = {
 class Miniboss1 extends Miniboss {
     constructor() {
         super();
+        this.isMiniboss = true;
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'miniboss_1.png');
         this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 2);
         this.img.setVisible(false);

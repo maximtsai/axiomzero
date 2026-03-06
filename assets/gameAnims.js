@@ -24,6 +24,18 @@ function createAnimations(scene) {
         }),
         frameRate: 20,
         repeat: 0,
-        yoyo: false
+    });
+
+    scene.anims.create({
+        key: 'explosion_anim',
+        frames: scene.anims.generateFrameNames('enemies', {
+            prefix: 'explosion_anim',
+            start: 1,
+            end: 11,
+            zeroPad: 0,
+        }),
+        frameRate: 20,
+        repeat: 0,
+        hideOnComplete: false
     });
 }

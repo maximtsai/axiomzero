@@ -156,6 +156,7 @@ const waveManager = (() => {
             // 3. Inform enemyManager to instantly kill all non-boss enemies
             if (typeof enemyManager !== 'undefined') {
                 enemyManager.killAllNonBossEnemies();
+                PhaserScene.cameras.main.shake(500, 0.02);
             }
 
             // 4. Trigger resource vacuum (to be implemented in resourceManager)

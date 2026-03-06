@@ -246,7 +246,48 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">enemies/explosion_anim1.png</key>
+            <key type="filename">enemies/explosion_anim10.png</key>
+            <key type="filename">enemies/explosion_anim11.png</key>
+            <key type="filename">enemies/explosion_anim2.png</key>
+            <key type="filename">enemies/explosion_anim3.png</key>
+            <key type="filename">enemies/explosion_anim4.png</key>
+            <key type="filename">enemies/explosion_anim5.png</key>
+            <key type="filename">enemies/explosion_anim6.png</key>
+            <key type="filename">enemies/explosion_anim7.png</key>
+            <key type="filename">enemies/explosion_anim8.png</key>
+            <key type="filename">enemies/explosion_anim9.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>30,30,59,59</rect>
+                <key>scale9Paddings</key>
+                <rect>30,30,59,59</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">enemies/explosion_charge.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,25,50,50</rect>
+                <key>scale9Paddings</key>
+                <rect>25,25,50,50</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">enemies/explosion_flash.png</key>
+            <key type="filename">enemies/explosion_white.png</key>
             <key type="filename">enemies/warning_area.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -259,6 +300,21 @@
                 <rect>118,118,235,235</rect>
                 <key>scale9Paddings</key>
                 <rect>118,118,235,235</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">enemies/explosion_ray.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>50,15,100,30</rect>
+                <key>scale9Paddings</key>
+                <rect>50,15,100,30</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
