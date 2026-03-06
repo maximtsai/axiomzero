@@ -30,6 +30,7 @@ function createAnimations(scene) {
         key: 'explosion_anim',
         frames: scene.anims.generateFrameNames('enemies', {
             prefix: 'explosion_anim',
+            suffix: '.png',
             start: 1,
             end: 11,
             zeroPad: 0,

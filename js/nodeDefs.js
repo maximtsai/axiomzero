@@ -6,8 +6,14 @@
 function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
+    pulseAttack.setDamage(5 + 2 * ampLv);
+}
+
+/** Recalculates total pulse size from all pulse upgrade nodes. */
+function _recalcPulseSize() {
+    const ups = gameState.upgrades || {};
     const surgeLv = ups.pulse_damage_2 || 0;
-    pulseAttack.setDamage(5 + 2 * ampLv + 10 * surgeLv);
+    pulseAttack.setSize(100 + 40 * surgeLv);
 }
 
 const NODE_DEFS = [
@@ -57,11 +63,11 @@ const NODE_DEFS = [
         id: 'pulse_damage_2',
         name: 'SURGE',
         icon: 'Skillicon14_07.png',
-        description: '+10 pulse damage',
-        popupText: '+10 PULSE DMG',
+        description: '+40 pulse attack size',
+        popupText: '+40 PULSE SIZE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
-        baseCost: 40,
+        baseCost: 10,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -71,7 +77,7 @@ const NODE_DEFS = [
         treeX: 325,
         treeY: 650,
         effect: function () {
-            _recalcPulseDamage();
+            _recalcPulseSize();
         },
     },
     {

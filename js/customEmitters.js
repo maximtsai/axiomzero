@@ -258,7 +258,11 @@ const customEmitters = (() => {
                     PhaserScene.time.delayedCall(50, () => {
                         warning.clearTint();
                         warning.setScale(4 * effectScale);
-                        warning.play('explosion_anim');
+                        if (PhaserScene.anims.exists('explosion_anim')) {
+                            warning.play('explosion_anim');
+                        } else {
+                            warning.setFrame('explosion_flash.png');
+                        }
 
                         // 6. Camera shake and Deal 99 damage to all enemies within scaled 240px radius
                         PhaserScene.cameras.main.shake(250, 0.015);
