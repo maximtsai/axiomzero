@@ -35,8 +35,8 @@ function _showOptionsPopup() {
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
-    const width = 600;
-    const height = 450;
+    const width = 800;
+    const height = 600;
     const elements = [];
 
     const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
@@ -60,32 +60,32 @@ function _showOptionsPopup() {
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
 
-    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 30, '// SYSTEM CONFIGURATION v0.7.3', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#ffffff',
+    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 25, '// SYSTEM CONFIGURATION v0.7.3', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff',
     }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0);
     elements.push(titleObj);
 
     // --- AUDIO SECTION ---
-    const audioHeaderY = H - height / 2 + 80;
-    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY, 'AUDIO', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#000000',
+    const audioHeaderY = H - height / 2 + 75;
+    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 8, 'AUDIO', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#000000',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(audioLabel);
 
-    const audioLine = PhaserScene.add.image(W, audioHeaderY + 15, 'pixels', 'black_pixel.png');
+    const audioLine = PhaserScene.add.image(W, audioHeaderY + 28, 'pixels', 'black_pixel.png');
     audioLine.setDisplaySize(width - 80, 2);
     audioLine.setAlpha(1);
     audioLine.setDepth(depth + 3);
     audioLine.setScrollFactor(0);
     elements.push(audioLine);
 
-    const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 45, 'MUSIC VOLUME', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
+    const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 55, 'MUSIC VOLUME', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(musicLabel);
 
     const musicSlider = new Slider(
-        W + 110, audioHeaderY + 45, 300, 50,
+        W + 70, audioHeaderY + 55, 400, 50,
         'slider_knob.png', 'buttons',
         (val) => audio.setMusicVolume(val),
         parseFloat(localStorage.getItem('globalMusicVol')) || 1.0,
@@ -93,13 +93,13 @@ function _showOptionsPopup() {
     );
     elements.push(musicSlider);
 
-    const sfxLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 80, 'SFX VOLUME', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
+    const sfxLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 95, 'SFX VOLUME', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(sfxLabel);
 
     const sfxSlider = new Slider(
-        W + 110, audioHeaderY + 80, 300, 40,
+        W + 70, audioHeaderY + 95, 400, 40,
         'slider_knob.png', 'buttons',
         (val) => audio.setVolume(val),
         parseFloat(localStorage.getItem('globalVolume')) || 1.0,
@@ -108,13 +108,13 @@ function _showOptionsPopup() {
     elements.push(sfxSlider);
 
     // --- VISUAL SECTION ---
-    const visualHeaderY = audioHeaderY + 125;
+    const visualHeaderY = audioHeaderY + 145;
     const visualLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY, 'VISUAL', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#000000',
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#000000',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(visualLabel);
 
-    const visualLine = PhaserScene.add.image(W, visualHeaderY + 15, 'pixels', 'black_pixel.png');
+    const visualLine = PhaserScene.add.image(W, visualHeaderY + 20, 'pixels', 'black_pixel.png');
     visualLine.setDisplaySize(width - 80, 2);
     visualLine.setAlpha(1);
     visualLine.setDepth(depth + 3);
@@ -124,7 +124,7 @@ function _showOptionsPopup() {
     // Chromatic Aberration Checkbox
     let isChromaEnabled = localStorage.getItem('chromaticAberration') !== 'false'; // Default to true
     const chromaCheckbox = new Button({
-        normal: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 55, y: visualHeaderY + 45 },
+        normal: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 65, y: visualHeaderY + 55 },
         hover: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
         onMouseUp: () => {
             isChromaEnabled = !isChromaEnabled;
@@ -136,13 +136,56 @@ function _showOptionsPopup() {
     });
     chromaCheckbox.setDepth(depth + 3);
     chromaCheckbox.setScrollFactor(0);
-    chromaCheckbox.setScale(0.8);
+    chromaCheckbox.setScale(1.0);
     elements.push(chromaCheckbox);
 
-    const chromaLabel = PhaserScene.add.text(W - width / 2 + 90, visualHeaderY + 45, 'CHROMATIC ABERRATION', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff',
+    const chromaLabel = PhaserScene.add.text(W - width / 2 + 105, visualHeaderY + 55, 'CHROMATIC ABERRATION', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(chromaLabel);
+
+    const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 95, 'PARTICLES', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(particlesLabel);
+
+    // --- GAMEPLAY SECTION ---
+    const gameplayHeaderY = visualHeaderY + 145;
+    const gameplayLabel = PhaserScene.add.text(W - width / 2 + 40, gameplayHeaderY + 12, 'GAMEPLAY', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#000000',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(gameplayLabel);
+
+    const gameplayLine = PhaserScene.add.image(W, gameplayHeaderY + 32, 'pixels', 'black_pixel.png');
+    gameplayLine.setDisplaySize(width - 80, 2);
+    gameplayLine.setAlpha(1);
+    gameplayLine.setDepth(depth + 3);
+    gameplayLine.setScrollFactor(0);
+    elements.push(gameplayLine);
+
+    const languageLabel = PhaserScene.add.text(W - width / 2 + 40, gameplayHeaderY + 60, 'LANGUAGE', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(languageLabel);
+
+    const damageNumbersLabel = PhaserScene.add.text(W - width / 2 + 40, gameplayHeaderY + 110, 'SHOW DAMAGE NUMBERS:', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(damageNumbersLabel);
+
+    // --- DATA SECTION ---
+    const dataHeaderY = gameplayHeaderY + 170;
+    const dataLabel = PhaserScene.add.text(W - width / 2 + 40, dataHeaderY - 12, 'DATA', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#000000',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(dataLabel);
+
+    const dataLine = PhaserScene.add.image(W, dataHeaderY + 8, 'pixels', 'black_pixel.png');
+    dataLine.setDisplaySize(width - 80, 2);
+    dataLine.setAlpha(1);
+    dataLine.setDepth(depth + 3);
+    dataLine.setScrollFactor(0);
+    elements.push(dataLine);
 
     const closeBtn = new Button({
         normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 33, y: H - height / 2 + 34 },
