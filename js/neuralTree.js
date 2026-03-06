@@ -151,7 +151,7 @@ const neuralTree = (() => {
         treeGroup.add(dragSurface);
 
         // Title
-        titleText = PhaserScene.add.text(TREE_CENTER_X, 38, 'NEURAL TREE', {
+        titleText = PhaserScene.add.text(TREE_CENTER_X, 48, 'NEURAL TREE', {
             fontFamily: 'Michroma',
             fontSize: '28px',
             color: '#00f5ff',

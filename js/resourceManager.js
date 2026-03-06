@@ -30,6 +30,7 @@ const resourceManager = (() => {
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
+        messageBus.subscribe('triggerResourceVacuum', _vacuumAllDrops);
         updateManager.addFunction(_update);
     }
 
@@ -252,6 +253,28 @@ const resourceManager = (() => {
             else addData(1);
         }
         flyingDrops.length = 0;
+    }
+
+    /** Forces all currently resting drops and incoming spawn drops to immediately fly to cursor at high speed. */
+    function _vacuumAllDrops() {
+        for (let i = activeDrops.length - 1; i >= 0; i--) {
+            const d = activeDrops[i];
+
+            if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
+            d.x = d.img.x;
+            d.y = d.img.y;
+            d.flying = true;
+            // Ramp up inertia drastically to ensure they pull in fast
+            d.inertia = 4.0;
+
+            activeDrops.splice(i, 1);
+            flyingDrops.push(d);
+        }
+
+        // Also boost any drops already flying
+        for (let i = 0; i < flyingDrops.length; i++) {
+            flyingDrops[i].inertia = 4.0;
+        }
     }
 
     // ── per-frame ────────────────────────────────────────────────────────────

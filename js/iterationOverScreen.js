@@ -7,9 +7,10 @@ const iterationOverScreen = (() => {
     let dataText = null;
     let insightText = null;
     let upgradesBtn = null;
-    let retryBtn = null;
+    let newTierText = null;
 
     let visible = false;
+    let isBossKill = false;
 
     // ── init ─────────────────────────────────────────────────────────────
 
@@ -61,6 +62,13 @@ const iterationOverScreen = (() => {
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
+
+        newTierText = PhaserScene.add.text(cx, cy - 85, 'new tier unlocked', {
+            fontFamily: 'JetBrainsMono_Italic',
+            fontSize: '18px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1).setVisible(false);
 
         // UPGRADES button
         upgradesBtn = new Button({
@@ -143,6 +151,14 @@ const iterationOverScreen = (() => {
         retryBtn.setVisible(true);
         retryBtn.setState(NORMAL);
 
+        if (isBossKill) {
+            titleText.fullText = 'BOSS DEFEATED';
+            newTierText.setVisible(true);
+        } else {
+            titleText.fullText = 'ITERATION COMPLETE';
+            newTierText.setVisible(false);
+        }
+
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
@@ -196,10 +212,12 @@ const iterationOverScreen = (() => {
 
     function _hideAll() {
         visible = false;
+        visible = false;
         overlay.setVisible(false);
         titleText.setVisible(false);
         dataText.setVisible(false);
         insightText.setVisible(false);
+        if (newTierText) newTierText.setVisible(false);
         upgradesBtn.setVisible(false);
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);
@@ -237,8 +255,9 @@ const iterationOverScreen = (() => {
 
     // ── events ───────────────────────────────────────────────────────────
 
-    function _onPhaseChanged(phase) {
+    function _onPhaseChanged(phase, data = {}) {
         if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
+            isBossKill = !!data.bossKill;
             show();
         } else if (visible) {
             _hideAll();

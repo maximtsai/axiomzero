@@ -19,6 +19,7 @@ const enemyManager = (() => {
     let logicStrayPool = []; // pre-allocated LogicStrayEnemy instances
     let protectorPool = []; // pre-allocated ProtectorEnemy instances
     let minibossPool = [];  // pre-allocated Miniboss instances
+    let bossPool = [];      // pre-allocated Boss1 instances
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
     let spawning = false;
@@ -32,12 +33,17 @@ const enemyManager = (() => {
     let lastWaveProgress = 0;     // current progress 0-1
     let recentSpawnAngles = [];   // tracks the last 4 spawn angles (in radians)
 
+    // Boss tracking
+    let bossSpawned = false;
+    let bossAlive = false;
+
 
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
         _buildPool();
         _buildMinibossPool();
+        _buildBossPool();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
@@ -65,6 +71,13 @@ const enemyManager = (() => {
         }
     }
 
+    function _buildBossPool() {
+        // Only ever 1 boss at a time, but allocate 2 to be safe
+        for (let i = 0; i < 2; i++) {
+            bossPool.push(new Boss1());
+        }
+    }
+
     // ── spawning ─────────────────────────────────────────────────────────────
 
     function _startSpawning() {
@@ -75,6 +88,8 @@ const enemyManager = (() => {
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         minibossSpawned = false;
         minibossAlive = false;
+        bossSpawned = false;
+        bossAlive = false;
         lastWaveProgress = 0;
         recentSpawnAngles = [];
     }
@@ -95,10 +110,23 @@ const enemyManager = (() => {
     }
 
     function clearAllEnemies() {
-        for (let i = activeEnemies.length - 1; i >= 0; i--) {
-            activeEnemies[i].deactivate();
+        for (let i = activeEnemies.length - 0; i >= 0; i--) {
+            if (activeEnemies[i]) activeEnemies[i].deactivate();
         }
         activeEnemies.length = 0;
+    }
+
+    function killAllNonBossEnemies() {
+        for (let i = activeEnemies.length - 1; i >= 0; i--) {
+            const e = activeEnemies[i];
+            if (e && e.alive && !e.isBoss) {
+                // Inflict lethal damage using selfDamage to ensure it dies and triggers drops
+                e.takeDamage(e.maxHealth * 10);
+                if (e.alive) {
+                    _killEnemy(e);
+                }
+            }
+        }
     }
 
     function _spawnOne() {
@@ -248,6 +276,48 @@ const enemyManager = (() => {
         debugLog('Miniboss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
     }
 
+    function _spawnBoss() {
+        if (bossSpawned) return;
+        const b = _getBossFromPool();
+        if (!b) return;
+
+        bossSpawned = true;
+        bossAlive = true;
+
+        const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
+        const angle = Math.random() * Math.PI * 2;
+        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
+        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
+
+        // Visual warning before spawning
+        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
+        warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+        warningImg.setOrigin(0, 0.5);
+        warningImg.setScale(1.6, 1.4);
+        warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
+        warningImg.setAlpha(0);
+
+        PhaserScene.tweens.add({
+            targets: warningImg,
+            alpha: 1,
+            duration: 750,
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+                warningImg.destroy();
+            }
+        });
+
+        // Use standard scale factor or custom logic if needed
+        b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
+        b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+        activeEnemies.push(b);
+
+        messageBus.publish('bossSpawned');
+        debugLog('Boss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
+    }
+
     function _getFromPool() {
         for (let i = 0; i < pool.length; i++) {
             if (!pool[i].alive) return pool[i];
@@ -307,6 +377,13 @@ const enemyManager = (() => {
     function _getMinibossFromPool() {
         for (let i = 0; i < minibossPool.length; i++) {
             if (!minibossPool[i].alive) return minibossPool[i];
+        }
+        return null;
+    }
+
+    function _getBossFromPool() {
+        for (let i = 0; i < bossPool.length; i++) {
+            if (!bossPool[i].alive) return bossPool[i];
         }
         return null;
     }
@@ -440,11 +517,18 @@ const enemyManager = (() => {
         const ex = enemy.x;
         const ey = enemy.y;
         const wasMiniboss = enemy.isMiniboss;
+        const wasBoss = enemy.isBoss;
+
         enemy.deactivate();
         const idx = activeEnemies.indexOf(enemy);
         if (idx !== -1) activeEnemies.splice(idx, 1);
 
-        if (wasMiniboss) {
+        if (wasBoss) {
+            bossAlive = false;
+            messageBus.publish('bossDefeated', ex, ey);
+            debugLog('Boss defeated');
+        } else if (wasMiniboss) {
+            minibossAlive = false;
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
         } else {
@@ -542,9 +626,13 @@ const enemyManager = (() => {
         if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !minibossSpawned && spawning) {
             _spawnMiniboss();
         }
+        if (progress >= 1.0 && !bossSpawned && spawning) {
+            _stopSpawning(); // Prevent endless swarms when boss appears
+            _spawnBoss();
+        }
     }
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
 })();

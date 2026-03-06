@@ -29,6 +29,7 @@ const waveManager = (() => {
         messageBus.subscribe('unfreezeEnemies', () => { frozen = false; });
         messageBus.subscribe('minibossSpawned', () => { progressPaused = true; });
         messageBus.subscribe('minibossDefeated', () => { progressPaused = false; });
+        messageBus.subscribe('bossDefeated', _onBossDefeated);
     }
 
     function _onPhaseChanged(phase) {
@@ -116,6 +117,57 @@ const waveManager = (() => {
         debugLog('Death sequence complete — entering WAVE_COMPLETE');
     }
 
+    function _onBossDefeated(x, y) {
+        debugLog('Boss 1 defeated — triggering victory sequence');
+
+        // 1. Tower becomes invincible (no need to call, boss is dead and enemies are dying, plus transition handles this)
+        // Also handled safely by the incoming phase change
+
+        // 2. Play shockwave animation at boss location
+        const shockwave = PhaserScene.add.image(x, y, 'enemies', 'explosion_flash.png');
+        shockwave.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
+        shockwave.setScale(0.1);
+        shockwave.setAlpha(0.8);
+
+        // Flash tint cyan to match player colors
+        shockwave.setTintFill(GAME_CONSTANTS.COLOR_FRIENDLY);
+
+        // Explode outward
+        PhaserScene.tweens.add({
+            targets: shockwave,
+            scaleX: 12,
+            scaleY: 12,
+            duration: 400,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                shockwave.destroy();
+            }
+        });
+
+        PhaserScene.tweens.add({
+            targets: shockwave,
+            alpha: 0,
+            duration: 400,
+            onComplete: () => {
+                shockwave.destroy();
+            }
+        });
+        PhaserScene.time.delayedCall(200, () => {
+            // 3. Inform enemyManager to instantly kill all non-boss enemies
+            if (typeof enemyManager !== 'undefined') {
+                enemyManager.killAllNonBossEnemies();
+            }
+
+            // 4. Trigger resource vacuum (to be implemented in resourceManager)
+            messageBus.publish('triggerResourceVacuum');
+        });
+
+        // 5. Short delay, then transition to iteration over
+        PhaserScene.time.delayedCall(2000, () => {
+            gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE, { bossKill: true });
+        });
+    }
+
     /** Called via 'endIterationRequested' — voluntarily end combat. */
     function endIteration() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) return;
@@ -134,8 +186,6 @@ const waveManager = (() => {
             waveProgress = Math.min(1, waveProgress + dt / GAME_CONSTANTS.WAVE_DURATION);
             messageBus.publish('waveProgressChanged', waveProgress);
         }
-
-        // TODO: When waveProgress >= 1.0, spawn the boss (future implementation)
     }
 
     function getProgress() { return waveProgress; }
