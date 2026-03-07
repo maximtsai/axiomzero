@@ -10,4 +10,5 @@ const audioFiles = [
     { name: 'click', src: 'audio/click.mp3' },
     { name: 'data_reveal', src: 'audio/data_reveal.mp3' },
     { name: 'bg_music1', src: 'audio/bg_music1.mp3' },
+    { name: 'boss_music', src: 'audio/bossmusic_loop.mp3' },
 ];
