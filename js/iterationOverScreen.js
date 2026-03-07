@@ -178,7 +178,7 @@ const iterationOverScreen = (() => {
 
             // Insight text
             if (sessionInsight > 0) {
-                insightText.setText('\u25C9 INSIGHT gained: ' + sessionInsight);
+                insightText.setText('⦵ INSIGHT gained: ' + sessionInsight);
                 insightText.setVisible(true);
             } else {
                 insightText.setVisible(false);

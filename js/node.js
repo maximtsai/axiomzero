@@ -452,7 +452,7 @@ class Node {
         } else {
             // Level and cost - center aligned, larger font
             const lvStr = 'Lv ' + this.level + '/' + this.maxLevel;
-            const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '\u25C8' : '\u25C9');
+            const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '\u25C8' : '⦵');
             const infoT = PhaserScene.add.text(x, currentY, lvStr + '  ' + costStr, {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: '19px',
