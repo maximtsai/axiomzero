@@ -43,6 +43,7 @@ const enemyManager = (() => {
     let fastPackActive = false;
     let fastPackCount = 0;
     let fastPackOriginalAngle = 0;
+    let fastPackLastOffsetSign = 1;
     let fastPackCooldown = 0;
 
     // Spawn Rules configuration
@@ -226,8 +227,13 @@ const enemyManager = (() => {
         } else if (chosenType === 'swarmer') {
             angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES['swarmer']);
         } else if (chosenType === 'fast' && fastPackActive) {
-            // Pick an angle 0.2 to 0.5 radians away from original, varying polarity
-            const offset = Phaser.Math.Between(20, 50) / 100 * (Math.random() < 0.5 ? 1 : -1);
+            // Pick an angle 0.2 to 0.5 radians away from original
+            const offsetMag = Phaser.Math.Between(20, 50) / 100;
+            // Third member (count is currently 2, will be 3) spawns opposite to second
+            const sign = -fastPackLastOffsetSign;
+            const offset = offsetMag * sign;
+            fastPackLastOffsetSign = sign;
+
             angle = fastPackOriginalAngle + offset;
             angle = Phaser.Math.Angle.Wrap(angle);
         } else {
@@ -240,6 +246,7 @@ const enemyManager = (() => {
                 fastPackActive = true;
                 fastPackCount = 1;
                 fastPackOriginalAngle = angle;
+                fastPackLastOffsetSign = Math.random() < 0.5 ? 1 : -1;
             } else {
                 fastPackCount++;
                 if (fastPackCount >= 3) {

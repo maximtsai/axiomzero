@@ -480,6 +480,8 @@ const tower = (() => {
             model.attackTimer = 0;
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             model.active = false;
+            model.health = model.maxHealth;
+            messageBus.publish('healthChanged', model.health, model.maxHealth);
             view.playUpgradePhaseAnimation(model.attackRange);
         } else {
             model.active = false;
