@@ -68,9 +68,11 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
 
-    // Pulse attack — cursor AOE (unlocked by default)
+    // Pulse attack — cursor AOE (must be unlocked via Neural Tree)
     pulseAttack.init();
-    pulseAttack.unlock();
+    if ((gameState.upgrades && gameState.upgrades.basic_pulse) >= 1) {
+        pulseAttack.unlock();
+    }
 
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.testMobile() ? 3 : 0;

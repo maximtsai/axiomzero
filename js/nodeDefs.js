@@ -29,7 +29,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: null,
-        childIds: ['pulse_damage', 'reinforce', 'sharpen'],
+        childIds: ['basic_pulse', 'reinforce', 'sharpen'],
         treeX: 400,
         treeY: 750,
         effect: function () {
@@ -38,6 +38,26 @@ const NODE_DEFS = [
             if (neuralTree.isVisible()) {
                 neuralTree._showDeployButton();
             }
+        },
+    },
+    {
+        id: 'basic_pulse',
+        name: 'COGNITION',
+        icon: 'Skillicon14_02.png',
+        description: 'Your cursor now auto-attacks.',
+        popupText: 'PULSE UNLOCKED',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'awaken',
+        childIds: ['pulse_damage', 'magnet'],
+        treeX: 400,
+        treeY: 670,
+        effect: function () {
+            pulseAttack.unlock();
         },
     },
     {
@@ -52,10 +72,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 4,
-        parentId: 'awaken',
-        childIds: ['pulse_damage_2', 'magnet'],
+        parentId: 'basic_pulse',
+        childIds: ['pulse_damage_2'],
         treeX: 320,
-        treeY: 750,
+        treeY: 670,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -72,10 +92,10 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         costStep: 0,
-        parentId: 'pulse_damage',
+        parentId: 'basic_pulse',
         childIds: [],
-        treeX: 240,
-        treeY: 750,
+        treeX: 480,
+        treeY: 670,
         effect: function () {
             resourceManager.recalcPickupRadius();
         },
@@ -115,8 +135,8 @@ const NODE_DEFS = [
         costStep: 5,
         parentId: 'pulse_damage_2',
         childIds: [],
-        treeX: 240,
-        treeY: 590,
+        treeX: 160,
+        treeY: 670,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -135,8 +155,8 @@ const NODE_DEFS = [
         costStep: 8,
         parentId: 'awaken',
         childIds: ['regen'],
-        treeX: 400,
-        treeY: 670,
+        treeX: 320,
+        treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -196,8 +216,8 @@ const NODE_DEFS = [
         costStep: 6,
         parentId: 'reinforce',
         childIds: [],
-        treeX: 480,
-        treeY: 670,
+        treeX: 240,
+        treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
