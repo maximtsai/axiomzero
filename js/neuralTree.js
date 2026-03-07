@@ -194,19 +194,8 @@ const neuralTree = (() => {
         if (!parent) return;
         for (let i = 0; i < parent.childIds.length; i++) {
             const child = nodes[parent.childIds[i]];
-            if (child && (child.state === NODE_STATE.HIDDEN || child.state === NODE_STATE.GHOST)) {
-                if (child.requiresMaxParent) {
-                    if (parent.isMaxed()) {
-                        child.setState(NODE_STATE.UNLOCKED);
-                    } else if (parent.level > 0 && child.state === NODE_STATE.HIDDEN) {
-                        child.setState(NODE_STATE.GHOST);
-                    }
-                } else {
-                    // Default logic
-                    if (parent.level > 0) {
-                        child.setState(NODE_STATE.UNLOCKED);
-                    }
-                }
+            if (child) {
+                child.refreshState();
             }
         }
         // Redraw lines to reflect new child states

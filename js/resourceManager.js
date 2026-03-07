@@ -5,8 +5,8 @@
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
-    const FLY_SPEED = 320;  // px/sec while flying toward cursor
-    const FLY_COLLECT_DIST = 14;   // Manhattan distance (px) — no sqrt needed
+    const FLY_SPEED = 350;  // px/sec while flying toward cursor
+    const FLY_COLLECT_DIST = 18;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
@@ -363,7 +363,7 @@ const resourceManager = (() => {
             d.dy *= 0.95 - 0.05 * d.inertia;
 
             if (d.inertia < 1) {
-                d.inertia = Math.min(1, d.inertia + 0.75 * dt);
+                d.inertia = Math.min(1, d.inertia + 0.85 * dt);
             }
             d.img.setPosition(d.x, d.y);
         }
