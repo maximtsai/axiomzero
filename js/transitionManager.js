@@ -51,6 +51,9 @@ const transitionManager = (() => {
                 gameHUD.setWaveProgressBarVisible(true);
             });
         } else if (targetPhase === GAME_CONSTANTS.PHASE_UPGRADE) {
+            // Stop boss track & bring back main BGM if applicable
+            audio.stopBossMusic();
+
             // First switch phase so tree UI appears, then slide camera
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_UPGRADE);
 

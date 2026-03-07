@@ -195,14 +195,51 @@ const audio = {
     setSoundVolume: function (sound, volume = 0, duration) {
         let globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
         sound.fullVolume = volume;
+
+        let targetVolume = sound.fullVolume * globalToUse;
+        if (isMuted || (sound.isMusic && isMusicMuted) || (!sound.isMusic && isSFXMuted)) {
+            targetVolume = 0;
+        }
+
         if (!duration) {
-            sound.volume = sound.fullVolume * globalToUse;
+            sound.volume = targetVolume;
         } else {
             PhaserScene.tweens.add({
                 targets: sound,
-                volume: sound.fullVolume * globalToUse,
+                volume: targetVolume,
                 duration
             });
+        }
+    },
+
+    /** Starts the boss music, fading out the main music concurrently. */
+    playBossMusic: function (bossMusicName = 'boss_music') {
+        if (!globalMusic || isMuted || isMusicMuted) return;
+
+        // Fade out main background music over 1.5 seconds
+        audio.setSoundVolume(globalMusic, 0, 1500);
+
+        // Start boss music loop at 0.01 volume and fade it in over 1 seconds after a 0.75 second delay
+        globalTempMusic = audio.playFakeBGMusic(bossMusicName, 0.01, true);
+        PhaserScene.time.delayedCall(750, () => {
+            audio.setSoundVolume(globalTempMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 1000);
+        });
+    },
+
+    /** Stops the boss music and fades the main background music back in. */
+    stopBossMusic: function () {
+        if (globalTempMusic) {
+            // Fade out boss music over 0.75 seconds then stop
+            audio.fadeAway(globalTempMusic, 750, 'Linear', () => {
+                globalTempMusic = null;
+            });
+        }
+
+        if (globalMusic && !isMuted && !isMusicMuted) {
+            // Bring back bg_music1 from 0.01 to full over 0.6 seconds
+            globalMusic.fullVolume = 0.01;
+            globalMusic.volume = 0.01 * globalMusicVol;
+            audio.setSoundVolume(globalMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 600);
         }
     },
 

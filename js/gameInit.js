@@ -26,6 +26,12 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         }
     });
 
+    // Start boss music when boss spawns
+    messageBus.subscribe('bossSpawned', () => {
+        debugLog('Playing boss music...');
+        audio.playBossMusic();
+    });
+
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
 
     // Global Animations
