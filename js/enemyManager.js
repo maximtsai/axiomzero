@@ -39,6 +39,12 @@ const enemyManager = (() => {
     let bossSpawned = false;
     let bossAlive = false;
 
+    // Fast enemy pack tracking
+    let fastPackActive = false;
+    let fastPackCount = 0;
+    let fastPackOriginalAngle = 0;
+    let fastPackCooldown = 0;
+
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
         basic: {},
@@ -113,6 +119,9 @@ const enemyManager = (() => {
         lastWaveProgress = 0;
         recentSpawnIndex = 0;
         recentSpawnCount = 0;
+        fastPackActive = false;
+        fastPackCount = 0;
+        fastPackCooldown = 0;
     }
 
     function _stopSpawning() {
@@ -172,6 +181,25 @@ const enemyManager = (() => {
             chosenType = 'basic';
         }
 
+        // Apply fast pack overrides and cooldowns
+        if (fastPackCooldown > 0 && chosenType === 'fast') {
+            chosenType = 'basic';
+        } else if (fastPackActive) {
+            if (chosenType === 'basic') {
+                if (Math.random() < 0.6) {
+                    chosenType = 'fast';
+                } else {
+                    // Pack broken by bad luck
+                    fastPackActive = false;
+                    if (fastPackCount > 1) fastPackCooldown = 5;
+                }
+            } else if (chosenType !== 'fast') {
+                // Pack broken by a non-basic spawn rolling naturally
+                fastPackActive = false;
+                if (fastPackCount > 1) fastPackCooldown = 5;
+            }
+        }
+
         // Check max active limits
         if (chosenType !== 'basic' && rules.maxActive) {
             const activeCount = activeEnemies.filter(e => e.alive && e.type === chosenType).length;
@@ -197,8 +225,28 @@ const enemyManager = (() => {
             }
         } else if (chosenType === 'swarmer') {
             angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES['swarmer']);
+        } else if (chosenType === 'fast' && fastPackActive) {
+            // Pick an angle 0.2 to 0.5 radians away from original, varying polarity
+            const offset = Phaser.Math.Between(20, 50) / 100 * (Math.random() < 0.5 ? 1 : -1);
+            angle = fastPackOriginalAngle + offset;
+            angle = Phaser.Math.Angle.Wrap(angle);
         } else {
             angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES[chosenType] || {});
+        }
+
+        // Track pack state for 'fast'
+        if (chosenType === 'fast') {
+            if (!fastPackActive) {
+                fastPackActive = true;
+                fastPackCount = 1;
+                fastPackOriginalAngle = angle;
+            } else {
+                fastPackCount++;
+                if (fastPackCount >= 3) {
+                    fastPackActive = false;
+                    fastPackCooldown = 5; // Enforce cooldown
+                }
+            }
         }
 
         // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
@@ -621,36 +669,44 @@ const enemyManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (frozen) return; // death sequence — all enemies paused
-        if (!spawning && activeEnemies.length === 0) return;
+        if (!spawning || frozen) return;
 
         const dt = delta / 1000;
 
-        if (spawning) {
+        // Pause combatTime (scaling) while major enemies are alive
+        if (!minibossAlive && !bossAlive) {
             combatTime += dt;
-            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
+        }
 
-            // Update spawn speed multiplier: 5x for 0.8s, then linearly decay to 1x over 0.5s
-            const firstThreshold = 5;
-            const secondThreshold = 1.25;
-            if (combatTime < firstThreshold) {
-                spawnSpeedMultiplier = 27;
-            } else if (combatTime < firstThreshold + secondThreshold) {
-                // Linear interpolation from 5 to 1 over 0.8 seconds
-                const progress = (combatTime - firstThreshold) / secondThreshold;
-                spawnSpeedMultiplier = 27 - 26 * progress;
-            } else {
-                spawnSpeedMultiplier = 1;
-            }
+        // Update wave scale factor
+        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
-            // Spawn timer
-            spawnTimer += delta;
-            const config = getCurrentLevelConfig();
-            const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
-            if (spawnTimer >= trueSpawnInterval) {
-                spawnTimer -= trueSpawnInterval;
-                _spawnOne();
-            }
+        // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
+        const firstThreshold = 5;
+        const secondThreshold = 1.25;
+        if (combatTime < firstThreshold) {
+            spawnSpeedMultiplier = 27;
+        } else if (combatTime < firstThreshold + secondThreshold) {
+            // Linear interpolation from 27 to 1
+            const progress = (combatTime - firstThreshold) / secondThreshold;
+            spawnSpeedMultiplier = 27 - 26 * progress;
+        } else {
+            spawnSpeedMultiplier = 1;
+        }
+
+        // Decrement fast pack cooldown
+        if (fastPackCooldown > 0) {
+            fastPackCooldown -= dt;
+            if (fastPackCooldown < 0) fastPackCooldown = 0;
+        }
+
+        // Spawn timer
+        spawnTimer += delta;
+        const config = getCurrentLevelConfig();
+        const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
+        if (spawnTimer >= trueSpawnInterval) {
+            spawnTimer -= trueSpawnInterval;
+            _spawnOne();
         }
 
         // Move enemies & check tower contact
