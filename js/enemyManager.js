@@ -167,9 +167,46 @@ const enemyManager = (() => {
             numToSpawn = Phaser.Math.Between(config.swarmerGroupSize.min, config.swarmerGroupSize.max);
         }
 
+        let angle = _getValidSpawnAngle(chosenType);
+
+        if (chosenType === 'protector') {
+            const activeProtectors = activeEnemies.filter(e => e.alive && e.type === 'protector');
+            let valid = false;
+            let attempts = 0;
+
+            while (!valid && attempts < 3) {
+                valid = true;
+                for (let i = 0; i < activeProtectors.length; i++) {
+                    const p = activeProtectors[i];
+                    const pAngle = Math.atan2(p.y - GAME_CONSTANTS.halfHeight, p.x - GAME_CONSTANTS.halfWidth);
+                    const diff = Phaser.Math.Angle.ShortestBetween(
+                        Phaser.Math.RadToDeg(angle),
+                        Phaser.Math.RadToDeg(pAngle)
+                    );
+                    if (Math.abs(diff) < Phaser.Math.RadToDeg(0.4)) {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (!valid) {
+                    attempts++;
+                    if (attempts < 3) {
+                        angle = Math.random() * Math.PI * 2;
+                    }
+                }
+            }
+
+            if (!valid) {
+                chosenType = 'basic';
+            } else {
+                // Update the recent spawn angle with the valid one we found
+                recentSpawnAngles[recentSpawnAngles.length - 1] = angle;
+            }
+        }
+
         // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = _getValidSpawnAngle(chosenType);
         const baseX = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const baseY = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 

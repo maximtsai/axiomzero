@@ -21,7 +21,7 @@ class InternalMouseManager {
             GAME_VARS.mouseposx       = pointer.x;
             GAME_VARS.mouseposy       = pointer.y;
 
-            helper.createClickEffect(pointer.x, pointer.y);
+            // helper.createClickEffect(pointer.x, pointer.y);
             GAME_VARS.mousedown       = true;
             GAME_VARS.mouseJustDowned = true;
             GAME_VARS.wasTouch        = (pointer.pointerType === 'touch');
