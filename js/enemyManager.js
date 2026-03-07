@@ -31,11 +31,31 @@ const enemyManager = (() => {
     let minibossSpawned = false;  // has a miniboss spawned this wave?
     let minibossAlive = false;    // is the current miniboss still alive?
     let lastWaveProgress = 0;     // current progress 0-1
-    let recentSpawnAngles = [];   // tracks the last 4 spawn angles (in radians)
+    let recentSpawnAngles = new Float32Array(6); // tracks the last 6 spawn angles (in radians)
+    let recentSpawnIndex = 0;
+    let recentSpawnCount = 0;
 
     // Boss tracking
     let bossSpawned = false;
     let bossAlive = false;
+
+    // Spawn Rules configuration
+    const ENEMY_SPAWN_RULES = {
+        basic: {},
+        fast: { minCombatTime: 9 },
+        logic_stray: { minCombatTime: 9 },
+        swarmer: { minCombatTime: 6, avoidRecentAngles: 0.45, maxAttempts: 6 },
+        sniper: { minCombatTime: 6 },
+        shooter: {},
+        heavy: {},
+        protector: {
+            minCombatTime: 6,
+            maxActive: 2,
+            avoidActiveTypes: ['protector'],
+            minSeparation: 0.4,
+            maxAttempts: 3
+        }
+    };
 
 
     // ── init ─────────────────────────────────────────────────────────────────
@@ -91,7 +111,8 @@ const enemyManager = (() => {
         bossSpawned = false;
         bossAlive = false;
         lastWaveProgress = 0;
-        recentSpawnAngles = [];
+        recentSpawnIndex = 0;
+        recentSpawnCount = 0;
     }
 
     function _stopSpawning() {
@@ -144,20 +165,19 @@ const enemyManager = (() => {
             }
         }
 
-        // Special case: No fast or logic stray enemies in the first few seconds
-        if ((chosenType === 'fast' || chosenType === 'logic_stray') && combatTime < 9) {
-            chosenType = 'basic';
-        }
-        if ((chosenType === 'swarmer' || chosenType === 'sniper' || chosenType === 'protector') && combatTime < 6) {
+        const rules = ENEMY_SPAWN_RULES[chosenType] || {};
+
+        // Check time constraints
+        if (rules.minCombatTime && combatTime < rules.minCombatTime) {
             chosenType = 'basic';
         }
 
-        // Limit active Protectors to prevent overwhelming defense
-        if (chosenType === 'protector') {
-            const activeProtectors = activeEnemies.filter(e => e.alive && e.type === 'protector').length;
-            if (activeProtectors >= 2) {
+        // Check max active limits
+        if (chosenType !== 'basic' && rules.maxActive) {
+            const activeCount = activeEnemies.filter(e => e.alive && e.type === chosenType).length;
+            if (activeCount >= rules.maxActive) {
                 if (Math.random() < 0.8) chosenType = 'basic';
-            } else if (activeProtectors >= 1) {
+            } else if (activeCount >= rules.maxActive - 1) {
                 if (Math.random() < 0.4) chosenType = 'basic';
             }
         }
@@ -167,42 +187,18 @@ const enemyManager = (() => {
             numToSpawn = Phaser.Math.Between(config.swarmerGroupSize.min, config.swarmerGroupSize.max);
         }
 
-        let angle = _getValidSpawnAngle(chosenType);
-
+        let angle;
         if (chosenType === 'protector') {
-            const activeProtectors = activeEnemies.filter(e => e.alive && e.type === 'protector');
-            let valid = false;
-            let attempts = 0;
-
-            while (!valid && attempts < 3) {
-                valid = true;
-                for (let i = 0; i < activeProtectors.length; i++) {
-                    const p = activeProtectors[i];
-                    const pAngle = Math.atan2(p.y - GAME_CONSTANTS.halfHeight, p.x - GAME_CONSTANTS.halfWidth);
-                    const diff = Phaser.Math.Angle.ShortestBetween(
-                        Phaser.Math.RadToDeg(angle),
-                        Phaser.Math.RadToDeg(pAngle)
-                    );
-                    if (Math.abs(diff) < Phaser.Math.RadToDeg(0.4)) {
-                        valid = false;
-                        break;
-                    }
-                }
-
-                if (!valid) {
-                    attempts++;
-                    if (attempts < 3) {
-                        angle = Math.random() * Math.PI * 2;
-                    }
-                }
-            }
-
-            if (!valid) {
+            const rules = ENEMY_SPAWN_RULES['protector'];
+            angle = findValidAngle(() => Math.random() * Math.PI * 2, rules);
+            if (angle === null) {
                 chosenType = 'basic';
-            } else {
-                // Update the recent spawn angle with the valid one we found
-                recentSpawnAngles[recentSpawnAngles.length - 1] = angle;
+                angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES['basic']);
             }
+        } else if (chosenType === 'swarmer') {
+            angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES['swarmer']);
+        } else {
+            angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES[chosenType] || {});
         }
 
         // Determine base spawn position — random angle, ENEMY_SPAWN_DISTANCE from center
@@ -282,6 +278,18 @@ const enemyManager = (() => {
         }
     }
 
+    function _getValidBossSpawnAngle() {
+        const rules5 = { avoidActiveTypes: ['protector'], minSeparation: 0.5, maxAttempts: 5 };
+        let angle = findValidAngle(Miniboss.getSpawnAngle, rules5);
+        if (angle !== null) return angle;
+
+        const rules3 = { avoidActiveTypes: ['protector'], minSeparation: 0.3, maxAttempts: 5 };
+        angle = findValidAngle(Miniboss.getSpawnAngle, rules3);
+        if (angle !== null) return angle;
+
+        return Miniboss.getSpawnAngle();
+    }
+
     function _spawnMiniboss() {
         if (minibossSpawned) return;
         const mb = _getMinibossFromPool();
@@ -291,7 +299,7 @@ const enemyManager = (() => {
         minibossAlive = true;
 
         const distance = GAME_CONSTANTS.MINIBOSS_SPAWN_DISTANCE;
-        const angle = Miniboss.getSpawnAngle();
+        const angle = _getValidBossSpawnAngle();
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
@@ -332,7 +340,7 @@ const enemyManager = (() => {
         bossAlive = true;
 
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = Miniboss.getSpawnAngle();
+        const angle = _getValidBossSpawnAngle();
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
@@ -435,40 +443,61 @@ const enemyManager = (() => {
         return null;
     }
 
-    function _getValidSpawnAngle(chosenType) {
-        let angle = Math.random() * Math.PI * 2;
+    function findValidAngle(generatorFn, rules) {
+        let attempts = 0;
+        const maxAttempts = rules.maxAttempts || 1;
+        let angle;
+        let valid = false;
 
-        // If it's a swarmer, try to find an angle far from the last 4 spawns
-        if (chosenType === 'swarmer') {
-            const minSeparation = 0.45; // ~26 degrees minimum distance
-            let valid = false;
-            let attempts = 0;
+        while (!valid && attempts < maxAttempts) {
+            angle = generatorFn();
+            valid = true;
 
-            while (!valid && attempts < 6) {
-                valid = true;
-                for (let i = 0; i < recentSpawnAngles.length; i++) {
+            if (rules.avoidRecentAngles) {
+                for (let i = 0; i < recentSpawnCount; i++) {
                     const diff = Phaser.Math.Angle.ShortestBetween(
                         Phaser.Math.RadToDeg(angle),
                         Phaser.Math.RadToDeg(recentSpawnAngles[i])
                     );
-                    if (Math.abs(diff) < Phaser.Math.RadToDeg(minSeparation)) {
+                    if (Math.abs(diff) < Phaser.Math.RadToDeg(rules.avoidRecentAngles)) {
                         valid = false;
                         break;
                     }
                 }
+            }
 
-                if (!valid) {
-                    angle = Math.random() * Math.PI * 2;
-                    attempts++;
+            if (valid && rules.avoidActiveTypes && rules.minSeparation) {
+                for (let t = 0; t < rules.avoidActiveTypes.length; t++) {
+                    const typeToAvoid = rules.avoidActiveTypes[t];
+                    const avoidTargets = activeEnemies.filter(e => e.alive && e.type === typeToAvoid);
+
+                    for (let i = 0; i < avoidTargets.length; i++) {
+                        const target = avoidTargets[i];
+                        const targetAngle = Math.atan2(target.y - GAME_CONSTANTS.halfHeight, target.x - GAME_CONSTANTS.halfWidth);
+                        const diff = Phaser.Math.Angle.ShortestBetween(
+                            Phaser.Math.RadToDeg(angle),
+                            Phaser.Math.RadToDeg(targetAngle)
+                        );
+                        if (Math.abs(diff) < Phaser.Math.RadToDeg(rules.minSeparation)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) break;
                 }
             }
+
+            attempts++;
         }
 
-        recentSpawnAngles.push(angle);
-        if (recentSpawnAngles.length > 4) {
-            recentSpawnAngles.shift();
+        if (valid) {
+            recentSpawnAngles[recentSpawnIndex] = angle;
+            recentSpawnIndex = (recentSpawnIndex + 1) % 6;
+            recentSpawnCount = Math.min(recentSpawnCount + 1, 6);
+            return angle;
         }
-        return angle;
+
+        return null;
     }
 
     // ── public queries ───────────────────────────────────────────────────────
