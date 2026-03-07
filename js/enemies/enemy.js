@@ -31,6 +31,8 @@ class Enemy {
         this.selfDamage = 0;
         this.cannotRotate = false;
         this.hpImg = null; // Health representing sprite
+        this.attackCooldown = 2.0; // Default attack rate (seconds)
+        this.attackTimer = 0;      // Cooldown timer
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -144,6 +146,10 @@ class Enemy {
 
             this.x += this.vx * dt * moveMult;
             this.y += this.vy * dt * moveMult;
+        }
+
+        if (this.attackTimer > 0) {
+            this.attackTimer -= dt;
         }
         if (this.img) this.img.setPosition(this.x, this.y);
         if (this.hpImg) {

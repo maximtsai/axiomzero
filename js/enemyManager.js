@@ -727,12 +727,15 @@ const enemyManager = (() => {
                 // Attack range based on size (Basic size 12 * 2 = 24px)
                 const contactR = (e.size || 12) * 2;
                 if (dx * dx + dy * dy < contactR * contactR) {
-                    tower.takeDamage(e.damage, e.x, e.y);
+                    if (e.attackTimer <= 0 && e.damage > 0) {
+                        tower.takeDamage(e.damage, e.x, e.y);
+                        e.attackTimer = e.attackCooldown;
 
-                    // Apply self-damage on contact
-                    if (e.takeDamage(e.selfDamage)) {
-                        // Only kill if the self-damage was lethal
-                        _killEnemy(e);
+                        // Apply self-damage only when it hits
+                        if (e.takeDamage(e.selfDamage)) {
+                            // Only kill if the self-damage was lethal
+                            _killEnemy(e);
+                        }
                     }
 
                     // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
