@@ -28,13 +28,12 @@ class Boss1 extends Boss {
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     activate(x, y, scaleFactor = 1.0) {
-        // High health pool multiplier (specific to Boss 1)
-        const healthMult = 80;
-        const bossHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * healthMult * scaleFactor;
+        // Base health 150 (ignores scaleFactor to prevent scaling over time)
+        const bossHealth = 150;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3 * scaleFactor, // Big hit on collision
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3, // Big hit on collision (no scaling)
             selfDamage: 0, // Doesn't die on hitting the tower
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75, // Target speed
             size: this.size // 28

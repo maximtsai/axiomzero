@@ -39,10 +39,12 @@ function setGameState(key, value) {
 // ─── Persistence ──────────────────────────────────────────────────────────────
 
 function _migrateState(fromVersion, data) {
-    // Starting with v2, state incorporates stats, claims, and settings.
     if (!data.stats) data.stats = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS.stats));
     if (!data.claimed) data.claimed = {};
     if (!data.settings) data.settings = JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS.settings));
+
+    // Ensure tier is at least 1 for legacy saves
+    if (data.currentTier === 0) data.currentTier = 1;
 
     if (fromVersion < 2) {
         // Attempt to absorb legacy settings

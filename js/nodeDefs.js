@@ -7,7 +7,7 @@ function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
     const overchargeLv = ups.pulse_damage_3 || 0;
-    pulseAttack.setDamage(5 + 2 * ampLv + 4 * overchargeLv);
+    pulseAttack.setDamage(4 + 2 * ampLv + 4 * overchargeLv);
 }
 
 /** Recalculates total pulse size from all pulse upgrade nodes. */
@@ -88,7 +88,7 @@ const NODE_DEFS = [
         popupText: '+40 PULSE SIZE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
-        baseCost: 10,
+        baseCost: 20,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -113,7 +113,6 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 5,
-        tier: 2,
         parentId: 'pulse_damage_2',
         childIds: [],
         treeX: 240,
@@ -130,10 +129,10 @@ const NODE_DEFS = [
         popupText: '+5 MAX HEALTH',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
         maxLevel: 4,
-        baseCost: 2,
+        baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 2,
+        costStep: 8,
         parentId: 'awaken',
         childIds: ['regen'],
         treeX: 400,
@@ -150,10 +149,10 @@ const NODE_DEFS = [
         popupText: '+2 DAMAGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 5,
-        baseCost: 2,
+        baseCost: 6,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 2,
+        costStep: 4,
         parentId: 'awaken',
         childIds: ['focus'],
         treeX: 480,
@@ -170,7 +169,7 @@ const NODE_DEFS = [
         popupText: '+20% RANGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
-        baseCost: 10,
+        baseCost: 20,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -191,10 +190,10 @@ const NODE_DEFS = [
         popupText: '+0.2 REGEN',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
         maxLevel: 3,
-        baseCost: 2,
+        baseCost: 6,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 2,
+        costStep: 6,
         parentId: 'reinforce',
         childIds: [],
         treeX: 480,

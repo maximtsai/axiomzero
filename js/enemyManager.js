@@ -187,17 +187,19 @@ const enemyManager = (() => {
             chosenType = 'basic';
         } else if (fastPackActive) {
             if (chosenType === 'basic') {
-                if (Math.random() < 0.6) {
+                const randVal = Math.random();
+                console.log(randVal);
+                if (randVal < 0.6) {
                     chosenType = 'fast';
                 } else {
                     // Pack broken by bad luck
                     fastPackActive = false;
-                    if (fastPackCount > 1) fastPackCooldown = 5;
+                    if (fastPackCount > 1) fastPackCooldown = 4;
                 }
             } else if (chosenType !== 'fast') {
                 // Pack broken by a non-basic spawn rolling naturally
                 fastPackActive = false;
-                if (fastPackCount > 1) fastPackCooldown = 5;
+                if (fastPackCount > 1) fastPackCooldown = 4;
             }
         }
 
@@ -227,8 +229,8 @@ const enemyManager = (() => {
         } else if (chosenType === 'swarmer') {
             angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES['swarmer']);
         } else if (chosenType === 'fast' && fastPackActive) {
-            // Pick an angle 0.2 to 0.5 radians away from original
-            const offsetMag = Phaser.Math.Between(20, 50) / 100;
+            // Pick an angle 0.15 to 0.35 radians away from original
+            const offsetMag = Phaser.Math.Between(15, 35) / 100;
             // Third member (count is currently 2, will be 3) spawns opposite to second
             const sign = -fastPackLastOffsetSign;
             const offset = offsetMag * sign;

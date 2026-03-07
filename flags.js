@@ -10,7 +10,7 @@ const FLAGS = {
 
     // Set true locally to enable the FPS overlay and verbose console logging.
     // Always leave false in production builds.
-    DEBUG: true,
+    DEBUG: false,
 
     // Set true to enable the Service Worker for dynamic asset caching.
     // On repeat visits, all previously loaded files are served from local cache
