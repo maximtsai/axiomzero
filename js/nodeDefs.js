@@ -54,7 +54,7 @@ const NODE_DEFS = [
         costStep: 4,
         parentId: 'awaken',
         childIds: ['pulse_damage_2', 'magnet'],
-        treeX: 325,
+        treeX: 320,
         treeY: 750,
         effect: function () {
             _recalcPulseDamage();
@@ -74,7 +74,7 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'pulse_damage',
         childIds: [],
-        treeX: 250,
+        treeX: 240,
         treeY: 750,
         effect: function () {
             resourceManager.recalcPickupRadius();
@@ -95,8 +95,8 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         requiresMaxParent: true,
         childIds: ['pulse_damage_3'],
-        treeX: 250,
-        treeY: 675,
+        treeX: 240,
+        treeY: 670,
         effect: function () {
             _recalcPulseSize();
         },
@@ -116,8 +116,8 @@ const NODE_DEFS = [
         tier: 2,
         parentId: 'pulse_damage_2',
         childIds: [],
-        treeX: 250,
-        treeY: 600,
+        treeX: 240,
+        treeY: 590,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -137,7 +137,7 @@ const NODE_DEFS = [
         parentId: 'awaken',
         childIds: ['regen'],
         treeX: 400,
-        treeY: 675,
+        treeY: 670,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -156,7 +156,7 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'awaken',
         childIds: ['focus'],
-        treeX: 475,
+        treeX: 480,
         treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -177,7 +177,7 @@ const NODE_DEFS = [
         parentId: 'sharpen',
         requiresMaxParent: true,
         childIds: [],
-        treeX: 550,
+        treeX: 560,
         treeY: 750,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -197,8 +197,8 @@ const NODE_DEFS = [
         costStep: 2,
         parentId: 'reinforce',
         childIds: [],
-        treeX: 475,
-        treeY: 675,
+        treeX: 480,
+        treeY: 670,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
