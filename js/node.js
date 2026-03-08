@@ -542,15 +542,27 @@ class Node {
 
         // --- Entrance Animation (The "Bouncy" Pop) ---
         if (!isPurchaseRefresh) {
-            this.hoverContainer.setScale(0.2);
-            this.hoverContainer.angle = -8; // Start slightly tilted
+            this.hoverContainer.setScale(0.75);
+            this.hoverContainer.angle = 6; // Start slightly tilted
             PhaserScene.tweens.add({
                 targets: this.hoverContainer,
-                scaleX: 1,
-                scaleY: 1,
-                angle: 0, // Snap to upright
-                duration: 250, // Quicker duration
-                ease: 'Back.easeOut',
+                scaleX: 1.08,
+                scaleY: 1.08,
+                angle: -5,
+                duration: 110,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    if (this.hoverContainer && this.hoverContainer.active) {
+                        PhaserScene.tweens.add({
+                            targets: this.hoverContainer,
+                            scaleX: 1,
+                            scaleY: 1,
+                            angle: 0,
+                            duration: 180,
+                            ease: 'Back.easeOut',
+                        });
+                    }
+                }
             });
         }
 
