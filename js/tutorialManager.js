@@ -66,7 +66,7 @@ const tutorialManager = (() => {
     function _showUpgradeTutorial() {
         const msg = "USE DATA \u25C8 TO EVOLVE";
         // 200px above Awaken node (treeX: 400, treeY: 750)
-        const x = 400;
+        const x = 0;
         const y = 550;
 
         _createTutorialPopup(msg, x, y, true);
@@ -78,7 +78,8 @@ const tutorialManager = (() => {
             fontFamily: 'VCR',
             fontSize: '24px'
         }).setVisible(false);
-        const finalWidth = measureText.width + 40; // Add padding
+        const textWidth = measureText.width;
+        const finalWidth = textWidth + 40; // Add padding
         const finalHeight = measureText.height + 15;
         measureText.destroy();
 
@@ -99,13 +100,13 @@ const tutorialManager = (() => {
             ease: 'Quad.easeOut'
         });
 
-        // 3. Create the typewriter text
-        tutorialText = PhaserScene.add.text(x, y, '', {
+        // 3. Create the typewriter text - Positioned so (0, 0.5) origin results in centered text when full
+        tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
             fontFamily: 'VCR',
             fontSize: '24px',
             color: '#00f5ff',
-            align: 'center'
-        }).setOrigin(0.5, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
+            align: 'left'
+        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
 
         if (!isUpgradeTree) {
             tutorialText.setScrollFactor(0);
@@ -145,18 +146,16 @@ const tutorialManager = (() => {
             waveManager.registerCombatObject(tutorialBg);
         }
 
-        // Only auto-fade combat tutorial
-        if (!isUpgradeTree) {
-            PhaserScene.tweens.add({
-                targets: [tutorialText, tutorialBg],
-                alpha: 0,
-                duration: 1000,
-                delay: 6000,
-                onComplete: () => {
-                    _clearTutorial();
-                }
-            });
-        }
+        // Auto-fade tutorial after 5 seconds
+        PhaserScene.tweens.add({
+            targets: [tutorialText, tutorialBg],
+            alpha: 0,
+            duration: 1000,
+            delay: 5000,
+            onComplete: () => {
+                _clearTutorial();
+            }
+        });
     }
 
     function _clearTutorial() {

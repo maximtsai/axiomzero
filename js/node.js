@@ -398,7 +398,7 @@ class Node {
 
         const x = this.btn.x;  // actual position of node (handles group offsets)
         const y = this.btn.y - 23;  // directly above
-        const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10;
+        const depth = GAME_CONSTANTS.DEPTH_POPUPS;
         const bgWidth = 300;
         const bgHeight = 138;
         const treeGroup = neuralTree.getGroup();
@@ -420,46 +420,108 @@ class Node {
         const startY = y - bgHeight + padding;
         let currentY = startY;
 
-        // Name - center aligned, larger font
-        const nameT = PhaserScene.add.text(x, currentY, this.name, {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '22px',
-            color: '#00f5ff',
-            align: 'center',
-        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
-        this.hoverGroup.push(nameT);
-        currentY += nameT.height + 6;
+        // --- ROW 1: Name & Icon ---
+        const nameTextStr = this.name.toLowerCase();
+        let iconOffset = 0;
+        const boxOutlineSize = 34;
+        const boxInnerSize = 30;
+        const iconSize = 26;
 
-        // Description - center aligned, larger font
-        const descT = PhaserScene.add.text(x, currentY, this.description, {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '19px',
-            color: '#cccccc',
+        if (this.icon) {
+            iconOffset = boxOutlineSize + 10;
+        }
+
+        const testNameT = PhaserScene.add.text(0, 0, nameTextStr, {
+            fontFamily: 'VCR',
+            fontSize: '24px'
+        });
+        const titleWidth = testNameT.width + iconOffset;
+        testNameT.destroy();
+
+        const titleStartX = x - titleWidth / 2;
+        const centerTitleY = currentY + 17;
+
+        if (this.icon) {
+            const whiteBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'white_pixel.png')
+                .setDisplaySize(boxOutlineSize, boxOutlineSize).setDepth(depth + 1).setScrollFactor(0);
+            this.hoverGroup.push(whiteBg);
+
+            const blackBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'black_pixel.png')
+                .setDisplaySize(boxInnerSize, boxInnerSize).setDepth(depth + 2).setScrollFactor(0);
+            this.hoverGroup.push(blackBg);
+
+            const iconSpr = PhaserScene.add.sprite(titleStartX + boxOutlineSize / 2, centerTitleY, 'buttons', this.icon)
+                .setDisplaySize(iconSize, iconSize).setDepth(depth + 3).setScrollFactor(0);
+            this.hoverGroup.push(iconSpr);
+        }
+
+        const nameT = PhaserScene.add.text(titleStartX + iconOffset, centerTitleY, nameTextStr, {
+            fontFamily: 'VCR',
+            fontSize: '24px',
+            color: '#ffffff',
+            align: 'left',
+        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0);
+        this.hoverGroup.push(nameT);
+
+        currentY += 34 + 6;
+
+        // --- ROW 2: Description ---
+        const descT = PhaserScene.add.text(x, currentY, this.description.toLowerCase(), {
+            fontFamily: 'VCR',
+            fontSize: '18px',
+            color: '#ffffff',
             align: 'center',
             wordWrap: { width: 275 },
         }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
         this.hoverGroup.push(descT);
         currentY += descT.height + 6;
 
+        // --- ROW 3: Level ---
+        const lvStr = 'Lv. ' + this.level + ' / ' + this.maxLevel;
+        const lvT = PhaserScene.add.text(x, currentY, lvStr, {
+            fontFamily: 'VCR',
+            fontSize: '19px',
+            color: '#ffffff',
+            align: 'center',
+        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
+        this.hoverGroup.push(lvT);
+        currentY += lvT.height + 6;
+
         if (this.state === NODE_STATE.MAXED) {
-            const maxT = PhaserScene.add.text(x, currentY, 'MAXED', {
-                fontFamily: 'JetBrainsMono_Italic',
-                fontSize: '19px',
-                color: '#ffe600',
+            // --- ROW 4: MAX Bar ---
+            const maxBgHeight = 24;
+            const goldBg = PhaserScene.add.image(x, currentY + maxBgHeight / 2 - 2, 'pixels', 'gold_pixel.png')
+                .setDisplaySize(bgWidth, maxBgHeight)
+                .setDepth(depth + 1).setScrollFactor(0);
+            this.hoverGroup.push(goldBg);
+
+            const maxT = PhaserScene.add.text(x, currentY, 'MAX', {
+                fontFamily: 'VCR',
+                fontSize: '22px',
+                color: '#ffffff',
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
+            }).setOrigin(0.5, 0).setDepth(depth + 2).setScrollFactor(0);
             this.hoverGroup.push(maxT);
         } else {
-            // Level and cost - center aligned, larger font
-            const lvStr = 'Lv ' + this.level + '/' + this.maxLevel;
-            const costStr = 'Cost: ' + this.getCost() + ' ' + (this.costType === 'data' ? '◈' : '⦵');
-            const infoT = PhaserScene.add.text(x, currentY, lvStr + '  ' + costStr, {
-                fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '19px',
-                color: this.canAfford() ? '#00ff88' : '#ff4444',
+            // --- ROW 4: Cost ---
+            const costColor = this.costType === 'insight' ? '#ff9500' : '#ff2d78';
+            const iconStr = this.costType === 'data' ? '◈' : '⦵';
+            const currentRes = this.costType === 'data' ? resourceManager.getData() : resourceManager.getInsight();
+            const costStr = iconStr + ' ' + this.getCost() + ' / ' + currentRes;
+
+            const costBgHeight = 24;
+            const darkRedBg = PhaserScene.add.image(x, currentY + costBgHeight / 2 - 2, 'pixels', 'dark_red_pixel.png')
+                .setDisplaySize(bgWidth, costBgHeight)
+                .setDepth(depth + 1).setScrollFactor(0);
+            this.hoverGroup.push(darkRedBg);
+
+            const costT = PhaserScene.add.text(x, currentY, costStr, {
+                fontFamily: 'VCR',
+                fontSize: '22px',
+                color: costColor,
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
-            this.hoverGroup.push(infoT);
+            }).setOrigin(0.5, 0).setDepth(depth + 2).setScrollFactor(0);
+            this.hoverGroup.push(costT);
         }
 
         // Add all tooltip elements to the groups so they move if the tree moves
