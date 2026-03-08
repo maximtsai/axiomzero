@@ -14,12 +14,14 @@ class TowerModel {
         this.healthRegen = 0;
         this.attackCooldown = 0;
         this.attackTimer = 0;
+        this.armor = 0;
         this.exp = 0;
 
         this.alive = false;
         this.active = false;       // true only during COMBAT_PHASE
         this.isInvincible = false;       // true briefly after a boss is defeated
         this.awakened = false; // true after awaken() is called
+        this.paused = false;
     }
 
     recalcStats() {
@@ -28,11 +30,13 @@ class TowerModel {
         const sharpenLv = ups.sharpen || 0;
         const regenLv = ups.regen || 0;
         const focusLv = ups.focus || 0;
+        const armorLv = ups.armor || 0;
 
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * reinforceLv;
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
+        this.armor = armorLv * 1; // 1 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN;
     }
 
@@ -49,7 +53,9 @@ class TowerModel {
 
     takeDamage(amount) {
         if (!this.alive || this.isInvincible) return false;
-        this.health -= amount;
+        
+        let reducedAmount = Math.max(0, amount - this.armor);
+        this.health -= reducedAmount;
         if (this.health <= 0) {
             this.health = 0;
             this.die();
@@ -343,6 +349,8 @@ const tower = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
+        messageBus.subscribe('gamePaused', () => { model.paused = true; });
+        messageBus.subscribe('gameResumed', () => { model.paused = false; });
         messageBus.subscribe('towerShakeRequested', function (duration) {
             view.shake(duration, function () { messageBus.publish('towerShakeComplete'); });
         });
@@ -424,7 +432,7 @@ const tower = (() => {
     function shake(duration, onComplete) { view.shake(duration, onComplete); }
 
     function _update(delta) {
-        if (!model.alive || !model.active) return;
+        if (!model.alive || !model.active || model.paused) return;
 
         const dt = delta / 1000; // seconds
 

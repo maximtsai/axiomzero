@@ -29,7 +29,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: null,
-        childIds: ['basic_pulse', 'reinforce', 'sharpen'],
+        childIds: ['basic_pulse', 'reinforce', 'sharpen', 'crypto_mine_unlock'],
         treeX: 400,
         treeY: 750,
         effect: function () {
@@ -155,7 +155,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 8,
         parentId: 'awaken',
-        childIds: ['regen'],
+        childIds: ['regen', 'armor'],
         treeX: 320,
         treeY: 750,
         effect: function () {
@@ -219,6 +219,48 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 240,
         treeY: 750,
+        effect: function () {
+            // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'crypto_mine_unlock',
+        name: 'CRYPTO MINE',
+        icon: 'Skillicon14_09.png',
+        description: 'Unlocks the Crypto Mine.',
+        popupText: 'MINE UNLOCKED',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'awaken',
+        childIds: [],
+        treeX: 400,
+        treeY: 830,
+        effect: function () {
+            if (typeof neuralTree !== 'undefined') {
+                neuralTree._showCryptoMineButton();
+            }
+        },
+    },
+    {
+        id: 'armor',
+        name: 'ARMOR',
+        icon: 'Skillicon14_11.png',
+        description: 'Reduces incoming damage by 1.',
+        popupText: '+1 ARMOR',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        maxLevel: 5,
+        baseCost: 10,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 10,
+        parentId: 'reinforce',
+        childIds: [],
+        treeX: 240,
+        treeY: 830,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },

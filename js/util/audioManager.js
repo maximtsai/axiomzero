@@ -53,6 +53,25 @@ const audio = {
         if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * globalMusicVol;
     },
 
+    /** Pause all currently playing audio (for ad breaks). Does not alter mute state. */
+    pauseAll: function() {
+        if (typeof PhaserScene !== 'undefined' && PhaserScene.sound) {
+            PhaserScene.sound.pauseAll();
+        }
+    },
+
+    /** Resume all audio paused by pauseAll. */
+    resumeAll: function() {
+        if (typeof PhaserScene !== 'undefined' && PhaserScene.sound) {
+            PhaserScene.sound.resumeAll();
+            // Reapply mute states just in case resumeAll overrides volume to 1
+            if (isMuted || isMusicMuted) {
+                if (globalMusic) globalMusic.setVolume(0);
+                if (globalTempMusic) globalTempMusic.setVolume(0);
+            }
+        }
+    },
+
     /** @param {boolean} shouldMute - Mute/unmute SFX; persists to gameState. */
     muteSFX: function (shouldMute) {
         isSFXMuted = shouldMute;

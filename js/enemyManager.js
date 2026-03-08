@@ -24,6 +24,7 @@ const enemyManager = (() => {
     let spawnTimer = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
+    let paused = false;     // true when options menu opens
     let combatTime = 4;    // seconds since wave start — drives scaling
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
@@ -74,6 +75,8 @@ const enemyManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
         messageBus.subscribe('waveProgressChanged', _onWaveProgress);
     }
 
@@ -678,7 +681,7 @@ const enemyManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (!spawning || frozen) return;
+        if (!spawning || frozen || paused) return;
 
         const dt = delta / 1000;
 

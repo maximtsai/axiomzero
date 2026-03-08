@@ -4,12 +4,15 @@
 const enemyBulletManager = (() => {
     let pool = [];
     let activeBullets = [];
+    let paused = false;
 
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
         _buildPool();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
     function _buildPool() {
@@ -85,7 +88,7 @@ const enemyBulletManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (activeBullets.length === 0) return;
+        if (activeBullets.length === 0 || paused) return;
 
         const dt = delta / 1000;
         const tPos = tower.getPosition();

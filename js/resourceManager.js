@@ -12,6 +12,7 @@ const resourceManager = (() => {
     let activeDrops = [];   // resting drops waiting for cursor proximity
     let flyingDrops = [];   // drops currently flying toward cursor
     let processorPool = []; // Pool for processor resources
+    let paused = false;     // true when options menu is open
 
     let totalDropsSpawned = 0;
     let currentPickupRadius2 = 0;
@@ -32,6 +33,8 @@ const resourceManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
         messageBus.subscribe('triggerResourceVacuum', _vacuumAllDrops);
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
         _recalcPickupRadius();
         updateManager.addFunction(_update);
     }
@@ -100,7 +103,7 @@ const resourceManager = (() => {
         d.alive = true;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = -0.075;
+        d.inertia = -0.08;
 
         // Visibility logic
         let visible = true;
@@ -250,7 +253,7 @@ const resourceManager = (() => {
         d.alive = false;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = -0.1;
+        d.inertia = -0.08;
         d.img.setVisible(false);
         d.img.setActive(false);
     }
@@ -291,7 +294,7 @@ const resourceManager = (() => {
     // ── per-frame ────────────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (activeDrops.length === 0 && flyingDrops.length === 0) return;
+        if ((activeDrops.length === 0 && flyingDrops.length === 0) || paused) return;
 
         const dt = delta / 1000;
         const cx = GAME_VARS.mouseposx;
@@ -350,8 +353,8 @@ const resourceManager = (() => {
             const len = Math.sqrt(dx * dx + dy * dy);
             const move = Math.min(flyStep * d.inertia, len);  // don't overshoot cursor
 
-            const predictDx = dx - d.dx * 2;
-            const predictDy = dy - d.dy * 2;
+            const predictDx = dx - d.dx * 1.5;
+            const predictDy = dy - d.dy * 1.5;
 
             const moveAmtX = (predictDx / len) * move;
             const moveAmtY = (predictDy / len) * move;

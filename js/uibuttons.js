@@ -32,6 +32,7 @@ function createOptionsButton(x, y) {
 }
 
 function _showOptionsPopup() {
+    messageBus.publish('gamePaused');
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
@@ -255,6 +256,7 @@ function _showOptionsPopup() {
     elements.push(closeBtn);
 
     function closePopup() {
+        messageBus.publish('gameResumed');
         elements.forEach(el => {
             if (el && el.destroy) el.destroy();
         });

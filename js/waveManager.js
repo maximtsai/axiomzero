@@ -20,6 +20,7 @@ const waveManager = (() => {
     let waveProgress = 0;    // 0→1 over WAVE_DURATION seconds during combat
     let waveActive = false;
     let frozen = false;
+    let paused = false; // true during options menu
     let progressPaused = false; // true while a miniboss/boss is alive
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
 
@@ -31,6 +32,8 @@ const waveManager = (() => {
         messageBus.subscribe('minibossSpawned', () => { progressPaused = true; });
         messageBus.subscribe('minibossDefeated', () => { progressPaused = false; });
         messageBus.subscribe('bossDefeated', _onBossDefeated);
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
     function _onPhaseChanged(phase) {
@@ -204,7 +207,7 @@ const waveManager = (() => {
     // ── per-frame update ────────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (!waveActive || frozen) return;
+        if (!waveActive || frozen || paused) return;
         const dt = delta / 1000;
 
         if (!progressPaused) {

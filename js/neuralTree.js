@@ -16,6 +16,7 @@ const neuralTree = (() => {
     let dragSurface = null;
     let titleText = null;
     let deployBtn = null;
+    let cryptoMineBtn = null;
     let lines = [];  // Phaser Graphics lines connecting parent → child
     let treeGroup = null;
     let draggableGroup = null;
@@ -39,6 +40,7 @@ const neuralTree = (() => {
         _createPanel();
         _createNodes();
         _createDeployButton();
+        _createCryptoMineButton();
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
@@ -46,6 +48,7 @@ const neuralTree = (() => {
 
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
+
 
     function _createPanel() {
         // Pretty background image - moves with the nodes
@@ -238,6 +241,46 @@ const neuralTree = (() => {
         treeGroup.add(deployBtn.getContainer ? deployBtn.getContainer() : deployBtn); // Note: Button doesn't expose container generally, maybe add multiple
     }
 
+    function _createCryptoMineButton() {
+        cryptoMineBtn = new Button({
+            normal: {
+                ref: 'button_normal.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X + 220, // Beside the 'NEURAL TREE' text
+                y: 48,
+            },
+            hover: {
+                ref: 'button_hover.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X + 220,
+                y: 48,
+            },
+            press: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X + 220,
+                y: 48,
+            },
+            onMouseUp: () => {
+                if (typeof cryptoMine !== 'undefined') {
+                    cryptoMine.show();
+                }
+            },
+        });
+        cryptoMineBtn.addText('MINE', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '18px',
+            color: '#ff9500',
+        });
+        cryptoMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);
+        cryptoMineBtn.setScrollFactor(0);
+        
+        cryptoMineBtn.setVisible(false);
+        cryptoMineBtn.setState(DISABLE);
+        
+        treeGroup.add(cryptoMineBtn.getContainer ? cryptoMineBtn.getContainer() : cryptoMineBtn);
+    }
+
     // ── show / hide ──────────────────────────────────────────────────────
 
     function show() {
@@ -276,6 +319,12 @@ const neuralTree = (() => {
             deployBtn.setState(NORMAL);
         }
 
+        const mineLevel = (gameState.upgrades && gameState.upgrades.crypto_mine_unlock) || 0;
+        if (mineLevel > 0) {
+            cryptoMineBtn.setVisible(true);
+            cryptoMineBtn.setState(NORMAL);
+        }
+
         _updateLines();
     }
 
@@ -287,6 +336,12 @@ const neuralTree = (() => {
         titleText.setVisible(false);
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
+        
+        if (cryptoMineBtn) {
+            cryptoMineBtn.setVisible(false);
+            cryptoMineBtn.setState(DISABLE);
+        }
+
         for (const id in nodes) {
             nodes[id].setVisible(false);
         }
@@ -445,8 +500,15 @@ const neuralTree = (() => {
         }
     }
 
+    function _showCryptoMineButton() {
+        if (cryptoMineBtn) {
+            cryptoMineBtn.setVisible(true);
+            cryptoMineBtn.setState(NORMAL);
+        }
+    }
+
     function getGroup() { return treeGroup; }
     function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, getGroup, getDraggableGroup };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, _showCryptoMineButton, getGroup, getDraggableGroup };
 })();

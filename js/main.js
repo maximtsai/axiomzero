@@ -59,6 +59,28 @@ const config = {
     }
 };
 
+// ─── Global Ad Hooks ──────────────────────────────────────────────────────────
+
+window.pauseGameForAd = function() {
+    console.log('[Ad Break] Pausing game and audio...');
+    if (typeof PhaserScene !== 'undefined') {
+        PhaserScene.scene.pause();
+    }
+    if (typeof audio !== 'undefined') {
+        audio.pauseAll();
+    }
+};
+
+window.resumeGameFromAd = function() {
+    console.log('[Ad Break] Resuming game and audio...');
+    if (typeof PhaserScene !== 'undefined') {
+        PhaserScene.scene.resume();
+    }
+    if (typeof audio !== 'undefined') {
+        audio.resumeAll();
+    }
+};
+
 // ─── Host guard ───────────────────────────────────────────────────────────────
 
 function isAllowedRuntimeHost() {

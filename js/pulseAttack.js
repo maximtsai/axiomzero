@@ -11,6 +11,7 @@ class PulseAttackModel {
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false;  // true after basic_pulse purchased
+        this.paused = false;
         this.fireTimer = 0;
         this.size = this.BASE_SIZE;  // current square side length (upgradeable)
         this.damage = this.BASE_DAMAGE; // current damage per pulse (upgradeable)
@@ -207,6 +208,8 @@ const pulseAttack = (() => {
         if (typeof _recalcPulseDamage === 'function') _recalcPulseDamage();
         if (typeof _recalcPulseSize === 'function') _recalcPulseSize();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('gamePaused', () => { model.paused = true; });
+        messageBus.subscribe('gameResumed', () => { model.paused = false; });
         updateManager.addFunction(_update);
     }
 
@@ -224,7 +227,7 @@ const pulseAttack = (() => {
     }
 
     function _update(delta) {
-        if (!model.active) return;
+        if (!model.active || model.paused) return;
 
         view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy);
 

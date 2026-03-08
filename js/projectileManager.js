@@ -6,6 +6,7 @@ const projectileManager = (() => {
 
     let pool = [];
     let activeProjectiles = [];
+    let paused = false;
 
     let hitAnimPool = null;
 
@@ -34,6 +35,8 @@ const projectileManager = (() => {
         );
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
     function _buildPool() {
@@ -107,7 +110,7 @@ const projectileManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (activeProjectiles.length === 0) return;
+        if (activeProjectiles.length === 0 || paused) return;
 
         const dt = delta / 1000;
         const enemies = enemyManager.getActiveEnemies();
