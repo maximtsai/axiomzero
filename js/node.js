@@ -399,26 +399,18 @@ class Node {
         const x = this.btn.x;  // actual position of node (handles group offsets)
         const y = this.btn.y - 23;  // directly above
         const depth = GAME_CONSTANTS.DEPTH_POPUPS;
-        const bgWidth = 300;
+        const bgWidth = 280;
         const bgHeight = 138;
         const treeGroup = neuralTree.getGroup();
         const draggableGroup = neuralTree.getDraggableGroup();
 
+        // 1. Create a Container initially at (0,0) to measure contents
+        this.hoverContainer = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0);
         this.hoverGroup = [];
 
-        // Background - centered above node
-        const bg = PhaserScene.add.image(x, y, 'white_pixel');
-        bg.setOrigin(0.5, 1)
-            .setDisplaySize(bgWidth, bgHeight)
-            .setTint(0x111122)
-            .setAlpha(0.92)
-            .setDepth(depth)
-            .setScrollFactor(0);
-        this.hoverGroup.push(bg);
-
         const padding = 12;
-        const startY = y - bgHeight + padding;
-        let currentY = startY;
+        const rowSpacing = 10;
+        let currentY = padding;
 
         // --- ROW 1: Name & Icon ---
         const nameTextStr = this.name.toUpperCase();
@@ -431,78 +423,75 @@ class Node {
             iconOffset = boxOutlineSize + 10;
         }
 
-        const testNameT = PhaserScene.add.text(0, 0, nameTextStr, {
+        const nameT = PhaserScene.add.text(0, 0, nameTextStr, {
             fontFamily: 'VCR',
-            fontSize: '24px'
-        });
-        const titleWidth = testNameT.width + iconOffset;
-        testNameT.destroy();
+            fontSize: '22px',
+            color: '#ffffff',
+            align: 'left',
+        }).setOrigin(0, 0.5);
 
-        const titleStartX = x - titleWidth / 2;
-        const centerTitleY = currentY + 12;
+        const titleWidth = nameT.width + iconOffset;
+        const titleStartX = -titleWidth / 2;
+        const centerTitleY = currentY + boxOutlineSize / 2;
 
         if (this.icon) {
             const whiteBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'white_pixel.png')
-                .setDisplaySize(boxOutlineSize, boxOutlineSize).setDepth(depth + 1).setScrollFactor(0);
-            this.hoverGroup.push(whiteBg);
+                .setDisplaySize(boxOutlineSize, boxOutlineSize);
+            this.hoverContainer.add(whiteBg);
 
             const blackBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'black_pixel.png')
-                .setDisplaySize(boxInnerSize, boxInnerSize).setDepth(depth + 2).setScrollFactor(0);
-            this.hoverGroup.push(blackBg);
+                .setDisplaySize(boxInnerSize, boxInnerSize);
+            this.hoverContainer.add(blackBg);
 
             const iconSpr = PhaserScene.add.sprite(titleStartX + boxOutlineSize / 2, centerTitleY, 'buttons', this.icon)
-                .setDisplaySize(iconSize, iconSize).setDepth(depth + 3).setScrollFactor(0);
-            this.hoverGroup.push(iconSpr);
+                .setDisplaySize(iconSize, iconSize);
+            this.hoverContainer.add(iconSpr);
         }
 
-        const nameT = PhaserScene.add.text(titleStartX + iconOffset, centerTitleY, nameTextStr, {
-            fontFamily: 'VCR',
-            fontSize: '24px',
-            color: '#ffffff',
-            align: 'left',
-        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0);
-        this.hoverGroup.push(nameT);
+        nameT.setPosition(titleStartX + iconOffset, centerTitleY);
+        this.hoverContainer.add(nameT);
 
-        currentY += 40;
+        currentY += boxOutlineSize + rowSpacing;
 
         // --- ROW 2: Description ---
-        const descT = PhaserScene.add.text(x, currentY - 4, this.description.toLowerCase(), {
+        const descT = PhaserScene.add.text(0, currentY, this.description.toLowerCase(), {
             fontFamily: 'VCR',
-            fontSize: '18px',
+            fontSize: '22px',
             color: '#ffffff',
             align: 'center',
-            wordWrap: { width: 275 },
-        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
-        this.hoverGroup.push(descT);
-        currentY += descT.height + 6;
+            wordWrap: { width: 255 },
+            lineSpacing: 4,
+        }).setOrigin(0.5, 0);
+        this.hoverContainer.add(descT);
+        currentY += descT.height + rowSpacing;
 
         // --- ROW 3: Level ---
         const lvStr = 'Lv. ' + this.level + ' / ' + this.maxLevel;
-        const lvT = PhaserScene.add.text(x, currentY - 3, lvStr, {
+        const lvT = PhaserScene.add.text(0, currentY, lvStr, {
             fontFamily: 'VCR',
-            fontSize: '19px',
+            fontSize: '22px',
             color: '#ffffff',
             align: 'center',
-        }).setOrigin(0.5, 0).setDepth(depth + 1).setScrollFactor(0);
-        this.hoverGroup.push(lvT);
-        currentY += lvT.height + 6;
+        }).setOrigin(0.5, 0);
+        this.hoverContainer.add(lvT);
+        currentY += lvT.height + rowSpacing;
 
         let goldBg, maxT, costBg, costT;
+        const barHeight = 26;
         if (this.state === NODE_STATE.MAXED) {
             // --- ROW 4: MAX Bar ---
-            const maxBgHeight = 24;
-            goldBg = PhaserScene.add.image(x, currentY + maxBgHeight / 2 - 2, 'pixels', 'gold_pixel.png')
-                .setDisplaySize(bgWidth, maxBgHeight)
-                .setDepth(depth + 1).setScrollFactor(0);
-            this.hoverGroup.push(goldBg);
+            goldBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', 'gold_pixel.png')
+                .setDisplaySize(bgWidth, barHeight);
+            this.hoverContainer.add(goldBg);
 
-            maxT = PhaserScene.add.text(x, currentY, 'MAX', {
+            maxT = PhaserScene.add.text(0, currentY + barHeight / 2, 'MAX', {
                 fontFamily: 'VCR',
                 fontSize: '22px',
                 color: '#ffffff',
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 2).setScrollFactor(0);
-            this.hoverGroup.push(maxT);
+            }).setOrigin(0.5, 0.5);
+            this.hoverContainer.add(maxT);
+            currentY += barHeight;
         } else {
             // --- ROW 4: Cost ---
             const costColor = this.costType === 'insight' ? '#ff9500' : '#ff2d78';
@@ -510,28 +499,58 @@ class Node {
             const currentRes = this.costType === 'data' ? resourceManager.getData() : resourceManager.getInsight();
             const costStr = iconStr + ' ' + this.getCost() + ' / ' + currentRes;
 
-            const costBgHeight = 24;
             const bgPixel = this.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
-            costBg = PhaserScene.add.image(x, currentY + costBgHeight / 2 - 2, 'pixels', bgPixel)
-                .setDisplaySize(bgWidth, costBgHeight)
-                .setDepth(depth + 1).setScrollFactor(0);
-            this.hoverGroup.push(costBg);
+            costBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', bgPixel)
+                .setDisplaySize(bgWidth, barHeight);
+            this.hoverContainer.add(costBg);
 
-            costT = PhaserScene.add.text(x, currentY, costStr, {
+            costT = PhaserScene.add.text(0, currentY + barHeight / 2, costStr, {
                 fontFamily: 'VCR',
                 fontSize: '22px',
                 color: costColor,
                 align: 'center',
-            }).setOrigin(0.5, 0).setDepth(depth + 2).setScrollFactor(0);
+            }).setOrigin(0.5, 0.5);
+            this.hoverContainer.add(costT);
             this.hoverGroup.push(costT);
+            currentY += barHeight;
         }
 
-        // Add all tooltip elements to the groups so they move if the tree moves
+        const totalHeight = currentY;
+
+        // Final position adjustment: move container to 'y' and shift content so (0,0) is bottom-center
+        this.hoverContainer.setPosition(x, y);
+        this.hoverContainer.iterate(child => {
+            child.y -= totalHeight;
+        });
+
+        // Background (add at the back of the container)
+        const bg = PhaserScene.add.image(0, -totalHeight, 'white_pixel');
+        bg.setOrigin(0.5, 0) // Pin at top, expand down
+            .setDisplaySize(bgWidth, totalHeight)
+            .setTint(0x111122)
+            .setAlpha(0.92);
+        this.hoverContainer.addAt(bg, 0);
+
+        // Add container to the groups so it moves if the tree moves
         if (treeGroup) {
-            this.hoverGroup.forEach(obj => treeGroup.add(obj));
+            treeGroup.add(this.hoverContainer);
         }
         if (draggableGroup) {
-            this.hoverGroup.forEach(obj => draggableGroup.add(obj));
+            draggableGroup.add(this.hoverContainer);
+        }
+
+        // --- Entrance Animation (The "Bouncy" Pop) ---
+        if (!isPurchaseRefresh) {
+            this.hoverContainer.setScale(0.2);
+            this.hoverContainer.angle = -8; // Start slightly tilted
+            PhaserScene.tweens.add({
+                targets: this.hoverContainer,
+                scaleX: 1,
+                scaleY: 1,
+                angle: 0, // Snap to upright
+                duration: 250, // Quicker duration
+                ease: 'Back.easeOut',
+            });
         }
 
         // --- Purchase Animation ---
@@ -564,17 +583,19 @@ class Node {
     }
 
     _hideHover() {
+        if (this.hoverContainer) {
+            this.hoverContainer.destroy();
+            this.hoverContainer = null;
+        }
         if (this.hoverGroup) {
-            for (let i = 0; i < this.hoverGroup.length; i++) {
-                this.hoverGroup[i].destroy();
-            }
             this.hoverGroup = null;
         }
     }
 
     _shakeCostText() {
-        if (!this.hoverGroup || this.hoverGroup.length < 3) return;
-        // infoT is the last element (added last in _showHover)
+        if (!this.hoverContainer || !this.hoverGroup || this.hoverGroup.length === 0) return;
+
+        // infoT is the costT we saved into hoverGroup
         const infoT = this.hoverGroup[this.hoverGroup.length - 1];
         if (!infoT) return;
 
