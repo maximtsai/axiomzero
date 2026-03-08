@@ -176,6 +176,7 @@
             <key type="filename">pixels/black_pixel.png</key>
             <key type="filename">pixels/blank_pixel.png</key>
             <key type="filename">pixels/blue_pixel.png</key>
+            <key type="filename">pixels/dark_green_pixel.png</key>
             <key type="filename">pixels/dark_red_pixel.png</key>
             <key type="filename">pixels/gold_pixel.png</key>
             <key type="filename">pixels/green_pixel.png</key>

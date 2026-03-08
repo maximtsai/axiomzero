@@ -9,14 +9,12 @@ const tutorialManager = (() => {
     }
 
     function _onPhaseChanged(phase) {
+        _clearTutorial();
+
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _checkEarlyGameTutorial();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             _checkUpgradeTutorial();
-        } else {
-            // waveManager handles cleanup of tutorialText if it was registered, 
-            // but we can also null it here for local tracking.
-            _clearTutorial();
         }
     }
 

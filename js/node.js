@@ -202,7 +202,7 @@ class Node {
 
         // Refresh hover text if it was visible
         if (this.hoverGroup) {
-            this._showHover();
+            this._showHover(true);
         }
 
         return true;
@@ -392,7 +392,7 @@ class Node {
 
     // ── hover tooltip ────────────────────────────────────────────────────
 
-    _showHover() {
+    _showHover(isPurchaseRefresh = false) {
         if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
         this._hideHover();
 
@@ -487,15 +487,16 @@ class Node {
         this.hoverGroup.push(lvT);
         currentY += lvT.height + 6;
 
+        let goldBg, maxT, costBg, costT;
         if (this.state === NODE_STATE.MAXED) {
             // --- ROW 4: MAX Bar ---
             const maxBgHeight = 24;
-            const goldBg = PhaserScene.add.image(x, currentY + maxBgHeight / 2 - 2, 'pixels', 'gold_pixel.png')
+            goldBg = PhaserScene.add.image(x, currentY + maxBgHeight / 2 - 2, 'pixels', 'gold_pixel.png')
                 .setDisplaySize(bgWidth, maxBgHeight)
                 .setDepth(depth + 1).setScrollFactor(0);
             this.hoverGroup.push(goldBg);
 
-            const maxT = PhaserScene.add.text(x, currentY, 'MAX', {
+            maxT = PhaserScene.add.text(x, currentY, 'MAX', {
                 fontFamily: 'VCR',
                 fontSize: '22px',
                 color: '#ffffff',
@@ -510,12 +511,13 @@ class Node {
             const costStr = iconStr + ' ' + this.getCost() + ' / ' + currentRes;
 
             const costBgHeight = 24;
-            const darkRedBg = PhaserScene.add.image(x, currentY + costBgHeight / 2 - 2, 'pixels', 'dark_red_pixel.png')
+            const bgPixel = this.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
+            costBg = PhaserScene.add.image(x, currentY + costBgHeight / 2 - 2, 'pixels', bgPixel)
                 .setDisplaySize(bgWidth, costBgHeight)
                 .setDepth(depth + 1).setScrollFactor(0);
-            this.hoverGroup.push(darkRedBg);
+            this.hoverGroup.push(costBg);
 
-            const costT = PhaserScene.add.text(x, currentY, costStr, {
+            costT = PhaserScene.add.text(x, currentY, costStr, {
                 fontFamily: 'VCR',
                 fontSize: '22px',
                 color: costColor,
@@ -530,6 +532,34 @@ class Node {
         }
         if (draggableGroup) {
             this.hoverGroup.forEach(obj => draggableGroup.add(obj));
+        }
+
+        // --- Purchase Animation ---
+        if (isPurchaseRefresh) {
+            const animateTargets = [lvT];
+            if (this.state === NODE_STATE.MAXED) {
+                if (maxT) animateTargets.push(maxT);
+            } else {
+                if (costT) animateTargets.push(costT);
+            }
+
+            animateTargets.forEach(target => {
+                target.setScale(0.82, 1);
+                PhaserScene.tweens.add({
+                    targets: target,
+                    scaleX: 1.18,
+                    duration: 150,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        PhaserScene.tweens.add({
+                            targets: target,
+                            scaleX: 1,
+                            duration: 350,
+                            ease: 'Back.easeOut'
+                        });
+                    }
+                });
+            });
         }
     }
 

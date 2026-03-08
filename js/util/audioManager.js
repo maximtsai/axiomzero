@@ -216,13 +216,13 @@ const audio = {
     playBossMusic: function (bossMusicName = 'boss_music') {
         if (!globalMusic || isMuted || isMusicMuted) return;
 
-        // Fade out main background music over 1 seconds
-        audio.setSoundVolume(globalMusic, 0, 700);
+        // Fade out main background music over 1.2 seconds
+        audio.setSoundVolume(globalMusic, 0, 1200);
 
         // Start boss music loop at 0.01 volume and fade it in over 1 seconds after a 0.75 second delay
         globalTempMusic = audio.playFakeBGMusic(bossMusicName, 0.01, true);
-        PhaserScene.time.delayedCall(650, () => {
-            audio.setSoundVolume(globalTempMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 750);
+        PhaserScene.time.delayedCall(800, () => {
+            audio.setSoundVolume(globalTempMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 800);
         });
     },
 
@@ -239,7 +239,9 @@ const audio = {
             // Bring back bg_music1 from 0.01 to full over 0.6 seconds
             globalMusic.fullVolume = 0.01;
             globalMusic.volume = 0.01 * globalMusicVol;
-            audio.setSoundVolume(globalMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 600);
+            PhaserScene.time.delayedCall(300, () => {
+                audio.setSoundVolume(globalMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 600);
+            });
         }
     },
 

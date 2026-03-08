@@ -5,8 +5,8 @@
 
 const resourceManager = (() => {
     const DROP_POOL_SIZE = 1200;
-    const FLY_SPEED = 350;  // px/sec while flying toward cursor
-    const FLY_COLLECT_DIST = 18;   // Manhattan distance (px) — no sqrt needed
+    const FLY_SPEED = 800;  // px/sec while flying toward cursor
+    const FLY_COLLECT_DIST = 20;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
@@ -100,7 +100,7 @@ const resourceManager = (() => {
         d.alive = true;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = -0.1;
+        d.inertia = -0.075;
 
         // Visibility logic
         let visible = true;
@@ -276,7 +276,7 @@ const resourceManager = (() => {
             d.y = d.img.y;
             d.flying = true;
             // Ramp up inertia drastically to ensure they pull in fast
-            d.inertia = 2.0;
+            d.inertia = 1.0;
 
             activeDrops.splice(i, 1);
             flyingDrops.push(d);
@@ -284,7 +284,7 @@ const resourceManager = (() => {
 
         // Also boost any drops already flying
         for (let i = 0; i < flyingDrops.length; i++) {
-            flyingDrops[i].inertia = 2.0;
+            flyingDrops[i].inertia = 1.0;
         }
     }
 
@@ -363,7 +363,7 @@ const resourceManager = (() => {
             d.dy *= 0.95 - 0.05 * d.inertia;
 
             if (d.inertia < 1) {
-                d.inertia = Math.min(1, d.inertia + 0.85 * dt);
+                d.inertia = Math.min(1, d.inertia + 0.75 * dt);
             }
             d.img.setPosition(d.x, d.y);
         }
