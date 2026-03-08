@@ -421,7 +421,7 @@ class Node {
         let currentY = startY;
 
         // --- ROW 1: Name & Icon ---
-        const nameTextStr = this.name.toLowerCase();
+        const nameTextStr = this.name.toUpperCase();
         let iconOffset = 0;
         const boxOutlineSize = 34;
         const boxInnerSize = 30;
@@ -439,7 +439,7 @@ class Node {
         testNameT.destroy();
 
         const titleStartX = x - titleWidth / 2;
-        const centerTitleY = currentY + 17;
+        const centerTitleY = currentY + 12;
 
         if (this.icon) {
             const whiteBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'white_pixel.png')
@@ -463,10 +463,10 @@ class Node {
         }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0);
         this.hoverGroup.push(nameT);
 
-        currentY += 34 + 6;
+        currentY += 40;
 
         // --- ROW 2: Description ---
-        const descT = PhaserScene.add.text(x, currentY, this.description.toLowerCase(), {
+        const descT = PhaserScene.add.text(x, currentY - 4, this.description.toLowerCase(), {
             fontFamily: 'VCR',
             fontSize: '18px',
             color: '#ffffff',
@@ -478,7 +478,7 @@ class Node {
 
         // --- ROW 3: Level ---
         const lvStr = 'Lv. ' + this.level + ' / ' + this.maxLevel;
-        const lvT = PhaserScene.add.text(x, currentY, lvStr, {
+        const lvT = PhaserScene.add.text(x, currentY - 3, lvStr, {
             fontFamily: 'VCR',
             fontSize: '19px',
             color: '#ffffff',

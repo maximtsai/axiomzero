@@ -117,17 +117,19 @@ const tutorialManager = (() => {
 
         // Use local typewriter logic to play sound per character
         let charIdx = 0;
-        PhaserScene.time.addEvent({
-            delay: 40,
-            repeat: msg.length - 1,
-            callback: () => {
-                if (!tutorialText || !tutorialText.active) return;
-                charIdx++;
-                tutorialText.setText(msg.substring(0, charIdx));
-                if (typeof audio !== 'undefined') {
-                    audio.play('digital_typewriter_short', 0.6);
+        PhaserScene.time.delayedCall(600, () => {
+            PhaserScene.time.addEvent({
+                delay: 40,
+                repeat: msg.length - 1,
+                callback: () => {
+                    if (!tutorialText || !tutorialText.active) return;
+                    charIdx++;
+                    tutorialText.setText(msg.substring(0, charIdx));
+                    if (typeof audio !== 'undefined') {
+                        audio.play('digital_typewriter_short', 0.6);
+                    }
                 }
-            }
+            });
         });
 
         // If in upgrade tree, add to the draggable group so it moves with the nodes
@@ -151,7 +153,7 @@ const tutorialManager = (() => {
             targets: [tutorialText, tutorialBg],
             alpha: 0,
             duration: 1000,
-            delay: 5000,
+            delay: 5600,
             onComplete: () => {
                 _clearTutorial();
             }
