@@ -6,7 +6,10 @@ const iterationOverScreen = (() => {
     let titleText = null;
     let dataText = null;
     let insightText = null;
+    let shardText = null;
+    let processorText = null;
     let upgradesBtn = null;
+    let retryBtn = null;
     let newTierText = null;
 
     let visible = false;
@@ -49,17 +52,31 @@ const iterationOverScreen = (() => {
         titleText.setText('');
 
         // Acquired resources
-        dataText = PhaserScene.add.text(cx, cy - 38, '', {
+        dataText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '24px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
-        insightText = PhaserScene.add.text(cx, cy, '', {
+        insightText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '24px',
             color: '#ffffff',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1);
+
+        shardText = PhaserScene.add.text(cx, 0, '', {
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '24px',
+            color: '#ff2d78',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1);
+
+        processorText = PhaserScene.add.text(cx, 0, '', {
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '24px',
+            color: '#ff9500',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
@@ -142,6 +159,8 @@ const iterationOverScreen = (() => {
 
         const sessionData = resourceManager.getSessionData();
         const sessionInsight = resourceManager.getSessionInsight();
+        const sessionShards = resourceManager.getSessionShards();
+        const sessionProcessors = resourceManager.getSessionProcessors();
 
         overlay.setVisible(true);
         titleText.setVisible(true);
@@ -162,37 +181,48 @@ const iterationOverScreen = (() => {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
-        if (sessionData === 0 && sessionInsight === 0) {
+        // Hide all initially
+        dataText.setVisible(false);
+        insightText.setVisible(false);
+        shardText.setVisible(false);
+        processorText.setVisible(false);
+
+        const activeTexts = [];
+
+        if (sessionData === 0 && sessionInsight === 0 && sessionShards === 0 && sessionProcessors === 0) {
             dataText.setText('no resources');
-            dataText.setY(cy - 19);
             dataText.setVisible(true);
-            insightText.setVisible(false);
+            activeTexts.push(dataText);
         } else {
-            // Data text
             if (sessionData > 0) {
                 dataText.setText('\u25C8 DATA collected: ' + sessionData);
                 dataText.setVisible(true);
-            } else {
-                dataText.setVisible(false);
+                activeTexts.push(dataText);
             }
-
-            // Insight text
             if (sessionInsight > 0) {
                 insightText.setText('⦵ INSIGHT gained: ' + sessionInsight);
                 insightText.setVisible(true);
-            } else {
-                insightText.setVisible(false);
+                activeTexts.push(insightText);
             }
+            if (sessionShards > 0) {
+                shardText.setText('♦ SHARDS found: ' + sessionShards);
+                shardText.setVisible(true);
+                activeTexts.push(shardText);
+            }
+            if (sessionProcessors > 0) {
+                processorText.setText('■ PROCESSORS salvaged: ' + sessionProcessors);
+                processorText.setVisible(true);
+                activeTexts.push(processorText);
+            }
+        }
 
-            // Reposition for centering if only one is shown
-            if (sessionData > 0 && sessionInsight > 0) {
-                dataText.setY(cy - 38);
-                insightText.setY(cy);
-            } else if (sessionData > 0) {
-                dataText.setY(cy - 19);
-            } else if (sessionInsight > 0) {
-                insightText.setY(cy - 19);
-            }
+        // Center block dynamically
+        const lineSpacing = 30;
+        const totalHeight = (activeTexts.length - 1) * lineSpacing;
+        let startY = cy - 20 - (totalHeight / 2);
+
+        for (let i = 0; i < activeTexts.length; i++) {
+            activeTexts[i].setY(startY + (i * lineSpacing));
         }
 
         // Start typewriter effect
@@ -212,11 +242,12 @@ const iterationOverScreen = (() => {
 
     function _hideAll() {
         visible = false;
-        visible = false;
         overlay.setVisible(false);
         titleText.setVisible(false);
         dataText.setVisible(false);
         insightText.setVisible(false);
+        shardText.setVisible(false);
+        processorText.setVisible(false);
         if (newTierText) newTierText.setVisible(false);
         upgradesBtn.setVisible(false);
         upgradesBtn.setState(DISABLE);

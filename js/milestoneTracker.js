@@ -37,7 +37,6 @@ const milestoneTracker = (() => {
 
     function init() {
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
-        messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('waveCompleted', _onWaveCompleted);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
@@ -48,15 +47,6 @@ const milestoneTracker = (() => {
 
     function _onEnemyKilled() {
         gameState.stats.totalKills++;
-    }
-
-    function _onCurrencyChanged(type, amount, delta) {
-        if (type === 'data' && delta > 0) {
-            gameState.stats.totalDataCollected += delta;
-        }
-        if (type === 'insight' && delta > 0) {
-            gameState.stats.totalInsightEarned += delta;
-        }
     }
 
     function _onWaveCompleted() {
@@ -78,6 +68,15 @@ const milestoneTracker = (() => {
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             waveStartTime = Date.now();
+        }
+
+        // Add session stats when an iteration ends (WAVE_COMPLETE or GAME_OVER)
+        if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
+            gameState.stats.totalDataCollected += resourceManager.getSessionData();
+            gameState.stats.totalInsightEarned += resourceManager.getSessionInsight();
+            gameState.stats.totalShardsCollected += resourceManager.getSessionShards();
+            gameState.stats.totalProcessorsCollected += resourceManager.getSessionProcessors();
+            gameState.stats.totalCoinsCollected += resourceManager.getSessionCoins();
         }
 
         // Save game data when Deploy is clicked (enters COMBAT), 
