@@ -691,7 +691,11 @@ const enemyManager = (() => {
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
         // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
-        const firstThreshold = 5;
+        let firstThreshold = 4.9;
+        // Special case: if basic_pulse isn't researched, increase threshold to 5.75
+        if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
+            firstThreshold = 5.15;
+        }
         const secondThreshold = 1.25;
         if (combatTime < firstThreshold) {
             spawnSpeedMultiplier = 27;
@@ -729,13 +733,19 @@ const enemyManager = (() => {
 
             e.update(dt * spawnSpeedMultiplier);
 
-            // Tower contact check — minibosses do NOT die on contact
+            // Tower contact check — minibosses do NOT die on contact currently
             if (!e.isMiniboss) {
                 const dx = e.x - tPos.x;
                 const dy = e.y - tPos.y;
+                const distSq = dx * dx + dy * dy;
+
                 // Attack range based on size (Basic size 12 * 2 = 24px)
                 const contactR = (e.size || 12) * 2;
-                if (dx * dx + dy * dy < contactR * contactR) {
+                const contactR2 = contactR * contactR;
+
+                if (distSq < contactR2) {
+                    e.isAttacking = true;
+
                     if (e.attackTimer <= 0 && e.damage > 0) {
                         tower.takeDamage(e.damage, e.x, e.y);
                         e.attackTimer = e.attackCooldown;
@@ -750,6 +760,8 @@ const enemyManager = (() => {
                     // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
                     // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;
+                } else {
+                    e.isAttacking = false;
                 }
             }
         }

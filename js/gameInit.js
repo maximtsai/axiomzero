@@ -57,6 +57,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     neuralTree.init();
     gameHUD.init();
     iterationOverScreen.init();
+    tutorialManager.init();
 
     // Camera & transition — cameraManager before transitionManager
     cameraManager.init();

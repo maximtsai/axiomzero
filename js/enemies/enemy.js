@@ -33,6 +33,7 @@ class Enemy {
         this.hpImg = null; // Health representing sprite
         this.attackCooldown = 2.0; // Default attack rate (seconds)
         this.attackTimer = 0;      // Cooldown timer
+        this.isAttacking = false;  // True when in contact with tower
 
         // ── Velocity (px/sec) — set by aimAt() or overridden by update() ──────
         this.vx = 0;
@@ -54,6 +55,7 @@ class Enemy {
         this.y = y;
         this.alive = true;
         this.stunned = false;
+        this.isAttacking = false;
 
         // Reset core stats if provided, or use defaults
         if (config.maxHealth !== undefined) {
@@ -137,7 +139,7 @@ class Enemy {
      * @param {number} dt  Delta time in seconds
      */
     update(dt) {
-        if (!this.stunned) {
+        if (!this.stunned && !this.isAttacking) {
             let moveMult = 1;
             if (this.hitStopTimer > 0) {
                 moveMult = 0.1;

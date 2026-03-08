@@ -12,9 +12,9 @@
 const MB1 = {
     HEALTH: 60,
     SPEED_MULT: 1.5,   // × ENEMY_BASE_SPEED
-    ATTACK_RANGE: 180,   // px — stop and attack
-    RETREAT_RANGE: 220,   // px — resume movement if pushed past this
-    FIRE_INTERVAL: 3000,  // ms between shots
+    ATTACK_RANGE: 195,   // px — stop and attack (increased by 15)
+    RETREAT_RANGE: 235,   // px — resume movement if pushed past this (increased by 15)
+    FIRE_INTERVAL: 4000,  // ms between shots (increased by 1s)
     BULLET_DAMAGE: 4,
     KNOCKBACK_MOD: 0,   // 0 knockback
     SPAWN_BURST_DURATION: 2,    // seconds — speed burst on spawn
@@ -136,8 +136,8 @@ class Miniboss1 extends Miniboss {
                 const dist = Math.max(1, distToTower);
                 const ux = dx / dist;
                 const uy = dy / dist;
-                // Offset 41px towards player
-                this.chargeSprite.setPosition(this.x + ux * 41, this.y + uy * 41);
+                // Offset 51px towards player (moved 10px closer)
+                this.chargeSprite.setPosition(this.x + ux * 50, this.y + uy * 50);
                 this.chargeSprite.setRotation(0); // Forced to 0 rotation
 
                 if (this._isRampingUp) {
@@ -239,7 +239,7 @@ class Miniboss1 extends Miniboss {
             const uy = dy / dist;
 
             enemyBulletManager.fire(
-                this.x + ux * 20, this.y + uy * 20,
+                this.x + ux * 27, this.y + uy * 27, // Start 7px closer
                 targetX, targetY,
                 MB1.BULLET_DAMAGE
             );

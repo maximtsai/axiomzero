@@ -74,7 +74,7 @@ const NODE_DEFS = [
         costStep: 4,
         parentId: 'basic_pulse',
         childIds: ['pulse_damage_2'],
-        treeX: 320,
+        treeX: 480,
         treeY: 670,
         effect: function () {
             _recalcPulseDamage();
@@ -94,7 +94,7 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'basic_pulse',
         childIds: [],
-        treeX: 480,
+        treeX: 320,
         treeY: 670,
         effect: function () {
             resourceManager.recalcPickupRadius();
@@ -115,7 +115,7 @@ const NODE_DEFS = [
         parentId: 'pulse_damage',
         requiresMaxParent: true,
         childIds: ['pulse_damage_3'],
-        treeX: 240,
+        treeX: 560,
         treeY: 670,
         effect: function () {
             _recalcPulseSize();
@@ -135,8 +135,9 @@ const NODE_DEFS = [
         costStep: 5,
         parentId: 'pulse_damage_2',
         childIds: [],
-        treeX: 160,
-        treeY: 670,
+        tier: 2,
+        treeX: 560,
+        treeY: 590,
         effect: function () {
             _recalcPulseDamage();
         },

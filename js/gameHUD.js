@@ -284,7 +284,7 @@ const gameHUD = (() => {
                 ui.icon.setVisible(true);
                 ui.text.setVisible(true);
                 ui.icon.y = currentY;
-                ui.text.y = currentY - 11;
+                ui.text.y = currentY - 13;
                 currentY += spacing;
             } else {
                 ui.icon.setVisible(false);

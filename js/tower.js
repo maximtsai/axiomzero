@@ -323,6 +323,7 @@ const tower = (() => {
         view._hitAnimPool = new ObjectPool(
             () => {
                 const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_strike1.png');
+                spr.setScale(1.4);
                 spr.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 1);
                 spr.setVisible(false);
                 spr.setActive(false);

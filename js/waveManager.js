@@ -21,6 +21,7 @@ const waveManager = (() => {
     let waveActive = false;
     let frozen = false;
     let progressPaused = false; // true while a miniboss/boss is alive
+    let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -64,6 +65,25 @@ const waveManager = (() => {
             towerDiedSub = null;
         }
         // enemyManager handles its own cleanup on phaseChanged
+        _clearCombatRegistry();
+    }
+
+    /** Register an object (with a .destroy() method) to be cleaned up when the wave ends. */
+    function registerCombatObject(obj) {
+        if (obj) combatRegistry.push(obj);
+    }
+
+    function _clearCombatRegistry() {
+        combatRegistry.forEach(obj => {
+            if (obj && obj.destroy) {
+                try {
+                    obj.destroy();
+                } catch (e) {
+                    console.warn('Failed to destroy combat registry object:', e);
+                }
+            }
+        });
+        combatRegistry = [];
     }
 
     function _onTowerDied() {
@@ -197,5 +217,5 @@ const waveManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, endIteration, getProgress };
+    return { init, endIteration, getProgress, registerCombatObject };
 })();
