@@ -408,9 +408,9 @@ class Node {
         this.hoverContainer = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0);
         this.hoverGroup = [];
 
-        const padding = 12;
+        const padding = 12; // Legacy padding for other refs, used for desc wrapping
         const rowSpacing = 10;
-        let currentY = padding;
+        let currentY = 3; // Shifted up so backing is 3px from top
 
         // --- ROW 1: Name & Icon ---
         const nameTextStr = this.name.toUpperCase();
@@ -474,14 +474,15 @@ class Node {
             align: 'center',
         }).setOrigin(0.5, 0);
         this.hoverContainer.add(lvT);
-        currentY += lvT.height + rowSpacing;
+        currentY += lvT.height + (rowSpacing - 3); // Shifted up 3px as requested
 
         let goldBg, maxT, costBg, costT;
         const barHeight = 26;
+        const barWidth = bgWidth - 6; // 3px padding on sides
         if (this.state === NODE_STATE.MAXED) {
             // --- ROW 4: MAX Bar ---
             goldBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', 'gold_pixel.png')
-                .setDisplaySize(bgWidth, barHeight);
+                .setDisplaySize(barWidth, barHeight);
             this.hoverContainer.add(goldBg);
 
             maxT = PhaserScene.add.text(0, currentY + barHeight / 2, 'MAX', {
@@ -501,7 +502,7 @@ class Node {
 
             const bgPixel = this.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', bgPixel)
-                .setDisplaySize(bgWidth, barHeight);
+                .setDisplaySize(barWidth, barHeight);
             this.hoverContainer.add(costBg);
 
             costT = PhaserScene.add.text(0, currentY + barHeight / 2, costStr, {
@@ -515,7 +516,7 @@ class Node {
             currentY += barHeight;
         }
 
-        const totalHeight = currentY;
+        const totalHeight = currentY + 3; // 3px bottom padding
 
         // Final position adjustment: move container to 'y' and shift content so (0,0) is bottom-center
         this.hoverContainer.setPosition(x, y);
