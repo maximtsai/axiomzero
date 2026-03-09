@@ -59,7 +59,7 @@ const GAME_VARS = {
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────
 
-const OPTIONS_KEY = 'axiomzero_options';
+// OPTIONS_KEY must be defined in gameConfig.js
 
 const GAME_OPTIONS_DEFAULTS = {
     language: 'en',

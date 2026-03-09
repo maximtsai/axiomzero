@@ -232,29 +232,38 @@ const audio = {
         }
     },
 
-    /** Starts the boss music, fading out the main music concurrently. */
-    playBossMusic: function (bossMusicName = 'boss_music') {
-        if (!globalMusic || isMuted || isMusicMuted) return;
+    /**
+     * Executes a complex audio transition (e.g., boss music swap).
+     * @param {Object} config - Transition parameters.
+     */
+    playComplexTransition: function (config) {
+        if (!config || isMuted || (config.isMusic && isMusicMuted)) return;
 
-        // Fade out main background music over 1.2 seconds and stop it
-        audio.fadeAway(globalMusic, 1200, 'Linear');
+        // 1. Fade out current music
+        if (globalMusic) {
+            audio.fadeAway(globalMusic, config.fadeOutDuration || 1000, config.fadeOutEase || 'Linear');
+        }
 
-        // Start boss music loop at 0.01 volume and fade it in over 1 seconds after a 0.75 second delay
-        globalTempMusic = audio.playFakeBGMusic(bossMusicName, 0.01, true);
-        PhaserScene.time.delayedCall(800, () => {
-            audio.setSoundVolume(globalTempMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 800);
+        // 2. Start new track after delay
+        PhaserScene.time.delayedCall(config.fadeInDelay || 0, () => {
+            globalTempMusic = audio.playFakeBGMusic(config.assetKey, 0.01, config.loop !== false);
+            audio.setSoundVolume(globalTempMusic, config.targetVolume || AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, config.fadeInDuration || 1000);
         });
     },
 
-    /** Stops the boss music and fades the main background music back in. */
-    stopBossMusic: function () {
+    /**
+     * Stops a complex transition and restores background music.
+     * @param {Object} config - Restore parameters.
+     */
+    stopComplexTransition: function (config) {
         if (!globalTempMusic) return;
 
-        // Fade out boss music over 0.75 seconds then stop
-        audio.fadeAway(globalTempMusic, 750, 'Linear', () => {
+        // 1. Fade out the temporary track
+        audio.fadeAway(globalTempMusic, config.fadeOutDuration || 750, config.fadeOutEase || 'Linear', () => {
             globalTempMusic = null;
         });
 
+        // 2. Restore main music
         if (globalMusic && !isMuted && !isMusicMuted) {
             if (globalMusic.currTween) {
                 globalMusic.currTween.stop();
@@ -262,11 +271,12 @@ const audio = {
             }
             globalMusic.stop();
             globalMusic.play();
-            // Bring back bg_music1 from 0.01 to full over 0.6 seconds
+
             globalMusic.fullVolume = 0.01;
             globalMusic.volume = 0.01 * globalMusicVol;
-            PhaserScene.time.delayedCall(300, () => {
-                audio.setSoundVolume(globalMusic, AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, 600);
+
+            PhaserScene.time.delayedCall(config.restoreDelay || 300, () => {
+                audio.setSoundVolume(globalMusic, config.targetVolume || AUDIO_CONSTANTS.DEFAULT_MUSIC_VOLUME, config.restoreDuration || 600);
             });
         }
     },

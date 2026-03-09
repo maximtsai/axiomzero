@@ -100,11 +100,27 @@ GAME_CONSTANTS.DEPTH_POPUPS = 10000;
 GAME_CONSTANTS.TRANSITION_DURATION = 600;  // ms — camera slide duration
 GAME_CONSTANTS.COMBAT_INTRO_TEXT = 'SYSTEM ANOMALY DETECTED';
 
+// ─── Audio Transitions ────────────────────────────────────────────────────────
+
+GAME_CONSTANTS.AUDIO_TRANSITIONS = {
+    BOSS: {
+        assetKey: 'boss_music',
+        fadeOutDuration: 1200,
+        fadeOutEase: 'Linear',
+        fadeInDelay: 800,
+        fadeInDuration: 800,
+        targetVolume: 0.85, // Matches DEFAULT_MUSIC_VOLUME
+        restoreDelay: 300,
+        restoreDuration: 600
+    }
+};
+
 // ─── Save / persistence keys ──────────────────────────────────────────────────
 // Consumed by js/util/gameState.js — kept here so renaming for a new project
 // only requires editing this file.
 
 const SAVE_KEY = 'axiomzero_save';
+const OPTIONS_KEY = 'axiomzero_options';
 const SAVE_VERSION = 2;
 
 // ─── Default game state shape ─────────────────────────────────────────────────

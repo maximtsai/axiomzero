@@ -42,7 +42,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // Start boss music when boss spawns
     messageBus.subscribe('bossSpawned', () => {
         debugLog('Playing boss music...');
-        audio.playBossMusic();
+        audio.playComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
     });
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────

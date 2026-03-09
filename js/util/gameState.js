@@ -82,19 +82,11 @@ function _migrateState(fromVersion, data) {
         } catch (e) {
             console.error('Failed to migrate legacy settings', e);
         }
+    }
 
-        // Attempt to absorb legacy milestones
-        try {
-            const oldMilestonesRaw = localStorage.getItem('axiomzero_milestones');
-            if (oldMilestonesRaw) {
-                const parsedMilestones = JSON.parse(oldMilestonesRaw);
-                if (parsedMilestones.stats) Object.assign(data.stats, parsedMilestones.stats);
-                if (parsedMilestones.claimed) Object.assign(data.claimed, parsedMilestones.claimed);
-                localStorage.removeItem('axiomzero_milestones');
-            }
-        } catch (e) {
-            console.error('Failed to migrate legacy milestones', e);
-        }
+    // Call project-specific migration hook if defined (e.g. in gameConfig.js)
+    if (typeof migrateProjectState === 'function') {
+        data = migrateProjectState(fromVersion, data);
     }
 
     return data;

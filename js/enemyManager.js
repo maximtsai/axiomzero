@@ -277,10 +277,11 @@ const enemyManager = (() => {
             let sy = baseY;
 
             if (numToSpawn > 1) {
-                // Swarmers form layers of up to 4 to avoid overly wide arcs
-                const layer = Math.floor(i / 4);
-                const indexInLayer = i % 4;
-                const layerSize = Math.min(4, numToSpawn - (layer * 4));
+                // If 6 or fewer swarmers, form layers of up to 2. Otherwise up to 4.
+                const maxPerLayer = numToSpawn <= 6 ? 2 : 4;
+                const layer = Math.floor(i / maxPerLayer);
+                const indexInLayer = i % maxPerLayer;
+                const layerSize = Math.min(maxPerLayer, numToSpawn - (layer * maxPerLayer));
 
                 // Spread them along the arc for this specific layer
                 const angleStep = 0.1; // ~5.7 degrees

@@ -271,8 +271,8 @@ const iterationOverScreen = (() => {
     function _onRetryClicked() {
         _hideAll();
         // Stop boss track & bring back main BGM if applicable
-        if (typeof audio !== 'undefined' && audio.stopBossMusic) {
-            audio.stopBossMusic();
+        if (typeof audio !== 'undefined' && audio.stopComplexTransition) {
+            audio.stopComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
         }
         // Reset combat state directly — no transition animation
         enemyManager.clearAllEnemies();
