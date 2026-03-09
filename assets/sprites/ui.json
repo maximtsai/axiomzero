@@ -4,8 +4,8 @@
 			"image": "ui-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 244,
-				"h": 386
+				"w": 390,
+				"h": 256
 			},
 			"scale": 1,
 			"frames": [
@@ -35,6 +35,31 @@
 					}
 				},
 				{
+					"filename": "progress_container.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 42,
+						"h": 42
+					},
+					"frame": {
+						"x": 1,
+						"y": 213,
+						"w": 42,
+						"h": 42
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "ui_background.png",
 					"rotated": false,
 					"trimmed": false,
@@ -49,8 +74,8 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 213,
-						"y": 1,
+						"x": 45,
+						"y": 213,
 						"w": 10,
 						"h": 10
 					},
@@ -62,22 +87,22 @@
 				{
 					"filename": "close_button_hover.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 60,
-						"h": 60
+						"w": 68,
+						"h": 68
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
+						"x": 2,
+						"y": 2,
+						"w": 64,
+						"h": 64
 					},
 					"frame": {
-						"x": 1,
-						"y": 213,
-						"w": 60,
-						"h": 60
+						"x": 213,
+						"y": 1,
+						"w": 64,
+						"h": 64
 					},
 					"anchor": {
 						"x": 0.5,
@@ -87,22 +112,47 @@
 				{
 					"filename": "close_button_normal.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 60,
-						"h": 60
+						"w": 68,
+						"h": 68
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
+						"x": 2,
+						"y": 2,
+						"w": 64,
+						"h": 64
 					},
 					"frame": {
-						"x": 1,
-						"y": 275,
-						"w": 60,
-						"h": 60
+						"x": 213,
+						"y": 67,
+						"w": 64,
+						"h": 64
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "close_button_press.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 68,
+						"h": 68
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 2,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 213,
+						"y": 133,
+						"w": 64,
+						"h": 64
 					},
 					"anchor": {
 						"x": 0.5,
@@ -124,8 +174,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 1,
-						"y": 337,
+						"x": 213,
+						"y": 199,
 						"w": 48,
 						"h": 48
 					},
@@ -149,35 +199,10 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 51,
-						"y": 337,
+						"x": 263,
+						"y": 199,
 						"w": 48,
 						"h": 48
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "close_button_press.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 63,
-						"y": 213,
-						"w": 60,
-						"h": 60
 					},
 					"anchor": {
 						"x": 0.5,
@@ -199,35 +224,10 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 63,
-						"y": 275,
+						"x": 279,
+						"y": 1,
 						"w": 60,
 						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "checkbox_off_press.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 48,
-						"h": 48
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 48,
-						"h": 48
-					},
-					"frame": {
-						"x": 101,
-						"y": 337,
-						"w": 48,
-						"h": 48
 					},
 					"anchor": {
 						"x": 0.5,
@@ -249,8 +249,8 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 125,
-						"y": 213,
+						"x": 279,
+						"y": 63,
 						"w": 60,
 						"h": 60
 					},
@@ -274,10 +274,35 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 125,
-						"y": 275,
+						"x": 279,
+						"y": 125,
 						"w": 60,
 						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "checkbox_off_press.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 313,
+						"y": 187,
+						"w": 48,
+						"h": 48
 					},
 					"anchor": {
 						"x": 0.5,
@@ -299,8 +324,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 151,
-						"y": 337,
+						"x": 341,
+						"y": 1,
 						"w": 48,
 						"h": 48
 					},
@@ -324,8 +349,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 187,
-						"y": 213,
+						"x": 341,
+						"y": 51,
 						"w": 48,
 						"h": 48
 					},
@@ -349,35 +374,10 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 187,
-						"y": 263,
+						"x": 341,
+						"y": 101,
 						"w": 48,
 						"h": 48
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "progress_container.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 42,
-						"h": 42
-					},
-					"frame": {
-						"x": 201,
-						"y": 313,
-						"w": 42,
-						"h": 42
 					},
 					"anchor": {
 						"x": 0.5,
@@ -390,6 +390,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:86b97ead454a244aa58a9155c964f133:1a7226cd314cd85394ec75577eca48aa:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c0a3ac82ce8dace229af78ac7c6328cb:b6918cd8bec5ea26830e58b648fc3e74:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

@@ -229,7 +229,7 @@ const gameHUD = (() => {
     }
 
     function _onHealthChanged(current, max) {
-        if (!visible) return;
+        // Remove !visible guard to ensure health bar updates on load
 
         // Logarithmic scaling: 200px at 20 health, ~800px at 10,000 health
         // Formula: L = 222.3 * log10(max) - 89.2
@@ -256,7 +256,7 @@ const gameHUD = (() => {
     }
 
     function _onExpChanged(current, max) {
-        if (!visible) return;
+        // Remove !visible guard to ensure exp bar updates on load
         const ratio = Math.min(1, Math.max(0, current / max));
         expBarFill.setDisplaySize(BAR_W * ratio, 10);
         expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
@@ -315,7 +315,7 @@ const gameHUD = (() => {
     }
 
     function _onWaveProgressChanged(progress) {
-        if (!visible) return;
+        // Remove !visible guard to ensure wave progress updates on load
         if (waveProgressBar) waveProgressBar.setProgress(progress);
     }
 

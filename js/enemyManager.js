@@ -637,13 +637,15 @@ const enemyManager = (() => {
         // Color is HOSTILE (pink) normally, or grey-red if protected
         const textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
 
-        floatingText.show(enemy.x, enemy.y - 14, finalAmount.toString(), {
-            fontFamily: 'VCR',
-            fontSize: 28,
-            color: textColor,
-            depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
-            duration: 1000,
-        });
+        if (gameState.settings.showDamageNumbers) {
+            floatingText.show(enemy.x, enemy.y - 14, finalAmount.toString(), {
+                fontFamily: 'VCR',
+                fontSize: 28,
+                color: textColor,
+                depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
+                duration: 1000,
+            });
+        }
         if (died) {
             _killEnemy(enemy);
         }

@@ -157,6 +157,7 @@ const GAME_STATE_DEFAULTS = {
         globalMusicVol: 1.0,
         sfxMuted: false,
         musicMuted: false,
-        chromaticAberration: true
+        chromaticAberration: true,
+        showDamageNumbers: true
     }
 };

@@ -495,10 +495,20 @@ class Node {
             currentY += barHeight;
         } else {
             // --- ROW 4: Cost ---
-            const costColor = this.costType === 'insight' ? '#ff9500' : '#ff2d78';
+            let costColor = '#30ffff'; // light blue as requested
+            if (this.costType === 'insight') {
+                costColor = '#ff9500';
+            } else if (this.costType === 'processor') {
+                costColor = '#ffe600';
+            } else if (this.costType === 'shard') {
+                costColor = '#ff2d78';
+            } else if (this.costType === 'coin') {
+                costColor = '#00ff66';
+            }
+
             const iconStr = this.costType === 'data' ? '◈' : '⦵';
             const currentRes = this.costType === 'data' ? resourceManager.getData() : resourceManager.getInsight();
-            const costStr = iconStr + ' ' + this.getCost() + ' / ' + currentRes;
+            const costStr = iconStr + ' ' + Math.floor(currentRes) + ' / ' + this.getCost();
 
             const bgPixel = this.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', bgPixel)

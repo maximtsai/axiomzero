@@ -146,6 +146,30 @@ function _showOptionsPopup() {
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(chromaLabel);
 
+    // Damage Numbers Checkbox
+    let isDamageEnabled = gameState.settings.showDamageNumbers;
+    const damageCheckbox = new Button({
+        normal: { atlas: 'ui', ref: isDamageEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W + 20, y: visualHeaderY + 35 },
+        hover: { atlas: 'ui', ref: isDamageEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
+        onMouseUp: () => {
+            isDamageEnabled = !isDamageEnabled;
+            gameState.settings.showDamageNumbers = isDamageEnabled;
+            saveGame();
+            damageCheckbox.normal.ref = isDamageEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
+            damageCheckbox.hover.ref = isDamageEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
+            damageCheckbox.setState(damageCheckbox.state);
+        }
+    });
+    damageCheckbox.setDepth(depth + 3);
+    damageCheckbox.setScrollFactor(0);
+    damageCheckbox.setScale(1.0);
+    elements.push(damageCheckbox);
+
+    const damageNumbersLabel = PhaserScene.add.text(W + 60, visualHeaderY + 35, 'DAMAGE NUMBERS', {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
+    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
+    elements.push(damageNumbersLabel);
+
     const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 75, 'PARTICLES', {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
@@ -170,10 +194,6 @@ function _showOptionsPopup() {
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(languageLabel);
 
-    const damageNumbersLabel = PhaserScene.add.text(W - width / 2 + 40, gameplayHeaderY + 110, 'SHOW DAMAGE NUMBERS:', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff',
-    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
-    elements.push(damageNumbersLabel);
 
     // --- DATA SECTION ---
     const dataHeaderY = gameplayHeaderY + 170;
@@ -218,7 +238,7 @@ function _showOptionsPopup() {
         },
         onHoverOut: () => {
             resetBg.setAlpha(0.5);
-            resetText.setAlpha(0.5);
+            resetText.setAlpha(0.75);
         },
         onMouseUp: () => {
             if (!confirmReset) {
