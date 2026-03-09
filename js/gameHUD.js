@@ -19,8 +19,9 @@ const gameHUD = (() => {
     const HUD_X = 20;
     const HUD_Y = 20;
     const BAR_W = 200;
-    const BAR_H = 18;
-    const BAR_GAP = 8;
+    const BAR_H = helper.isMobileDevice() ? 22 : 18;
+    const BAR_GAP = helper.isMobileDevice() ? 12 : 8;
+    const EXP_BAR_H = helper.isMobileDevice() ? 14 : 10;
     const DATA_ICON_SIZE = 18;
     const DATA_ICON_GAP = 5;
 
@@ -57,21 +58,21 @@ const gameHUD = (() => {
 
         healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 1, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '20px',
+            fontSize: helper.isMobileDevice() ? '24px' : '20px',
             color: '#ffffff',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── EXP bar ──
         const expY = HUD_Y + BAR_H + BAR_GAP + 3;
         expBarBg = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, 10).setTint(0x222222).setDepth(depth).setScrollFactor(0);
+        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, EXP_BAR_H).setTint(0x222222).setDepth(depth).setScrollFactor(0);
 
         expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, 10).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
-        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - 5, 'EXP 0%', {
+        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 3 : 5), 'EXP 0%', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '20px',
+            fontSize: helper.isMobileDevice() ? '24px' : '20px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
@@ -96,7 +97,7 @@ const gameHUD = (() => {
             const initialVal = _getResourceValue(type.id);
             const text = PhaserScene.add.text(groupX + 28, currY - 11, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '21px',
+                fontSize: helper.isMobileDevice() ? '26px' : '21px',
                 color: type.color,
             }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
 
@@ -121,33 +122,34 @@ const gameHUD = (() => {
             }
         }
 
-        // ── END ITERATION button ──
+
         endIterationBtn = new Button({
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 34,
+                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 34,
+                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - 34,
+                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
+                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
             },
         });
+        endIterationBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         endIterationBtn.addText('END ITERATION', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: helper.isMobileDevice() ? '18px' : '19px',
             color: '#ffffff',
         });
         endIterationBtn.setDepth(depth + 3);
@@ -155,9 +157,9 @@ const gameHUD = (() => {
 
         // ── Progress bar ──
         waveProgressBar = new ProgressBar(PhaserScene, {
-            x: 705,
+            x: helper.isMobileDevice() ? 898 : 705,
             y: GAME_CONSTANTS.HEIGHT - 22,
-            width: GAME_CONSTANTS.WIDTH - 220,
+            width: GAME_CONSTANTS.WIDTH - (helper.isMobileDevice() ? 234 : 220),
             height: 27,
             padding: 7,
             bgColor: 0x222233,
@@ -261,7 +263,7 @@ const gameHUD = (() => {
     function _onExpChanged(current, max) {
         // Remove !visible guard to ensure exp bar updates on load
         const ratio = Math.min(1, Math.max(0, current / max));
-        expBarFill.setDisplaySize(BAR_W * ratio, 10);
+        expBarFill.setDisplaySize(BAR_W * ratio, EXP_BAR_H);
         expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
     }
 
@@ -283,8 +285,8 @@ const gameHUD = (() => {
     function _updateResourceLayout() {
         if (!visible) return;
 
-        let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + 10 + BAR_GAP + 15;
-        const spacing = 28;
+        let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + EXP_BAR_H + BAR_GAP + 15;
+        const spacing = helper.isMobileDevice() ? 32 : 28;
 
         const order = ['data', 'insight', 'shard', 'processor', 'coin'];
         order.forEach(id => {
@@ -294,7 +296,7 @@ const gameHUD = (() => {
             if (val > 0) {
                 ui.icon.setVisible(true);
                 ui.text.setVisible(true);
-                ui.icon.y = currentY;
+                ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
                 ui.text.y = currentY - 13;
                 currentY += spacing;
             } else {

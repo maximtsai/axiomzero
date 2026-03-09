@@ -232,9 +232,10 @@ const neuralTree = (() => {
             },
             onMouseUp: _onDeployClicked,
         });
+        deployBtn.setScale(helper.isMobileDevice() ? 0.95 : 0.9, helper.isMobileDevice() ? 1.0 : 0.9);
         deployBtn.addText('DEPLOY', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '22px',
+            fontSize: '25px',
             color: '#ffffff',
         });
         deployBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5);
@@ -272,9 +273,10 @@ const neuralTree = (() => {
                 }
             },
         });
+        cryptoMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         cryptoMineBtn.addText('MINE', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
+            fontSize: '21px',
             color: '#ff9500',
         });
         cryptoMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);

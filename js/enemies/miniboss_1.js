@@ -10,7 +10,7 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB1 = {
-    HEALTH: 60,
+    HEALTH: 70,
     SPEED_MULT: 1.5,   // × ENEMY_BASE_SPEED
     ATTACK_RANGE: 195,   // px — stop and attack (increased by 15)
     RETREAT_RANGE: 235,   // px — resume movement if pushed past this (increased by 15)

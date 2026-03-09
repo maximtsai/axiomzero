@@ -112,9 +112,10 @@ const iterationOverScreen = (() => {
             },
             onMouseUp: _onUpgradesClicked,
         });
+        upgradesBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         upgradesBtn.addText('UPGRADES', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '22px',
+            fontSize: '25px',
             color: '#ffffff',
         });
         upgradesBtn.setScrollFactor(0);
@@ -144,9 +145,10 @@ const iterationOverScreen = (() => {
             },
             onMouseUp: _onRetryClicked,
         });
+        retryBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         retryBtn.addText('RETRY', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '22px',
+            fontSize: '25px',
             color: '#ffffff',
         });
         retryBtn.setScrollFactor(0);
