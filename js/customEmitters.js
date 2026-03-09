@@ -1,19 +1,9 @@
 // customEmitters.js
 // Named Phaser 3.60+ particle emitter effects.
-//
-// Adding a new emitter with dynamic angle:
-//   1. let _myFxAngle = 0;  (module-scoped slot for angle)
-//   2. const _getMyFx = _make(texture, config, depth);
-//      — use angle: { onEmit: () => _myFxAngle + Phaser.Math.Between(-spread, spread) } for cone
-//   3. function _myFx(angle) { _myFxAngle = angle; return _getMyFx(); }
-//   4. function myEffect(x, y, angle) { _myFx(angle).explode(count, x, y); }
-//   5. Add myEffect to the return object.
 
 const customEmitters = (() => {
 
     // ── Lazy emitter factory ──────────────────────────────────────────────────
-    // Returns a getter fn. The Phaser emitter is created on first call,
-    // guaranteeing PhaserScene is ready without needing an explicit init().
     function _make(texture, config, depth) {
         let emitter = null;
         return function () {
@@ -42,14 +32,13 @@ const customEmitters = (() => {
             sprite.x = 0;
             sprite.y = 0;
         },
-        50
+        75
     );
 
+    let activeManualStrikes = [];
+    let activeGhosts = [];
 
     // ── basicStrike ──────────────────────────────────────────────────────────
-    // Angle slot — set before explode() so the onEmit callback reads the correct value.
-    let _strikeAngle = 0;
-
     const strikeParams = {
         frame: 'blue_pixel.png',
         speed: { min: 80, max: 230, ease: 'Cubic.easeOut' },
@@ -64,30 +53,22 @@ const customEmitters = (() => {
 
     const _strike = _make('pixels', strikeParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
 
-    /**
-     * Short directional burst of blue pixels — used on projectile hit.
-     * @param {number} x      World X
-     * @param {number} y      World Y
-     * @param {number} angle  Centre direction in degrees (0 = right, 90 = down)
-     */
     function basicStrike(x, y, angle) {
-        const count = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
+        const count = Math.floor(Math.random() * 3) + 3;
         const e = _strike();
-        let minAngle = angle - 60;
-        let maxAngle = angle + 60;
-        let newParams = strikeParams;
-        newParams.angle = { min: minAngle, max: maxAngle }
-        e.setConfig(newParams)
-        //e.setAngle({min: minAngle, max: maxAngle});
+        const minAngle = angle - 60;
+        const maxAngle = angle + 60;
+        const newParams = Object.assign({}, strikeParams);
+        newParams.angle = { min: minAngle, max: maxAngle };
+        e.setConfig(newParams);
         e.explode(count, x, y);
     }
 
     // ── basicStrikeManual ─────────────────────────────────────────────────────
-    // Sprite-based version using ObjectPool — matches basicStrike behavior.
     function basicStrikeManual(x, y, angle) {
-        const count = Math.floor(Math.random() * 3) + 3;
-        const minAngle = angle - 60;
-        const maxAngle = angle + 60;
+        const count = Math.floor(Math.random() * 2) + 2;
+        const minAngle = angle - 50;
+        const maxAngle = angle + 50;
         const depth = GAME_CONSTANTS.DEPTH_ENEMIES + 2;
 
         for (let i = 0; i < count; i++) {
@@ -99,37 +80,25 @@ const customEmitters = (() => {
 
             const emitAngle = Phaser.Math.Between(minAngle, maxAngle);
             const radians = Phaser.Math.DegToRad(emitAngle);
-            const lifespan = Phaser.Math.Between(30, 250) + Phaser.Math.Between(30, 100);
+            const lifespan = Phaser.Math.Between(150, 450);
 
             sprite.setRotation(radians);
             sprite.setOrigin(0, 0.5);
             sprite.setAlpha(1);
 
-            const dist = (lifespan * 0.2 + 20) * (0.4 + Math.random() * 0.6);
-            let startScale = dist * (0.2 + Math.random() * 0.3) + 2;
+            const travelDist = (lifespan * 0.18 + 18) * (0.6 + Math.random() * 0.4);
+            const startScale = travelDist * (0.22 + Math.random() * 0.1) + 2.5;
             sprite.setScale(startScale, 2);
 
-            const targetX = x + Math.cos(radians) * dist;
-            const targetY = y + Math.sin(radians) * dist;
+            sprite._startX = x;
+            sprite._startY = y;
+            sprite._distX = Math.cos(radians) * travelDist;
+            sprite._distY = Math.sin(radians) * travelDist;
+            sprite._startScale = startScale;
+            sprite._lifespan = lifespan;
+            sprite._elapsed = 0;
 
-            PhaserScene.tweens.add({
-                targets: sprite,
-                x: targetX,
-                y: targetY,
-                duration: lifespan + 70,
-                ease: 'Cubic.easeOut',
-            });
-            PhaserScene.tweens.add({
-                targets: sprite,
-                scaleX: 0,
-                duration: lifespan,
-                completeDelay: 100,
-                onComplete: () => {
-                    sprite.setActive(false);
-                    sprite.setVisible(false);
-                    strikeSpritePool.release(sprite);
-                }
-            });
+            activeManualStrikes.push(sprite);
         }
     }
 
@@ -169,9 +138,6 @@ const customEmitters = (() => {
         30
     );
 
-    /**
-     * Creates a stationary fading ghost of the logic stray.
-     */
     function logicStrayGhost(x, y, rotation, scale) {
         const sprite = logicStrayGhostPool.get();
         sprite.setPosition(x, y);
@@ -182,24 +148,12 @@ const customEmitters = (() => {
         sprite.setActive(true);
         sprite.setAlpha(0.4);
 
-        PhaserScene.tweens.add({
-            targets: sprite,
-            alpha: 0,
-            duration: 3250,
-            ease: 'Linear',
-            onComplete: () => {
-                sprite.setActive(false);
-                sprite.setVisible(false);
-                logicStrayGhostPool.release(sprite);
-            }
-        });
+        sprite._duration = 3000;
+        sprite._elapsed = 0;
+        activeGhosts.push(sprite);
     }
 
-    /**
-     * Creates a visually rich explosion on miniboss death.
-     * @param {Phaser.GameObjects.Image|Phaser.GameObjects.Sprite} originalSprite
-     * @param {number} effectScale - Overriding scale for the explosion (1.0 default)
-     */
+    // ── Miniboss Explosion ───────────────────────────────────────────────────
     function minibossExplosion(originalSprite, effectScale = 1.0) {
         const x = originalSprite.x;
         const y = originalSprite.y;
@@ -210,14 +164,12 @@ const customEmitters = (() => {
         const texture = originalSprite.texture.key;
         const frame = originalSprite.frame.name;
 
-        // 1. Create copy of the miniboss sprite (no tint)
         const copy = PhaserScene.add.image(x, y, texture, frame);
         copy.setRotation(rotation);
         copy.setScale(scaleX, scaleY);
         copy.setDepth(depth);
         copy.clearTint();
 
-        // 2. Flash white 3 times over 0.6 seconds
         PhaserScene.tweens.add({
             targets: copy,
             duration: 150,
@@ -231,13 +183,11 @@ const customEmitters = (() => {
             }
         });
 
-        // 3. Warning area centered at the miniboss
         const warning = PhaserScene.add.sprite(x, y, 'enemies', 'warning_area.png');
         warning.setDepth(depth + 1);
         warning.setAlpha(0);
         warning.setScale(0.8 * effectScale);
 
-        // 4. Tween warning area over 0.6 seconds
         PhaserScene.tweens.add({
             targets: warning,
             alpha: 0.8,
@@ -245,15 +195,13 @@ const customEmitters = (() => {
             duration: 900,
             ease: 'Quad.easeOut',
             onComplete: () => {
-                // At the end of 0.6s:
                 if (copy.active) copy.destroy();
 
-                // 5. Explosion sequence starts
                 warning.setFrame('explosion_white.png');
                 warning.setAlpha(1);
 
                 PhaserScene.time.delayedCall(50, () => {
-                    warning.setTint(0x000000); // Fully black
+                    warning.setTint(0x000000);
 
                     PhaserScene.time.delayedCall(50, () => {
                         warning.clearTint();
@@ -264,7 +212,6 @@ const customEmitters = (() => {
                             warning.setFrame('explosion_flash.png');
                         }
 
-                        // 6. Camera shake and Deal 99 damage to all enemies within scaled 240px radius
                         PhaserScene.cameras.main.shake(250, 0.015);
                         if (typeof enemyManager !== 'undefined') {
                             const enemies = enemyManager.getActiveEnemies();
@@ -282,7 +229,6 @@ const customEmitters = (() => {
                             }
                         }
 
-                        // 7. Fade out over 2 seconds
                         PhaserScene.tweens.add({
                             targets: warning,
                             alpha: 0,
@@ -298,6 +244,49 @@ const customEmitters = (() => {
         });
     }
 
-    // ── public API ───────────────────────────────────────────────────────────
+    function _update(delta) {
+        if (activeManualStrikes.length > 0) {
+            for (let i = activeManualStrikes.length - 1; i >= 0; i--) {
+                const p = activeManualStrikes[i];
+                p._elapsed += delta;
+                const progress = Math.min(1, p._elapsed / p._lifespan);
+
+                const moveProgress = 1 - Math.pow(1 - progress, 3);
+                p.x = p._startX + p._distX * moveProgress;
+                p.y = p._startY + p._distY * moveProgress;
+
+                const scaleProgress = progress * progress;
+                p.setScale(p._startScale * (1 - scaleProgress), 2);
+
+                if (progress >= 1) {
+                    p.setActive(false);
+                    p.setVisible(false);
+                    strikeSpritePool.release(p);
+                    activeManualStrikes[i] = activeManualStrikes[activeManualStrikes.length - 1];
+                    activeManualStrikes.pop();
+                }
+            }
+        }
+
+        if (activeGhosts.length > 0) {
+            for (let i = activeGhosts.length - 1; i >= 0; i--) {
+                const g = activeGhosts[i];
+                g._elapsed += delta;
+                const progress = Math.min(1, g._elapsed / g._duration);
+                g.setAlpha(0.4 * (1 - progress));
+
+                if (progress >= 1) {
+                    g.setActive(false);
+                    g.setVisible(false);
+                    logicStrayGhostPool.release(g);
+                    activeGhosts[i] = activeGhosts[activeGhosts.length - 1];
+                    activeGhosts.pop();
+                }
+            }
+        }
+    }
+
+    updateManager.addFunction(_update);
+
     return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost, minibossExplosion };
 })();

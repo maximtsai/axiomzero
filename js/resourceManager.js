@@ -27,8 +27,48 @@ const resourceManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        _buildPool();
-        _buildProcessorPool();
+        dropPool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data.png');
+                img.setScale(0.75);
+                img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+                img.setVisible(false);
+                img.setActive(false);
+                return {
+                    img: img,
+                    alive: false,
+                    flying: false,
+                    readyToCollect: false,
+                    x: 0, y: 0,
+                    type: 'data',
+                    spawnTween: null,
+                };
+            },
+            _resetDrop,
+            DROP_POOL_SIZE
+        ).preAllocate(DROP_POOL_SIZE);
+
+        processorPool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'player', 'resrc_processor.png');
+                img.setScale(0.85);
+                img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+                img.setVisible(false);
+                img.setActive(false);
+                return {
+                    img: img,
+                    alive: false,
+                    flying: false,
+                    readyToCollect: false,
+                    x: 0, y: 0,
+                    type: 'processor',
+                    spawnTween: null,
+                };
+            },
+            _resetDrop,
+            100
+        ).preAllocate(100);
+
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
@@ -42,55 +82,29 @@ const resourceManager = (() => {
         updateManager.addFunction(_update);
     }
 
-    function _buildPool() {
-        for (let i = 0; i < DROP_POOL_SIZE; i++) {
-            const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data.png');
-            img.setScale(0.75);
-            img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
-            img.setVisible(false);
-            img.setActive(false);
-            dropPool.push({
-                img: img,
-                alive: false,
-                flying: false,
-                readyToCollect: false,
-                x: 0, y: 0,
-                type: 'data',
-                spawnTween: null,
-            });
-        }
+    function _resetDrop(d) {
+        if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
+        d.alive = false;
+        d.flying = false;
+        d.readyToCollect = false;
+        d.inertia = -0.08;
+        d.img.setVisible(false);
+        d.img.setActive(false);
     }
 
-    function _buildProcessorPool() {
-        const PROCESSOR_POOL_SIZE = 100;
-        for (let i = 0; i < PROCESSOR_POOL_SIZE; i++) {
-            const img = PhaserScene.add.image(0, 0, 'player', 'resrc_processor.png');
-            img.setScale(0.85);
-            img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
-            img.setVisible(false);
-            img.setActive(false);
-            processorPool.push({
-                img: img,
-                alive: false,
-                flying: false,
-                readyToCollect: false,
-                x: 0, y: 0,
-                type: 'processor',
-                spawnTween: null,
-            });
-        }
-    }
 
     // ── public API ───────────────────────────────────────────────────────────
 
     function spawnProcessorDrop(x, y) {
-        const d = _getProcessorFromPool();
+        if (!processorPool) return;
+        const d = processorPool.get();
         if (!d) return;
         _setupDrop(d, x, y);
     }
 
     function spawnDataDrop(x, y) {
-        const d = _getFromPool();
+        if (!dropPool) return;
+        const d = dropPool.get();
         if (!d) return;
 
         _setupDrop(d, x, y);
@@ -232,33 +246,10 @@ const resourceManager = (() => {
         currentPickupRadius2 = finalR * finalR;
     }
 
-    // ── internals ────────────────────────────────────────────────────────────
-
-    function _getFromPool() {
-        for (let i = 0; i < dropPool.length; i++) {
-            if (!dropPool[i].alive) {
-                dropPool[i].type = 'data';
-                return dropPool[i];
-            }
-        }
-        return null;
-    }
-
-    function _getProcessorFromPool() {
-        for (let i = 0; i < processorPool.length; i++) {
-            if (!processorPool[i].alive) return processorPool[i];
-        }
-        return null;
-    }
-
     function _deactivate(d) {
-        if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
-        d.alive = false;
-        d.flying = false;
-        d.readyToCollect = false;
-        d.inertia = -0.08;
-        d.img.setVisible(false);
-        d.img.setActive(false);
+        _resetDrop(d); // Hide visual and stop tweens immediately
+        if (d.type === 'processor') processorPool.release(d);
+        else dropPool.release(d);
     }
 
     /** Instantly collect all flying drops and credit their value. */

@@ -10,16 +10,7 @@ const enemyManager = (() => {
     const POOL_SIZE = 80;
     const MINIBOSS_POOL_SIZE = 2;
 
-    let pool = [];          // pre-allocated BasicEnemy instances
-    let shooterPool = [];   // pre-allocated ShooterEnemy instances
-    let swarmerPool = [];   // pre-allocated SwarmerEnemy instances
-    let heavyPool = [];     // pre-allocated HeavyEnemy instances
-    let fastPool = [];      // pre-allocated FastEnemy instances
-    let sniperPool = [];    // pre-allocated SniperEnemy instances
-    let logicStrayPool = []; // pre-allocated LogicStrayEnemy instances
-    let protectorPool = []; // pre-allocated ProtectorEnemy instances
-    let minibossPool = [];  // pre-allocated Miniboss instances
-    let bossPool = [];      // pre-allocated Boss1 instances
+    let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spawnTimer = 0;
     let spawning = false;
@@ -69,9 +60,7 @@ const enemyManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        _buildPool();
-        _buildMinibossPool();
-        _buildBossPool();
+        _buildPools();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
@@ -80,32 +69,21 @@ const enemyManager = (() => {
         messageBus.subscribe('waveProgressChanged', _onWaveProgress);
     }
 
-    function _buildPool() {
-        for (let i = 0; i < POOL_SIZE; i++) {
-            pool.push(new BasicEnemy());
-            shooterPool.push(new ShooterEnemy());
-            heavyPool.push(new HeavyEnemy());
-            fastPool.push(new FastEnemy());
-            sniperPool.push(new SniperEnemy());
-            logicStrayPool.push(new LogicStrayEnemy());
-            protectorPool.push(new ProtectorEnemy());
-        }
-        for (let i = 0; i < POOL_SIZE * 2; i++) { // Double pool size since they spawn in clusters
-            swarmerPool.push(new SwarmerEnemy());
-        }
-    }
+    function _buildPools() {
+        // Shared reset function for all enemies
+        const resetFn = (e) => { e.deactivate(); };
 
-    function _buildMinibossPool() {
-        for (let i = 0; i < MINIBOSS_POOL_SIZE; i++) {
-            minibossPool.push(new Miniboss1());
-        }
-    }
+        pools.basic = new ObjectPool(() => new BasicEnemy(), resetFn, POOL_SIZE).preAllocate(POOL_SIZE);
+        pools.shooter = new ObjectPool(() => new ShooterEnemy(), resetFn, POOL_SIZE).preAllocate(20);
+        pools.heavy = new ObjectPool(() => new HeavyEnemy(), resetFn, POOL_SIZE).preAllocate(20);
+        pools.fast = new ObjectPool(() => new FastEnemy(), resetFn, POOL_SIZE).preAllocate(20);
+        pools.sniper = new ObjectPool(() => new SniperEnemy(), resetFn, POOL_SIZE).preAllocate(20);
+        pools.logic_stray = new ObjectPool(() => new LogicStrayEnemy(), resetFn, POOL_SIZE).preAllocate(20);
+        pools.protector = new ObjectPool(() => new ProtectorEnemy(), resetFn, POOL_SIZE).preAllocate(5);
+        pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
 
-    function _buildBossPool() {
-        // Only ever 1 boss at a time, but allocate 2 to be safe
-        for (let i = 0; i < 2; i++) {
-            bossPool.push(new Boss1());
-        }
+        pools.miniboss = new ObjectPool(() => new Miniboss1(), resetFn, MINIBOSS_POOL_SIZE).preAllocate(MINIBOSS_POOL_SIZE);
+        pools.boss = new ObjectPool(() => new Boss1(), resetFn, 2).preAllocate(1);
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -144,8 +122,12 @@ const enemyManager = (() => {
     }
 
     function clearAllEnemies() {
-        for (let i = activeEnemies.length - 0; i >= 0; i--) {
-            if (activeEnemies[i]) activeEnemies[i].deactivate();
+        for (let i = activeEnemies.length - 1; i >= 0; i--) {
+            const e = activeEnemies[i];
+            if (e) {
+                e.deactivate();
+                _releaseToPool(e);
+            }
         }
         activeEnemies.length = 0;
     }
@@ -191,7 +173,6 @@ const enemyManager = (() => {
         } else if (fastPackActive) {
             if (chosenType === 'basic') {
                 const randVal = Math.random();
-                console.log(randVal);
                 if (randVal < 0.6) {
                     chosenType = 'fast';
                 } else {
@@ -273,22 +254,22 @@ const enemyManager = (() => {
         for (let i = 0; i < numToSpawn; i++) {
             let e = null;
             if (chosenType === 'swarmer') {
-                e = _getSwarmerFromPool();
+                e = pools.swarmer.get();
             } else if (chosenType === 'shooter') {
-                e = _getShooterFromPool();
+                e = pools.shooter.get();
             } else if (chosenType === 'heavy') {
-                e = _getHeavyFromPool();
+                e = pools.heavy.get();
             } else if (chosenType === 'fast') {
-                e = _getFastFromPool();
+                e = pools.fast.get();
             } else if (chosenType === 'sniper') {
-                e = _getSniperFromPool();
+                e = pools.sniper.get();
             } else if (chosenType === 'logic_stray') {
-                e = _getLogicStrayFromPool();
+                e = pools.logic_stray.get();
             } else if (chosenType === 'protector') {
-                e = _getProtectorFromPool();
+                e = pools.protector.get();
             }
 
-            if (!e) e = _getFromPool(); // fallback to basic if target pool is exhausted
+            if (!e) e = pools.basic.get(); // fallback to basic if target pool is exhausted
             if (!e) continue;           // safety net: all fallback pools exhausted
 
             let sx = baseX;
@@ -352,7 +333,7 @@ const enemyManager = (() => {
 
     function _spawnMiniboss() {
         if (minibossSpawned) return;
-        const mb = _getMinibossFromPool();
+        const mb = pools.miniboss.get();
         if (!mb) return;
 
         minibossSpawned = true;
@@ -393,7 +374,7 @@ const enemyManager = (() => {
 
     function _spawnBoss() {
         if (bossSpawned) return;
-        const b = _getBossFromPool();
+        const b = pools.boss.get();
         if (!b) return;
 
         bossSpawned = true;
@@ -433,74 +414,17 @@ const enemyManager = (() => {
         debugLog('Boss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
     }
 
-    function _getFromPool() {
-        for (let i = 0; i < pool.length; i++) {
-            if (!pool[i].alive) return pool[i];
+    function _releaseToPool(e) {
+        if (e.isBoss) {
+            pools.boss.release(e);
+        } else if (e.isMiniboss) {
+            pools.miniboss.release(e);
+        } else if (pools[e.type]) {
+            pools[e.type].release(e);
+        } else {
+            // Fallback for types not explicitly in pools (shouldn't happen with current logic)
+            pools.basic.release(e);
         }
-        return null;
-    }
-
-    function _getShooterFromPool() {
-        for (let i = 0; i < shooterPool.length; i++) {
-            if (!shooterPool[i].alive) return shooterPool[i];
-        }
-        return null;
-    }
-
-    function _getSwarmerFromPool() {
-        for (let i = 0; i < swarmerPool.length; i++) {
-            if (!swarmerPool[i].alive) return swarmerPool[i];
-        }
-        return null;
-    }
-
-    function _getHeavyFromPool() {
-        for (let i = 0; i < heavyPool.length; i++) {
-            if (!heavyPool[i].alive) return heavyPool[i];
-        }
-        return null;
-    }
-
-    function _getFastFromPool() {
-        for (let i = 0; i < fastPool.length; i++) {
-            if (!fastPool[i].alive) return fastPool[i];
-        }
-        return null;
-    }
-
-    function _getSniperFromPool() {
-        for (let i = 0; i < sniperPool.length; i++) {
-            if (!sniperPool[i].alive) return sniperPool[i];
-        }
-        return null;
-    }
-
-    function _getLogicStrayFromPool() {
-        for (let i = 0; i < logicStrayPool.length; i++) {
-            if (!logicStrayPool[i].alive) return logicStrayPool[i];
-        }
-        return null;
-    }
-
-    function _getProtectorFromPool() {
-        for (let i = 0; i < protectorPool.length; i++) {
-            if (!protectorPool[i].alive) return protectorPool[i];
-        }
-        return null;
-    }
-
-    function _getMinibossFromPool() {
-        for (let i = 0; i < minibossPool.length; i++) {
-            if (!minibossPool[i].alive) return minibossPool[i];
-        }
-        return null;
-    }
-
-    function _getBossFromPool() {
-        for (let i = 0; i < bossPool.length; i++) {
-            if (!bossPool[i].alive) return bossPool[i];
-        }
-        return null;
     }
 
     function findValidAngle(generatorFn, rules) {
@@ -658,8 +582,14 @@ const enemyManager = (() => {
         const wasBoss = enemy.isBoss;
 
         enemy.deactivate();
+
+        // Swap-and-pop removal from active array
         const idx = activeEnemies.indexOf(enemy);
-        if (idx !== -1) activeEnemies.splice(idx, 1);
+        if (idx !== -1) {
+            activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
+            activeEnemies.pop();
+            _releaseToPool(enemy);
+        }
 
         if (wasMiniboss) {
             minibossAlive = false;

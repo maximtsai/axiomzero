@@ -13,7 +13,30 @@ const projectileManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        _buildPool();
+        pool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
+                img.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES);
+                img.setScale(6);
+                img.setVisible(false);
+                img.setActive(false);
+                img.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+                return {
+                    img: img,
+                    alive: false,
+                    x: 0, y: 0,
+                    vx: 0, vy: 0,
+                    damage: 0,
+                    life: 0,
+                };
+            },
+            (p) => {
+                p.alive = false;
+                p.img.setVisible(false);
+                p.img.setActive(false);
+            },
+            POOL_SIZE
+        ).preAllocate(POOL_SIZE);
 
         hitAnimPool = new ObjectPool(
             () => {
@@ -24,44 +47,27 @@ const projectileManager = (() => {
                 spr.on('animationcomplete', function (anim) {
                     if (anim.key === 'hit_circle') {
                         hitAnimPool.release(spr);
-                        spr.setVisible(false);
-                        spr.setActive(false);
                     }
                 });
                 return spr;
             },
-            (spr) => { },
+            (spr) => {
+                spr.setVisible(false);
+                spr.setActive(false);
+            },
             40 // Size matching projectile pool size
-        );
+        ).preAllocate(20);
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
-    function _buildPool() {
-        for (let i = 0; i < POOL_SIZE; i++) {
-            const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
-            img.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES);
-            img.setScale(6);
-            img.setVisible(false);
-            img.setActive(false);
-            img.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
-            pool.push({
-                img: img,
-                alive: false,
-                x: 0, y: 0,
-                vx: 0, vy: 0,
-                damage: 0,
-                life: 0,     // ms remaining
-            });
-        }
-    }
-
     // ── public API ───────────────────────────────────────────────────────────
 
     function fire(fromX, fromY, toX, toY, dmg) {
-        const p = _getFromPool();
+        if (!pool) return;
+        const p = pool.get();
         if (!p) return;
 
         const dx = toX - fromX;
@@ -75,7 +81,7 @@ const projectileManager = (() => {
         p.y = fromY;
         p.damage = dmg;
         p.alive = true;
-        p.life = 3000; // auto-expire after 5s
+        p.life = 3000; // auto-expire after 3s
 
         p.img.setPosition(fromX, fromY);
         p.img.setRotation(Math.atan2(dy, dx));
@@ -87,24 +93,15 @@ const projectileManager = (() => {
 
     function clearAll() {
         for (let i = activeProjectiles.length - 1; i >= 0; i--) {
-            _deactivate(activeProjectiles[i]);
+            pool.release(activeProjectiles[i]);
         }
         activeProjectiles.length = 0;
     }
 
     // ── internals ────────────────────────────────────────────────────────────
 
-    function _getFromPool() {
-        for (let i = 0; i < pool.length; i++) {
-            if (!pool[i].alive) return pool[i];
-        }
-        return null;
-    }
-
     function _deactivate(p) {
-        p.alive = false;
-        p.img.setVisible(false);
-        p.img.setActive(false);
+        pool.release(p);
     }
 
     // ── per-frame update ─────────────────────────────────────────────────────

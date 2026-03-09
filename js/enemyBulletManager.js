@@ -9,35 +9,39 @@ const enemyBulletManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
-        _buildPool();
+        pool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'enemies', 'bullet.png');
+                img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
+                img.setScale(1);
+                img.setVisible(false);
+                img.setActive(false);
+                return {
+                    img: img,
+                    alive: false,
+                    x: 0, y: 0,
+                    vx: 0, vy: 0,
+                    damage: 0,
+                    life: 0,
+                };
+            },
+            (b) => {
+                b.alive = false;
+                b.img.setVisible(false);
+                b.img.setActive(false);
+            },
+            GAME_CONSTANTS.ENEMY_BULLET_POOL_SIZE
+        ).preAllocate(20);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
-    function _buildPool() {
-        const size = GAME_CONSTANTS.ENEMY_BULLET_POOL_SIZE;
-        for (let i = 0; i < size; i++) {
-            const img = PhaserScene.add.image(0, 0, 'enemies', 'bullet.png');
-            img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
-            img.setScale(1);
-            img.setVisible(false);
-            img.setActive(false);
-            pool.push({
-                img: img,
-                alive: false,
-                x: 0, y: 0,
-                vx: 0, vy: 0,
-                damage: 0,
-                life: 0,
-            });
-        }
-    }
-
     // ── public API ───────────────────────────────────────────────────────────
 
     function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null) {
-        const b = _getFromPool();
+        if (!pool) return;
+        const b = pool.get();
         if (!b) return;
 
         const dx = toX - fromX;
@@ -65,24 +69,15 @@ const enemyBulletManager = (() => {
 
     function clearAll() {
         for (let i = activeBullets.length - 1; i >= 0; i--) {
-            _deactivate(activeBullets[i]);
+            pool.release(activeBullets[i]);
         }
         activeBullets.length = 0;
     }
 
     // ── internals ────────────────────────────────────────────────────────────
 
-    function _getFromPool() {
-        for (let i = 0; i < pool.length; i++) {
-            if (!pool[i].alive) return pool[i];
-        }
-        return null;
-    }
-
     function _deactivate(b) {
-        b.alive = false;
-        b.img.setVisible(false);
-        b.img.setActive(false);
+        pool.release(b);
     }
 
     // ── per-frame update ─────────────────────────────────────────────────────

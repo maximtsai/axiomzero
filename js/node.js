@@ -455,7 +455,7 @@ class Node {
         currentY += boxOutlineSize + rowSpacing;
 
         // --- ROW 2: Description ---
-        const descT = PhaserScene.add.text(0, currentY, this.description.toLowerCase(), {
+        const descT = PhaserScene.add.text(0, currentY, this.description, {
             fontFamily: 'VCR',
             fontSize: '22px',
             color: '#ffffff',
