@@ -146,12 +146,12 @@ const tutorialManager = (() => {
             waveManager.registerCombatObject(tutorialBg);
         }
 
-        // Auto-fade tutorial after 5 seconds
+        // Auto-fade tutorial after 6 seconds
         PhaserScene.tweens.add({
             targets: [tutorialText, tutorialBg],
             alpha: 0,
-            duration: 1000,
-            delay: 5600,
+            duration: 2000,
+            delay: 6600,
             onComplete: () => {
                 _clearTutorial();
             }

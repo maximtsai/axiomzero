@@ -169,7 +169,7 @@ const nodeTooltip = (() => {
         bg.setDisplaySize(bgWidth, totalHeight);
 
         // Position above the node
-        container.setPosition(node.btn.x, node.btn.y - 23);
+        container.setPosition(node.btn.x, node.btn.y - 21);
 
         // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
         // This is necessary because of the singleton pattern (reuse)
