@@ -54,7 +54,8 @@ GAME_CONSTANTS.DATA_PICKUP_RADIUS = 75;  // px — cursor auto-collects within t
 
 // ─── Projectile ───────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.PROJECTILE_SPEED = 400;  // px/sec
+GAME_CONSTANTS.PROJECTILE_SPEED = 600;  // 50% faster (px/sec)
+GAME_CONSTANTS.ENEMY_PROJECTILE_SPEED = 400; // px/sec
 GAME_CONSTANTS.PROJECTILE_HIT_RADIUS = 15;
 
 // ─── Miniboss / Boss ──────────────────────────────────────────────────────────

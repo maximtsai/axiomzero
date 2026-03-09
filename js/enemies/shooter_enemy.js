@@ -91,7 +91,7 @@ class ShooterEnemy extends Enemy {
                 targetX, targetY,
                 this.projectileDamage,
                 'projectile.png',
-                GAME_CONSTANTS.PROJECTILE_SPEED * 0.7 // 30% slower
+                GAME_CONSTANTS.ENEMY_PROJECTILE_SPEED // 30% slower
             );
         }
     }

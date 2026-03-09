@@ -54,14 +54,14 @@ const audio = {
     },
 
     /** Pause all currently playing audio (for ad breaks). Does not alter mute state. */
-    pauseAll: function() {
+    pauseAll: function () {
         if (typeof PhaserScene !== 'undefined' && PhaserScene.sound) {
             PhaserScene.sound.pauseAll();
         }
     },
 
     /** Resume all audio paused by pauseAll. */
-    resumeAll: function() {
+    resumeAll: function () {
         if (typeof PhaserScene !== 'undefined' && PhaserScene.sound) {
             PhaserScene.sound.resumeAll();
             // Reapply mute states just in case resumeAll overrides volume to 1
@@ -183,6 +183,7 @@ const audio = {
 
         if (isMuted) s.volume = 0;
 
+        s.stop();
         s.play();
         return s;
     },
@@ -235,8 +236,8 @@ const audio = {
     playBossMusic: function (bossMusicName = 'boss_music') {
         if (!globalMusic || isMuted || isMusicMuted) return;
 
-        // Fade out main background music over 1.2 seconds
-        audio.setSoundVolume(globalMusic, 0, 1200);
+        // Fade out main background music over 1.2 seconds and stop it
+        audio.fadeAway(globalMusic, 1200, 'Linear');
 
         // Start boss music loop at 0.01 volume and fade it in over 1 seconds after a 0.75 second delay
         globalTempMusic = audio.playFakeBGMusic(bossMusicName, 0.01, true);
@@ -247,14 +248,20 @@ const audio = {
 
     /** Stops the boss music and fades the main background music back in. */
     stopBossMusic: function () {
-        if (globalTempMusic) {
-            // Fade out boss music over 0.75 seconds then stop
-            audio.fadeAway(globalTempMusic, 750, 'Linear', () => {
-                globalTempMusic = null;
-            });
-        }
+        if (!globalTempMusic) return;
+
+        // Fade out boss music over 0.75 seconds then stop
+        audio.fadeAway(globalTempMusic, 750, 'Linear', () => {
+            globalTempMusic = null;
+        });
 
         if (globalMusic && !isMuted && !isMusicMuted) {
+            if (globalMusic.currTween) {
+                globalMusic.currTween.stop();
+                globalMusic.currTween = null;
+            }
+            globalMusic.stop();
+            globalMusic.play();
             // Bring back bg_music1 from 0.01 to full over 0.6 seconds
             globalMusic.fullVolume = 0.01;
             globalMusic.volume = 0.01 * globalMusicVol;

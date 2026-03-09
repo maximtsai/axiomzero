@@ -26,7 +26,7 @@ function initGameState() {
 
         // Apply debug start if needed
         if (typeof FLAGS !== 'undefined' && FLAGS.DEBUG) {
-            gameState.data = 200;
+            gameState.data = 1000;
             gameState.insight = 5;
             gameState.shard = 5;
             gameState.processor = 5;

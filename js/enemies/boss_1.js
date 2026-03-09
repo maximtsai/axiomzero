@@ -14,13 +14,13 @@ class Boss1 extends Boss {
 
         // Visuals
         this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_1.png');
-        this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
+        this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         this.img.setVisible(false);
         this.img.setActive(false);
 
         // HP sprite specialized for boss
         this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_hp.png');
-        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
+        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         this.hpImg.setVisible(false);
         this.hpImg.setActive(false);
     }

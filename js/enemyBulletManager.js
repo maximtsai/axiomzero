@@ -47,7 +47,7 @@ const enemyBulletManager = (() => {
         const dx = toX - fromX;
         const dy = toY - fromY;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const speed = speedOverride !== null ? speedOverride : GAME_CONSTANTS.PROJECTILE_SPEED; // same speed as tower projectiles by default
+        const speed = speedOverride !== null ? speedOverride : GAME_CONSTANTS.ENEMY_PROJECTILE_SPEED; // original speed by default
 
         b.vx = (dx / dist) * speed;
         b.vy = (dy / dist) * speed;
