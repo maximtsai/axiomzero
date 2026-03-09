@@ -12,7 +12,7 @@ const floatingText = (() => {
 
     function _factory() {
         const t = _scene.add.text(0, 0, '', {
-            fontFamily: 'Arial',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '22px',
             color: '#ffffff',
         });
@@ -21,7 +21,7 @@ const floatingText = (() => {
         t.setVisible(false);
         // Cache current styles on the object to avoid redundant setStyle calls
         t._cachedStyles = {
-            fontFamily: 'Arial',
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '22px',
             color: '#ffffff'
         };
@@ -41,7 +41,7 @@ const floatingText = (() => {
 
         opts = opts || {};
         const fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
-        const fontFamily = opts.fontFamily || 'Arial';
+        const fontFamily = opts.fontFamily || 'JetBrainsMono_Regular';
         const color = opts.color || '#ffffff';
         const depth = opts.depth !== undefined ? opts.depth : 9999;
         const duration = opts.duration !== undefined ? opts.duration : 1200;

@@ -294,7 +294,7 @@ const enemyManager = (() => {
                 const finalAngle = angle + angleOffset;
 
                 // Push each subsequent layer further away from the tower
-                const layerDistance = layer * 30;
+                const layerDistance = layer * 40;
 
                 // Minor random distance staggering within the layer (increased by 33%)
                 const distanceVariation = Phaser.Math.Between(-12, 12);
@@ -499,15 +499,21 @@ const enemyManager = (() => {
 
     function getNearestEnemy(x, y, range) {
         let best = null;
-        let bestDist = range * range;
+        let bestEffectiveDist = range;
+
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
             if (!e.alive) continue;
+
             const dx = e.x - x;
             const dy = e.y - y;
-            const d2 = dx * dx + dy * dy;
-            if (d2 < bestDist) {
-                bestDist = d2;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            // effectiveDist is the distance from tower to the edge of the enemy
+            const effectiveDist = dist - (e.size || 0);
+
+            if (effectiveDist < bestEffectiveDist) {
+                bestEffectiveDist = effectiveDist;
                 best = e;
             }
         }

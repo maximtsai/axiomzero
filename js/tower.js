@@ -151,7 +151,7 @@ class TowerView {
         });
     }
 
-    refreshRangeSprite(attackRange, pos) {
+    refreshRangeSprite(attackRange, pos, isIntense = false) {
         const rangeScale = attackRange / 202;
         if (!this.rangeSprite) {
             this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'player', 'range.png');
@@ -159,10 +159,10 @@ class TowerView {
             this.rangeSprite.setAlpha(0);
             this.rangeSprite.setScale(rangeScale * 0.2);
         }
-        this.updateRangeSprite(rangeScale);
+        this.updateRangeSprite(rangeScale, isIntense);
     }
 
-    updateRangeSprite(newScale) {
+    updateRangeSprite(newScale, isIntense = false) {
         if (!this.rangeSprite) return;
 
         // Kill existing tweens on rangeSprite to prevent conflicts
@@ -177,11 +177,14 @@ class TowerView {
             completeDelay: 100,
         });
 
+        const overshoot = isIntense ? 1.14 : 1.1;
+        const shakeMag = isIntense ? 0.003 : 0.002;
+
         // Scale animation
         this.rangeSprite.currAnim = PhaserScene.tweens.add({
             targets: this.rangeSprite,
-            scaleX: newScale * 1.14,
-            scaleY: newScale * 1.14,
+            scaleX: newScale * overshoot,
+            scaleY: newScale * overshoot,
             duration: 550,
             ease: 'Cubic.easeOut',
             onComplete: () => {
@@ -193,7 +196,7 @@ class TowerView {
                     ease: 'Cubic.easeIn',
                     onComplete: () => {
                         // add a tiny brief zoom in here
-                        PhaserScene.cameras.main.shake(80, 0.003);
+                        PhaserScene.cameras.main.shake(80, shakeMag);
                         this.rangeSprite.setAlpha(1);
                         this.rangeSprite.currAnim = PhaserScene.tweens.add({
                             targets: this.rangeSprite,
@@ -381,10 +384,10 @@ const tower = (() => {
         debugLog('Tower awakened');
     }
 
-    function reset() {
+    function reset(isIntense = false) {
         model.reset();
         if (model.awakened) {
-            view.refreshRangeSprite(model.attackRange, view.getPosition());
+            view.refreshRangeSprite(model.attackRange, view.getPosition(), isIntense);
         }
     }
 

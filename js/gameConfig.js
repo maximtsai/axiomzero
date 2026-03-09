@@ -117,8 +117,11 @@ const GAME_STATE_DEFAULTS = {
     towerHealthRegen: -0.4,   // HP/sec (negative = drain)
 
     // Resources
-    data: 100,
+    data: 0,
     insight: 0,
+    shard: 0,
+    processor: 0,
+    coin: 0,
 
     // EXP (0–100, awards INSIGHT at 100)
     exp: 0,

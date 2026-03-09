@@ -52,7 +52,7 @@ const waveManager = (() => {
         progressPaused = false;
 
         // Reset tower for this combat session
-        tower.reset();
+        tower.reset(true);
 
         // Listen for tower death
         towerDiedSub = messageBus.subscribe('towerDied', _onTowerDied);

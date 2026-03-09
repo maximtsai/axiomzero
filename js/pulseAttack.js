@@ -235,7 +235,7 @@ const pulseAttack = (() => {
         if (model.paused) return;
 
         // The pointer is always tracked and updated if combat is active
-        const isCombat = gameState.phase === GAME_CONSTANTS.PHASE_COMBAT;
+        const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
         if (isCombat) {
             view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy);
         }

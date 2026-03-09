@@ -15,6 +15,19 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // ── Restore or initialise game state ────────────────────────────────
     initGameState();
 
+    if (typeof FLAGS !== 'undefined' && FLAGS.DEBUG) {
+        console.group('%c [DEBUG] Purchased Upgrades ', 'background: #222; color: #00f5ff; font-weight: bold;');
+        const upgrades = gameState.upgrades || {};
+        if (Object.keys(upgrades).length === 0) {
+            console.log('No upgrades purchased.');
+        } else {
+            for (const id in upgrades) {
+                console.log(`- ${id}: Lv. ${upgrades[id]}`);
+            }
+        }
+        console.groupEnd();
+    }
+
     audio.init(PhaserScene);
 
     // Browser autoplay policy: play music on the first interaction

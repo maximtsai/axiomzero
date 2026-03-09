@@ -23,6 +23,16 @@ function initGameState() {
         const migrated = _migrateState(0, gameState);
         Object.assign(gameState, migrated);
         debugLog('Fresh game state initialised with legacy migration check');
+
+        // Apply debug start if needed
+        if (typeof FLAGS !== 'undefined' && FLAGS.DEBUG) {
+            gameState.data = 200;
+            gameState.insight = 5;
+            gameState.shard = 5;
+            gameState.processor = 5;
+            gameState.coin = 5;
+            debugLog('Debug start: Resources granted');
+        }
     }
 }
 

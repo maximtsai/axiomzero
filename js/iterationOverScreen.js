@@ -278,7 +278,7 @@ const iterationOverScreen = (() => {
         enemyManager.clearAllEnemies();
         projectileManager.clearAll();
         resourceManager.clearDrops();
-        tower.reset();
+        tower.reset(true);
         // Go straight back to combat
         gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
 
