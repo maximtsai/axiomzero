@@ -184,13 +184,18 @@ class PulseAttackView {
         if (!this.sprite) return;
         this.sprite.setVisible(visible);
         this.spriteBright.setVisible(visible);
-        this.spritePointer.setVisible(visible);
         this.spriteRed.setVisible(visible);
 
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
             this.spriteBright.setAlpha(0);
             this.spriteRed.setAlpha(0);
+        }
+    }
+
+    setPointerVisibility(visible) {
+        if (this.spritePointer) {
+            this.spritePointer.setVisible(visible);
         }
     }
 }
@@ -227,9 +232,15 @@ const pulseAttack = (() => {
     }
 
     function _update(delta) {
-        if (!model.active || model.paused) return;
+        if (model.paused) return;
 
-        view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy);
+        // The pointer is always tracked and updated if combat is active
+        const isCombat = gameState.phase === GAME_CONSTANTS.PHASE_COMBAT;
+        if (isCombat) {
+            view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy);
+        }
+
+        if (!model.active) return;
 
         if (model.updateTimer(delta)) {
             _fire();
@@ -254,7 +265,11 @@ const pulseAttack = (() => {
     }
 
     function _onPhaseChanged(phase) {
-        if (phase === GAME_CONSTANTS.PHASE_COMBAT && model.unlocked) {
+        const isCombat = phase === GAME_CONSTANTS.PHASE_COMBAT;
+
+        view.setPointerVisibility(isCombat);
+
+        if (isCombat && model.unlocked) {
             model.active = true;
             model.resetTimer();
             view.setVisibility(true, true);

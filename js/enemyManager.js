@@ -12,6 +12,8 @@ const enemyManager = (() => {
 
     let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
+    let activeProtectors = []; // persistent list of protectors for aura checks
+    let typeCounts = {};    // tracks number of active enemies per type (for spawn limits)
     let spawnTimer = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
@@ -130,6 +132,8 @@ const enemyManager = (() => {
             }
         }
         activeEnemies.length = 0;
+        activeProtectors.length = 0;
+        for (let key in typeCounts) typeCounts[key] = 0;
     }
 
     function killAllNonBossEnemies() {
@@ -189,7 +193,7 @@ const enemyManager = (() => {
 
         // Check max active limits
         if (chosenType !== 'basic' && rules.maxActive) {
-            const activeCount = activeEnemies.filter(e => e.alive && e.type === chosenType).length;
+            const activeCount = typeCounts[chosenType] || 0;
             if (activeCount >= rules.maxActive) {
                 if (Math.random() < 0.8) chosenType = 'basic';
             } else if (activeCount >= rules.maxActive - 1) {
@@ -312,6 +316,10 @@ const enemyManager = (() => {
             // Activate (sets stats and resets visuals inside Enemy subclass)
             e.activate(sx, sy, currentScale);
 
+            // Maintain type counts and protector lists
+            typeCounts[e.type] = (typeCounts[e.type] || 0) + 1;
+            if (e.type === 'protector') activeProtectors.push(e);
+
             // Aim at tower center
             e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
 
@@ -365,6 +373,9 @@ const enemyManager = (() => {
         });
 
         mb.activate(sx, sy);
+
+        typeCounts[mb.type] = (typeCounts[mb.type] || 0) + 1;
+
         mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(mb);
 
@@ -407,6 +418,9 @@ const enemyManager = (() => {
 
         // Use standard scale factor or custom logic if needed
         b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
+
+        typeCounts[b.type] = (typeCounts[b.type] || 0) + 1;
+
         b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(b);
 
@@ -453,10 +467,12 @@ const enemyManager = (() => {
             if (valid && rules.avoidActiveTypes && rules.minSeparation) {
                 for (let t = 0; t < rules.avoidActiveTypes.length; t++) {
                     const typeToAvoid = rules.avoidActiveTypes[t];
-                    const avoidTargets = activeEnemies.filter(e => e.alive && e.type === typeToAvoid);
+                    const minSep2 = rules.minSeparation * rules.minSeparation;
 
-                    for (let i = 0; i < avoidTargets.length; i++) {
-                        const target = avoidTargets[i];
+                    for (let i = 0; i < activeEnemies.length; i++) {
+                        const target = activeEnemies[i];
+                        if (!target.alive || target.type !== typeToAvoid) continue;
+
                         const targetAngle = Math.atan2(target.y - GAME_CONSTANTS.halfHeight, target.x - GAME_CONSTANTS.halfWidth);
                         const diff = Phaser.Math.Angle.ShortestBetween(
                             Phaser.Math.RadToDeg(angle),
@@ -514,14 +530,7 @@ const enemyManager = (() => {
 
     /** Returns all active, fully-spawned protectors for aura checks. */
     function getActiveProtectors() {
-        const activeProts = [];
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const e = activeEnemies[i];
-            if (e.alive && e.type === 'protector' && e.auraActive) {
-                activeProts.push(e);
-            }
-        }
-        return activeProts;
+        return activeProtectors;
     }
 
     /**
@@ -589,6 +598,16 @@ const enemyManager = (() => {
             activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
             activeEnemies.pop();
             _releaseToPool(enemy);
+        }
+
+        // Maintain type counts and protector lists
+        typeCounts[enemy.type] = Math.max(0, (typeCounts[enemy.type] || 1) - 1);
+        if (enemy.type === 'protector') {
+            const pIdx = activeProtectors.indexOf(enemy);
+            if (pIdx !== -1) {
+                activeProtectors[pIdx] = activeProtectors[activeProtectors.length - 1];
+                activeProtectors.pop();
+            }
         }
 
         if (wasMiniboss) {
