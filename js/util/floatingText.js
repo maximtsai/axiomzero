@@ -1,41 +1,34 @@
-// floatingText.js — Pooled floating text effects.
-// Text spawns at (x, y), floats up 100px linearly over 2 seconds,
-// and fades out starting at 1.5s over 0.5s (Quad.easeIn).
-//
-// Usage:
-//   floatingText.init(scene);                    // call once on init
-//   floatingText.show(x, y, 'text', { ...opts }); // spawn a label
-//
-// Options (all optional):
-//   fontSize   {number}  default 22
-//   fontFamily {string}  default 'Arial'
-//   color      {string}  default '#ffffff'
-//   depth      {number}  default 9999
-//   duration   {number}  default 2400 (ms)
-
 const floatingText = (() => {
     let _scene = null;
-    let _pool  = null;
+    let _pool = null;
+    let _activeTexts = [];
+    const MAX_ACTIVE = 120; // Hard cap on simultaneous damage numbers
 
     function init(scene) {
         _scene = scene;
-        _pool  = new ObjectPool(_factory, _reset, 20);
+        _pool = new ObjectPool(_factory, _reset, 30);
+        updateManager.addFunction(_update);
     }
 
     function _factory() {
         const t = _scene.add.text(0, 0, '', {
             fontFamily: 'Arial',
-            fontSize:   '22px',
-            color:      '#ffffff',
+            fontSize: '22px',
+            color: '#ffffff',
         });
         t.setOrigin(0.5, 0.5);
         t.setAlpha(0);
         t.setVisible(false);
+        // Cache current styles on the object to avoid redundant setStyle calls
+        t._cachedStyles = {
+            fontFamily: 'Arial',
+            fontSize: '22px',
+            color: '#ffffff'
+        };
         return t;
     }
 
     function _reset(t) {
-        _scene.tweens.killTweensOf(t);
         t.setAlpha(0);
         t.setVisible(false);
     }
@@ -43,44 +36,78 @@ const floatingText = (() => {
     function show(x, y, text, opts) {
         if (!_pool) return;
 
+        // Safety cap: don't spawn more than MAX_ACTIVE to prevent frame spikes
+        if (_activeTexts.length >= MAX_ACTIVE) return;
+
         opts = opts || {};
-        const fontSize   = opts.fontSize   !== undefined ? opts.fontSize   : 22;
+        const fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
         const fontFamily = opts.fontFamily || 'Arial';
-        const color      = opts.color      || '#ffffff';
-        const depth      = opts.depth      !== undefined ? opts.depth      : 9999;
-        const duration   = opts.duration   !== undefined ? opts.duration   : 2400;
+        const color = opts.color || '#ffffff';
+        const depth = opts.depth !== undefined ? opts.depth : 9999;
+        const duration = opts.duration !== undefined ? opts.duration : 1200;
 
         const t = _pool.get();
         t.setText(text);
-        t.setStyle({ fontFamily: fontFamily, fontSize: fontSize + 'px', color: color });
+
+        // Style Caching: Only update if something changed
+        const fontStr = fontSize + 'px';
+        if (t._cachedStyles.fontFamily !== fontFamily ||
+            t._cachedStyles.fontSize !== fontStr ||
+            t._cachedStyles.color !== color) {
+
+            t.setStyle({ fontFamily, fontSize: fontStr, color });
+            t._cachedStyles.fontFamily = fontFamily;
+            t._cachedStyles.fontSize = fontStr;
+            t._cachedStyles.color = color;
+        }
+
         t.setPosition(x, y);
         t.setAlpha(1);
         t.setDepth(depth);
         t.setVisible(true);
 
-        const fadeDelay = (duration / 2400) * 1900;
-        const travelDist = 90 * (duration / 2400)
+        // Custom state for manual update loop (avoids Tween overhead)
+        t._floatY = y;
+        t._startTime = 0; // Will be set on first update call or here
+        t._elapsed = 0;
+        t._totalDuration = duration;
+        t._startY = y;
+        // Travel distance is fixed regardless of duration for consistency
+        t._targetTravel = 85;
 
-        // Float up 100px linearly
-        _scene.tweens.add({
-            targets:  t,
-            y:        y - travelDist,
-            duration: duration,
-            ease:     'Quad.easeOut',
-        });
+        _activeTexts.push(t);
+    }
 
-        // Fade to alpha 0, delay scales with duration, duration fixed
-        _scene.tweens.add({
-            targets:  t,
-            alpha:    0,
-            duration: 500,
-            delay:    fadeDelay,
-            ease:     'Quad.easeIn',
-            onComplete: () => {
+    function _update(delta) {
+        if (_activeTexts.length === 0) return;
+
+        for (let i = _activeTexts.length - 1; i >= 0; i--) {
+            const t = _activeTexts[i];
+            t._elapsed += delta;
+
+            const progress = Math.min(1, t._elapsed / t._totalDuration);
+
+            // Movement: Quad.easeOut
+            const movementProgress = 1 - Math.pow(1 - progress, 2);
+            t.y = t._startY - (t._targetTravel * movementProgress);
+
+            // Fade out: starts after 60% of duration, Quad.easeIn
+            if (progress > 0.6) {
+                const fadeProgress = (progress - 0.6) / 0.4;
+                t.setAlpha(1 - (fadeProgress * fadeProgress));
+            } else {
+                t.setAlpha(1);
+            }
+
+            // Expiry Check
+            if (progress >= 1) {
                 _pool.release(t);
-            },
-        });
+                _activeTexts[i] = _activeTexts[_activeTexts.length - 1];
+                _activeTexts.pop();
+            }
+        }
     }
 
     return { init, show };
 })();
+
