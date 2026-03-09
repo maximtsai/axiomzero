@@ -274,7 +274,7 @@ const resourceManager = (() => {
 
     /** Forces all currently resting drops and incoming spawn drops to immediately fly to cursor at high speed. */
     function _vacuumAllDrops() {
-        for (let i = activeDrops.length - 1; i >= 0; i--) {
+        for (let i = 0; i < activeDrops.length; i++) {
             const d = activeDrops[i];
 
             if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
@@ -284,9 +284,9 @@ const resourceManager = (() => {
             // Ramp up inertia drastically to ensure they pull in fast
             d.inertia = 1.0;
 
-            activeDrops.splice(i, 1);
             flyingDrops.push(d);
         }
+        activeDrops.length = 0;
 
         // Also boost any drops already flying
         for (let i = 0; i < flyingDrops.length; i++) {
@@ -307,7 +307,11 @@ const resourceManager = (() => {
         // ── Resting drops: check if cursor entered pickup radius → start flying ──
         for (let i = activeDrops.length - 1; i >= 0; i--) {
             const d = activeDrops[i];
-            if (!d.alive) { activeDrops.splice(i, 1); continue; }
+            if (!d.alive) {
+                activeDrops[i] = activeDrops[activeDrops.length - 1];
+                activeDrops.pop();
+                continue;
+            }
 
             const dx = d.x - cx;
             const dy = d.y - cy;
@@ -320,8 +324,9 @@ const resourceManager = (() => {
                 d.y = d.img.y;
                 d.flying = true;
 
-                activeDrops.splice(i, 1);
                 flyingDrops.push(d);
+                activeDrops[i] = activeDrops[activeDrops.length - 1];
+                activeDrops.pop();
             }
         }
 
@@ -340,7 +345,8 @@ const resourceManager = (() => {
                 const popNum = Math.floor(Math.random() * 3) + 1;
                 audio.play('pop' + popNum, 0.45 + Math.random() * 0.1);
 
-                flyingDrops.splice(i, 1);
+                flyingDrops[i] = flyingDrops[flyingDrops.length - 1];
+                flyingDrops.pop();
                 continue;
             }
 

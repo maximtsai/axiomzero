@@ -96,7 +96,14 @@ const enemyBulletManager = (() => {
 
         for (let i = activeBullets.length - 1; i >= 0; i--) {
             const b = activeBullets[i];
-            if (!b.alive) { activeBullets.splice(i, 1); continue; }
+
+            // Handle dead/expired bullets
+            if (!b.alive || b.life <= 0) {
+                _deactivate(b);
+                activeBullets[i] = activeBullets[activeBullets.length - 1];
+                activeBullets.pop();
+                continue;
+            }
 
             // Move
             b.x += b.vx * dt;
@@ -105,11 +112,6 @@ const enemyBulletManager = (() => {
 
             // Lifetime
             b.life -= delta;
-            if (b.life <= 0) {
-                _deactivate(b);
-                activeBullets.splice(i, 1);
-                continue;
-            }
 
             // Collision with tower
             const dx = b.x - tPos.x;
@@ -117,7 +119,8 @@ const enemyBulletManager = (() => {
             if (dx * dx + dy * dy < hitR2) {
                 tower.takeDamage(b.damage, b.x, b.y);
                 _deactivate(b);
-                activeBullets.splice(i, 1);
+                activeBullets[i] = activeBullets[activeBullets.length - 1];
+                activeBullets.pop();
             }
         }
     }

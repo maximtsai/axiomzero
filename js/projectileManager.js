@@ -118,7 +118,14 @@ const projectileManager = (() => {
 
         for (let i = activeProjectiles.length - 1; i >= 0; i--) {
             const p = activeProjectiles[i];
-            if (!p.alive) { activeProjectiles.splice(i, 1); continue; }
+
+            // Handle dead/expired projectiles
+            if (!p.alive || p.life <= 0) {
+                _deactivate(p);
+                activeProjectiles[i] = activeProjectiles[activeProjectiles.length - 1];
+                activeProjectiles.pop();
+                continue;
+            }
 
             // Move
             p.x += p.vx * dt;
@@ -127,11 +134,6 @@ const projectileManager = (() => {
 
             // Lifetime
             p.life -= delta;
-            if (p.life <= 0) {
-                _deactivate(p);
-                activeProjectiles.splice(i, 1);
-                continue;
-            }
 
             // Collision with enemies
             let hit = false;
@@ -172,7 +174,8 @@ const projectileManager = (() => {
             }
             if (hit) {
                 _deactivate(p);
-                activeProjectiles.splice(i, 1);
+                activeProjectiles[i] = activeProjectiles[activeProjectiles.length - 1];
+                activeProjectiles.pop();
             }
         }
     }

@@ -85,8 +85,19 @@ const nodeTooltip = (() => {
         if (draggableGroup) draggableGroup.add(container);
     }
 
+    function _clearTweens() {
+        if (!container) return;
+        PhaserScene.tweens.killTweensOf([container, lvT, maxT, costT]);
+        // Reset scale/angle but NOT Y (Y is handled by layout)
+        container.setScale(1).setAngle(0);
+        lvT.setScale(1);
+        maxT.setScale(1);
+        costT.setScale(1).setAlpha(1);
+    }
+
     function show(node, isPurchaseRefresh = false) {
         if (!container) init();
+        _clearTweens();
 
         currentNode = node;
         container.setVisible(true);
@@ -160,20 +171,31 @@ const nodeTooltip = (() => {
         // Position above the node
         container.setPosition(node.btn.x, node.btn.y - 23);
 
-        // Shift content so (0,0) is bottom-center
+        // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
+        // This is necessary because of the singleton pattern (reuse)
+        bg.y = -totalHeight;
         container.iterate(child => {
+            if (child === bg) return;
+            // Since elements were positioned starting at Y=3, we don't need to reset
+            // their specific currentY, we just need to subtract totalHeight FROM their
+            // calculated positions.
             child.y -= totalHeight;
         });
-        // Background needs manual fix because it uses origin 0
-        bg.y = -totalHeight;
 
         // Animations
         if (!isPurchaseRefresh) {
             container.setScale(0.75).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1, scaleY: 1, angle: 0,
-                duration: 250, ease: 'Back.easeOut'
+                scaleX: 1.05, scaleY: 1.05, angle: -3,
+                duration: 100, ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: container,
+                        scaleX: 1, scaleY: 1, angle: 0,
+                        duration: 200, ease: 'Back.easeOut'
+                    });
+                }
             });
         } else {
             const targets = [lvT, (node.state === NODE_STATE.MAXED ? maxT : costT)];
@@ -185,12 +207,16 @@ const nodeTooltip = (() => {
     }
 
     function hide() {
-        if (container) container.setVisible(false);
+        if (container) {
+            _clearTweens();
+            container.setVisible(false);
+        }
         currentNode = null;
     }
 
     function shakeCost() {
         if (!container || !costT.visible) return;
+        _clearTweens();
         const origX = costT.x;
         PhaserScene.tweens.add({
             targets: costT,
