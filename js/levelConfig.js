@@ -9,7 +9,7 @@ const LEVEL_CONFIG = {
             fast: 0.08,
             shooter: 0.0,
             swarmer: 0.06,
-            sniper: 0.0,
+            sniper: 1.0,
             heavy: 0.0,
             logic_stray: 0.0,
             protector: 0.0

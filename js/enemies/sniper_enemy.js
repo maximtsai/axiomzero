@@ -1,7 +1,7 @@
 // js/enemies/sniper_enemy.js — Long-range, slow-firing specialist enemy.
 //
 // Behaviour:
-//   • Stops at 240px from tower to fire.
+//   • Stops at 250px from tower to fire.
 //   • Fires 1 high-damage bullet every 4 seconds.
 //   • First shot fires after 3 seconds of entering range.
 //   • Size is 2x basic enemy (24).
@@ -40,6 +40,7 @@ class SniperEnemy extends Enemy {
         this.cannotRotate = true;
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
+        this.knockBackModifier = 0;
     }
 
     activate(x, y, scaleFactor) {
@@ -75,7 +76,7 @@ class SniperEnemy extends Enemy {
         const dx = tPos.x - this.x;
         const dy = tPos.y - this.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
-        const range = 240;
+        const range = 250;
 
         // Sync charge sprite position if it's active
         if (this.chargeSprite && this.chargeSprite.visible) {

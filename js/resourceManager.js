@@ -272,17 +272,16 @@ const resourceManager = (() => {
             d.x = d.img.x;
             d.y = d.img.y;
             d.flying = true;
-            // Ramp up inertia drastically to ensure they pull in fast
-            d.inertia = 0.1;
+            d.inertia = 0;
 
             flyingDrops.push(d);
         }
         activeDrops.length = 0;
 
-        // Also boost any drops already flying
-        for (let i = 0; i < flyingDrops.length; i++) {
-            flyingDrops[i].inertia = 0.1;
-        }
+        // // Also boost any drops already flying
+        // for (let i = 0; i < flyingDrops.length; i++) {
+        //     flyingDrops[i].inertia = 1;
+        // }
     }
 
     // ── per-frame ────────────────────────────────────────────────────────────

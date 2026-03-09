@@ -26,7 +26,7 @@ GAME_CONSTANTS.HEALTH_BAR_TINT = 0x333333;
 
 GAME_CONSTANTS.TOWER_BASE_HEALTH = 20;
 GAME_CONSTANTS.TOWER_BASE_DAMAGE = 5;
-GAME_CONSTANTS.TOWER_ATTACK_RANGE = 250;
+GAME_CONSTANTS.TOWER_ATTACK_RANGE = 230;
 GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
 GAME_CONSTANTS.TOWER_BASE_REGEN = -0.4;   // HP/sec (negative = drain)
 
@@ -130,7 +130,7 @@ const GAME_STATE_DEFAULTS = {
     // Tower
     towerMaxHealth: 20,
     towerDamage: 6,
-    towerAttackRange: 200,
+    towerAttackRange: 230,
     towerHealthRegen: -0.4,   // HP/sec (negative = drain)
 
     // Resources
