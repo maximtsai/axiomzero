@@ -275,22 +275,7 @@ class Enemy {
         } = config;
 
         // Rotation wobble (Bosses and minibosses do not wobble)
-        if (!this.cannotRotate && !this.isBoss && !this.isMiniboss) {
-            const wobble = Phaser.Math.FloatBetween(-wobbleIntensity, wobbleIntensity);
-            this.setRotation(this.baseRotation + wobble);
-            if (this.wobbleAnim) this.wobbleAnim.stop();
-            this.wobbleAnim = PhaserScene.tweens.add({
-                delay: 75,
-                targets: [this.img, this.hpImg],
-                rotation: '-=' + wobble,
-                duration: wobbleDuration,
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    this.setRotation(this.baseRotation || 0);
-                    this.wobbleAnim = null;
-                }
-            });
-        }
+        // Rotation wobble disabled as requested
 
         // Alpha flicker
         PhaserScene.tweens.add({

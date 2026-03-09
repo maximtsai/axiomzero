@@ -27,7 +27,7 @@ const cryptoMine = (() => {
         blocker.setDepth(depth + 1);
         blocker.setScrollFactor(0);
 
-        popupBg = PhaserScene.add.nineslice(cx, cy, 'ui', 'popup_nineslice.png', width, height, 60, 60, 60, 60);
+        popupBg = PhaserScene.add.nineslice(cx, cy, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
         popupBg.setDepth(depth + 2);
         popupBg.setScrollFactor(0);
 
@@ -38,7 +38,7 @@ const cryptoMine = (() => {
         }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
 
         closeBtn = new Button({
-            normal: { ref: 'close_button_normal.png', atlas: 'ui', x: cx + width / 2 - 33, y: cy - height / 2 + 34 },
+            normal: { ref: 'close_button_normal.png', atlas: 'ui', x: cx + width / 2 - 35, y: cy - height / 2 + 36 },
             hover: { ref: 'close_button_hover.png', atlas: 'ui' },
             press: { ref: 'close_button_press.png', atlas: 'ui' },
             onMouseUp: hide
@@ -51,7 +51,7 @@ const cryptoMine = (() => {
 
     function show() {
         visible = true;
-        
+
         bgOverlay.setVisible(true);
         blocker.setVisible(true);
         blocker.setState(NORMAL);
