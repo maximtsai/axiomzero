@@ -25,6 +25,8 @@ const gameHUD = (() => {
     const DATA_ICON_GAP = 5;
 
     let visible = false;
+    let needsLayoutUpdate = false;
+    let layoutFrameCounter = 0;
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -39,6 +41,7 @@ const gameHUD = (() => {
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
         messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
+        updateManager.addFunction(_update);
     }
 
     function _createElements() {
@@ -265,7 +268,15 @@ const gameHUD = (() => {
     function _onCurrencyChanged(type, amount) {
         if (resourceUI[type]) {
             resourceUI[type].text.setText(Math.floor(amount));
+            needsLayoutUpdate = true;
+        }
+    }
+
+    function _update(delta) {
+        layoutFrameCounter++;
+        if (layoutFrameCounter % 5 === 0 && needsLayoutUpdate) {
             _updateResourceLayout();
+            needsLayoutUpdate = false;
         }
     }
 

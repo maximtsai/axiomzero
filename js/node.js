@@ -9,6 +9,7 @@ const NODE_STATE = {
     MAXED: 'MAXED',
 };
 
+
 /**
  * Node definition schema (passed into constructor):
  * {
@@ -201,7 +202,7 @@ class Node {
         messageBus.publish('upgradePurchased', this.id, this.level);
 
         // Refresh hover text if it was visible
-        if (this.hoverGroup) {
+        if (nodeTooltip.getCurrentNode() === this) {
             this._showHover(true);
         }
 
@@ -288,10 +289,10 @@ class Node {
             this.purchase();
         } else {
             // Can't afford — show hover and shake the cost text
-            if (!this.hoverGroup) {
+            if (!nodeTooltip.isVisible() || nodeTooltip.getCurrentNode() !== this) {
                 this._showHover();
             }
-            this._shakeCostText();
+            nodeTooltip.shakeCost();
         }
     }
 
@@ -547,104 +548,26 @@ class Node {
             treeGroup.add(this.hoverContainer);
         }
         if (draggableGroup) {
-            draggableGroup.add(this.hoverContainer);
+            const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
+            draggableGroup.add(btnObj);
+            if (this.iconSprite) draggableGroup.add(this.iconSprite);
+            draggableGroup.add(this.fadeoutSprite);
         }
 
-        // --- Entrance Animation (The "Bouncy" Pop) ---
-        if (!isPurchaseRefresh) {
-            this.hoverContainer.setScale(0.75);
-            this.hoverContainer.angle = 6; // Start slightly tilted
-            PhaserScene.tweens.add({
-                targets: this.hoverContainer,
-                scaleX: 1.08,
-                scaleY: 1.08,
-                angle: -5,
-                duration: 110,
-                ease: 'Cubic.easeOut',
-                onComplete: () => {
-                    if (this.hoverContainer && this.hoverContainer.active) {
-                        PhaserScene.tweens.add({
-                            targets: this.hoverContainer,
-                            scaleX: 1,
-                            scaleY: 1,
-                            angle: 0,
-                            duration: 180,
-                            ease: 'Back.easeOut',
-                        });
-                    }
-                }
-            });
-        }
+        this._updateVisual();
+    }
 
-        // --- Purchase Animation ---
-        if (isPurchaseRefresh) {
-            const animateTargets = [lvT];
-            if (this.state === NODE_STATE.MAXED) {
-                if (maxT) animateTargets.push(maxT);
-            } else {
-                if (costT) animateTargets.push(costT);
-            }
+    // ── hover tooltip ────────────────────────────────────────────────────
 
-            animateTargets.forEach(target => {
-                target.setScale(0.82, 1);
-                PhaserScene.tweens.add({
-                    targets: target,
-                    scaleX: 1.18,
-                    duration: 150,
-                    ease: 'Cubic.easeOut',
-                    onComplete: () => {
-                        PhaserScene.tweens.add({
-                            targets: target,
-                            scaleX: 1,
-                            duration: 350,
-                            ease: 'Back.easeOut'
-                        });
-                    }
-                });
-            });
-        }
+    _showHover(isPurchaseRefresh = false) {
+        if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
+        nodeTooltip.show(this, isPurchaseRefresh);
     }
 
     _hideHover() {
-        if (this.hoverContainer) {
-            this.hoverContainer.destroy();
-            this.hoverContainer = null;
+        if (nodeTooltip.getCurrentNode() === this) {
+            nodeTooltip.hide();
         }
-        if (this.hoverGroup) {
-            this.hoverGroup = null;
-        }
-    }
-
-    _shakeCostText() {
-        if (!this.hoverContainer || !this.hoverGroup || this.hoverGroup.length === 0) return;
-
-        // infoT is the costT we saved into hoverGroup
-        const infoT = this.hoverGroup[this.hoverGroup.length - 1];
-        if (!infoT) return;
-
-        const origX = infoT.x;
-        const shakeAmp = 8; // pixels
-        const shakes = 4;   // number of oscillations
-        const duration = 80; // ms per oscillation
-
-        for (let i = 0; i < shakes; i++) {
-            PhaserScene.tweens.add({
-                targets: infoT,
-                x: origX + (i % 2 === 0 ? shakeAmp : -shakeAmp),
-                duration: duration,
-                ease: 'Linear',
-                delay: i * duration,
-            });
-        }
-
-        // Return to original position
-        PhaserScene.tweens.add({
-            targets: infoT,
-            x: origX,
-            duration: 150,
-            ease: 'Cubic.easeOut',
-            delay: shakes * duration,
-        });
     }
 
     // ── cleanup ──────────────────────────────────────────────────────────

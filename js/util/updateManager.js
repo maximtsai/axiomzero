@@ -16,7 +16,11 @@ class UpdateManager {
             return;
         }
         for (let i = 0; i < this.listOfFunctions.length; i++) {
-            this.listOfFunctions[i](delta);
+            try {
+                this.listOfFunctions[i](delta);
+            } catch (e) {
+                console.error('Error in UpdateManager function:', e);
+            }
         }
     }
 

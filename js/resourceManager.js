@@ -33,6 +33,9 @@ const resourceManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
         messageBus.subscribe('triggerResourceVacuum', _vacuumAllDrops);
+        messageBus.subscribe('upgradePurchased', (id) => {
+            if (id === 'magnet') _recalcPickupRadius();
+        });
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
         _recalcPickupRadius();

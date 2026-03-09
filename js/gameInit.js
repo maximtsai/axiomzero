@@ -92,6 +92,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // ── Enter the game ──────────────────────────────────────────────────
     // Start camera in upgrade view position (no animation on initial load)
+    resourceManager.recalcPickupRadius();
     PhaserScene.cameras.main.scrollX = -GAME_CONSTANTS.halfWidth / 2;
     gameStateMachine.goTo(GAME_CONSTANTS.PHASE_UPGRADE);
     debugLog('Game initialised — entering UPGRADE_PHASE');
