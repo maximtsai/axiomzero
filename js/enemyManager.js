@@ -83,9 +83,6 @@ const enemyManager = (() => {
         pools.logic_stray = new ObjectPool(() => new LogicStrayEnemy(), resetFn, POOL_SIZE).preAllocate(20);
         pools.protector = new ObjectPool(() => new ProtectorEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
-
-        pools.miniboss = new ObjectPool(() => new Miniboss1(), resetFn, MINIBOSS_POOL_SIZE).preAllocate(MINIBOSS_POOL_SIZE);
-        pools.boss = new ObjectPool(() => new Boss1(), resetFn, 2).preAllocate(1);
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -341,7 +338,7 @@ const enemyManager = (() => {
 
     function _spawnMiniboss() {
         if (minibossSpawned) return;
-        const mb = pools.miniboss.get();
+        const mb = new Miniboss1();
         if (!mb) return;
 
         minibossSpawned = true;
@@ -385,7 +382,7 @@ const enemyManager = (() => {
 
     function _spawnBoss() {
         if (bossSpawned) return;
-        const b = pools.boss.get();
+        const b = new Boss1();
         if (!b) return;
 
         bossSpawned = true;
@@ -429,11 +426,9 @@ const enemyManager = (() => {
     }
 
     function _releaseToPool(e) {
-        if (e.isBoss) {
-            pools.boss.release(e);
-        } else if (e.isMiniboss) {
-            pools.miniboss.release(e);
-        } else if (pools[e.type]) {
+        if (e.isBoss || e.isMiniboss) return; // Bosses are not pooled
+
+        if (pools[e.type]) {
             pools[e.type].release(e);
         } else {
             // Fallback for types not explicitly in pools (shouldn't happen with current logic)
@@ -645,7 +640,7 @@ const enemyManager = (() => {
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
         // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
-        let firstThreshold = 4.9;
+        let firstThreshold = 5;
         // Special case: if basic_pulse isn't researched, increase threshold to 5.75
         if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
             firstThreshold = 5.15;

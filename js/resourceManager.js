@@ -332,10 +332,6 @@ const resourceManager = (() => {
                 if (d.type === 'processor') addProcessor(1);
                 else addData(1);
 
-                // Play random pop sound on collection
-                const popNum = Math.floor(Math.random() * 3) + 1;
-                audio.play('pop' + popNum, 0.45 + Math.random() * 0.1);
-
                 flyingDrops[i] = flyingDrops[flyingDrops.length - 1];
                 flyingDrops.pop();
                 continue;

@@ -107,8 +107,8 @@ Upon first launch, the player enters directly into the **Upgrade Phase** — no 
 - The DEPLOY button appears at the bottom right of the tree half
 - Three nodes become visible as Unlocked, all direct children of AWAKEN:
   - **Basic Pulse** — unlocks the cursor attack
-  - **Reinforce** — increases tower max health
-  - **Sharpen** — increases tower basic attack damage
+   - **Integrity** — increases tower max health
+- **Intensity** — increases tower basic attack damage
 
 **Clicking DEPLOY:**
 - Transition animation (0.8s): Neural Tree slides left off-screen, camera centers on tower

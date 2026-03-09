@@ -26,14 +26,14 @@ class TowerModel {
 
     recalcStats() {
         const ups = gameState.upgrades || {};
-        const reinforceLv = ups.reinforce || 0;
-        const sharpenLv = ups.sharpen || 0;
+        const integrityLv = ups.integrity || 0;
+        const intensityLv = ups.intensity || 0;
         const regenLv = ups.regen || 0;
         const focusLv = ups.focus || 0;
         const armorLv = ups.armor || 0;
 
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * reinforceLv;
-        this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * sharpenLv;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv;
+        this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv;
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
         this.armor = armorLv * 1; // 1 flat damage reduction per level
@@ -53,7 +53,7 @@ class TowerModel {
 
     takeDamage(amount) {
         if (!this.alive || this.isInvincible) return false;
-        
+
         let reducedAmount = Math.max(0, amount - this.armor);
         this.health -= reducedAmount;
         if (this.health <= 0) {
