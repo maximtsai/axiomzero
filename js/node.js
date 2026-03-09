@@ -285,6 +285,19 @@ class Node {
     _onClick() {
         if (this.state !== NODE_STATE.UNLOCKED) return;
 
+        // Mobile interaction refinement: First tap shows info, second tap buys.
+        if (GAME_VARS.wasTouch) {
+            const isShowingThis = nodeTooltip.isVisible() && nodeTooltip.getCurrentNode() === this;
+            const tooltipAge = nodeTooltip.getShowAge();
+
+            // If tooltip isn't showing, or was JUST shown (likely by the 'hover' step of this same tap),
+            // then we only show the hover and stop there. 150ms is a safe threshold for a single tap.
+            if (!isShowingThis || tooltipAge < 150) {
+                this._showHover();
+                return;
+            }
+        }
+
         if (this.canAfford()) {
             this.purchase();
         } else {

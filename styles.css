@@ -37,11 +37,6 @@ html, body {
     overflow: hidden; /* Prevents scrollbars */
     background-color: #111010;
     
-    /* Flexbox centers the canvas perfectly in the viewport */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
     /* Prevents highlighting text on the page */
     user-select: none;
     -webkit-user-select: none;

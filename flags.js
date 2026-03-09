@@ -5,8 +5,9 @@ const FLAGS = {
     // Set true when deploying to CrazyGames to enable SDK init, mute sync, etc.
     USING_CRAZYGAMES_SDK: false,
 
-    // Set true for desktop-targeted builds (affects input, UI scaling hints, etc.)
-    IS_DESKTOP: false,
+    // Set true for standalone PC builds (.exe) or local electron shells.
+    // When false, the game behaves as a web build (allowing mobile detection, etc.)
+    IS_EXE: false,
 
     // Set true locally to enable the FPS overlay and verbose console logging.
     // Always leave false in production builds.

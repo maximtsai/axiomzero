@@ -143,7 +143,7 @@ Top-level switches edited directly in `flags.js` before deployment. Loaded befor
 | Flag | Default | Description |
 |---|---|---|
 | `FLAGS.USING_CRAZYGAMES_SDK` | `false` | Enables CrazyGames SDK init, mute sync, and settings listener |
-| `FLAGS.IS_DESKTOP` | `false` | Marks build as desktop-targeted (input/UI scaling hints) |
+| `FLAGS.IS_EXE` | `false` | Marks build as a standalone executable (disables web-only features) |
 
 ## Key Globals & Singletons
 

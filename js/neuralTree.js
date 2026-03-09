@@ -148,6 +148,11 @@ const neuralTree = (() => {
 
                 lastDragX = x;
                 lastDragY = y;
+            },
+            onMouseUp: () => {
+                if (typeof nodeTooltip !== 'undefined') {
+                    nodeTooltip.hide();
+                }
             }
         });
         dragSurface.setScrollFactor(0);
@@ -274,10 +279,10 @@ const neuralTree = (() => {
         });
         cryptoMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);
         cryptoMineBtn.setScrollFactor(0);
-        
+
         cryptoMineBtn.setVisible(false);
         cryptoMineBtn.setState(DISABLE);
-        
+
         treeGroup.add(cryptoMineBtn.getContainer ? cryptoMineBtn.getContainer() : cryptoMineBtn);
     }
 
@@ -336,7 +341,7 @@ const neuralTree = (() => {
         titleText.setVisible(false);
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
-        
+
         if (cryptoMineBtn) {
             cryptoMineBtn.setVisible(false);
             cryptoMineBtn.setState(DISABLE);

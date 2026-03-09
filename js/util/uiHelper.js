@@ -4,20 +4,20 @@
 // Extends the `helper` object defined in typewriterHelper.js.
 
 Object.assign(helper, {
-    openFullscreen: function() {
+    openFullscreen: function () {
         const elem = document.body;
-        if      (elem.requestFullscreen)       { elem.requestFullscreen(); }
+        if (elem.requestFullscreen) { elem.requestFullscreen(); }
         else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-        else if (elem.msRequestFullscreen)     { elem.msRequestFullscreen(); }
+        else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
     },
 
-    testMobile: function() {
+    isMobileDevice: function () {
         return /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     },
 
-    isSafariIOS: function() {
+    isSafariIOS: function () {
         const ua = window.navigator.userAgent;
-        const iOS    = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+        const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
         const webkit = !!ua.match(/WebKit/i);
         return iOS && webkit && !ua.match(/CriOS/i);
     },
@@ -27,7 +27,7 @@ Object.assign(helper, {
      * Pass showPointer=true to display a pointer cursor while blocked.
      * Returns the blocker Button.
      */
-    createGlobalClickBlocker: function(showPointer) {
+    createGlobalClickBlocker: function (showPointer) {
         if (!globalObjects.clickBlocker) {
             globalObjects.clickBlocker = new Button({
                 normal: {
@@ -38,12 +38,12 @@ Object.assign(helper, {
                     scaleX: 1000,
                     scaleY: 1000
                 },
-                onMouseUp: function() {}
+                onMouseUp: function () { }
             });
             globalObjects.clickBlocker.setScrollFactor(0);
         } else {
             globalObjects.clickBlocker.setState(NORMAL);
-            globalObjects.clickBlocker.setOnMouseUpFunc(function() {});
+            globalObjects.clickBlocker.setOnMouseUpFunc(function () { });
             buttonManager.bringButtonToTop(globalObjects.clickBlocker);
         }
         if (showPointer) {
@@ -54,14 +54,14 @@ Object.assign(helper, {
     },
 
     /** Disables the global click blocker and restores the default cursor. */
-    hideGlobalClickBlocker: function() {
+    hideGlobalClickBlocker: function () {
         if (!globalObjects.clickBlocker) { return; }
         globalObjects.clickBlocker.setState(DISABLE);
         const canvas = PhaserScene.sys.canvas;
         if (canvas) { canvas.style.cursor = 'default'; }
     },
 
-    restartGame: function() {
+    restartGame: function () {
         location.reload();
     },
 

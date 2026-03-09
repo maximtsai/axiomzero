@@ -48,7 +48,9 @@ const config = {
     scene: MainScene,
     scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.NO_CENTER
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        forceOrientation: true,
+        orientation: Phaser.Scale.Orientation.LANDSCAPE
     },
     plugins: {
         global: [{
@@ -61,7 +63,7 @@ const config = {
 
 // ─── Global Ad Hooks ──────────────────────────────────────────────────────────
 
-window.pauseGameForAd = function() {
+window.pauseGameForAd = function () {
     console.log('[Ad Break] Pausing game and audio...');
     if (typeof PhaserScene !== 'undefined') {
         PhaserScene.scene.pause();
@@ -71,7 +73,7 @@ window.pauseGameForAd = function() {
     }
 };
 
-window.resumeGameFromAd = function() {
+window.resumeGameFromAd = function () {
     console.log('[Ad Break] Resuming game and audio...');
     if (typeof PhaserScene !== 'undefined') {
         PhaserScene.scene.resume();

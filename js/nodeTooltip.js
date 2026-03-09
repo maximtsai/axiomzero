@@ -17,6 +17,7 @@ const nodeTooltip = (() => {
     let costBg = null;
 
     let currentNode = null;
+    let lastShowTime = 0;
     const bgWidth = 280;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
@@ -98,6 +99,10 @@ const nodeTooltip = (() => {
     function show(node, isPurchaseRefresh = false) {
         if (!container) init();
         _clearTweens();
+
+        if (currentNode !== node) {
+            lastShowTime = Date.now();
+        }
 
         currentNode = node;
         container.setVisible(true);
@@ -227,6 +232,7 @@ const nodeTooltip = (() => {
 
     function isVisible() { return container && container.visible; }
     function getCurrentNode() { return currentNode; }
+    function getShowAge() { return Date.now() - lastShowTime; }
 
-    return { init, show, hide, shakeCost, isVisible, getCurrentNode };
+    return { init, show, hide, shakeCost, isVisible, getCurrentNode, getShowAge };
 })();
