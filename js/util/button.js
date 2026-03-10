@@ -99,6 +99,11 @@ class Button {
     }
 
     setState(newState) {
+        // If transitioning to NORMAL but mouse is currently over, go to HOVER instead
+        if (newState === NORMAL && this.checkCoordOver(GAME_VARS.mouseposx, GAME_VARS.mouseposy)) {
+            newState = HOVER;
+        }
+
         let stateData;
         switch (newState) {
             case NORMAL:
