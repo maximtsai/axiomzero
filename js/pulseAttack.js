@@ -1,4 +1,4 @@
-// pulseAttack.js — Player cursor AOE pulse attack (Refactored to MVC).
+// pulseAttack.js — Player cursor AOE cursor attack (Refactored to MVC).
 // A nine-sliced square centered on the mouse that fires every FIRE_INTERVAL ms,
 // dealing DAMAGE to all enemies within its AOE. Activated by "basic_pulse" node.
 // Visual: 0.3 alpha idle, flashes to 1 on fire with Quart.easeOut tween back.

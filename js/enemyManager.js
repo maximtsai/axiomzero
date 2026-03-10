@@ -621,6 +621,7 @@ const enemyManager = (() => {
             debugLog('Miniboss defeated');
         } else if (wasBoss) {
             bossAlive = false;
+            if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
             messageBus.publish('bossDefeated', ex, ey);
             debugLog('Boss defeated');
         } else {

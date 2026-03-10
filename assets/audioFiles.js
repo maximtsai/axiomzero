@@ -8,4 +8,7 @@ const audioFiles = [
     { name: 'data_reveal', src: 'audio/data_reveal.mp3' },
     { name: 'bg_music1', src: 'audio/bg_music1.mp3' },
     { name: 'boss_music', src: 'audio/bossmusic_loop.mp3' },
+    { name: 'explosion_death', src: 'audio/explosion_death.mp3' },
+    { name: 'charge_attack', src: 'audio/charge_attack.mp3' },
+    { name: 'on_death_boss', src: 'audio/on_death_boss.mp3' },
 ];

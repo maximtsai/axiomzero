@@ -22,7 +22,7 @@ Horizontal placement follows a thematic separation of upgrade types:
 - **Left Side (X < 400)**: **Defense, Utility, & Resource Management**
   - Upgrades like Tower Health (`Reinforce`), HP Regen (`Regen`), and Resource Pickup Range (`Attract`).
 - **Right Side (X > 400)**: **Offense & Combat Power**
-  - Upgrades like Basic Damage (`Sharpen`), Pulse Damage (`Amplify`), Pulse Size (`Nova`), and Attack Range (`Influence`).
+  - Upgrades like Basic Damage (`Sharpen`), Cursor Damage (`Amplify`), Pulse Size (`Nova`), and Attack Range (`Influence`).
 - **Standard X Step**: `80` (e.g., 400 -> 320 or 400 -> 480).
 
 ## Node Mapping Summary (Common Coordinates)

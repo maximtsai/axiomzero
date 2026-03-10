@@ -49,6 +49,7 @@ class Miniboss1 extends Miniboss {
         this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
         this.chargeSprite.setVisible(false);
         this.isCharging = false;
+        this.chargeAttackPlayed = false;
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
     }
@@ -166,10 +167,16 @@ class Miniboss1 extends Miniboss {
                 this._startCharge();
             }
 
+            if (this.fireCooldown <= 2000 && !this.chargeAttackPlayed && this.fireCooldown > 0) {
+                if (typeof audio !== 'undefined') audio.play('charge_attack', 0.85);
+                this.chargeAttackPlayed = true;
+            }
+
             if (this.fireCooldown <= 0) {
                 this._fireBullet(tPos.x, tPos.y);
                 this._stopCharge();
                 this.fireCooldown = MB1.FIRE_INTERVAL;
+                this.chargeAttackPlayed = false;
             }
         }
     }

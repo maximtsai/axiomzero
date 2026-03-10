@@ -2,7 +2,7 @@
 // Centralized node data for the upgrade tree.
 // Tree center X is at 400 (half of 800px panel width)
 
-/** Recalculates total pulse damage from all pulse upgrade nodes. */
+/** Recalculates total cursor damage from all pulse upgrade nodes. */
 function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
@@ -64,8 +64,8 @@ const NODE_DEFS = [
         id: 'pulse_damage',
         name: 'AMPLIFY',
         icon: 'Skillicon14_06.png',
-        description: '+2 pulse damage',
-        popupText: '+2 PULSE DMG',
+        description: '+2 cursor damage',
+        popupText: '+2 CURSOR DMG',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 3,
         baseCost: 5,
@@ -125,8 +125,8 @@ const NODE_DEFS = [
         id: 'pulse_damage_3',
         name: 'OVERCHARGE',
         icon: 'Skillicon14_08.png',
-        description: '+4 pulse damage',
-        popupText: '+4 PULSE DMG',
+        description: '+4 cursor damage',
+        popupText: '+4 CURSOR DMG',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 2,
         baseCost: 10,

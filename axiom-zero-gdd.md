@@ -194,7 +194,7 @@ The cursor is a direct interaction tool — not just a UI pointer.
 **Cursor Attack (Basic Pulse node — one of first 3 Tier 1 unlocks):** Grants an auto-firing pulse every 2 seconds dealing moderate AoE damage centered on the cursor's current position.
 
 **Cursor upgrade path (non-exhaustive):**
-- +Pulse damage
+- +Cursor damage
 - +AoE size
 - +DATA pickup range
 - Additional projectiles fired outward with each pulse
@@ -394,7 +394,7 @@ Representative, non-exhaustive listing. All values use clean discrete increments
 
 ### Offense — Cursor
 - **Basic Pulse** *(one of the 3 initial AWAKEN children)* — Unlocks cursor auto-pulse (fires every 2 seconds, moderate AoE around cursor)
-- **+Cursor Pulse Damage**
+- **+Cursor Damage**
 - **+Cursor AoE Size**
 - **+Cursor Projectile Count** — Each pulse fires additional outward projectiles
 - **Projectile Detonation** — Projectiles explode upon reaching max range

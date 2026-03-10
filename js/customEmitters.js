@@ -213,6 +213,7 @@ const customEmitters = (() => {
                         }
 
                         PhaserScene.cameras.main.shake(250, 0.015);
+                        if (typeof audio !== 'undefined') audio.play('explosion_death', 0.82);
                         if (typeof enemyManager !== 'undefined') {
                             const enemies = enemyManager.getActiveEnemies();
                             const radius = 240 * effectScale;

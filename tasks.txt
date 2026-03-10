@@ -26,9 +26,9 @@ AXIOM ZERO - IMPLEMENTATION NEXT STEPS
 ## CURSOR & BASIC ATTACKS
 [ ] Implement cursor attack (Basic Pulse node) - fires every 2 seconds, AoE around cursor
 [ ] Add cursor visual indicator (glow or crosshair)
-[ ] Test cursor pulse damage against enemies
+[ ] Test cursor damage against enemies
 [ ] Implement cursor projectile detonation mechanic
-[ ] Add +Cursor Pulse Damage upgrade node
+[ ] Add +Cursor Damage upgrade node
 
 ## BOSSES - MINIBOSS & TIER BOSS (Tier 1)
 [ ] Design & implement Tier 1 Miniboss (drop 1 SHARD)
