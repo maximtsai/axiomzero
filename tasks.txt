@@ -18,13 +18,13 @@ AXIOM ZERO - IMPLEMENTATION NEXT STEPS
 
 ## NEURAL TREE - TIER 1 SETUP
 [ ] Build AWAKEN node with visual feedback (sparkle → tower transform)
-[ ] Implement 3 initial child nodes (Basic Pulse, Reinforce, Sharpen)
+[ ] Implement 3 initial child nodes (Basic Cursor attack, Reinforce, Sharpen)
 [ ] Set up node state machine (Hidden → Ghost → Unlocked → Maxed)
 [ ] Test node cost scaling (static vs linear)
 [ ] Add hover tooltips showing Name, Effect, Level, Cost
 
 ## CURSOR & BASIC ATTACKS
-[ ] Implement cursor attack (Basic Pulse node) - fires every 2 seconds, AoE around cursor
+[ ] Implement cursor attack (Basic Cursor atk node) - fires every 2 seconds, AoE around cursor
 [ ] Add cursor visual indicator (glow or crosshair)
 [ ] Test cursor damage against enemies
 [ ] Implement cursor projectile detonation mechanic

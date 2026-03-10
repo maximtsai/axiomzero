@@ -83,7 +83,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
 
-    // Pulse attack — cursor AOE (must be unlocked via Neural Tree)
+    // cursor AOE (must be unlocked via Neural Tree)
     pulseAttack.init();
     if ((gameState.upgrades && gameState.upgrades.basic_pulse) >= 1) {
         pulseAttack.unlock();
