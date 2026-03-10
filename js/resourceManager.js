@@ -13,6 +13,7 @@ const resourceManager = (() => {
     let flyingDrops = [];   // drops currently flying toward cursor
     let processorPool = []; // Pool for processor resources
     let paused = false;     // true when options menu is open
+    let shardIsFlying = false; // Guard to ensure miniboss shards are always collected
 
     let totalDropsSpawned = 0;
     let currentPickupRadius2 = 0;
@@ -111,6 +112,7 @@ const resourceManager = (() => {
     }
 
     function spawnShardDrop(x, y) {
+        shardIsFlying = true;
         const img = PhaserScene.add.image(x, y, 'player', 'resrc_shard.png');
         img.setScale(1.0);
         img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
@@ -118,7 +120,7 @@ const resourceManager = (() => {
         const d = {
             img: img,
             alive: true,
-            flying: true,
+            flying: false,
             readyToCollect: false,
             x: x,
             y: y,
@@ -129,7 +131,33 @@ const resourceManager = (() => {
             spawnTween: null,
         };
 
-        flyingDrops.push(d);
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 50 + Math.random() * 30;
+        const endX = x + Math.cos(angle) * dist;
+        const endY = y + Math.sin(angle) * dist;
+
+        d.spawnTween = PhaserScene.tweens.add({
+            targets: d.img,
+            x: endX,
+            y: endY,
+            duration: 1000,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                d.x = d.img.x;
+                d.y = d.img.y;
+                d.spawnTween = null;
+                d.flying = true;
+
+                // Automatically move to flying list
+                const idx = activeDrops.indexOf(d);
+                if (idx !== -1) {
+                    activeDrops.splice(idx, 1);
+                    flyingDrops.push(d);
+                }
+            }
+        });
+
+        activeDrops.push(d);
     }
 
     function _setupDrop(d, x, y) {
@@ -207,6 +235,7 @@ const resourceManager = (() => {
     }
 
     function addShard(amount) {
+        if (amount > 0) shardIsFlying = false;
         gameState.shard = (gameState.shard || 0) + amount;
         sessionShards += amount;
         messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
@@ -251,6 +280,7 @@ const resourceManager = (() => {
         sessionProcessors = 0;
         sessionCoins = 0;
         totalDropsSpawned = 0;
+        shardIsFlying = false;
     }
 
     /**
@@ -261,6 +291,11 @@ const resourceManager = (() => {
     function clearDrops() {
         // Cash out any flying resources before clearing
         _collectAllFlying();
+
+        if (shardIsFlying) {
+            addShard(1);
+            shardIsFlying = false;
+        }
 
         for (let i = activeDrops.length - 1; i >= 0; i--) {
             _deactivate(activeDrops[i]);
@@ -306,7 +341,7 @@ const resourceManager = (() => {
 
     /** Forces all currently resting drops and incoming spawn drops to immediately fly to cursor at high speed. */
     function _vacuumAllDrops() {
-        for (let i = 0; i < activeDrops.length; i++) {
+        for (let i = activeDrops.length - 1; i >= 0; i--) {
             const d = activeDrops[i];
 
             if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
