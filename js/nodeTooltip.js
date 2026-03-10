@@ -136,16 +136,35 @@ const nodeTooltip = (() => {
         descT.setText(node.description.toLowerCase()).setPosition(0, currentY);
         currentY += descT.height + rowSpacing;
 
-        // Row 3: Level
-        lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY);
-        currentY += lvT.height + 7;
+        // Row 3: Level (skip for duo-box nodes — always 1/1)
+        if (node.isDuoBox) {
+            lvT.setVisible(false);
+        } else {
+            lvT.setVisible(true);
+            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY);
+            currentY += lvT.height + 7;
+        }
 
-        // Row 4: Cost or MAX
-        if (node.state === NODE_STATE.MAXED) {
+        // Row 4: Cost, MAX, ACTIVE, or SWAP
+        const isDuoActive = node.isDuoBox && gameState.duoBoxPurchased && gameState.duoBoxPurchased[node.duoBoxTier];
+        const isThisNodeActive = isDuoActive && gameState.activeShards[node.duoBoxTier] === node.shardId;
+        const isSwappable = isDuoActive && !isThisNodeActive;
+
+        if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 13);
             maxT.setVisible(true).setPosition(0, currentY + 13);
+            maxT.setText(isThisNodeActive ? 'ACTIVE' : 'MAX');
             costBg.setVisible(false);
             costT.setVisible(false);
+            currentY += 26;
+        } else if (isSwappable) {
+            goldBg.setVisible(false);
+            maxT.setVisible(false);
+            costBg.setVisible(true).setPosition(0, currentY + 13);
+            costBg.setTexture('pixels', 'dark_green_pixel.png');
+            costT.setVisible(true).setPosition(0, currentY + 13);
+            costT.setText('CLICK TO SWAP');
+            costT.setColor('#ffffff');
             currentY += 26;
         } else {
             goldBg.setVisible(false);
@@ -156,8 +175,17 @@ const nodeTooltip = (() => {
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg.setTexture('pixels', bgPixel);
 
-            const iconStr = node.costType === 'data' ? '◈' : '⦵';
-            const currentRes = node.costType === 'data' ? resourceManager.getData() : resourceManager.getInsight();
+            let iconStr, currentRes;
+            if (node.costType === 'shard') {
+                iconStr = '◆';
+                currentRes = resourceManager.getShards();
+            } else if (node.costType === 'insight') {
+                iconStr = '⦵';
+                currentRes = resourceManager.getInsight();
+            } else {
+                iconStr = '◈';
+                currentRes = resourceManager.getData();
+            }
             costT.setText(iconStr + ' ' + Math.floor(currentRes) + ' / ' + node.getCost());
 
             let costColor = '#30ffff';

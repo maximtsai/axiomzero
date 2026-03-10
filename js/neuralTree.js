@@ -358,35 +358,74 @@ const neuralTree = (() => {
     function _updateLines() {
         // Create lines if they don't exist yet
         if (lines.length === 0) {
+            const isDuoLineDrawn = {}; // track which duo-box tiers already have their parent line
+
             for (const id in nodes) {
                 const n = nodes[id];
                 if (n.parentId && nodes[n.parentId]) {
                     const p = nodes[n.parentId];
 
-                    const px = p.btn.x;
-                    const py = p.btn.y;
-                    const cx = n.btn.x;
-                    const cy = n.btn.y;
+                    // For duo-box nodes, draw ONE line from parent to center of duo container
+                    if (n.isDuoBox && n.duoBoxTier > 0) {
+                        const duoKey = n.duoBoxTier + '_' + n.parentId;
+                        if (isDuoLineDrawn[duoKey]) continue; // already drew this duo's line
+                        isDuoLineDrawn[duoKey] = true;
 
-                    const dx = cx - px;
-                    const dy = cy - py;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const angle = Math.atan2(dy, dx) + 1.57;
+                        // Find both siblings to compute the center
+                        const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
+                        const cx = sibling ? (n.btn.x + sibling.btn.x) / 2 : n.btn.x;
+                        const cy = sibling ? (n.btn.y + sibling.btn.y) / 2 : n.btn.y;
 
-                    const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
-                    line.setScale(1.5, distance / 2);
-                    line.setOrigin(0.5, 1);
-                    line.setRotation(angle);
-                    line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
-                    line.setScrollFactor(0);
+                        const px = p.btn.x;
+                        const py = p.btn.y;
 
-                    // Attach id data so we know who this line belongs to
-                    line.childId = id;
-                    line.parentId = n.parentId;
+                        const dx = cx - px;
+                        const dy = cy - py;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) + 1.57;
 
-                    lines.push(line);
-                    treeGroup.add(line);
-                    draggableGroup.add(line);
+                        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+                        line.setScale(1.5, distance / 2);
+                        line.setOrigin(0.5, 1);
+                        line.setRotation(angle);
+                        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+                        line.setScrollFactor(0);
+
+                        // Mark as duo-box line — visible when either sibling is not HIDDEN
+                        line.childId = id;
+                        line.duoSiblingChildId = n.duoSiblingId;
+                        line.parentId = n.parentId;
+                        line.isDuoLine = true;
+
+                        lines.push(line);
+                        treeGroup.add(line);
+                        draggableGroup.add(line);
+                    } else {
+                        const px = p.btn.x;
+                        const py = p.btn.y;
+                        const cx = n.btn.x;
+                        const cy = n.btn.y;
+
+                        const dx = cx - px;
+                        const dy = cy - py;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) + 1.57;
+
+                        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+                        line.setScale(1.5, distance / 2);
+                        line.setOrigin(0.5, 1);
+                        line.setRotation(angle);
+                        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+                        line.setScrollFactor(0);
+
+                        // Attach id data so we know who this line belongs to
+                        line.childId = id;
+                        line.parentId = n.parentId;
+
+                        lines.push(line);
+                        treeGroup.add(line);
+                        draggableGroup.add(line);
+                    }
                 }
             }
         }
@@ -397,12 +436,26 @@ const neuralTree = (() => {
             const p = nodes[line.parentId];
             const n = nodes[line.childId];
 
-            if (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN) {
-                line.setVisible(false);
+            if (line.isDuoLine) {
+                // Duo line: visible when parent is visible AND either sibling is not HIDDEN
+                const sib = line.duoSiblingChildId ? nodes[line.duoSiblingChildId] : null;
+                const eitherVisible = (n.state !== NODE_STATE.HIDDEN) || (sib && sib.state !== NODE_STATE.HIDDEN);
+                if (p.state === NODE_STATE.HIDDEN || !eitherVisible) {
+                    line.setVisible(false);
+                } else {
+                    line.setVisible(true);
+                    // Line is solid if at least one sibling is not a ghost
+                    const bothGhost = (n.state === NODE_STATE.GHOST) && (!sib || sib.state === NODE_STATE.GHOST);
+                    line.setAlpha(bothGhost ? 0.25 : 1.0);
+                }
             } else {
-                line.setVisible(true);
-                const alpha = n.state === NODE_STATE.GHOST ? 0.25 : 1.0;
-                line.setAlpha(alpha);
+                if (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN) {
+                    line.setVisible(false);
+                } else {
+                    line.setVisible(true);
+                    const alpha = n.state === NODE_STATE.GHOST ? 0.25 : 1.0;
+                    line.setAlpha(alpha);
+                }
             }
         }
     }

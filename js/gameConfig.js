@@ -154,6 +154,10 @@ const GAME_STATE_DEFAULTS = {
     // Purchased upgrade levels  { nodeId: level }
     upgrades: {},
 
+    // Duo-Box system
+    activeShards: {},      // { tierNum: 'shardId' } — which shard node is active per tier
+    duoBoxPurchased: {},   // { tierNum: true } — has player purchased either node in this tier's duo-box?
+
     // Lifetime Stats
     stats: {
         totalKills: 0,

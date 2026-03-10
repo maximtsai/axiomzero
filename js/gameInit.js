@@ -89,6 +89,22 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         pulseAttack.unlock();
     }
 
+    // Duo-box weapons (must be unlocked via Neural Tree shard purchase)
+    lightningAttack.init();
+    shockwaveAttack.init();
+    // Restore weapon state from save
+    if (gameState.duoBoxPurchased && gameState.duoBoxPurchased[1]) {
+        const activeShard = gameState.activeShards && gameState.activeShards[1];
+        if (activeShard === 'lightning_weapon') {
+            lightningAttack.unlock();
+        } else if (activeShard === 'shockwave_weapon') {
+            shockwaveAttack.unlock();
+        }
+        // Recalc lightning upgrades if any were purchased
+        if (typeof _recalcLightningChains === 'function') _recalcLightningChains();
+        if (typeof _recalcLightningDamage === 'function') _recalcLightningDamage();
+    }
+
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.isMobileDevice() ? 3 : 0;
     createOptionsButton(GAME_CONSTANTS.WIDTH - 33 + optionsBtnOffset, 33 + optionsBtnOffset);

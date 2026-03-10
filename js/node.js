@@ -55,11 +55,17 @@ class Node {
         this.tier = def.tier || 1;
         this.isDuoBox = def.isDuoBox || false;
         this.shardId = def.shardId || null;
+        this.duoBoxTier = def.duoBoxTier || 0;
+        this.duoSiblingId = def.duoSiblingId || null;
         this.requiresMaxParent = def.requiresMaxParent || false;
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
+
+        // Duo-box backing sprite (only created by one of the two siblings)
+        this.duoBackingSprite = null;
+        this._isDuoBackingOwner = false; // true for the node that creates/owns the shared backing
 
         // Phaser objects
         this.btn = null;
@@ -91,6 +97,7 @@ class Node {
     canAfford() {
         const cost = this.getCost();
         // Updated to use resourceManager API
+        if (this.costType === 'shard') return resourceManager.getShards() >= cost;
         if (this.costType === 'insight') return resourceManager.getInsight() >= cost;
         return resourceManager.getData() >= cost;
     }
@@ -113,14 +120,48 @@ class Node {
     refreshState() {
         // 1. Determine if this branch is active (for Duo-Boxes)
         if (this.isDuoBox) {
-            this.branchActive = (gameState.activeShards[this.tier] === this.shardId);
+            const activeShard = gameState.activeShards[this.duoBoxTier];
+            if (activeShard) {
+                // A shard has been chosen for this tier
+                this.branchActive = (activeShard === this.shardId);
+            } else {
+                // No shard chosen yet — both are "active" (available to purchase)
+                this.branchActive = true;
+            }
         } else if (this.parentId) {
             const p = neuralTree.getNode(this.parentId);
             this.branchActive = p ? p.branchActive : true;
         }
 
         // 2. Set State based on requirements and level
-        if (!this.branchActive && this.level > 0) {
+        if (this.isDuoBox) {
+            // Duo-box special state logic
+            const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[this.duoBoxTier];
+            const activeShard = gameState.activeShards[this.duoBoxTier];
+
+            if (!this.isRequirementsMet()) {
+                // Parent not bought yet — check if we should be ghost or hidden
+                if (this.parentId) {
+                    const p = neuralTree.getNode(this.parentId);
+                    if (p && p.level > 0) {
+                        this.setState(NODE_STATE.GHOST);
+                    } else {
+                        this.setState(NODE_STATE.HIDDEN);
+                    }
+                } else {
+                    this.setState(NODE_STATE.HIDDEN);
+                }
+            } else if (!tierPurchased) {
+                // Parent bought, no shard purchased yet — both unlocked for purchase
+                this.setState(NODE_STATE.UNLOCKED);
+            } else if (this.branchActive) {
+                // This is the currently active shard node
+                this.setState(NODE_STATE.MAXED);
+            } else {
+                // This is the inactive sibling — clickable to swap
+                this.setState(NODE_STATE.UNLOCKED);
+            }
+        } else if (!this.branchActive && this.level > 0) {
             this.setState(NODE_STATE.GHOST); // Purchased but currently deactivated
         } else if (this.level >= this.maxLevel) {
             this.setState(NODE_STATE.MAXED);
@@ -132,7 +173,10 @@ class Node {
             this.setState(NODE_STATE.HIDDEN);
         }
 
-        // 3. Recursively refresh children so ghost/active state cascades down the tree
+        // 3. Update duo-box backing sprite if we own it
+        this._updateDuoBacking();
+
+        // 4. Recursively refresh children so ghost/active state cascades down the tree
         for (let i = 0; i < this.childIds.length; i++) {
             const child = neuralTree.getNode(this.childIds[i]);
             if (child) child.refreshState();
@@ -161,7 +205,9 @@ class Node {
         if (!this.canAfford()) return false;
 
         // Deduct cost via resourceManager (Fix 2: Centralized Economy)
-        if (this.costType === 'insight') {
+        if (this.costType === 'shard') {
+            resourceManager.addShard(-cost);
+        } else if (this.costType === 'insight') {
             resourceManager.addInsight(-cost);
         } else {
             resourceManager.addData(-cost);
@@ -172,6 +218,34 @@ class Node {
         // Persist
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
+
+        // Duo-Box first-purchase logic
+        if (this.isDuoBox && this.duoBoxTier > 0) {
+            if (!gameState.duoBoxPurchased) gameState.duoBoxPurchased = {};
+            const isFirstDuoPurchaseEver = Object.keys(gameState.duoBoxPurchased).length === 0;
+            gameState.duoBoxPurchased[this.duoBoxTier] = true;
+            if (!gameState.activeShards) gameState.activeShards = {};
+            gameState.activeShards[this.duoBoxTier] = this.shardId;
+
+            // First-purchase notification (GDD §11)
+            if (isFirstDuoPurchaseEver) {
+                const pos = tower.getPosition();
+                floatingText.show(
+                    pos.x,
+                    pos.y - 60,
+                    'SWAP FREELY DURING UPGRADES',
+                    { fontFamily: 'JetBrainsMono_Bold', color: '#ffffff', fontSize: 18 }
+                );
+            }
+
+            // Refresh both siblings so their states update
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling) {
+                sibling.level = 1;
+                if (!gameState.upgrades) gameState.upgrades = {};
+                gameState.upgrades[sibling.id] = sibling.level;
+            }
+        }
 
         // Apply effect
         this.effect(this.level);
@@ -192,8 +266,16 @@ class Node {
             );
         }
 
-        // Check if maxed
-        if (this.isMaxed()) {
+        // Check if maxed (for duo-box both siblings need a full refresh)
+        if (this.isDuoBox) {
+            this.refreshState();
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling) sibling.refreshState();
+
+            // Explicitly update visuals for both siblings
+            this._updateVisual();
+            if (sibling) sibling._updateVisual();
+        } else if (this.isMaxed()) {
             this.setState(NODE_STATE.MAXED);
         } else {
             this._updateVisual();
@@ -279,11 +361,62 @@ class Node {
             }
         }
 
+        // Duo-box backing sprite — only one sibling creates it (the one whose id sorts first)
+        if (this.isDuoBox && this.duoSiblingId && this.id < this.duoSiblingId) {
+            this._isDuoBackingOwner = true;
+            const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
+            const centerX = (this.treeX + (siblingDef ? siblingDef.treeX : this.treeX)) / 2 + offsetX;
+            const centerY = (this.treeY + (siblingDef ? siblingDef.treeY : this.treeY)) / 2 + offsetY; // centered on siblings
+            const backingDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1.5; // Behind nodes but above lines
+
+            this.duoBackingSprite = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing_disabled.png')
+                .setOrigin(0.5, 0.5)
+                .setScale(0.9) // restored to 90% of base size
+                .setDepth(backingDepth)
+                .setScrollFactor(0)
+                .setVisible(false);
+
+            if (treeGroup) treeGroup.add(this.duoBackingSprite);
+            if (draggableGroup) draggableGroup.add(this.duoBackingSprite);
+        }
+
         this._updateVisual();
     }
 
     _onClick() {
         if (this.state !== NODE_STATE.UNLOCKED) return;
+
+        // Duo-box swap logic: if this tier is already purchased and this is the inactive sibling
+        if (this.isDuoBox && this.duoBoxTier > 0) {
+            const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[this.duoBoxTier];
+            const activeShard = gameState.activeShards && gameState.activeShards[this.duoBoxTier];
+
+            if (tierPurchased && activeShard !== this.shardId) {
+                // Free swap — no cost
+                gameState.activeShards[this.duoBoxTier] = this.shardId;
+
+                // Apply this node's effect, deactivate sibling's
+                this.effect(this.level);
+
+                // Refresh both siblings and their entire sub-trees
+                this.refreshState();
+                const sibling = neuralTree.getNode(this.duoSiblingId);
+                if (sibling) sibling.refreshState();
+
+                // Explicitly update visuals for both siblings
+                this._updateVisual();
+                if (sibling) sibling._updateVisual();
+
+                // Update connection lines
+                neuralTree._revealChildren(this.parentId);
+
+                // Refresh tooltip
+                if (nodeTooltip.getCurrentNode() === this) {
+                    this._showHover(true);
+                }
+                return;
+            }
+        }
 
         // Mobile interaction refinement: First tap shows info, second tap buys.
         if (GAME_VARS.wasTouch) {
@@ -344,8 +477,17 @@ class Node {
                 this.btn.disable = { ref: 'node_unlocked_disabled.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setAlpha(1);
+
+                // Handle affordability vs. free swap for Duo-Boxes
+                // A duo-box node is swappable if its tier is purchased but it isn't the active one
+                const isDuoSwappable = this.isDuoBox &&
+                    gameState.duoBoxPurchased &&
+                    gameState.duoBoxPurchased[this.duoBoxTier] &&
+                    gameState.activeShards[this.duoBoxTier] !== this.shardId;
+
                 // Show disabled appearance when unaffordable, but hover still works
-                if (this.canAfford()) {
+                // Skip afford check if it's already swappable (free)
+                if (isDuoSwappable || this.canAfford()) {
                     this.btn.setState(NORMAL);
                     currentSpriteRef = 'node_unlocked.png';
                 } else {
@@ -375,6 +517,35 @@ class Node {
         // Store current sprite for next state change
         this.lastSpriteRef = currentSpriteRef;
         this.lastVisualState = this.state;
+    }
+
+    // ── duo-box backing sprite management ────────────────────────────────
+
+    _updateDuoBacking() {
+        // Only the backing owner manages the sprite
+        if (!this._isDuoBackingOwner || !this.duoBackingSprite) return;
+
+        const tier = this.duoBoxTier;
+        const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[tier];
+
+        // Show backing if either sibling is not HIDDEN
+        if (this.state === NODE_STATE.HIDDEN) {
+            this.duoBackingSprite.setVisible(false);
+            return;
+        }
+
+        this.duoBackingSprite.setVisible(true);
+
+        if (tierPurchased) {
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
+            this.duoBackingSprite.setAlpha(1);
+        } else if (this.state === NODE_STATE.GHOST) {
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_disabled.png');
+            this.duoBackingSprite.setAlpha(0.4);
+        } else {
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_disabled.png');
+            this.duoBackingSprite.setAlpha(1);
+        }
     }
 
     // ── fadeout animation ───────────────────────────────────────────────
@@ -588,6 +759,7 @@ class Node {
     setVisible(vis) {
         if (this.btn) this.btn.setVisible(vis);
         if (this.iconSprite) this.iconSprite.setVisible(vis);
+        if (this.duoBackingSprite) this.duoBackingSprite.setVisible(vis);
         if (!vis) this._hideHover();
     }
 
@@ -600,6 +772,10 @@ class Node {
         if (this.fadeoutSprite) {
             this.fadeoutSprite.destroy();
             this.fadeoutSprite = null;
+        }
+        if (this.duoBackingSprite) {
+            this.duoBackingSprite.destroy();
+            this.duoBackingSprite = null;
         }
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }

@@ -17,6 +17,20 @@ function _recalcPulseSize() {
     pulseAttack.setSize(100 + 40 * surgeLv);
 }
 
+/** Recalculates lightning chain count from upgrade nodes. */
+function _recalcLightningChains() {
+    const ups = gameState.upgrades || {};
+    const chainLv = ups.lightning_chain || 0;
+    lightningAttack.setChainCount(2 + chainLv);
+}
+
+/** Recalculates lightning damage from upgrade nodes. */
+function _recalcLightningDamage() {
+    const ups = gameState.upgrades || {};
+    const boostLv = ups.lightning_boost || 0;
+    lightningAttack.setDamage(6 + 3 * boostLv);
+}
+
 const NODE_DEFS = [
     {
         id: 'awaken',
@@ -53,7 +67,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: 'awaken',
-        childIds: ['pulse_damage', 'magnet'],
+        childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon'],
         treeX: 400,
         treeY: 670,
         effect: function () {
@@ -263,6 +277,97 @@ const NODE_DEFS = [
         treeY: 830,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
+    {
+        id: 'lightning_weapon',
+        name: 'LIGHTNING',
+        icon: 'Skillicon14_17.png',
+        description: 'Tower gains a lightning weapon that chains across enemies.',
+        popupText: 'LIGHTNING WEAPON',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'basic_pulse',
+        childIds: ['lightning_chain', 'lightning_boost'],
+        isDuoBox: true,
+        duoBoxTier: 1,
+        shardId: 'lightning_weapon',
+        duoSiblingId: 'shockwave_weapon',
+        treeX: 370,
+        treeY: 550,
+        effect: function () {
+            lightningAttack.unlock();
+            shockwaveAttack.lock();
+        },
+    },
+    {
+        id: 'shockwave_weapon',
+        name: 'SHOCKWAVE',
+        icon: 'Skillicon14_20.png',
+        description: 'Tower pulses a shockwave every 3s, damaging nearby enemies.',
+        popupText: 'SHOCKWAVE WEAPON',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'basic_pulse',
+        childIds: [],
+        isDuoBox: true,
+        duoBoxTier: 1,
+        shardId: 'shockwave_weapon',
+        duoSiblingId: 'lightning_weapon',
+        treeX: 430,
+        treeY: 550,
+        effect: function () {
+            shockwaveAttack.unlock();
+            lightningAttack.lock();
+        },
+    },
+    {
+        id: 'lightning_chain',
+        name: 'FORK',
+        icon: 'Skillicon14_17.png',
+        description: '+1 lightning chain target',
+        popupText: '+1 CHAIN',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 15,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'lightning_weapon',
+        childIds: [],
+        treeX: 320,
+        treeY: 470,
+        effect: function () {
+            _recalcLightningChains();
+        },
+    },
+    {
+        id: 'lightning_boost',
+        name: 'VOLTAGE',
+        icon: 'Skillicon14_18.png',
+        description: '+50% lightning damage',
+        popupText: '+50% LIGHTNING DMG',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 20,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'lightning_weapon',
+        childIds: [],
+        treeX: 320,
+        treeY: 390,
+        effect: function () {
+            _recalcLightningDamage();
         },
     },
 ];
