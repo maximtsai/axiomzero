@@ -29,7 +29,7 @@ class HeavyEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5 * 0.201,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
-            size: 28
+            size: 32
         });
 
         if (this.img) this.img.setTint(0xffffff);

@@ -37,7 +37,7 @@ class LogicStrayEnemy extends Enemy {
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED;
         this.damage = 0;
         this.selfDamage = 0;
-        this.size = 14;
+        this.size = 20;
         this.isEnraged = false;
         this.rotationTime = Math.random() * 3; // Random start phase
         this.ghostTimer = 0;

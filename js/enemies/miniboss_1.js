@@ -62,7 +62,7 @@ class Miniboss1 extends Miniboss {
         this.damage = 0; // miniboss does NOT deal contact damage
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB1.SPEED_MULT;
         this.knockBackModifier = MB1.KNOCKBACK_MOD;
-        this.size = 70;
+        this.size = 60;
 
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = MB1.FIRE_INTERVAL; // Give full cooldown instead of 0

@@ -28,7 +28,7 @@ class SwarmerEnemy extends Enemy {
         this.selfDamage = this.maxHealth * 3;
         this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
         this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25;
-        this.size = 10;
+        this.size = 14;
 
         if (this.img) {
             this.img.setAlpha(1);

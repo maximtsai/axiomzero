@@ -38,7 +38,7 @@ class ShooterEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 15
+            size: 19
         });
 
         this.fireCooldown = 0;

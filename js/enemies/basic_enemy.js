@@ -35,7 +35,7 @@ class BasicEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 12
+            size: 18
         });
     }
 

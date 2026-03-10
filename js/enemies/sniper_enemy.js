@@ -49,7 +49,7 @@ class SniperEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.9,
-            size: 24
+            size: 28
         });
 
         this.projectileDamage = 4 * scaleFactor;

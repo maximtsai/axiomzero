@@ -55,7 +55,7 @@ class ProtectorEnemy extends Enemy {
             damage: 0,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.5,
-            size: 18
+            size: 26
         });
 
         this.state = PROTECTOR_STATE.RUSHING;

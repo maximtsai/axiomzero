@@ -29,7 +29,7 @@ class FastEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.501,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.5,
-            size: 15
+            size: 20
         });
 
         if (this.img) this.img.setTint(0xffffff); // Unique reset for this type
