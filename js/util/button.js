@@ -210,13 +210,13 @@ class Button {
         if (vis) {
             // Only the current state sprite should be visible; hide all others
             this.forceInvis = false;
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].setVisible(key === this.currImageRef);
-            });
+            }
         } else {
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].setVisible(false);
-            });
+            }
             this.forceInvis = true;
         }
         if (this.text) {
@@ -228,20 +228,25 @@ class Button {
         if (this.state === DISABLE && !this.hoverWhileDisabled) {
             return false;
         }
+        let currImage = this.imageRefs[this.currImageRef];
+        if (!currImage) return false;
+
         let scrollFactorX = this.normal.scrollFactorX !== undefined ? this.normal.scrollFactorX : 1;
         let scrollFactorY = this.normal.scrollFactorY !== undefined ? this.normal.scrollFactorY : 1;
-        let x = valX + PhaserScene.cameras.main.scrollX * scrollFactorX;
-        let y = valY + PhaserScene.cameras.main.scrollY * scrollFactorY;
-        let currImage = this.imageRefs[this.currImageRef];
+        let cam = this.scene ? this.scene.cameras.main : PhaserScene.cameras.main;
+        let x = valX + cam.scrollX * scrollFactorX;
+        let y = valY + cam.scrollY * scrollFactorY;
+
         let width = currImage.width * Math.abs(currImage.scaleX);
-        let height = currImage.height * Math.abs(currImage.scaleY);
         let leftMost = currImage.x - currImage.originX * width;
-        let rightMost = currImage.x + (1 - currImage.originX) * width;
+        let rightMost = leftMost + width;
         if (x < leftMost || x > rightMost) {
             return false;
         }
+
+        let height = currImage.height * Math.abs(currImage.scaleY);
         let topMost = currImage.y - currImage.originY * height;
-        let botMost = currImage.y + (1 - currImage.originY) * height;
+        let botMost = topMost + height;
         if (y < topMost || y > botMost) {
             return false;
         }
@@ -327,9 +332,9 @@ class Button {
         if (this.text) {
             this.text.setDepth(depth + 1);
         }
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].setDepth(depth);
-        });
+        }
     }
 
     setRotation(rot) {
@@ -337,9 +342,9 @@ class Button {
         this.hover.rotation = rot;
         this.press.rotation = rot;
         this.disable.rotation = rot;
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].setRotation(rot);
-        });
+        }
         if (this.text) {
             this.text.setRotation(rot);
         }
@@ -476,9 +481,9 @@ class Button {
             this.hover.x = x;
             this.press.x = x;
             this.disable.x = x;
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].x = x;
-            });
+            }
             if (this.text) {
                 this.text.x = x;
                 if (this.text.offsetX) {
@@ -491,9 +496,9 @@ class Button {
             this.hover.y = y;
             this.press.y = y;
             this.disable.y = y;
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].y = y;
-            });
+            }
             if (this.text) {
                 this.text.y = y;
                 if (this.text.offsetY) {
@@ -510,9 +515,9 @@ class Button {
             this.hover.scrollFactorX = x;
             this.press.scrollFactorX = x;
             this.disable.scrollFactorX = x;
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].scrollFactorX = x;
-            });
+            }
             if (this.text) {
                 this.text.scrollFactorX = x;
             }
@@ -522,9 +527,9 @@ class Button {
             this.hover.scrollFactorY = y;
             this.press.scrollFactorY = y;
             this.disable.scrollFactorY = y;
-            Object.keys(this.imageRefs).forEach(key => {
+            for (let key in this.imageRefs) {
                 this.imageRefs[key].scrollFactorY = y;
-            });
+            }
             if (this.text) {
                 this.text.scrollFactorY = y;
             }
@@ -532,9 +537,9 @@ class Button {
     }
 
     setAlpha(alpha = 1) {
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].alpha = alpha;
-        });
+        }
         if (this.text) {
             this.text.setAlpha(alpha);
         }
@@ -544,16 +549,16 @@ class Button {
         if (scaleY === undefined) {
             scaleY = scaleX;
         }
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].scaleX = scaleX;
             this.imageRefs[key].scaleY = scaleY;
-        });
+        }
     }
 
     setOrigin(origX, origY) {
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].setOrigin(origX, origY);
-        });
+        }
         return this;
     }
 
@@ -710,8 +715,8 @@ class Button {
             this.text.destroy();
         }
 
-        Object.keys(this.imageRefs).forEach(key => {
+        for (let key in this.imageRefs) {
             this.imageRefs[key].destroy();
-        });
+        }
     }
 }
