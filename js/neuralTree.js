@@ -79,30 +79,30 @@ const neuralTree = (() => {
 
         // Animation sequence for glitch outline
         const startGlitch = () => {
-            panelOutlineGlitch.setVisible(true);
-            panelOutlineGlitch.setAlpha(1);
+            const glitchSteps = [
+                { delay: 0, alpha: 1 },
+                { delay: 200, alpha: 0.4 },
+                { delay: 40, alpha: 1 },
+                { delay: 100, alpha: 0.25 },
+                { delay: 40, alpha: 1 },
+                { delay: 300, alpha: 0.25 },
+                { delay: 150, alpha: 0.5 },
+                { delay: 100, alpha: -1 }, // -1 = hide
+            ];
 
-            PhaserScene.time.delayedCall(200, () => {
-                panelOutlineGlitch.setAlpha(0.4);
-                PhaserScene.time.delayedCall(40, () => {
-                    panelOutlineGlitch.setAlpha(1);
-                    PhaserScene.time.delayedCall(100, () => {
-                        panelOutlineGlitch.setAlpha(0.25);
-                        PhaserScene.time.delayedCall(40, () => {
-                            panelOutlineGlitch.setAlpha(1);
-                            PhaserScene.time.delayedCall(300, () => {
-                                panelOutlineGlitch.setAlpha(0.25);
-                                PhaserScene.time.delayedCall(150, () => {
-                                    panelOutlineGlitch.setAlpha(0.5);
-                                    PhaserScene.time.delayedCall(100, () => {
-                                        panelOutlineGlitch.setVisible(false);
-                                    });
-                                });
-                            });
-                        });
-                    });
+            panelOutlineGlitch.setVisible(true);
+            let cumDelay = 0;
+            for (const step of glitchSteps) {
+                cumDelay += step.delay;
+                const { alpha } = step;
+                PhaserScene.time.delayedCall(cumDelay, () => {
+                    if (alpha < 0) {
+                        panelOutlineGlitch.setVisible(false);
+                    } else {
+                        panelOutlineGlitch.setAlpha(alpha);
+                    }
                 });
-            });
+            }
         };
 
         // Start the glitch animation (one-time upon creation)
@@ -186,14 +186,16 @@ const neuralTree = (() => {
         }
 
         // Set initial states
-        _applyInitialStates();
+        _refreshAllNodes();
     }
 
-    function _applyInitialStates() {
-        // Refresh all nodes. Parents refresh their children recursively,
-        // so we just need to hit lahat (all) root nodes or just all nodes to be safe.
+    function _refreshAllNodes() {
         for (const id in nodes) {
-            nodes[id].refreshState();
+            const n = nodes[id];
+            n.refreshState();
+            // Always set logical node visible; internal _updateVisual handles hiding button/label if HIDDEN.
+            // This prevents HIDDEN inner Duo nodes from hiding the shared backing sprite.
+            n.setVisible(true);
         }
     }
 
@@ -311,14 +313,7 @@ const neuralTree = (() => {
         dragSurface.setVisible(true);
         titleText.setVisible(true);
 
-        for (const id in nodes) {
-            const n = nodes[id];
-            // Ensure state is fresh
-            n.refreshState();
-            // Always set logical node visible; internal _updateVisual handles hiding button/label if HIDDEN.
-            // This prevents HIDDEN inner Duo nodes from hiding the shared backing sprite.
-            n.setVisible(true);
-        }
+        _refreshAllNodes();
 
         // Show DEPLOY button only if tower has been spawned
         const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
@@ -356,113 +351,81 @@ const neuralTree = (() => {
         _hideLines();
     }
 
+    function _createLine(px, py, cx, cy, metadata) {
+        const dx = cx - px, dy = cy - py;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) + 1.57;
+
+        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+        line.setScale(1.5, distance / 2);
+        line.setOrigin(0.5, 1);
+        line.setRotation(angle);
+        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+        line.setScrollFactor(0);
+        Object.assign(line, metadata);
+
+        lines.push(line);
+        treeGroup.add(line);
+        draggableGroup.add(line);
+        return line;
+    }
+
     function _updateLines() {
         // Create lines if they don't exist yet
         if (lines.length === 0) {
-            const isDuoLineDrawn = {}; // track which duo-box tiers already have their parent line
+            const isDuoLineDrawn = {};
 
             for (const id in nodes) {
                 const n = nodes[id];
                 if (n.parentId && nodes[n.parentId]) {
                     const p = nodes[n.parentId];
 
-                    // For duo-box nodes, draw ONE line from parent to center of duo container
                     if (n.isDuoBox && n.duoBoxTier > 0) {
                         const duoKey = n.duoBoxTier + '_' + n.parentId;
-                        if (isDuoLineDrawn[duoKey]) continue; // already drew this duo's line
+                        if (isDuoLineDrawn[duoKey]) continue;
                         isDuoLineDrawn[duoKey] = true;
 
-                        // Find both siblings to compute the center
                         const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
                         const cx = sibling ? (n.btn.x + sibling.btn.x) / 2 : n.btn.x;
                         const cy = sibling ? (n.btn.y + sibling.btn.y) / 2 : n.btn.y;
 
-                        const px = p.btn.x;
-                        const py = p.btn.y;
-
-                        const dx = cx - px;
-                        const dy = cy - py;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        const angle = Math.atan2(dy, dx) + 1.57;
-
-                        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
-                        line.setScale(1.5, distance / 2);
-                        line.setOrigin(0.5, 1);
-                        line.setRotation(angle);
-                        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
-                        line.setScrollFactor(0);
-
-                        // Mark as duo-box line — visible when either sibling is not HIDDEN
-                        line.childId = id;
-                        line.duoSiblingChildId = n.duoSiblingId;
-                        line.parentId = n.parentId;
-                        line.isDuoLine = true;
-
-                        lines.push(line);
-                        treeGroup.add(line);
-                        draggableGroup.add(line);
+                        _createLine(p.btn.x, p.btn.y, cx, cy, {
+                            childId: id,
+                            duoSiblingChildId: n.duoSiblingId,
+                            parentId: n.parentId,
+                            isDuoLine: true,
+                        });
                     } else {
-                        const px = p.btn.x;
-                        const py = p.btn.y;
-                        const cx = n.btn.x;
-                        const cy = n.btn.y;
-
-                        const dx = cx - px;
-                        const dy = cy - py;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        const angle = Math.atan2(dy, dx) + 1.57;
-
-                        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
-                        line.setScale(1.5, distance / 2);
-                        line.setOrigin(0.5, 1);
-                        line.setRotation(angle);
-                        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
-                        line.setScrollFactor(0);
-
-                        // Attach id data so we know who this line belongs to
-                        line.childId = id;
-                        line.parentId = n.parentId;
-
-                        lines.push(line);
-                        treeGroup.add(line);
-                        draggableGroup.add(line);
+                        _createLine(p.btn.x, p.btn.y, n.btn.x, n.btn.y, {
+                            childId: id,
+                            parentId: n.parentId,
+                        });
                     }
                 }
             }
         }
 
-        // Update their visual states based on the current nodes' states
+        // Update visual states based on current node states
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const p = nodes[line.parentId];
             const n = nodes[line.childId];
 
+            // Determine visibility
+            let shouldHide;
             if (line.isDuoLine) {
-                // Duo line: visible when parent is visible AND the Duo Box tier is visible
                 const isVisibleTier = (n.tier <= gameState.currentTier);
-                if (p.state === NODE_STATE.HIDDEN || !isVisibleTier) {
-                    line.setVisible(false);
-                } else {
-                    line.setVisible(true);
-                    // Line is solid if the parent is active (UNLOCKED/MAXED).
-                    // If the parent is a ghost, hide the line (alpha 0).
-                    const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
-                    line.setAlpha(parentActive ? 0.5 : 0); // Consistent 0.5 alpha
-                }
+                shouldHide = (p.state === NODE_STATE.HIDDEN || !isVisibleTier);
             } else {
-                if (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN) {
-                    line.setVisible(false);
-                } else {
-                    line.setVisible(true);
-                    const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
+                shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
+            }
 
-                    if (n.state === NODE_STATE.GHOST) {
-                        // show solid line only if parent is active
-                        line.setAlpha(parentActive ? 0.5 : 0);
-                    } else {
-                        line.setAlpha(0.5);
-                    }
-                }
+            if (shouldHide) {
+                line.setVisible(false);
+            } else {
+                line.setVisible(true);
+                const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
+                line.setAlpha(parentActive ? 0.5 : 0);
             }
         }
     }
