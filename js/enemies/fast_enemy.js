@@ -1,4 +1,4 @@
-// js/enemies/fast_enemy.js — High speed, low health interceptor enemy.
+// js/enemies/fast_enemy.js — High speed, low health interceptor enemy (MVC).
 //
 // Behaviour:
 //   • Moves at 2.5x speed of basic enemy.
@@ -6,21 +6,34 @@
 //   • Deals 0.501 of its max health to itself on tower contact.
 //   • Uses fast.png from enemies atlas.
 
-class FastEnemy extends Enemy {
+class FastEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'fast';
         this.baseResourceDrop = 1.5;
-        this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'fast.png');
-        this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
-        this.img.setVisible(false);
-        this.img.setActive(false);
+    }
 
-        // UI: Health sprite overlay
-        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'fast_enemy_hp.png');
-        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
-        this.hpImg.setVisible(false);
-        this.hpImg.setActive(false);
+    getHitFeedbackConfig() {
+        return {
+            wobbleIntensity: 0.4,
+            wobbleDuration: 200,
+            flickerAlpha: 0.4,
+            flickerDuration: 60
+        };
+    }
+}
+
+class FastEnemyView extends EnemyView {
+    constructor() {
+        super(Enemy.TEX_KEY, 'fast.png', 'fast_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+    }
+}
+
+class FastEnemy extends Enemy {
+    constructor() {
+        super();
+        this.model = new FastEnemyModel();
+        this.view = new FastEnemyView();
     }
 
     activate(x, y, scaleFactor) {
@@ -32,15 +45,6 @@ class FastEnemy extends Enemy {
             size: 20
         });
 
-        if (this.img) this.img.setTint(0xffffff); // Unique reset for this type
-    }
-
-    getHitFeedbackConfig() {
-        return {
-            wobbleIntensity: 0.4,
-            wobbleDuration: 200,
-            flickerAlpha: 0.4,
-            flickerDuration: 60
-        };
+        if (this.view.img) this.view.img.setTint(0xffffff);
     }
 }

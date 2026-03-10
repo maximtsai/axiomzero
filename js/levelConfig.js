@@ -7,12 +7,12 @@ const LEVEL_CONFIG = {
         initialWeights: {
             basic: 1,
             fast: 0.08,
-            shooter: 0.0,
+            shooter: 0.1,
             swarmer: 0.06,
-            sniper: 0.0,
-            heavy: 0.0,
-            logic_stray: 0.0,
-            protector: 0.0
+            sniper: 0.1,
+            heavy: 0.1,
+            logic_stray: 0.1,
+            protector: 0.1
         },
         lateWeights: {
             shooter: 0.1,

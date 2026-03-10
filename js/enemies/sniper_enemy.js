@@ -1,8 +1,8 @@
-// js/enemies/sniper_enemy.js — Long-range, slow-firing specialist enemy.
+// js/enemies/sniper_enemy.js — Long-range, slow-firing specialist enemy (MVC).
 //
 // Behaviour:
 //   • Stops at 250px from tower to fire.
-//   • Fires 1 high-damage bullet every 4 seconds.
+//   • Fires 1 high-damage bullet every 5 seconds.
 //   • First shot fires after 3 seconds of entering range.
 //   • Size is 2x basic enemy (24).
 //   • Uses sniper.png and sniper_projectile.png from enemies atlas.
@@ -12,35 +12,117 @@ const SNIPER_STATE = {
     ATTACKING: 'ATTACKING',
 };
 
-class SniperEnemy extends Enemy {
+class SniperEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'sniper';
         this.baseResourceDrop = 5;
-        this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'sniper.png');
-        this.img.setVisible(false);
-        this.img.setActive(false);
+        this.cannotRotate = true;
+        this.knockBackModifier = 0;
 
-        // UI: Health sprite overlay
-        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'sniper_enemy_hp.png');
-        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
-        this.hpImg.setRotation(-Math.PI / 2); // 90 deg CCW
-        this.hpImg.setVisible(false);
-        this.hpImg.setActive(false);
+        this.state = SNIPER_STATE.MOVING;
+        this.fireCooldown = 0;
+        this.baseAttackInterval = 5000;
+        this.projectileDamage = 4;
+        this.isCharging = false;
+        this._isRampingUp = false;
+        this._chargeWobbleTime = 0;
+    }
+}
+
+class SniperEnemyView extends EnemyView {
+    constructor() {
+        super(Enemy.TEX_KEY, 'sniper.png', 'sniper_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        // HP bar rotated 90 deg CCW
+        this.hpImg.setRotation(-Math.PI / 2);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
         this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 1);
         this.chargeSprite.setVisible(false);
+    }
 
-        this.state = SNIPER_STATE.MOVING;
-        this.fireCooldown = 0;
-        this.baseAttackInterval = 5000; // 5 seconds
-        this.isCharging = false;
-        this.cannotRotate = true;
-        this._isRampingUp = false;
-        this._chargeWobbleTime = 0;
-        this.knockBackModifier = 0;
+    startCharge() {
+        if (!this.chargeSprite) return;
+        this.chargeSprite.setVisible(true);
+        this.chargeSprite.setScale(0.2);
+        this.chargeSprite.setAlpha(1);
+
+        PhaserScene.tweens.killTweensOf(this.chargeSprite);
+
+        // Stage 1: Pop up
+        PhaserScene.tweens.add({
+            targets: this.chargeSprite,
+            scale: 1.1,
+            duration: 250,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                if (!this.chargeSprite.visible) return;
+                // Stage 2: Shrink and fade
+                PhaserScene.tweens.add({
+                    targets: this.chargeSprite,
+                    scale: 0.4,
+                    alpha: 0.7,
+                    duration: 350,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => {
+                        if (!this.chargeSprite.visible) return;
+                        // Stage 3: Slow build-up (flag handled by controller)
+                        PhaserScene.tweens.add({
+                            targets: this.chargeSprite,
+                            scale: 1.2,
+                            alpha: 1,
+                            duration: 2200,
+                            ease: 'Linear',
+                            onComplete: () => {
+                                if (!this.chargeSprite.visible) return;
+                                // Stage 4: Final jump
+                                this.chargeSprite.setScale(1.35);
+                                this.chargeSprite.setAlpha(1);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    stopCharge() {
+        if (this.chargeSprite) {
+            this.chargeSprite.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+        }
+    }
+
+    syncChargePosition(x, y) {
+        if (this.chargeSprite && this.chargeSprite.visible) {
+            this.chargeSprite.setPosition(x, y);
+            this.chargeSprite.setRotation(0);
+        }
+    }
+
+    applyChargeWobble(dt, wobbleTime) {
+        if (!this.chargeSprite || !this.chargeSprite.visible) return wobbleTime;
+        wobbleTime += dt;
+        const wx = Math.sin(wobbleTime * 25) * 0.06;
+        const wy = Math.cos(wobbleTime * 21) * 0.06;
+        const baseScale = this.chargeSprite.scaleX;
+        this.chargeSprite.scaleX = baseScale + wx;
+        this.chargeSprite.scaleY = baseScale + wy;
+        return wobbleTime;
+    }
+
+    deactivate() {
+        super.deactivate();
+        this.stopCharge();
+    }
+}
+
+class SniperEnemy extends Enemy {
+    constructor() {
+        super();
+        this.model = new SniperEnemyModel();
+        this.view = new SniperEnemyView();
     }
 
     activate(x, y, scaleFactor) {
@@ -52,159 +134,99 @@ class SniperEnemy extends Enemy {
             size: 28
         });
 
-        this.projectileDamage = 4 * scaleFactor;
-        this.state = SNIPER_STATE.MOVING;
-        this.fireCooldown = 0;
-        this.isCharging = false;
-        this._isRampingUp = false;
-        this._chargeWobbleTime = 0;
+        const m = this.model;
+        m.projectileDamage = 4 * scaleFactor;
+        m.state = SNIPER_STATE.MOVING;
+        m.fireCooldown = 0;
+        m.isCharging = false;
+        m._isRampingUp = false;
+        m._chargeWobbleTime = 0;
 
-        if (this.img) this.img.setTint(0xffffff);
+        if (this.view.img) this.view.img.setTint(0xffffff);
     }
 
     deactivate() {
+        this.model.isCharging = false;
+        this.model._isRampingUp = false;
         super.deactivate();
-        if (this.chargeSprite) {
-            PhaserScene.tweens.killTweensOf(this.chargeSprite);
-            this.chargeSprite.setVisible(false);
-        }
-        this.isCharging = false;
     }
 
     update(dt) {
+        const m = this.model;
+        const v = this.view;
         const tPos = tower.getPosition();
-        const dx = tPos.x - this.x;
-        const dy = tPos.y - this.y;
+        const dx = tPos.x - m.x;
+        const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
         const range = 250;
 
-        // Sync charge sprite position if it's active
-        if (this.chargeSprite && this.chargeSprite.visible) {
-            this.chargeSprite.setPosition(this.x, this.y);
-            this.chargeSprite.setRotation(0);
+        // Sync charge sprite position
+        v.syncChargePosition(m.x, m.y);
 
-            if (this._isRampingUp) {
-                this._chargeWobbleTime += dt;
-                const wx = Math.sin(this._chargeWobbleTime * 25) * 0.06;
-                const wy = Math.cos(this._chargeWobbleTime * 21) * 0.06;
-                // Add wobble on top of current base scale
-                const baseScale = this.chargeSprite.scaleX;
-                this.chargeSprite.scaleX = baseScale + wx;
-                this.chargeSprite.scaleY = baseScale + wy;
-            }
+        // Apply wobble during ramp-up
+        if (m._isRampingUp) {
+            m._chargeWobbleTime = v.applyChargeWobble(dt, m._chargeWobbleTime);
         }
 
-        if (this.state === SNIPER_STATE.MOVING) {
+        if (m.state === SNIPER_STATE.MOVING) {
             super.update(dt);
 
-            if (this.isCharging) {
-                this._stopCharge();
+            if (m.isCharging) {
+                v.stopCharge();
+                m.isCharging = false;
+                m._isRampingUp = false;
             }
 
             if (distToTower <= range) {
-                this.state = SNIPER_STATE.ATTACKING;
-                this.vx = 0;
-                this.vy = 0;
-                // Starts with a cooldown of 3 seconds upon first entering range
-                this.fireCooldown = 3000;
+                m.state = SNIPER_STATE.ATTACKING;
+                m.vx = 0;
+                m.vy = 0;
+                m.fireCooldown = 3000;
             }
-        } else if (this.state === SNIPER_STATE.ATTACKING) {
-            if (distToTower > range + 20) { // Slight buffer for retreat
-                this.state = SNIPER_STATE.MOVING;
-                this._stopCharge();
-                this.aimAt(tPos.x, tPos.y);
+        } else if (m.state === SNIPER_STATE.ATTACKING) {
+            if (distToTower > range + 20) {
+                m.state = SNIPER_STATE.MOVING;
+                v.stopCharge();
+                m.isCharging = false;
+                m._isRampingUp = false;
+                m.aimAt(tPos.x, tPos.y);
                 return;
             }
 
-            this.baseRotation = Math.atan2(dy, dx);
-            this.setRotation(this.baseRotation);
+            m.baseRotation = Math.atan2(dy, dx);
+            v.setRotation(m.baseRotation);
 
-            this.vx = 0;
-            this.vy = 0;
+            m.vx = 0;
+            m.vy = 0;
 
             const dtMs = dt * 1000;
-            this.fireCooldown -= dtMs;
+            m.fireCooldown -= dtMs;
 
-            if (this.fireCooldown <= 3000 && !this.isCharging && this.fireCooldown > 0) {
-                this._startCharge();
+            if (m.fireCooldown <= 3000 && !m.isCharging && m.fireCooldown > 0) {
+                m.isCharging = true;
+                m._isRampingUp = true;
+                m._chargeWobbleTime = 0;
+                v.startCharge();
             }
 
-            if (this.fireCooldown <= 0) {
+            if (m.fireCooldown <= 0) {
                 this._fireBullet(tPos.x, tPos.y);
-                this._stopCharge();
-                this.fireCooldown = this.baseAttackInterval;
+                v.stopCharge();
+                m.isCharging = false;
+                m._isRampingUp = false;
+                m.fireCooldown = m.baseAttackInterval;
             }
-        }
-    }
-
-    _startCharge() {
-        if (!this.chargeSprite) return;
-        this.isCharging = true;
-        this.chargeSprite.setVisible(true);
-        this.chargeSprite.setScale(0.2);
-        this.chargeSprite.setAlpha(1);
-
-        // Animation sequence
-        PhaserScene.tweens.killTweensOf(this.chargeSprite);
-
-        // Stage 1: Pop up
-        PhaserScene.tweens.add({
-            targets: this.chargeSprite,
-            scale: 1.1,
-            duration: 250,
-            ease: 'Quad.easeIn',
-            onComplete: () => {
-                if (!this.isCharging) return;
-                // Stage 2: Shrink and fade
-                PhaserScene.tweens.add({
-                    targets: this.chargeSprite,
-                    scale: 0.4,
-                    alpha: 0.7,
-                    duration: 350,
-                    ease: 'Quad.easeOut',
-                    onComplete: () => {
-                        if (!this.isCharging) return;
-                        // Stage 3: Slow build-up
-                        this._isRampingUp = true;
-                        this._chargeWobbleTime = 0;
-                        PhaserScene.tweens.add({
-                            targets: this.chargeSprite,
-                            scale: 1.2,
-                            alpha: 1,
-                            duration: 2200,
-                            ease: 'Linear',
-                            onComplete: () => {
-                                if (!this.isCharging) return;
-                                // Stage 4: Final jump
-                                this._isRampingUp = false;
-                                this.chargeSprite.setScale(1.35);
-                                this.chargeSprite.setAlpha(1);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    _stopCharge() {
-        this.isCharging = false;
-        this._isRampingUp = false;
-        if (this.chargeSprite) {
-            this.chargeSprite.setVisible(false);
-            PhaserScene.tweens.killTweensOf(this.chargeSprite);
         }
     }
 
     _fireBullet(targetX, targetY) {
         if (typeof enemyBulletManager !== 'undefined') {
             enemyBulletManager.fire(
-                this.x, this.y,
+                this.model.x, this.model.y,
                 targetX, targetY,
-                this.projectileDamage,
+                this.model.projectileDamage,
                 'sniper_projectile.png'
             );
         }
     }
-
 }

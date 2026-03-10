@@ -1,42 +1,46 @@
-// js/enemies/swarmer_enemy.js — Enemy that spawns in clusters.
+// js/enemies/swarmer_enemy.js — Enemy that spawns in clusters (MVC).
 //
 // Behaviour:
-//   • Speeds is 1.25x of basic enemy, health is 3.
+//   • Speed is 1.25x of basic enemy, health is 3.
 //   • Spawned in groups to overwhelm the tower.
 //   • Deals same base damage as basic enemy.
 
-class SwarmerEnemy extends Enemy {
+class SwarmerEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'swarmer';
         this.baseResourceDrop = 0.4;
-        this.img = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'swarmer.png');
-        this.img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
-        this.img.setVisible(false);
-        this.img.setActive(false);
+    }
+}
 
-        // UI: Health sprite overlay
-        this.hpImg = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'swarmer_enemy_hp.png');
-        this.hpImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES);
-        this.hpImg.setVisible(false);
-        this.hpImg.setActive(false);
+class SwarmerEnemyView extends EnemyView {
+    constructor() {
+        super(Enemy.TEX_KEY, 'swarmer.png', 'swarmer_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+    }
+}
+
+class SwarmerEnemy extends Enemy {
+    constructor() {
+        super();
+        this.model = new SwarmerEnemyModel();
+        this.view = new SwarmerEnemyView();
     }
 
     activate(x, y, scaleFactor) {
-        this.maxHealth = 3; // Always 3
-        this.health = this.maxHealth;
-        this.selfDamage = this.maxHealth * 3;
-        this.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
-        this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25;
-        this.size = 14;
+        this.model.maxHealth = 3; // Always 3
+        this.model.health = this.model.maxHealth;
+        this.model.selfDamage = this.model.maxHealth * 3;
+        this.model.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
+        this.model.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25;
+        this.model.size = 14;
 
-        if (this.img) {
-            this.img.setAlpha(1);
-            this.img.setScale(1);
+        if (this.view.img) {
+            this.view.img.setAlpha(1);
+            this.view.img.setScale(1);
         }
-        if (this.hpImg) {
-            this.hpImg.setAlpha(1);
-            this.hpImg.setScale(1);
+        if (this.view.hpImg) {
+            this.view.hpImg.setAlpha(1);
+            this.view.hpImg.setScale(1);
         }
 
         super.activate(x, y);

@@ -1,32 +1,35 @@
-// js/enemies/miniboss.js — Abstract base class for all miniboss types.
+// js/enemies/miniboss.js — Abstract base class for all miniboss types (MVC).
 //
-// Extends Enemy with miniboss-specific behaviour:
+// Extends EnemyModel/Enemy with miniboss-specific behaviour:
 //   • Not knockback-immune, but knockback is reduced (knockBackModifier)
 //   • Spawns from left/right side only (constrained angle)
 //   • Does not scale with wave progression
 //   • Does NOT die on tower contact (handled by enemyManager)
-//
-// Subclasses (Miniboss1, etc.) override activate(), update(), takeDamage().
+
+class MinibossModel extends EnemyModel {
+    constructor() {
+        super();
+        this.type = 'miniboss';
+        this.isBoss = true;
+        this.isMiniboss = true;
+        this.knockBackModifier = 0;
+    }
+}
 
 class Miniboss extends Enemy {
     constructor() {
         super();
-        this.type = 'miniboss';
-        this.isBoss = true;        // minibosses are now knockback-immune
-        this.isMiniboss = true;
-        this.knockBackModifier = 0; // 0 knockback
+        // Subclasses MUST set this.model and this.view
     }
 
     /**
      * Returns a spawn angle constrained to the left or right side of the screen.
-     * The angle is within ±(MINIBOSS_SPAWN_ANGLE/2) degrees from horizontal,
-     * randomly choosing left (π) or right (0) side.
      * @returns {number} Angle in radians
      */
     static getSpawnAngle() {
         const halfCone = (GAME_CONSTANTS.MINIBOSS_SPAWN_ANGLE / 2) * (Math.PI / 180);
-        const side = Math.random() < 0.5 ? 0 : Math.PI; // right or left
-        const offset = (Math.random() * 2 - 1) * halfCone; // random within cone
+        const side = Math.random() < 0.5 ? 0 : Math.PI;
+        const offset = (Math.random() * 2 - 1) * halfCone;
         return side + offset;
     }
 }
