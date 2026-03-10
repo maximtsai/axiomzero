@@ -5,8 +5,8 @@
 class ShockwaveAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between pulses
-        this.BASE_DAMAGE = 5;
-        this.BASE_RADIUS = 140;     // px — damage radius
+        this.BASE_DAMAGE = 6;
+        this.BASE_RADIUS = 160;     // px — damage radius
 
         this.active = false;
         this.unlocked = false;
@@ -32,8 +32,9 @@ class ShockwaveAttackModel {
 
 class ShockwaveAttackView {
     constructor() {
-        this.EXPAND_DURATION = 350;  // ms — ring expansion time
-        this.MAX_SCALE = 0.6;       // final scale of shockwave.png (400×400 base)
+        this.EXPAND_DURATION = 400; // ms — expansion time
+        this.FADE_DURATION = 1000;  // ms — ring fade time
+        this.MAX_SCALE = 0.7;       // scale of shockwave.png (400×400 base) to match 160px radius
 
         this.sprite = null;
     }
@@ -52,18 +53,26 @@ class ShockwaveAttackView {
         if (!this.sprite) return;
 
         this.sprite.setPosition(x, y);
-        this.sprite.setScale(0.05);
-        this.sprite.setAlpha(1.5);
+        this.sprite.setScale(this.MAX_SCALE * 0.7);
+        this.sprite.setAlpha(1.0);
         this.sprite.setVisible(true);
         this.sprite.setRotation(Math.random() * Math.PI * 2);
 
+        // Expansion tween
         PhaserScene.tweens.add({
             targets: this.sprite,
             scaleX: this.MAX_SCALE,
             scaleY: this.MAX_SCALE,
-            alpha: 0,
             duration: this.EXPAND_DURATION,
-            ease: 'Quad.easeIn',
+            ease: 'Quart.easeOut'
+        });
+
+        // Fade out tween
+        PhaserScene.tweens.add({
+            targets: this.sprite,
+            alpha: 0,
+            duration: this.FADE_DURATION,
+            ease: 'Power1.easeOut',
             onComplete: () => {
                 this.sprite.setVisible(false);
             }
