@@ -193,9 +193,6 @@ class SniperEnemy extends Enemy {
                 return;
             }
 
-            m.baseRotation = Math.atan2(dy, dx);
-            v.setRotation(m.baseRotation);
-
             m.vx = 0;
             m.vy = 0;
 

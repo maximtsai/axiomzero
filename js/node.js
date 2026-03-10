@@ -78,6 +78,9 @@ class Node {
         this.fadeoutTween = null;
         this.lastVisualState = NODE_STATE.HIDDEN;
         this.lastSpriteRef = null;
+
+        // Mobile two-tap purchase guard
+        this._tapConfirmed = false;
     }
 
     // ── helpers ──────────────────────────────────────────────────────────
@@ -458,15 +461,13 @@ class Node {
 
         // Mobile interaction refinement: First tap shows info, second tap buys.
         if (GAME_VARS.wasTouch) {
-            const isShowingThis = nodeTooltip.isVisible() && nodeTooltip.getCurrentNode() === this;
-            const tooltipAge = nodeTooltip.getShowAge();
-
-            // If tooltip isn't showing, or was JUST shown (likely by the 'hover' step of this same tap),
-            // then we only show the hover and stop there. 150ms is a safe threshold for a single tap.
-            if (!isShowingThis || tooltipAge < 150) {
+            if (!this._tapConfirmed) {
+                // First tap — show the tooltip and mark as confirmed for next tap
+                this._tapConfirmed = true;
                 this._showHover();
                 return;
             }
+            // Second tap — fall through to purchase
         }
 
         if (this.canAfford()) {
@@ -634,6 +635,7 @@ class Node {
     }
 
     _hideHover() {
+        this._tapConfirmed = false;
         if (nodeTooltip.getCurrentNode() === this) {
             nodeTooltip.hide();
         }

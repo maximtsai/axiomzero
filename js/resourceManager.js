@@ -110,6 +110,28 @@ const resourceManager = (() => {
         _setupDrop(d, x, y);
     }
 
+    function spawnShardDrop(x, y) {
+        const img = PhaserScene.add.image(x, y, 'player', 'resrc_shard.png');
+        img.setScale(1.0);
+        img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+
+        const d = {
+            img: img,
+            alive: true,
+            flying: true,
+            readyToCollect: false,
+            x: x,
+            y: y,
+            dx: 0,
+            dy: 0,
+            inertia: -0.05,
+            type: 'shard',
+            spawnTween: null,
+        };
+
+        flyingDrops.push(d);
+    }
+
     function _setupDrop(d, x, y) {
         totalDropsSpawned++;
 
@@ -188,6 +210,15 @@ const resourceManager = (() => {
         gameState.shard = (gameState.shard || 0) + amount;
         sessionShards += amount;
         messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
+
+        if (amount > 0) {
+            floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, '+1 SHARD ACQUIRED', {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: 22,
+                color: '#ff5555',
+                depth: GAME_CONSTANTS.DEPTH_UI + 100,
+            });
+        }
     }
 
     function addProcessor(amount) {
@@ -255,6 +286,9 @@ const resourceManager = (() => {
     function _deactivate(d) {
         _resetDrop(d); // Hide visual and stop tweens immediately
         if (d.type === 'processor') processorPool.release(d);
+        else if (d.type === 'shard') {
+            d.img.destroy();
+        }
         else dropPool.release(d);
     }
 
@@ -264,6 +298,7 @@ const resourceManager = (() => {
             const d = flyingDrops[i];
             _deactivate(d);
             if (d.type === 'processor') addProcessor(1);
+            else if (d.type === 'shard') addShard(1);
             else addData(1);
         }
         flyingDrops.length = 0;
@@ -340,6 +375,7 @@ const resourceManager = (() => {
             if (d.readyToCollect) {
                 _deactivate(d);
                 if (d.type === 'processor') addProcessor(1);
+                else if (d.type === 'shard') addShard(1);
                 else addData(1);
 
                 flyingDrops[i] = flyingDrops[flyingDrops.length - 1];
@@ -400,7 +436,7 @@ const resourceManager = (() => {
     }
 
     function _onMinibossDefeated(x, y) {
-        addShard(1);
+        spawnShardDrop(x, y);
     }
 
     function _onPhaseChanged(phase) {
@@ -413,7 +449,7 @@ const resourceManager = (() => {
     }
 
     return {
-        init, spawnDataDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
+        init, spawnDataDrop, spawnShardDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
         getData, getInsight, getShards, getProcessors, getCoins,
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
         resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
