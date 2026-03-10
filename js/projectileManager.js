@@ -16,7 +16,7 @@ const projectileManager = (() => {
         pool = new ObjectPool(
             () => {
                 const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
-                img.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES);
+                img.setDepth(150); // Below tower (200) but above enemies (100)
                 img.setScale(6);
                 img.setVisible(false);
                 img.setActive(false);
@@ -41,7 +41,7 @@ const projectileManager = (() => {
         hitAnimPool = new ObjectPool(
             () => {
                 const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'hit_circle1.png');
-                spr.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES + 1);
+                spr.setDepth(151); // Slightly above projectiles
                 spr.setVisible(false);
                 spr.setActive(false);
                 spr.on('animationcomplete', function (anim) {

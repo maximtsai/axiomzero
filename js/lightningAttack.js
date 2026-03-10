@@ -47,7 +47,7 @@ class LightningAttackView {
 
     drawBolt(fromX, fromY, toX, toY) {
         const gfx = PhaserScene.add.graphics();
-        gfx.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES + 1);
+        gfx.setDepth(150); // Below tower (200) but above enemies (100)
         gfx.setScrollFactor(0);
 
         const dx = toX - fromX;

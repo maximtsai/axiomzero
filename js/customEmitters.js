@@ -51,7 +51,7 @@ const customEmitters = (() => {
         angle: { min: -180, max: 180 },
     }
 
-    const _strike = _make('pixels', strikeParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+    const _strike = _make('pixels', strikeParams, 152);
 
     function basicStrike(x, y, angle) {
         const count = Math.floor(Math.random() * 3) + 3;
@@ -69,7 +69,7 @@ const customEmitters = (() => {
         const count = Math.floor(Math.random() * 2) + 2;
         const minAngle = angle - 50;
         const maxAngle = angle + 50;
-        const depth = GAME_CONSTANTS.DEPTH_ENEMIES + 2;
+        const depth = 152;
 
         for (let i = 0; i < count; i++) {
             const sprite = strikeSpritePool.get();

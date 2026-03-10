@@ -42,7 +42,7 @@ class ShockwaveAttackView {
     init() {
         this.sprite = PhaserScene.add.image(0, 0, 'player', 'shockwave.png');
         this.sprite.setOrigin(0.5, 0.5);
-        this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1); // Below tower
+        this.sprite.setDepth(150); // Below tower (200) but above enemies (100)
         this.sprite.setScrollFactor(0);
         this.sprite.setScale(0.05);
         this.sprite.setAlpha(0);
