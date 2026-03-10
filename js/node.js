@@ -51,7 +51,7 @@ class Node {
         this.treeY = def.treeY || 0;
         this.icon = def.icon || null;
 
-        // New Properties for Tier and Duo-Box Logic
+        // Tier and Duo-Box properties
         this.tier = def.tier || 1;
         this.isDuoBox = def.isDuoBox || false;
         this.shardId = def.shardId || null;
@@ -80,6 +80,12 @@ class Node {
         this.lastSpriteRef = null;
     }
 
+    // ── helpers ──────────────────────────────────────────────────────────
+
+    _isDuoTierPurchased(tier = this.duoBoxTier) {
+        return !!(gameState.duoBoxPurchased && gameState.duoBoxPurchased[tier]);
+    }
+
     // ── cost calculation ─────────────────────────────────────────────────
 
     getCost() {
@@ -102,21 +108,34 @@ class Node {
         return resourceManager.getData() >= cost;
     }
 
+    _deductCost(cost) {
+        if (this.costType === 'shard') { resourceManager.addShard(-cost); }
+        else if (this.costType === 'insight') { resourceManager.addInsight(-cost); }
+        else { resourceManager.addData(-cost); }
+    }
+
     // ── state management ─────────────────────────────────────────────────
 
-    // NEW: Logic to check Tier and Parent requirements
     isRequirementsMet() {
         if (gameState.currentTier < this.tier) return false;
         if (this.parentId) {
             const p = neuralTree.getNode(this.parentId);
-            if (!p || p.level < 1 || !p.branchActive) return false;
-            // NEW: Check for full upgrade if required
+            if (!p || !p.branchActive) return false;
+
+            if (p.isDuoBox) {
+                if (!this._isDuoTierPurchased(p.duoBoxTier)) return false;
+            } else {
+                // Standard node parent must be bought
+                if (p.level < 1) return false;
+            }
+
+            // Check for full upgrade if required
             if (this.requiresMaxParent && p.level < p.maxLevel) return false;
         }
         return true;
     }
 
-    // NEW: Handles Duo-Box swapping and recursive ghosting
+    // Handles Duo-Box swapping and recursive ghosting
     refreshState() {
         // 1. Determine if this branch is active (for Duo-Boxes)
         if (this.isDuoBox) {
@@ -129,28 +148,40 @@ class Node {
                 this.branchActive = true;
             }
         } else if (this.parentId) {
-            const p = neuralTree.getNode(this.parentId);
-            this.branchActive = p ? p.branchActive : true;
+            const parent = neuralTree.getNode(this.parentId);
+            this.branchActive = parent ? parent.branchActive : true;
+        }
+
+        // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
+        if (this.parentId) {
+            const parent = neuralTree.getNode(this.parentId);
+            if (parent && parent.state === NODE_STATE.HIDDEN) {
+                this.setState(NODE_STATE.HIDDEN);
+                for (let i = 0; i < this.childIds.length; i++) {
+                    const child = neuralTree.getNode(this.childIds[i]);
+                    if (child) child.refreshState();
+                }
+                return;
+            }
+
+            // Duo child reveal: Keep hidden until DUO is actually BOUGHT
+            if (parent && parent.isDuoBox) {
+                if (!this._isDuoTierPurchased(parent.duoBoxTier)) {
+                    this.setState(NODE_STATE.HIDDEN);
+                    return;
+                }
+            }
         }
 
         // 2. Set State based on requirements and level
         if (this.isDuoBox) {
             // Duo-box special state logic
-            const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[this.duoBoxTier];
+            const tierPurchased = this._isDuoTierPurchased();
             const activeShard = gameState.activeShards[this.duoBoxTier];
 
             if (!this.isRequirementsMet()) {
-                // Parent not bought yet — check if we should be ghost or hidden
-                if (this.parentId) {
-                    const p = neuralTree.getNode(this.parentId);
-                    if (p && p.level > 0) {
-                        this.setState(NODE_STATE.GHOST);
-                    } else {
-                        this.setState(NODE_STATE.HIDDEN);
-                    }
-                } else {
-                    this.setState(NODE_STATE.HIDDEN);
-                }
+                // Parent not bought yet — Duo inner nodes stay HIDDEN until unlocked
+                this.setState(NODE_STATE.HIDDEN);
             } else if (!tierPurchased) {
                 // Parent bought, no shard purchased yet — both unlocked for purchase
                 this.setState(NODE_STATE.UNLOCKED);
@@ -170,7 +201,12 @@ class Node {
         } else if (this.parentId && neuralTree.getNode(this.parentId).level > 0) {
             this.setState(NODE_STATE.GHOST); // Visible but locked
         } else {
-            this.setState(NODE_STATE.HIDDEN);
+            // Show as GHOST if in current tier, otherwise HIDDEN
+            if (this.tier <= gameState.currentTier) {
+                this.setState(NODE_STATE.GHOST);
+            } else {
+                this.setState(NODE_STATE.HIDDEN);
+            }
         }
 
         // 3. Update duo-box backing sprite if we own it
@@ -204,14 +240,8 @@ class Node {
         const cost = this.getCost();
         if (!this.canAfford()) return false;
 
-        // Deduct cost via resourceManager (Fix 2: Centralized Economy)
-        if (this.costType === 'shard') {
-            resourceManager.addShard(-cost);
-        } else if (this.costType === 'insight') {
-            resourceManager.addInsight(-cost);
-        } else {
-            resourceManager.addData(-cost);
-        }
+        // Deduct cost
+        this._deductCost(cost);
 
         this.level++;
 
@@ -255,6 +285,14 @@ class Node {
             neuralTree._revealChildren(this.id);
         }
 
+        // For duo-box, we also need to reveal the sibling's children
+        if (this.isDuoBox) {
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling && sibling.childIds.length > 0) {
+                neuralTree._revealChildren(sibling.id);
+            }
+        }
+
         // Floating text popup (if defined on this node)
         if (this.popupText) {
             const pos = tower.getPosition();
@@ -270,11 +308,11 @@ class Node {
         if (this.isDuoBox) {
             this.refreshState();
             const sibling = neuralTree.getNode(this.duoSiblingId);
-            if (sibling) sibling.refreshState();
-
-            // Explicitly update visuals for both siblings
+            if (sibling) {
+                sibling.refreshState();
+                sibling._updateVisual();
+            }
             this._updateVisual();
-            if (sibling) sibling._updateVisual();
         } else if (this.isMaxed()) {
             this.setState(NODE_STATE.MAXED);
         } else {
@@ -388,7 +426,7 @@ class Node {
 
         // Duo-box swap logic: if this tier is already purchased and this is the inactive sibling
         if (this.isDuoBox && this.duoBoxTier > 0) {
-            const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[this.duoBoxTier];
+            const tierPurchased = this._isDuoTierPurchased();
             const activeShard = gameState.activeShards && gameState.activeShards[this.duoBoxTier];
 
             if (tierPurchased && activeShard !== this.shardId) {
@@ -461,11 +499,21 @@ class Node {
                 break;
 
             case NODE_STATE.GHOST:
-                // Swap disable ref to ghost image, then disable the button
+                // swap disable ref to ghost image, then disable the button
                 this.btn.disable = { ref: 'node_ghost.png', atlas: 'buttons' };
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-                this.btn.setAlpha(0.4);
+
+                // Set alpha based on parent state
+                let ghostAlpha = 1.0;
+                if (this.parentId) {
+                    const p = neuralTree.getNode(this.parentId);
+                    if (p && (p.state === NODE_STATE.GHOST || p.state === NODE_STATE.HIDDEN)) {
+                        ghostAlpha = 0.5;
+                    }
+                }
+                this.btn.setAlpha(ghostAlpha);
+
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(false);
                 }
@@ -481,8 +529,7 @@ class Node {
                 // Handle affordability vs. free swap for Duo-Boxes
                 // A duo-box node is swappable if its tier is purchased but it isn't the active one
                 const isDuoSwappable = this.isDuoBox &&
-                    gameState.duoBoxPurchased &&
-                    gameState.duoBoxPurchased[this.duoBoxTier] &&
+                    this._isDuoTierPurchased() &&
                     gameState.activeShards[this.duoBoxTier] !== this.shardId;
 
                 // Show disabled appearance when unaffordable, but hover still works
@@ -525,11 +572,15 @@ class Node {
         // Only the backing owner manages the sprite
         if (!this._isDuoBackingOwner || !this.duoBackingSprite) return;
 
-        const tier = this.duoBoxTier;
-        const tierPurchased = gameState.duoBoxPurchased && gameState.duoBoxPurchased[tier];
+        const tierNum = this.duoBoxTier;
+        const tierLevel = this.tier || 1;
+        const currentTier = gameState.currentTier || 1;
+        const tierPurchased = this._isDuoTierPurchased(tierNum);
 
-        // Show backing if either sibling is not HIDDEN
-        if (this.state === NODE_STATE.HIDDEN) {
+        // Visible from the beginning (if tier-appropriate)
+        const isVisibleTier = (tierLevel <= currentTier);
+
+        if (!isVisibleTier) {
             this.duoBackingSprite.setVisible(false);
             return;
         }
@@ -539,12 +590,11 @@ class Node {
         if (tierPurchased) {
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
             this.duoBackingSprite.setAlpha(1);
-        } else if (this.state === NODE_STATE.GHOST) {
-            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_disabled.png');
-            this.duoBackingSprite.setAlpha(0.4);
         } else {
+            // Unpurchased state: use disabled texture
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_disabled.png');
-            this.duoBackingSprite.setAlpha(1);
+            // Show as solid foreshadowing
+            this.duoBackingSprite.setAlpha(1.0); // Set to 1.0 for all foreshadowed states
         }
     }
 
@@ -575,171 +625,6 @@ class Node {
         });
     }
 
-    // ── hover tooltip ────────────────────────────────────────────────────
-
-    _showHover(isPurchaseRefresh = false) {
-        if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
-        this._hideHover();
-
-        const x = this.btn.x;  // actual position of node (handles group offsets)
-        const y = this.btn.y - 23;  // directly above
-        const depth = GAME_CONSTANTS.DEPTH_POPUPS;
-        const bgWidth = 280;
-        const bgHeight = 138;
-        const treeGroup = neuralTree.getGroup();
-        const draggableGroup = neuralTree.getDraggableGroup();
-
-        // 1. Create a Container initially at (0,0) to measure contents
-        this.hoverContainer = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0);
-        this.hoverGroup = [];
-
-        const padding = 12; // Legacy padding for other refs, used for desc wrapping
-        const rowSpacing = 10;
-        let currentY = 3; // Shifted up so backing is 3px from top
-
-        // --- ROW 1: Name & Icon ---
-        const nameTextStr = this.name.toUpperCase();
-        let iconOffset = 0;
-        const boxOutlineSize = 34;
-        const boxInnerSize = 30;
-        const iconSize = 26;
-
-        if (this.icon) {
-            iconOffset = boxOutlineSize + 10;
-        }
-
-        const nameT = PhaserScene.add.text(0, 0, nameTextStr, {
-            fontFamily: 'VCR',
-            fontSize: '22px',
-            color: '#ffffff',
-            align: 'left',
-        }).setOrigin(0, 0.5);
-
-        const titleWidth = nameT.width + iconOffset;
-        const titleStartX = -titleWidth / 2;
-        const centerTitleY = currentY + boxOutlineSize / 2;
-
-        if (this.icon) {
-            const whiteBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'white_pixel.png')
-                .setDisplaySize(boxOutlineSize, boxOutlineSize);
-            this.hoverContainer.add(whiteBg);
-
-            const blackBg = PhaserScene.add.image(titleStartX + boxOutlineSize / 2, centerTitleY, 'pixels', 'black_pixel.png')
-                .setDisplaySize(boxInnerSize, boxInnerSize);
-            this.hoverContainer.add(blackBg);
-
-            const iconSpr = PhaserScene.add.sprite(titleStartX + boxOutlineSize / 2, centerTitleY, 'buttons', this.icon)
-                .setDisplaySize(iconSize, iconSize);
-            this.hoverContainer.add(iconSpr);
-        }
-
-        nameT.setPosition(titleStartX + iconOffset, centerTitleY);
-        this.hoverContainer.add(nameT);
-
-        currentY += boxOutlineSize + rowSpacing;
-
-        // --- ROW 2: Description ---
-        const descT = PhaserScene.add.text(0, currentY, this.description, {
-            fontFamily: 'VCR',
-            fontSize: '22px',
-            color: '#ffffff',
-            align: 'center',
-            wordWrap: { width: 255 },
-            lineSpacing: 4,
-        }).setOrigin(0.5, 0);
-        this.hoverContainer.add(descT);
-        currentY += descT.height + rowSpacing;
-
-        // --- ROW 3: Level ---
-        const lvStr = 'Lv. ' + this.level + ' / ' + this.maxLevel;
-        const lvT = PhaserScene.add.text(0, currentY, lvStr, {
-            fontFamily: 'VCR',
-            fontSize: '22px',
-            color: '#ffffff',
-            align: 'center',
-        }).setOrigin(0.5, 0);
-        this.hoverContainer.add(lvT);
-        currentY += lvT.height + (rowSpacing - 3); // Shifted up 3px as requested
-
-        let goldBg, maxT, costBg, costT;
-        const barHeight = 26;
-        const barWidth = bgWidth - 6; // 3px padding on sides
-        if (this.state === NODE_STATE.MAXED) {
-            // --- ROW 4: MAX Bar ---
-            goldBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', 'gold_pixel.png')
-                .setDisplaySize(barWidth, barHeight);
-            this.hoverContainer.add(goldBg);
-
-            maxT = PhaserScene.add.text(0, currentY + barHeight / 2, 'MAX', {
-                fontFamily: 'VCR',
-                fontSize: '22px',
-                color: '#ffffff',
-                align: 'center',
-            }).setOrigin(0.5, 0.5);
-            this.hoverContainer.add(maxT);
-            currentY += barHeight;
-        } else {
-            // --- ROW 4: Cost ---
-            let costColor = '#30ffff'; // light blue as requested
-            if (this.costType === 'insight') {
-                costColor = '#ff9500';
-            } else if (this.costType === 'processor') {
-                costColor = '#ffe600';
-            } else if (this.costType === 'shard') {
-                costColor = '#ff2d78';
-            } else if (this.costType === 'coin') {
-                costColor = '#00ff66';
-            }
-
-            const iconStr = this.costType === 'data' ? '◈' : '⦵';
-            const currentRes = this.costType === 'data' ? resourceManager.getData() : resourceManager.getInsight();
-            const costStr = iconStr + ' ' + Math.floor(currentRes) + ' / ' + this.getCost();
-
-            const bgPixel = this.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
-            costBg = PhaserScene.add.image(0, currentY + barHeight / 2, 'pixels', bgPixel)
-                .setDisplaySize(barWidth, barHeight);
-            this.hoverContainer.add(costBg);
-
-            costT = PhaserScene.add.text(0, currentY + barHeight / 2, costStr, {
-                fontFamily: 'VCR',
-                fontSize: '22px',
-                color: costColor,
-                align: 'center',
-            }).setOrigin(0.5, 0.5);
-            this.hoverContainer.add(costT);
-            this.hoverGroup.push(costT);
-            currentY += barHeight;
-        }
-
-        const totalHeight = currentY + 3; // 3px bottom padding
-
-        // Final position adjustment: move container to 'y' and shift content so (0,0) is bottom-center
-        this.hoverContainer.setPosition(x, y);
-        this.hoverContainer.iterate(child => {
-            child.y -= totalHeight;
-        });
-
-        // Background (add at the back of the container)
-        const bg = PhaserScene.add.image(0, -totalHeight, 'white_pixel');
-        bg.setOrigin(0.5, 0) // Pin at top, expand down
-            .setDisplaySize(bgWidth, totalHeight)
-            .setTint(0x111122)
-            .setAlpha(0.92);
-        this.hoverContainer.addAt(bg, 0);
-
-        // Add container to the groups so it moves if the tree moves
-        if (treeGroup) {
-            treeGroup.add(this.hoverContainer);
-        }
-        if (draggableGroup) {
-            const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
-            draggableGroup.add(btnObj);
-            if (this.iconSprite) draggableGroup.add(this.iconSprite);
-            draggableGroup.add(this.fadeoutSprite);
-        }
-
-        this._updateVisual();
-    }
 
     // ── hover tooltip ────────────────────────────────────────────────────
 
@@ -757,9 +642,29 @@ class Node {
     // ── cleanup ──────────────────────────────────────────────────────────
 
     setVisible(vis) {
-        if (this.btn) this.btn.setVisible(vis);
-        if (this.iconSprite) this.iconSprite.setVisible(vis);
-        if (this.duoBackingSprite) this.duoBackingSprite.setVisible(vis);
+        const isHidden = this.state === NODE_STATE.HIDDEN;
+        const isGhost = this.state === NODE_STATE.GHOST;
+
+        if (this.btn) {
+            this.btn.setVisible(vis && !isHidden);
+        }
+        if (this.iconSprite) {
+            // Ghost nodes should never show their icons
+            this.iconSprite.setVisible(vis && !isHidden && !isGhost);
+        }
+        if (this.label) {
+            this.label.setVisible(vis && !isHidden);
+        }
+
+        // Duo backing visibility is managed by its own logic
+        if (this.duoBackingSprite && this._isDuoBackingOwner) {
+            if (!vis) {
+                this.duoBackingSprite.setVisible(false);
+            } else {
+                this._updateDuoBacking();
+            }
+        }
+
         if (!vis) this._hideHover();
     }
 

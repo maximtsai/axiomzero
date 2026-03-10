@@ -313,10 +313,11 @@ const neuralTree = (() => {
 
         for (const id in nodes) {
             const n = nodes[id];
-            n.setVisible(n.state !== NODE_STATE.HIDDEN);
-            if (n.state !== NODE_STATE.HIDDEN) {
-                n._updateVisual();
-            }
+            // Ensure state is fresh
+            n.refreshState();
+            // Always set logical node visible; internal _updateVisual handles hiding button/label if HIDDEN.
+            // This prevents HIDDEN inner Duo nodes from hiding the shared backing sprite.
+            n.setVisible(true);
         }
 
         // Show DEPLOY button only if tower has been spawned
@@ -437,24 +438,30 @@ const neuralTree = (() => {
             const n = nodes[line.childId];
 
             if (line.isDuoLine) {
-                // Duo line: visible when parent is visible AND either sibling is not HIDDEN
-                const sib = line.duoSiblingChildId ? nodes[line.duoSiblingChildId] : null;
-                const eitherVisible = (n.state !== NODE_STATE.HIDDEN) || (sib && sib.state !== NODE_STATE.HIDDEN);
-                if (p.state === NODE_STATE.HIDDEN || !eitherVisible) {
+                // Duo line: visible when parent is visible AND the Duo Box tier is visible
+                const isVisibleTier = (n.tier <= gameState.currentTier);
+                if (p.state === NODE_STATE.HIDDEN || !isVisibleTier) {
                     line.setVisible(false);
                 } else {
                     line.setVisible(true);
-                    // Line is solid if at least one sibling is not a ghost
-                    const bothGhost = (n.state === NODE_STATE.GHOST) && (!sib || sib.state === NODE_STATE.GHOST);
-                    line.setAlpha(bothGhost ? 0.25 : 1.0);
+                    // Line is solid if the parent is active (UNLOCKED/MAXED).
+                    // If the parent is a ghost, hide the line (alpha 0).
+                    const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
+                    line.setAlpha(parentActive ? 0.5 : 0); // Consistent 0.5 alpha
                 }
             } else {
                 if (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN) {
                     line.setVisible(false);
                 } else {
                     line.setVisible(true);
-                    const alpha = n.state === NODE_STATE.GHOST ? 0.25 : 1.0;
-                    line.setAlpha(alpha);
+                    const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
+
+                    if (n.state === NODE_STATE.GHOST) {
+                        // show solid line only if parent is active
+                        line.setAlpha(parentActive ? 0.5 : 0);
+                    } else {
+                        line.setAlpha(0.5);
+                    }
                 }
             }
         }
