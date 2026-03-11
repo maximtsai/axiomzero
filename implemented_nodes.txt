@@ -1,0 +1,157 @@
+### Tower Starting Stats
+
+*   **Max Health:** 20
+*   **Base Damage:** 5
+*   **Attack Range:** 230
+*   **Attack Cooldown:** 1000 ms (1 sec)
+*   **Health Regen:** -0.3 HP/sec (natural drain)
+
+---
+
+### Implemented Neural Tree Nodes
+
+#### Core / Startup
+*   **AWAKEN**
+    *   Description: Begin existence.
+    *   Parent: None
+    *   Children: COGNITION, INTEGRITY, INTENSITY
+    *   Max Level: 1
+    *   Cost: 0 Data
+
+#### Cursor Attacks (Tier 1)
+*   **COGNITION**
+    *   Description: Your cursor now auto-attacks.
+    *   *In-Depth:* Enables a square Area of Effect (AOE) attack centered on your mouse cursor. It fires automatically every 2000 ms (2 seconds). By default, it deals 4 damage to all enemies within a 100x100 pixel square radius.
+    *   Parent: AWAKEN
+    *   Children: AMPLIFY, ATTRACT, LIGHTNING, SHOCKWAVE
+    *   Max Level: 1
+    *   Cost: 1 Data
+*   **AMPLIFY**
+    *   Description: +2 cursor damage
+    *   Parent: COGNITION
+    *   Children: NOVA
+    *   Max Level: 3
+    *   Cost: 5 Data (Linear +10 per level)
+*   **NOVA**
+    *   Description: +40 cursor attack size
+    *   Parent: AMPLIFY
+    *   Children: OVERCHARGE
+    *   Max Level: 1
+    *   Cost: 20 Data
+
+#### Tower Upgrades (Tier 1)
+*   **INTEGRITY**
+    *   Description: +5 tower max health
+    *   Parent: AWAKEN
+    *   Children: REGEN, ARMOR
+    *   Max Level: 4
+    *   Cost: 4 Data (Linear +8 per level)
+*   **INTENSITY**
+    *   Description: +2 tower basic damage
+    *   Parent: AWAKEN
+    *   Children: INFLUENCE
+    *   Max Level: 5
+    *   Cost: 5 Data (Linear +5 per level)
+*   **INFLUENCE**
+    *   Description: +20% tower attack range
+    *   Parent: INTENSITY
+    *   Children: None
+    *   Max Level: 1
+    *   Cost: 20 Data
+*   **REGEN**
+    *   Description: +0.2 health regen
+    *   Parent: INTEGRITY
+    *   Children: None
+    *   Max Level: 3
+    *   Cost: 6 Data (Linear +6 per level)
+*   **ARMOR**
+    *   Description: Reduces incoming damage by 1.
+    *   Parent: INTEGRITY
+    *   Children: None
+    *   Max Level: 3
+    *   Cost: 10 Data (Linear +10 per level)
+
+#### Utility (Tier 1)
+*   **ATTRACT**
+    *   Description: +40% resource pickup range
+    *   Parent: COGNITION
+    *   Children: None
+    *   Max Level: 1
+    *   Cost: 1 Insight
+
+#### Tier 1 Duo-Box (Select One)
+*   **LIGHTNING** (Duo-Box Option A)
+    *   Description: Tower gains a lightning weapon that chains across enemies.
+    *   *In-Depth:* Fires a jagged lightning bolt from the tower to the nearest enemy every 2500 ms (2.5 seconds). It deals a base of 6 damage and will automatically chain to 1 additional enemy within 115 pixels of the primary target.
+    *   Parent: COGNITION
+    *   Children: FORK, VOLTAGE
+    *   Max Level: 1
+    *   Cost: 1 Shard
+    *   *Sub-nodes:*
+        *   **FORK:** +1 lightning chain target
+            *   Parent: LIGHTNING
+            *   Children: None
+            *   (Max Lvl 1, 15 Data)
+        *   **VOLTAGE:** +50% lightning damage
+            *   Parent: LIGHTNING
+            *   Children: None
+            *   (Max Lvl 1, 20 Data)
+
+*   **SHOCKWAVE** (Duo-Box Option B)
+    *   Description: Tower pulses a shockwave every 3s, damaging nearby enemies.
+    *   *In-Depth:* Creates an expanding circular ring centered on the tower every 3000 ms (3 seconds). It deals a base of 6 damage to all enemies caught within its 160 pixel radius.
+    *   Parent: COGNITION
+    *   Children: AMPLIFIER, RESONANCE
+    *   Max Level: 1
+    *   Cost: 1 Shard
+    *   *Sub-nodes:*
+        *   **AMPLIFIER:** +25% shockwave damage & range
+            *   Parent: SHOCKWAVE
+            *   Children: None
+            *   (Max Lvl 1, 40 Data)
+        *   **RESONANCE:** Shockwave deals +1/2/3 dmg per enemy hit
+            *   Parent: SHOCKWAVE
+            *   Children: None
+            *   (Max Lvl 3, 30 Data, Linear +30)
+
+---
+
+### Tier 2
+
+#### Cursor Attacks (Tier 2)
+*   **OVERCHARGE**
+    *   Description: +4 cursor damage
+    *   Parent: NOVA
+    *   Children: None
+    *   Max Level: 2
+    *   Cost: 10 Data (Linear +5 per level)
+
+---
+
+### Tier 3
+*(To be implemented)*
+
+---
+
+### Tier 4
+*(To be implemented)*
+
+---
+
+### Tier 5
+*(To be implemented)*
+
+---
+
+### Tier 6
+*(To be implemented)*
+
+---
+
+### Tier 7
+*(To be implemented)*
+
+---
+
+### Tier 8
+*(To be implemented)*

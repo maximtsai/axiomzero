@@ -77,11 +77,11 @@ class LightningAttackView {
         );
     }
 
-    drawBolt(fromX, fromY, toX, toY) {
+    _generatePoints(fromX, fromY, toX, toY) {
         const dx = toX - fromX;
         const dy = toY - fromY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 1) return;
+        if (dist < 1) return [];
 
         // Perpendicular direction for jitter
         const perpX = -dy / dist;
@@ -100,9 +100,10 @@ class LightningAttackView {
             });
         }
         points.push({ x: toX, y: toY });
+        return points;
+    }
 
-        const segments = [];
-
+    _updateSegments(segments, points) {
         for (let i = 0; i < points.length - 1; i++) {
             const p1 = points[i];
             const p2 = points[i + 1];
@@ -112,28 +113,31 @@ class LightningAttackView {
             const segDist = Math.sqrt(segDx * segDx + segDy * segDy);
             const segAngle = Math.atan2(segDy, segDx);
 
-            // Draw glow (wider, lower alpha)
-            const glow = this.glowPool.get();
-            glow.setPosition(p1.x, p1.y);
-            glow.setRotation(segAngle);
-            glow.setDisplaySize(segDist, this.BOLT_LINE_WIDTH * 5);
-            glow.setAlpha(0.35);
-            glow.setTint(0x4488ff);
-            glow.setVisible(true);
-            glow.setActive(true);
+            const glow = segments[i * 2];
+            const core = segments[i * 2 + 1];
 
-            // Draw core bolt (bright white-cyan)
+            glow.setPosition(p1.x, p1.y).setRotation(segAngle).setDisplaySize(segDist, this.BOLT_LINE_WIDTH * 5);
+            core.setPosition(p1.x, p1.y).setRotation(segAngle).setDisplaySize(segDist, this.BOLT_LINE_WIDTH);
+        }
+    }
+
+    drawBolt(fromX, fromY, toX, toY) {
+        const points = this._generatePoints(fromX, fromY, toX, toY);
+        if (points.length === 0) return;
+
+        const segments = [];
+        for (let i = 0; i < points.length - 1; i++) {
+            const glow = this.glowPool.get();
+            glow.setAlpha(0.35).setTint(0x4488ff).setVisible(true).setActive(true);
+
             const core = this.corePool.get();
-            core.setPosition(p1.x, p1.y);
-            core.setRotation(segAngle);
-            core.setDisplaySize(segDist, this.BOLT_LINE_WIDTH);
-            core.setTint(0xccffff);
-            core.setAlpha(1.0);
-            core.setVisible(true);
-            core.setActive(true);
+            core.setAlpha(1.0).setTint(0xccffff).setVisible(true).setActive(true);
 
             segments.push(glow, core);
         }
+
+        // Initial positioning
+        this._updateSegments(segments, points);
 
         // Flicker effect: 1 repeat (total 2 cycles)
         PhaserScene.tweens.add({
@@ -142,6 +146,11 @@ class LightningAttackView {
             duration: 40,
             yoyo: true,
             repeat: 1,
+            onRepeat: () => {
+                // Redraw points for the second flicker
+                const newPoints = this._generatePoints(fromX, fromY, toX, toY);
+                this._updateSegments(segments, newPoints);
+            },
             onComplete: () => {
                 // Fade out and return to pool
                 PhaserScene.tweens.add({
