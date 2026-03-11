@@ -115,7 +115,12 @@ const resourceManager = (() => {
         shardIsFlying = true;
         const img = PhaserScene.add.image(x, y, 'player', 'resrc_shard.png');
         img.setScale(1.0);
-        img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+        img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES + 1);
+
+        // Add backing sprite
+        const backing = PhaserScene.add.image(x, y, 'player', 'resrc_shard_backing.png');
+        backing.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
+        backing.setScale(1.0);
 
         const d = {
             img: img,
@@ -129,10 +134,37 @@ const resourceManager = (() => {
             inertia: -0.05,
             type: 'shard',
             spawnTween: null,
+            backing: backing,
         };
 
+        // Pulse effect 1 second after drop
+        PhaserScene.time.delayedCall(1000, () => {
+            if (!d.alive || !d.img || !d.img.active) return;
+            const px = d.img.x;
+            const py = d.img.y;
+            const pulse = PhaserScene.add.image(px, py, 'player', 'shard_pulse.png');
+            pulse.setDepth(d.img.depth - 1);
+            pulse.setScale(0.4);
+            pulse.setAlpha(1.15);
+
+            PhaserScene.tweens.add({
+                targets: pulse,
+                scale: 1.0,
+                duration: 500,
+                ease: 'Quart.easeOut'
+            });
+
+            PhaserScene.tweens.add({
+                targets: pulse,
+                alpha: 0,
+                duration: 500,
+                ease: 'Quad.easeIn',
+                onComplete: () => pulse.destroy()
+            });
+        });
+
         const angle = Math.random() * Math.PI * 2;
-        const dist = 50 + Math.random() * 30;
+        const dist = 30 + Math.random() * 20;
         const endX = x + Math.cos(angle) * dist;
         const endY = y + Math.sin(angle) * dist;
 
@@ -140,9 +172,9 @@ const resourceManager = (() => {
             targets: d.img,
             x: endX,
             y: endY,
-            duration: 1700,
+            duration: 1500,
             ease: 'Cubic.easeOut',
-            completeDelay: 300,
+            completeDelay: 1000,
             onComplete: () => {
                 d.x = d.img.x;
                 d.y = d.img.y;
@@ -323,6 +355,10 @@ const resourceManager = (() => {
         _resetDrop(d); // Hide visual and stop tweens immediately
         if (d.type === 'processor') processorPool.release(d);
         else if (d.type === 'shard') {
+            if (d.backing) {
+                d.backing.destroy();
+                d.backing = null;
+            }
             d.img.destroy();
         }
         else dropPool.release(d);
@@ -445,6 +481,12 @@ const resourceManager = (() => {
 
             if (d.inertia < 1) {
                 d.inertia = Math.min(1, d.inertia + 0.75 * dt);
+            }
+            const oldImgXPos = d.img.x;
+            const oldImgYPos = d.img.y;
+            if (d.backing) {
+                console.log("backing update");
+                d.backing.setPosition(oldImgXPos * 0.5 + d.x * 0.5, oldImgYPos * 0.5 + d.y * 0.5);
             }
             d.img.setPosition(d.x, d.y);
         }

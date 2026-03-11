@@ -153,7 +153,6 @@ const audio = {
             s.volume = 0;
         }
 
-        s.detune = 0;
         s.pan = 0;
         s.play();
         return s;

@@ -11,4 +11,7 @@ const audioFiles = [
     { name: 'explosion_death', src: 'audio/explosion_death.mp3' },
     { name: 'charge_attack', src: 'audio/charge_attack.mp3' },
     { name: 'on_death_boss', src: 'audio/on_death_boss.mp3' },
+    { name: 'shock1', src: 'audio/shock1.mp3' },
+    { name: 'shock2', src: 'audio/shock2.mp3' },
+    { name: 'shock3', src: 'audio/shock3.mp3' },
 ];

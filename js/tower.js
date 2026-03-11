@@ -120,7 +120,7 @@ class TowerView {
 
         // Glow layer — additive blend, slightly larger, pulses
         this.glowSprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
-        this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
+        this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.glowSprite.setScale(1.35);
         this.glowSprite.setAlpha(0.35);
         this.glowSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
@@ -133,8 +133,8 @@ class TowerView {
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
-        this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
-        this.rangeSprite.setDepth(50);  // Below enemies (100) and tower (200), above background
+        this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'range.png');
+        this.rangeSprite.setDepth(1);  // Rendered behind almost everything
         this.rangeSprite.setAlpha(0.40 / 3);
         this.rangeSprite.setScale(rangeScale * 0.2);
         this.updateRangeSprite(rangeScale);
@@ -154,8 +154,8 @@ class TowerView {
     refreshRangeSprite(attackRange, pos, isIntense = false) {
         const rangeScale = attackRange / 202;
         if (!this.rangeSprite) {
-            this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'player', 'range.png');
-            this.rangeSprite.setDepth(50);
+            this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'range.png');
+            this.rangeSprite.setDepth(1);
             this.rangeSprite.setAlpha(0);
             this.rangeSprite.setScale(rangeScale * 0.2);
         }
@@ -313,8 +313,8 @@ class TowerView {
                     // Snap back and restore normal depths
                     for (let i = 0; i < targets.length; i++) { targets[i].x = origX; }
                     if (this.sprite) this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-                    if (this.glowSprite) this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_GLOW);
-                    if (this.rangeSprite) this.rangeSprite.setDepth(50);
+                    if (this.glowSprite) this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+                    if (this.rangeSprite) this.rangeSprite.setDepth(1);
                     if (this.sparkleSprite) this.sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
                     if (onComplete) onComplete();
                 } : undefined,
@@ -333,7 +333,7 @@ const tower = (() => {
             () => {
                 const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_strike1.png');
                 spr.setScale(1.4);
-                spr.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 1);
+                spr.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
                 spr.setVisible(false);
                 spr.setActive(false);
                 spr.on('animationcomplete', function (anim) {

@@ -128,7 +128,7 @@ class LightningAttackView {
         const segments = [];
         for (let i = 0; i < points.length - 1; i++) {
             const glow = this.glowPool.get();
-            glow.setAlpha(0.35).setTint(0x4488ff).setVisible(true).setActive(true);
+            glow.setAlpha(1).setTint(0x4488ff).setVisible(true).setActive(true);
 
             const core = this.corePool.get();
             core.setAlpha(1.0).setTint(0xccffff).setVisible(true).setActive(true);
@@ -263,6 +263,11 @@ const lightningAttack = (() => {
 
         // Micro camera shake
         zoomShake(1.003);
+
+        // Play random shock sound with subtle detune
+        const soundName = `shock${Phaser.Math.Between(1, 3)}`;
+        const sound = audio.play(soundName, 0.6);
+        sound.detune = Phaser.Math.Between(-150, 80);
     }
 
     function _onPhaseChanged(phase) {
