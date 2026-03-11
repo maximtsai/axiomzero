@@ -21,6 +21,9 @@ const neuralTree = (() => {
     let treeGroup = null;
     let draggableGroup = null;
 
+    let buyPulsePool = null;
+    let maxPulsePool = null;
+
     let lastDragX = 0;
     let lastDragY = 0;
 
@@ -41,6 +44,7 @@ const neuralTree = (() => {
         _createNodes();
         _createDeployButton();
         _createCryptoMineButton();
+        _initPools();
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
@@ -288,6 +292,78 @@ const neuralTree = (() => {
         cryptoMineBtn.setState(DISABLE);
 
         treeGroup.add(cryptoMineBtn.getContainer ? cryptoMineBtn.getContainer() : cryptoMineBtn);
+    }
+
+    function _initPools() {
+        const resetFn = (p) => {
+            p.setVisible(false);
+            p.setActive(false);
+        };
+
+        buyPulsePool = new ObjectPool(() => {
+            // 9-slice: x, y, atlas, frame, width, height, left, right, top, bottom
+            const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
+            slice.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 3); // behind node button (2.0)
+            slice.setScrollFactor(0);
+            treeGroup.add(slice);
+            draggableGroup.add(slice);
+            return slice;
+        }, resetFn, 10).preAllocate(4);
+
+        maxPulsePool = new ObjectPool(() => {
+            const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'max_pulse.png', 80, 80, 25, 25, 25, 25);
+            slice.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 3);
+            slice.setScrollFactor(0);
+            treeGroup.add(slice);
+            draggableGroup.add(slice);
+            return slice;
+        }, resetFn, 10).preAllocate(4);
+    }
+
+    function playPurchasePulse(x, y, isMaxed) {
+        if (!buyPulsePool || !maxPulsePool) return;
+
+        const dur = isMaxed ? 750 : 550;
+        const startAlpha = isMaxed ? 1.3 : 1;
+
+        // Primary pulse
+        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 166 : 112, dur, startAlpha);
+
+        // Secondary inner pulse (Max only)
+        if (isMaxed) {
+            _animatePulse(x, y, maxPulsePool, 64, 140, dur, startAlpha - 0.35, 70);
+        }
+    }
+
+    function _animatePulse(x, y, pool, startSize, targetSize, duration, alpha, delay = 0) {
+        const pulse = pool.get();
+        pulse.setPosition(x, y);
+        pulse.setVisible(true);
+        pulse.setActive(true);
+        pulse.setAlpha(alpha);
+
+        pulse.setScale(1);
+        pulse.width = startSize;
+        pulse.height = startSize;
+
+        PhaserScene.tweens.add({
+            delay: delay,
+            targets: pulse,
+            width: targetSize,
+            height: targetSize,
+            duration: duration,
+            ease: 'Quart.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            delay: delay,
+            targets: pulse,
+            alpha: 0,
+            duration: duration,
+            onComplete: () => {
+                pool.release(pulse);
+            }
+        });
     }
 
     // ── show / hide ──────────────────────────────────────────────────────
@@ -540,5 +616,5 @@ const neuralTree = (() => {
     function getGroup() { return treeGroup; }
     function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, _showCryptoMineButton, getGroup, getDraggableGroup };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, _showCryptoMineButton, playPurchasePulse, getGroup, getDraggableGroup };
 })();

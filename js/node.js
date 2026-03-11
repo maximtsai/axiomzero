@@ -283,6 +283,11 @@ class Node {
         // Apply effect
         this.effect(this.level);
 
+        // Visual pulse effect
+        if (typeof neuralTree !== 'undefined') {
+            neuralTree.playPurchasePulse(this.btn.x, this.btn.y, this.isMaxed());
+        }
+
         // Reveal children — any HIDDEN children become at least visible
         if (this.childIds.length > 0) {
             neuralTree._revealChildren(this.id);

@@ -244,8 +244,23 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/buy_pulse.png</key>
+            <key type="filename">buttons/max_pulse.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>18,18,36,36</rect>
+                <key>scale9Paddings</key>
+                <rect>18,18,36,36</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/duo_node_backing.png</key>
-            <key type="filename">buttons/duo_node_backing_disabled.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -257,6 +272,24 @@
                 <rect>63,48,125,95</rect>
                 <key>scale9Paddings</key>
                 <rect>63,48,125,95</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/duo_node_button_disabled.png</key>
+            <key type="filename">buttons/duo_node_button_hover.png</key>
+            <key type="filename">buttons/duo_node_button_normal.png</key>
+            <key type="filename">buttons/duo_node_button_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>23,43,47,85</rect>
+                <key>scale9Paddings</key>
+                <rect>23,43,47,85</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
