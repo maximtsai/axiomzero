@@ -18,8 +18,10 @@ const NODE_STATE = {
  * description: string,
  * maxLevel:    number,
  * baseCost:    number,        // DATA cost at level 1
- * costScaling: 'static'|'linear',
+ * costScaling: 'static'|'linear'|'custom',
  * costStep:    number,        // added per level for 'linear'
+ * costStepScaling: number,    // scaling for the costStep in 'linear'
+ * customCost:  number[],      // explicit costs per level for 'custom'
  * costType:    'data'|'insight',
  * effect:      function(level),  // called after purchase to apply effect
  * parentId:    string|null,
@@ -41,6 +43,8 @@ class Node {
         this.baseCost = def.baseCost || 0;
         this.costScaling = def.costScaling || 'static';
         this.costStep = def.costStep || 0;
+        this.costStepScaling = def.costStepScaling || 0;
+        this.customCost = def.customCost || [];
         this.costType = def.costType || 'data';
         this.effect = def.effect || function () { };
         this.popupText = def.popupText || null;
@@ -100,8 +104,13 @@ class Node {
 
     getCost() {
         if (this.level >= this.maxLevel) return Infinity;
+        if (this.costScaling === 'custom' && this.customCost.length > 0) {
+            const idx = Math.min(this.level, this.customCost.length - 1);
+            return this.customCost[idx];
+        }
         if (this.costScaling === 'linear') {
-            return this.baseCost + this.costStep * this.level;
+            const scalingBonus = (this.level * (this.level + 1)) / 2 * this.costStepScaling;
+            return this.baseCost + (this.costStep * this.level) + scalingBonus;
         }
         return this.baseCost; // static
     }

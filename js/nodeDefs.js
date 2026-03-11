@@ -13,8 +13,8 @@ function _recalcPulseDamage() {
 /** Recalculates total pulse size from all pulse upgrade nodes. */
 function _recalcPulseSize() {
     const ups = gameState.upgrades || {};
-    const surgeLv = ups.pulse_damage_2 || 0;
-    pulseAttack.setSize(100 + 40 * surgeLv);
+    const expansionLv = ups.pulse_expansion || 0;
+    pulseAttack.setSize(100 * (1 + 0.3 * expansionLv));
 }
 
 /** Recalculates lightning chain count from upgrade nodes. */
@@ -97,7 +97,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 10,
         parentId: 'basic_pulse',
-        childIds: ['pulse_damage_2'],
+        childIds: ['pulse_expansion'],
         treeX: 480,
         treeY: 670,
         effect: function () {
@@ -125,11 +125,11 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'pulse_damage_2',
-        name: 'NOVA',
+        id: 'pulse_expansion',
+        name: 'EXPANSION',
         icon: 'Skillicon14_07.png',
-        description: '+40 cursor attack size',
-        popupText: '+40 CURSOR ATTACK SIZE',
+        description: '+30% cursor attack size',
+        popupText: '+30% CURSOR SIZE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
         baseCost: 20,
@@ -157,7 +157,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 5,
-        parentId: 'pulse_damage_2',
+        parentId: 'pulse_expansion',
         childIds: [],
         tier: 2,
         treeX: 560,
@@ -173,11 +173,12 @@ const NODE_DEFS = [
         description: '+5 tower max health',
         popupText: '+5 MAX HEALTH',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
-        maxLevel: 4,
+        maxLevel: 8,
         baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 8,
+        costStep: 4,
+        costStepScaling: 4,
         parentId: 'awaken',
         childIds: ['regen', 'armor'],
         treeX: 320,
@@ -193,7 +194,7 @@ const NODE_DEFS = [
         description: '+2 tower basic damage',
         popupText: '+2 DAMAGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
-        maxLevel: 5,
+        maxLevel: 4,
         baseCost: 5,
         costType: 'data',
         costScaling: 'linear',

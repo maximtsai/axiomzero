@@ -29,11 +29,11 @@
 *   **AMPLIFY**
     *   Description: +2 cursor damage
     *   Parent: COGNITION
-    *   Children: NOVA
+    *   Children: EXPANSION
     *   Max Level: 3
     *   Cost: 5 Data (Linear +10 per level)
-*   **NOVA**
-    *   Description: +40 cursor attack size
+*   **EXPANSION**
+    *   Description: +30% cursor attack size
     *   Parent: AMPLIFY
     *   Children: OVERCHARGE
     *   Max Level: 1
@@ -121,7 +121,7 @@
 #### Cursor Attacks (Tier 2)
 *   **OVERCHARGE**
     *   Description: +4 cursor damage
-    *   Parent: NOVA
+    *   Parent: EXPANSION
     *   Children: None
     *   Max Level: 2
     *   Cost: 10 Data (Linear +5 per level)
