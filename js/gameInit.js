@@ -103,6 +103,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         // Recalc lightning upgrades if any were purchased
         if (typeof _recalcLightningChains === 'function') _recalcLightningChains();
         if (typeof _recalcLightningDamage === 'function') _recalcLightningDamage();
+        if (typeof _recalcShockwaveStats === 'function') _recalcShockwaveStats();
     }
 
     // Options button (top-right corner, always visible)

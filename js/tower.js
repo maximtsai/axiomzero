@@ -132,7 +132,7 @@ class TowerView {
 
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
-        const rangeScale = attackRange / 202;  // 202 = base range for 400x400 sprite
+        const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
         this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(50);  // Below enemies (100) and tower (200), above background
         this.rangeSprite.setAlpha(0.40 / 3);

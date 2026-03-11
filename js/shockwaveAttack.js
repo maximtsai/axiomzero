@@ -14,6 +14,7 @@ class ShockwaveAttackModel {
         this.fireTimer = 0;
         this.damage = this.BASE_DAMAGE;
         this.radius = this.BASE_RADIUS;
+        this.resonanceDmgPerHit = 0;
     }
 
     resetTimer() {
@@ -49,11 +50,12 @@ class ShockwaveAttackView {
         this.sprite.setVisible(false);
     }
 
-    playPulse(x, y) {
+    playPulse(x, y, scaleMultiplier = 1.0) {
         if (!this.sprite) return;
 
         this.sprite.setPosition(x, y);
-        this.sprite.setScale(this.MAX_SCALE * 0.7);
+        const targetScale = this.MAX_SCALE * scaleMultiplier;
+        this.sprite.setScale(targetScale * 0.7);
         this.sprite.setAlpha(1.0);
         this.sprite.setVisible(true);
         this.sprite.setRotation(Math.random() * Math.PI * 2);
@@ -61,8 +63,8 @@ class ShockwaveAttackView {
         // Expansion tween
         PhaserScene.tweens.add({
             targets: this.sprite,
-            scaleX: this.MAX_SCALE,
-            scaleY: this.MAX_SCALE,
+            scaleX: targetScale,
+            scaleY: targetScale,
             duration: this.EXPAND_DURATION,
             ease: 'Quart.easeOut'
         });
@@ -112,6 +114,20 @@ const shockwaveAttack = (() => {
         }
     }
 
+    function setAmplifierLevel(level) {
+        if (level > 0) {
+            model.damage = model.BASE_DAMAGE * 1.25;
+            model.radius = model.BASE_RADIUS * 1.25;
+        } else {
+            model.damage = model.BASE_DAMAGE;
+            model.radius = model.BASE_RADIUS;
+        }
+    }
+
+    function setResonanceLevel(level) {
+        model.resonanceDmgPerHit = level;
+    }
+
     function lock() {
         model.unlocked = false;
         model.active = false;
@@ -130,19 +146,31 @@ const shockwaveAttack = (() => {
         const pos = tower.getPosition();
         if (!pos) return;
 
-        view.playPulse(pos.x, pos.y);
+        view.playPulse(pos.x, pos.y, model.radius / model.BASE_RADIUS);
 
         // Damage all enemies in range (using square approximation)
         const halfSize = model.radius;
         const hits = enemyManager.getEnemiesInSquareRange(pos.x, pos.y, halfSize, _hitBuffer);
+
+        // Circle check and count valid hits
+        let validHits = [];
         for (let i = 0; i < hits.length; i++) {
-            // Additional circle check for more accurate radius
             const e = hits[i];
             const dx = e.x - pos.x;
             const dy = e.y - pos.y;
-            if (dx * dx + dy * dy <= model.radius * model.radius) {
-                enemyManager.damageEnemy(e, model.damage);
+            const distSq = dx * dx + dy * dy;
+
+            // Inclusion check: shockwave edge touches enemy edge
+            const checkR = model.radius + (e.size || 12);
+            if (distSq <= checkR * checkR) {
+                validHits.push(e);
             }
+        }
+
+        const totalDamage = model.damage + (model.resonanceDmgPerHit * validHits.length);
+
+        for (let i = 0; i < validHits.length; i++) {
+            enemyManager.damageEnemy(validHits[i], totalDamage);
         }
 
         // Subtle camera shake
@@ -161,5 +189,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock };
+    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel };
 })();

@@ -180,8 +180,10 @@ const lightningAttack = (() => {
                 const dx = e.x - lastHit.x;
                 const dy = e.y - lastHit.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < bestDist) {
-                    bestDist = dist;
+                const effectiveDist = dist - (e.size || 0) - (lastHit.size || 0);
+
+                if (effectiveDist < bestDist) {
+                    bestDist = effectiveDist;
                     bestEnemy = e;
                 }
             }

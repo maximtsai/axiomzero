@@ -31,6 +31,16 @@ function _recalcLightningDamage() {
     lightningAttack.setDamage(6 + 3 * boostLv);
 }
 
+/** Recalculates shockwave upgrades from upgrade nodes. */
+function _recalcShockwaveStats() {
+    if (typeof shockwaveAttack === 'undefined') return;
+    const ups = gameState.upgrades || {};
+    const ampLv = ups.shockwave_amplifier || 0;
+    const resLv = ups.shockwave_resonance || 0;
+    shockwaveAttack.setAmplifierLevel(ampLv);
+    shockwaveAttack.setResonanceLevel(resLv);
+}
+
 const NODE_DEFS = [
     {
         id: 'awaken',
@@ -318,7 +328,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parentId: 'basic_pulse',
-        childIds: [],
+        childIds: ['shockwave_amplifier', 'shockwave_resonance'],
         isDuoBox: true,
         duoBoxTier: 1,
         shardId: 'shockwave_weapon',
@@ -368,6 +378,46 @@ const NODE_DEFS = [
         treeY: 390,
         effect: function () {
             _recalcLightningDamage();
+        },
+    },
+    {
+        id: 'shockwave_amplifier',
+        name: 'AMPLIFIER',
+        icon: 'Skillicon14_21.png',
+        description: '+25% shockwave damage & range',
+        popupText: '+25% RANGE & DMG',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 40,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'shockwave_weapon',
+        childIds: [],
+        treeX: 480,
+        treeY: 470,
+        effect: function () {
+            _recalcShockwaveStats();
+        },
+    },
+    {
+        id: 'shockwave_resonance',
+        name: 'RESONANCE',
+        icon: 'Skillicon14_22.png',
+        description: 'Shockwave deals +1/2/3 dmg per enemy hit',
+        popupText: 'RESONANCE FREQUENCY',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 3,
+        baseCost: 30,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 30,
+        parentId: 'shockwave_weapon',
+        childIds: [],
+        treeX: 480,
+        treeY: 390,
+        effect: function () {
+            _recalcShockwaveStats();
         },
     },
 ];

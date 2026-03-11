@@ -109,7 +109,7 @@ GAME_CONSTANTS.AUDIO_TRANSITIONS = {
         fadeOutEase: 'Linear',
         fadeInDelay: 800,
         fadeInDuration: 800,
-        targetVolume: 0.85, // Matches DEFAULT_MUSIC_VOLUME
+        targetVolume: 1.0,
         restoreDelay: 300,
         restoreDuration: 600
     }
