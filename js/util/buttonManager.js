@@ -42,14 +42,15 @@ class InternalButtonManager {
                 break;
             }
         }
-        if (this.lastHovered && this.lastHovered !== currentHovered) {
-            this.lastHovered.onHoverOut();
+        let oldHovered = this.lastHovered;
+        this.lastHovered = currentHovered;
+
+        if (oldHovered && oldHovered !== currentHovered) {
+            oldHovered.onHoverOut();
         }
         if (newHovered) {
             newHovered.onHover();
         }
-
-        this.lastHovered = currentHovered;
     }
 
     onPointerUp(mouseX, mouseY) {

@@ -100,8 +100,13 @@ class Button {
 
     setState(newState) {
         // If transitioning to NORMAL but mouse is currently over, go to HOVER instead
+        // ONLY if this button is explicitly the front-most hovered button managed by buttonManager
         if (newState === NORMAL && this.checkCoordOver(GAME_VARS.mouseposx, GAME_VARS.mouseposy)) {
-            newState = HOVER;
+            // Use window reference safely if buttonManager isn't available somehow
+            const mgr = (typeof buttonManager !== 'undefined') ? buttonManager : null;
+            if (!mgr || mgr.lastHovered === this) {
+                newState = HOVER;
+            }
         }
 
         let stateData;
