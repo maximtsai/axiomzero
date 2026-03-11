@@ -42,18 +42,46 @@ class LightningAttackView {
     }
 
     init() {
-        // Nothing to pre-create — bolts are drawn on demand
+        this.glowPool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'player', 'lightning_glow.png');
+                img.setDepth(150);
+                img.setScrollFactor(0);
+                img.setOrigin(0, 0.5);
+                img.setVisible(false);
+                img.setActive(false);
+                return img;
+            },
+            (img) => {
+                img.setVisible(false);
+                img.setActive(false);
+            },
+            50
+        );
+
+        this.corePool = new ObjectPool(
+            () => {
+                const img = PhaserScene.add.image(0, 0, 'player', 'lightning_core.png');
+                img.setDepth(151);
+                img.setScrollFactor(0);
+                img.setOrigin(0, 0.5);
+                img.setVisible(false);
+                img.setActive(false);
+                return img;
+            },
+            (img) => {
+                img.setVisible(false);
+                img.setActive(false);
+            },
+            50
+        );
     }
 
     drawBolt(fromX, fromY, toX, toY) {
-        const gfx = PhaserScene.add.graphics();
-        gfx.setDepth(150); // Below tower (200) but above enemies (100)
-        gfx.setScrollFactor(0);
-
         const dx = toX - fromX;
         const dy = toY - fromY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 1) { gfx.destroy(); return; }
+        if (dist < 1) return;
 
         // Perpendicular direction for jitter
         const perpX = -dy / dist;
@@ -73,33 +101,61 @@ class LightningAttackView {
         }
         points.push({ x: toX, y: toY });
 
-        // Draw glow (wider, lower alpha)
-        gfx.lineStyle(this.BOLT_LINE_WIDTH * 3, 0x4488ff, 0.35);
-        gfx.beginPath();
-        gfx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            gfx.lineTo(points[i].x, points[i].y);
-        }
-        gfx.strokePath();
+        const segments = [];
 
-        // Draw core bolt (bright white-cyan)
-        gfx.lineStyle(this.BOLT_LINE_WIDTH, 0xccffff, 1.0);
-        gfx.beginPath();
-        gfx.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            gfx.lineTo(points[i].x, points[i].y);
-        }
-        gfx.strokePath();
+        for (let i = 0; i < points.length - 1; i++) {
+            const p1 = points[i];
+            const p2 = points[i + 1];
 
-        // Fade out and destroy
-        gfx.setAlpha(1);
+            const segDx = p2.x - p1.x;
+            const segDy = p2.y - p1.y;
+            const segDist = Math.sqrt(segDx * segDx + segDy * segDy);
+            const segAngle = Math.atan2(segDy, segDx);
+
+            // Draw glow (wider, lower alpha)
+            const glow = this.glowPool.get();
+            glow.setPosition(p1.x, p1.y);
+            glow.setRotation(segAngle);
+            glow.setDisplaySize(segDist, this.BOLT_LINE_WIDTH * 5);
+            glow.setAlpha(0.35);
+            glow.setTint(0x4488ff);
+            glow.setVisible(true);
+            glow.setActive(true);
+
+            // Draw core bolt (bright white-cyan)
+            const core = this.corePool.get();
+            core.setPosition(p1.x, p1.y);
+            core.setRotation(segAngle);
+            core.setDisplaySize(segDist, this.BOLT_LINE_WIDTH);
+            core.setTint(0xccffff);
+            core.setAlpha(1.0);
+            core.setVisible(true);
+            core.setActive(true);
+
+            segments.push(glow, core);
+        }
+
+        // Flicker effect: 1 repeat (total 2 cycles)
         PhaserScene.tweens.add({
-            targets: gfx,
-            alpha: 0,
-            duration: this.BOLT_FADE_DURATION,
-            ease: 'Quad.easeIn',
+            targets: segments,
+            alpha: { from: 0.05, to: 1.0 },
+            duration: 40,
+            yoyo: true,
+            repeat: 1,
             onComplete: () => {
-                gfx.destroy();
+                // Fade out and return to pool
+                PhaserScene.tweens.add({
+                    targets: segments,
+                    alpha: 0,
+                    duration: this.BOLT_FADE_DURATION,
+                    ease: 'Quad.easeIn',
+                    onComplete: () => {
+                        segments.forEach(s => {
+                            if (s.frame.name === 'lightning_glow.png') this.glowPool.release(s);
+                            else this.corePool.release(s);
+                        });
+                    }
+                });
             }
         });
     }

@@ -140,8 +140,9 @@ const resourceManager = (() => {
             targets: d.img,
             x: endX,
             y: endY,
-            duration: 1000,
+            duration: 1700,
             ease: 'Cubic.easeOut',
+            completeDelay: 300,
             onComplete: () => {
                 d.x = d.img.x;
                 d.y = d.img.y;
