@@ -265,7 +265,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.85</double>
+                <double>0.78</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -275,15 +275,16 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">buttons/duo_node_button_disabled.png</key>
+            <key type="filename">buttons/duo_node_button_ghost.png</key>
             <key type="filename">buttons/duo_node_button_hover.png</key>
+            <key type="filename">buttons/duo_node_button_maxed.png</key>
             <key type="filename">buttons/duo_node_button_normal.png</key>
             <key type="filename">buttons/duo_node_button_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>1</double>
+                <double>0.78</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>

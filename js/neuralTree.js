@@ -178,7 +178,7 @@ const neuralTree = (() => {
     function _createNodes() {
         for (let i = 0; i < NODE_DEFS.length; i++) {
             const def = NODE_DEFS[i];
-            const node = new Node(def);
+            const node = def.isDuoBox ? new DuoNode(def) : new Node(def);
             nodes[def.id] = node;
             node.create(0, 0); // offset handled by treeX/treeY in defs
 
@@ -462,22 +462,27 @@ const neuralTree = (() => {
                         isDuoLineDrawn[duoKey] = true;
 
                         const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
-                        const cx = sibling ? (n.btn.x + sibling.btn.x) / 2 : n.btn.x;
-                        const cy = sibling ? (n.btn.y + sibling.btn.y) / 2 : n.btn.y;
+                        const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
+                        const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
 
-                        _createLine(p.btn.x, p.btn.y, cx, cy, {
+                        _createLine(p.treeX, p.treeY, targetX, targetY, {
                             childId: id,
                             duoSiblingChildId: n.duoSiblingId,
                             parentId: n.parentId,
                             isDuoLine: true,
                         });
                     } else {
-                        _createLine(p.btn.x, p.btn.y, n.btn.x, n.btn.y, {
+                        _createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
                             childId: id,
                             parentId: n.parentId,
                         });
                     }
                 }
+            }
+
+            // Adjust line thickness now that they are created
+            for (const line of lines) {
+                line.setScale(1.5, line.scaleY);
             }
         }
 
@@ -487,10 +492,13 @@ const neuralTree = (() => {
             const p = nodes[line.parentId];
             const n = nodes[line.childId];
 
+            if (!p || !n) continue;
+
             // Determine visibility
             let shouldHide;
             if (line.isDuoLine) {
-                const isVisibleTier = (n.tier <= gameState.currentTier);
+                const tier = n.tier || 1;
+                const isVisibleTier = (tier <= (gameState.currentTier || 1));
                 shouldHide = (p.state === NODE_STATE.HIDDEN || !isVisibleTier);
             } else {
                 shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
@@ -501,7 +509,7 @@ const neuralTree = (() => {
             } else {
                 line.setVisible(true);
                 const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
-                line.setAlpha(parentActive ? 0.5 : 0);
+                line.setAlpha(parentActive ? 0.6 : 0); // Slightly more opaque (0.6)
             }
         }
     }

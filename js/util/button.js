@@ -142,6 +142,8 @@ class Button {
                     newImage.setOrigin(oldImage.originX, oldImage.originY);
                     newImage.scrollFactorX = oldImage.scrollFactorX;
                     newImage.scrollFactorY = oldImage.scrollFactorY;
+                    newImage.scaleX = oldImage.scaleX;
+                    newImage.scaleY = oldImage.scaleY;
                 }
                 newImage.setDepth(this.depth);
                 this.imageRefs[stateData.ref] = newImage;

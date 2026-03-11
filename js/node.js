@@ -340,8 +340,23 @@ class Node {
     // ── rendering ────────────────────────────────────────────────────────
 
     create(offsetX, offsetY) {
-        const x = this.treeX + offsetX;
-        const y = this.treeY + offsetY;
+        let x = this.treeX + offsetX;
+        let y = this.treeY + offsetY;
+
+        // Duo-box positioning tweaks: Move buttons 8px apart (4px each) and offset icons 16px
+        let iconX = x;
+        if (this.isDuoBox && this.duoSiblingId) {
+            const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
+            if (siblingDef) {
+                if (this.treeX < siblingDef.treeX) {
+                    x -= 4;
+                    iconX = x + 16;
+                } else {
+                    x += 4;
+                    iconX = x - 16;
+                }
+            }
+        }
 
         const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
         this.btn = new Button({
@@ -379,7 +394,7 @@ class Node {
 
         // Node icon
         if (this.icon) {
-            this.iconSprite = PhaserScene.add.sprite(x, y, 'buttons', this.icon)
+            this.iconSprite = PhaserScene.add.sprite(iconX, y, 'buttons', this.icon)
                 .setOrigin(0.5, 0.5)
                 .setDepth(nodeDepth + 1)
                 .setScrollFactor(0);
@@ -407,6 +422,15 @@ class Node {
             }
         }
 
+        // Flip X scale for the right-side duo node
+        if (this.isDuoBox && this.duoSiblingId) {
+            const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
+            if (siblingDef && this.treeX > siblingDef.treeX) {
+                this.btn.setScale(-1, 1);
+                this.fadeoutSprite.setScale(-1, 1);
+            }
+        }
+
         // Duo-box backing sprite — only one sibling creates it (the one whose id sorts first)
         if (this.isDuoBox && this.duoSiblingId && this.id < this.duoSiblingId) {
             this._isDuoBackingOwner = true;
@@ -415,9 +439,9 @@ class Node {
             const centerY = (this.treeY + (siblingDef ? siblingDef.treeY : this.treeY)) / 2 + offsetY; // centered on siblings
             const backingDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1.5; // Behind nodes but above lines
 
-            this.duoBackingSprite = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing_disabled.png')
+            this.duoBackingSprite = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing.png')
                 .setOrigin(0.5, 0.5)
-                .setScale(0.9) // restored to 90% of base size
+                .setScale(1.0)
                 .setDepth(backingDepth)
                 .setScrollFactor(0)
                 .setVisible(false);
@@ -436,8 +460,10 @@ class Node {
         if (this.isDuoBox && this.duoBoxTier > 0) {
             const tierPurchased = this._isDuoTierPurchased();
             const activeShard = gameState.activeShards && gameState.activeShards[this.duoBoxTier];
+            // Also treat as swappable if this node's level is already > 0 (means it's been bought before)
+            const isAlreadyBought = this.level > 0;
 
-            if (tierPurchased && activeShard !== this.shardId) {
+            if ((tierPurchased || isAlreadyBought) && activeShard !== this.shardId) {
                 // Free swap — no cost
                 gameState.activeShards[this.duoBoxTier] = this.shardId;
 
@@ -506,7 +532,7 @@ class Node {
 
             case NODE_STATE.GHOST:
                 // swap disable ref to ghost image, then disable the button
-                this.btn.disable = { ref: 'node_ghost.png', atlas: 'buttons' };
+                this.btn.setDisableRef('node_ghost.png');
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
 
@@ -528,7 +554,7 @@ class Node {
 
             case NODE_STATE.UNLOCKED:
                 // Restore disable ref to the unlocked-disabled image
-                this.btn.disable = { ref: 'node_unlocked_disabled.png', atlas: 'buttons' };
+                this.btn.setDisableRef('node_unlocked_disabled.png');
                 this.btn.setVisible(true);
                 this.btn.setAlpha(1);
 
@@ -555,7 +581,7 @@ class Node {
 
             case NODE_STATE.MAXED:
                 // Swap disable ref to maxed image
-                this.btn.disable = { ref: 'node_maxed.png', atlas: 'buttons' };
+                this.btn.setDisableRef('node_maxed.png');
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
                 this.btn.setAlpha(1);
@@ -597,8 +623,8 @@ class Node {
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
             this.duoBackingSprite.setAlpha(1);
         } else {
-            // Unpurchased state: use disabled texture
-            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_disabled.png');
+            // Unpurchased state: use same texture as purchased now
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
             // Show as solid foreshadowing
             this.duoBackingSprite.setAlpha(1.0); // Set to 1.0 for all foreshadowed states
         }
@@ -691,5 +717,105 @@ class Node {
         }
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
+    }
+}
+
+/**
+ * Specialized Node for Shard choices in the Duo Box.
+ * Uses 'duo_node_button' assets.
+ */
+class DuoNode extends Node {
+    constructor(def) {
+        super(def);
+        this.prefix = 'duo_node_button';
+    }
+
+    _updateVisual() {
+        if (!this.btn) return;
+
+        // Trigger fadeout if state changed
+        if (this.lastVisualState !== this.state && this.lastSpriteRef) {
+            this._playFadeoutAnimation(this.lastSpriteRef);
+        }
+
+        let currentSpriteRef;
+        const p = this.prefix;
+
+
+
+        switch (this.state) {
+            case NODE_STATE.HIDDEN:
+                this.btn.setVisible(false);
+                this.btn.setState(DISABLE);
+                if (this.iconSprite) this.iconSprite.setVisible(false);
+                currentSpriteRef = null;
+                break;
+
+            case NODE_STATE.GHOST:
+                this.btn.setDisableRef(`${p}_ghost.png`);
+                this.btn.setVisible(true);
+                this.btn.setState(DISABLE);
+                let ghostAlpha = 1.0;
+                if (this.parentId) {
+                    const parentNode = neuralTree.getNode(this.parentId);
+                    if (parentNode && (parentNode.state === NODE_STATE.GHOST || parentNode.state === NODE_STATE.HIDDEN)) {
+                        ghostAlpha = 0.5;
+                    }
+                }
+                this.btn.setAlpha(ghostAlpha);
+                if (this.iconSprite) this.iconSprite.setVisible(false);
+                currentSpriteRef = `${p}_ghost.png`;
+                break;
+
+            case NODE_STATE.UNLOCKED:
+                this.btn.setDisableRef(`${p}_normal.png`);
+                this.btn.setVisible(true);
+                this.btn.setAlpha(1);
+
+                const isDuoSwappable = this.isDuoBox &&
+                    this._isDuoTierPurchased() &&
+                    gameState.activeShards && gameState.activeShards[this.duoBoxTier] !== this.shardId;
+
+                if (isDuoSwappable || this.canAfford()) {
+                    this.btn.setNormalRef(`${p}_normal.png`);
+                    this.btn.setHoverRef(`${p}_hover.png`);
+                    this.btn.setPressRef(`${p}_press.png`);
+                    this.btn.setState(NORMAL);
+                    currentSpriteRef = `${p}_normal.png`;
+                } else {
+                    this.btn.setDisableRef(`${p}_normal.png`);
+                    this.btn.setState(DISABLE);
+                    currentSpriteRef = `${p}_normal.png`;
+                }
+                if (this.iconSprite) {
+                    this.iconSprite.setVisible(true);
+                    this.iconSprite.setAlpha(1);
+                }
+                break;
+
+            case NODE_STATE.MAXED:
+                // Active Shards in a DuoBox stay interactive (NORMAL button state) so they can be clicked
+                // even though the node is 'MAXED'. This allows the swap logic in _onClick to stay reachable.
+                if (this.isDuoBox) {
+                    this.btn.setNormalRef(`${p}_maxed.png`);
+                    this.btn.setHoverRef(`${p}_maxed.png`);
+                    this.btn.setPressRef(`${p}_maxed.png`);
+                    this.btn.setState(NORMAL);
+                } else {
+                    this.btn.setDisableRef(`${p}_maxed.png`);
+                    this.btn.setState(DISABLE);
+                }
+                this.btn.setVisible(true);
+                this.btn.setAlpha(1);
+                if (this.iconSprite) {
+                    this.iconSprite.setVisible(true);
+                    this.iconSprite.setAlpha(1);
+                }
+                currentSpriteRef = `${p}_maxed.png`;
+                break;
+        }
+
+        this.lastSpriteRef = currentSpriteRef;
+        this.lastVisualState = this.state;
     }
 }
