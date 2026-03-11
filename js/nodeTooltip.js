@@ -203,7 +203,14 @@ const nodeTooltip = (() => {
 
         // Position above the node (Duo nodes appear 20px higher)
         const verticalOffset = node.isDuoBox ? 36 : 21;
-        container.setPosition(node.btn.x, node.btn.y - verticalOffset);
+        let horizontalOffset = 0;
+        if (node.isDuoBox) {
+            const side = node._getDuoSide();
+            if (side === 'left') horizontalOffset = -4;
+            else if (side === 'right') horizontalOffset = 4;
+        }
+
+        container.setPosition(node.btn.x + horizontalOffset, node.btn.y - verticalOffset);
 
         // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
         // This is necessary because of the singleton pattern (reuse)

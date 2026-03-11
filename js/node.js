@@ -89,6 +89,13 @@ class Node {
         return !!(gameState.duoBoxPurchased && gameState.duoBoxPurchased[tier]);
     }
 
+    _getDuoSide() {
+        if (!this.isDuoBox || !this.duoSiblingId) return null;
+        const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
+        if (!siblingDef) return null;
+        return this.treeX < siblingDef.treeX ? 'left' : 'right';
+    }
+
     // ── cost calculation ─────────────────────────────────────────────────
 
     getCost() {
@@ -479,13 +486,14 @@ class Node {
                 this._updateVisual();
                 if (sibling) sibling._updateVisual();
 
-                // Update connection lines
-                neuralTree._revealChildren(this.parentId);
-
                 // Refresh tooltip
                 if (nodeTooltip.getCurrentNode() === this) {
                     this._showHover(true);
                 }
+
+                // Notify systems of state change
+                messageBus.publish('upgradePurchased');
+
                 return;
             }
         }
