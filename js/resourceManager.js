@@ -256,6 +256,13 @@ const resourceManager = (() => {
     }
 
     function addData(amount) {
+        // DATA COMPRESSION effect
+        const ups = gameState.upgrades || {};
+        const compressionLv = ups.data_compression || 0;
+        if (compressionLv > 0 && Math.random() < 0.5) {
+            amount *= 2;
+        }
+
         gameState.data = (gameState.data || 0) + amount;
         sessionData += amount;
         messageBus.publish('currencyChanged', 'data', gameState.data, amount);

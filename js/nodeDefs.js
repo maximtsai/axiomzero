@@ -241,7 +241,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 6,
         parentId: 'integrity',
-        childIds: [],
+        childIds: ['overclock', 'prismatic_array', 'data_compression'],
         treeX: 240,
         treeY: 750,
         effect: function () {
@@ -450,6 +450,66 @@ const NODE_DEFS = [
         treeY: 430,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'overclock',
+        name: 'OVERCLOCK',
+        icon: 'Skillicon14_04.png',
+        description: '-25% tower attack cooldown',
+        popupText: '-25% COOLDOWN',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 10,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'regen',
+        childIds: [],
+        treeX: 160,
+        treeY: 750,
+        effect: function () {
+            // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'prismatic_array',
+        name: 'PRISMATIC ARRAY',
+        icon: 'Skillicon14_12.png',
+        description: '+25% chance to fire an extra projectile',
+        popupText: 'PRISMATIC ARRAY',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        maxLevel: 4,
+        baseCost: 20,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 20,
+        parentId: 'regen',
+        childIds: [],
+        treeX: 80,
+        treeY: 750,
+        effect: function () {
+            // Recalculated via normal gameplay checks
+        },
+    },
+    {
+        id: 'data_compression',
+        name: 'DATA COMPRESSION',
+        icon: 'Skillicon14_19.png',
+        description: '50% chance to double collected DATA',
+        popupText: 'DATA COMPRESSION',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 2,
+        costType: 'insight',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'regen',
+        childIds: [],
+        treeX: 160,
+        treeY: 830,
+        effect: function () {
+            // Recalculated via normal gameplay checks
         },
     },
 ];
