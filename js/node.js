@@ -366,7 +366,7 @@ class Node {
 
         // Refresh hover text if it was visible
         if (nodeTooltip.getCurrentNode() === this) {
-            this._showHover(true);
+            this._showHover(true, cost);
         }
 
         return true;
@@ -713,9 +713,9 @@ class Node {
 
     // ── hover tooltip ────────────────────────────────────────────────────
 
-    _showHover(isPurchaseRefresh = false) {
+    _showHover(isPurchaseRefresh = false, purchaseCost = 0) {
         if (this.isPlaceholder || this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
-        nodeTooltip.show(this, isPurchaseRefresh);
+        nodeTooltip.show(this, isPurchaseRefresh, purchaseCost);
     }
 
     _hideHover() {

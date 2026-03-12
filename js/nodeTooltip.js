@@ -15,6 +15,7 @@ const nodeTooltip = (() => {
     let iconSpr = null;
     let goldBg = null;
     let costBg = null;
+    let animValue = { val: 0 };
 
     let currentNode = null;
     let lastShowTime = 0;
@@ -88,7 +89,7 @@ const nodeTooltip = (() => {
 
     function _clearTweens() {
         if (!container) return;
-        PhaserScene.tweens.killTweensOf([container, lvT, maxT, costT]);
+        PhaserScene.tweens.killTweensOf([container, lvT, maxT, costT, animValue]);
         // Reset scale/angle but NOT Y (Y is handled by layout)
         container.setScale(1).setAngle(0);
         lvT.setScale(1);
@@ -96,7 +97,7 @@ const nodeTooltip = (() => {
         costT.setScale(1).setAlpha(1);
     }
 
-    function show(node, isPurchaseRefresh = false) {
+    function show(node, isPurchaseRefresh = false, purchaseCost = 0) {
         if (!container) init();
         _clearTweens();
 
@@ -186,7 +187,26 @@ const nodeTooltip = (() => {
                 iconStr = '◈';
                 currentRes = resourceManager.getData();
             }
-            costT.setText(iconStr + ' ' + Math.floor(currentRes) + ' / ' + node.getCost());
+            if (isPurchaseRefresh && purchaseCost > 0) {
+                const targetRes = currentRes;
+                animValue.val = targetRes + purchaseCost;
+                costT.setText(iconStr + ' ' + Math.floor(animValue.val) + ' / ' + node.getCost());
+
+                PhaserScene.tweens.add({
+                    targets: animValue,
+                    val: targetRes,
+                    duration: 500,
+                    ease: 'Cubic.easeOut',
+                    onUpdate: () => {
+                        // Check if node is still the current one to avoid updating stale tooltips
+                        if (currentNode === node && costT.visible) {
+                            costT.setText(iconStr + ' ' + Math.floor(animValue.val) + ' / ' + node.getCost());
+                        }
+                    }
+                });
+            } else {
+                costT.setText(iconStr + ' ' + Math.floor(currentRes) + ' / ' + node.getCost());
+            }
 
             let costColor = '#30ffff';
             if (node.costType === 'insight') costColor = '#ff9500';
