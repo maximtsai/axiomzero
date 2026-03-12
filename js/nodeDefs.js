@@ -164,8 +164,8 @@ const NODE_DEFS = [
         parents: ['pulse_expansion'],
         childIds: [],
         tier: 2,
-        treeX: 560,
-        treeY: 590,
+        treeX: 640,
+        treeY: 630,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -412,7 +412,7 @@ const NODE_DEFS = [
         parents: ['lightning_boost', 'lightning_chain'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: 190,
+        treeX: 200,
         treeY: 550,
         effect: function () {
             _recalcLightningDamage();
@@ -473,7 +473,7 @@ const NODE_DEFS = [
         parents: ['shockwave_amplifier', 'shockwave_resonance'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: 610,
+        treeX: 600,
         treeY: 550,
         effect: function () {
             _recalcShockwaveStats();

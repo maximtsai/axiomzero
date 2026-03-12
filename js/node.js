@@ -137,6 +137,16 @@ class Node {
 
     // ── state management ─────────────────────────────────────────────────
 
+    isDuoDescendant() {
+        if (this.isDuoBox) return true;
+        if (this.parents.length === 0) return false;
+        for (let pid of this.parents) {
+            const p = neuralTree.getNode(pid);
+            if (p && p.isDuoDescendant()) return true;
+        }
+        return false;
+    }
+
     isRequirementsMet() {
         if (gameState.currentTier < this.tier) return false;
 
@@ -602,7 +612,9 @@ class Node {
 
                 // Set alpha based on parent state
                 let ghostAlpha = 1.0;
-                if (this.parents && this.parents.length > 0) {
+
+                // Exception: descendants of Shard nodes (duo branches) stay at 1.0 alpha
+                if (!this.isDuoDescendant() && this.parents && this.parents.length > 0) {
                     let allGhostOrHidden = true;
                     for (let pid of this.parents) {
                         const p = neuralTree.getNode(pid);

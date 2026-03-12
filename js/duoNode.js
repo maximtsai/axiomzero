@@ -34,7 +34,8 @@ class DuoNode extends Node {
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
                 let ghostAlpha = 1.0;
-                if (this.parents && this.parents.length > 0) {
+                // Exception: descendants of Shard nodes (duo branches) stay at 1.0 alpha
+                if (!this.isDuoDescendant() && this.parents && this.parents.length > 0) {
                     let allGhostOrHidden = true;
                     for (let pid of this.parents) {
                         const parentNode = neuralTree.getNode(pid);
