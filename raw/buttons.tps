@@ -276,13 +276,27 @@
                 <false/>
             </struct>
             <key type="filename">buttons/duo_node_backing_active.png</key>
-            <key type="filename">buttons/duo_node_backing_outline.png</key>
             <key type="filename">buttons/duo_node_pulse.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>46,43,91,85</rect>
+                <key>scale9Paddings</key>
+                <rect>46,43,91,85</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/duo_node_backing_outline.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.98</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>

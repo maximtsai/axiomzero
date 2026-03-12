@@ -65,6 +65,11 @@ class Node {
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.prefix = 'node';
 
+        this.duoBackingSprite = null;
+        this.duoBackingOutline = null;
+        this.duoOutlineTween = null;
+        this._isDuoBackingOwner = false;
+
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
@@ -344,6 +349,9 @@ class Node {
         // Visual pulse effect
         if (typeof neuralTree !== 'undefined') {
             neuralTree.playPurchasePulse(this.btn.x, this.btn.y, this.isMaxed());
+            if (this.isDuoBox) {
+                this._playDuoPulse();
+            }
         }
 
         // Reveal children — any HIDDEN children become at least visible
@@ -515,8 +523,22 @@ class Node {
                 .setScrollFactor(0)
                 .setVisible(false);
 
-            if (treeGroup) treeGroup.add(this.duoBackingSprite);
-            if (draggableGroup) draggableGroup.add(this.duoBackingSprite);
+            this.duoBackingOutline = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing_outline.png')
+                .setOrigin(0.5, 0.5)
+                .setScale(1.0)
+                .setDepth(backingDepth - 1)
+                .setScrollFactor(0)
+                .setVisible(false)
+                .setAlpha(0);
+
+            if (treeGroup) {
+                treeGroup.add(this.duoBackingSprite);
+                treeGroup.add(this.duoBackingOutline);
+            }
+            if (draggableGroup) {
+                draggableGroup.add(this.duoBackingSprite);
+                draggableGroup.add(this.duoBackingOutline);
+            }
         }
 
         this._updateVisual();
@@ -555,6 +577,8 @@ class Node {
 
                 // Notify systems of state change
                 messageBus.publish('upgradePurchased');
+
+                this._playDuoPulse();
 
                 return;
             }
@@ -726,11 +750,39 @@ class Node {
         if (tierPurchased || parentPurchased) {
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
             this.duoBackingSprite.setAlpha(1);
+
+            if (this.duoBackingOutline) {
+                this.duoBackingOutline.setVisible(true);
+                if (!this.duoOutlineTween) {
+                    this.duoBackingOutline.setAlpha(0.15);
+                    this.duoOutlineTween = PhaserScene.tweens.add({
+                        targets: this.duoBackingOutline,
+                        alpha: 1.15,
+                        duration: 2500,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Quad.easeInOut'
+                    });
+                }
+            }
         } else {
             // Unpurchased state: default texture
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
             // Show as solid foreshadowing
-            this.duoBackingSprite.setAlpha(1.0); 
+            this.duoBackingSprite.setAlpha(1.0);
+
+            if (this.duoBackingOutline) {
+                this._stopDuoOutlineAnimation();
+                this.duoBackingOutline.setAlpha(0);
+                this.duoBackingOutline.setVisible(false);
+            }
+        }
+    }
+
+    _stopDuoOutlineAnimation() {
+        if (this.duoOutlineTween) {
+            this.duoOutlineTween.stop();
+            this.duoOutlineTween = null;
         }
     }
 
@@ -800,6 +852,8 @@ class Node {
         if (this.duoBackingSprite && this._isDuoBackingOwner) {
             if (!vis) {
                 this.duoBackingSprite.setVisible(false);
+                if (this.duoBackingOutline) this.duoBackingOutline.setVisible(false);
+                this._stopDuoOutlineAnimation();
             } else {
                 this._updateDuoBacking();
             }
@@ -822,8 +876,63 @@ class Node {
             this.duoBackingSprite.destroy();
             this.duoBackingSprite = null;
         }
+        if (this.duoBackingOutline) {
+            this.duoBackingOutline.destroy();
+            this.duoBackingOutline = null;
+        }
+        this._stopDuoOutlineAnimation();
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
+    }
+
+    _playDuoPulse() {
+        if (!this.btn) return;
+
+        let x = this.btn.x;
+        let y = this.btn.y;
+
+        // Find the center of the duo box
+        if (this._isDuoBackingOwner && this.duoBackingSprite) {
+            x = this.duoBackingSprite.x;
+            y = this.duoBackingSprite.y;
+        } else {
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling && sibling.duoBackingSprite) {
+                x = sibling.duoBackingSprite.x;
+                y = sibling.duoBackingSprite.y;
+            }
+        }
+
+        const pulseDepth = this.btn.depth + 1;
+
+        const pulse = PhaserScene.add.sprite(x, y, 'buttons', 'duo_node_pulse.png')
+            .setOrigin(0.5, 0.5)
+            .setDepth(pulseDepth)
+            .setScrollFactor(0)
+            .setAlpha(1.1)
+            .setScale(0.95);
+
+        const treeGroup = neuralTree.getGroup();
+        const draggableGroup = neuralTree.getDraggableGroup();
+        if (treeGroup) treeGroup.add(pulse);
+        if (draggableGroup) draggableGroup.add(pulse);
+
+        PhaserScene.tweens.add({
+            targets: pulse,
+            alpha: 0,
+            duration: 1100,
+        });
+
+        PhaserScene.tweens.add({
+            targets: pulse,
+            scaleX: 1.6,
+            scaleY: 1.6,
+            duration: 1100,
+            ease: 'Quart.easeOut',
+            onComplete: () => {
+                pulse.destroy();
+            }
+        });
     }
 }
 
