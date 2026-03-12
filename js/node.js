@@ -666,12 +666,18 @@ class Node {
 
         this.duoBackingSprite.setVisible(true);
 
-        if (tierPurchased) {
+        let parentPurchased = false;
+        if (this.parentId) {
+            const p = neuralTree.getNode(this.parentId);
+            if (p && p.level > 0) parentPurchased = true;
+        }
+
+        if (tierPurchased || parentPurchased) {
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
             this.duoBackingSprite.setAlpha(1);
         } else {
-            // Unpurchased state: use active texture if unlocked, else default
-            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
+            // Unpurchased state: default texture
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
             // Show as solid foreshadowing
             this.duoBackingSprite.setAlpha(1.0); 
         }

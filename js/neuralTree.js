@@ -328,11 +328,11 @@ const neuralTree = (() => {
         const startAlpha = isMaxed ? 1.3 : 1;
 
         // Primary pulse
-        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 166 : 112, dur, startAlpha);
+        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 156 : 112, dur, startAlpha);
 
         // Secondary inner pulse (Max only)
         if (isMaxed) {
-            _animatePulse(x, y, maxPulsePool, 64, 140, dur, startAlpha - 0.35, 70);
+            _animatePulse(x, y, maxPulsePool, 64, 130, dur + 50, startAlpha - 0.35, 70);
         }
     }
 
