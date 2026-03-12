@@ -163,7 +163,7 @@ const NODE_DEFS = [
         costStep: 5,
         parents: ['pulse_expansion'],
         childIds: [],
-        tier: 2,
+
         treeX: 640,
         treeY: 630,
         effect: function () {
@@ -301,7 +301,7 @@ const NODE_DEFS = [
         parents: [],
         monitorsDuoTier: 1,
         childIds: ['base_hp_boost'],
-        tier: 1,
+
         treeX: 400,
         treeY: 580,
         effect: function () { },
@@ -492,7 +492,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        tier: 2,
+
         treeX: 400,
         treeY: 430,
         effect: function () {

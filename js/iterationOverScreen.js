@@ -10,7 +10,6 @@ const iterationOverScreen = (() => {
     let processorText = null;
     let upgradesBtn = null;
     let retryBtn = null;
-    let newTierText = null;
 
     let visible = false;
     let isBossKill = false;
@@ -79,13 +78,6 @@ const iterationOverScreen = (() => {
             color: '#ff9500',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
-
-        newTierText = PhaserScene.add.text(cx, cy - 85, 'new tier unlocked', {
-            fontFamily: 'JetBrainsMono_Italic',
-            fontSize: '18px',
-            color: '#00f5ff',
-            align: 'center',
-        }).setOrigin(0.5).setDepth(depth + 1).setVisible(false);
 
         // UPGRADES button
         upgradesBtn = new Button({
@@ -174,10 +166,8 @@ const iterationOverScreen = (() => {
 
         if (isBossKill) {
             titleText.fullText = 'BOSS DEFEATED';
-            newTierText.setVisible(true);
         } else {
             titleText.fullText = 'ITERATION COMPLETE';
-            newTierText.setVisible(false);
         }
 
         const cx = GAME_CONSTANTS.halfWidth;
@@ -250,7 +240,6 @@ const iterationOverScreen = (() => {
         insightText.setVisible(false);
         shardText.setVisible(false);
         processorText.setVisible(false);
-        if (newTierText) newTierText.setVisible(false);
         upgradesBtn.setVisible(false);
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);

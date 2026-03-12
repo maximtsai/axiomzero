@@ -56,7 +56,6 @@ class Node {
         this.icon = def.icon || null;
 
         // Tier and Duo-Box properties
-        this.tier = def.tier || 1;
         this.isDuoBox = def.isDuoBox || false;
         this.shardId = def.shardId || null;
         this.duoBoxTier = def.duoBoxTier || 0;
@@ -148,7 +147,6 @@ class Node {
     }
 
     isRequirementsMet() {
-        if (gameState.currentTier < this.tier) return false;
 
         // Placeholders monitoring a Duo Tier don't need standard parents
         if (this.isPlaceholder && this.monitorsDuoTier > 0) {
@@ -266,12 +264,9 @@ class Node {
         } else if (this.parents.some(pid => neuralTree.getNode(pid) && neuralTree.getNode(pid).level > 0)) {
             this.setState(NODE_STATE.GHOST); // Visible but locked
         } else {
-            // Show as GHOST if in current tier, otherwise HIDDEN
-            if (this.tier <= gameState.currentTier) {
-                this.setState(NODE_STATE.GHOST);
-            } else {
-                this.setState(NODE_STATE.HIDDEN);
-            }
+            // Any node not actively unlocked/purchased and whose parents are unlocked/maxed
+            // defaults to GHOST. Since there are no more global tiers, we just make them ghosts.
+            this.setState(NODE_STATE.GHOST);
         }
 
         // 3. Update duo-box backing sprite if we own it

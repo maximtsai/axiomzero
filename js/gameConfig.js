@@ -146,7 +146,6 @@ const GAME_STATE_DEFAULTS = {
     // Wave / progression
     currentLevel: 1,
     currentWave: 1,
-    currentTier: 1,
 
     // First-launch flag — drives AWAKEN-only tree state
     isFirstLaunch: true,

@@ -501,9 +501,7 @@ const neuralTree = (() => {
             // Determine visibility
             let shouldHide;
             if (line.isDuoLine) {
-                const tier = n.tier || 1;
-                const isVisibleTier = (tier <= (gameState.currentTier || 1));
-                shouldHide = (p.state === NODE_STATE.HIDDEN || !isVisibleTier);
+                shouldHide = (p.state === NODE_STATE.HIDDEN);
             } else {
                 shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
             }
