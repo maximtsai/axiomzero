@@ -34,11 +34,16 @@ class DuoNode extends Node {
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
                 let ghostAlpha = 1.0;
-                if (this.parentId) {
-                    const parentNode = neuralTree.getNode(this.parentId);
-                    if (parentNode && (parentNode.state === NODE_STATE.GHOST || parentNode.state === NODE_STATE.HIDDEN)) {
-                        ghostAlpha = 0.5;
+                if (this.parents && this.parents.length > 0) {
+                    let allGhostOrHidden = true;
+                    for (let pid of this.parents) {
+                        const parentNode = neuralTree.getNode(pid);
+                        if (parentNode && parentNode.state !== NODE_STATE.GHOST && parentNode.state !== NODE_STATE.HIDDEN) {
+                            allGhostOrHidden = false;
+                            break;
+                        }
                     }
+                    if (allGhostOrHidden) ghostAlpha = 0.5;
                 }
                 this.btn.setAlpha(ghostAlpha);
                 if (this.iconSprite) this.iconSprite.setVisible(false);

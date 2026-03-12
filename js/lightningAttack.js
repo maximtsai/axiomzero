@@ -12,9 +12,9 @@ class LightningAttackModel {
         this.active = false;  // true when combat phase AND unlocked
         this.unlocked = false;
         this.paused = false;
-        this.fireTimer = 0;
         this.damage = this.BASE_DAMAGE;
         this.chainCount = this.BASE_CHAIN_COUNT;
+        this.staticChargeMultiplier = 0; // 0.5 per level
     }
 
     resetTimer() {
@@ -205,6 +205,10 @@ const lightningAttack = (() => {
         model.damage = dmg;
     }
 
+    function setStaticChargeLevel(level) {
+        model.staticChargeMultiplier = level * 0.5;
+    }
+
     function _update(delta) {
         if (model.paused || !model.active) return;
 
@@ -223,7 +227,13 @@ const lightningAttack = (() => {
 
         const hitEnemies = [first];
         view.drawBolt(pos.x, pos.y, first.x, first.y);
-        enemyManager.damageEnemy(first, model.damage);
+
+        let actualDamage = model.damage;
+        if (model.staticChargeMultiplier > 0 && first.health >= first.maxHealth * 0.8) {
+            actualDamage *= (1 + model.staticChargeMultiplier);
+        }
+        console.log(actualDamage, model.staticChargeMultiplier, first.health, first.maxHealth);
+        enemyManager.damageEnemy(first, actualDamage);
 
         // Chain to additional enemies
         let lastHit = first;
@@ -256,7 +266,13 @@ const lightningAttack = (() => {
             if (!bestEnemy) break;
 
             view.drawBolt(lastHit.x, lastHit.y, bestEnemy.x, bestEnemy.y);
-            enemyManager.damageEnemy(bestEnemy, model.damage);
+
+            let chainDamage = model.damage;
+            if (model.staticChargeMultiplier > 0 && bestEnemy.health >= bestEnemy.maxHealth * 0.8) {
+                chainDamage *= (1 + model.staticChargeMultiplier);
+            }
+            enemyManager.damageEnemy(bestEnemy, chainDamage);
+
             hitEnemies.push(bestEnemy);
             lastHit = bestEnemy;
         }
@@ -281,5 +297,5 @@ const lightningAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setChainCount, setDamage };
+    return { init, unlock, lock, setChainCount, setDamage, setStaticChargeLevel };
 })();

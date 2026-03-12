@@ -191,12 +191,12 @@ const nodeTooltip = (() => {
                 const targetRes = currentRes;
                 animValue.val = targetRes + purchaseCost;
                 costT.setText(iconStr + ' ' + Math.floor(animValue.val) + ' / ' + node.getCost());
-
+                let calcDur = 250 + Math.floor(Math.sqrt(purchaseCost) * 5);
                 PhaserScene.tweens.add({
                     targets: animValue,
                     val: targetRes,
-                    duration: 500,
-                    ease: 'Cubic.easeOut',
+                    duration: calcDur,
+                    ease: 'Quad.easeOut',
                     onUpdate: () => {
                         // Check if node is still the current one to avoid updating stale tooltips
                         if (currentNode === node && costT.visible) {

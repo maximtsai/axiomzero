@@ -6,15 +6,15 @@ class ShockwaveAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between pulses
         this.BASE_DAMAGE = 6;
-        this.BASE_RADIUS = 160;     // px — damage radius
+        this.BASE_RADIUS = 130;     // px — damage radius
 
         this.active = false;
         this.unlocked = false;
         this.paused = false;
         this.fireTimer = 0;
-        this.damage = this.BASE_DAMAGE;
         this.radius = this.BASE_RADIUS;
         this.resonanceDmgPerHit = 0;
+        this.seismicCrushMultiplier = 0; // 0.5 per level
     }
 
     resetTimer() {
@@ -116,7 +116,7 @@ const shockwaveAttack = (() => {
 
     function setAmplifierLevel(level) {
         if (level > 0) {
-            model.radius = model.BASE_RADIUS * 1.25;
+            model.radius = model.BASE_RADIUS * 1.4;
         } else {
             model.radius = model.BASE_RADIUS;
         }
@@ -124,6 +124,10 @@ const shockwaveAttack = (() => {
 
     function setResonanceLevel(level) {
         model.resonanceDmgPerHit = level;
+    }
+
+    function setSeismicCrushLevel(level) {
+        model.seismicCrushMultiplier = level * 0.5;
     }
 
     function lock() {
@@ -168,7 +172,15 @@ const shockwaveAttack = (() => {
         const totalDamage = model.damage + (model.resonanceDmgPerHit * validHits.length);
 
         for (let i = 0; i < validHits.length; i++) {
-            enemyManager.damageEnemy(validHits[i], totalDamage);
+            const e = validHits[i];
+            let actualDamage = totalDamage;
+
+            // Seismic Crush checks if enemy is below 50% HP
+            if (model.seismicCrushMultiplier > 0 && e.health < e.maxHealth * 0.5) {
+                actualDamage *= (1 + model.seismicCrushMultiplier);
+            }
+
+            enemyManager.damageEnemy(e, actualDamage);
         }
 
         // Subtle camera shake
@@ -187,5 +199,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel };
+    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel, setSeismicCrushLevel };
 })();

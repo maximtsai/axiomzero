@@ -504,7 +504,7 @@ Optional modifiers:
 
 ### Phase 2 — Core Loop Complete
 - Full 5-currency resource economy
-- Cursor pulse attack (Basic Pulse node, upgradeable)
+- Cursor attack (Basic cursor attack node, upgradeable)
 - Logic Strays (PROCESSOR drops)
 - Tier structure + first Tier Boss + first Miniboss
 - Shard system + first Duo-Box + first-purchase notification blurb

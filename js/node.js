@@ -49,7 +49,7 @@ class Node {
         this.effect = def.effect || function () { };
         this.popupText = def.popupText || null;
         this.popupColor = def.popupColor || '#ffffff';
-        this.parentId = def.parentId || null;
+        this.parents = def.parents || [];
         this.childIds = def.childIds || [];
         this.treeX = def.treeX || 0;
         this.treeY = def.treeY || 0;
@@ -145,19 +145,28 @@ class Node {
             return this._isDuoTierPurchased(this.monitorsDuoTier);
         }
 
-        if (this.parentId) {
-            const p = neuralTree.getNode(this.parentId);
-            if (!p || !p.branchActive) return false;
-
-            if (p.isDuoBox) {
-                if (!this._isDuoTierPurchased(p.duoBoxTier)) return false;
+        if (this.parents.length > 0) {
+            if (this.requiresMaxParent) {
+                // ALL parents must be maxed
+                for (let pid of this.parents) {
+                    const p = neuralTree.getNode(pid);
+                    if (!p || !p.branchActive) return false;
+                    if (p.isDuoBox && !this._isDuoTierPurchased(p.duoBoxTier)) return false;
+                    if (!p.isDuoBox && p.level < 1) return false;
+                    if (p.level < p.maxLevel) return false;
+                }
+                return true;
             } else {
-                // Standard node parent must be bought
-                if (p.level < 1) return false;
+                // AT LEAST ONE parent must be unlocked (level >= 1)
+                for (let pid of this.parents) {
+                    const p = neuralTree.getNode(pid);
+                    if (p && p.branchActive) {
+                        if (p.isDuoBox && this._isDuoTierPurchased(p.duoBoxTier)) return true;
+                        if (!p.isDuoBox && p.level >= 1) return true;
+                    }
+                }
+                return false;
             }
-
-            // Check for full upgrade if required
-            if (this.requiresMaxParent && p.level < p.maxLevel) return false;
         }
         return true;
     }
@@ -174,29 +183,37 @@ class Node {
                 // No shard chosen yet — both are "active" (available to purchase)
                 this.branchActive = true;
             }
-        } else if (this.parentId) {
-            const parent = neuralTree.getNode(this.parentId);
-            this.branchActive = parent ? parent.branchActive : true;
+        } else if (this.parents.length > 0) {
+            this.branchActive = this.parents.some(pid => {
+                const p = neuralTree.getNode(pid);
+                return p ? p.branchActive : true;
+            });
         }
 
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
-        if (this.parentId) {
-            const parent = neuralTree.getNode(this.parentId);
-            if (parent && parent.state === NODE_STATE.HIDDEN) {
+        if (this.parents.length > 0) {
+            let anyRevealed = false;
+            for (let pid of this.parents) {
+                const parent = neuralTree.getNode(pid);
+                if (parent) {
+                    let isHidden = parent.state === NODE_STATE.HIDDEN;
+                    if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
+                        isHidden = true; // Still "hidden" from this child's perspective
+                    }
+                    if (!isHidden) {
+                        anyRevealed = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!anyRevealed) {
                 this.setState(NODE_STATE.HIDDEN);
                 for (let i = 0; i < this.childIds.length; i++) {
                     const child = neuralTree.getNode(this.childIds[i]);
                     if (child) child.refreshState();
                 }
                 return;
-            }
-
-            // Duo child reveal: Keep hidden until DUO is actually BOUGHT
-            if (parent && parent.isDuoBox) {
-                if (!this._isDuoTierPurchased(parent.duoBoxTier)) {
-                    this.setState(NODE_STATE.HIDDEN);
-                    return;
-                }
             }
         }
 
@@ -236,7 +253,7 @@ class Node {
             this.setState(NODE_STATE.MAXED);
         } else if (this.isRequirementsMet()) {
             this.setState(NODE_STATE.UNLOCKED);
-        } else if (this.parentId && neuralTree.getNode(this.parentId).level > 0) {
+        } else if (this.parents.some(pid => neuralTree.getNode(pid) && neuralTree.getNode(pid).level > 0)) {
             this.setState(NODE_STATE.GHOST); // Visible but locked
         } else {
             // Show as GHOST if in current tier, otherwise HIDDEN
@@ -585,11 +602,16 @@ class Node {
 
                 // Set alpha based on parent state
                 let ghostAlpha = 1.0;
-                if (this.parentId) {
-                    const p = neuralTree.getNode(this.parentId);
-                    if (p && (p.state === NODE_STATE.GHOST || p.state === NODE_STATE.HIDDEN)) {
-                        ghostAlpha = 0.5;
+                if (this.parents && this.parents.length > 0) {
+                    let allGhostOrHidden = true;
+                    for (let pid of this.parents) {
+                        const p = neuralTree.getNode(pid);
+                        if (p && p.state !== NODE_STATE.GHOST && p.state !== NODE_STATE.HIDDEN) {
+                            allGhostOrHidden = false;
+                            break;
+                        }
                     }
+                    if (allGhostOrHidden) ghostAlpha = 0.5;
                 }
                 this.btn.setAlpha(ghostAlpha);
 
@@ -667,9 +689,14 @@ class Node {
         this.duoBackingSprite.setVisible(true);
 
         let parentPurchased = false;
-        if (this.parentId) {
-            const p = neuralTree.getNode(this.parentId);
-            if (p && p.level > 0) parentPurchased = true;
+        if (this.parents && this.parents.length > 0) {
+            for (let pid of this.parents) {
+                const p = neuralTree.getNode(pid);
+                if (p && p.level > 0) {
+                    parentPurchased = true;
+                    break;
+                }
+            }
         }
 
         if (tierPurchased || parentPurchased) {

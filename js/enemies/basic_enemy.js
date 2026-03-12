@@ -29,7 +29,7 @@ class BasicEnemy extends Enemy {
 
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
-            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,

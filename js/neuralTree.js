@@ -454,29 +454,32 @@ const neuralTree = (() => {
 
             for (const id in nodes) {
                 const n = nodes[id];
-                if (n.parentId && nodes[n.parentId]) {
-                    const p = nodes[n.parentId];
+                if (n.parents && n.parents.length > 0) {
+                    for (let pid of n.parents) {
+                        const p = nodes[pid];
+                        if (!p) continue;
 
-                    if (n.isDuoBox && n.duoBoxTier > 0) {
-                        const duoKey = n.duoBoxTier + '_' + n.parentId;
-                        if (isDuoLineDrawn[duoKey]) continue;
-                        isDuoLineDrawn[duoKey] = true;
+                        if (n.isDuoBox && n.duoBoxTier > 0) {
+                            const duoKey = n.duoBoxTier + '_' + pid;
+                            if (isDuoLineDrawn[duoKey]) continue;
+                            isDuoLineDrawn[duoKey] = true;
 
-                        const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
-                        const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
-                        const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
+                            const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
+                            const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
+                            const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
 
-                        _createLine(p.treeX, p.treeY, targetX, targetY, {
-                            childId: id,
-                            duoSiblingChildId: n.duoSiblingId,
-                            parentId: n.parentId,
-                            isDuoLine: true,
-                        });
-                    } else {
-                        _createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
-                            childId: id,
-                            parentId: n.parentId,
-                        });
+                            _createLine(p.treeX, p.treeY, targetX, targetY, {
+                                childId: id,
+                                duoSiblingChildId: n.duoSiblingId,
+                                parentId: pid,
+                                isDuoLine: true,
+                            });
+                        } else {
+                            _createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
+                                childId: id,
+                                parentId: pid,
+                            });
+                        }
                     }
                 }
             }
