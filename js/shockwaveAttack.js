@@ -116,10 +116,8 @@ const shockwaveAttack = (() => {
 
     function setAmplifierLevel(level) {
         if (level > 0) {
-            model.damage = model.BASE_DAMAGE * 1.25;
             model.radius = model.BASE_RADIUS * 1.25;
         } else {
-            model.damage = model.BASE_DAMAGE;
             model.radius = model.BASE_RADIUS;
         }
     }

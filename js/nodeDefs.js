@@ -277,11 +277,11 @@ const NODE_DEFS = [
         description: 'Reduces incoming damage by 1.',
         popupText: '+1 ARMOR',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
-        maxLevel: 3,
-        baseCost: 10,
+        maxLevel: 1,
+        baseCost: 0,
         costType: 'data',
-        costScaling: 'linear',
-        costStep: 10,
+        costScaling: 'static',
+        costStep: 0,
         parentId: 'integrity',
         childIds: [],
         treeX: 240,
@@ -290,12 +290,23 @@ const NODE_DEFS = [
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
+    {
+        id: 'placeholder_duo_1',
+        isPlaceholder: true,
+        parentId: null,
+        monitorsDuoTier: 1,
+        childIds: ['base_hp_boost'],
+        tier: 1,
+        treeX: 400,
+        treeY: 180,
+        effect: function () { },
+    },
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
     {
         id: 'lightning_weapon',
         name: 'LIGHTNING',
         icon: 'Skillicon14_17.png',
-        description: 'Tower gains a lightning weapon that chains across enemies.',
+        description: 'Tower gains a lightning weapon that fires every 3s and chains across enemies.',
         popupText: 'LIGHTNING WEAPON',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
@@ -356,7 +367,7 @@ const NODE_DEFS = [
         parentId: 'lightning_weapon',
         childIds: [],
         treeX: 320,
-        treeY: 470,
+        treeY: 370,
         effect: function () {
             _recalcLightningChains();
         },
@@ -376,7 +387,7 @@ const NODE_DEFS = [
         parentId: 'lightning_weapon',
         childIds: [],
         treeX: 320,
-        treeY: 390,
+        treeY: 290,
         effect: function () {
             _recalcLightningDamage();
         },
@@ -396,7 +407,7 @@ const NODE_DEFS = [
         parentId: 'shockwave_weapon',
         childIds: [],
         treeX: 480,
-        treeY: 470,
+        treeY: 370,
         effect: function () {
             _recalcShockwaveStats();
         },
@@ -416,10 +427,29 @@ const NODE_DEFS = [
         parentId: 'shockwave_weapon',
         childIds: [],
         treeX: 480,
-        treeY: 390,
+        treeY: 290,
         effect: function () {
             _recalcShockwaveStats();
         },
     },
-
+    {
+        id: 'base_hp_boost',
+        name: 'STABILIZE',
+        icon: 'Skillicon14_13.png',
+        description: '+10 tower max health',
+        popupText: '+10 MAX HEALTH',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 50,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parentId: 'placeholder_duo_1',
+        tier: 2,
+        treeX: 400,
+        treeY: 350,
+        effect: function () {
+            // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
 ];

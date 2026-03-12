@@ -62,6 +62,8 @@ class Node {
         this.duoBoxTier = def.duoBoxTier || 0;
         this.duoSiblingId = def.duoSiblingId || null;
         this.requiresMaxParent = def.requiresMaxParent || false;
+        this.isPlaceholder = def.isPlaceholder || false;
+        this.monitorsDuoTier = def.monitorsDuoTier || 0;
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
@@ -137,6 +139,12 @@ class Node {
 
     isRequirementsMet() {
         if (gameState.currentTier < this.tier) return false;
+
+        // Placeholders monitoring a Duo Tier don't need standard parents
+        if (this.isPlaceholder && this.monitorsDuoTier > 0) {
+            return this._isDuoTierPurchased(this.monitorsDuoTier);
+        }
+
         if (this.parentId) {
             const p = neuralTree.getNode(this.parentId);
             if (!p || !p.branchActive) return false;
@@ -193,7 +201,18 @@ class Node {
         }
 
         // 2. Set State based on requirements and level
-        if (this.isDuoBox) {
+        if (this.isPlaceholder) {
+            if (this.isRequirementsMet()) {
+                const justUnlocked = (this.level < this.maxLevel);
+                this.level = this.maxLevel;
+                this.setState(NODE_STATE.MAXED);
+                if (!gameState.upgrades) gameState.upgrades = {};
+                gameState.upgrades[this.id] = this.level;
+                if (justUnlocked) neuralTree._revealChildren(this.id);
+            } else {
+                this.setState(NODE_STATE.HIDDEN);
+            }
+        } else if (this.isDuoBox) {
             // Duo-box special state logic
             const tierPurchased = this._isDuoTierPurchased();
             const activeShard = gameState.activeShards[this.duoBoxTier];
@@ -356,6 +375,7 @@ class Node {
     // ── rendering ────────────────────────────────────────────────────────
 
     create(offsetX, offsetY) {
+
         let x = this.treeX + offsetX;
         let y = this.treeY + offsetY;
 
@@ -403,10 +423,11 @@ class Node {
             onMouseUp: () => { this._onClick(); },
             onHover: () => { this._showHover(); },
             onHoverOut: () => { this._hideHover(); },
-            hoverWhileDisabled: true,
+            hoverWhileDisabled: !this.isPlaceholder,
         });
         this.btn.setDepth(nodeDepth);
         this.btn.setScrollFactor(0);
+
 
         // Node icon
         if (this.icon) {
@@ -436,6 +457,15 @@ class Node {
                 if (this.iconSprite) draggableGroup.add(this.iconSprite);
                 draggableGroup.add(this.fadeoutSprite);
             }
+        }
+
+        // Placeholders shouldn't intercept clicks or be visible, but need the Button obj to exist
+        if (this.isPlaceholder) {
+            this.btn.setState(DISABLE);
+            this.btn.setAlpha(0);
+            this.btn.setVisible(false);
+            this.btn.setScale(0); // Fully collapse the hitbox
+            if (this.fadeoutSprite) this.fadeoutSprite.setVisible(false);
         }
 
         // Flip X scale for the right-side duo node
@@ -530,7 +560,7 @@ class Node {
     }
 
     _updateVisual() {
-        if (!this.btn) return;
+        if (this.isPlaceholder || !this.btn) return;
 
         // Trigger fadeout if state changed
         if (this.lastVisualState !== this.state && this.lastSpriteRef) {
@@ -678,11 +708,12 @@ class Node {
     // ── hover tooltip ────────────────────────────────────────────────────
 
     _showHover(isPurchaseRefresh = false) {
-        if (this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
+        if (this.isPlaceholder || this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
         nodeTooltip.show(this, isPurchaseRefresh);
     }
 
     _hideHover() {
+        if (this.isPlaceholder) return;
         this._tapConfirmed = false;
         if (nodeTooltip.getCurrentNode() === this) {
             nodeTooltip.hide();
@@ -692,6 +723,8 @@ class Node {
     // ── cleanup ──────────────────────────────────────────────────────────
 
     setVisible(vis) {
+        if (this.isPlaceholder) return;
+
         const isHidden = this.state === NODE_STATE.HIDDEN;
         const isGhost = this.state === NODE_STATE.GHOST;
 

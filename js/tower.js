@@ -31,8 +31,9 @@ class TowerModel {
         const regenLv = ups.regen || 0;
         const focusLv = ups.focus || 0;
         const armorLv = ups.armor || 0;
+        const baseHpLv = ups.base_hp_boost || 0;
 
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 10 * baseHpLv;
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv;
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
@@ -133,7 +134,7 @@ class TowerView {
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
-        this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'range.png');
+        this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
         this.rangeSprite.setAlpha(0.40 / 3);
         this.rangeSprite.setScale(rangeScale * 0.2);
@@ -154,7 +155,7 @@ class TowerView {
     refreshRangeSprite(attackRange, pos, isIntense = false) {
         const rangeScale = attackRange / 202;
         if (!this.rangeSprite) {
-            this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'range.png');
+            this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'player', 'range.png');
             this.rangeSprite.setDepth(1);
             this.rangeSprite.setAlpha(0);
             this.rangeSprite.setScale(rangeScale * 0.2);
