@@ -379,16 +379,16 @@ class Node {
         let x = this.treeX + offsetX;
         let y = this.treeY + offsetY;
 
-        // Duo-box positioning tweaks: Move buttons 8px apart (4px each) and offset icons 16px
+        // Duo-box positioning tweaks: Move buttons 14px apart (7px each) and offset icons 16px
         let iconX = x;
         if (this.isDuoBox && this.duoSiblingId) {
             const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
             if (siblingDef) {
                 if (this.treeX < siblingDef.treeX) {
-                    x -= 4;
+                    x -= 13;
                     iconX = x + 16;
                 } else {
-                    x += 4;
+                    x += 13;
                     iconX = x - 16;
                 }
             }
@@ -667,13 +667,13 @@ class Node {
         this.duoBackingSprite.setVisible(true);
 
         if (tierPurchased) {
-            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
             this.duoBackingSprite.setAlpha(1);
         } else {
-            // Unpurchased state: use same texture as purchased now
-            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
+            // Unpurchased state: use active texture if unlocked, else default
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
             // Show as solid foreshadowing
-            this.duoBackingSprite.setAlpha(1.0); // Set to 1.0 for all foreshadowed states
+            this.duoBackingSprite.setAlpha(1.0); 
         }
     }
 
@@ -844,17 +844,8 @@ class DuoNode extends Node {
                 break;
 
             case NODE_STATE.MAXED:
-                // Active Shards in a DuoBox stay interactive (NORMAL button state) so they can be clicked
-                // even though the node is 'MAXED'. This allows the swap logic in _onClick to stay reachable.
-                if (this.isDuoBox) {
-                    this.btn.setNormalRef(`${p}_maxed.png`);
-                    this.btn.setHoverRef(`${p}_maxed.png`);
-                    this.btn.setPressRef(`${p}_maxed.png`);
-                    this.btn.setState(NORMAL);
-                } else {
-                    this.btn.setDisableRef(`${p}_maxed.png`);
-                    this.btn.setState(DISABLE);
-                }
+                this.btn.setDisableRef(`${p}_maxed.png`);
+                this.btn.setState(DISABLE);
                 this.btn.setVisible(true);
                 this.btn.setAlpha(1);
                 if (this.iconSprite) {

@@ -133,7 +133,7 @@ const nodeTooltip = (() => {
         currentY += 34 + rowSpacing;
 
         // Row 2: Description
-        descT.setText(node.description.toLowerCase()).setPosition(0, currentY);
+        descT.setText(node.description).setPosition(0, currentY);
         currentY += descT.height + rowSpacing;
 
         // Row 3: Level (skip for duo-box nodes — always 1/1)
@@ -202,12 +202,12 @@ const nodeTooltip = (() => {
         bg.setDisplaySize(bgWidth, totalHeight);
 
         // Position above the node (Duo nodes appear 20px higher)
-        const verticalOffset = node.isDuoBox ? 36 : 21;
+        const verticalOffset = node.isDuoBox ? 38 : 23;
         let horizontalOffset = 0;
         if (node.isDuoBox) {
             const side = node._getDuoSide();
-            if (side === 'left') horizontalOffset = -4;
-            else if (side === 'right') horizontalOffset = 4;
+            if (side === 'left') horizontalOffset = -7;
+            else if (side === 'right') horizontalOffset = 7;
         }
 
         container.setPosition(node.btn.x + horizontalOffset, node.btn.y - verticalOffset);

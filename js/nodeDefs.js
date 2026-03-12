@@ -298,7 +298,7 @@ const NODE_DEFS = [
         childIds: ['base_hp_boost'],
         tier: 1,
         treeX: 400,
-        treeY: 180,
+        treeY: 580,
         effect: function () { },
     },
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
@@ -306,7 +306,7 @@ const NODE_DEFS = [
         id: 'lightning_weapon',
         name: 'LIGHTNING',
         icon: 'Skillicon14_17.png',
-        description: 'Tower gains a lightning weapon that fires every 3s and chains across enemies.',
+        description: 'Tower also shoots lightning every 3s that chains across enemies.',
         popupText: 'LIGHTNING WEAPON',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
@@ -366,8 +366,8 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'lightning_weapon',
         childIds: [],
-        treeX: 320,
-        treeY: 370,
+        treeX: 280,
+        treeY: 590,
         effect: function () {
             _recalcLightningChains();
         },
@@ -386,8 +386,8 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'lightning_weapon',
         childIds: [],
-        treeX: 320,
-        treeY: 290,
+        treeX: 280,
+        treeY: 510,
         effect: function () {
             _recalcLightningDamage();
         },
@@ -406,8 +406,8 @@ const NODE_DEFS = [
         costStep: 0,
         parentId: 'shockwave_weapon',
         childIds: [],
-        treeX: 480,
-        treeY: 370,
+        treeX: 520,
+        treeY: 590,
         effect: function () {
             _recalcShockwaveStats();
         },
@@ -426,15 +426,15 @@ const NODE_DEFS = [
         costStep: 30,
         parentId: 'shockwave_weapon',
         childIds: [],
-        treeX: 480,
-        treeY: 290,
+        treeX: 520,
+        treeY: 510,
         effect: function () {
             _recalcShockwaveStats();
         },
     },
     {
         id: 'base_hp_boost',
-        name: 'STABILIZE',
+        name: 'STABILITY',
         icon: 'Skillicon14_13.png',
         description: '+10 tower max health',
         popupText: '+10 MAX HEALTH',
@@ -447,7 +447,7 @@ const NODE_DEFS = [
         parentId: 'placeholder_duo_1',
         tier: 2,
         treeX: 400,
-        treeY: 350,
+        treeY: 430,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },

@@ -49,6 +49,7 @@ const neuralTree = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
+        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
 
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
@@ -551,6 +552,11 @@ const neuralTree = (() => {
                 n._updateVisual();
             }
         }
+    }
+
+    function _onUpgradePurchased() {
+        _refreshAllNodes();
+        _updateLines();
     }
 
     function _onDeployClicked() {
