@@ -226,8 +226,8 @@ const nodeTooltip = (() => {
         let horizontalOffset = 0;
         if (node.isDuoBox) {
             const side = node._getDuoSide();
-            if (side === 'left') horizontalOffset = -7;
-            else if (side === 'right') horizontalOffset = 7;
+            if (side === 'left') horizontalOffset = -3;
+            else if (side === 'right') horizontalOffset = 3;
         }
 
         // Clamp X position to stay within the 800px Neural Tree panel bounds

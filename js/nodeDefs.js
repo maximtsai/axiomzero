@@ -90,7 +90,7 @@ const NODE_DEFS = [
     },
     {
         id: 'pulse_damage',
-        name: 'AMPLIFY',
+        name: 'CONCENTRATION',
         icon: 'Skillicon14_06.png',
         description: '+2 cursor damage',
         popupText: '+2 CURSOR DMG',
@@ -110,7 +110,7 @@ const NODE_DEFS = [
     },
     {
         id: 'magnet',
-        name: 'ATTRACT',
+        name: 'CONVERGENCE',
         icon: 'Skillicon14_10.png',
         description: '+40% resource pickup range',
         popupText: '+40% PICKUP RANGE',
@@ -234,7 +234,7 @@ const NODE_DEFS = [
     },
     {
         id: 'regen',
-        name: 'REGEN',
+        name: 'RECOVERY',
         icon: 'Skillicon14_05.png',
         description: '+0.2 health regen',
         popupText: '+0.2 REGEN',
@@ -276,7 +276,7 @@ const NODE_DEFS = [
     },
     {
         id: 'armor',
-        name: 'ARMOR',
+        name: 'SECURITY',
         icon: 'Skillicon14_11.png',
         description: 'Reduces incoming damage by 1.',
         popupText: '+1 ARMOR',

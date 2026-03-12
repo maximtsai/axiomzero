@@ -63,6 +63,7 @@ class Node {
         this.requiresMaxParent = def.requiresMaxParent || false;
         this.isPlaceholder = def.isPlaceholder || false;
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
+        this.prefix = 'node';
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
@@ -419,25 +420,25 @@ class Node {
         const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
         this.btn = new Button({
             normal: {
-                ref: 'node_unlocked.png',
+                ref: this._getUnlockedSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
             },
             hover: {
-                ref: 'node_unlocked_hover.png',
+                ref: this._getHoverSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
             },
             press: {
-                ref: 'node_unlocked_press.png',
+                ref: this._getPressSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
             },
             disable: {
-                ref: 'node_unlocked_disabled.png',
+                ref: this._getUnlockedDisabledSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
@@ -581,6 +582,26 @@ class Node {
         }
     }
 
+    getGhostAlpha() {
+        if (this.isDuoDescendant() || !this.parents || this.parents.length === 0) return 1.0;
+
+        let allGhostOrHidden = true;
+        for (let pid of this.parents) {
+            const p = neuralTree.getNode(pid);
+            if (p && p.state !== NODE_STATE.GHOST && p.state !== NODE_STATE.HIDDEN) {
+                allGhostOrHidden = false;
+                break;
+            }
+        }
+        return allGhostOrHidden ? 0 : 1.0;
+    }
+
+    isDuoSwappable() {
+        return this.isDuoBox &&
+            this._isDuoTierPurchased() &&
+            gameState.activeShards && gameState.activeShards[this.duoBoxTier] !== this.shardId;
+    }
+
     _updateVisual() {
         if (this.isPlaceholder || !this.btn) return;
 
@@ -600,55 +621,30 @@ class Node {
                 break;
 
             case NODE_STATE.GHOST:
-                // swap disable ref to ghost image, then disable the button
-                this.btn.setDisableRef('node_ghost.png');
+                currentSpriteRef = `${this.prefix}_ghost.png`;
+                this.btn.setDisableRef(currentSpriteRef);
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
-
-                // Set alpha based on parent state
-                let ghostAlpha = 1.0;
-
-                // Exception: descendants of Shard nodes (duo branches) stay at 1.0 alpha
-                if (!this.isDuoDescendant() && this.parents && this.parents.length > 0) {
-                    let allGhostOrHidden = true;
-                    for (let pid of this.parents) {
-                        const p = neuralTree.getNode(pid);
-                        if (p && p.state !== NODE_STATE.GHOST && p.state !== NODE_STATE.HIDDEN) {
-                            allGhostOrHidden = false;
-                            break;
-                        }
-                    }
-                    if (allGhostOrHidden) ghostAlpha = 0.5;
-                }
-                this.btn.setAlpha(ghostAlpha);
-
-                if (this.iconSprite) {
-                    this.iconSprite.setVisible(false);
-                }
-                currentSpriteRef = 'node_ghost.png';
+                this.btn.setAlpha(this.getGhostAlpha());
+                if (this.iconSprite) this.iconSprite.setVisible(false);
                 break;
 
             case NODE_STATE.UNLOCKED:
-                // Restore disable ref to the unlocked-disabled image
-                this.btn.setDisableRef('node_unlocked_disabled.png');
+                const isSwappable = this.isDuoSwappable();
+                const canAfford = this.canAfford();
+
+                if (isSwappable || canAfford) {
+                    this.btn.setState(NORMAL);
+                    currentSpriteRef = this._getUnlockedSprite();
+                } else {
+                    this.btn.setState(DISABLE);
+                    currentSpriteRef = this._getUnlockedDisabledSprite();
+                }
+
+                this.btn.setDisableRef(this._getUnlockedDisabledSprite());
                 this.btn.setVisible(true);
                 this.btn.setAlpha(1);
 
-                // Handle affordability vs. free swap for Duo-Boxes
-                // A duo-box node is swappable if its tier is purchased but it isn't the active one
-                const isDuoSwappable = this.isDuoBox &&
-                    this._isDuoTierPurchased() &&
-                    gameState.activeShards[this.duoBoxTier] !== this.shardId;
-
-                // Show disabled appearance when unaffordable, but hover still works
-                // Skip afford check if it's already swappable (free)
-                if (isDuoSwappable || this.canAfford()) {
-                    this.btn.setState(NORMAL);
-                    currentSpriteRef = 'node_unlocked.png';
-                } else {
-                    this.btn.setState(DISABLE);
-                    currentSpriteRef = 'node_unlocked_disabled.png';
-                }
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(true);
                     this.iconSprite.setAlpha(1);
@@ -656,8 +652,8 @@ class Node {
                 break;
 
             case NODE_STATE.MAXED:
-                // Swap disable ref to maxed image
-                this.btn.setDisableRef('node_maxed.png');
+                currentSpriteRef = `${this.prefix}_maxed.png`;
+                this.btn.setDisableRef(currentSpriteRef);
                 this.btn.setVisible(true);
                 this.btn.setState(DISABLE);
                 this.btn.setAlpha(1);
@@ -665,13 +661,34 @@ class Node {
                     this.iconSprite.setVisible(true);
                     this.iconSprite.setAlpha(1);
                 }
-                currentSpriteRef = 'node_maxed.png';
                 break;
         }
+
+        this._applyVisualDepth();
 
         // Store current sprite for next state change
         this.lastSpriteRef = currentSpriteRef;
         this.lastVisualState = this.state;
+    }
+
+    _getUnlockedSprite() {
+        return `${this.prefix}_unlocked.png`;
+    }
+
+    _getUnlockedDisabledSprite() {
+        return `${this.prefix}_unlocked_disabled.png`;
+    }
+
+    _getHoverSprite() {
+        return `${this.prefix}_unlocked_hover.png`;
+    }
+
+    _getPressSprite() {
+        return `${this.prefix}_unlocked_press.png`;
+    }
+
+    _applyVisualDepth() {
+        // Base Node doesn't need special depth logic beyond default
     }
 
     // ── duo-box backing sprite management ────────────────────────────────

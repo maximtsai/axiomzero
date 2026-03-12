@@ -276,6 +276,8 @@
                 <false/>
             </struct>
             <key type="filename">buttons/duo_node_backing_active.png</key>
+            <key type="filename">buttons/duo_node_backing_outline.png</key>
+            <key type="filename">buttons/duo_node_pulse.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
