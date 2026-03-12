@@ -164,7 +164,7 @@ const resourceManager = (() => {
         });
 
         const angle = Math.random() * Math.PI * 2;
-        const dist = 30 + Math.random() * 20;
+        const dist = 1;
         const endX = x + Math.cos(angle) * dist;
         const endY = y + Math.sin(angle) * dist;
 

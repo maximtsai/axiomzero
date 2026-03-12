@@ -696,8 +696,8 @@ const enemyManager = (() => {
                 const dy = e.y - tPos.y;
                 const distSq = dx * dx + dy * dy;
 
-                // Attack range based on size (Basic size 12 * 2 = 24px)
-                const contactR = (e.size || 12) * 2;
+                // Attack range based exactly on size for melee units
+                const contactR = e.size || 12;
                 const contactR2 = contactR * contactR;
 
                 if (distSq < contactR2) {

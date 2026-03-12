@@ -497,7 +497,8 @@ const tower = (() => {
                     if (!model.alive || !model.active) return;
                     const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
                     if (newTarget) {
-                        projectileManager.fire(pos.x, pos.y, newTarget.x, newTarget.y, model.damage);
+                        const angle = Math.atan2(newTarget.y - pos.y, newTarget.x - pos.x) + (Math.random() * 0.06 - 0.03);
+                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, model.damage);
                     }
                 });
             }
