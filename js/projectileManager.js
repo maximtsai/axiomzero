@@ -17,7 +17,7 @@ const projectileManager = (() => {
             () => {
                 const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
                 img.setDepth(150); // Below tower (200) but above enemies (100)
-                img.setScale(6);
+                img.setScale(18, 5);
                 img.setVisible(false);
                 img.setActive(false);
                 img.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);

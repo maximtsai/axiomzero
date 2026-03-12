@@ -173,7 +173,6 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">enemies/basic - Copy.png</key>
             <key type="filename">enemies/basic.png</key>
             <key type="filename">enemies/bomb.png</key>
             <key type="filename">enemies/bullet.png</key>

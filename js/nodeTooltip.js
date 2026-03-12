@@ -210,7 +210,13 @@ const nodeTooltip = (() => {
             else if (side === 'right') horizontalOffset = 7;
         }
 
-        container.setPosition(node.btn.x + horizontalOffset, node.btn.y - verticalOffset);
+        // Clamp X position to stay within the 800px Neural Tree panel bounds
+        let targetX = node.btn.x + horizontalOffset;
+        const halfW = bgWidth / 2;
+        const margin = 10;
+        targetX = Phaser.Math.Clamp(targetX, halfW + margin, GAME_CONSTANTS.halfWidth - halfW - margin);
+
+        container.setPosition(targetX, node.btn.y - verticalOffset);
 
         // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
         // This is necessary because of the singleton pattern (reuse)
