@@ -511,7 +511,7 @@ const neuralTree = (() => {
 
             if (!p || !n) continue;
 
-            // Determine visibility: Hide if either p or n is HIDDEN
+            // Determine visibility: Hide if either p or n is HIDDEN.
             const shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
 
             if (shouldHide) {
@@ -578,6 +578,11 @@ const neuralTree = (() => {
 
         // Mark first launch as complete
         gameState.isFirstLaunch = false;
+
+        if (deployBtn.hiTimer) {
+            deployBtn.hiTimer.remove();
+            deployBtn.hiTimer = null;
+        }
 
         transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
     }
@@ -649,6 +654,16 @@ const neuralTree = (() => {
                 const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
                 ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
                 deployBtn.indicator = ind2;
+
+                deployBtn.hiTimer = PhaserScene.time.delayedCall(5000, () => {
+                    if (deployBtn.indicator) {
+                        deployBtn.indicator.destroy();
+                    }
+                    const ind3 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
+                    ind3.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                    deployBtn.indicator = ind3;
+                    deployBtn.hiTimer = null;
+                });
             }
         }
     }

@@ -81,7 +81,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon'],
+        childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
         treeX: 400,
         treeY: 670,
         effect: function () {
@@ -300,7 +300,7 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_1',
         isPlaceholder: true,
-        parents: [],
+        parents: ['basic_pulse'],
         monitorsDuoTier: 1,
         childIds: ['base_hp_boost'],
 

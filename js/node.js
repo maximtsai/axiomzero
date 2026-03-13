@@ -264,7 +264,7 @@ class Node {
                 gameState.upgrades[this.id] = this.level;
                 if (justUnlocked) neuralTree._revealChildren(this.id);
             } else {
-                this.setState(NODE_STATE.HIDDEN);
+                this.setState(NODE_STATE.GHOST);
             }
         } else if (this.isDuoBox) {
             // Duo-box special state logic

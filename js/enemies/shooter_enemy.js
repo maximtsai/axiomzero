@@ -2,7 +2,7 @@
 //
 // Behaviour:
 //   • Speeds and health matched with basic enemy.
-//   • Stops at 110px from tower and fires bullets via enemyBulletManager.
+//   • Stops at 120px from tower and fires bullets via enemyBulletManager.
 //   • Deals 1 base damage per bullet.
 
 const SHOOTER_STATE = {
@@ -60,14 +60,14 @@ class ShooterEnemy extends Enemy {
         if (m.state === SHOOTER_STATE.MOVING) {
             super.update(dt);
 
-            if (distToTower <= 110) {
+            if (distToTower <= 120) {
                 m.state = SHOOTER_STATE.ATTACKING;
                 m.vx = 0;
                 m.vy = 0;
                 m.fireCooldown = 0;
             }
         } else if (m.state === SHOOTER_STATE.ATTACKING) {
-            if (distToTower > 110) {
+            if (distToTower > 130) {
                 m.state = SHOOTER_STATE.MOVING;
                 m.aimAt(tPos.x, tPos.y);
                 return;

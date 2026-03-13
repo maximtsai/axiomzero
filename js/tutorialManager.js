@@ -31,7 +31,7 @@ const tutorialManager = (() => {
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
         if (onlyAwaken && !gameState.tutorialsSeen['combat_data']) {
-            PhaserScene.time.delayedCall(6000, () => {
+            PhaserScene.time.delayedCall(8500, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT) && !gameState.tutorialsSeen['combat_data']) {
                     _showCombatTutorial();
@@ -81,6 +81,15 @@ const tutorialManager = (() => {
         const y = GAME_CONSTANTS.halfHeight - 300;
 
         _createTutorialPopup(msg, x, y, false, undefined, undefined, 'combat_data', '30px');
+
+        PhaserScene.time.delayedCall(2500, () => {
+            if (typeof messageBus !== 'undefined') {
+                messageBus.publish('pulseData');
+                PhaserScene.time.delayedCall(2000, () => {
+                    messageBus.publish('pulseData');
+                });
+            }
+        });
     }
 
     function _showUpgradeTutorial() {

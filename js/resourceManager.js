@@ -79,6 +79,7 @@ const resourceManager = (() => {
         });
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
+        messageBus.subscribe('pulseData', _onPulseData);
         _recalcPickupRadius();
         updateManager.addFunction(_update);
     }
@@ -522,6 +523,41 @@ const resourceManager = (() => {
 
     function _onMinibossDefeated(x, y) {
         spawnShardDrop(x, y);
+    }
+
+    function _onPulseData() {
+        activeDrops.forEach(d => {
+            if (d.type !== 'data' || d.flying) return;
+
+            const delay = Math.random() * 150;
+            const px = d.img.x;
+            const py = d.img.y;
+
+            const shock = PhaserScene.add.image(px, py, 'player', 'shockwave.png');
+            shock.setDepth(d.img.depth - 1);
+            shock.setScale(0.02);
+            shock.setAlpha(1);
+
+            PhaserScene.tweens.add({
+                targets: shock,
+                scale: 0.35,
+                duration: 1300,
+                delay: delay,
+                ease: 'Quart.easeOut'
+            });
+
+            PhaserScene.tweens.add({
+                targets: shock,
+                alpha: 0,
+                duration: 1300,
+                delay: delay,
+                ease: 'Linear',
+                completeDelay: 500,
+                onComplete: () => {
+                    shock.destroy();
+                }
+            });
+        });
     }
 
     function _onPhaseChanged(phase) {
