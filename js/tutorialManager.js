@@ -69,7 +69,7 @@ const tutorialManager = (() => {
             if (!tutorialText) {
                 const msg = "Unlock new abilities with \u25C6";
                 const x = 0;
-                const y = 550;
+                const y = 440;
                 _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '30px');
             }
         }
@@ -121,8 +121,9 @@ const tutorialManager = (() => {
             fontSize: fontSize,
             color: color,
             align: 'left'
-        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
+        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
 
+        tutorialText.setAlpha(1);
         if (!isUpgradeTree) {
             tutorialBg.setScrollFactor(0);
             tutorialText.setScrollFactor(0);
@@ -181,41 +182,13 @@ const tutorialManager = (() => {
         });
     }
 
-    function updateCropping(minVisX, maxVisX, minVisY, maxVisY) {
-        if (!tutorialText || !tutorialText.active) return;
-
-        const objects = [tutorialText, tutorialBg];
-        objects.forEach(obj => {
-            if (!obj) return;
-            const ox = obj.x;
-            const oy = obj.y;
-            const ow = obj.width || obj.displayWidth;
-            const oh = obj.height || obj.displayHeight;
-
-            // For text with origin 0, width is to the right. 
-            // For BG image with origin 0.5 (default), width is around it? 
-            // Wait, tutorialBg is origin 0.5, 0.5 usually for images?
-            // Actually tutorialBg is at (x, y) with displaySize. Origin is (0.5, 0.5) by default.
-
-            let isOut = false;
-            if (obj === tutorialText) {
-                // Origin 0, 0.5
-                isOut = (ox + ow < minVisX || ox > maxVisX || oy + oh / 2 < minVisY || oy - oh / 2 > maxVisY);
-            } else {
-                // Origin 0.5, 0.5
-                isOut = (ox + ow / 2 < minVisX || ox - ow / 2 > maxVisX || oy + oh / 2 < minVisY || oy - oh / 2 > maxVisY);
-            }
-
-            obj.setAlpha(isOut ? 0 : (obj.targetAlpha !== undefined ? obj.targetAlpha : obj.alpha));
-        });
-    }
 
     function showDuoSwapTutorial() {
         if (!gameState.tutorialsSeen['duo_swap']) {
             _clearTutorial();
             const msg = "SWAPPING ABILITIES IS FREE";
             const x = 0;
-            const y = 450;
+            const y = 440;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '30px');
         }
     }
@@ -231,5 +204,5 @@ const tutorialManager = (() => {
         }
     }
 
-    return { init, updateCropping, showDuoSwapTutorial };
+    return { init, showDuoSwapTutorial };
 })();

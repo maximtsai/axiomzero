@@ -13,6 +13,7 @@ class ShockwaveAttackModel {
         this.paused = false;
         this.fireTimer = 0;
         this.radius = this.BASE_RADIUS;
+        this.damage = this.BASE_DAMAGE;
         this.resonanceDmgPerHit = 0;
         this.seismicCrushMultiplier = 0; // 0.5 per level
     }
@@ -130,6 +131,10 @@ const shockwaveAttack = (() => {
         model.seismicCrushMultiplier = level * 0.5;
     }
 
+    function setDamage(amount) {
+        model.damage = amount;
+    }
+
     function lock() {
         model.unlocked = false;
         model.active = false;
@@ -199,5 +204,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel, setSeismicCrushLevel };
+    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel, setSeismicCrushLevel, setDamage };
 })();

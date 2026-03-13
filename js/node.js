@@ -218,7 +218,9 @@ class Node {
                     if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
                         isHidden = true; // Still "hidden" from this child's perspective
                     }
-                    if (!isHidden) {
+                    // Only nodes that are purchasable or already bought reveal their children naturally.
+                    // Ghost nodes (previews or event-revealed) do NOT reveal their children.
+                    if (!isHidden && parent.state !== NODE_STATE.GHOST) {
                         anyRevealed = true;
                         break;
                     }
@@ -271,11 +273,9 @@ class Node {
             this.setState(NODE_STATE.MAXED);
         } else if (this.isRequirementsMet()) {
             this.setState(NODE_STATE.UNLOCKED);
-        } else if (this.parents.some(pid => neuralTree.getNode(pid) && neuralTree.getNode(pid).level > 0)) {
-            this.setState(NODE_STATE.GHOST); // Visible but locked
         } else {
-            // Any node not actively unlocked/purchased and whose parents are unlocked/maxed
-            // defaults to GHOST. Since there are no more global tiers, we just make them ghosts.
+            // If we reached here, the node is either force-revealed or has a purchasable parent.
+            // Default to GHOST state (preview).
             this.setState(NODE_STATE.GHOST);
         }
 

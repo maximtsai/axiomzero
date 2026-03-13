@@ -511,13 +511,8 @@ const neuralTree = (() => {
 
             if (!p || !n) continue;
 
-            // Determine visibility
-            let shouldHide;
-            if (line.isDuoLine) {
-                shouldHide = (p.state === NODE_STATE.HIDDEN);
-            } else {
-                shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
-            }
+            // Determine visibility: Hide if either p or n is HIDDEN
+            const shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
 
             if (shouldHide) {
                 line.setVisible(false);
@@ -631,9 +626,6 @@ const neuralTree = (() => {
             panelBg.setCrop(cropX, cropY, cropW, cropH);
         }
 
-        if (typeof tutorialManager !== 'undefined' && tutorialManager.updateCropping) {
-            tutorialManager.updateCropping(minVisX, maxVisX, minVisY, maxVisY);
-        }
     }
 
     function _showDeployButton() {
