@@ -427,9 +427,6 @@ const neuralTree = (() => {
         dragSurface.setVisible(false);
         titleText.setVisible(false);
         deployBtn.setVisible(false);
-        if (deployBtn.indicator) {
-            deployBtn.indicator.setVisible(false);
-        }
 
         deployBtn.setState(DISABLE);
 
@@ -578,6 +575,10 @@ const neuralTree = (() => {
 
     function _onDeployClicked() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
+
+        if (deployBtn.indicator) {
+            deployBtn.indicator.setVisible(false);
+        }
 
         // Mark first launch as complete
         gameState.isFirstLaunch = false;

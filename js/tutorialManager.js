@@ -70,7 +70,7 @@ const tutorialManager = (() => {
                 const msg = "Unlock new abilities with \u25C6";
                 const x = 0;
                 const y = 550;
-                _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard');
+                _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '30px');
             }
         }
     }
@@ -80,7 +80,7 @@ const tutorialManager = (() => {
         const x = GAME_CONSTANTS.halfWidth;
         const y = GAME_CONSTANTS.halfHeight - 300;
 
-        _createTutorialPopup(msg, x, y, false, undefined, undefined, 'combat_data');
+        _createTutorialPopup(msg, x, y, false, undefined, undefined, 'combat_data', '30px');
     }
 
     function _showUpgradeTutorial() {
@@ -89,62 +89,50 @@ const tutorialManager = (() => {
         const x = 0;
         const y = 550;
 
-        _createTutorialPopup(msg, x, y, true, undefined, undefined, 'upgrade_data');
+        _createTutorialPopup(msg, x, y, true, undefined, undefined, 'upgrade_data', '30px');
     }
 
-    function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null) {
+    function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '30px') {
         if (tutorialId) {
             gameState.tutorialsSeen[tutorialId] = true;
             if (typeof saveGame === 'function') saveGame();
         }
+        _clearTutorial();
+
         // 1. Create temporary text to measure its final width
         const measureText = PhaserScene.add.text(0, 0, msg, {
             fontFamily: 'VCR',
-            fontSize: '24px'
+            fontSize: fontSize
         }).setVisible(false);
         const textWidth = measureText.width;
         const finalWidth = textWidth + 40; // Add padding
         const finalHeight = measureText.height + 15;
         measureText.destroy();
 
-        // 2. Manage the background and text objects (reuse or create)
-        if (!tutorialBg || !tutorialBg.active) {
-            tutorialBg = PhaserScene.add.image(x, y, 'white_pixel');
-        } else {
-            PhaserScene.tweens.killTweensOf(tutorialBg);
-            tutorialBg.setPosition(x, y);
-        }
-        
-        tutorialBg.setTint(0x000000).setAlpha(0.4).setVisible(true);
-        tutorialBg.setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
+        // 2. Create the black background bar
+        tutorialBg = PhaserScene.add.image(x, y, 'white_pixel');
+        tutorialBg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
         tutorialBg.setDisplaySize(0, finalHeight);
         tutorialBg.targetAlpha = 0.4;
 
-        if (!tutorialText || !tutorialText.active) {
-            tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
-                fontFamily: 'VCR',
-                fontSize: '24px'
-            }).setOrigin(0, 0.5);
-        } else {
-            PhaserScene.tweens.killTweensOf(tutorialText);
-            tutorialText.setPosition(x - textWidth / 2, y);
-            tutorialText.setText('');
-        }
-
-        tutorialText.setStyle({ color: color });
-        tutorialText.setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
-        tutorialText.setAlpha(1);
-        tutorialText.setVisible(true);
-        tutorialText.setShadow(0, 0, shadowColor, 10, true, true);
-        tutorialText.targetAlpha = 1;
+        // 3. Create the typewriter text - Positioned so (0, 0.5) origin results in centered text when full
+        tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
+            fontFamily: 'VCR',
+            fontSize: fontSize,
+            color: color,
+            align: 'left'
+        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
 
         if (!isUpgradeTree) {
             tutorialBg.setScrollFactor(0);
             tutorialText.setScrollFactor(0);
-        } else {
-            tutorialBg.setScrollFactor(1);
-            tutorialText.setScrollFactor(1);
         }
+
+        // Add a faint glow
+        tutorialText.setShadow(0, 0, shadowColor, 10, true, true);
+
+        // Tracking for cropping
+        tutorialText.targetAlpha = 1;
 
         // Tween BG width
         PhaserScene.tweens.add({
@@ -175,14 +163,15 @@ const tutorialManager = (() => {
         if (isUpgradeTree && typeof neuralTree !== 'undefined') {
             const group = neuralTree.getDraggableGroup();
             if (group) {
-                if (!group.contains(tutorialBg)) group.add(tutorialBg);
-                if (!group.contains(tutorialText)) group.add(tutorialText);
+                group.add(tutorialBg);
+                group.add(tutorialText);
             }
         }
 
         // Auto-fade tutorial after 6 seconds
         PhaserScene.tweens.add({
             targets: [tutorialText, tutorialBg],
+            alpha: 0,
             targetAlpha: 0,
             duration: 2000,
             delay: 6600,
@@ -224,26 +213,21 @@ const tutorialManager = (() => {
     function showDuoSwapTutorial() {
         if (!gameState.tutorialsSeen['duo_swap']) {
             _clearTutorial();
-            const msg = "SWAP ABILITIES FOR FREE";
+            const msg = "SWAPPING ABILITIES IS FREE";
             const x = 370; // Above left duo node
             const y = 450;
-            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap');
+            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '30px');
         }
     }
 
     function _clearTutorial() {
-        if (tutorialText && tutorialText.active) {
-            tutorialText.setVisible(false);
-            tutorialText.setText('');
-            tutorialText.alpha = 0;
-            tutorialText.targetAlpha = 0;
-            PhaserScene.tweens.killTweensOf(tutorialText);
+        if (tutorialText) {
+            if (tutorialText.active) tutorialText.destroy();
+            tutorialText = null;
         }
-        if (tutorialBg && tutorialBg.active) {
-            tutorialBg.setVisible(false);
-            tutorialBg.alpha = 0;
-            tutorialBg.targetAlpha = 0;
-            PhaserScene.tweens.killTweensOf(tutorialBg);
+        if (tutorialBg) {
+            if (tutorialBg.active) tutorialBg.destroy();
+            tutorialBg = null;
         }
     }
 
