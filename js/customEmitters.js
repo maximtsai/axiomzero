@@ -153,6 +153,61 @@ const customEmitters = (() => {
         activeGhosts.push(sprite);
     }
 
+    // ── Enemy Death Animation ──────────────────────────────────────────────────
+    const enemyDeathAnimPool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'basic.png'); // Default frame, changed on use
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.clearTint();
+        },
+        30
+    );
+
+    function createEnemyDeathAnim(enemy) {
+        if (!enemy || !enemy.view || !enemy.view.img) return;
+        const origSprite = enemy.view.img;
+        
+        const copy = enemyDeathAnimPool.get();
+        copy.setFrame(origSprite.frame.name);
+        copy.setPosition(origSprite.x, origSprite.y);
+        copy.setRotation(origSprite.rotation);
+        copy.setDepth(origSprite.depth + 5);
+        
+        const baseScaleX = origSprite.scaleX;
+        const baseScaleY = origSprite.scaleY;
+        const signX = baseScaleX < 0 ? -1 : 1;
+        const signY = baseScaleY < 0 ? -1 : 1;
+        const absScaleX = Math.abs(baseScaleX);
+        const absScaleY = Math.abs(baseScaleY);
+
+        const targetScaleMultiplier = 1 + (20 / (20 + (enemy.size || 20)));
+        copy.setScale(absScaleX * targetScaleMultiplier * signX, absScaleY * targetScaleMultiplier * signY);
+        
+        copy.setTintFill(0xffffff);
+        copy.setVisible(true);
+        copy.setActive(true);
+
+        PhaserScene.tweens.add({
+            targets: copy,
+            scaleX: baseScaleX,
+            scaleY: baseScaleY,
+            duration: 80,
+            ease: 'Linear',
+            onComplete: () => {
+                copy.clearTint();
+                PhaserScene.time.delayedCall(40, () => {
+                    enemyDeathAnimPool.release(copy);
+                });
+            }
+        });
+    }
+
     // ── Miniboss Explosion ───────────────────────────────────────────────────
     function minibossExplosion(originalSprite, effectScale = 1.0) {
         const x = originalSprite.x;
@@ -289,5 +344,5 @@ const customEmitters = (() => {
 
     updateManager.addFunction(_update);
 
-    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost, minibossExplosion };
+    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost, createEnemyDeathAnim, minibossExplosion };
 })();

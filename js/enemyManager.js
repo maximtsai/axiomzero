@@ -582,6 +582,9 @@ const enemyManager = (() => {
             });
         }
         if (died) {
+            if (typeof customEmitters !== 'undefined' && customEmitters.createEnemyDeathAnim) {
+                customEmitters.createEnemyDeathAnim(enemy);
+            }
             _killEnemy(enemy);
         }
     }
