@@ -348,7 +348,7 @@ class Node {
 
         // Visual pulse effect
         if (typeof neuralTree !== 'undefined') {
-            neuralTree.playPurchasePulse(this.btn.x, this.btn.y, this.isMaxed());
+            neuralTree.playPurchasePulse(this.btn.x, this.btn.y + 1, this.isMaxed());
             if (this.isDuoBox) {
                 this._playDuoPulse();
             }

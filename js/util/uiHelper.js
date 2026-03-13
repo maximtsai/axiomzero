@@ -67,5 +67,131 @@ Object.assign(helper, {
 
     colorToHexString(color) {
         return '#' + color.toString(16).padStart(6, '0');
+    },
+
+    /**
+     * Creates a nine-sliced indicator at (x,y) that expands and fades in.
+     */
+    ninesliceIndicator: function (x, y, texture, frame, startW, startH, endW, endH, cornerSize = 10) {
+        // Create the nine-slice image
+        const indicator = PhaserScene.add.nineslice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
+        indicator.setAlpha(0);
+        indicator.setScrollFactor(0);
+
+        // Tween width and height
+        PhaserScene.tweens.add({
+            targets: indicator,
+            width: endW,
+            height: endH,
+            duration: 1800,
+            ease: 'Cubic.easeIn'
+        });
+
+        // Tween alpha and handle completion
+        PhaserScene.tweens.add({
+            targets: indicator,
+            alpha: 1,
+            duration: 1800,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                // Part 2: Contract to 70% of the midpoint between start and end size
+                const diffW = endW - startW;
+                const diffH = endH - startH;
+                const contractW = startW + diffW * 0.3;
+                const contractH = startH + diffH * 0.3;
+
+                PhaserScene.tweens.add({
+                    targets: indicator,
+                    width: contractW,
+                    height: contractH,
+                    alpha: 0,
+                    duration: 900,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        // Part 3: Expand back to full end size
+                        PhaserScene.tweens.add({
+                            targets: indicator,
+                            width: endW,
+                            height: endH,
+                            alpha: 1,
+                            duration: 900,
+                            ease: 'Cubic.easeIn',
+                            onComplete: () => {
+                                // Part 4: Shrink to start size and fade out
+                                PhaserScene.tweens.add({
+                                    targets: indicator,
+                                    width: contractW,
+                                    height: contractH,
+                                    duration: 900,
+                                    ease: 'Cubic.easeOut'
+                                });
+                                PhaserScene.tweens.add({
+                                    targets: indicator,
+                                    alpha: 0,
+                                    duration: 900,
+                                    ease: 'Quad.easeOut',
+                                    onComplete: () => {
+                                        indicator.destroy();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        return indicator;
+    },
+
+    /**
+     * Creates a nine-sliced indicator at (x,y) that expands and fades in.
+     */
+    ninesliceIndicatorShort: function (x, y, texture, frame, startW, startH, endW, endH, cornerSize = 10) {
+        // Create the nine-slice image
+        const indicator = PhaserScene.add.nineslice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
+        indicator.setAlpha(0);
+        indicator.setScrollFactor(0);
+
+        // Tween width and height
+        PhaserScene.tweens.add({
+            targets: indicator,
+            width: endW,
+            height: endH,
+            duration: 2000,
+            ease: 'Quart.easeIn'
+        });
+
+        // Tween alpha and handle completion
+        PhaserScene.tweens.add({
+            targets: indicator,
+            alpha: 1,
+            duration: 2000,
+            ease: 'Quart.easeIn',
+            onComplete: () => {
+                // Part 2: Contract to 70% of the midpoint between start and end size
+                const diffW = endW - startW;
+                const diffH = endH - startH;
+                const contractW = startW + diffW * 0.75;
+                const contractH = startH + diffH * 0.75;
+                PhaserScene.tweens.add({
+                    targets: indicator,
+                    width: contractW,
+                    height: contractH,
+                    duration: 900,
+                    ease: 'Cubic.easeOut',
+                });
+                PhaserScene.tweens.add({
+                    targets: indicator,
+                    duration: 900,
+                    alpha: 0,
+                    onComplete: () => {
+                        indicator.destroy();
+                    }
+                });
+            }
+        });
+
+        return indicator;
     }
 });

@@ -324,11 +324,11 @@ const neuralTree = (() => {
     function playPurchasePulse(x, y, isMaxed) {
         if (!buyPulsePool || !maxPulsePool) return;
 
-        const dur = isMaxed ? 750 : 550;
+        const dur = isMaxed ? 750 : 600;
         const startAlpha = isMaxed ? 1.3 : 1;
 
         // Primary pulse
-        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 156 : 112, dur, startAlpha);
+        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 156 : 98, dur, startAlpha);
 
         // Secondary inner pulse (Max only)
         if (isMaxed) {
@@ -382,6 +382,19 @@ const neuralTree = (() => {
                 duration: 1000,
                 ease: 'Linear'
             });
+
+            // Hint for new players: pulse indicate the AWAKEN node
+            const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
+            if (awakenLevel === 0) {
+                const ind = helper.ninesliceIndicator(400, 750, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
+                ind.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                const indShort = helper.ninesliceIndicatorShort(400, 750, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
+                indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+
+
+                // if (treeGroup) treeGroup.add(ind);
+                // if (draggableGroup) draggableGroup.add(ind);
+            }
         } else {
             panelBg.setAlpha(1);
         }
@@ -395,8 +408,7 @@ const neuralTree = (() => {
         // Show DEPLOY button only if tower has been spawned
         const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
         if (awakenLevel > 0) {
-            deployBtn.setVisible(true);
-            deployBtn.setState(NORMAL);
+            _showDeployButton();
         }
 
         const mineLevel = (gameState.upgrades && gameState.upgrades.crypto_mine_unlock) || 0;
@@ -540,8 +552,7 @@ const neuralTree = (() => {
     function _onTowerSpawned() {
         // Show DEPLOY button after AWAKEN is purchased
         if (visible) {
-            deployBtn.setVisible(true);
-            deployBtn.setState(NORMAL);
+            _showDeployButton();
         }
     }
 
@@ -617,8 +628,18 @@ const neuralTree = (() => {
 
     function _showDeployButton() {
         if (deployBtn) {
+            if (deployBtn.visible) return;
+
             deployBtn.setVisible(true);
             deployBtn.setState(NORMAL);
+
+            const bx = PANEL_W - 105;
+            const by = GAME_CONSTANTS.HEIGHT - 57;
+            const bw = 344 * 0.6;
+            const bh = 120 * 0.6;
+
+            const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
+            ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
         }
     }
 
