@@ -699,12 +699,29 @@ class Node {
                 const isSwappable = this.isDuoSwappable();
                 const canAfford = this.canAfford();
 
-                if (isSwappable || canAfford) {
-                    this.btn.setState(NORMAL);
-                    currentSpriteRef = this._getUnlockedSprite();
+                if (this.isDuoBox) {
+                    // DUO BOX: Traditional behavior (disabled if neither swappable nor affordable)
+                    if (isSwappable || canAfford) {
+                        this.btn.setState(NORMAL);
+                        currentSpriteRef = this._getUnlockedSprite();
+                    } else {
+                        this.btn.setState(DISABLE);
+                        currentSpriteRef = this._getUnlockedDisabledSprite();
+                    }
                 } else {
-                    this.btn.setState(DISABLE);
-                    currentSpriteRef = this._getUnlockedDisabledSprite();
+                    // REGULAR NODE: Always NORMAL (interactable) to allow tooltip shaking/logs
+                    this.btn.setState(NORMAL);
+                    if (canAfford) {
+                        currentSpriteRef = this._getUnlockedSprite();
+                        this.btn.setNormalRef(currentSpriteRef);
+                        this.btn.setHoverRef(this._getHoverSprite());
+                        this.btn.setPressRef(this._getPressSprite());
+                    } else {
+                        currentSpriteRef = this._getUnlockedDisabledSprite();
+                        this.btn.setNormalRef(currentSpriteRef);
+                        this.btn.setHoverRef(currentSpriteRef); // No hover highlight if unaffordable
+                        this.btn.setPressRef(currentSpriteRef); // No press effect if unaffordable
+                    }
                 }
 
                 this.btn.setDisableRef(this._getUnlockedDisabledSprite());
