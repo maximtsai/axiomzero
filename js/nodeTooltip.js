@@ -236,6 +236,7 @@ const nodeTooltip = (() => {
         const margin = 10;
         targetX = Phaser.Math.Clamp(targetX, halfW + margin, GAME_CONSTANTS.halfWidth - halfW - margin);
 
+        // TODO: if hover popup gets cut off from the top (.ie we are hovering over a node near the top of the screen), instead render it below the node.
         container.setPosition(targetX, node.btn.y - verticalOffset);
 
         // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
@@ -251,10 +252,10 @@ const nodeTooltip = (() => {
 
         // Animations
         if (!isPurchaseRefresh) {
-            container.setScale(0.75).setAngle(6);
+            container.setScale(0.7, 1.1).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1.05, scaleY: 1.05, angle: -3,
+                scaleX: 1.15, scaleY: 0.9, angle: -3, y: node.btn.y - verticalOffset,
                 duration: 100, ease: 'Cubic.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({

@@ -402,6 +402,30 @@ class Button {
         this.setPos(undefined, value);
     }
 
+    get rotation() {
+        return this.normal.rotation || 0;
+    }
+
+    set rotation(value) {
+        this.setRotation(value);
+    }
+
+    get scaleX() {
+        return this.getScaleX();
+    }
+
+    set scaleX(value) {
+        this.setScale(value, this.scaleY);
+    }
+
+    get scaleY() {
+        return this.getScaleY();
+    }
+
+    set scaleY(value) {
+        this.setScale(this.scaleX, value);
+    }
+
     setPosition(x, y) {
         this.setPos(x, y);
         return this;
@@ -561,6 +585,15 @@ class Button {
         if (scaleY === undefined) {
             scaleY = scaleX;
         }
+        this.normal.scaleX = scaleX;
+        this.normal.scaleY = scaleY;
+        this.hover.scaleX = scaleX;
+        this.hover.scaleY = scaleY;
+        this.press.scaleX = scaleX;
+        this.press.scaleY = scaleY;
+        this.disable.scaleX = scaleX;
+        this.disable.scaleY = scaleY;
+
         for (let key in this.imageRefs) {
             this.imageRefs[key].scaleX = scaleX;
             this.imageRefs[key].scaleY = scaleY;

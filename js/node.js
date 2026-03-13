@@ -354,6 +354,30 @@ class Node {
             }
         }
 
+        // Successful purchase animation
+        if (this.btn && !this.isDuoBox) {
+            const currentScaleX = this.btn.scaleX;
+            const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
+            this.btn.rotation = 0.2;
+            this.btn.setScale((currentScaleX >= 0 ? 0.95 : -0.95), 0.95);
+            PhaserScene.tweens.add({
+                targets: this.btn,
+                rotation: -0.1,
+                scaleX: targetScaleX,
+                scaleY: 1,
+                duration: 130,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: this.btn,
+                        rotation: 0,
+                        duration: 120,
+                        ease: 'Back.easeOut'
+                    });
+                }
+            });
+        }
+
         // Reveal children — any HIDDEN children become at least visible
         if (this.childIds.length > 0) {
             neuralTree._revealChildren(this.id);

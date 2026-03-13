@@ -242,7 +242,6 @@ class Miniboss1 extends Miniboss {
             }
 
             if (m.fireCooldown <= 2000 && !m.chargeAttackPlayed && m.fireCooldown > 0) {
-                if (typeof audio !== 'undefined') audio.play('charge_attack', 0.85);
                 m.chargeAttackPlayed = true;
             }
 
