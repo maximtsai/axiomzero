@@ -246,6 +246,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">enemies/explosion_anim0.png</key>
             <key type="filename">enemies/explosion_anim1.png</key>
             <key type="filename">enemies/explosion_anim10.png</key>
             <key type="filename">enemies/explosion_anim11.png</key>

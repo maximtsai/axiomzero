@@ -525,7 +525,8 @@ const neuralTree = (() => {
                 line.setVisible(true);
                 const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
                 const isDuoBranch = (n.isDuoDescendant && n.isDuoDescendant());
-                line.setAlpha((parentActive || isDuoBranch) ? 0.6 : 0); // Slightly more opaque (0.6)
+                const revealedLine = (p.revealed || n.revealed);
+                line.setAlpha((parentActive || isDuoBranch || revealedLine) ? 0.6 : 0); // Slightly more opaque (0.6)
             }
         }
     }

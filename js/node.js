@@ -73,6 +73,7 @@ class Node {
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
+        this.revealed = false;    // Whether this node is force-revealed by an event
 
         // Duo-box backing sprite (only created by one of the two siblings)
         this.duoBackingSprite = null;
@@ -204,6 +205,9 @@ class Node {
             });
         }
 
+        // 1a. Check for event-based revelation (ignored if node is already purchased, placeholders, or duo nodes)
+        this.revealed = !!(gameState.revealedNodes && gameState.revealedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
+
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
         if (this.parents.length > 0) {
             let anyRevealed = false;
@@ -221,7 +225,7 @@ class Node {
                 }
             }
 
-            if (!anyRevealed) {
+            if (!anyRevealed && !this.revealed) {
                 this.setState(NODE_STATE.HIDDEN);
                 for (let i = 0; i < this.childIds.length; i++) {
                     const child = neuralTree.getNode(this.childIds[i]);
@@ -627,6 +631,7 @@ class Node {
     }
 
     getGhostAlpha() {
+        if (this.revealed || this.level > 0) return 1.0;
         if (this.isDuoDescendant() || !this.parents || this.parents.length === 0) return 1.0;
 
         let allGhostOrHidden = true;

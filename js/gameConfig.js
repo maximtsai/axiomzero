@@ -156,6 +156,7 @@ const GAME_STATE_DEFAULTS = {
     // Duo-Box system
     activeShards: {},      // { tierNum: 'shardId' } — which shard node is active per tier
     duoBoxPurchased: {},   // { tierNum: true } — has player purchased either node in this tier's duo-box?
+    revealedNodes: {},     // { nodeId: true } — special events can reveal part of the tree
 
     // Lifetime Stats
     stats: {

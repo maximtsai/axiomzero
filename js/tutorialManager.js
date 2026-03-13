@@ -214,7 +214,7 @@ const tutorialManager = (() => {
         if (!gameState.tutorialsSeen['duo_swap']) {
             _clearTutorial();
             const msg = "SWAPPING ABILITIES IS FREE";
-            const x = 370; // Above left duo node
+            const x = 0;
             const y = 450;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '30px');
         }

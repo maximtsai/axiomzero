@@ -31,11 +31,11 @@ function createAnimations(scene) {
         frames: scene.anims.generateFrameNames('enemies', {
             prefix: 'explosion_anim',
             suffix: '.png',
-            start: 1,
+            start: 0,
             end: 11,
             zeroPad: 0,
         }),
-        frameRate: 20,
+        frameRate: 15,
         repeat: 0,
         hideOnComplete: false
     });
