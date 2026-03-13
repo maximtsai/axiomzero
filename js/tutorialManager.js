@@ -15,6 +15,7 @@ const tutorialManager = (() => {
             _checkEarlyGameTutorial();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             _checkUpgradeTutorial();
+            _checkDuoTutorial();
         }
     }
 
@@ -25,10 +26,10 @@ const tutorialManager = (() => {
         // Condition: Player only has purchased 'AWAKEN' (level 1)
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
-        if (onlyAwaken) {
+        if (onlyAwaken && !gameState.tutorialsSeen['combat_data']) {
             PhaserScene.time.delayedCall(6000, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
-                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT) && !gameState.tutorialsSeen['combat_data']) {
                     _showCombatTutorial();
                 }
             });
@@ -42,7 +43,7 @@ const tutorialManager = (() => {
 
         // Condition: Player has 1+ DATA and ONLY 'AWAKEN' (level 1) purchased
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
-        const condition = data >= 1 && onlyAwaken;
+        const condition = data >= 1 && onlyAwaken && !gameState.tutorialsSeen['upgrade_data'];
 
         if (condition) {
             if (!tutorialText) {
@@ -53,12 +54,29 @@ const tutorialManager = (() => {
         }
     }
 
+    function _checkDuoTutorial() {
+        const shardCount = resourceManager.getShards();
+        const duoPurchasedCount = Object.keys(gameState.duoBoxPurchased || {}).length;
+
+        // Condition: Has a shard but no duo weapons purchased yet
+        const condition = shardCount >= 1 && duoPurchasedCount === 0 && !gameState.tutorialsSeen['duo_shard'];
+
+        if (condition) {
+            if (!tutorialText) {
+                const msg = "Unlock new abilities with \u25C6";
+                const x = 0;
+                const y = 550;
+                _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard');
+            }
+        }
+    }
+
     function _showCombatTutorial() {
         const msg = "COLLECT DATA \u25C8 TO EVOLVE";
         const x = GAME_CONSTANTS.halfWidth;
         const y = GAME_CONSTANTS.halfHeight - 300;
 
-        _createTutorialPopup(msg, x, y, false);
+        _createTutorialPopup(msg, x, y, false, undefined, undefined, 'combat_data');
     }
 
     function _showUpgradeTutorial() {
@@ -67,10 +85,14 @@ const tutorialManager = (() => {
         const x = 0;
         const y = 550;
 
-        _createTutorialPopup(msg, x, y, true);
+        _createTutorialPopup(msg, x, y, true, undefined, undefined, 'upgrade_data');
     }
 
-    function _createTutorialPopup(msg, x, y, isUpgradeTree) {
+    function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null) {
+        if (tutorialId) {
+            gameState.tutorialsSeen[tutorialId] = true;
+            if (typeof saveGame === 'function') saveGame();
+        }
         // 1. Create temporary text to measure its final width
         const measureText = PhaserScene.add.text(0, 0, msg, {
             fontFamily: 'VCR',
@@ -102,7 +124,7 @@ const tutorialManager = (() => {
         tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
             fontFamily: 'VCR',
             fontSize: '24px',
-            color: '#00f5ff',
+            color: color,
             align: 'left'
         }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
 
@@ -110,8 +132,12 @@ const tutorialManager = (() => {
             tutorialText.setScrollFactor(0);
         }
 
-        // Add a faint cyan glow
-        tutorialText.setShadow(0, 0, '#00f5ff', 10, true, true);
+        // Add a faint glow
+        tutorialText.setShadow(0, 0, shadowColor, 10, true, true);
+
+        // Tracking for cropping
+        tutorialText.targetAlpha = 1;
+        tutorialBg.targetAlpha = 0.4;
 
         // Use local typewriter logic to play sound per character
         let charIdx = 0;
@@ -149,12 +175,41 @@ const tutorialManager = (() => {
         // Auto-fade tutorial after 6 seconds
         PhaserScene.tweens.add({
             targets: [tutorialText, tutorialBg],
-            alpha: 0,
+            targetAlpha: 0,
             duration: 2000,
             delay: 6600,
             onComplete: () => {
                 _clearTutorial();
             }
+        });
+    }
+
+    function updateCropping(minVisX, maxVisX, minVisY, maxVisY) {
+        if (!tutorialText || !tutorialText.active) return;
+
+        const objects = [tutorialText, tutorialBg];
+        objects.forEach(obj => {
+            if (!obj) return;
+            const ox = obj.x;
+            const oy = obj.y;
+            const ow = obj.width || obj.displayWidth;
+            const oh = obj.height || obj.displayHeight;
+
+            // For text with origin 0, width is to the right. 
+            // For BG image with origin 0.5 (default), width is around it? 
+            // Wait, tutorialBg is origin 0.5, 0.5 usually for images?
+            // Actually tutorialBg is at (x, y) with displaySize. Origin is (0.5, 0.5) by default.
+
+            let isOut = false;
+            if (obj === tutorialText) {
+                // Origin 0, 0.5
+                isOut = (ox + ow < minVisX || ox > maxVisX || oy + oh / 2 < minVisY || oy - oh / 2 > maxVisY);
+            } else {
+                // Origin 0.5, 0.5
+                isOut = (ox + ow / 2 < minVisX || ox - ow / 2 > maxVisX || oy + oh / 2 < minVisY || oy - oh / 2 > maxVisY);
+            }
+
+            obj.setAlpha(isOut ? 0 : (obj.targetAlpha !== undefined ? obj.targetAlpha : obj.alpha));
         });
     }
 
@@ -169,5 +224,5 @@ const tutorialManager = (() => {
         }
     }
 
-    return { init };
+    return { init, updateCropping };
 })();

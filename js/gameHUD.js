@@ -160,7 +160,7 @@ const gameHUD = (() => {
             x: helper.isMobileDevice() ? 898 : 705,
             y: GAME_CONSTANTS.HEIGHT - 22,
             width: GAME_CONSTANTS.WIDTH - (helper.isMobileDevice() ? 234 : 220),
-            height: 27,
+            height: 24,
             padding: 7,
             bgColor: 0x222233,
             fillColor: 0x00f5ff,

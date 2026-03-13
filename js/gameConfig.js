@@ -173,6 +173,7 @@ const GAME_STATE_DEFAULTS = {
 
     // Claimed Milestones
     claimed: {},
+    tutorialsSeen: {},
 
     // Settings
     settings: {

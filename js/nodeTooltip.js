@@ -255,13 +255,13 @@ const nodeTooltip = (() => {
             container.setScale(0.7, 1.1).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1.15, scaleY: 0.9, angle: -3, y: node.btn.y - verticalOffset,
+                scaleX: 1.1, scaleY: 0.95, angle: -3, y: node.btn.y - verticalOffset,
                 duration: 100, ease: 'Cubic.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({
                         targets: container,
                         scaleX: 1, scaleY: 1, angle: 0,
-                        duration: 200, ease: 'Back.easeOut'
+                        duration: 220, ease: 'Back.easeOut'
                     });
                 }
             });

@@ -392,8 +392,6 @@ const neuralTree = (() => {
                 indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
 
 
-                // if (treeGroup) treeGroup.add(ind);
-                // if (draggableGroup) draggableGroup.add(ind);
             }
         } else {
             panelBg.setAlpha(1);
@@ -623,6 +621,10 @@ const neuralTree = (() => {
             const cropX = (cropLeft - spriteLeft) / scale;
             const cropY = (cropTop - spriteTop) / scale;
             panelBg.setCrop(cropX, cropY, cropW, cropH);
+        }
+
+        if (typeof tutorialManager !== 'undefined' && tutorialManager.updateCropping) {
+            tutorialManager.updateCropping(minVisX, maxVisX, minVisY, maxVisY);
         }
     }
 
