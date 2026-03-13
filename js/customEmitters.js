@@ -171,38 +171,50 @@ const customEmitters = (() => {
 
     function createEnemyDeathAnim(enemy) {
         if (!enemy || !enemy.view || !enemy.view.img) return;
-        const origSprite = enemy.view.img;
-        
-        const copy = enemyDeathAnimPool.get();
-        copy.setFrame(origSprite.frame.name);
-        copy.setPosition(origSprite.x, origSprite.y);
-        copy.setRotation(origSprite.rotation);
-        copy.setDepth(origSprite.depth + 5);
-        
-        const baseScaleX = origSprite.scaleX;
-        const baseScaleY = origSprite.scaleY;
-        const signX = baseScaleX < 0 ? -1 : 1;
-        const signY = baseScaleY < 0 ? -1 : 1;
-        const absScaleX = Math.abs(baseScaleX);
-        const absScaleY = Math.abs(baseScaleY);
 
-        const targetScaleMultiplier = 1 + (20 / (20 + (enemy.size || 20)));
-        copy.setScale(absScaleX * targetScaleMultiplier * signX, absScaleY * targetScaleMultiplier * signY);
-        
-        copy.setTintFill(0xffffff);
-        copy.setVisible(true);
-        copy.setActive(true);
+        const spritesToAnimate = [enemy.view.img];
+        if (enemy.view.hpImg) {
+            enemy.view.hpImg.setScale(enemy.view.img.scaleX);
+            enemy.view.hpImg.depth = enemy.view.img.depth + 1;
+            spritesToAnimate.push(enemy.view.hpImg);
+        }
+
+        const targetScaleMultiplier = 1 + (40 / (20 + (enemy.size || 20)));
+        const baseScaleX = enemy.view.img.scaleX;
+        const baseScaleY = enemy.view.img.scaleY;
+
+        const copies = spritesToAnimate.map(origSprite => {
+            const copy = enemyDeathAnimPool.get();
+            copy.setFrame(origSprite.frame.name);
+            copy.setPosition(origSprite.x, origSprite.y);
+            copy.setRotation(origSprite.rotation);
+            copy.setDepth(origSprite.depth + 5);
+
+            const signX = origSprite.scaleX < 0 ? -1 : 1;
+            const signY = origSprite.scaleY < 0 ? -1 : 1;
+            const absScaleX = Math.abs(origSprite.scaleX);
+            const absScaleY = Math.abs(origSprite.scaleY);
+
+            copy.setScale(absScaleX * targetScaleMultiplier * signX, absScaleY * targetScaleMultiplier * signY);
+
+            copy.setTintFill(0xffffff);
+            copy.setVisible(true);
+            copy.setActive(true);
+            return copy;
+        });
 
         PhaserScene.tweens.add({
-            targets: copy,
+            targets: copies,
             scaleX: baseScaleX,
             scaleY: baseScaleY,
-            duration: 80,
+            duration: 90,
             ease: 'Linear',
             onComplete: () => {
-                copy.clearTint();
-                PhaserScene.time.delayedCall(40, () => {
-                    enemyDeathAnimPool.release(copy);
+                copies.forEach(c => {
+                    c.clearTint();
+                    PhaserScene.time.delayedCall(50, () => {
+                        enemyDeathAnimPool.release(c);
+                    });
                 });
             }
         });
