@@ -390,6 +390,8 @@ const neuralTree = (() => {
                 ind.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
                 const indShort = helper.ninesliceIndicatorShort(400, 750, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
                 indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                treeGroup.add(ind);
+                treeGroup.add(indShort);
 
 
             }
@@ -425,6 +427,10 @@ const neuralTree = (() => {
         dragSurface.setVisible(false);
         titleText.setVisible(false);
         deployBtn.setVisible(false);
+        if (deployBtn.indicator) {
+            deployBtn.indicator.setVisible(false);
+        }
+
         deployBtn.setState(DISABLE);
 
         if (cryptoMineBtn) {
@@ -635,13 +641,21 @@ const neuralTree = (() => {
             deployBtn.setVisible(true);
             deployBtn.setState(NORMAL);
 
-            const bx = PANEL_W - 105;
-            const by = GAME_CONSTANTS.HEIGHT - 57;
-            const bw = 344 * 0.6;
-            const bh = 120 * 0.6;
+            // Only pulse if the only node purchased is Awaken
+            const upgrades = gameState.upgrades || {};
+            const keys = Object.keys(upgrades).filter(k => upgrades[k] > 0);
+            const onlyAwaken = keys.length === 1 && keys[0] === 'awaken';
 
-            const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-            ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+            if (onlyAwaken) {
+                const bx = PANEL_W - 105;
+                const by = GAME_CONSTANTS.HEIGHT - 57;
+                const bw = 344 * 0.6;
+                const bh = 120 * 0.6;
+
+                const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
+                ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                deployBtn.indicator = ind2;
+            }
         }
     }
 

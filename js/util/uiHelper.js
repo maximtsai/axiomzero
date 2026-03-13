@@ -165,15 +165,15 @@ Object.assign(helper, {
         // Tween alpha and handle completion
         PhaserScene.tweens.add({
             targets: indicator,
-            alpha: 1,
+            alpha: 1.2,
             duration: 2000,
             ease: 'Quart.easeIn',
             onComplete: () => {
                 // Part 2: Contract to 70% of the midpoint between start and end size
                 const diffW = endW - startW;
                 const diffH = endH - startH;
-                const contractW = startW + diffW * 0.75;
-                const contractH = startH + diffH * 0.75;
+                const contractW = startW + diffW * 0.7;
+                const contractH = startH + diffH * 0.7;
                 PhaserScene.tweens.add({
                     targets: indicator,
                     width: contractW,

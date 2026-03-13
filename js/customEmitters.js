@@ -169,7 +169,7 @@ const customEmitters = (() => {
         30
     );
 
-    function createEnemyDeathAnim(enemy) {
+    function createEnemyDeathAnim(enemy, isSlow = false) {
         if (!enemy || !enemy.view || !enemy.view.img) return;
 
         const spritesToAnimate = [enemy.view.img];
@@ -207,7 +207,7 @@ const customEmitters = (() => {
             targets: copies,
             scaleX: baseScaleX,
             scaleY: baseScaleY,
-            duration: 90,
+            duration: isSlow ? 250 : 90,
             ease: 'Linear',
             onComplete: () => {
                 copies.forEach(c => {

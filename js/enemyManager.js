@@ -582,14 +582,15 @@ const enemyManager = (() => {
             });
         }
         if (died) {
-            if (typeof customEmitters !== 'undefined' && customEmitters.createEnemyDeathAnim) {
-                customEmitters.createEnemyDeathAnim(enemy);
-            }
             _killEnemy(enemy);
         }
     }
 
     function _killEnemy(enemy) {
+        if (typeof customEmitters !== 'undefined' && customEmitters.createEnemyDeathAnim) {
+            customEmitters.createEnemyDeathAnim(enemy, (enemy.isBoss || enemy.isMiniboss));
+        }
+
         const ex = enemy.x;
         const ey = enemy.y;
         const wasMiniboss = enemy.isMiniboss;

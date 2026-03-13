@@ -107,13 +107,43 @@ const tutorialManager = (() => {
         const finalHeight = measureText.height + 15;
         measureText.destroy();
 
-        // 2. Create the black background bar
-        tutorialBg = PhaserScene.add.image(x, y, 'white_pixel');
-        tutorialBg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
+        // 2. Manage the background and text objects (reuse or create)
+        if (!tutorialBg || !tutorialBg.active) {
+            tutorialBg = PhaserScene.add.image(x, y, 'white_pixel');
+        } else {
+            PhaserScene.tweens.killTweensOf(tutorialBg);
+            tutorialBg.setPosition(x, y);
+        }
+        
+        tutorialBg.setTint(0x000000).setAlpha(0.4).setVisible(true);
+        tutorialBg.setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
         tutorialBg.setDisplaySize(0, finalHeight);
+        tutorialBg.targetAlpha = 0.4;
+
+        if (!tutorialText || !tutorialText.active) {
+            tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
+                fontFamily: 'VCR',
+                fontSize: '24px'
+            }).setOrigin(0, 0.5);
+        } else {
+            PhaserScene.tweens.killTweensOf(tutorialText);
+            tutorialText.setPosition(x - textWidth / 2, y);
+            tutorialText.setText('');
+        }
+
+        tutorialText.setStyle({ color: color });
+        tutorialText.setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
+        tutorialText.setAlpha(1);
+        tutorialText.setVisible(true);
+        tutorialText.setShadow(0, 0, shadowColor, 10, true, true);
+        tutorialText.targetAlpha = 1;
 
         if (!isUpgradeTree) {
             tutorialBg.setScrollFactor(0);
+            tutorialText.setScrollFactor(0);
+        } else {
+            tutorialBg.setScrollFactor(1);
+            tutorialText.setScrollFactor(1);
         }
 
         // Tween BG width
@@ -123,25 +153,6 @@ const tutorialManager = (() => {
             duration: 200,
             ease: 'Quad.easeOut'
         });
-
-        // 3. Create the typewriter text - Positioned so (0, 0.5) origin results in centered text when full
-        tutorialText = PhaserScene.add.text(x - textWidth / 2, y, '', {
-            fontFamily: 'VCR',
-            fontSize: '24px',
-            color: color,
-            align: 'left'
-        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD).setAlpha(1);
-
-        if (!isUpgradeTree) {
-            tutorialText.setScrollFactor(0);
-        }
-
-        // Add a faint glow
-        tutorialText.setShadow(0, 0, shadowColor, 10, true, true);
-
-        // Tracking for cropping
-        tutorialText.targetAlpha = 1;
-        tutorialBg.targetAlpha = 0.4;
 
         // Use local typewriter logic to play sound per character
         let charIdx = 0;
@@ -164,16 +175,9 @@ const tutorialManager = (() => {
         if (isUpgradeTree && typeof neuralTree !== 'undefined') {
             const group = neuralTree.getDraggableGroup();
             if (group) {
-                group.add(tutorialBg);
-                group.add(tutorialText);
+                if (!group.contains(tutorialBg)) group.add(tutorialBg);
+                if (!group.contains(tutorialText)) group.add(tutorialText);
             }
-        }
-
-        // Register for cleanup - Combat one might be cleaned by waveManager, 
-        // but we also have our manual cleanup and timer.
-        if (!isUpgradeTree && typeof waveManager !== 'undefined' && waveManager.registerCombatObject) {
-            waveManager.registerCombatObject(tutorialText);
-            waveManager.registerCombatObject(tutorialBg);
         }
 
         // Auto-fade tutorial after 6 seconds
@@ -228,13 +232,18 @@ const tutorialManager = (() => {
     }
 
     function _clearTutorial() {
-        if (tutorialText) {
-            if (tutorialText.active) tutorialText.destroy();
-            tutorialText = null;
+        if (tutorialText && tutorialText.active) {
+            tutorialText.setVisible(false);
+            tutorialText.setText('');
+            tutorialText.alpha = 0;
+            tutorialText.targetAlpha = 0;
+            PhaserScene.tweens.killTweensOf(tutorialText);
         }
-        if (tutorialBg) {
-            if (tutorialBg.active) tutorialBg.destroy();
-            tutorialBg = null;
+        if (tutorialBg && tutorialBg.active) {
+            tutorialBg.setVisible(false);
+            tutorialBg.alpha = 0;
+            tutorialBg.targetAlpha = 0;
+            PhaserScene.tweens.killTweensOf(tutorialBg);
         }
     }
 
