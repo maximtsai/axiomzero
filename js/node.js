@@ -153,6 +153,21 @@ class Node {
         return false;
     }
 
+    isDuoPathPurchased() {
+        if (this.isDuoBox) {
+            return this._isDuoTierPurchased();
+        }
+        if (this.isPlaceholder && this.monitorsDuoTier > 0) {
+            return this._isDuoTierPurchased(this.monitorsDuoTier);
+        }
+        if (this.parents.length === 0) return false;
+        for (let pid of this.parents) {
+            const p = neuralTree.getNode(pid);
+            if (p && p.isDuoPathPurchased()) return true;
+        }
+        return false;
+    }
+
     isRequirementsMet() {
 
         // Placeholders monitoring a Duo Tier don't need standard parents
@@ -219,8 +234,10 @@ class Node {
                         isHidden = true; // Still "hidden" from this child's perspective
                     }
                     // Only nodes that are purchasable or already bought reveal their children naturally.
-                    // Ghost nodes (previews or event-revealed) do NOT reveal their children.
-                    if (!isHidden && parent.state !== NODE_STATE.GHOST) {
+                    // Ghost nodes (previews or event-revealed) do NOT reveal their children,
+                    // UNLESS they have been purchased (level > 0) or are part of a purchased Duo path.
+                    const canReveal = !isHidden && (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoPathPurchased());
+                    if (canReveal) {
                         anyRevealed = true;
                         break;
                     }
