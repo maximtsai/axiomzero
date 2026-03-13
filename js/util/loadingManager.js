@@ -5,6 +5,45 @@
  * @module loadingManager
  */
 
+// Inject retry() functionality into Phaser's LoaderPlugin if missing.
+if (typeof Phaser !== 'undefined' && Phaser.Loader && Phaser.Loader.LoaderPlugin) {
+    if (!Phaser.Loader.LoaderPlugin.prototype.retry) {
+        Phaser.Loader.LoaderPlugin.prototype.retry = function () {
+            let filesToRetry = [];
+
+            // Helper to add files with error or failed status to the retry list
+            const checkFile = (file) => {
+                if (file.status === 3 || file.status === 4) { // ERRORED or FAILED
+                    file.status = 0; // PENDING
+                    filesToRetry.push(file);
+                }
+            };
+
+            // In Phaser 3, files might be in this.list (pending) or this.inflight (in-progress) 
+            // the list property is often a Phaser.Structs.List object.
+            if (this.list && this.list.each) {
+                this.list.each(checkFile);
+            } else if (this.list && Array.isArray(this.list)) {
+                this.list.forEach(checkFile);
+            } else if (this.list instanceof Set) {
+                this.list.forEach(checkFile);
+            }
+
+            // Inflight files that errored also need resetting
+            if (this.inflight && this.inflight.each) {
+                this.inflight.each(checkFile);
+            } else if (this.inflight instanceof Set) {
+                this.inflight.forEach(checkFile);
+            }
+
+            // Re-start the loader to process the newly pending files
+            if (filesToRetry.length > 0 && !this.isLoading()) {
+                this.start();
+            }
+        };
+    }
+}
+
 class LoadingManager {
 
     // ─── Phase 2: main asset load ─────────────────────────────────────────────

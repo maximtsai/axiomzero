@@ -7,22 +7,22 @@ const LEVEL_CONFIG = {
         initialWeights: {
             basic: 1,
             fast: 0.08,
-            shooter: 0.1,
+            shooter: 0,
             swarmer: 0.06,
-            sniper: 0.1,
-            heavy: 0.1,
-            logic_stray: 0.1,
-            protector: 0.1
+            sniper: 0,
+            heavy: 0,
+            logic_stray: 0,
+            protector: 0
         },
         lateWeights: {
             shooter: 0.1,
-            swarmer: 0.1,
-            heavy: 0.1,
+            swarmer: 0.12,
+            heavy: 0,
             fast: 0.1,
-            sniper: 0.05,
+            sniper: 0,
             protector: 0.0
         },
-        swarmerGroupSize: { min: 3, max: 6 },
+        swarmerGroupSize: { min: 2, max: 5 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
         resourceMult: 1,
 
