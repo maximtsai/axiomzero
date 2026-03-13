@@ -57,7 +57,7 @@
     *   Parent: INTENSITY
     *   Children: None
     *   Max Level: 1
-    *   Cost: 20 Data
+    *   Cost: 50 Data
 *   **REGEN**
     *   Description: +0.2 health regen
     *   Parent: INTEGRITY

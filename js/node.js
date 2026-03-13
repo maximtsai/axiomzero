@@ -325,13 +325,9 @@ class Node {
 
             // First-purchase notification (GDD §11)
             if (isFirstDuoPurchaseEver) {
-                const pos = tower.getPosition();
-                floatingText.show(
-                    pos.x,
-                    pos.y - 60,
-                    'SWAP FREELY DURING UPGRADES',
-                    { fontFamily: 'JetBrainsMono_Bold', color: '#ffffff', fontSize: 18 }
-                );
+                if (typeof tutorialManager !== 'undefined' && tutorialManager.showDuoSwapTutorial) {
+                    tutorialManager.showDuoSwapTutorial();
+                }
             }
 
             // Refresh both siblings so their states update

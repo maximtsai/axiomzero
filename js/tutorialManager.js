@@ -14,8 +14,12 @@ const tutorialManager = (() => {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _checkEarlyGameTutorial();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
-            _checkUpgradeTutorial();
-            _checkDuoTutorial();
+            PhaserScene.time.delayedCall(GAME_CONSTANTS.TRANSITION_DURATION || 600, () => {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) {
+                    _checkUpgradeTutorial();
+                    _checkDuoTutorial();
+                }
+            });
         }
     }
 
@@ -213,6 +217,16 @@ const tutorialManager = (() => {
         });
     }
 
+    function showDuoSwapTutorial() {
+        if (!gameState.tutorialsSeen['duo_swap']) {
+            _clearTutorial();
+            const msg = "SWAP ABILITIES FOR FREE";
+            const x = 370; // Above left duo node
+            const y = 450;
+            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap');
+        }
+    }
+
     function _clearTutorial() {
         if (tutorialText) {
             if (tutorialText.active) tutorialText.destroy();
@@ -224,5 +238,5 @@ const tutorialManager = (() => {
         }
     }
 
-    return { init, updateCropping };
+    return { init, updateCropping, showDuoSwapTutorial };
 })();

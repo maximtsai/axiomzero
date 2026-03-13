@@ -222,7 +222,7 @@ const nodeTooltip = (() => {
         bg.setDisplaySize(bgWidth, totalHeight);
 
         // Position above the node (Duo nodes appear 20px higher)
-        const verticalOffset = node.isDuoBox ? 58 : 23;
+        const verticalOffset = node.isDuoBox ? 56 : 21;
         let horizontalOffset = 0;
         if (node.isDuoBox) {
             const side = node._getDuoSide();

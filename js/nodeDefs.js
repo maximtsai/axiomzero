@@ -219,7 +219,7 @@ const NODE_DEFS = [
         popupText: '+20% ATTACK RANGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
-        baseCost: 20,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
