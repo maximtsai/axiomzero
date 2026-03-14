@@ -25,6 +25,10 @@ const resourceManager = (() => {
     let sessionProcessors = 0;
     let sessionCoins = 0;
 
+    let isPacketSniffingActive = false;
+    let sniffTimer = 0;
+    let currentPhase = '';
+
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
@@ -81,6 +85,11 @@ const resourceManager = (() => {
         messageBus.subscribe('gameResumed', () => { paused = false; });
         messageBus.subscribe('pulseData', _onPulseData);
         _recalcPickupRadius();
+        
+        // Initial check for packet sniffing if already purchased (on load)
+        const ups = gameState.upgrades || {};
+        isPacketSniffingActive = (ups.packet_sniffing || 0) > 0;
+
         updateManager.addFunction(_update);
     }
 
@@ -415,7 +424,18 @@ const resourceManager = (() => {
 
     let frameCounter = 0;
     function _update(delta) {
-        if ((activeDrops.length === 0 && flyingDrops.length === 0) || paused) return;
+        if (paused) return;
+
+        // ── Packet Sniffing Logic ──
+        if (isPacketSniffingActive && currentPhase === GAME_CONSTANTS.PHASE_COMBAT) {
+            sniffTimer += delta;
+            if (sniffTimer >= 2000) {
+                addData(1);
+                sniffTimer -= 2000;
+            }
+        }
+
+        if (activeDrops.length === 0 && flyingDrops.length === 0) return;
 
         frameCounter++;
         const dt = delta / 1000;
@@ -572,8 +592,10 @@ const resourceManager = (() => {
     }
 
     function _onPhaseChanged(phase) {
+        currentPhase = phase;
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             resetSession();
+            sniffTimer = 0; // Reset timer at start of combat
         } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE
             || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
             clearDrops();  // flying drops are cashed out inside clearDrops()
@@ -585,5 +607,6 @@ const resourceManager = (() => {
         getData, getInsight, getShards, getProcessors, getCoins,
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
         resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
+        setPacketSniffing: (active) => { isPacketSniffingActive = active; }
     };
 })();

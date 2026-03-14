@@ -50,6 +50,7 @@ window.TRANSLATIONS.en = {
         manual_pulse_child_1_2: { name: 'RECHARGE EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RECHARGE OPTIMIZED' },
         pulse_aoe_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
+        packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Intercepts 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
         lore_1: { name: 'ARCHIVE', desc: 'seemingly useless data...' },
         resource_gate: { name: 'RESOURCE GATE', desc: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.' }
     },

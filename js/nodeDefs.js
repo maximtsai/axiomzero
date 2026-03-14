@@ -7,14 +7,14 @@ function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
     const overchargeLv = ups.pulse_damage_3 || 0;
-    
+
     let base = 4 + 2 * ampLv + 4 * overchargeLv;
-    
+
     // Apply Kinetic Amplifier bonus (manual_pulse_child_1_1)
     if (ups.manual_pulse_child_1_1) {
         base *= 1.5;
     }
-    
+
     pulseAttack.setDamage(base);
 }
 
@@ -70,6 +70,13 @@ function _recalcLightningDamage() {
     const staticLv = ups.lightning_static_charge || 0;
     lightningAttack.setDamage(6 + 2 * boostLv);
     lightningAttack.setStaticChargeLevel(staticLv);
+}
+
+/** Recalculates packet sniffing state. */
+function _recalcPacketSniffing() {
+    const ups = gameState.upgrades || {};
+    const hasSniffing = (ups.packet_sniffing || 0) > 0;
+    resourceManager.setPacketSniffing(hasSniffing);
 }
 
 /** Recalculates shockwave upgrades from upgrade nodes. */
@@ -201,7 +208,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 5,
         parents: ['pulse_expansion'],
-        childIds: ['test_reveal_1'],
+        childIds: ['test_reveal_1', 'packet_sniffing'],
 
         treeX: 640,
         treeY: 630,
@@ -679,6 +686,25 @@ const NODE_DEFS = [
         treeY: 430,
         effect: function () {
             // Recalculated via normal gameplay checks
+        },
+    },
+    {
+        id: 'packet_sniffing',
+        name: 'PACKET SNIFFING',
+        icon: 'Skillicon14_13.png',
+        description: 'Passively gain 1 DATA every 2s during combat.',
+        popupText: 'SNIFFER ACTIVE',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['pulse_damage_3'],
+        childIds: [],
+        treeX: 720,
+        treeY: 710,
+        effect: function () {
+            _recalcPacketSniffing();
         },
     },
     {
