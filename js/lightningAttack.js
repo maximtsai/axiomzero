@@ -232,7 +232,6 @@ const lightningAttack = (() => {
         if (model.staticChargeMultiplier > 0 && first.health >= first.maxHealth * 0.8) {
             actualDamage *= (1 + model.staticChargeMultiplier);
         }
-        console.log(actualDamage, model.staticChargeMultiplier, first.health, first.maxHealth);
         enemyManager.damageEnemy(first, actualDamage);
 
         // Chain to additional enemies

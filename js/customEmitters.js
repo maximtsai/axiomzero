@@ -179,7 +179,7 @@ const customEmitters = (() => {
             spritesToAnimate.push(enemy.view.hpImg);
         }
 
-        const targetScaleMultiplier = 1 + (40 / (20 + (enemy.size || 20)));
+        const targetScaleMultiplier = 1 + (50 / (30 + (enemy.size || 20)));
         const baseScaleX = enemy.view.img.scaleX;
         const baseScaleY = enemy.view.img.scaleY;
 
@@ -207,7 +207,7 @@ const customEmitters = (() => {
             targets: copies,
             scaleX: baseScaleX,
             scaleY: baseScaleY,
-            duration: isSlow ? 250 : 90,
+            duration: isSlow ? 370 : 90,
             ease: 'Linear',
             onComplete: () => {
                 copies.forEach(c => {

@@ -150,49 +150,49 @@ const waveManager = (() => {
         // 1. Tower becomes invincible (no need to call, boss is dead and enemies are dying, plus transition handles this)
         // Also handled safely by the incoming phase change
 
-        // 2. Play shockwave animation at boss location
-        const shockwave = PhaserScene.add.image(x, y, 'enemies', 'explosion_flash.png');
-        shockwave.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
-        shockwave.setScale(0.1);
-        shockwave.setAlpha(0.8);
+        PhaserScene.time.delayedCall(300, () => {
+            // 2. Play shockwave animation at boss location
+            const shockwave = PhaserScene.add.image(x, y, 'enemies', 'explosion_flash.png');
+            shockwave.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
+            shockwave.setScale(0.1);
+            shockwave.setAlpha(0.8);
 
-        // Flash tint cyan to match player colors
-        shockwave.setTintFill(GAME_CONSTANTS.COLOR_FRIENDLY);
+            // Flash tint cyan to match player colors
+            shockwave.setTintFill(GAME_CONSTANTS.COLOR_FRIENDLY);
 
-        // Explode outward
-        PhaserScene.tweens.add({
-            targets: shockwave,
-            scaleX: 12,
-            scaleY: 12,
-            duration: 400,
-            ease: 'Cubic.easeOut',
-            onComplete: () => {
-                shockwave.destroy();
-            }
-        });
+            // Explode outward
+            PhaserScene.tweens.add({
+                targets: shockwave,
+                scaleX: 12,
+                scaleY: 12,
+                duration: 500,
+                ease: 'Quad.easeIn',
+            });
 
-        PhaserScene.tweens.add({
-            targets: shockwave,
-            alpha: 0,
-            duration: 400,
-            onComplete: () => {
-                shockwave.destroy();
-            }
-        });
-        PhaserScene.time.delayedCall(200, () => {
-            // 3. Inform enemyManager to instantly kill all non-boss enemies
-            if (typeof enemyManager !== 'undefined') {
-                enemyManager.killAllNonBossEnemies();
-                PhaserScene.cameras.main.shake(500, 0.02);
-            }
+            PhaserScene.tweens.add({
+                targets: shockwave,
+                alpha: 0,
+                duration: 500,
+                ease: 'Quart.easeIn',
+                onComplete: () => {
+                    shockwave.destroy();
+                }
+            });
+            PhaserScene.time.delayedCall(300, () => {
+                // 3. Inform enemyManager to instantly kill all non-boss enemies
+                if (typeof enemyManager !== 'undefined') {
+                    enemyManager.killAllNonBossEnemies();
+                    PhaserScene.cameras.main.shake(500, 0.03);
+                }
 
-            // 4. Trigger resource vacuum (to be implemented in resourceManager)
-            messageBus.publish('triggerResourceVacuum');
-        });
+                // 4. Trigger resource vacuum (to be implemented in resourceManager)
+                messageBus.publish('triggerResourceVacuum');
+            });
 
-        // 5. Short delay, then transition to iteration over
-        PhaserScene.time.delayedCall(2000, () => {
-            gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE, { bossKill: true });
+            // 5. Short delay, then transition to iteration over
+            PhaserScene.time.delayedCall(2400, () => {
+                gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE, { bossKill: true });
+            });
         });
     }
 

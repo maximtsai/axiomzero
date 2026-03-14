@@ -531,10 +531,10 @@ const tower = (() => {
 
     function _onBossDefeated() {
         model.isInvincible = true;
-        PhaserScene.time.delayedCall(2000, () => {
+        PhaserScene.time.delayedCall(2800, () => {
             model.isInvincible = false;
         });
-        debugLog('Tower invincible for 2s after boss defeat');
+        debugLog('Tower invincible for 2.8s after boss defeat');
     }
 
     return {

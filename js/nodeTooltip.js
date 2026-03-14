@@ -286,9 +286,10 @@ const nodeTooltip = (() => {
         if (!container || !costT.visible) return;
         _clearTweens();
         const origX = costT.x;
+        costT.x = origX - 5;
         PhaserScene.tweens.add({
             targets: costT,
-            x: origX + 8, duration: 50, yoyo: true, repeat: 3,
+            x: origX + 5, duration: 50, yoyo: true, repeat: 3,
             onComplete: () => { costT.x = origX; }
         });
     }
