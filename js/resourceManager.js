@@ -89,7 +89,7 @@ const resourceManager = (() => {
         d.alive = false;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = -0.08;
+        d.inertia = -0.11;
         d.img.setVisible(false);
         d.img.setActive(false);
     }
@@ -128,6 +128,7 @@ const resourceManager = (() => {
             alive: true,
             flying: false,
             readyToCollect: false,
+            isLocked: true, // Shard cannot be picked up or move towards player while locked
             x: x,
             y: y,
             dx: 0,
@@ -138,8 +139,13 @@ const resourceManager = (() => {
             backing: backing,
         };
 
+        // Unlock shard after 2 seconds
+        PhaserScene.time.delayedCall(2000, () => {
+            if (d) d.isLocked = false;
+        });
+
         // Pulse effect 1 second after drop
-        PhaserScene.time.delayedCall(1000, () => {
+        PhaserScene.time.delayedCall(1600, () => {
             if (!d.alive || !d.img || !d.img.active) return;
             const px = d.img.x;
             const py = d.img.y;
@@ -204,7 +210,7 @@ const resourceManager = (() => {
         d.alive = true;
         d.flying = false;
         d.readyToCollect = false;
-        d.inertia = -0.08;
+        d.inertia = -0.11;
 
         // Visibility logic
         let visible = true;
@@ -396,8 +402,8 @@ const resourceManager = (() => {
             d.inertia = 0;
 
             flyingDrops.push(d);
+            activeDrops.splice(i, 1);
         }
-        activeDrops.length = 0;
 
         // // Also boost any drops already flying
         // for (let i = 0; i < flyingDrops.length; i++) {
@@ -422,9 +428,11 @@ const resourceManager = (() => {
         if (frameCounter % 4 === 0) {
             for (let i = activeDrops.length - 1; i >= 0; i--) {
                 const d = activeDrops[i];
-                if (!d.alive) {
-                    activeDrops[i] = activeDrops[activeDrops.length - 1];
-                    activeDrops.pop();
+                if (!d.alive || d.isLocked) {
+                    if (!d.alive) {
+                        activeDrops[i] = activeDrops[activeDrops.length - 1];
+                        activeDrops.pop();
+                    }
                     continue;
                 }
 
@@ -488,6 +496,9 @@ const resourceManager = (() => {
             d.dy *= 0.95 - 0.05 * d.inertia;
 
             if (d.inertia < 1) {
+                if (d.inertia < 0) {
+                    d.inertia *= 0.95;
+                }
                 d.inertia = Math.min(1, d.inertia + 0.75 * dt);
             }
             const oldImgXPos = d.img.x;

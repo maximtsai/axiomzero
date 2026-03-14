@@ -25,6 +25,8 @@ window.TRANSLATIONS.en = {
         integrity: { name: 'INTEGRITY', desc: '+5 tower max health', popup: '+5 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
         focus: { name: 'INFLUENCE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
+        focus_range_2: { name: 'COMMAND', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
+        focus_range_3: { name: 'AUTHORITY', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
         regen: { name: 'RECOVERY', desc: '+0.2 health regen', popup: '+0.2 REGEN' },
         crypto_mine_unlock: { name: 'CRYPTO MINE', desc: 'Unlocks the Crypto Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'SECURITY', desc: 'Reduces incoming damage by 1.', popup: '+1 ARMOR' },

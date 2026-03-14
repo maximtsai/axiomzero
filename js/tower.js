@@ -30,13 +30,15 @@ class TowerModel {
         const intensityLv = ups.intensity || 0;
         const regenLv = ups.regen || 0;
         const focusLv = ups.focus || 0;
+        const focus2Lv = ups.focus_range_2 || 0;
+        const focus3Lv = ups.focus_range_3 || 0;
         const armorLv = ups.armor || 0;
         const baseHpLv = ups.base_hp_boost || 0;
         const overclockLv = ups.overclock || 0;
 
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 10 * baseHpLv;
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv;
-        this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv);
+        this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
         this.armor = armorLv * 1; // 1 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.25 * overclockLv);

@@ -482,9 +482,9 @@ const gameHUD = (() => {
                                 waveProgressBar.setBorderAlpha(0.2);
                                 PhaserScene.time.delayedCall(100, () => {
                                     waveProgressBar.setAlpha(1);
-                                    waveProgressBar.setBorderAlpha(0.75);
+                                    waveProgressBar.setBorderAlpha(0.5);
                                     PhaserScene.time.delayedCall(400, () => {
-                                        waveProgressBar.setBorderAlpha(1);
+                                        waveProgressBar.setBorderAlpha(0.6);
                                     });
                                 });
                             });

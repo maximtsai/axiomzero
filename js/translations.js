@@ -1,7 +1,7 @@
 // window.TRANSLATIONS is populated by external files in js/localization/
-// en.js, es.js, zh.js
+// en.js
 
-const SUPPORTED_LANGUAGES = Object.freeze(['en', 'es', 'zh', 'debug']);
+const SUPPORTED_LANGUAGES = Object.freeze(['en', 'debug']);
 
 const TRANSLATIONS = window.TRANSLATIONS || {};
 
