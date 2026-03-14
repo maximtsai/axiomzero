@@ -97,8 +97,6 @@ function isAllowedRuntimeHost() {
     return isLocalhost || isCrazyGamesHost || isItchHost || isPersonalHost;
 }
 
-function onloadFunc() { }
-
 function applyCrazyGamesMuteSetting(settings) {
     if (!settings || typeof settings.muteAudio !== 'boolean') return;
     if (settings.muteAudio) {

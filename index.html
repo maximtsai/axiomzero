@@ -6,28 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="description" content="Axiom Zero: Incremental Tower Defense">
 
-  <!-- Basic mobile / theme -->
   <meta name="theme-color" content="#05080f">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Manifest -->
-
-
-  <!-- Favicons / icons -->
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Social / SEO -->
   <meta property="og:title" content="Axiom Zero">
   <meta property="og:description"
     content="A newborn AI fights to become the system. Tower defense + incremental mechanics.">
-  <!-- Performance: preconnect and preload critical resources -->
   <link rel="preconnect" href="https://sdk.crazygames.com" crossorigin>
 
 
   <title>Axiom Zero</title>
 
-  <link rel="icon" type="image/x-icon" href="favicon.png">
   <link rel="stylesheet" href="styles.css">
 
   <script src="flags.js"></script>
@@ -79,7 +71,6 @@
   <script src="js/tooltipManager.js"></script>
   <script src="js/progressBar.js"></script>
 
-  <!-- Phase 1 gameplay systems (loaded before gameInit bootstrapper) -->
   <script src="js/tower.js"></script>
   <script src="js/enemies/enemy.js"></script>
   <script src="js/enemies/basic_enemy.js"></script>
@@ -121,7 +112,7 @@
   <noscript>Enable JavaScript to play Axiom Zero.</noscript>
 </head>
 
-<body onload="onloadFunc()">
+<body>
 
   <div id="preload">
     <span style="font-family: 'Michroma'">.</span>
@@ -152,6 +143,14 @@
     }
   </script>
   <script src="js/main.js"></script>
+  <script>
+    window.addEventListener('load', function () {
+      if (typeof finalizeTranslations === 'function') {
+        finalizeTranslations();
+        console.log("Axiom Zero: Translations loaded and secured.");
+      }
+    });
+  </script>
 </body>
 
 </html>

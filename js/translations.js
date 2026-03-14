@@ -5,6 +5,9 @@ const SUPPORTED_LANGUAGES = Object.freeze(['en', 'es', 'zh', 'debug']);
 
 const TRANSLATIONS = window.TRANSLATIONS || {};
 
+// Cleaned up the local storage key
+const STORAGE_KEY = 'axiomzero-lang';
+
 /**
  * Cache for dot-path splitting
  */
@@ -52,7 +55,7 @@ function _getEntry(lang, mainKey, subKey) {
  */
 function loadSavedLanguage() {
     try {
-        const saved = localStorage.getItem('catgirl-language');
+        const saved = localStorage.getItem(STORAGE_KEY);
 
         if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
             return saved;
@@ -77,7 +80,7 @@ function saveLanguage(lang) {
     if (!SUPPORTED_LANGUAGES.includes(lang)) return;
 
     try {
-        localStorage.setItem('catgirl-language', lang);
+        localStorage.setItem(STORAGE_KEY, lang);
 
         if (typeof gameOptions !== 'undefined') {
             gameOptions.language = lang;
@@ -117,6 +120,7 @@ function t(mainKey, subKey, placeholders = []) {
         text = _getEntry('en', mainKey, subKey);
     }
 
+    // Fixed consistency
     if (text === null) return `[${mainKey}.${subKey}]`;
 
     if (typeof text !== 'string') return text;
@@ -140,7 +144,8 @@ function tRaw(mainKey, subKey, lang = 'en') {
         text = _getEntry('en', mainKey, subKey);
     }
 
-    return text ?? `[${subKey}]`;
+    // Fixed consistency
+    return text ?? `[${mainKey}.${subKey}]`;
 }
 
 /**
@@ -156,27 +161,27 @@ function hasTranslation(mainKey, subKey) {
 }
 
 /**
- * Deep freezes object to prevent mutation
+ * Deep freezes object to prevent mutation.
+ * Wrap in a function so it can be called explicitly after all JS translation files load.
  */
-function deepFreeze(obj) {
-    if (!obj || Object.isFrozen(obj)) return obj;
+function finalizeTranslations() {
+    function deepFreeze(obj) {
+        if (!obj || Object.isFrozen(obj)) return obj;
 
-    Object.freeze(obj);
+        Object.freeze(obj);
 
-    for (const value of Object.values(obj)) {
-        if (value && typeof value === "object") {
-            deepFreeze(value);
+        for (const value of Object.values(obj)) {
+            if (value && typeof value === "object") {
+                deepFreeze(value);
+            }
         }
+
+        return obj;
     }
 
-    return obj;
-}
-
-/**
- * Freeze translations once loaded
- */
-if (TRANSLATIONS) {
-    deepFreeze(TRANSLATIONS);
+    if (window.TRANSLATIONS) {
+        deepFreeze(window.TRANSLATIONS);
+    }
 }
 
 /**
@@ -186,4 +191,5 @@ window.t = t;
 window.tRaw = tRaw;
 window.hasTranslation = hasTranslation;
 window.setLanguage = setLanguage;
+window.finalizeTranslations = finalizeTranslations;
 window.SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES;
