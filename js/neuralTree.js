@@ -32,7 +32,8 @@ const neuralTree = (() => {
 
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
-    const TREE_CENTER_X = PANEL_W / 2;  // 400
+    const TREE_X_OFFSET = 8;
+    const TREE_CENTER_X = PANEL_W / 2 + TREE_X_OFFSET;  // 408
 
     // ── init ─────────────────────────────────────────────────────────────
 
@@ -181,7 +182,7 @@ const neuralTree = (() => {
             const def = NODE_DEFS[i];
             const node = def.isDuoBox ? new DuoNode(def) : new Node(def);
             nodes[def.id] = node;
-            node.create(0, 0); // offset handled by treeX/treeY in defs
+            node.create(TREE_X_OFFSET, 0); // offset handled by treeX/treeY in defs
 
             // Restore saved level
             const savedLevel = (gameState.upgrades && gameState.upgrades[def.id]) || 0;
@@ -222,19 +223,19 @@ const neuralTree = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: PANEL_W - 105,
+                x: PANEL_W - 110 + TREE_X_OFFSET,
                 y: GAME_CONSTANTS.HEIGHT - 57,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: PANEL_W - 105,
+                x: PANEL_W - 110 + TREE_X_OFFSET,
                 y: GAME_CONSTANTS.HEIGHT - 57,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: PANEL_W - 105,
+                x: PANEL_W - 110 + TREE_X_OFFSET,
                 y: GAME_CONSTANTS.HEIGHT - 57,
             },
             onMouseUp: _onDeployClicked,
@@ -386,9 +387,9 @@ const neuralTree = (() => {
             // Hint for new players: pulse indicate the AWAKEN node
             const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
             if (awakenLevel === 0) {
-                const ind = helper.ninesliceIndicator(400, 750, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
+                const ind = helper.ninesliceIndicator(400 + TREE_X_OFFSET, 750, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
                 ind.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
-                const indShort = helper.ninesliceIndicatorShort(400, 750, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
+                const indShort = helper.ninesliceIndicatorShort(400 + TREE_X_OFFSET, 750, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
                 indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
                 treeGroup.add(ind);
                 treeGroup.add(indShort);
@@ -446,7 +447,7 @@ const neuralTree = (() => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx) + 1.57;
 
-        const line = PhaserScene.add.image(px, py, 'pixels', 'white_pixel.png');
+        const line = PhaserScene.add.image(px + TREE_X_OFFSET, py, 'pixels', 'white_pixel.png');
         line.setScale(1.5, distance / 2);
         line.setOrigin(0.5, 1);
         line.setRotation(angle);
@@ -646,7 +647,7 @@ const neuralTree = (() => {
             const onlyAwaken = keys.length === 1 && keys[0] === 'awaken';
 
             if (onlyAwaken) {
-                const bx = PANEL_W - 105;
+                const bx = PANEL_W - 110 + TREE_X_OFFSET;
                 const by = GAME_CONSTANTS.HEIGHT - 57;
                 const bw = 344 * 0.6;
                 const bh = 120 * 0.6;
