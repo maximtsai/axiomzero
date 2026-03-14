@@ -15,6 +15,10 @@ class PulseAttackModel {
         this.fireTimer = 0;
         this.size = this.BASE_SIZE;  // current square side length (upgradeable)
         this.damage = this.BASE_DAMAGE; // current damage per pulse (upgradeable)
+
+        this.manualMode = false;
+        this.charges = 0;
+        this.maxCharges = 2;
     }
 
     resetTimer() {
@@ -25,6 +29,13 @@ class PulseAttackModel {
         this.fireTimer += delta;
         if (this.fireTimer >= this.FIRE_INTERVAL) {
             this.fireTimer -= this.FIRE_INTERVAL;
+
+            if (this.manualMode) {
+                if (this.charges < this.maxCharges) {
+                    this.charges++;
+                }
+                return false; // Manual mode doesn't auto-fire
+            }
             return true; // Should fire
         }
         return false;
@@ -47,6 +58,7 @@ class PulseAttackView {
         this.shakeVelY = 0;
         this.shakeX = 0;
         this.shakeY = 0;
+        this.chargeSprites = [];
     }
 
     init(initialSize) {
@@ -92,11 +104,19 @@ class PulseAttackView {
 
         // Pointer sprite
         this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
-        this.cursorX = 0;
-        this.cursorY = 0;
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
         this.spritePointer.setScrollFactor(0);
         this.spritePointer.setVisible(false);
+
+        // Charge indicators (Right-to-left at top-right of the square)
+        for (let i = 0; i < 4; i++) { // Max supported UI-wise for now
+            const s = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
+            s.setScale(2);
+            s.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 5);
+            s.setScrollFactor(0);
+            s.setVisible(false);
+            this.chargeSprites.push(s);
+        }
     }
 
     setSize(newSize) {
@@ -111,7 +131,7 @@ class PulseAttackView {
         }
     }
 
-    updatePosition(delta, targetX, targetY) {
+    updatePosition(delta, targetX, targetY, model) {
         if (!this.sprite) return;
 
         this.sprite.setPosition(targetX + this.shakeX, targetY + this.shakeY);
@@ -119,10 +139,28 @@ class PulseAttackView {
         this.spritePointer.setPosition(targetX, targetY);
         this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
 
+        const size = model.size;
+        const topY = targetY - size / 2 - 4; // 4px above edge (matching user's recent change)
+        const leftAnchorX = targetX - size / 2 + 4; // Offset from left edge
+        const spacing = 13;
+
+        for (let i = 0; i < this.chargeSprites.length; i++) {
+            const s = this.chargeSprites[i];
+            // i=0 is the first charge (leftmost), i=1 is the second (to its right), etc.
+            s.setPosition(leftAnchorX + i * spacing + 2, topY - 2);
+        }
+
         this.shakeX += this.shakeVelX * delta;
         this.shakeY += this.shakeVelY * delta;
         this.shakeX *= 0.36;
         this.shakeY *= 0.36;
+    }
+
+    updateCharges(count, maxCharges, manualMode) {
+        for (let i = 0; i < this.chargeSprites.length; i++) {
+            const s = this.chargeSprites[i];
+            s.setVisible(manualMode && i < count && this.sprite.visible);
+        }
     }
 
     playFireAnimation() {
@@ -180,7 +218,7 @@ class PulseAttackView {
         }
     }
 
-    setVisibility(visible, isIdle = true) {
+    setVisibility(visible, isIdle = true, manualMode = false, charges = 0) {
         if (!this.sprite) return;
         this.sprite.setVisible(visible);
         this.spriteBright.setVisible(visible);
@@ -191,6 +229,8 @@ class PulseAttackView {
             this.spriteBright.setAlpha(0);
             this.spriteRed.setAlpha(0);
         }
+
+        this.updateCharges(charges, 0, manualMode);
     }
 
     setPointerVisibility(visible) {
@@ -212,10 +252,21 @@ const pulseAttack = (() => {
         view.init(model.size);
         if (typeof _recalcPulseDamage === 'function') _recalcPulseDamage();
         if (typeof _recalcPulseSize === 'function') _recalcPulseSize();
+        if (typeof _recalcPulseMode === 'function') _recalcPulseMode();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
         updateManager.addFunction(_update);
+
+        // Global click listener for manual firing
+        PhaserScene.input.on('pointerdown', () => {
+            if (model.manualMode && model.active && !model.paused) {
+                if (model.charges > 0) {
+                    model.charges--;
+                    _fire();
+                }
+            }
+        });
     }
 
     function unlock() {
@@ -237,7 +288,8 @@ const pulseAttack = (() => {
         // The pointer is always tracked and updated if combat is active
         const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
         if (isCombat) {
-            view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy);
+            view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy, model);
+            view.updateCharges(model.charges, model.maxCharges, model.manualMode);
         }
 
         if (!model.active) return;
@@ -272,12 +324,17 @@ const pulseAttack = (() => {
         if (isCombat && model.unlocked) {
             model.active = true;
             model.resetTimer();
-            view.setVisibility(true, true);
+            view.setVisibility(true, true, model.manualMode, model.charges);
         } else {
             model.active = false;
             view.setVisibility(false);
         }
     }
 
-    return { init, unlock, setSize, setDamage };
+    function setManualMode(enabled) {
+        model.manualMode = enabled;
+        if (!enabled) model.charges = 0;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode };
 })();

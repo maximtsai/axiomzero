@@ -14,7 +14,15 @@ function _recalcPulseDamage() {
 function _recalcPulseSize() {
     const ups = gameState.upgrades || {};
     const expansionLv = ups.pulse_expansion || 0;
-    pulseAttack.setSize(100 * (1 + 0.3 * expansionLv));
+    const aoeBonus = ups.pulse_aoe || 0;
+    pulseAttack.setSize(100 * (1 + 0.3 * expansionLv + 0.3 * aoeBonus));
+}
+
+/** Recalculates pulse manual mode. */
+function _recalcPulseMode() {
+    const ups = gameState.upgrades || {};
+    const manualLv = ups.manual_pulse || 0;
+    pulseAttack.setManualMode(manualLv > 0);
 }
 
 /** Recalculates lightning chain count from upgrade nodes. */
@@ -552,12 +560,12 @@ const NODE_DEFS = [
         popupText: '-25% COOLDOWN',
         popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 100,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
         parents: ['prismatic_array', 'armor'],
-        childIds: [],
+        childIds: ['placeholder_duo_2'],
         treeX: 400,
         treeY: 350,
         effect: function () {
@@ -728,6 +736,118 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 680,
         treeY: 230,
+        effect: function () { },
+    },
+    {
+        id: 'placeholder_duo_2',
+        isPlaceholder: true,
+        parents: ['overclock'],
+        monitorsDuoTier: 2,
+        childIds: ['manual_pulse_child_1', 'manual_pulse_child_2', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
+        treeX: 400,
+        treeY: 220,
+        effect: function () { },
+    },
+    {
+        id: 'manual_pulse',
+        name: 'MANUAL PROTOCOL',
+        icon: 'Skillicon14_02.png',
+        description: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.',
+        popupText: 'MANUAL PULSE UNLOCKED',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        parents: ['overclock'],
+        childIds: ['manual_pulse_child_1', 'manual_pulse_child_2'],
+        isDuoBox: true,
+        duoBoxTier: 2,
+        shardId: 'manual_pulse',
+        duoSiblingId: 'pulse_aoe',
+        treeX: 370,
+        treeY: 190,
+        effect: function () {
+            _recalcPulseMode();
+        },
+    },
+    {
+        id: 'pulse_aoe',
+        name: 'RESONANCE AREA',
+        icon: 'Skillicon14_07.png',
+        description: '+30% pulse attack size.',
+        popupText: '+30% PULSE AOE',
+        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        parents: ['overclock'],
+        childIds: ['pulse_aoe_child_1', 'pulse_aoe_child_2'],
+        isDuoBox: true,
+        duoBoxTier: 2,
+        shardId: 'pulse_aoe',
+        duoSiblingId: 'manual_pulse',
+        treeX: 430,
+        treeY: 190,
+        effect: function () {
+            _recalcPulseSize();
+        },
+    },
+    {
+        id: 'manual_pulse_child_1',
+        name: '...',
+        description: 'Searching for extra data.',
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['manual_pulse'],
+        childIds: [],
+        treeX: 330,
+        treeY: 110,
+        effect: function () { },
+    },
+    {
+        id: 'manual_pulse_child_2',
+        name: '...',
+        description: 'Searching for extra data.',
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['manual_pulse'],
+        childIds: [],
+        treeX: 410,
+        treeY: 110,
+        effect: function () { },
+    },
+    {
+        id: 'pulse_aoe_child_1',
+        name: '...',
+        description: 'Searching for extra data.',
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['pulse_aoe'],
+        childIds: [],
+        treeX: 390,
+        treeY: 110,
+        effect: function () { },
+    },
+    {
+        id: 'pulse_aoe_child_2',
+        name: '...',
+        description: 'Searching for extra data.',
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['pulse_aoe'],
+        childIds: [],
+        treeX: 470,
+        treeY: 110,
         effect: function () { },
     },
 ];
