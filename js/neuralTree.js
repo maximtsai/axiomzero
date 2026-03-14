@@ -29,6 +29,7 @@ const neuralTree = (() => {
 
     let visible = false;
     let hasShownThisSession = false;
+    let hintPulseTimer = null;
 
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
@@ -337,6 +338,78 @@ const neuralTree = (() => {
         }
     }
 
+    function _startHintTimer() {
+        if (hintPulseTimer) return;
+
+        const check = () => {
+            if (!visible) return;
+            const shardCount = resourceManager.getShards();
+            const lNode = nodes['lightning_weapon'];
+            const sNode = nodes['shockwave_weapon'];
+            // If we have a shard but haven't bought the duo node yet
+            if (shardCount >= 1 && lNode && sNode && lNode.level === 0) {
+                _playDuoHintPulse(lNode, sNode);
+            }
+        };
+
+        // Check every 4 seconds as requested
+        hintPulseTimer = PhaserScene.time.addEvent({
+            delay: 4000,
+            callback: check,
+            loop: true
+        });
+    }
+
+    function _stopHintTimer() {
+        if (hintPulseTimer) {
+            hintPulseTimer.remove();
+            hintPulseTimer = null;
+        }
+    }
+
+    function _playDuoHintPulse(nodeA, nodeB) {
+        // Pulse at the center of the duo box
+        const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET;
+        const centerY = (nodeA.treeY + nodeB.treeY) / 2;
+
+        const pulse = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_pulse.png');
+        pulse.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+        pulse.setScrollFactor(0);
+        pulse.setScale(2.1);
+        pulse.setAlpha(0);
+
+        treeGroup.add(pulse);
+        draggableGroup.add(pulse);
+
+        PhaserScene.tweens.add({
+            targets: pulse,
+            scaleX: 1.01,
+            scaleY: 1,
+            alpha: 1,
+            duration: 2000,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: pulse,
+                    scaleX: 1.8,
+                    scaleY: 1.8,
+                    duration: 1000,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        pulse.destroy();
+                    }
+                });
+                PhaserScene.tweens.add({
+                    targets: pulse,
+                    alpha: 0,
+                    duration: 1000,
+                    ease: 'Quad.easeOut',
+                });
+            }
+        });
+
+    }
+
     function _animatePulse(x, y, pool, startSize, targetSize, duration, alpha, delay = 0) {
         const pulse = pool.get();
         pulse.setPosition(x, y);
@@ -545,7 +618,9 @@ const neuralTree = (() => {
         if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             show();
             if (draggableGroup) draggableGroup.activate();
+            _startHintTimer();
         } else {
+            _stopHintTimer();
             if (draggableGroup) draggableGroup.deactivate();
             if (typeof transitionManager === 'undefined' || !transitionManager.isTransitioning()) {
                 hide();
@@ -590,6 +665,8 @@ const neuralTree = (() => {
             deployBtn.hiTimer.remove();
             deployBtn.hiTimer = null;
         }
+
+        _stopHintTimer();
 
         transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
     }

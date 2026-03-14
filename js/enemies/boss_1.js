@@ -61,8 +61,8 @@ class Boss1View extends EnemyView {
             // Tween size to 400 over 1s (Cubic.easeOut)
             PhaserScene.tweens.add({
                 targets: this.pulse,
-                width: 460,
-                height: 460,
+                width: 480,
+                height: 480,
                 duration: 1100,
                 ease: 'Quart.easeOut'
             });
@@ -72,7 +72,7 @@ class Boss1View extends EnemyView {
                 targets: this.pulse,
                 alpha: 0,
                 duration: 1100,
-                ease: 'Linear'
+                ease: 'Quad.easeOut'
             });
         };
 

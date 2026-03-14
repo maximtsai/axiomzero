@@ -210,7 +210,7 @@ const lightningAttack = (() => {
     }
 
     function _update(delta) {
-        if (model.paused || !model.active) return;
+        if (model.paused || !model.active || !tower.isAlive()) return;
 
         if (model.updateTimer(delta)) {
             _fire();

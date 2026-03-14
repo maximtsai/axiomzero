@@ -103,6 +103,7 @@ const shockwaveAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('gameResumed', () => { model.paused = false; });
         updateManager.addFunction(_update);
     }
 
@@ -142,7 +143,10 @@ const shockwaveAttack = (() => {
     }
 
     function _update(delta) {
-        if (model.paused || !model.active) return;
+        if (model.paused || !model.active || !tower.isAlive()) {
+            if (!tower.isAlive()) view.setVisible(false);
+            return;
+        }
 
         if (model.updateTimer(delta)) {
             _fire();

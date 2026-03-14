@@ -85,7 +85,7 @@ const resourceManager = (() => {
         messageBus.subscribe('gameResumed', () => { paused = false; });
         messageBus.subscribe('pulseData', _onPulseData);
         _recalcPickupRadius();
-        
+
         // Initial check for packet sniffing if already purchased (on load)
         const ups = gameState.upgrades || {};
         isPacketSniffingActive = (ups.packet_sniffing || 0) > 0;
@@ -272,28 +272,30 @@ const resourceManager = (() => {
     }
 
     function addData(amount) {
-        // DATA COMPRESSION effect
-        const ups = gameState.upgrades || {};
-        const compressionLv = ups.data_compression || 0;
-        if (compressionLv > 0 && Math.random() < 0.5) {
-            amount *= 2;
+        // DATA COMPRESSION effect - ONLY apply to gains (positive amount)
+        if (amount > 0) {
+            const ups = gameState.upgrades || {};
+            const compressionLv = ups.data_compression || 0;
+            if (compressionLv > 0 && Math.random() < 0.5) {
+                amount *= 2;
+            }
         }
 
-        gameState.data = (gameState.data || 0) + amount;
-        sessionData += amount;
+        gameState.data = Math.max(0, (gameState.data || 0) + amount);
+        sessionData += Math.max(0, amount);
         messageBus.publish('currencyChanged', 'data', gameState.data, amount);
     }
 
     function addInsight(amount) {
-        gameState.insight = (gameState.insight || 0) + amount;
-        sessionInsight += amount;
+        gameState.insight = Math.max(0, (gameState.insight || 0) + amount);
+        sessionInsight += Math.max(0, amount);
         messageBus.publish('currencyChanged', 'insight', gameState.insight, amount);
     }
 
     function addShard(amount) {
         if (amount > 0) shardIsFlying = false;
-        gameState.shard = (gameState.shard || 0) + amount;
-        sessionShards += amount;
+        gameState.shard = Math.max(0, (gameState.shard || 0) + amount);
+        sessionShards += Math.max(0, amount);
         messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
 
         if (amount > 0) {
@@ -307,14 +309,14 @@ const resourceManager = (() => {
     }
 
     function addProcessor(amount) {
-        gameState.processor = (gameState.processor || 0) + amount;
-        sessionProcessors += amount;
+        gameState.processor = Math.max(0, (gameState.processor || 0) + amount);
+        sessionProcessors += Math.max(0, amount);
         messageBus.publish('currencyChanged', 'processor', gameState.processor, amount);
     }
 
     function addCoin(amount) {
-        gameState.coin = (gameState.coin || 0) + amount;
-        sessionCoins += amount;
+        gameState.coin = Math.max(0, (gameState.coin || 0) + amount);
+        sessionCoins += Math.max(0, amount);
         messageBus.publish('currencyChanged', 'coin', gameState.coin, amount);
     }
 
@@ -495,7 +497,9 @@ const resourceManager = (() => {
             const dy = cy - d.y;
 
             // Collect check — Manhattan distance, no sqrt needed
-            if (Math.abs(dx) + Math.abs(dy) <= FLY_COLLECT_DIST * d.inertia) {
+            // More inertia = bigger collection radius, added to base distance
+            const collectionRadius = FLY_COLLECT_DIST + (25 * Math.max(0, d.inertia));
+            if (Math.abs(dx) + Math.abs(dy) <= collectionRadius) {
                 d.readyToCollect = true;
             }
 

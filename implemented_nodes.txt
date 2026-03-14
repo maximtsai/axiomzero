@@ -20,7 +20,7 @@
 
 #### Cursor Attacks (Tier 1)
 *   **COGNITION**
-    *   Description: Your cursor now auto-attacks.
+    *   Description: Your cursor pulses damage every 2s.
     *   *In-Depth:* Enables a square Area of Effect (AOE) attack centered on your mouse cursor. It fires automatically every 2000 ms (2 seconds). By default, it deals 4 damage to all enemies within a 100x100 pixel square radius.
     *   Parent: AWAKEN
     *   Children: AMPLIFY, ATTRACT, LIGHTNING, SHOCKWAVE
@@ -60,7 +60,7 @@
     *   Cost: 50 Data
 *   **REGEN**
     *   Description: +0.2 health regen
-    *   Parent: INTEGRITY
+    *   Parent: INTEGRITY, ATTRACT
     *   Children: None
     *   Max Level: 3
     *   Cost: 6 Data (Linear +6 per level)
@@ -75,7 +75,7 @@
 *   **ATTRACT**
     *   Description: +40% resource pickup range
     *   Parent: COGNITION
-    *   Children: None
+    *   Children: REGEN
     *   Max Level: 1
     *   Cost: 1 Insight
 

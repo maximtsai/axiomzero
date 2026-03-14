@@ -296,7 +296,12 @@ const pulseAttack = (() => {
             view.updateCharges(model.charges, model.maxCharges, model.manualMode);
         }
 
-        if (!model.active) return;
+        if (!model.active || !tower.isAlive()) {
+            if (isCombat && !tower.isAlive()) {
+                view.setVisibility(false);
+            }
+            return;
+        }
 
         if (model.updateTimer(delta)) {
             _fire();
