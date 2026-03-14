@@ -35,7 +35,7 @@ function createAnimations(scene) {
             end: 11,
             zeroPad: 0,
         }),
-        frameRate: 15,
+        frameRate: 20,
         repeat: 0,
         hideOnComplete: false
     });

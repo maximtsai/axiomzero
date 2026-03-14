@@ -42,6 +42,9 @@ const gameHUD = (() => {
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
         messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
+        messageBus.subscribe('bossDefeated', () => {
+            if (endIterationBtn) endIterationBtn.setState(DISABLE);
+        });
         updateManager.addFunction(_update);
     }
 
@@ -160,7 +163,7 @@ const gameHUD = (() => {
             x: helper.isMobileDevice() ? 898 : 705,
             y: GAME_CONSTANTS.HEIGHT - 22,
             width: GAME_CONSTANTS.WIDTH - (helper.isMobileDevice() ? 234 : 220),
-            height: 24,
+            height: 20,
             padding: 7,
             bgColor: 0x222233,
             fillColor: 0x00f5ff,
@@ -456,22 +459,33 @@ const gameHUD = (() => {
             // Animation sequence:
             // 0.5 alpha, wait 0.05s (50ms), 0 alpha, wait 0.2s (200ms), 0.5 alpha, wait 0.1s (100ms), 0 alpha, wait 0.75s (750ms), 1 alpha.
             waveProgressBar.setAlpha(0.5);
+            waveProgressBar.setBorderAlpha(0.3);
 
             PhaserScene.time.delayedCall(40, () => {
                 waveProgressBar.setAlpha(0);
+                waveProgressBar.setBorderAlpha(0);
 
                 PhaserScene.time.delayedCall(100, () => {
                     waveProgressBar.setAlpha(0.6);
+                    waveProgressBar.setBorderAlpha(0.4);
 
                     PhaserScene.time.delayedCall(40, () => {
                         waveProgressBar.setAlpha(0);
+                        waveProgressBar.setBorderAlpha(0);
 
                         PhaserScene.time.delayedCall(350, () => {
                             waveProgressBar.setAlpha(0.7);
+                            waveProgressBar.setBorderAlpha(0.4);
+
                             PhaserScene.time.delayedCall(250, () => {
                                 waveProgressBar.setAlpha(0.4);
+                                waveProgressBar.setBorderAlpha(0.2);
                                 PhaserScene.time.delayedCall(100, () => {
                                     waveProgressBar.setAlpha(1);
+                                    waveProgressBar.setBorderAlpha(0.75);
+                                    PhaserScene.time.delayedCall(400, () => {
+                                        waveProgressBar.setBorderAlpha(1);
+                                    });
                                 });
                             });
                         });

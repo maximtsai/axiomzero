@@ -40,6 +40,11 @@ class ProgressBar {
         this.bg.setDepth(this.depth);
         this.bg.setScrollFactor(0);
 
+        // NineSlice border
+        this.border = this.scene.add.nineslice(this.x, this.y, 'ui', 'nineslice_box.png', this.width - 1, this.height - 1, 3, 3, 3, 3);
+        this.border.setDepth(this.depth + 1);
+        this.border.setScrollFactor(0);
+
         // The Fill bar
         // We use origin (0, 0.5) to scale from the left
         const fillWidth = this.width - (this.padding * 2);
@@ -80,6 +85,7 @@ class ProgressBar {
      */
     setVisible(visible) {
         this.bg.setVisible(visible);
+        if (this.border) this.border.setVisible(visible);
         this.fill.setVisible(visible);
     }
 
@@ -93,10 +99,19 @@ class ProgressBar {
     }
 
     /**
+     * Set the alpha of only the border.
+     * @param {number} alpha - Value between 0 and 1.
+     */
+    setBorderAlpha(alpha) {
+        if (this.border) this.border.setAlpha(alpha);
+    }
+
+    /**
      * Clean up game objects.
      */
     destroy() {
         if (this.bg) this.bg.destroy();
+        if (this.border) this.border.destroy();
         if (this.fill) this.fill.destroy();
     }
 }

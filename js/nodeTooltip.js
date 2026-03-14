@@ -27,7 +27,7 @@ const nodeTooltip = (() => {
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
 
-        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x111122).setAlpha(0.92);
+        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x111122).setAlpha(0.82);
         container.add(bg);
 
         // Icon elements
@@ -41,6 +41,7 @@ const nodeTooltip = (() => {
             fontSize: '22px',
             color: '#ffffff',
             align: 'left',
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0, 0.5);
         container.add(nameT);
 
@@ -51,6 +52,7 @@ const nodeTooltip = (() => {
             align: 'center',
             wordWrap: { width: 255 },
             lineSpacing: 4,
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
         container.add(descT);
 
@@ -59,6 +61,7 @@ const nodeTooltip = (() => {
             fontSize: '22px',
             color: '#ffffff',
             align: 'center',
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
         container.add(lvT);
 
@@ -234,7 +237,7 @@ const nodeTooltip = (() => {
         let targetX = node.btn.x + horizontalOffset;
         const halfW = bgWidth / 2;
         const margin = 10;
-        targetX = Phaser.Math.Clamp(targetX, halfW + margin, GAME_CONSTANTS.halfWidth - halfW - margin);
+        targetX = Math.max(targetX, halfW + margin);
 
         // TODO: if hover popup gets cut off from the top (.ie we are hovering over a node near the top of the screen), instead render it below the node.
         container.setPosition(targetX, node.btn.y - verticalOffset);
