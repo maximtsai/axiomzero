@@ -109,7 +109,7 @@
             *   Parent: SHOCKWAVE
             *   Children: None
             *   (Max Lvl 1, 40 Data)
-        *   **RESONANCE:** Shockwave deals +1/2/3 dmg per enemy hit
+        *   **RESONANCE:** Shockwave deals +1 dmg per enemy hit
             *   Parent: SHOCKWAVE
             *   Children: None
             *   (Max Lvl 3, 30 Data, Linear +30)

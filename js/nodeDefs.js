@@ -444,7 +444,7 @@ const NODE_DEFS = [
         id: 'shockwave_resonance',
         name: 'RESONANCE',
         icon: 'Skillicon14_22.png',
-        description: 'Shockwave deals +1/2/3 dmg per enemy hit',
+        description: 'Shockwave deals +1 dmg/lvl for each enemy hit',
         popupText: 'RESONANCE FREQUENCY',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 3,
@@ -595,7 +595,7 @@ const NODE_DEFS = [
         childIds: ['test_reveal_3', 'test_reveal_2_1'],
         treeX: 680,
         treeY: 470,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_2_1',
@@ -610,7 +610,7 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 760,
         treeY: 470,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_3',
@@ -625,7 +625,7 @@ const NODE_DEFS = [
         childIds: ['test_reveal_4'],
         treeX: 680,
         treeY: 390,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_4',
@@ -640,7 +640,7 @@ const NODE_DEFS = [
         childIds: ['test_reveal_5', 'test_reveal_4_1'],
         treeX: 680,
         treeY: 310,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_4_1',
@@ -655,7 +655,7 @@ const NODE_DEFS = [
         childIds: ['test_reveal_4_1_1'],
         treeX: 600,
         treeY: 310,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_4_1_1',
@@ -670,7 +670,7 @@ const NODE_DEFS = [
         childIds: ['test_reveal_4_1_2'],
         treeX: 520,
         treeY: 310,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_4_1_2',
@@ -685,7 +685,7 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 440,
         treeY: 310,
-        effect: function () {},
+        effect: function () { },
     },
     {
         id: 'test_reveal_5',
@@ -700,6 +700,6 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 680,
         treeY: 230,
-        effect: function () {},
+        effect: function () { },
     },
 ];

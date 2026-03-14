@@ -721,7 +721,7 @@ class Node {
 
                 if (this.iconSprite) {
                     this.iconSprite.setVisible(true);
-                    this.iconSprite.setAlpha(1);
+                    this.iconSprite.setAlpha(isActive ? 1 : 0.5);
                 }
                 break;
 
