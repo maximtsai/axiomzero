@@ -14,14 +14,22 @@ function _recalcPulseDamage() {
 function _recalcPulseSize() {
     const ups = gameState.upgrades || {};
     const expansionLv = ups.pulse_expansion || 0;
-    const aoeBonus = ups.pulse_aoe || 0;
+
+    // Only apply Resonance Area size bonus if it is the active selection for Duo Tier 2
+    const aoeActive = (gameState.activeShards && gameState.activeShards[2] === 'pulse_aoe');
+    const aoeBonus = aoeActive ? (ups.pulse_aoe || 0) : 0;
+
     pulseAttack.setSize(100 * (1 + 0.3 * expansionLv + 0.3 * aoeBonus));
 }
 
 /** Recalculates pulse manual mode. */
 function _recalcPulseMode() {
     const ups = gameState.upgrades || {};
-    const manualLv = ups.manual_pulse || 0;
+
+    // Only enable manual mode if Manual Protocol is the active selection for Duo Tier 2
+    const manualActive = (gameState.activeShards && gameState.activeShards[2] === 'manual_pulse');
+    const manualLv = manualActive ? (ups.manual_pulse || 0) : 0;
+
     pulseAttack.setManualMode(manualLv > 0);
     _recalcPulseCharges();
 }
@@ -815,6 +823,7 @@ const NODE_DEFS = [
         treeY: 310,
         effect: function () {
             _recalcPulseMode();
+            _recalcPulseSize();
         },
     },
     {
@@ -838,6 +847,7 @@ const NODE_DEFS = [
         treeY: 310,
         effect: function () {
             _recalcPulseSize();
+            _recalcPulseMode();
         },
     },
     {
