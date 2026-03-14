@@ -46,6 +46,8 @@ window.TRANSLATIONS.en = {
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         pulse_aoe: { name: 'RESONANCE AREA', desc: '+30% pulse attack size.', popup: '+30% PULSE AOE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
+        manual_pulse_child_1_1: { name: 'KINETIC AMPLIFIER', desc: '+50% cursor damage', popup: 'KINETIC OVERLOAD' },
+        manual_pulse_child_1_2: { name: 'RECHARGE EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RECHARGE OPTIMIZED' },
         pulse_aoe_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         lore_1: { name: 'ARCHIVE', desc: 'seemingly useless data...' },

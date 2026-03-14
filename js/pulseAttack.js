@@ -25,6 +25,10 @@ class PulseAttackModel {
         this.fireTimer = 0;
     }
 
+    setFireInterval(ms) {
+        this.FIRE_INTERVAL = ms;
+    }
+
     updateTimer(delta) {
         this.fireTimer += delta;
         if (this.fireTimer >= this.FIRE_INTERVAL) {
@@ -336,9 +340,13 @@ const pulseAttack = (() => {
         if (!enabled) model.charges = 0;
     }
 
+    function setFireInterval(ms) {
+        model.setFireInterval(ms);
+    }
+
     function setMaxCharges(newMax) {
         model.maxCharges = newMax;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval };
 })();

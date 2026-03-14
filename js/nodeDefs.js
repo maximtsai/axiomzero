@@ -7,7 +7,22 @@ function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
     const overchargeLv = ups.pulse_damage_3 || 0;
-    pulseAttack.setDamage(4 + 2 * ampLv + 4 * overchargeLv);
+    
+    let base = 4 + 2 * ampLv + 4 * overchargeLv;
+    
+    // Apply Kinetic Amplifier bonus (manual_pulse_child_1_1)
+    if (ups.manual_pulse_child_1_1) {
+        base *= 1.5;
+    }
+    
+    pulseAttack.setDamage(base);
+}
+
+/** Recalculates pulse recharge interval. */
+function _recalcPulseRecharge() {
+    const ups = gameState.upgrades || {};
+    const intervalBonus = ups.manual_pulse_child_1_2 ? 0.75 : 1.0;
+    pulseAttack.setFireInterval(2000 * intervalBonus);
 }
 
 /** Recalculates total pulse size from all pulse upgrade nodes. */
@@ -333,7 +348,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['data_compression'],
+        childIds: [],
         treeX: 400,
         treeY: 830,
         effect: function () {
@@ -406,7 +421,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['basic_pulse'],
         monitorsDuoTier: 1,
-        childIds: ['armor'],
+        childIds: ['data_compression'],
 
         treeX: 400,
         treeY: 580,
@@ -597,11 +612,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['placeholder_duo_1'],
-        childIds: ['overclock', 'prismatic_array'],
+        parents: ['overclock'],
+        childIds: [],
 
-        treeX: 400,
-        treeY: 430,
+        treeX: 240,
+        treeY: 390,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -618,8 +633,8 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['armor'],
-        childIds: ['placeholder_duo_2'],
+        parents: ['data_compression'],
+        childIds: ['placeholder_duo_2', 'armor'],
         treeX: 320,
         treeY: 390,
         effect: function () {
@@ -638,7 +653,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['armor'],
+        parents: ['data_compression'],
         childIds: [],
         treeX: 480,
         treeY: 390,
@@ -658,10 +673,10 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         costStep: 0,
-        parents: ['crypto_mine_unlock'],
-        childIds: [],
+        parents: ['placeholder_duo_1'],
+        childIds: ['overclock', 'prismatic_array'],
         treeX: 400,
-        treeY: 910,
+        treeY: 430,
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -799,7 +814,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 2,
         childIds: ['manual_pulse_child_1', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
         treeX: 320,
-        treeY: 340,
+        treeY: 300,
         effect: function () { },
     },
     {
@@ -820,7 +835,7 @@ const NODE_DEFS = [
         shardId: 'manual_pulse',
         duoSiblingId: 'pulse_aoe',
         treeX: 290,
-        treeY: 310,
+        treeY: 270,
         effect: function () {
             _recalcPulseMode();
             _recalcPulseSize();
@@ -844,7 +859,7 @@ const NODE_DEFS = [
         shardId: 'pulse_aoe',
         duoSiblingId: 'manual_pulse',
         treeX: 350,
-        treeY: 310,
+        treeY: 270,
         effect: function () {
             _recalcPulseSize();
             _recalcPulseMode();
@@ -862,11 +877,45 @@ const NODE_DEFS = [
         costStep: 20,
         costStepScaling: 20,
         parents: ['manual_pulse'],
-        childIds: [],
+        childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
         treeX: 200,
-        treeY: 310,
+        treeY: 270,
         effect: function () {
             _recalcPulseCharges();
+        },
+    },
+    {
+        id: 'manual_pulse_child_1_1',
+        name: 'KINETIC AMPLIFIER',
+        icon: 'Skillicon14_08.png',
+        description: '+50% cursor damage',
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['manual_pulse_child_1'],
+        childIds: [],
+        treeX: 120,
+        treeY: 230,
+        effect: function () {
+            _recalcPulseDamage();
+        },
+    },
+    {
+        id: 'manual_pulse_child_1_2',
+        name: 'RECHARGE EFFICIENCY',
+        icon: 'Skillicon14_04.png',
+        description: 'Charges refill 25% faster',
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['manual_pulse_child_1'],
+        childIds: [],
+        treeX: 120,
+        treeY: 310,
+        effect: function () {
+            _recalcPulseRecharge();
         },
     },
     {
@@ -880,7 +929,7 @@ const NODE_DEFS = [
         parents: ['pulse_aoe'],
         childIds: [],
         treeX: 310,
-        treeY: 230,
+        treeY: 190,
         effect: function () { },
     },
     {
@@ -894,7 +943,7 @@ const NODE_DEFS = [
         parents: ['pulse_aoe'],
         childIds: [],
         treeX: 390,
-        treeY: 230,
+        treeY: 190,
         effect: function () { },
     },
 ];
