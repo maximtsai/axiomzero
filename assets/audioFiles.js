@@ -13,4 +13,5 @@ const audioFiles = [
     { name: 'shock1', src: 'audio/shock1.mp3' },
     { name: 'shock2', src: 'audio/shock2.mp3' },
     { name: 'shock3', src: 'audio/shock3.mp3' },
+    { name: 'drum_beat', src: 'audio/drum_beat.mp3' },
 ];

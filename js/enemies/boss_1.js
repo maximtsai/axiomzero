@@ -14,7 +14,96 @@ class Boss1Model extends BossModel {
 
 class Boss1View extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'boss_1.png', 'boss_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
+        super(Enemy.TEX_KEY, 'boss_1.png', 'boss_hp.png', baseDepth);
+
+        // Add pink pulse nineslice — corner size 65px
+        // Phaser 3.60+ nineslice: (x, y, texture, frame, width, height, left, right, top, bottom)
+        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 265, 265, 65, 65, 65, 65);
+        this.pulse.setDepth(baseDepth - 1);
+        this.pulse.setVisible(false);
+        this.pulse.setAlpha(0);
+
+        this.pulseTimer = null;
+    }
+
+    activate(x, y, rotation, cannotRotate) {
+        super.activate(x, y, rotation, cannotRotate);
+
+        if (this.pulse) {
+            this.pulse.setPosition(x, y);
+            this.pulse.setVisible(true);
+            this.pulse.setAlpha(0);
+            this.pulse.setRotation(rotation);
+            this.pulse.width = 265;
+            this.pulse.height = 265;
+
+            this._startPulseEffect();
+        }
+    }
+
+    _startPulseEffect() {
+        const playPulse = () => {
+            if (!this.pulse || !this.pulse.scene) return;
+
+            // Reset state
+            this.pulse.width = 270;
+            this.pulse.height = 270;
+            // Subtle screenshake
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(120, 0.004);
+            }
+            // Play drum beat sound
+            if (typeof audio !== 'undefined') {
+                audio.play('drum_beat', 0.85);
+            }
+            this.pulse.setAlpha(1);
+            // Tween size to 400 over 1s (Cubic.easeOut)
+            PhaserScene.tweens.add({
+                targets: this.pulse,
+                width: 460,
+                height: 460,
+                duration: 1100,
+                ease: 'Quart.easeOut'
+            });
+
+            // Tween alpha to 0 over 1s (Linear)
+            PhaserScene.tweens.add({
+                targets: this.pulse,
+                alpha: 0,
+                duration: 1100,
+                ease: 'Linear'
+            });
+        };
+
+        // Initial play
+        playPulse();
+
+        // Recurring pulse timer — every 2.4 seconds
+        if (this.pulseTimer) this.pulseTimer.remove();
+        this.pulseTimer = PhaserScene.time.addEvent({
+            delay: 2400,
+            callback: playPulse,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    syncPosition(x, y) {
+        super.syncPosition(x, y);
+        if (this.pulse) this.pulse.setPosition(x, y);
+    }
+
+    deactivate() {
+        super.deactivate();
+        if (this.pulseTimer) {
+            this.pulseTimer.remove();
+            this.pulseTimer = null;
+        }
+        if (this.pulse) {
+            this.pulse.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.pulse);
+        }
     }
 }
 
