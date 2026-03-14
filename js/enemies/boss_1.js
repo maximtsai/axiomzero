@@ -8,7 +8,7 @@ class Boss1Model extends BossModel {
         super();
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.3;
-        this.size = 130;
+        this.size = 120;
     }
 }
 

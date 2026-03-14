@@ -45,10 +45,11 @@ window.TRANSLATIONS.en = {
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         pulse_aoe: { name: 'RESONANCE AREA', desc: '+30% pulse attack size.', popup: '+30% PULSE AOE' },
-        manual_pulse_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
-        manual_pulse_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
+        manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
         pulse_aoe_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
-        pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' }
+        pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
+        lore_1: { name: 'ARCHIVE', desc: 'seemingly useless data...' },
+        resource_gate: { name: 'RESOURCE GATE', desc: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },

@@ -21,7 +21,7 @@ class BossModel extends EnemyModel {
         this.initialSpeedMult = 1.0;
         this.rampDuration = 1.25;
 
-        this.size = 44;
+        this.size = 100;
     }
 
     _applyAimedVelocity() {

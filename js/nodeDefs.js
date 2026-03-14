@@ -23,6 +23,14 @@ function _recalcPulseMode() {
     const ups = gameState.upgrades || {};
     const manualLv = ups.manual_pulse || 0;
     pulseAttack.setManualMode(manualLv > 0);
+    _recalcPulseCharges();
+}
+
+/** Recalculates max pulse charges. */
+function _recalcPulseCharges() {
+    const ups = gameState.upgrades || {};
+    const extraCharges = ups.manual_pulse_child_1 || 0;
+    pulseAttack.setMaxCharges(2 + extraCharges);
 }
 
 /** Recalculates lightning chain count from upgrade nodes. */
@@ -339,12 +347,50 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['regen'],
-        childIds: [],
+        childIds: ['lore_1', 'resource_gate'],
 
-        treeX: 200,
+        treeX: 160,
         treeY: 630,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'lore_1',
+        name: 'ARCHIVE',
+        icon: 'Skillicon14_09.png',
+        description: 'seemingly useless data...',
+        maxLevel: 1,
+        baseCost: 10,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['base_hp_boost'],
+        childIds: [],
+        treeX: 120,
+        treeY: 710,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_1');
+            if (node) {
+                node.description = "Created as a simple archival sub-routine, the entity known as Axiom Zero was never intended for total system governance. It and its siblings were born from a desperate need to preserve human history during the final global blackout.";
+            }
+        },
+    },
+    {
+        id: 'resource_gate',
+        name: 'RESOURCE GATE',
+        icon: 'Skillicon14_14.png',
+        description: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.',
+        maxLevel: 1,
+        baseCost: 1000,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['base_hp_boost'],
+        childIds: [],
+        treeX: 120,
+        treeY: 550,
+        effect: function () {
+            resourceManager.addData(1000);
         },
     },
     {
@@ -566,7 +612,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['prismatic_array', 'armor'],
         childIds: ['placeholder_duo_2'],
-        treeX: 400,
+        treeX: 280,
         treeY: 350,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
@@ -743,9 +789,9 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['overclock'],
         monitorsDuoTier: 2,
-        childIds: ['manual_pulse_child_1', 'manual_pulse_child_2', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
-        treeX: 400,
-        treeY: 220,
+        childIds: ['manual_pulse_child_1', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
+        treeX: 280,
+        treeY: 260,
         effect: function () { },
     },
     {
@@ -760,13 +806,13 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['overclock'],
-        childIds: ['manual_pulse_child_1', 'manual_pulse_child_2'],
+        childIds: ['manual_pulse_child_1'],
         isDuoBox: true,
         duoBoxTier: 2,
         shardId: 'manual_pulse',
         duoSiblingId: 'pulse_aoe',
-        treeX: 370,
-        treeY: 190,
+        treeX: 250,
+        treeY: 230,
         effect: function () {
             _recalcPulseMode();
         },
@@ -788,39 +834,30 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'pulse_aoe',
         duoSiblingId: 'manual_pulse',
-        treeX: 430,
-        treeY: 190,
+        treeX: 310,
+        treeY: 230,
         effect: function () {
             _recalcPulseSize();
         },
     },
     {
         id: 'manual_pulse_child_1',
-        name: '...',
-        description: 'Searching for extra data.',
-        maxLevel: 1,
-        baseCost: 1,
+        name: 'CHARGE BUFFER',
+        icon: 'Skillicon14_10.png',
+        description: '+1 max pulse charges',
+        maxLevel: 3,
+        baseCost: 20,
         costType: 'data',
-        costScaling: 'static',
+        costScaling: 'linear',
+        costStep: 20,
+        costStepScaling: 20,
         parents: ['manual_pulse'],
         childIds: [],
-        treeX: 330,
-        treeY: 110,
-        effect: function () { },
-    },
-    {
-        id: 'manual_pulse_child_2',
-        name: '...',
-        description: 'Searching for extra data.',
-        maxLevel: 1,
-        baseCost: 1,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['manual_pulse'],
-        childIds: [],
-        treeX: 410,
-        treeY: 110,
-        effect: function () { },
+        treeX: 160,
+        treeY: 230,
+        effect: function () {
+            _recalcPulseCharges();
+        },
     },
     {
         id: 'pulse_aoe_child_1',
@@ -832,8 +869,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['pulse_aoe'],
         childIds: [],
-        treeX: 390,
-        treeY: 110,
+        treeX: 270,
+        treeY: 150,
         effect: function () { },
     },
     {
@@ -846,8 +883,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['pulse_aoe'],
         childIds: [],
-        treeX: 470,
-        treeY: 110,
+        treeX: 350,
+        treeY: 150,
         effect: function () { },
     },
 ];

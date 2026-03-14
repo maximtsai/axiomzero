@@ -513,7 +513,13 @@ const neuralTree = (() => {
             if (!p || !n) continue;
 
             // Determine visibility: Hide if either p or n is HIDDEN.
-            const shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
+            // SPECIAL CASE: Duo node children/lines show if Duo parent is purchased (level > 0)
+            let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
+            if (shouldHide && n.isDuoDescendant && n.isDuoDescendant()) {
+                if (n.isDuoPathPurchased()) {
+                    shouldHide = false;
+                }
+            }
 
             if (shouldHide) {
                 line.setVisible(false);

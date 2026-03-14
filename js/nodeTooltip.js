@@ -111,6 +111,16 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
+        const currentBgWidth = node.wideTooltip ? 580 : 280;
+        const currentWordWrap = currentBgWidth - 25;
+
+        // Update word wrap for description
+        descT.setWordWrapWidth(currentWordWrap);
+
+        // Update background elements display sizes
+        goldBg.setDisplaySize(currentBgWidth - 6, 26);
+        costBg.setDisplaySize(currentBgWidth - 6, 26);
+
         const rowSpacing = 10;
         let currentY = 3;
 
@@ -222,7 +232,7 @@ const nodeTooltip = (() => {
         }
 
         const totalHeight = currentY + 3;
-        bg.setDisplaySize(bgWidth, totalHeight);
+        bg.setDisplaySize(currentBgWidth, totalHeight);
 
         // Position above the node (Duo nodes appear 20px higher)
         const verticalOffset = node.isDuoBox ? 56 : 21;
@@ -235,9 +245,10 @@ const nodeTooltip = (() => {
 
         // Clamp X position to stay within the 800px Neural Tree panel bounds
         let targetX = node.btn.x + horizontalOffset;
-        const halfW = bgWidth / 2;
+        const halfW = currentBgWidth / 2;
         const margin = 10;
         targetX = Math.max(targetX, halfW + margin);
+        targetX = Math.min(targetX, 800 - halfW - margin);
 
         // TODO: if hover popup gets cut off from the top (.ie we are hovering over a node near the top of the screen), instead render it below the node.
         container.setPosition(targetX, node.btn.y - verticalOffset);

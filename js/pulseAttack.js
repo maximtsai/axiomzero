@@ -109,7 +109,7 @@ class PulseAttackView {
         this.spritePointer.setVisible(false);
 
         // Charge indicators (Right-to-left at top-right of the square)
-        for (let i = 0; i < 4; i++) { // Max supported UI-wise for now
+        for (let i = 0; i < 8; i++) { // Increased to support upgrades
             const s = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
             s.setScale(2);
             s.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 5);
@@ -147,7 +147,7 @@ class PulseAttackView {
         for (let i = 0; i < this.chargeSprites.length; i++) {
             const s = this.chargeSprites[i];
             // i=0 is the first charge (leftmost), i=1 is the second (to its right), etc.
-            s.setPosition(leftAnchorX + i * spacing + 2, topY - 2);
+            s.setPosition(leftAnchorX + i * spacing + 3, topY - 2);
         }
 
         this.shakeX += this.shakeVelX * delta;
@@ -336,5 +336,9 @@ const pulseAttack = (() => {
         if (!enabled) model.charges = 0;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode };
+    function setMaxCharges(newMax) {
+        model.maxCharges = newMax;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges };
 })();
