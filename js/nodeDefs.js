@@ -398,7 +398,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['basic_pulse'],
         monitorsDuoTier: 1,
-        childIds: ['armor', 'prismatic_array'],
+        childIds: ['armor'],
 
         treeX: 400,
         treeY: 580,
@@ -590,9 +590,9 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['overclock'],
+        childIds: ['overclock', 'prismatic_array'],
 
-        treeX: 360,
+        treeX: 400,
         treeY: 430,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -610,10 +610,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['prismatic_array', 'armor'],
+        parents: ['armor'],
         childIds: ['placeholder_duo_2'],
-        treeX: 280,
-        treeY: 350,
+        treeX: 320,
+        treeY: 390,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -630,10 +630,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['placeholder_duo_1'],
-        childIds: ['overclock'],
-        treeX: 440,
-        treeY: 430,
+        parents: ['armor'],
+        childIds: [],
+        treeX: 480,
+        treeY: 390,
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -790,8 +790,8 @@ const NODE_DEFS = [
         parents: ['overclock'],
         monitorsDuoTier: 2,
         childIds: ['manual_pulse_child_1', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
-        treeX: 280,
-        treeY: 260,
+        treeX: 320,
+        treeY: 340,
         effect: function () { },
     },
     {
@@ -811,8 +811,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'manual_pulse',
         duoSiblingId: 'pulse_aoe',
-        treeX: 250,
-        treeY: 230,
+        treeX: 290,
+        treeY: 310,
         effect: function () {
             _recalcPulseMode();
         },
@@ -834,8 +834,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'pulse_aoe',
         duoSiblingId: 'manual_pulse',
-        treeX: 310,
-        treeY: 230,
+        treeX: 350,
+        treeY: 310,
         effect: function () {
             _recalcPulseSize();
         },
@@ -853,8 +853,8 @@ const NODE_DEFS = [
         costStepScaling: 20,
         parents: ['manual_pulse'],
         childIds: [],
-        treeX: 160,
-        treeY: 230,
+        treeX: 200,
+        treeY: 310,
         effect: function () {
             _recalcPulseCharges();
         },
@@ -869,8 +869,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['pulse_aoe'],
         childIds: [],
-        treeX: 270,
-        treeY: 150,
+        treeX: 310,
+        treeY: 230,
         effect: function () { },
     },
     {
@@ -883,8 +883,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['pulse_aoe'],
         childIds: [],
-        treeX: 350,
-        treeY: 150,
+        treeX: 390,
+        treeY: 230,
         effect: function () { },
     },
 ];
