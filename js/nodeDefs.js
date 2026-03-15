@@ -357,7 +357,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: [],
         treeX: 400,
-        treeY: 830,
+        treeY: 910,
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
                 neuralTree._showCryptoMineButton();
