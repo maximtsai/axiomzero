@@ -777,11 +777,23 @@ class Node {
         const currentTier = gameState.currentTier || 1;
         const tierPurchased = this._isDuoTierPurchased(tierNum);
 
-        // Visible from the beginning (if tier-appropriate)
+        // Visible only if tier-appropriate AND at least one parent is "Unlocked" or better
         const isVisibleTier = (tierLevel <= currentTier);
+        let anyParentActive = (this.parents.length === 0);
+        for (let pid of this.parents) {
+            const p = neuralTree.getNode(pid);
+            if (p && p.state !== NODE_STATE.HIDDEN && p.state !== NODE_STATE.GHOST) {
+                anyParentActive = true;
+                break;
+            }
+        }
 
-        if (!isVisibleTier) {
+        if (!isVisibleTier || !anyParentActive) {
             this.duoBackingSprite.setVisible(false);
+            if (this.duoBackingOutline) {
+                this._stopDuoOutlineAnimation();
+                this.duoBackingOutline.setVisible(false);
+            }
             return;
         }
 
