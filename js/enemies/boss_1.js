@@ -8,7 +8,7 @@ class Boss1Model extends BossModel {
         super();
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.3;
-        this.size = 120;
+        this.size = 122;
     }
 }
 
@@ -115,7 +115,7 @@ class Boss1 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 150;
+        const bossHealth = 165;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
