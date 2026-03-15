@@ -8,7 +8,7 @@ class Boss1Model extends BossModel {
         super();
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.3;
-        this.size = 120;
+        this.size = 122;
     }
 }
 
@@ -115,13 +115,13 @@ class Boss1 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 150;
+        const bossHealth = 160;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3,
             selfDamage: 0,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.8,
             size: this.model.size
         });
 
