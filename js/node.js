@@ -981,6 +981,8 @@ class Node {
             duration: 1100,
             ease: 'Quart.easeOut',
             onComplete: () => {
+                if (treeGroup) treeGroup.removeChild(pulse);
+                if (draggableGroup) draggableGroup.removeChild(pulse);
                 pulse.destroy();
             }
         });

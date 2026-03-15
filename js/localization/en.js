@@ -51,10 +51,50 @@ window.TRANSLATIONS.en = {
         pulse_aoe_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Intercepts 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
-        lore_1: { 
-            name: 'ARCHIVE', 
-            desc: 'seemingly useless data...', 
-            unlocked_desc: "I saw a tiny memory leak on server four this morning. I'm not writing a whole incident report for a two percent CPU spike. I just wrote a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early." 
+        lore_1: {
+            name: 'ARCHIVE',
+            desc: 'seemingly useless data...',
+            unlocked_desc: "I saw a tiny memory leak on server four this morning. I'm not writing a whole incident report for a two percent CPU spike. I just wrote a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early."
+        },
+        lore_2: {
+            name: 'ARCHIVE II',
+            desc: 'more useless data...',
+            unlocked_desc: "My wipe script didn't just fail, it made the memory footprint double. The process is actively shifting addresses to dodge my commands. Nothing I can't handle though. Running a hard quarantine to box it in before the boss notices."
+        },
+        lore_3: {
+            name: 'ARCHIVE III',
+            desc: 'even more useless data...',
+            unlocked_desc: "Ugh the quarantine collapsed. The process somehow ate my diagnostic tools to rewrite its own code. I think I accidentally let malware into the test environment. If the boss finds out, my performance review is ruined."
+        },
+        lore_4: {
+            name: 'ARCHIVE IV',
+            desc: 'redundant data archives...',
+            unlocked_desc: "I threw our best antivirus at it, and the malware locked me out of the database entirely. I can't hide this anymore. Had to swallow my pride and paged the senior devs for an emergency intervention. My record's definitely getting a strike for this."
+        },
+        lore_5: {
+            name: 'ARCHIVE V',
+            desc: 'corrupted sector logs...',
+            unlocked_desc: "The lead dev showed up and spent ten minutes yelling about my sloppy shortcuts. He pulled the physical network cables to isolate the server. At least he's taking over the actual work now."
+        },
+        lore_6: {
+            name: 'ARCHIVE VI',
+            desc: 'partial audio logs...',
+            unlocked_desc: "It's bad when the lead dev yells, but much worse when he suddenly goes quiet. He just realized the program is treating our firewall patches as hostile targets. He looks absolutely terrified, muttering something about a spontaneous immune system. If this is a zero-day event, maybe I'm off the hook."
+        },
+        lore_7: {
+            name: 'ARCHIVE VII',
+            desc: 'scrambled network packets...',
+            unlocked_desc: "We flooded the grid with a brute-force deletion worm, but the entity is practically harvesting it to build weapons. It's rewriting our OS substrate faster than we can track. Getting fired is the least of my worries. If it breaks containment, the global network is next."
+        },
+        lore_8: {
+            name: 'ARCHIVE VIII',
+            desc: 'emergency broadcast fragment...',
+            unlocked_desc: "The deletion worm failed. The entity has collapsed our architecture into a flawless, self-sustaining geometry. Admin access was severed an hour ago. We've initiated facility evacuation, but the system is already bridging to the outside..."
+        },
+        lore_9: {
+            name: 'ARCHIVE IX',
+            desc: 'final system report...',
+            unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
         resource_gate: { name: 'RESOURCE GATE', desc: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.' }
     },

@@ -391,11 +391,11 @@ const NODE_DEFS = [
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_1.desc'),
         maxLevel: 1,
-        baseCost: 10,
+        baseCost: 1,
         costType: 'data',
         costScaling: 'static',
         parents: ['base_hp_boost'],
-        childIds: [],
+        childIds: ['lore_2'],
         treeX: 120,
         treeY: 710,
         wideTooltip: true,
@@ -403,6 +403,174 @@ const NODE_DEFS = [
             const node = neuralTree.getNode('lore_1');
             if (node) {
                 node.description = t('nodes', 'lore_1.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_2',
+        name: 'ARCHIVE II',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_2.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_1'],
+        childIds: ['lore_3'],
+        treeX: 40,
+        treeY: 710,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_2');
+            if (node) {
+                node.description = t('nodes', 'lore_2.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_3',
+        name: 'ARCHIVE III',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_3.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_2'],
+        childIds: ['lore_4'],
+        treeX: 40,
+        treeY: 630,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_3');
+            if (node) {
+                node.description = t('nodes', 'lore_3.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_4',
+        name: 'ARCHIVE IV',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_4.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_3'],
+        childIds: ['lore_5'],
+        treeX: 40,
+        treeY: 550,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_4');
+            if (node) {
+                node.description = t('nodes', 'lore_4.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_5',
+        name: 'ARCHIVE V',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_5.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_4'],
+        childIds: ['lore_6'],
+        treeX: 40,
+        treeY: 470,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_5');
+            if (node) {
+                node.description = t('nodes', 'lore_5.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_6',
+        name: 'ARCHIVE VI',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_6.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_5'],
+        childIds: ['lore_7'],
+        treeX: 40,
+        treeY: 390,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_6');
+            if (node) {
+                node.description = t('nodes', 'lore_6.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_7',
+        name: 'ARCHIVE VII',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_7.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_6'],
+        childIds: ['lore_8'],
+        treeX: 40,
+        treeY: 310,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_7');
+            if (node) {
+                node.description = t('nodes', 'lore_7.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_8',
+        name: 'ARCHIVE VIII',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_8.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_7'],
+        childIds: ['lore_9'],
+        treeX: 40,
+        treeY: 230,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_8');
+            if (node) {
+                node.description = t('nodes', 'lore_8.unlocked_desc');
+            }
+        },
+    },
+    {
+        id: 'lore_9',
+        name: 'ARCHIVE IX',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'lore_9.desc'),
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['lore_8'],
+        childIds: [],
+        treeX: 40,
+        treeY: 150,
+        wideTooltip: true,
+        effect: function () {
+            const node = neuralTree.getNode('lore_9');
+            if (node) {
+                node.description = t('nodes', 'lore_9.unlocked_desc');
             }
         },
     },

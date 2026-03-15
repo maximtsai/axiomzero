@@ -344,10 +344,14 @@ const neuralTree = (() => {
         const check = () => {
             if (!visible) return;
             const shardCount = resourceManager.getShards();
+            if (shardCount <= 0) return;
+
+            // Check Tier 1
+            const tier1Purchased = !!(gameState.duoBoxPurchased && gameState.duoBoxPurchased[1]);
             const lNode = nodes['lightning_weapon'];
             const sNode = nodes['shockwave_weapon'];
-            // If we have a shard but haven't bought the duo node yet
-            if (shardCount >= 1 && lNode && sNode && lNode.level === 0) {
+
+            if (!tier1Purchased && lNode && sNode && (lNode.isRequirementsMet() || sNode.isRequirementsMet())) {
                 _playDuoHintPulse(lNode, sNode);
             }
         };
@@ -372,7 +376,9 @@ const neuralTree = (() => {
         const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET;
         const centerY = (nodeA.treeY + nodeB.treeY) / 2;
 
-        const pulse = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_pulse.png');
+        pulseYPos = centerY + draggableGroup.y;
+
+        const pulse = PhaserScene.add.image(centerX, pulseYPos, 'buttons', 'duo_node_pulse.png');
         pulse.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
         pulse.setScrollFactor(0);
         pulse.setScale(2.1);
@@ -396,6 +402,8 @@ const neuralTree = (() => {
                     duration: 1000,
                     ease: 'Cubic.easeOut',
                     onComplete: () => {
+                        treeGroup.removeChild(pulse);
+                        draggableGroup.removeChild(pulse);
                         pulse.destroy();
                     }
                 });

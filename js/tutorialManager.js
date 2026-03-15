@@ -210,7 +210,7 @@ const tutorialManager = (() => {
             _clearTutorial();
             const msg = "SWAPPING ABILITIES IS FREE";
             const x = 0;
-            const y = 660;
+            const y = 600;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '30px');
         }
     }
