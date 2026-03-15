@@ -113,12 +113,29 @@ const customEmitters = (() => {
         emitting: false,
     }
 
+    const towerDeathShrapnelParams = {
+        frame: 'white_pixel.png',
+        speed: { min: 400, max: 700, ease: 'Cubic.easeOut' },
+        lifespan: { min: 300, max: 600 },
+        scale: { start: 10, end: 0 },
+        alpha: { start: 0.8, end: 0 },
+        rotate: { start: 0, end: 1080 },
+        gravityY: 0,
+        emitting: false,
+    }
+
     const _towerDeath = _make('pixels', towerDeathParams, GAME_CONSTANTS.DEPTH_TOWER + 2);
+    const _towerDeathShrapnel = _make('pixels', towerDeathShrapnelParams, GAME_CONSTANTS.DEPTH_TOWER + 3);
 
     function towerDeath(x, y) {
-        const count = 8;
+        const isMinimal = gameState.settings.minimalParticles;
+        const count = isMinimal ? 6 : 8;
         const e = _towerDeath();
         e.explode(count, x, y);
+
+        const shrapnelCount = isMinimal ? 4 : 8;
+        const e2 = _towerDeathShrapnel();
+        e2.explode(shrapnelCount, x, y);
     }
 
     // ── Logic Stray Ghost ──────────────────────────────────────────────────────────

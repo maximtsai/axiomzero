@@ -126,6 +126,8 @@ window.TRANSLATIONS.en = {
         chroma: 'CHROMATIC ABERRATION ',
         dmg_numbers: 'DAMAGE NUMBERS ',
         particles: 'PARTICLES ',
+        particles_full: 'FULL',
+        particles_minimal: 'MINIMAL',
         gameplay: 'GAMEPLAY ',
         language: 'LANGUAGE ',
         data_label: 'DATA',

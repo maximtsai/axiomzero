@@ -183,6 +183,7 @@ const GAME_STATE_DEFAULTS = {
         sfxMuted: false,
         musicMuted: false,
         chromaticAberration: true,
-        showDamageNumbers: true
+        showDamageNumbers: true,
+        minimalParticles: false
     }
 };

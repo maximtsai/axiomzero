@@ -445,34 +445,31 @@ const resourceManager = (() => {
         const cy = GAME_VARS.mouseposy;
         const pickupR2 = currentPickupRadius2;
 
-        // ── Resting drops: check if cursor entered pickup radius → start flying ──
-        // Optimized: only check distance once every 4 frames to reduce overhead
-        if (frameCounter % 4 === 0) {
-            for (let i = activeDrops.length - 1; i >= 0; i--) {
-                const d = activeDrops[i];
-                if (!d.alive || d.isLocked) {
-                    if (!d.alive) {
-                        activeDrops[i] = activeDrops[activeDrops.length - 1];
-                        activeDrops.pop();
-                    }
-                    continue;
-                }
-
-                const dx = d.x - cx;
-                const dy = d.y - cy;
-                if (dx * dx + dy * dy < pickupR2) {
-                    // Stop any spawn tween — we'll drive position manually from here
-                    if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
-
-                    // Sync logical position from sprite in case spawn tween was mid-flight
-                    d.x = d.img.x;
-                    d.y = d.img.y;
-                    d.flying = true;
-
-                    flyingDrops.push(d);
+        // Check if cursor entered pickup radius → start flying
+        for (let i = activeDrops.length - 1; i >= 0; i--) {
+            const d = activeDrops[i];
+            if (!d.alive || d.isLocked) {
+                if (!d.alive) {
                     activeDrops[i] = activeDrops[activeDrops.length - 1];
                     activeDrops.pop();
                 }
+                continue;
+            }
+
+            const dx = d.x - cx;
+            const dy = d.y - cy;
+            if (dx * dx + dy * dy < pickupR2) {
+                // Stop any spawn tween — we'll drive position manually from here
+                if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
+
+                // Sync logical position from sprite in case spawn tween was mid-flight
+                d.x = d.img.x;
+                d.y = d.img.y;
+                d.flying = true;
+
+                flyingDrops.push(d);
+                activeDrops[i] = activeDrops[activeDrops.length - 1];
+                activeDrops.pop();
             }
         }
 
