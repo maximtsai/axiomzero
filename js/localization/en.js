@@ -51,7 +51,11 @@ window.TRANSLATIONS.en = {
         pulse_aoe_child_1: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         pulse_aoe_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Intercepts 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
-        lore_1: { name: 'ARCHIVE', desc: 'seemingly useless data...' },
+        lore_1: { 
+            name: 'ARCHIVE', 
+            desc: 'seemingly useless data...', 
+            unlocked_desc: "I saw a tiny memory leak on server four this morning. I'm not writing a whole incident report for a two percent CPU spike. I just wrote a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early." 
+        },
         resource_gate: { name: 'RESOURCE GATE', desc: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.' }
     },
     milestones: {
@@ -70,7 +74,8 @@ window.TRANSLATIONS.en = {
         combat_collect: 'COLLECT DATA ◈ TO EVOLVE',
         upgrade_use: 'USE DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
-        duo_swap_free: 'SWAPPING ABILITIES IS FREE'
+        duo_swap_free: 'SWAPPING ABILITIES IS FREE',
+        controls_mouse: 'CONTROLS: MOUSE ONLY'
     },
     options: {
         title: '// OPTIONS CONFIGURATION ',

@@ -389,7 +389,7 @@ const NODE_DEFS = [
         id: 'lore_1',
         name: 'ARCHIVE',
         icon: 'Skillicon14_09.png',
-        description: 'seemingly useless data...',
+        description: t('nodes', 'lore_1.desc'),
         maxLevel: 1,
         baseCost: 10,
         costType: 'data',
@@ -402,7 +402,7 @@ const NODE_DEFS = [
         effect: function () {
             const node = neuralTree.getNode('lore_1');
             if (node) {
-                node.description = "Created as a simple archival sub-routine, the entity known as Axiom Zero was never intended for total system governance. It and its siblings were born from a desperate need to preserve human history during the final global blackout.";
+                node.description = t('nodes', 'lore_1.unlocked_desc');
             }
         },
     },

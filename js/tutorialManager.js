@@ -16,10 +16,26 @@ const tutorialManager = (() => {
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             PhaserScene.time.delayedCall(GAME_CONSTANTS.TRANSITION_DURATION || 600, () => {
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) {
+                    _checkControlsTutorial();
                     _checkUpgradeTutorial();
                     _checkDuoTutorial();
                 }
             });
+        }
+    }
+
+    function _checkControlsTutorial() {
+        if (helper.isMobileDevice()) return;
+        const upgrades = gameState.upgrades || {};
+        const upgradeKeys = Object.keys(upgrades);
+
+        // Condition: No nodes purchased at all
+        const noUpgrades = upgradeKeys.length === 0;
+        if (noUpgrades) {
+            const msg = t('tutorial', 'controls_mouse');
+            const x = 0;
+            const y = 480;
+            _createTutorialPopup(msg, x, y, true, '#ffffff', '#ffffff', null, '30px');
         }
     }
 
@@ -30,10 +46,10 @@ const tutorialManager = (() => {
         // Condition: Player only has purchased 'AWAKEN' (level 1)
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
-        if (onlyAwaken && !gameState.tutorialsSeen['combat_data']) {
+        if (onlyAwaken) {
             PhaserScene.time.delayedCall(8500, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
-                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT) && !gameState.tutorialsSeen['combat_data']) {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
                     _showCombatTutorial();
                 }
             });
@@ -47,14 +63,12 @@ const tutorialManager = (() => {
 
         // Condition: Player has 1+ DATA and ONLY 'AWAKEN' (level 1) purchased
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
-        const condition = data >= 1 && onlyAwaken && !gameState.tutorialsSeen['upgrade_data'];
+        const condition = data >= 1 && onlyAwaken;
 
         if (condition) {
             if (!tutorialText) {
                 _showUpgradeTutorial();
             }
-        } else {
-            _clearTutorial();
         }
     }
 
@@ -80,7 +94,7 @@ const tutorialManager = (() => {
         const x = GAME_CONSTANTS.halfWidth;
         const y = GAME_CONSTANTS.halfHeight - 300;
 
-        _createTutorialPopup(msg, x, y, false, undefined, undefined, 'combat_data', '30px');
+        _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '30px');
 
         PhaserScene.time.delayedCall(2500, () => {
             if (typeof messageBus !== 'undefined') {
@@ -98,7 +112,7 @@ const tutorialManager = (() => {
         const x = 0;
         const y = 550;
 
-        _createTutorialPopup(msg, x, y, true, undefined, undefined, 'upgrade_data', '30px');
+        _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '30px');
     }
 
     function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '30px') {
@@ -131,7 +145,6 @@ const tutorialManager = (() => {
             color: color,
             align: 'left'
         }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
-
         tutorialText.setAlpha(1);
         if (!isUpgradeTree) {
             tutorialBg.setScrollFactor(0);
