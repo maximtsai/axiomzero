@@ -346,17 +346,33 @@ const neuralTree = (() => {
             const shardCount = resourceManager.getShards();
             if (shardCount <= 0) return;
 
-            // Check Tier 1
-            const tier1Purchased = !!(gameState.duoBoxPurchased && gameState.duoBoxPurchased[1]);
-            const lNode = nodes['lightning_weapon'];
-            const sNode = nodes['shockwave_weapon'];
+            // Group duo nodes by tier
+            const duoTiers = {}; // tier -> [nodeA, nodeB]
+            for (const id in nodes) {
+                const n = nodes[id];
+                if (n.isDuoBox && n.duoBoxTier > 0) {
+                    if (!duoTiers[n.duoBoxTier]) duoTiers[n.duoBoxTier] = [];
+                    duoTiers[n.duoBoxTier].push(n);
+                }
+            }
 
-            if (!tier1Purchased && lNode && sNode && (lNode.isRequirementsMet() || sNode.isRequirementsMet())) {
-                _playDuoHintPulse(lNode, sNode);
+            for (const tier in duoTiers) {
+                const purchased = !!(gameState.duoBoxPurchased && gameState.duoBoxPurchased[tier]);
+                if (purchased) continue;
+
+                const pair = duoTiers[tier];
+                if (pair.length < 2) continue;
+
+                const nA = pair[0];
+                const nB = pair[1];
+
+                if (nA.isRequirementsMet() || nB.isRequirementsMet()) {
+                    _playDuoHintPulse(nA, nB);
+                }
             }
         };
 
-        // Check every 4 seconds as requested
+        // Check every 4 seconds
         hintPulseTimer = PhaserScene.time.addEvent({
             delay: 4000,
             callback: check,
@@ -376,7 +392,7 @@ const neuralTree = (() => {
         const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET;
         const centerY = (nodeA.treeY + nodeB.treeY) / 2;
 
-        pulseYPos = centerY + draggableGroup.y;
+        const pulseYPos = centerY + draggableGroup.y;
 
         const pulse = PhaserScene.add.image(centerX, pulseYPos, 'buttons', 'duo_node_pulse.png');
         pulse.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
