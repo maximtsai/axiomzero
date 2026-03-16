@@ -24,6 +24,11 @@ class Boss1View extends EnemyView {
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
+        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 265, 265, 65, 65, 65, 65);
+        this.pulse2.setDepth(baseDepth - 1);
+        this.pulse2.setVisible(false);
+        this.pulse2.setAlpha(0);
+
         this.pulseTimer = null;
     }
 
@@ -38,6 +43,13 @@ class Boss1View extends EnemyView {
             this.pulse.width = 265;
             this.pulse.height = 265;
 
+            this.pulse2.setPosition(x, y);
+            this.pulse2.setVisible(true);
+            this.pulse2.setAlpha(0);
+            this.pulse2.setRotation(rotation);
+            this.pulse2.width = 260;
+            this.pulse2.height = 260;
+
             this._startPulseEffect();
         }
     }
@@ -46,9 +58,39 @@ class Boss1View extends EnemyView {
         const playPulse = () => {
             if (!this.pulse || !this.pulse.scene) return;
 
-            // Reset state
-            this.pulse.width = 270;
-            this.pulse.height = 270;
+            const triggerOne = (p, finalSize) => {
+                if (!p || !p.scene) return;
+                // Reset state
+                p.width = 270;
+                p.height = 270;
+                p.setAlpha(1);
+
+                // Tween size
+                PhaserScene.tweens.add({
+                    targets: p,
+                    width: finalSize,
+                    height: finalSize,
+                    duration: 1100,
+                    ease: 'Quart.easeOut'
+                });
+
+                // Tween alpha
+                PhaserScene.tweens.add({
+                    targets: p,
+                    alpha: 0,
+                    duration: 1100,
+                    ease: 'Quad.easeOut'
+                });
+            };
+
+            // First pulse
+            triggerOne(this.pulse, 500);
+
+            // Second pulse 0.1s later
+            PhaserScene.time.delayedCall(100, () => {
+                triggerOne(this.pulse2, 450);
+            });
+
             // Subtle screenshake
             if (typeof cameraManager !== 'undefined') {
                 cameraManager.shake(120, 0.004);
@@ -57,23 +99,6 @@ class Boss1View extends EnemyView {
             if (typeof audio !== 'undefined') {
                 audio.play('drum_beat', 0.85);
             }
-            this.pulse.setAlpha(1);
-            // Tween size to 400 over 1s (Cubic.easeOut)
-            PhaserScene.tweens.add({
-                targets: this.pulse,
-                width: 480,
-                height: 480,
-                duration: 1100,
-                ease: 'Quart.easeOut'
-            });
-
-            // Tween alpha to 0 over 1s (Linear)
-            PhaserScene.tweens.add({
-                targets: this.pulse,
-                alpha: 0,
-                duration: 1100,
-                ease: 'Quad.easeOut'
-            });
         };
 
         // Initial play
@@ -92,6 +117,7 @@ class Boss1View extends EnemyView {
     syncPosition(x, y) {
         super.syncPosition(x, y);
         if (this.pulse) this.pulse.setPosition(x, y);
+        if (this.pulse2) this.pulse2.setPosition(x, y);
     }
 
     deactivate() {
@@ -103,6 +129,10 @@ class Boss1View extends EnemyView {
         if (this.pulse) {
             this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+        }
+        if (this.pulse2) {
+            this.pulse2.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.pulse2);
         }
     }
 }

@@ -10,6 +10,31 @@
 			"scale": 1,
 			"frames": [
 				{
+					"filename": "explosion_pulse0.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 400,
+						"h": 400
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 400,
+						"h": 400
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 400,
+						"h": 400
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "explosion_pulse1.png",
 					"rotated": false,
 					"trimmed": false,
@@ -1015,6 +1040,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:7d8c9d2943ad99690b950fae4dacdbdc:d8fb8b103078e9a976074b497960aeab:824c311b23d45c8185d8536d4540223d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:afcbcf46ca19ad101078e383fdbd3590:b0beba189733a83a8049156a5e03a1dd:824c311b23d45c8185d8536d4540223d$"
 	}
 }

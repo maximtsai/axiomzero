@@ -45,11 +45,11 @@ function createAnimations(scene) {
         frames: scene.anims.generateFrameNames('attacks', {
             prefix: 'explosion_pulse',
             suffix: '.png',
-            start: 1,
+            start: 0,
             end: 12,
             zeroPad: 0,
         }),
-        frameRate: 30,
+        frameRate: 24,
         repeat: 0,
     });
 }

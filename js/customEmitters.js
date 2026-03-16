@@ -377,12 +377,34 @@ const customEmitters = (() => {
 
     function createBossExplosionRays(x, y, baseDepth) {
         const count = Phaser.Math.Between(4, 5);
+        const minGap = 0.5; // radians
+        const placedAngles = [];
+
         for (let i = 0; i < count; i++) {
             const ray = explosionRayPool.get();
+            if (!ray) continue;
+
+            let angle = 0;
+            // Try up to 10 times to find a suitable angle
+            for (let attempt = 0; attempt <= 10; attempt++) {
+                angle = Math.random() * Math.PI * 2;
+                let tooClose = false;
+                for (const existingAngle of placedAngles) {
+                    let diff = Math.abs(angle - existingAngle) % (Math.PI * 2);
+                    if (diff > Math.PI) diff = Math.PI * 2 - diff;
+                    if (diff < minGap) {
+                        tooClose = true;
+                        break;
+                    }
+                }
+                if (!tooClose || attempt === 10) break;
+            }
+            placedAngles.push(angle);
+
             ray.setPosition(x, y);
             ray.setOrigin(0, 0.5);
             ray.setScale(2);
-            ray.setRotation(Math.random() * Math.PI * 2);
+            ray.setRotation(angle);
             ray.setDepth(baseDepth + 5);
             ray.setAlpha(0.5);
             ray.setVisible(true);
@@ -405,13 +427,21 @@ const customEmitters = (() => {
             activeExplosionRays.push(ray);
         }
 
-        const pulse = explosionPulsePool.get();
-        pulse.setPosition(x, y);
-        pulse.setDepth(baseDepth + 6);
-        pulse.setScale(2.75);
-        pulse.setVisible(true);
-        pulse.setActive(true);
-        pulse.play('explosion_pulse');
+        PhaserScene.time.delayedCall(600, () => {
+            const pulse = explosionPulsePool.get();
+            pulse.setPosition(x, y);
+            pulse.setDepth(baseDepth + 6);
+            pulse.setScale(1.4);
+            PhaserScene.tweens.add({
+                targets: pulse,
+                scale: 1.55,
+                duration: 300,
+                ease: 'Cubic.easeOut',
+            });
+            pulse.setVisible(true);
+            pulse.setActive(true);
+            pulse.play('explosion_pulse');
+        });
     }
 
     function _update(delta) {

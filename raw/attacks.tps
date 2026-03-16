@@ -215,6 +215,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">attacks/explosion_pulse0.png</key>
             <key type="filename">attacks/explosion_pulse1.png</key>
             <key type="filename">attacks/explosion_pulse10.png</key>
             <key type="filename">attacks/explosion_pulse11.png</key>
