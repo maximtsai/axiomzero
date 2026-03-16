@@ -34,7 +34,7 @@ function _recalcPulseSize() {
     const aoeActive = (gameState.activeShards && gameState.activeShards[2] === 'pulse_aoe');
     const aoeBonus = aoeActive ? (ups.pulse_aoe || 0) : 0;
 
-    pulseAttack.setSize(100 * (1 + 0.3 * expansionLv + 0.3 * aoeBonus));
+    pulseAttack.setSize(100 * (1 + 0.2 * expansionLv + 0.3 * aoeBonus));
 }
 
 /** Recalculates pulse manual mode. */
@@ -178,8 +178,8 @@ const NODE_DEFS = [
         id: 'pulse_expansion',
         name: 'EXPANSION',
         icon: 'Skillicon14_07.png',
-        description: '+30% cursor attack size',
-        popupText: '+30% CURSOR SIZE',
+        description: '+20% cursor pulse size',
+        popupText: '+20% CURSOR PULSE SIZE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
         baseCost: 20,
@@ -1039,8 +1039,8 @@ const NODE_DEFS = [
         id: 'pulse_aoe',
         name: 'RESONANCE AREA',
         icon: 'Skillicon14_07.png',
-        description: '+30% pulse attack size.',
-        popupText: '+30% PULSE AOE',
+        description: '+30% cursor pulse size.',
+        popupText: '+30% CURSOR PULSE SIZE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
         baseCost: 1,

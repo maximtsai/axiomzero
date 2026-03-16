@@ -37,6 +37,49 @@ const customEmitters = (() => {
 
     let activeManualStrikes = [];
     let activeGhosts = [];
+    let activeExplosionRays = [];
+
+    // ── Explosion Rays (Boss Death) ──────────────────────────────────────────
+    const explosionRayPool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.sprite(0, 0, 'enemies', 'explosion_ray.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.setScale(1);
+            sprite.setAlpha(1);
+            sprite.setRotation(0);
+        },
+        5
+    );
+
+    const explosionPulsePool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.sprite(0, 0, 'attacks', 'explosion_pulse1.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.on('animationcomplete', (anim) => {
+                if (anim.key === 'explosion_pulse') {
+                    sprite.setActive(false);
+                    sprite.setVisible(false);
+                    explosionPulsePool.release(sprite);
+                }
+            });
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.setScale(1);
+            sprite.setAlpha(1);
+            sprite.setRotation(0);
+        },
+        5
+    );
 
     // ── basicStrike ──────────────────────────────────────────────────────────
     const strikeParams = {
@@ -329,6 +372,45 @@ const customEmitters = (() => {
         });
     }
 
+    function createBossExplosionRays(x, y, baseDepth) {
+        const count = Phaser.Math.Between(4, 5);
+        for (let i = 0; i < count; i++) {
+            const ray = explosionRayPool.get();
+            ray.setPosition(x, y);
+            ray.setOrigin(0, 0.5);
+            ray.setScale(2);
+            ray.setRotation(Math.random() * Math.PI * 2);
+            ray.setDepth(baseDepth + 5);
+            ray.setAlpha(0.75);
+            ray.setVisible(true);
+            ray.setActive(true);
+
+            ray._duration = 300;
+            ray._elapsed = 0;
+            ray._startRotation = ray.rotation;
+            ray._targetRotationOffset = Phaser.Math.FloatBetween(-0.4, 0.4);
+
+            // Randomize flicker timing ("once or twice")
+            ray._flickerCount = Phaser.Math.Between(1, 2);
+            ray._flickerTimes = [];
+            for (let j = 0; j < ray._flickerCount; j++) {
+                // Flicker between 75ms and 240ms (leaving time to finish at 1)
+                ray._flickerTimes.push(75 + Math.random() * 165);
+            }
+            ray._flickerTimes.sort((a, b) => a - b);
+
+            activeExplosionRays.push(ray);
+        }
+
+        const pulse = explosionPulsePool.get();
+        pulse.setPosition(x, y);
+        pulse.setDepth(baseDepth + 6);
+        pulse.setScale(2.5);
+        pulse.setVisible(true);
+        pulse.setActive(true);
+        pulse.play('explosion_pulse');
+    }
+
     function _update(delta) {
         if (activeManualStrikes.length > 0) {
             for (let i = activeManualStrikes.length - 1; i >= 0; i--) {
@@ -369,9 +451,59 @@ const customEmitters = (() => {
                 }
             }
         }
+
+        if (activeExplosionRays.length > 0) {
+            for (let i = activeExplosionRays.length - 1; i >= 0; i--) {
+                const ray = activeExplosionRays[i];
+                ray._elapsed += delta;
+                const progress = Math.min(1, ray._elapsed / ray._duration);
+
+                // Rotation linear tween
+                ray.rotation = ray._startRotation + (ray._targetRotationOffset * progress);
+
+                // Alpha logic
+                if (ray._elapsed <= 75) {
+                    // 0-75ms: tween 0.75 to 1
+                    const alphaProgress = ray._elapsed / 75;
+                    ray.setAlpha(0.75 + (0.25 * alphaProgress));
+                } else {
+                    // 75-300ms: brief flickering to 0.6
+                    let targetAlpha = 1;
+                    for (const fTime of ray._flickerTimes) {
+                        if (ray._elapsed >= fTime && ray._elapsed <= fTime + 40) {
+                            targetAlpha = 0.6;
+                            break;
+                        }
+                    }
+                    ray.setAlpha(targetAlpha);
+                }
+
+                if (progress >= 1) {
+                    ray.setActive(false);
+                    ray.setVisible(false);
+                    explosionRayPool.release(ray);
+                    activeExplosionRays[i] = activeExplosionRays[activeExplosionRays.length - 1];
+                    activeExplosionRays.pop();
+                }
+            }
+        }
+    }
+
+    function init() {
+        explosionRayPool.preAllocate(5);
+        explosionPulsePool.preAllocate(5);
     }
 
     updateManager.addFunction(_update);
 
-    return { basicStrike, basicStrikeManual, towerDeath, logicStrayGhost, createEnemyDeathAnim, minibossExplosion };
+    return {
+        init,
+        basicStrike,
+        basicStrikeManual,
+        towerDeath,
+        logicStrayGhost,
+        createEnemyDeathAnim,
+        minibossExplosion,
+        createBossExplosionRays
+    };
 })();

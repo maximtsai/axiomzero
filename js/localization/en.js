@@ -20,7 +20,7 @@ window.TRANSLATIONS.en = {
         basic_pulse: { name: 'COGNITION', desc: 'Your cursor now auto-attacks.', popup: 'PULSE UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '+2 cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
-        pulse_expansion: { name: 'EXPANSION', desc: '+30% cursor attack size', popup: '+30% CURSOR SIZE' },
+        pulse_expansion: { name: 'EXPANSION', desc: '+20% cursor pulse size', popup: '+20% CURSOR PULSE SIZE' },
         pulse_damage_3: { name: 'OVERCHARGE', desc: '+4 cursor damage', popup: '+4 CURSOR DMG' },
         integrity: { name: 'INTEGRITY', desc: '+4 tower max health', popup: '+4 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
@@ -44,7 +44,7 @@ window.TRANSLATIONS.en = {
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+25% chance to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
-        pulse_aoe: { name: 'RESONANCE AREA', desc: '+30% pulse attack size.', popup: '+30% PULSE AOE' },
+        pulse_aoe: { name: 'RESONANCE AREA', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
         manual_pulse_child_1_1: { name: 'KINETIC AMPLIFIER', desc: '+50% cursor damage', popup: 'KINETIC OVERLOAD' },
         manual_pulse_child_1_2: { name: 'RECHARGE EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RECHARGE OPTIMIZED' },
@@ -132,7 +132,8 @@ window.TRANSLATIONS.en = {
         language: 'LANGUAGE ',
         data_label: 'DATA',
         reset_progress: '[ ⚠ RESET PROGRESS !! ]',
-        confirm_reset: '[ CLICK AGAIN TO CONFIRM ]'
+        confirm_reset: '[ CLICK AGAIN TO CONFIRM ]',
+        reset_confirm_text: 'ARE YOU SURE YOU WANT TO\nPERMANENTLY RESET ALL PROGRESS?'
     },
     results: {
         iteration_complete: 'ITERATION COMPLETE',

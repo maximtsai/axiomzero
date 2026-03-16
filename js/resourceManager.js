@@ -148,8 +148,8 @@ const resourceManager = (() => {
             backing: backing,
         };
 
-        // Unlock shard after 2 seconds
-        PhaserScene.time.delayedCall(2000, () => {
+        // Unlock shard after 1.65 seconds
+        PhaserScene.time.delayedCall(1650, () => {
             if (d) d.isLocked = false;
         });
 

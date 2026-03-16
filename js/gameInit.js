@@ -56,6 +56,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // Core entities — no cross-deps at init time
     tower.init();
     enemyManager.init();
+    customEmitters.init();
     projectileManager.init();
     enemyBulletManager.init();
     resourceManager.init();

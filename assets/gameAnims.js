@@ -39,4 +39,17 @@ function createAnimations(scene) {
         repeat: 0,
         hideOnComplete: false
     });
+
+    scene.anims.create({
+        key: 'explosion_pulse',
+        frames: scene.anims.generateFrameNames('attacks', {
+            prefix: 'explosion_pulse',
+            suffix: '.png',
+            start: 1,
+            end: 12,
+            zeroPad: 0,
+        }),
+        frameRate: 30,
+        repeat: 0,
+    });
 }

@@ -626,6 +626,9 @@ const enemyManager = (() => {
         } else if (wasBoss) {
             bossAlive = false;
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
+            if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+                customEmitters.createBossExplosionRays(ex, ey, (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150));
+            }
             messageBus.publish('bossDefeated', ex, ey);
             debugLog('Boss defeated');
         } else {
