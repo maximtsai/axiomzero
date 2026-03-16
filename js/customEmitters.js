@@ -239,7 +239,7 @@ const customEmitters = (() => {
             spritesToAnimate.push(enemy.view.hpImg);
         }
 
-        const targetScaleMultiplier = 1 + (60 / (60 + (enemy.size || 20)));
+        const targetScaleMultiplier = 1 + (90 / (90 + (enemy.size || 20)));
         const baseScaleX = enemy.view.img.scaleX;
         const baseScaleY = enemy.view.img.scaleY;
 
@@ -263,12 +263,15 @@ const customEmitters = (() => {
             return copy;
         });
 
+        let duration = isSlow ? 420 : 90;
+        if (enemy && enemy.isBoss) duration = 800;
+
         PhaserScene.tweens.add({
             targets: copies,
             scaleX: baseScaleX,
             scaleY: baseScaleY,
-            duration: isSlow ? 350 : 90,
-            ease: 'Linear',
+            duration: duration,
+            ease: 'Quad.easeOut',
             onComplete: () => {
                 copies.forEach(c => {
                     c.clearTint();
@@ -381,21 +384,21 @@ const customEmitters = (() => {
             ray.setScale(2);
             ray.setRotation(Math.random() * Math.PI * 2);
             ray.setDepth(baseDepth + 5);
-            ray.setAlpha(0.75);
+            ray.setAlpha(0.5);
             ray.setVisible(true);
             ray.setActive(true);
 
-            ray._duration = 300;
+            ray._duration = 760;
             ray._elapsed = 0;
             ray._startRotation = ray.rotation;
-            ray._targetRotationOffset = Phaser.Math.FloatBetween(-0.4, 0.4);
+            ray._targetRotationOffset = Phaser.Math.FloatBetween(-0.6, 0.6);
 
-            // Randomize flicker timing ("once or twice")
-            ray._flickerCount = Phaser.Math.Between(1, 2);
+            // Randomize flicker timing ("2 to 3 times")
+            ray._flickerCount = Phaser.Math.Between(2, 3);
             ray._flickerTimes = [];
             for (let j = 0; j < ray._flickerCount; j++) {
-                // Flicker between 75ms and 240ms (leaving time to finish at 1)
-                ray._flickerTimes.push(75 + Math.random() * 165);
+                // Flicker between 75ms and 650ms (leaving time to finish at 1)
+                ray._flickerTimes.push(125 + Math.random() * 525);
             }
             ray._flickerTimes.sort((a, b) => a - b);
 
@@ -405,7 +408,7 @@ const customEmitters = (() => {
         const pulse = explosionPulsePool.get();
         pulse.setPosition(x, y);
         pulse.setDepth(baseDepth + 6);
-        pulse.setScale(2.5);
+        pulse.setScale(2.75);
         pulse.setVisible(true);
         pulse.setActive(true);
         pulse.play('explosion_pulse');
@@ -465,7 +468,7 @@ const customEmitters = (() => {
                 if (ray._elapsed <= 75) {
                     // 0-75ms: tween 0.75 to 1
                     const alphaProgress = ray._elapsed / 75;
-                    ray.setAlpha(0.75 + (0.25 * alphaProgress));
+                    ray.setAlpha(0.5 + (0.5 * alphaProgress));
                 } else {
                     // 75-300ms: brief flickering to 0.6
                     let targetAlpha = 1;
@@ -491,7 +494,7 @@ const customEmitters = (() => {
 
     function init() {
         explosionRayPool.preAllocate(5);
-        explosionPulsePool.preAllocate(5);
+        explosionPulsePool.preAllocate(1);
     }
 
     updateManager.addFunction(_update);

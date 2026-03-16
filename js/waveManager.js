@@ -150,7 +150,7 @@ const waveManager = (() => {
         // 1. Tower becomes invincible (no need to call, boss is dead and enemies are dying, plus transition handles this)
         // Also handled safely by the incoming phase change
 
-        PhaserScene.time.delayedCall(300, () => {
+        PhaserScene.time.delayedCall(750, () => {
             // 2. Play shockwave animation at boss location
             const shockwave = PhaserScene.add.image(x, y, 'enemies', 'explosion_flash.png');
             shockwave.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
@@ -166,7 +166,7 @@ const waveManager = (() => {
                 scaleX: 12,
                 scaleY: 12,
                 duration: 500,
-                ease: 'Quad.easeIn',
+                ease: 'Cubic.easeIn',
             });
 
             PhaserScene.tweens.add({
@@ -182,10 +182,10 @@ const waveManager = (() => {
                 // 3. Inform enemyManager to instantly kill all non-boss enemies
                 if (typeof enemyManager !== 'undefined') {
                     enemyManager.killAllNonBossEnemies();
-                    PhaserScene.cameras.main.shake(500, 0.03);
+                    PhaserScene.cameras.main.shake(1000, 0.03);
                 }
 
-                // 4. Trigger resource vacuum (to be implemented in resourceManager)
+                // 4. Trigger resource vacuum (implemented in resourceManager)
                 messageBus.publish('triggerResourceVacuum');
             });
 
