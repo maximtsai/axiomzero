@@ -10,8 +10,7 @@ const nodeTooltip = (() => {
     let lvT = null;
     let maxT = null;
     let costT = null;
-    let iconWhiteBg = null;
-    let iconBlackBg = null;
+    let iconHolder = null;
     let iconSpr = null;
     let goldBg = null;
     let costBg = null;
@@ -30,11 +29,10 @@ const nodeTooltip = (() => {
         bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x111122).setAlpha(0.82);
         container.add(bg);
 
-        // Icon elements
-        iconWhiteBg = PhaserScene.add.image(0, 0, 'pixels', 'white_pixel.png').setDisplaySize(34, 34);
-        iconBlackBg = PhaserScene.add.image(0, 0, 'pixels', 'black_pixel.png').setDisplaySize(30, 30);
+        // Icon holder
+        iconHolder = PhaserScene.add.image(0, 0, 'buttons', 'icon_holder.png');
         iconSpr = PhaserScene.add.sprite(0, 0, 'buttons', 'Skillicon14_01.png').setDisplaySize(26, 26);
-        container.add([iconWhiteBg, iconBlackBg, iconSpr]);
+        container.add([iconHolder, iconSpr]);
 
         nameT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
@@ -134,12 +132,10 @@ const nodeTooltip = (() => {
         const centerTitleY = currentY + 17;
 
         if (node.icon) {
-            iconWhiteBg.setVisible(true).setPosition(titleStartX + 17, centerTitleY);
-            iconBlackBg.setVisible(true).setPosition(titleStartX + 17, centerTitleY);
+            iconHolder.setVisible(true).setPosition(titleStartX + 17, centerTitleY);
             iconSpr.setVisible(true).setFrame(node.icon).setPosition(titleStartX + 17, centerTitleY);
         } else {
-            iconWhiteBg.setVisible(false);
-            iconBlackBg.setVisible(false);
+            iconHolder.setVisible(false);
             iconSpr.setVisible(false);
         }
 

@@ -325,6 +325,17 @@ const enemyManager = (() => {
         }
     }
 
+    function _resolveEnemyClass(className) {
+        // Explicit mapping of string identifiers to class constructors.
+        // This is safer than window[className] as it avoids global namespace pollution
+        // and provides a clear list of supported boss types.
+        const registry = {
+            'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
+            'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null
+        };
+        return registry[className];
+    }
+
     function _getValidBossSpawnAngle() {
         const rules5 = { avoidActiveTypes: ['protector'], minSeparation: 0.5, maxAttempts: 5 };
         let angle = findValidAngle(Miniboss.getSpawnAngle, rules5);
@@ -339,7 +350,18 @@ const enemyManager = (() => {
 
     function _spawnMiniboss() {
         if (minibossSpawned) return;
-        const mb = new Miniboss1();
+
+        const config = getCurrentLevelConfig(lastWaveProgress);
+        let mbClass = _resolveEnemyClass(config.miniboss);
+        let mb = null;
+        if (!mbClass) {
+            console.warn(`[EnemyManager] Miniboss class '${config.miniboss}' not found. Defaulting to Miniboss1.`);
+            mbClass = Miniboss1;
+            mb = new mbClass(config.levelScalingModifier || 1);
+        } else {
+            mb = new mbClass(1);
+        }
+
         if (!mb) return;
 
         minibossSpawned = true;
@@ -383,7 +405,18 @@ const enemyManager = (() => {
 
     function _spawnBoss() {
         if (bossSpawned) return;
-        const b = new Boss1();
+
+        const config = getCurrentLevelConfig(lastWaveProgress);
+        let bossClass = _resolveEnemyClass(config.mainBoss);
+        let b = null;
+        if (!bossClass) {
+            console.warn(`[EnemyManager] Boss class '${config.mainBoss}' not found. Defaulting to Boss1.`);
+            bossClass = Boss1;
+            b = new bossClass(config.levelScalingModifier || 1);
+        } else {
+            b = new bossClass(1);
+        }
+
         if (!b) return;
 
         bossSpawned = true;

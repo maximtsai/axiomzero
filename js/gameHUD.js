@@ -99,13 +99,27 @@ const gameHUD = (() => {
 
             // Fetch initial value from resourceManager
             const initialVal = _getResourceValue(type.id);
+
             const text = PhaserScene.add.text(groupX + 28, currY - 11, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: helper.isMobileDevice() ? '26px' : '21px',
                 color: type.color,
             }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
 
-            resourceUI[type.id] = { icon, text, baseY: currY };
+            // Button background for upgrade phase
+            const btn = new Button({
+                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
+                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
+                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
+                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
+            });
+            btn.setOrigin(0.5, 0.5);
+            btn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
+            btn.setDepth(depth + 1);
+            btn.setScrollFactor(0);
+            btn.setVisible(false);
+
+            resourceUI[type.id] = { icon, text, btn, baseY: currY };
         });
 
         _updateResourceLayout();
@@ -120,6 +134,10 @@ const gameHUD = (() => {
                 treeGroup.add(expBarFill);
                 treeGroup.add(expText);
                 Object.values(resourceUI).forEach(res => {
+                    // Add all sprites managed by the button to the tree group
+                    if (res.btn && res.btn.imageRefs) {
+                        Object.values(res.btn.imageRefs).forEach(img => treeGroup.add(img));
+                    }
                     treeGroup.add(res.icon);
                     treeGroup.add(res.text);
                 });
@@ -197,6 +215,7 @@ const gameHUD = (() => {
         expBarFill.setVisible(false);
         expText.setVisible(false);
         Object.values(resourceUI).forEach(res => {
+            if (res.btn) res.btn.setVisible(false);
             res.icon.setVisible(false);
             res.text.setVisible(false);
         });
@@ -290,7 +309,8 @@ const gameHUD = (() => {
         if (!visible) return;
 
         let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + EXP_BAR_H + BAR_GAP + 15;
-        const spacing = helper.isMobileDevice() ? 32 : 28;
+        const spacing = helper.isMobileDevice() ? 35 : 31;
+        const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
         const order = ['data', 'insight', 'shard', 'processor', 'coin'];
         order.forEach(id => {
@@ -298,12 +318,19 @@ const gameHUD = (() => {
             const val = _getResourceValue(id);
 
             if (val > 0) {
+                const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
+                if (ui.btn) {
+                    ui.btn.setVisible(isUpgradePhase);
+                    ui.btn.setPos(groupX + 45, currentY);
+                    ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
+                }
                 ui.icon.setVisible(true);
                 ui.text.setVisible(true);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
                 ui.text.y = currentY - 13;
                 currentY += spacing;
             } else {
+                if (ui.btn) ui.btn.setVisible(false);
                 ui.icon.setVisible(false);
                 ui.text.setVisible(false);
             }

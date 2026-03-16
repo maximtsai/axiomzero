@@ -4,8 +4,8 @@
 // High health. On defeat, triggers a special sequence that kills all enemies and vacuums drops.
 
 class Boss1Model extends BossModel {
-    constructor() {
-        super();
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.3;
         this.size = 122;
@@ -138,9 +138,9 @@ class Boss1View extends EnemyView {
 }
 
 class Boss1 extends Boss {
-    constructor() {
-        super();
-        this.model = new Boss1Model();
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
+        this.model = new Boss1Model(levelScalingModifier);
         this.view = new Boss1View();
     }
 

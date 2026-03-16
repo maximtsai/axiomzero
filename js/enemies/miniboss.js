@@ -7,8 +7,9 @@
 //   • Does NOT die on tower contact (handled by enemyManager)
 
 class MinibossModel extends EnemyModel {
-    constructor() {
+    constructor(levelScalingModifier = 1) {
         super();
+        this.levelScalingModifier = levelScalingModifier;
         this.type = 'miniboss';
         this.isBoss = true;
         this.isMiniboss = true;
@@ -17,8 +18,9 @@ class MinibossModel extends EnemyModel {
 }
 
 class Miniboss extends Enemy {
-    constructor() {
+    constructor(levelScalingModifier = 1) {
         super();
+        this.levelScalingModifier = levelScalingModifier;
         // Subclasses MUST set this.model and this.view
     }
 

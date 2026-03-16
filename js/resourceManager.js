@@ -538,8 +538,9 @@ const resourceManager = (() => {
 
     function _onEnemyKilled(x, y, baseResourceDrop) {
         const config = getCurrentLevelConfig();
-        const levelMult = config.resourceMult || 1;
-        const totalDrop = baseResourceDrop * levelMult;
+        const dataDropMult = config.dataDropMultiplier || 1;
+
+        const totalDrop = baseResourceDrop * dataDropMult;
 
         // Add to the fractional drop accumulator
         dropAccumulator += totalDrop;

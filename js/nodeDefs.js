@@ -110,7 +110,7 @@ const NODE_DEFS = [
         parents: [],
         childIds: ['basic_pulse', 'integrity', 'intensity', 'crypto_mine_unlock'],
         treeX: 400,
-        treeY: 740,
+        treeY: 730,
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
@@ -134,7 +134,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
         treeX: 400,
-        treeY: 660,
+        treeY: 650,
         effect: function () {
             pulseAttack.unlock();
         },
@@ -154,7 +154,7 @@ const NODE_DEFS = [
         parents: ['basic_pulse'],
         childIds: ['pulse_expansion'],
         treeX: 480,
-        treeY: 660,
+        treeY: 650,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -174,7 +174,7 @@ const NODE_DEFS = [
         parents: ['basic_pulse'],
         childIds: ['regen'],
         treeX: 320,
-        treeY: 660,
+        treeY: 650,
         effect: function () {
             resourceManager.recalcPickupRadius();
         },
@@ -195,7 +195,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: ['packet_sniffing', 'farsight'],
         treeX: 560,
-        treeY: 660,
+        treeY: 650,
         effect: function () {
             _recalcPulseSize();
         },
@@ -216,7 +216,7 @@ const NODE_DEFS = [
         childIds: ['placeholder_duo_2'],
 
         treeX: 320,
-        treeY: 420,
+        treeY: 410,
         effect: function () {
             _recalcPulseDamage();
 
@@ -240,7 +240,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['regen'],
         treeX: 320,
-        treeY: 740,
+        treeY: 730,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -261,7 +261,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['focus'],
         treeX: 480,
-        treeY: 740,
+        treeY: 730,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -282,7 +282,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: ['farsight'],
         treeX: 560,
-        treeY: 740,
+        treeY: 730,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -301,7 +301,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: [],
         treeX: 640,
-        treeY: 700,
+        treeY: 690,
         effect: function () { },
     },
     {
@@ -320,7 +320,7 @@ const NODE_DEFS = [
         parents: ['integrity', 'magnet'],
         childIds: ['base_hp_boost'],
         treeX: 240,
-        treeY: 700,
+        treeY: 690,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -340,7 +340,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: [],
         treeX: 400,
-        treeY: 900,
+        treeY: 890,
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
                 neuralTree._showCryptoMineButton();
@@ -363,7 +363,7 @@ const NODE_DEFS = [
         childIds: ['lore_1', 'resource_gate'],
 
         treeX: 160,
-        treeY: 620,
+        treeY: 610,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -380,7 +380,7 @@ const NODE_DEFS = [
         parents: ['base_hp_boost'],
         childIds: ['lore_2'],
         treeX: 120,
-        treeY: 700,
+        treeY: 690,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_1');
@@ -401,7 +401,7 @@ const NODE_DEFS = [
         parents: ['lore_1'],
         childIds: ['lore_3'],
         treeX: 40,
-        treeY: 700,
+        treeY: 690,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
@@ -422,7 +422,7 @@ const NODE_DEFS = [
         parents: ['lore_2'],
         childIds: ['lore_4'],
         treeX: 40,
-        treeY: 620,
+        treeY: 610,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
@@ -443,7 +443,7 @@ const NODE_DEFS = [
         parents: ['lore_3'],
         childIds: ['lore_5'],
         treeX: 40,
-        treeY: 540,
+        treeY: 530,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_4');
@@ -464,7 +464,7 @@ const NODE_DEFS = [
         parents: ['lore_4'],
         childIds: ['lore_6'],
         treeX: 40,
-        treeY: 460,
+        treeY: 450,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_5');
@@ -485,7 +485,7 @@ const NODE_DEFS = [
         parents: ['lore_5'],
         childIds: ['lore_7'],
         treeX: 40,
-        treeY: 380,
+        treeY: 370,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_6');
@@ -506,7 +506,7 @@ const NODE_DEFS = [
         parents: ['lore_6'],
         childIds: ['lore_8'],
         treeX: 40,
-        treeY: 300,
+        treeY: 290,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_7');
@@ -527,7 +527,7 @@ const NODE_DEFS = [
         parents: ['lore_7'],
         childIds: ['lore_9'],
         treeX: 40,
-        treeY: 220,
+        treeY: 210,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_8');
@@ -548,7 +548,7 @@ const NODE_DEFS = [
         parents: ['lore_8'],
         childIds: [],
         treeX: 40,
-        treeY: 140,
+        treeY: 130,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_9');
@@ -568,7 +568,7 @@ const NODE_DEFS = [
         parents: ['base_hp_boost'],
         childIds: ['threat_response'],
         treeX: 120,
-        treeY: 540,
+        treeY: 530,
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(50);
@@ -588,7 +588,7 @@ const NODE_DEFS = [
         parents: ['resource_gate'],
         childIds: ['armor'],
         treeX: 160,
-        treeY: 460,
+        treeY: 450,
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -601,7 +601,7 @@ const NODE_DEFS = [
         childIds: ['data_compression'],
 
         treeX: 400,
-        treeY: 570,
+        treeY: 560,
         effect: function () { },
     },
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
@@ -624,7 +624,7 @@ const NODE_DEFS = [
         shardId: 'lightning_weapon',
         duoSiblingId: 'shockwave_weapon',
         treeX: 370,
-        treeY: 540,
+        treeY: 530,
         effect: function () {
             lightningAttack.unlock();
             shockwaveAttack.lock();
@@ -649,7 +649,7 @@ const NODE_DEFS = [
         shardId: 'shockwave_weapon',
         duoSiblingId: 'lightning_weapon',
         treeX: 430,
-        treeY: 540,
+        treeY: 530,
         effect: function () {
             shockwaveAttack.unlock();
             lightningAttack.lock();
@@ -670,7 +670,7 @@ const NODE_DEFS = [
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
         treeX: 280,
-        treeY: 580,
+        treeY: 570,
         effect: function () {
             _recalcLightningChains();
         },
@@ -690,7 +690,7 @@ const NODE_DEFS = [
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
         treeX: 280,
-        treeY: 500,
+        treeY: 490,
         effect: function () {
             _recalcLightningDamage();
         },
@@ -699,7 +699,7 @@ const NODE_DEFS = [
         id: 'lightning_static_charge',
         name: 'STATIC CHARGE',
         icon: 'Skillicon14_06.png',
-        description: 'Lightning deals +50% damage per lvl to enemies above 80% HP',
+        description: 'Lightning deals +50% damage to enemies above 80% HP',
         popupText: 'STATIC CHARGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 2,
@@ -711,7 +711,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: [],
         treeX: 200,
-        treeY: 540,
+        treeY: 530,
         effect: function () {
             _recalcLightningDamage();
         },
@@ -720,8 +720,8 @@ const NODE_DEFS = [
         id: 'shockwave_amplifier',
         name: 'AMPLIFIER',
         icon: 'Skillicon14_21.png',
-        description: '+40% shockwave range',
-        popupText: '+40% RANGE',
+        description: '+30% shockwave range',
+        popupText: '+30% RANGE',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 1,
         baseCost: 40,
@@ -731,7 +731,7 @@ const NODE_DEFS = [
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
         treeX: 520,
-        treeY: 580,
+        treeY: 570,
         effect: function () {
             _recalcShockwaveStats();
         },
@@ -740,7 +740,7 @@ const NODE_DEFS = [
         id: 'shockwave_resonance',
         name: 'RESONANCE',
         icon: 'Skillicon14_22.png',
-        description: 'Shockwave deals +1 dmg/lvl for each enemy hit',
+        description: 'Shockwave deals +1 dmg for each enemy hit',
         popupText: 'RESONANCE FREQUENCY',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 3,
@@ -751,7 +751,7 @@ const NODE_DEFS = [
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
         treeX: 520,
-        treeY: 500,
+        treeY: 490,
         effect: function () {
             _recalcShockwaveStats();
         },
@@ -760,19 +760,19 @@ const NODE_DEFS = [
         id: 'shockwave_seismic_crush',
         name: 'SEISMIC CRUSH',
         icon: 'Skillicon14_06.png',
-        description: 'Shockwave deals +50% damage per lvl to enemies below 50% HP',
+        description: 'Shockwave deals +50% damage to enemies below 50% HP',
         popupText: 'SEISMIC CRUSH',
         popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
         maxLevel: 2,
-        baseCost: 50,
+        baseCost: 100,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 50,
+        costStep: 100,
         parents: ['shockwave_amplifier', 'shockwave_resonance'],
         requiresMaxParent: true,
         childIds: [],
         treeX: 600,
-        treeY: 540,
+        treeY: 530,
         effect: function () {
             _recalcShockwaveStats();
         },
@@ -793,7 +793,7 @@ const NODE_DEFS = [
         childIds: ['overcharge'],
 
         treeX: 240,
-        treeY: 420,
+        treeY: 410,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -813,7 +813,7 @@ const NODE_DEFS = [
         parents: ['data_compression'],
         childIds: ['prismatic_array'],
         treeX: 480,
-        treeY: 420,
+        treeY: 410,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -833,7 +833,7 @@ const NODE_DEFS = [
         parents: ['overclock'],
         childIds: [],
         treeX: 560,
-        treeY: 380,
+        treeY: 370,
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -853,7 +853,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_1'],
         childIds: ['overcharge', 'overclock'],
         treeX: 400,
-        treeY: 420,
+        treeY: 410,
         effect: function () {
             if (!gameState.revealedNodes) gameState.revealedNodes = {};
             gameState.revealedNodes['armor'] = true;
@@ -873,7 +873,7 @@ const NODE_DEFS = [
         parents: ['pulse_expansion'],
         childIds: ['resource_gate_2', 'test_reveal_1'],
         treeX: 640,
-        treeY: 620,
+        treeY: 610,
         effect: function () {
             _recalcPacketSniffing();
         },
@@ -889,7 +889,7 @@ const NODE_DEFS = [
         parents: ['packet_sniffing'],
         childIds: ['test_reveal_2'],
         treeX: 680,
-        treeY: 540,
+        treeY: 530,
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(50);
@@ -907,7 +907,7 @@ const NODE_DEFS = [
         parents: ['packet_sniffing'],
         childIds: [],
         treeX: 720,
-        treeY: 620,
+        treeY: 610,
         effect: function () { },
     },
     {
@@ -922,7 +922,7 @@ const NODE_DEFS = [
         parents: ['resource_gate_2'],
         childIds: ['test_reveal_3'],
         treeX: 680,
-        treeY: 460,
+        treeY: 450,
         effect: function () { },
     },
     {
@@ -937,7 +937,7 @@ const NODE_DEFS = [
         parents: ['test_reveal_2'],
         childIds: ['test_reveal_4'],
         treeX: 680,
-        treeY: 380,
+        treeY: 370,
         effect: function () { },
     },
     {
@@ -952,7 +952,7 @@ const NODE_DEFS = [
         parents: ['test_reveal_3'],
         childIds: [],
         treeX: 680,
-        treeY: 300,
+        treeY: 290,
         effect: function () { },
     },
     {
@@ -962,7 +962,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 2,
         childIds: ['manual_pulse', 'wide_pulse'],
         treeX: 320,
-        treeY: 330,
+        treeY: 320,
         effect: function () { },
     },
     {
@@ -983,7 +983,7 @@ const NODE_DEFS = [
         shardId: 'manual_pulse',
         duoSiblingId: 'wide_pulse',
         treeX: 290,
-        treeY: 300,
+        treeY: 290,
         effect: function () {
             _recalcPulseMode();
             _recalcPulseSize();
@@ -1007,7 +1007,7 @@ const NODE_DEFS = [
         shardId: 'wide_pulse',
         duoSiblingId: 'manual_pulse',
         treeX: 350,
-        treeY: 300,
+        treeY: 290,
         effect: function () {
             _recalcPulseSize();
             _recalcPulseMode();
@@ -1027,7 +1027,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
         treeX: 200,
-        treeY: 300,
+        treeY: 290,
         effect: function () {
             _recalcPulseCharges();
         },
@@ -1044,7 +1044,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: 120,
-        treeY: 260,
+        treeY: 250,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -1061,7 +1061,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: 120,
-        treeY: 340,
+        treeY: 330,
         effect: function () {
             _recalcPulseRecharge();
         },
@@ -1077,7 +1077,7 @@ const NODE_DEFS = [
         parents: ['wide_pulse'],
         childIds: [],
         treeX: 310,
-        treeY: 220,
+        treeY: 210,
         effect: function () { },
     },
     {
@@ -1091,7 +1091,7 @@ const NODE_DEFS = [
         parents: ['wide_pulse'],
         childIds: [],
         treeX: 390,
-        treeY: 220,
+        treeY: 210,
         effect: function () { },
     },
 ];

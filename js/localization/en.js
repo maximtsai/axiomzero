@@ -38,7 +38,7 @@ window.TRANSLATIONS.en = {
         lightning_chain: { name: 'FORK', desc: '+1 lightning chain target', popup: '+1 CHAIN' },
         lightning_boost: { name: 'VOLTAGE', desc: '+2 lightning damage', popup: '+2 LIGHTNING DMG' },
         lightning_static_charge: { name: 'STATIC CHARGE', desc: 'Lightning deals +50% damage per lvl to enemies above 80% HP', popup: 'STATIC CHARGE' },
-        shockwave_amplifier: { name: 'AMPLIFIER', desc: '+40% shockwave range', popup: '+40% RANGE' },
+        shockwave_amplifier: { name: 'AMPLIFIER', desc: '+30% shockwave range', popup: '+30% RANGE' },
         shockwave_resonance: { name: 'RESONANCE', desc: 'Shockwave deals +1 dmg/lvl for each enemy hit', popup: 'RESONANCE FREQUENCY' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +50% damage per lvl to enemies below 50% HP', popup: 'SEISMIC CRUSH' },
         base_hp_boost: { name: 'STABILITY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },

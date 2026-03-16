@@ -7,8 +7,9 @@
 //   • Larger base hitbox size.
 
 class BossModel extends EnemyModel {
-    constructor() {
+    constructor(levelScalingModifier = 1) {
         super();
+        this.levelScalingModifier = levelScalingModifier;
         this.type = 'boss';
         this.isBoss = true;
         this.isMiniboss = false;
@@ -62,8 +63,9 @@ class BossModel extends EnemyModel {
 }
 
 class Boss extends Enemy {
-    constructor() {
+    constructor(levelScalingModifier = 1) {
         super();
+        this.levelScalingModifier = levelScalingModifier;
         // Subclasses MUST set this.model and this.view
     }
 

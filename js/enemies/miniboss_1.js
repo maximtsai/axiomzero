@@ -26,8 +26,8 @@ const MINIBOSS_STATE = {
 };
 
 class Miniboss1Model extends MinibossModel {
-    constructor() {
-        super();
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
         this.isMiniboss = true;
         this.state = MINIBOSS_STATE.MOVING;
         this.fireCooldown = 0;
@@ -136,9 +136,9 @@ class Miniboss1View extends EnemyView {
 }
 
 class Miniboss1 extends Miniboss {
-    constructor() {
-        super();
-        this.model = new Miniboss1Model();
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
+        this.model = new Miniboss1Model(levelScalingModifier);
         this.view = new Miniboss1View();
     }
 
