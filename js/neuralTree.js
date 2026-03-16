@@ -201,7 +201,7 @@ const neuralTree = (() => {
                 scaleX: PANEL_W / 2, // 2x2 pixel -> 800px
                 scaleY: GAME_CONSTANTS.HEIGHT / 2, // 2x2 pixel -> 900px
                 alpha: 0.001,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 0.1
+                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1
             },
             onMouseDown: (x, y) => {
                 lastDragX = x;
