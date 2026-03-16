@@ -193,7 +193,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['pulse_damage'],
         requiresMaxParent: true,
-        childIds: ['pulse_damage_3'],
+        childIds: ['packet_sniffing'],
         treeX: 560,
         treeY: 670,
         effect: function () {
@@ -212,11 +212,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 5,
-        parents: ['pulse_expansion'],
-        childIds: ['test_reveal_1', 'packet_sniffing'],
+        parents: ['data_compression'],
+        childIds: ['placeholder_duo_2'],
 
-        treeX: 640,
-        treeY: 630,
+        treeX: 320,
+        treeY: 390,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -833,9 +833,9 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['data_compression'],
-        childIds: ['placeholder_duo_2'],
-        treeX: 320,
-        treeY: 390,
+        childIds: ['prismatic_array'],
+        treeX: 480,
+        treeY: 430,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -852,9 +852,9 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['data_compression'],
+        parents: ['overclock'],
         childIds: [],
-        treeX: 480,
+        treeX: 560,
         treeY: 390,
         effect: function () {
             // Recalculated via normal gameplay checks
@@ -873,7 +873,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['overclock', 'prismatic_array'],
+        childIds: ['pulse_damage_3', 'overclock'],
         treeX: 400,
         treeY: 430,
         effect: function () {
@@ -891,10 +891,10 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'insight',
         costScaling: 'static',
-        parents: ['pulse_damage_3'],
-        childIds: [],
-        treeX: 720,
-        treeY: 710,
+        parents: ['pulse_expansion'],
+        childIds: ['test_reveal_1'],
+        treeX: 640,
+        treeY: 630,
         effect: function () {
             _recalcPacketSniffing();
         },
@@ -908,7 +908,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['pulse_damage_3'],
+        parents: ['packet_sniffing'],
         childIds: ['test_reveal_2'],
         treeX: 680,
         treeY: 550,
@@ -1028,7 +1028,7 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_2',
         isPlaceholder: true,
-        parents: ['overclock'],
+        parents: ['pulse_damage_3'],
         monitorsDuoTier: 2,
         childIds: ['manual_pulse_child_1', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
         treeX: 320,
@@ -1046,7 +1046,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['overclock'],
+        parents: ['pulse_damage_3'],
         childIds: ['manual_pulse_child_1'],
         isDuoBox: true,
         duoBoxTier: 2,
@@ -1070,7 +1070,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['overclock'],
+        parents: ['pulse_damage_3'],
         childIds: ['pulse_aoe_child_1', 'pulse_aoe_child_2'],
         isDuoBox: true,
         duoBoxTier: 2,
