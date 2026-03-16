@@ -6,7 +6,7 @@
 function _recalcPulseDamage() {
     const ups = gameState.upgrades || {};
     const ampLv = ups.pulse_damage || 0;
-    const overchargeLv = ups.pulse_damage_3 || 0;
+    const overchargeLv = ups.overcharge || 0;
 
     let base = 4 + 2 * ampLv + 4 * overchargeLv;
 
@@ -201,7 +201,7 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'pulse_damage_3',
+        id: 'overcharge',
         name: 'OVERCHARGE',
         icon: 'Skillicon14_08.png',
         description: '+4 cursor damage',
@@ -212,11 +212,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 5,
-        parents: ['data_compression'],
+        parents: ['armor', 'data_compression'],
         childIds: ['placeholder_duo_2'],
 
         treeX: 320,
-        treeY: 390,
+        treeY: 430,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -812,10 +812,10 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['threat_response'],
-        childIds: [],
+        childIds: ['overcharge'],
 
         treeX: 240,
-        treeY: 390,
+        treeY: 430,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -873,7 +873,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['pulse_damage_3', 'overclock'],
+        childIds: ['overcharge', 'overclock'],
         treeX: 400,
         treeY: 430,
         effect: function () {
@@ -916,8 +916,15 @@ const NODE_DEFS = [
             if (!gameState.revealedNodes) gameState.revealedNodes = {};
             gameState.revealedNodes['test_reveal_2'] = true;
             gameState.revealedNodes['test_reveal_3'] = true;
-            gameState.revealedNodes['test_reveal_4'] = true;
             gameState.revealedNodes['test_reveal_5'] = true;
+
+            const n4 = neuralTree.getNode('test_reveal_4');
+            if (n4) {
+                n4.level = 1;
+                if (!gameState.upgrades) gameState.upgrades = {};
+                gameState.upgrades['test_reveal_4'] = 1;
+                n4.effect(1);
+            }
         },
     },
     {
@@ -1028,11 +1035,11 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_2',
         isPlaceholder: true,
-        parents: ['pulse_damage_3'],
+        parents: ['overcharge'],
         monitorsDuoTier: 2,
         childIds: ['manual_pulse_child_1', 'pulse_aoe_child_1', 'pulse_aoe_child_2'],
         treeX: 320,
-        treeY: 300,
+        treeY: 340,
         effect: function () { },
     },
     {
@@ -1046,14 +1053,14 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['pulse_damage_3'],
+        parents: ['overcharge'],
         childIds: ['manual_pulse_child_1'],
         isDuoBox: true,
         duoBoxTier: 2,
         shardId: 'manual_pulse',
         duoSiblingId: 'pulse_aoe',
         treeX: 290,
-        treeY: 270,
+        treeY: 310,
         effect: function () {
             _recalcPulseMode();
             _recalcPulseSize();
@@ -1070,14 +1077,14 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['pulse_damage_3'],
+        parents: ['overcharge'],
         childIds: ['pulse_aoe_child_1', 'pulse_aoe_child_2'],
         isDuoBox: true,
         duoBoxTier: 2,
         shardId: 'pulse_aoe',
         duoSiblingId: 'manual_pulse',
         treeX: 350,
-        treeY: 270,
+        treeY: 310,
         effect: function () {
             _recalcPulseSize();
             _recalcPulseMode();
@@ -1097,7 +1104,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
         treeX: 200,
-        treeY: 270,
+        treeY: 310,
         effect: function () {
             _recalcPulseCharges();
         },
@@ -1114,7 +1121,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: 120,
-        treeY: 230,
+        treeY: 270,
         effect: function () {
             _recalcPulseDamage();
         },
@@ -1131,7 +1138,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: 120,
-        treeY: 310,
+        treeY: 350,
         effect: function () {
             _recalcPulseRecharge();
         },
@@ -1147,7 +1154,7 @@ const NODE_DEFS = [
         parents: ['pulse_aoe'],
         childIds: [],
         treeX: 310,
-        treeY: 190,
+        treeY: 230,
         effect: function () { },
     },
     {
@@ -1161,7 +1168,7 @@ const NODE_DEFS = [
         parents: ['pulse_aoe'],
         childIds: [],
         treeX: 390,
-        treeY: 190,
+        treeY: 230,
         effect: function () { },
     },
 ];

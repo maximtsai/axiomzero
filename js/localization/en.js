@@ -23,7 +23,7 @@ window.TRANSLATIONS.en = {
         pulse_damage: { name: 'CONCENTRATION', desc: '+2 cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
         pulse_expansion: { name: 'EXPANSION', desc: '+20% cursor pulse size', popup: '+20% CURSOR PULSE SIZE' },
-        pulse_damage_3: { name: 'OVERCHARGE', desc: '+4 cursor damage', popup: '+4 CURSOR DMG' },
+        overcharge: { name: 'OVERCHARGE', desc: '+4 cursor damage', popup: '+4 CURSOR DMG' },
         integrity: { name: 'INTEGRITY', desc: '+4 tower max health', popup: '+4 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
         focus: { name: 'INFLUENCE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
