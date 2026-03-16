@@ -374,6 +374,7 @@ const enemyManager = (() => {
 
         // Visual warning before spawning
         const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
+        audio.play('miniboss_warning');
         warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         warningImg.setOrigin(0, 0.5);
         warningImg.setScale(1.2, 1);

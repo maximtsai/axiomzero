@@ -158,9 +158,9 @@ const customEmitters = (() => {
 
     const towerDeathShrapnelParams = {
         frame: 'white_pixel.png',
-        speed: { min: 400, max: 700, ease: 'Cubic.easeOut' },
+        speed: { min: 280, max: 490, ease: 'Cubic.easeOut' },
         lifespan: { min: 300, max: 600 },
-        scale: { start: 10, end: 0 },
+        scale: { start: 30, end: 0 },
         alpha: { start: 0.8, end: 0 },
         rotate: { start: 0, end: 1080 },
         gravityY: 0,
@@ -403,12 +403,20 @@ const customEmitters = (() => {
 
             ray.setPosition(x, y);
             ray.setOrigin(0, 0.5);
-            ray.setScale(2);
+            ray.setScale(1);
             ray.setRotation(angle);
             ray.setDepth(baseDepth + 5);
             ray.setAlpha(0.5);
             ray.setVisible(true);
             ray.setActive(true);
+
+            PhaserScene.tweens.add({
+                targets: ray,
+                scaleX: 2,
+                scaleY: 2,
+                duration: 500,
+                ease: 'Cubic.easeOut'
+            });
 
             ray._duration = 760;
             ray._elapsed = 0;

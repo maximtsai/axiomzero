@@ -166,6 +166,7 @@ const iterationOverScreen = (() => {
 
         if (isBossKill) {
             titleText.fullText = 'BOSS DEFEATED';
+            audio.play('victory', 1.0, false);
         } else {
             titleText.fullText = 'ITERATION COMPLETE';
         }

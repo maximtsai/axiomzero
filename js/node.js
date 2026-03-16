@@ -335,6 +335,19 @@ class Node {
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
 
+        // Play sounds
+
+        const s = audio.play('upgrade', 0.95);
+        if (s) {
+            if (this.maxLevel === 1) {
+                s.detune = 200;
+            } else {
+                s.detune = (this.level - this.maxLevel) * 100 + 200;
+            }
+        }
+        if (this.isMaxed()) {
+            audio.play('upgrade_max', 0.25);
+        }
         // Duo-Box first-purchase logic
         if (this.isDuoBox && this.duoBoxTier > 0) {
             if (!gameState.duoBoxPurchased) gameState.duoBoxPurchased = {};

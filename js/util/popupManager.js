@@ -228,7 +228,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
         fontFamily: 'Arial', fontSize: _POPUP.FONT_YN_BODY, color: '#000000', align: 'center',
     }).setOrigin(0.5, 0.5).setDepth(_POPUP.DEPTH).setAlpha(0.1);
 
-    const animDur = superFast ? 0.7 : 200;
+    const animDur = superFast ? 1 : 200;
     PhaserScene.tweens.add({ targets: [newText, descText], alpha: 1, ease: 'Cubic.easeOut', duration: animDur });
     PhaserScene.tweens.add({ targets: popupBG, scaleX: 0.72, scaleY: 0.6, ease: 'Back.easeOut', duration: animDur });
 

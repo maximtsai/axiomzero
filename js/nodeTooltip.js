@@ -104,6 +104,14 @@ const nodeTooltip = (() => {
 
         if (currentNode !== node) {
             lastShowTime = Date.now();
+            if (!isPurchaseRefresh) {
+                const s = audio.play('node_hover', 0.95);
+                if (s) {
+                    let detune = Phaser.Math.Between(-50, 50);
+                    if (node.state === NODE_STATE.MAXED) detune -= 150;
+                    s.detune = detune;
+                }
+            }
         }
 
         currentNode = node;
@@ -262,16 +270,16 @@ const nodeTooltip = (() => {
 
         // Animations
         if (!isPurchaseRefresh) {
-            container.setScale(0.7, 1.1).setAngle(6);
+            container.setScale(0.77, 1.08).setAngle(5);
             PhaserScene.tweens.add({
                 targets: container,
                 scaleX: 1.1, scaleY: 0.95, angle: -3, y: node.btn.y - verticalOffset,
-                duration: 100, ease: 'Cubic.easeOut',
+                duration: 85, ease: 'Cubic.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({
                         targets: container,
                         scaleX: 1, scaleY: 1, angle: 0,
-                        duration: 220, ease: 'Back.easeOut'
+                        duration: 210, ease: 'Back.easeOut'
                     });
                 }
             });

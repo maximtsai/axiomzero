@@ -35,6 +35,7 @@ class BasicEnemy extends Enemy {
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 18
         });
+        this.setEnemyGlow('basic_enemy_glow.png');
     }
 
     // ── Static texture helpers ────────────────────────────────────────────────

@@ -190,6 +190,11 @@ class EnemyView {
         this.hpImg.setDepth(depth);
         this.hpImg.setVisible(false);
         this.hpImg.setActive(false);
+
+        this.enemyGlow = PhaserScene.add.image(0, 0, texKey, 'default_enemy_glow.png');
+        this.enemyGlow.setDepth(depth - 2);
+        this.enemyGlow.setVisible(false);
+        this.enemyGlow.setActive(false);
     }
 
     activate(x, y, rotation, cannotRotate) {
@@ -206,6 +211,13 @@ class EnemyView {
             this.hpImg.setActive(true);
             this.hpImg.setAlpha(1);
             this.hpImg.setScale(1);
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.setPosition(x, y);
+            this.enemyGlow.setActive(true);
+            this.enemyGlow.setVisible(false); // defaults to false
+            this.enemyGlow.setAlpha(1);
+            this.enemyGlow.setScale(1);
         }
 
         if (!cannotRotate) {
@@ -224,16 +236,23 @@ class EnemyView {
             this.hpImg.setVisible(false);
             this.hpImg.setActive(false);
         }
+        if (this.enemyGlow) {
+            PhaserScene.tweens.killTweensOf(this.enemyGlow);
+            this.enemyGlow.setVisible(false);
+            this.enemyGlow.setActive(false);
+        }
     }
 
     syncPosition(x, y) {
         if (this.img) this.img.setPosition(x, y);
         if (this.hpImg) this.hpImg.setPosition(x, y);
+        if (this.enemyGlow) this.enemyGlow.setPosition(x, y);
     }
 
     setRotation(rot) {
         if (this.img) this.img.setRotation(rot);
         if (this.hpImg) this.hpImg.setRotation(rot);
+        if (this.enemyGlow) this.enemyGlow.setRotation(rot);
     }
 
     updateHPCrop(healthPct) {
@@ -253,6 +272,7 @@ class EnemyView {
         if (this.img && this.img.scene) {
             this.img.setTintFill(0xffffff);
             if (this.hpImg) this.hpImg.setTintFill(0xffffff);
+            if (this.enemyGlow) this.enemyGlow.setTintFill(0xffffff);
         }
     }
 
@@ -267,6 +287,15 @@ class EnemyView {
         if (this.hpImg && this.hpImg.scene) {
             this.hpImg.clearTint();
         }
+        if (this.enemyGlow && this.enemyGlow.scene) {
+            this.enemyGlow.clearTint();
+        }
+    }
+
+    setScale(scale) {
+        if (this.img) this.img.setScale(scale);
+        if (this.hpImg) this.hpImg.setScale(scale);
+        if (this.enemyGlow) this.enemyGlow.setScale(scale);
     }
 
     playHitFeedback(config = {}) {
@@ -278,11 +307,18 @@ class EnemyView {
         } = config;
 
         PhaserScene.tweens.add({
-            targets: [this.img, this.hpImg].filter(i => i && i.scene),
+            targets: [this.img, this.hpImg, this.enemyGlow].filter(i => i && i.scene),
             alpha: { from: flickerAlpha, to: 1 },
             duration: flickerDuration,
             ease: 'Linear'
         });
+    }
+
+    setEnemyGlow(frame) {
+        if (this.enemyGlow) {
+            this.enemyGlow.setFrame(frame);
+            this.enemyGlow.setVisible(true);
+        }
     }
 }
 
@@ -321,6 +357,10 @@ class Enemy {
         this.model.aimAt(tx, ty);
     }
 
+    setScale(scale) {
+        this.view.setScale(scale);
+    }
+
     update(dt) {
         this.model.update(dt);
         this.view.syncPosition(this.model.x, this.model.y);
@@ -346,6 +386,10 @@ class Enemy {
 
     refreshTint() {
         this.view.refreshTint();
+    }
+
+    setEnemyGlow(frame) {
+        this.view.setEnemyGlow(frame);
     }
 
     applyKnockback(dirX, dirY, distance) {

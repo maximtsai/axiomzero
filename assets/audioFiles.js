@@ -14,4 +14,9 @@ const audioFiles = [
     { name: 'shock2', src: 'audio/shock2.mp3' },
     { name: 'shock3', src: 'audio/shock3.mp3' },
     { name: 'drum_beat', src: 'audio/drum_beat.mp3' },
+    { name: 'miniboss_warning', src: 'audio/miniboss_warning.mp3' },
+    { name: 'node_hover', src: 'audio/node_hover.mp3' },
+    { name: 'victory', src: 'audio/victory.mp3' },
+    { name: 'upgrade', src: 'audio/upgrade.mp3' },
+    { name: 'upgrade_max', src: 'audio/upgrade_max.mp3' },
 ];
