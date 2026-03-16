@@ -219,6 +219,9 @@ const NODE_DEFS = [
         treeY: 430,
         effect: function () {
             _recalcPulseDamage();
+
+            if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
+            gameState.unlockedNodes['armor'] = true;
         },
     },
     {
@@ -919,13 +922,8 @@ const NODE_DEFS = [
             gameState.revealedNodes['test_reveal_3'] = true;
             gameState.revealedNodes['test_reveal_5'] = true;
 
-            const n4 = neuralTree.getNode('test_reveal_4');
-            if (n4) {
-                n4.level = 1;
-                if (!gameState.upgrades) gameState.upgrades = {};
-                gameState.upgrades['test_reveal_4'] = 1;
-                n4.effect(1);
-            }
+            if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
+            gameState.unlockedNodes['test_reveal_4'] = true;
         },
     },
     {

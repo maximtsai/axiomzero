@@ -75,6 +75,7 @@ class Node {
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
         this.revealed = false;    // Whether this node is force-revealed by an event
+        this.forceUnlocked = false; // Whether this node is force-unlocked by an event
 
         // Duo-box backing sprite (only created by one of the two siblings)
         this.duoBackingSprite = null;
@@ -221,8 +222,9 @@ class Node {
             });
         }
 
-        // 1a. Check for event-based revelation (ignored if node is already purchased, placeholders, or duo nodes)
+        // 1a. Check for event-based revelation/unlocking (ignored if node is already purchased, placeholders, or duo nodes)
         this.revealed = !!(gameState.revealedNodes && gameState.revealedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
+        this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
 
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
         if (this.parents.length > 0) {
@@ -245,7 +247,7 @@ class Node {
                 }
             }
 
-            if (!anyRevealed && !this.revealed) {
+            if (!anyRevealed && !this.revealed && !this.forceUnlocked && this.level === 0) {
                 this.setState(NODE_STATE.HIDDEN);
                 for (let i = 0; i < this.childIds.length; i++) {
                     const child = neuralTree.getNode(this.childIds[i]);
@@ -289,7 +291,7 @@ class Node {
             this.setState(NODE_STATE.GHOST); // Purchased but currently deactivated
         } else if (this.level >= this.maxLevel) {
             this.setState(NODE_STATE.MAXED);
-        } else if (this.isRequirementsMet()) {
+        } else if (this.isRequirementsMet() || this.forceUnlocked) {
             this.setState(NODE_STATE.UNLOCKED);
         } else {
             // If we reached here, the node is either force-revealed or has a purchasable parent.
