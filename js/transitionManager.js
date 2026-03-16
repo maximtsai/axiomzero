@@ -37,7 +37,7 @@ const transitionManager = (() => {
         const duration = GAME_CONSTANTS.TRANSITION_DURATION;
 
         if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
-            gameHUD.showTransitionMessage(GAME_CONSTANTS.COMBAT_INTRO_TEXT);
+            messageBus.publish('AnnounceText', t('ui', 'combat_intro'));
             // First switch phase so game logic activates, then slide camera
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
             const targetX = -GAME_CONSTANTS.halfWidth - 10;

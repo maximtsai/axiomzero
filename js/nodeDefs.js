@@ -91,6 +91,11 @@ function _recalcShockwaveStats() {
     shockwaveAttack.setSeismicCrushLevel(crushLv);
 }
 
+/** Recalculates threat response healing on boss spawn. */
+function _recalcThreatResponse() {
+    // Subscription handled in gameInit.js
+}
+
 const NODE_DEFS = [
     {
         id: 'awaken',
@@ -398,7 +403,7 @@ const NODE_DEFS = [
         childIds: ['lore_2'],
         treeX: 120,
         treeY: 710,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_1');
             if (node) {
@@ -419,7 +424,7 @@ const NODE_DEFS = [
         childIds: ['lore_3'],
         treeX: 40,
         treeY: 710,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
             if (node) {
@@ -440,7 +445,7 @@ const NODE_DEFS = [
         childIds: ['lore_4'],
         treeX: 40,
         treeY: 630,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
             if (node) {
@@ -461,7 +466,7 @@ const NODE_DEFS = [
         childIds: ['lore_5'],
         treeX: 40,
         treeY: 550,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_4');
             if (node) {
@@ -482,7 +487,7 @@ const NODE_DEFS = [
         childIds: ['lore_6'],
         treeX: 40,
         treeY: 470,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_5');
             if (node) {
@@ -503,7 +508,7 @@ const NODE_DEFS = [
         childIds: ['lore_7'],
         treeX: 40,
         treeY: 390,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_6');
             if (node) {
@@ -524,7 +529,7 @@ const NODE_DEFS = [
         childIds: ['lore_8'],
         treeX: 40,
         treeY: 310,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_7');
             if (node) {
@@ -545,7 +550,7 @@ const NODE_DEFS = [
         childIds: ['lore_9'],
         treeX: 40,
         treeY: 230,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_8');
             if (node) {
@@ -566,7 +571,7 @@ const NODE_DEFS = [
         childIds: [],
         treeX: 40,
         treeY: 150,
-        wideTooltip: true,
+        tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_9');
             if (node) {
@@ -578,17 +583,36 @@ const NODE_DEFS = [
         id: 'resource_gate',
         name: 'RESOURCE GATE',
         icon: 'Skillicon14_14.png',
-        description: 'Throughput calibration. Investing 1000 DATA immediately refunds the full amount.',
+        description: 'Inefficient bypass. A speedbump for taking a roundabout logic path. Partial data recovery (50%).',
         maxLevel: 1,
-        baseCost: 1000,
+        baseCost: 100,
         costType: 'data',
-        costScaling: 'static',
         parents: ['base_hp_boost'],
-        childIds: [],
+        childIds: ['threat_response'],
         treeX: 120,
         treeY: 550,
+        tooltipExtraWidth: 60,
         effect: function () {
-            resourceManager.addData(1000);
+            resourceManager.addData(50);
+        },
+    },
+    {
+        id: 'threat_response',
+        name: 'THREAT ADAPTATION',
+        icon: 'Skillicon14_05.png',
+        description: 'Recovery protocol. Heal for up to 15 HP when a Boss or Miniboss appears.',
+        popupText: 'THREAT ADAPTATION',
+        popupColor: '#00ff66',
+        maxLevel: 1,
+        baseCost: 250,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['resource_gate'],
+        childIds: ['armor'],
+        treeX: 160,
+        treeY: 470,
+        effect: function () {
+            // Logic integrated into gameInit.js listeners
         },
     },
     {
@@ -787,7 +811,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['overclock'],
+        parents: ['threat_response'],
         childIds: [],
 
         treeX: 240,
@@ -809,7 +833,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['data_compression'],
-        childIds: ['placeholder_duo_2', 'armor'],
+        childIds: ['placeholder_duo_2'],
         treeX: 320,
         treeY: 390,
         effect: function () {

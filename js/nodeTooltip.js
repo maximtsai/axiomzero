@@ -111,7 +111,7 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
-        const currentBgWidth = node.wideTooltip ? 580 : 280;
+        const currentBgWidth = 280 + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
 
         // Update word wrap for description

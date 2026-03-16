@@ -13,7 +13,9 @@ window.TRANSLATIONS.en = {
         upgrades: 'UPGRADES',
         end_iteration: 'END ITERATION',
         exp_percent: 'EXP {0}%',
-        done: 'Done'
+        done: 'Done',
+        combat_intro: 'SYSTEM ANOMALY DETECTED',
+        boss_1_name: 'ENTITY APPROACHING:\n#THE WALL'
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'Begin existence.' },

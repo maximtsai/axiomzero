@@ -45,6 +45,7 @@ const gameHUD = (() => {
         messageBus.subscribe('bossDefeated', () => {
             if (endIterationBtn) endIterationBtn.setState(DISABLE);
         });
+        messageBus.subscribe('AnnounceText', showTransitionMessage);
         updateManager.addFunction(_update);
     }
 
@@ -355,101 +356,123 @@ const gameHUD = (() => {
      * @param {string} msg 
      */
     function showTransitionMessage(msg) {
-        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 340, msg, {
+        // Measure final dimensions without delay symbols for proper centering
+        const measureMsg = msg.replaceAll('#', '');
+        const tempTxt = PhaserScene.add.text(0, 0, measureMsg, {
+            fontFamily: 'VCR',
+            fontSize: '44px',
+        });
+        const fullWidth = tempTxt.width;
+        const fullHeight = tempTxt.height;
+        tempTxt.destroy();
+
+        const baseYPos = GAME_CONSTANTS.halfHeight - 310;
+        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
             fontFamily: 'VCR',
             fontSize: '44px',
             color: '#ffffff',
             align: 'center'
-        }).setOrigin(0, 0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
-
-        // Calculate final width and shift x to keep it centered as we type
-        const fullWidth = txt.width;
-        txt.text = '';
-        txt.x = GAME_CONSTANTS.halfWidth - (fullWidth / 2);
+        }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
 
         // Play reveal sound when string begins to appear
         audio.play('data_reveal', 0.8);
 
-        // Apply chromatic glitch 0.58s after it pops up
-        PhaserScene.time.delayedCall(750, () => glitchFX.triggerChromaticAberration(txt, 500, 1.75));
+        // Apply chromatic glitch 0.75s after it pops up
+        PhaserScene.time.delayedCall(750, () => {
+            if (txt.active) glitchFX.triggerChromaticAberration(txt, 500, 1.75);
+        });
 
         let charIdx = 0;
-        PhaserScene.time.addEvent({
-            delay: 25,
-            repeat: msg.length - 1,
-            callback: () => {
-                txt.text += msg[charIdx];
+
+        const typeChar = () => {
+            if (!txt.scene) return;
+
+            if (charIdx >= msg.length) {
+                _transitionMessageDone();
+                return;
+            }
+
+            const char = msg[charIdx];
+            if (char === '#') {
                 charIdx++;
+                PhaserScene.time.delayedCall(400, typeChar);
+            } else {
+                txt.text += char;
+                charIdx++;
+                PhaserScene.time.delayedCall(25, typeChar);
+            }
+        };
 
-                // When done typing, hold, then glitch out
-                if (charIdx === msg.length) {
-                    const baseX = txt.x;
-                    const baseY = txt.y;
+        const _transitionMessageDone = () => {
+            const baseX = txt.x;
+            const baseY = txt.y;
 
-                    PhaserScene.time.delayedCall(1500, () => {
-                        // Glitch jitter phase — erratic shaking + alpha flicker
-                        let jitterCount = 0;
-                        const jitterTotal = 8;
-                        const jitterEvent = PhaserScene.time.addEvent({
-                            delay: 35,
-                            repeat: jitterTotal - 1,
-                            callback: () => {
-                                jitterCount++;
-                                // Random position offset
-                                txt.x = baseX + (Math.random() - 0.5) * 12;
-                                txt.y = baseY + (Math.random() - 0.5) * 6;
-                                // Random alpha flicker between 0.5 and 1
-                                txt.setAlpha(0.5 + Math.random() * 0.5);
-                            }
-                        });
+            PhaserScene.time.delayedCall(2650, () => {
+                // Glitch jitter phase — erratic shaking + alpha flicker
+                let jitterCount = 0;
+                const jitterTotal = 8;
+                const jitterEvent = PhaserScene.time.addEvent({
+                    delay: 35,
+                    repeat: jitterTotal - 1,
+                    callback: () => {
+                        jitterCount++;
+                        // Random position offset
+                        txt.x = baseX + (Math.random() - 0.5) * 12;
+                        txt.y = baseY + (Math.random() - 0.5) * 6;
+                        // Random alpha flicker between 0.5 and 1
+                        txt.setAlpha(0.5 + Math.random() * 0.5);
+                    }
+                });
 
-                        // Blink 1 — deeper alpha dip at ~180ms into jitter
-                        PhaserScene.time.delayedCall(180, () => {
-                            txt.setAlpha(0.3);
-                            txt.x = baseX + (Math.random() - 0.5) * 18;
-                            PhaserScene.time.delayedCall(30, () => {
-                                txt.setAlpha(0.85);
-                                txt.x = baseX;
-                                txt.y = baseY;
-                            });
-                        });
+                // Blink 1 — deeper alpha dip at ~180ms into jitter
+                PhaserScene.time.delayedCall(180, () => {
+                    txt.setAlpha(0.3);
+                    txt.x = baseX + (Math.random() - 0.5) * 18;
+                    PhaserScene.time.delayedCall(30, () => {
+                        txt.setAlpha(0.85);
+                        txt.x = baseX;
+                        txt.y = baseY;
+                    });
+                });
 
-                        // Blink 2 — deeper alpha dip at ~350ms into jitter
-                        PhaserScene.time.delayedCall(350, () => {
-                            txt.setAlpha(0.3);
-                            txt.x = baseX + (Math.random() - 0.5) * 18;
-                            PhaserScene.time.delayedCall(30, () => {
-                                txt.setAlpha(0.85);
-                                txt.x = baseX;
-                                txt.y = baseY;
-                            });
-                        });
+                // Blink 2 — deeper alpha dip at ~350ms into jitter
+                PhaserScene.time.delayedCall(350, () => {
+                    txt.setAlpha(0.3);
+                    txt.x = baseX + (Math.random() - 0.5) * 18;
+                    PhaserScene.time.delayedCall(30, () => {
+                        txt.setAlpha(0.85);
+                        txt.x = baseX;
+                        txt.y = baseY;
+                    });
+                });
 
-                        // Final: reset position, pause 0.5s, then vanish
-                        PhaserScene.time.delayedCall(jitterTotal * 35 + 10, () => {
-                            txt.x = baseX;
-                            txt.y = baseY;
-                            txt.setAlpha(1);
-                            PhaserScene.time.delayedCall(400, () => {
-                                txt.setOrigin(0.5, 0.5);
-                                txt.x = GAME_CONSTANTS.halfWidth + 60;
-                                txt.setAlpha(0.65);
-                                txt.setScale(1.4, 0.8);
-                                PhaserScene.time.delayedCall(50, () => {
-                                    txt.x = GAME_CONSTANTS.halfWidth - 50;
-                                    txt.setAlpha(0.45);
-                                    txt.setScale(3.2, 0.2);
-                                    PhaserScene.time.delayedCall(25, () => {
-                                        txt.destroy();
-                                    });
-                                });
+                // Final: reset position, pause 0.5s, then vanish
+                PhaserScene.time.delayedCall(jitterTotal * 35 + 10, () => {
+                    txt.x = baseX;
+                    txt.y = baseY;
+                    txt.setAlpha(1);
+                    PhaserScene.time.delayedCall(400, () => {
+                        txt.setOrigin(0.5, 0.5);
+                        txt.x = GAME_CONSTANTS.halfWidth + 60;
+                        txt.y = baseYPos; // Recenter vertically for the exit animation
+                        txt.setAlpha(0.65);
+                        txt.setScale(1.4, 0.8);
+                        PhaserScene.time.delayedCall(50, () => {
+                            txt.x = GAME_CONSTANTS.halfWidth - 50;
+                            txt.setAlpha(0.45);
+                            txt.setScale(3.2, 0.2);
+                            PhaserScene.time.delayedCall(25, () => {
+                                txt.destroy();
                             });
                         });
                     });
-                }
-            }
-        });
+                });
+            });
+        };
+
+        typeChar();
     }
+
 
     function setWaveProgressBarVisible(vis) {
         if (!waveProgressBar) return;

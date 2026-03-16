@@ -43,6 +43,32 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     messageBus.subscribe('bossSpawned', () => {
         debugLog('Playing boss music...');
         audio.playComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
+
+        // THREAT ADAPTATION: Heal on boss spawn
+        if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
+            tower.heal(15);
+            const pos = tower.getPosition();
+            floatingText.show(pos.x, pos.y - 80, '+15 HP (ADAPTATION)', {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: 22,
+                color: '#00ff66',
+                depth: GAME_CONSTANTS.DEPTH_TOWER
+            });
+        }
+    });
+
+    messageBus.subscribe('minibossSpawned', () => {
+        // THREAT ADAPTATION: Heal on miniboss spawn
+        if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
+            tower.heal(15);
+            const pos = tower.getPosition();
+            floatingText.show(pos.x, pos.y - 60, '+15 HP (ADAPTATION)', {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: 22,
+                color: '#00ff66',
+                depth: GAME_CONSTANTS.DEPTH_TOWER
+            });
+        }
     });
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────

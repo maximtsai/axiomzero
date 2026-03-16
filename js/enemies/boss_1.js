@@ -160,5 +160,9 @@ class Boss1 extends Boss {
         this.model.aliveTime = 0;
         this.model.speedMult = this.model.initialSpeedMult;
         this.model._applyAimedVelocity();
+
+        PhaserScene.time.delayedCall(1000, () => {
+            messageBus.publish('AnnounceText', t('ui', 'boss_1_name'));
+        });
     }
 }

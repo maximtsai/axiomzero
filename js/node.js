@@ -63,7 +63,7 @@ class Node {
         this.requiresMaxParent = def.requiresMaxParent || false;
         this.isPlaceholder = def.isPlaceholder || false;
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
-        this.wideTooltip = def.wideTooltip || false;
+        this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
         this.prefix = 'node';
 
         this.duoBackingSprite = null;
