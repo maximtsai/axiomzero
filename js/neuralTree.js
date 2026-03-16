@@ -48,12 +48,85 @@ const neuralTree = (() => {
         _createCryptoMineButton();
         _initPools();
 
+        if (FLAGS.DEBUG) {
+            _checkNodeIntegrity();
+        }
+
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
 
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
+    }
+
+    /**
+     * Debug-only check to ensure all parent-child relationships in nodeDefs.js match.
+     * Logs warnings for missing references or one-way connections.
+     */
+    function _checkNodeIntegrity() {
+        console.log("%c [DEBUG] Neural Tree integrity check starting... ", "background: #111; color: #00f5ff; border: 1px solid #00f5ff;");
+        let warnings = 0;
+
+        for (const def of NODE_DEFS) {
+            const id = def.id;
+
+            // 1. Check all children list this node as a parent
+            if (def.childIds) {
+                for (const cid of def.childIds) {
+                    const child = NODE_DEFS.find(d => d.id === cid);
+                    if (!child) {
+                        console.warn(`[NODE INTEGRITY] Node '${id}' references non-existent child: '${cid}'`);
+                        warnings++;
+                        continue;
+                    }
+                    if (!child.parents || !child.parents.includes(id)) {
+                        // EXCEPTION: A placeholder lists duo nodes as children, but duo nodes list the grandparent as parent
+                        if (child.isDuoBox) {
+                            const childListsGrandparent = child.parents.some(pid => {
+                                const grandparent = NODE_DEFS.find(d => d.id === pid);
+                                return grandparent && grandparent.childIds && grandparent.childIds.includes(id);
+                            });
+                            if (childListsGrandparent) continue;
+                        }
+
+                        console.warn(`[NODE INTEGRITY] Reciprocity failure: '${id}' -> child '${cid}', but '${cid}' does not list '${id}' as parent.`);
+                        warnings++;
+                    }
+                }
+            }
+
+            // 2. Check all parents list this node as a child
+            if (def.parents) {
+                for (const pid of def.parents) {
+                    const parent = NODE_DEFS.find(d => d.id === pid);
+                    if (!parent) {
+                        console.warn(`[NODE INTEGRITY] Node '${id}' references non-existent parent: '${pid}'`);
+                        warnings++;
+                        continue;
+                    }
+                    if (!parent.childIds || !parent.childIds.includes(id)) {
+                        // EXCEPTION: Duo nodes may list a root parent while being technically children of an intermediate (like a placeholder)
+                        if (def.isDuoBox) {
+                            const parentHasIntermediate = parent.childIds.some(cid => {
+                                const intermediate = NODE_DEFS.find(d => d.id === cid);
+                                return intermediate && intermediate.childIds && intermediate.childIds.includes(id);
+                            });
+                            if (parentHasIntermediate) continue;
+                        }
+
+                        console.warn(`[NODE INTEGRITY] Reciprocity failure: '${id}' -> parent '${pid}', but '${pid}' does not list '${id}' as child.`);
+                        warnings++;
+                    }
+                }
+            }
+        }
+
+        if (warnings === 0) {
+            console.log("%c [DEBUG] Neural Tree integrity check: PASS ", "color: #00ff66;");
+        } else {
+            console.warn(`[DEBUG] Neural Tree integrity check: FAIL (${warnings} warnings). Check console above.`);
+        }
     }
 
 

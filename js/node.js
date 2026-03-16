@@ -249,10 +249,6 @@ class Node {
 
             if (!anyRevealed && !this.revealed && !this.forceUnlocked && this.level === 0) {
                 this.setState(NODE_STATE.HIDDEN);
-                for (let i = 0; i < this.childIds.length; i++) {
-                    const child = neuralTree.getNode(this.childIds[i]);
-                    if (child) child.refreshState();
-                }
                 return;
             }
         }
