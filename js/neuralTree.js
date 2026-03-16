@@ -193,50 +193,58 @@ const neuralTree = (() => {
         }
 
         // Invisible drag surface - covers the 800px wide panel
-        dragSurface = new Button({
-            normal: {
-                ref: 'white_pixel',
-                x: TREE_CENTER_X,
-                y: GAME_CONSTANTS.halfHeight,
-                scaleX: PANEL_W / 2, // 2x2 pixel -> 800px
-                scaleY: GAME_CONSTANTS.HEIGHT / 2, // 2x2 pixel -> 900px
-                alpha: 0.001,
-                depth: GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1
-            },
-            onMouseDown: (x, y) => {
-                lastDragX = x;
-                lastDragY = y;
-                buttonManager.setDraggedObj(dragSurface);
-            },
-            onDrag: (x, y) => {
-                const dx = x - lastDragX;
-                const dy = y - lastDragY;
+        // Using a Phaser Image instead of the Button system to avoid click consumption issues
+        dragSurface = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        dragSurface.setScale(PANEL_W / 2, GAME_CONSTANTS.HEIGHT / 2);
+        dragSurface.setAlpha(0.001);
+        dragSurface.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 0.1);
+        dragSurface.setScrollFactor(0);
+        dragSurface.setVisible(false);
+        dragSurface.setInteractive();
 
-                const currentX = draggableGroup.x;
-                const currentY = draggableGroup.y;
+        let isDraggingTree = false;
 
-                // Restrict movement based on global tree drag constants
-                const nextX = Phaser.Math.Clamp(currentX + dx, GAME_CONSTANTS.TREE_DRAG_MIN_X, GAME_CONSTANTS.TREE_DRAG_MAX_X);
-                const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
+        dragSurface.on('pointerdown', (pointer) => {
+            isDraggingTree = true;
+            lastDragX = pointer.x;
+            lastDragY = pointer.y;
+        });
 
-                const finalDx = nextX - currentX;
-                const finalDy = nextY - currentY;
+        PhaserScene.input.on('pointermove', (pointer) => {
+            if (!isDraggingTree || !visible) return;
 
-                if (finalDx !== 0 || finalDy !== 0) {
-                    draggableGroup.moveBy(finalDx, finalDy);
-                }
+            const x = pointer.x;
+            const y = pointer.y;
+            const dx = x - lastDragX;
+            const dy = y - lastDragY;
 
-                lastDragX = x;
-                lastDragY = y;
-            },
-            onMouseUp: () => {
+            const currentX = draggableGroup.x;
+            const currentY = draggableGroup.y;
+
+            // Restrict movement based on global tree drag constants
+            const nextX = Phaser.Math.Clamp(currentX + dx, GAME_CONSTANTS.TREE_DRAG_MIN_X, GAME_CONSTANTS.TREE_DRAG_MAX_X);
+            const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
+
+            const finalDx = nextX - currentX;
+            const finalDy = nextY - currentY;
+
+            if (finalDx !== 0 || finalDy !== 0) {
+                draggableGroup.moveBy(finalDx, finalDy);
+            }
+
+            lastDragX = x;
+            lastDragY = y;
+        });
+
+        PhaserScene.input.on('pointerup', () => {
+            if (isDraggingTree) {
+                isDraggingTree = false;
                 if (typeof nodeTooltip !== 'undefined') {
                     nodeTooltip.hide();
                 }
             }
         });
-        dragSurface.setScrollFactor(0);
-        dragSurface.setVisible(false);
+
         treeGroup.add(dragSurface);
 
         // Title
