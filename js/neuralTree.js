@@ -203,9 +203,11 @@ const neuralTree = (() => {
         dragSurface.setInteractive();
 
         let isDraggingTree = false;
+        let dragDistanceTotal = 0;
 
         dragSurface.on('pointerdown', (pointer) => {
             isDraggingTree = true;
+            dragDistanceTotal = 0;
             lastDragX = pointer.x;
             lastDragY = pointer.y;
         });
@@ -217,6 +219,8 @@ const neuralTree = (() => {
             const y = pointer.y;
             const dx = x - lastDragX;
             const dy = y - lastDragY;
+
+            dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
 
             const currentX = draggableGroup.x;
             const currentY = draggableGroup.y;
@@ -239,9 +243,15 @@ const neuralTree = (() => {
         PhaserScene.input.on('pointerup', () => {
             if (isDraggingTree) {
                 isDraggingTree = false;
-                if (typeof nodeTooltip !== 'undefined') {
-                    nodeTooltip.hide();
-                }
+
+                // Only hide tooltip if we actually dragged significantly.
+                // This prevents clicks on nodes (which also trigger dragSurface pointer events)
+                // from prematurely closing the hover popup.
+                // if (dragDistanceTotal > 5) {
+                //     if (typeof nodeTooltip !== 'undefined') {
+                //         nodeTooltip.hide();
+                //     }
+                // }
             }
         });
 
