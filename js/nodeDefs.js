@@ -600,11 +600,11 @@ const NODE_DEFS = [
         id: 'threat_response',
         name: 'THREAT ADAPTATION',
         icon: 'Skillicon14_05.png',
-        description: 'Recovery protocol. Heal for up to 15 HP when a Boss or Miniboss appears.',
+        description: 'Recovery protocol. Heal up to 15 HP when a Boss or Miniboss appears.',
         popupText: 'THREAT ADAPTATION',
         popupColor: '#00ff66',
         maxLevel: 1,
-        baseCost: 250,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         parents: ['resource_gate'],
@@ -877,7 +877,8 @@ const NODE_DEFS = [
         treeX: 400,
         treeY: 430,
         effect: function () {
-            // Recalculated via normal gameplay checks
+            if (!gameState.revealedNodes) gameState.revealedNodes = {};
+            gameState.revealedNodes['armor'] = true;
         },
     },
     {
