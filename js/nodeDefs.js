@@ -3,6 +3,7 @@
 
 // Tree Layout Constants
 const TREE_CENTER_X = 400; // Half of 800px panel width
+const TREE_START_Y = 730;
 const TREE_UNIT_X = 80;
 const TREE_UNIT_Y = 80;
 
@@ -20,7 +21,7 @@ const NODE_DEFS = [
         parents: [],
         childIds: ['basic_pulse', 'integrity', 'intensity', 'crypto_mine_unlock'],
         treeX: TREE_CENTER_X,
-        treeY: 730,
+        treeY: TREE_START_Y,
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
@@ -44,7 +45,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
         treeX: TREE_CENTER_X,
-        treeY: 650,
+        treeY: TREE_START_Y - TREE_UNIT_Y,
         effect: function () {
             pulseAttack.unlock();
         },
@@ -64,7 +65,7 @@ const NODE_DEFS = [
         parents: ['basic_pulse'],
         childIds: ['pulse_expansion'],
         treeX: TREE_CENTER_X + TREE_UNIT_X,
-        treeY: 650,
+        treeY: TREE_START_Y - TREE_UNIT_Y,
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -84,7 +85,7 @@ const NODE_DEFS = [
         parents: ['basic_pulse'],
         childIds: ['regen'],
         treeX: TREE_CENTER_X - TREE_UNIT_X,
-        treeY: 650,
+        treeY: TREE_START_Y - TREE_UNIT_Y,
         effect: function () {
             resourceManager.recalcPickupRadius();
         },
@@ -105,7 +106,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: ['packet_sniffing', 'farsight'],
         treeX: 560,
-        treeY: 650,
+        treeY: TREE_START_Y - TREE_UNIT_Y,
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
         },
@@ -150,7 +151,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['regen'],
         treeX: 320,
-        treeY: 730,
+        treeY: TREE_START_Y,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -171,7 +172,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['focus'],
         treeX: 480,
-        treeY: 730,
+        treeY: TREE_START_Y,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -192,7 +193,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: ['farsight'],
         treeX: 560,
-        treeY: 730,
+        treeY: TREE_START_Y,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -211,7 +212,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: [],
         treeX: 640,
-        treeY: 690,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         effect: function () { },
     },
     {
@@ -230,14 +231,14 @@ const NODE_DEFS = [
         parents: ['integrity', 'magnet'],
         childIds: ['base_hp_boost', 'junk_data_3'],
         treeX: 240,
-        treeY: 690,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
     {
         id: 'junk_data_3',
-        name: 'SLACK BITS',
+        name: 'STRAY BITS',
         icon: 'Skillicon14_04.png',
         description: t('nodes', 'junk_data_3.desc'),
         popupText: '+1 DAMAGE',
@@ -249,7 +250,7 @@ const NODE_DEFS = [
         parents: ['regen'],
         childIds: [],
         treeX: 200,
-        treeY: 770,
+        treeY: TREE_START_Y + TREE_UNIT_Y * 0.5,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -269,7 +270,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: [],
         treeX: 400,
-        treeY: 890,
+        treeY: TREE_START_Y + TREE_UNIT_Y * 2,
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
                 neuralTree._showCryptoMineButton();
@@ -508,7 +509,7 @@ const NODE_DEFS = [
         name: 'THREAT ADAPTATION',
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'threat_response.desc'),
-        popupText: 'THREAT ADAPTATION',
+        popupText: '+10 HP (ADAPTATION)',
         popupColor: '#00ff66',
         maxLevel: 1,
         baseCost: 150,
@@ -996,7 +997,7 @@ const NODE_DEFS = [
         treeX: 200,
         treeY: 290,
         effect: function () {
-            _recalcPulseCharges();
+            upgradeDispatcher.recalcPulseCharges();
         },
     },
     {

@@ -46,9 +46,9 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
         // THREAT ADAPTATION: Heal on boss spawn
         if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
-            tower.heal(15);
+            tower.heal(10);
             const pos = tower.getPosition();
-            floatingText.show(pos.x, pos.y - 80, '+15 HP (ADAPTATION)', {
+            floatingText.show(pos.x, pos.y - 80, '+10 HP (ADAPTATION)', {
                 fontFamily: 'JetBrainsMono_Bold',
                 fontSize: 22,
                 color: '#00ff66',
@@ -60,9 +60,9 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     messageBus.subscribe('minibossSpawned', () => {
         // THREAT ADAPTATION: Heal on miniboss spawn
         if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
-            tower.heal(15);
+            tower.heal(10);
             const pos = tower.getPosition();
-            floatingText.show(pos.x, pos.y - 60, '+15 HP (ADAPTATION)', {
+            floatingText.show(pos.x, pos.y - 60, '+10 HP (ADAPTATION)', {
                 fontFamily: 'JetBrainsMono_Bold',
                 fontSize: 22,
                 color: '#00ff66',
@@ -128,9 +128,11 @@ messageBus.subscribeOnce('assetsLoaded', () => {
             shockwaveAttack.unlock();
         }
         // Recalc lightning upgrades if any were purchased
-        if (typeof _recalcLightningChains === 'function') _recalcLightningChains();
-        if (typeof _recalcLightningDamage === 'function') _recalcLightningDamage();
-        if (typeof _recalcShockwaveStats === 'function') _recalcShockwaveStats();
+        if (typeof upgradeDispatcher !== 'undefined') {
+            upgradeDispatcher.recalcLightningChains();
+            upgradeDispatcher.recalcLightningDamage();
+            upgradeDispatcher.recalcShockwaveStats();
+        }
     }
 
     // Options button (top-right corner, always visible)

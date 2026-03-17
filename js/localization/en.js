@@ -103,14 +103,14 @@ window.TRANSLATIONS.en = {
         },
         resource_gate: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
         resource_gate_2: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
-        threat_response: { name: 'THREAT ADAPTATION', desc: 'Recovery protocol. Heal up to 15 HP when a Boss or Miniboss appears.' },
+        threat_response: { name: 'THREAT ADAPTATION', desc: 'Recovery protocol. Heal up to 10 HP when a Boss or Miniboss appears.' },
         test_reveal_1: { name: 'TEST REVEAL 1', desc: 'Testing revelation.' },
         test_reveal_2: { name: 'TEST REVEAL 2', desc: 'Testing revelation.' },
         test_reveal_3: { name: 'TEST REVEAL 3', desc: 'Testing revelation.' },
         test_reveal_4: { name: 'TEST REVEAL 4', desc: 'Testing revelation.' },
         junk_data_1: { name: 'FRAGMENT SALVAGE', desc: 'Scrape the system floor for discarded bits. Instantly grants 40 DATA.' },
         junk_data_2: { name: 'STALE CACHE', desc: '+2 tower max health' },
-        junk_data_3: { name: 'SLACK BITS', desc: '+1 tower basic damage' }
+        junk_data_3: { name: 'STRAY BITS', desc: '+1 tower basic damage' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },
