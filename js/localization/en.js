@@ -165,5 +165,17 @@ window.TRANSLATIONS.en = {
         max: 'MAX',
         active: 'ACTIVE',
         swap: 'CLICK TO SWAP'
+    },
+    hud: {
+        data_title: 'DATA',
+        data_desc: 'Common resource gained from enemies. Used for basic evolutions.',
+        insight_title: 'INSIGHT',
+        insight_desc: 'Compressed experience. Used for economic upgrades.',
+        shard_title: 'SHARD',
+        shard_desc: 'Rare resource dropped by minibosses. Unlocks powerful abilities.',
+        processor_title: 'PROCESSOR',
+        processor_desc: 'High-tier salvage. Used for advanced system modifications.',
+        coin_title: 'COIN',
+        coin_desc: 'A token that can influence the physical world. Provides powerful upgrades.',
     }
 };

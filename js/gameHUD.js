@@ -107,11 +107,21 @@ const gameHUD = (() => {
             }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
 
             // Button background for upgrade phase
-            const btn = new Button({
+            let btn;
+            btn = new Button({
                 normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
                 hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
                 press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
                 disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
+                onHover: () => {
+                    let sfxclick = audio.play('click', 0.95);
+                    if (sfxclick) sfxclick.detune = Phaser.Math.Between(-150, -50);
+                    tooltipManager.show(btn.x + 50, btn.y + 17, [
+                        { text: t('hud', `${type.id}_title`), style: 'title', color: type.color },
+                        { text: t('hud', `${type.id}_desc`), style: 'normal' }
+                    ]);
+                },
+                onHoverOut: () => tooltipManager.hide()
             });
             btn.setOrigin(0.5, 0.5);
             btn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);

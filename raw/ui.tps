@@ -246,6 +246,7 @@
                 <false/>
             </struct>
             <key type="filename">ui/ui_background.png</key>
+            <key type="filename">ui/white_outline.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

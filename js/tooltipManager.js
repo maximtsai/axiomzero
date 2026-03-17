@@ -14,20 +14,24 @@
 const tooltipManager = (() => {
     const PADDING = 12;
     const LINE_GAP = 4;
-    const MAX_WIDTH = 280;
+    const MAX_WIDTH = 330;
     const DEPTH = 120000;  // above popups
 
     let bg = null;
+    let outline = null;
     let textObjects = [];
     let visible = false;
 
     // Font presets
+    const bodySize = helper.isMobileDevice() ? '24px' : '20px';
+    const titleSize = helper.isMobileDevice() ? '26px' : '22px';
+
     const FONTS = {
-        normal: { fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#cccccc' },
-        bold: { fontFamily: 'JetBrainsMono_Bold', fontSize: '16px', color: '#ffffff' },
-        title: { fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#00f5ff' },
-        warn: { fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#ff4444' },
-        ok: { fontFamily: 'JetBrainsMono_Regular', fontSize: '16px', color: '#00ff88' },
+        normal: { fontFamily: 'VCR', fontSize: bodySize, color: '#cccccc' },
+        bold: { fontFamily: 'VCR', fontSize: bodySize, color: '#ffffff' },
+        title: { fontFamily: 'VCR', fontSize: titleSize, color: '#00f5ff' },
+        warn: { fontFamily: 'VCR', fontSize: bodySize, color: '#ff4444' },
+        ok: { fontFamily: 'VCR', fontSize: bodySize, color: '#00ff88' },
     };
 
     function init() {
@@ -38,6 +42,12 @@ const tooltipManager = (() => {
             .setAlpha(0)
             .setDepth(DEPTH)
             .setScrollFactor(0);
+
+        outline = PhaserScene.add.nineslice(0, 0, 'ui', 'white_outline.png', 10, 10, 8, 8, 8, 8);
+        outline.setOrigin(0, 0)
+            .setAlpha(0)
+            .setDepth(DEPTH + 0.5)
+            .setScrollFactor(0);
     }
 
     /**
@@ -45,12 +55,14 @@ const tooltipManager = (() => {
      * @param {number} x - Screen X
      * @param {number} y - Screen Y (tooltip appears above this point by default)
      * @param {{ text: string, style?: string }[]} lines - Lines to display.
+     * @param {number} [customWidth] - Optional override width.
      */
-    function show(x, y, lines) {
+    function show(x, y, lines, customWidth) {
         hide(); // clear previous
 
         if (!lines || lines.length === 0) return;
 
+        const useWidth = customWidth || MAX_WIDTH;
         let currentY = 0;
         let maxW = 0;
 
@@ -60,11 +72,13 @@ const tooltipManager = (() => {
             const font = FONTS[line.style] || FONTS.normal;
             const t = PhaserScene.add.text(0, currentY, line.text, {
                 ...font,
-                wordWrap: { width: MAX_WIDTH - PADDING * 2 },
+                wordWrap: { width: useWidth - PADDING * 2 },
             })
                 .setOrigin(0, 0)
                 .setDepth(DEPTH + 1)
                 .setScrollFactor(0);
+
+            if (line.color) t.setColor(line.color);
 
             textObjects.push(t);
             currentY += t.height + LINE_GAP;
@@ -77,7 +91,7 @@ const tooltipManager = (() => {
 
         // Position: try above the target, flip below if off-screen
         let posX = x - bgW / 2;
-        let posY = y - bgH - 8;
+        let posY = y;
 
         // Clamp to screen bounds
         if (posX < 4) posX = 4;
@@ -87,6 +101,10 @@ const tooltipManager = (() => {
         bg.setPosition(posX, posY);
         bg.setDisplaySize(bgW, bgH);
         bg.setAlpha(0.92);
+
+        outline.setPosition(posX - 6, posY - 6);
+        outline.setSize(bgW + 12, bgH + 12);
+        outline.setAlpha(0.4);
 
         // Position text lines inside the panel
         for (let i = 0; i < textObjects.length; i++) {
@@ -107,6 +125,7 @@ const tooltipManager = (() => {
         }
         textObjects.length = 0;
         if (bg) bg.setAlpha(0);
+        if (outline) outline.setAlpha(0);
         visible = false;
     }
 

@@ -105,7 +105,7 @@ const nodeTooltip = (() => {
         if (currentNode !== node) {
             lastShowTime = Date.now();
             if (!isPurchaseRefresh) {
-                const s = audio.play('node_hover', 0.85 + Math.random() * 0.15);
+                const s = audio.play('click', 0.85 + Math.random() * 0.15);
                 if (s) s.detune = Phaser.Math.Between(-70, 70);
             }
         }
