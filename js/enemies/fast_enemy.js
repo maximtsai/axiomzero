@@ -45,6 +45,8 @@ class FastEnemy extends Enemy {
             size: 20
         });
 
+        this.setEnemyGlow('fast_glow.png');
+
         if (this.view.img) this.view.img.setTint(0xffffff);
     }
 }

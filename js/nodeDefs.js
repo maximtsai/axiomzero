@@ -559,11 +559,11 @@ const NODE_DEFS = [
     },
     {
         id: 'resource_gate',
-        name: 'RESOURCE GATE',
+        name: 'FIREWALL',
         icon: 'Skillicon14_14.png',
         description: t('nodes', 'resource_gate.desc'),
         maxLevel: 1,
-        baseCost: 100,
+        baseCost: 200,
         costType: 'data',
         parents: ['base_hp_boost'],
         childIds: ['threat_response'],
@@ -571,7 +571,7 @@ const NODE_DEFS = [
         treeY: 530,
         tooltipExtraWidth: 60,
         effect: function () {
-            resourceManager.addData(50);
+            resourceManager.addData(180);
         },
     },
     {
@@ -880,11 +880,11 @@ const NODE_DEFS = [
     },
     {
         id: 'resource_gate_2',
-        name: 'RESOURCE GATE',
+        name: 'FIREWALL',
         icon: 'Skillicon14_14.png',
         description: t('nodes', 'resource_gate_2.desc'),
         maxLevel: 1,
-        baseCost: 100,
+        baseCost: 200,
         costType: 'data',
         parents: ['packet_sniffing'],
         childIds: ['test_reveal_2'],
@@ -892,7 +892,7 @@ const NODE_DEFS = [
         treeY: 530,
         tooltipExtraWidth: 60,
         effect: function () {
-            resourceManager.addData(50);
+            resourceManager.addData(180);
         },
     },
     {

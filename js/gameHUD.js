@@ -401,6 +401,25 @@ const gameHUD = (() => {
             align: 'center'
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1);
 
+        const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'ui', 'white_line.png');
+        line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0).setScrollFactor(0);
+
+        PhaserScene.tweens.add({
+            delay: 600,
+            targets: line,
+            scaleX: 4,
+            alpha: 1,
+            duration: 600,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: line,
+                    alpha: 0.8,
+                    duration: 800,
+                });
+            }
+        });
+
         // Play reveal sound when string begins to appear
         audio.play('data_reveal', 0.8);
 
@@ -433,6 +452,8 @@ const gameHUD = (() => {
         const _transitionMessageDone = () => {
             const baseX = txt.x;
             const baseY = txt.y;
+            const lineBaseX = line.x;
+            const lineBaseY = line.y;
 
             PhaserScene.time.delayedCall(2650, () => {
                 // Glitch jitter phase — erratic shaking + alpha flicker
@@ -444,32 +465,51 @@ const gameHUD = (() => {
                     callback: () => {
                         jitterCount++;
                         // Random position offset
-                        txt.x = baseX + (Math.random() - 0.5) * 12;
-                        txt.y = baseY + (Math.random() - 0.5) * 6;
+                        const ox = (Math.random() - 0.5) * 12;
+                        const oy = (Math.random() - 0.5) * 6;
+                        txt.x = baseX + ox;
+                        txt.y = baseY + oy;
+                        line.x = lineBaseX + ox;
+                        line.y = lineBaseY + oy;
+
                         // Random alpha flicker between 0.5 and 1
-                        txt.setAlpha(0.5 + Math.random() * 0.5);
+                        const flickAlpha = 0.5 + Math.random() * 0.5;
+                        txt.setAlpha(flickAlpha);
+                        line.setAlpha(flickAlpha);
                     }
                 });
 
                 // Blink 1 — deeper alpha dip at ~180ms into jitter
                 PhaserScene.time.delayedCall(180, () => {
                     txt.setAlpha(0.3);
-                    txt.x = baseX + (Math.random() - 0.5) * 18;
+                    line.setAlpha(0.3);
+                    const ox = (Math.random() - 0.5) * 18;
+                    txt.x = baseX + ox;
+                    line.x = lineBaseX + ox;
                     PhaserScene.time.delayedCall(30, () => {
                         txt.setAlpha(0.85);
+                        line.setAlpha(0.85);
                         txt.x = baseX;
                         txt.y = baseY;
+                        line.x = lineBaseX;
+                        line.y = lineBaseY;
                     });
                 });
 
                 // Blink 2 — deeper alpha dip at ~350ms into jitter
                 PhaserScene.time.delayedCall(350, () => {
                     txt.setAlpha(0.3);
-                    txt.x = baseX + (Math.random() - 0.5) * 18;
+                    line.setAlpha(0.3);
+                    const ox = (Math.random() - 0.5) * 18;
+                    txt.x = baseX + ox;
+                    line.x = lineBaseX + ox;
                     PhaserScene.time.delayedCall(30, () => {
                         txt.setAlpha(0.85);
+                        line.setAlpha(0.85);
                         txt.x = baseX;
                         txt.y = baseY;
+                        line.x = lineBaseX;
+                        line.y = lineBaseY;
                     });
                 });
 
@@ -478,18 +518,33 @@ const gameHUD = (() => {
                     txt.x = baseX;
                     txt.y = baseY;
                     txt.setAlpha(1);
+                    line.x = lineBaseX;
+                    line.y = lineBaseY;
+                    line.setAlpha(1);
+
                     PhaserScene.time.delayedCall(400, () => {
                         txt.setOrigin(0.5, 0.5);
                         txt.x = GAME_CONSTANTS.halfWidth + 60;
                         txt.y = baseYPos; // Recenter vertically for the exit animation
                         txt.setAlpha(0.65);
                         txt.setScale(1.4, 0.8);
+
+                        line.x = GAME_CONSTANTS.halfWidth + 60;
+                        line.setAlpha(0.65);
+                        line.setScale(4.2, 0.4); // Adjusted proportional stretch
+
                         PhaserScene.time.delayedCall(50, () => {
                             txt.x = GAME_CONSTANTS.halfWidth - 50;
                             txt.setAlpha(0.45);
                             txt.setScale(3.2, 0.2);
+
+                            line.x = GAME_CONSTANTS.halfWidth - 50;
+                            line.setAlpha(0.45);
+                            line.setScale(10, 0.1);
+
                             PhaserScene.time.delayedCall(25, () => {
                                 txt.destroy();
+                                line.destroy();
                             });
                         });
                     });

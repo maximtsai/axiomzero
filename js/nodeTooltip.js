@@ -106,11 +106,7 @@ const nodeTooltip = (() => {
             lastShowTime = Date.now();
             if (!isPurchaseRefresh) {
                 const s = audio.play('node_hover', 0.95);
-                if (s) {
-                    let detune = Phaser.Math.Between(-50, 50);
-                    if (node.state === NODE_STATE.MAXED) detune -= 150;
-                    s.detune = detune;
-                }
+                if (s) s.detune = Phaser.Math.Between(-50, 50);
             }
         }
 
@@ -159,7 +155,7 @@ const nodeTooltip = (() => {
             lvT.setVisible(false);
         } else {
             lvT.setVisible(true);
-            lvT.setText(t('tooltips', 'level', node.level, node.maxLevel)).setPosition(0, currentY);
+            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY);
             currentY += lvT.height + 7;
         }
 
