@@ -144,15 +144,12 @@ const gameHUD = (() => {
                 treeGroup.add(expBarFill);
                 treeGroup.add(expText);
                 Object.values(resourceUI).forEach(res => {
-                    // Add all sprites managed by the button to the tree group
-                    if (res.btn && res.btn.imageRefs) {
-                        Object.values(res.btn.imageRefs).forEach(img => treeGroup.add(img));
-                    }
                     treeGroup.add(res.icon);
                     treeGroup.add(res.text);
                 });
             }
         }
+
 
 
         endIterationBtn = new Button({
@@ -334,8 +331,8 @@ const gameHUD = (() => {
                     ui.btn.setPos(groupX + 45, currentY);
                     ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
                 }
-                ui.icon.setVisible(true);
-                ui.text.setVisible(true);
+                ui.icon.setVisible(isUpgradePhase);
+                ui.text.setVisible(isUpgradePhase);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
                 ui.text.y = currentY - 13;
                 currentY += spacing;
@@ -346,7 +343,7 @@ const gameHUD = (() => {
             }
         });
 
-        // Tell the virtualGroup that its children have moved so they don't snap back to overlapping positions
+        // Recalculate offsets for items in the tree group (health/text)
         if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
             const treeGroup = neuralTree.getGroup();
             if (treeGroup && treeGroup.recalculateOffsets) {
