@@ -102,7 +102,7 @@ window.TRANSLATIONS.en = {
             unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
         resource_gate: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
-        resource_gate_2: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
+        resource_gate_2: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
         threat_response: { name: 'THREAT ADAPTATION', desc: 'Recovery protocol. Heal up to 10 HP when a Boss or Miniboss appears.' },
         test_reveal_1: { name: 'TEST REVEAL 1', desc: 'Testing revelation.' },
         test_reveal_2: { name: 'TEST REVEAL 2', desc: 'Testing revelation.' },

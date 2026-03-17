@@ -248,7 +248,7 @@ const nodeTooltip = (() => {
         const halfW = currentBgWidth / 2;
         const margin = 10;
         targetX = Math.max(targetX, halfW + margin);
-        targetX = Math.min(targetX, 800 - halfW - margin);
+        // targetX = Math.min(targetX, 800 - halfW - margin); // Right clamp removed per user request
 
         // TODO: if hover popup gets cut off from the top (.ie we are hovering over a node near the top of the screen), instead render it below the node.
         container.setPosition(targetX, node.btn.y - verticalOffset);

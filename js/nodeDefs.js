@@ -832,19 +832,20 @@ const NODE_DEFS = [
     },
     {
         id: 'resource_gate_2',
-        name: 'FIREWALL',
+        name: 'JUNK DATA',
         icon: 'Skillicon14_14.png',
         description: t('nodes', 'resource_gate_2.desc'),
-        maxLevel: 1,
-        baseCost: 200,
+        maxLevel: 5,
+        baseCost: 10,
         costType: 'data',
+        costScaling: 'static',
         parents: ['packet_sniffing'],
         childIds: ['test_reveal_2', 'junk_data_2'],
         treeX: gridX(3.5),
         treeY: gridY(2.5),
         tooltipExtraWidth: 60,
         effect: function () {
-            resourceManager.addData(180);
+            // No longer refunds anything
         },
     },
     {
