@@ -257,10 +257,49 @@ const gameHUD = (() => {
 
         _updateResourceLayout();
 
+        // Count up animation for currencies
+        const order = ['data', 'insight', 'shard', 'processor', 'coin'];
+        order.forEach(id => {
+            const val = _getResourceValue(id);
+            if (val >= 2) {
+                _animateCurrencyCount(id, val);
+            } else {
+                if (resourceUI[id]) resourceUI[id].text.setText(Math.floor(val));
+            }
+        });
+
         // Hide combat-only elements
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
+    }
+
+    /**
+     * Tween a currency counter from 0 to targetVal.
+     * @param {string} id - resource id
+     * @param {number} targetVal 
+     */
+    function _animateCurrencyCount(id, targetVal) {
+        const ui = resourceUI[id];
+        if (!ui || !ui.text) return;
+
+        const duration = (id === 'data') ? 1000 : (250 + Math.floor(Math.random() * 250));
+        const counter = { val: 0 };
+        ui.text.setText('0');
+
+        ui.countTween = PhaserScene.tweens.add({
+            targets: counter,
+            val: targetVal,
+            duration: duration,
+            ease: 'Quad.easeOut',
+            onUpdate: () => {
+                ui.text.setText(Math.floor(counter.val).toString());
+            },
+            onComplete: () => {
+                ui.text.setText(Math.floor(targetVal).toString());
+                ui.countTween = null;
+            }
+        });
     }
 
     function _onHealthChanged(current, max) {
@@ -299,6 +338,11 @@ const gameHUD = (() => {
 
     function _onCurrencyChanged(type, amount) {
         if (resourceUI[type]) {
+            // Stop active count-up tween if balance changes while it's running
+            if (resourceUI[type].countTween) {
+                resourceUI[type].countTween.stop();
+                resourceUI[type].countTween = null;
+            }
             resourceUI[type].text.setText(Math.floor(amount));
             needsLayoutUpdate = true;
         }
@@ -337,7 +381,10 @@ const gameHUD = (() => {
                 ui.text.y = currentY - 13;
                 currentY += spacing;
             } else {
-                if (ui.btn) ui.btn.setVisible(false);
+                if (ui.btn) {
+                    ui.btn.setVisible(false);
+                    ui.btn.setState(DISABLE);
+                }
                 ui.icon.setVisible(false);
                 ui.text.setVisible(false);
             }
@@ -378,8 +425,14 @@ const gameHUD = (() => {
     function _onUpgradePurchased() {
         // Refresh currency display labels
         Object.keys(resourceUI).forEach(id => {
+            const ui = resourceUI[id];
+            // Stop active count-up tween if user buys something
+            if (ui.countTween) {
+                ui.countTween.stop();
+                ui.countTween = null;
+            }
             const val = _getResourceValue(id);
-            resourceUI[id].text.setText(Math.floor(val));
+            ui.text.setText(Math.floor(val));
         });
         _updateResourceLayout();
     }

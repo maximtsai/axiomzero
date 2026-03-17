@@ -504,7 +504,7 @@ function _showResetConfirmPopup() {
     elements.push(popupBG);
 
     const warningText = PhaserScene.add.text(W, H - 40, t('options', 'reset_confirm_text'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#ff3366', align: 'center', stroke: '#000000', strokeThickness: 2
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#ff3366', align: 'center', stroke: '#000000', strokeThickness: 4
     }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(warningText);
 
