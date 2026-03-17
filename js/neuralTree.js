@@ -575,14 +575,15 @@ const neuralTree = (() => {
             // Hint for new players: pulse indicate the AWAKEN node
             const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
             if (awakenLevel === 0) {
-                const ind = helper.ninesliceIndicator(400 + TREE_X_OFFSET, 750, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
+                const awakenNode = nodes['awaken'];
+                const awakenX = (awakenNode ? awakenNode.treeX : 400) + TREE_X_OFFSET;
+                const awakenY = (awakenNode ? awakenNode.treeY : 730);
+                const ind = helper.ninesliceIndicator(awakenX, awakenY, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
                 ind.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
-                const indShort = helper.ninesliceIndicatorShort(400 + TREE_X_OFFSET, 750, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
+                const indShort = helper.ninesliceIndicatorShort(awakenX, awakenY, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
                 indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
                 treeGroup.add(ind);
                 treeGroup.add(indShort);
-
-
             }
         } else {
             panelBg.setAlpha(1);

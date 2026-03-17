@@ -1,100 +1,10 @@
 // nodeDefs.js — Neural Tree upgrade definitions.
 // Centralized node data for the upgrade tree.
-// Tree center X is at 400 (half of 800px panel width)
 
-/** Recalculates total cursor damage from all pulse upgrade nodes. */
-function _recalcPulseDamage() {
-    const ups = gameState.upgrades || {};
-    const ampLv = ups.pulse_damage || 0;
-    const overchargeLv = ups.overcharge || 0;
-
-    let base = 4 + 2 * ampLv + 4 * overchargeLv;
-
-    // Apply Kinetic Amplifier bonus (manual_pulse_child_1_1)
-    if (ups.manual_pulse_child_1_1) {
-        base *= 1.5;
-    }
-
-    pulseAttack.setDamage(base);
-}
-
-/** Recalculates pulse recharge interval. */
-function _recalcPulseRecharge() {
-    const ups = gameState.upgrades || {};
-    const intervalBonus = ups.manual_pulse_child_1_2 ? 0.75 : 1.0;
-    pulseAttack.setFireInterval(2000 * intervalBonus);
-}
-
-/** Recalculates total pulse size from all pulse upgrade nodes. */
-function _recalcPulseSize() {
-    const ups = gameState.upgrades || {};
-    const expansionLv = ups.pulse_expansion || 0;
-
-    // Only apply Resonance Area size bonus if it is the active selection for Duo Tier 2
-    const aoeActive = (gameState.activeShards && gameState.activeShards[2] === 'wide_pulse');
-    const aoeBonus = aoeActive ? (ups.wide_pulse || 0) : 0;
-
-    pulseAttack.setSize(100 * (1 + 0.2 * expansionLv + 0.3 * aoeBonus));
-}
-
-/** Recalculates pulse manual mode. */
-function _recalcPulseMode() {
-    const ups = gameState.upgrades || {};
-
-    // Only enable manual mode if Manual Protocol is the active selection for Duo Tier 2
-    const manualActive = (gameState.activeShards && gameState.activeShards[2] === 'manual_pulse');
-    const manualLv = manualActive ? (ups.manual_pulse || 0) : 0;
-
-    pulseAttack.setManualMode(manualLv > 0);
-    _recalcPulseCharges();
-}
-
-/** Recalculates max pulse charges. */
-function _recalcPulseCharges() {
-    const ups = gameState.upgrades || {};
-    const extraCharges = ups.manual_pulse_child_1 || 0;
-    pulseAttack.setMaxCharges(2 + extraCharges);
-}
-
-/** Recalculates lightning chain count from upgrade nodes. */
-function _recalcLightningChains() {
-    const ups = gameState.upgrades || {};
-    const chainLv = ups.lightning_chain || 0;
-    lightningAttack.setChainCount(2 + chainLv);
-}
-
-/** Recalculates lightning damage from upgrade nodes. */
-function _recalcLightningDamage() {
-    const ups = gameState.upgrades || {};
-    const boostLv = ups.lightning_boost || 0;
-    const staticLv = ups.lightning_static_charge || 0;
-    lightningAttack.setDamage(6 + 2 * boostLv);
-    lightningAttack.setStaticChargeLevel(staticLv);
-}
-
-/** Recalculates packet sniffing state. */
-function _recalcPacketSniffing() {
-    const ups = gameState.upgrades || {};
-    const hasSniffing = (ups.packet_sniffing || 0) > 0;
-    resourceManager.setPacketSniffing(hasSniffing);
-}
-
-/** Recalculates shockwave upgrades from upgrade nodes. */
-function _recalcShockwaveStats() {
-    if (typeof shockwaveAttack === 'undefined') return;
-    const ups = gameState.upgrades || {};
-    const ampLv = ups.shockwave_amplifier || 0;
-    const resLv = ups.shockwave_resonance || 0;
-    const crushLv = ups.shockwave_seismic_crush || 0;
-    shockwaveAttack.setAmplifierLevel(ampLv);
-    shockwaveAttack.setResonanceLevel(resLv);
-    shockwaveAttack.setSeismicCrushLevel(crushLv);
-}
-
-/** Recalculates threat response healing on boss spawn. */
-function _recalcThreatResponse() {
-    // Subscription handled in gameInit.js
-}
+// Tree Layout Constants
+const TREE_CENTER_X = 400; // Half of 800px panel width
+const TREE_UNIT_X = 80;
+const TREE_UNIT_Y = 80;
 
 const NODE_DEFS = [
     {
@@ -109,7 +19,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: [],
         childIds: ['basic_pulse', 'integrity', 'intensity', 'crypto_mine_unlock'],
-        treeX: 400,
+        treeX: TREE_CENTER_X,
         treeY: 730,
         effect: function () {
             tower.awaken();
@@ -133,7 +43,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['awaken'],
         childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
-        treeX: 400,
+        treeX: TREE_CENTER_X,
         treeY: 650,
         effect: function () {
             pulseAttack.unlock();
@@ -153,10 +63,10 @@ const NODE_DEFS = [
         costStep: 10,
         parents: ['basic_pulse'],
         childIds: ['pulse_expansion'],
-        treeX: 480,
+        treeX: TREE_CENTER_X + TREE_UNIT_X,
         treeY: 650,
         effect: function () {
-            _recalcPulseDamage();
+            upgradeDispatcher.recalcPulseDamage();
         },
     },
     {
@@ -173,7 +83,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['basic_pulse'],
         childIds: ['regen'],
-        treeX: 320,
+        treeX: TREE_CENTER_X - TREE_UNIT_X,
         treeY: 650,
         effect: function () {
             resourceManager.recalcPickupRadius();
@@ -197,7 +107,7 @@ const NODE_DEFS = [
         treeX: 560,
         treeY: 650,
         effect: function () {
-            _recalcPulseSize();
+            upgradeDispatcher.recalcPulseSize();
         },
     },
     {
@@ -218,7 +128,7 @@ const NODE_DEFS = [
         treeX: 320,
         treeY: 410,
         effect: function () {
-            _recalcPulseDamage();
+            upgradeDispatcher.recalcPulseDamage();
 
             if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
             gameState.unlockedNodes['armor'] = true;
@@ -691,7 +601,7 @@ const NODE_DEFS = [
         treeX: 280,
         treeY: 570,
         effect: function () {
-            _recalcLightningChains();
+            upgradeDispatcher.recalcLightningChains();
         },
     },
     {
@@ -711,7 +621,7 @@ const NODE_DEFS = [
         treeX: 280,
         treeY: 490,
         effect: function () {
-            _recalcLightningDamage();
+            upgradeDispatcher.recalcLightningDamage();
         },
     },
     {
@@ -732,7 +642,7 @@ const NODE_DEFS = [
         treeX: 200,
         treeY: 530,
         effect: function () {
-            _recalcLightningDamage();
+            upgradeDispatcher.recalcLightningDamage();
         },
     },
     {
@@ -752,7 +662,7 @@ const NODE_DEFS = [
         treeX: 520,
         treeY: 570,
         effect: function () {
-            _recalcShockwaveStats();
+            upgradeDispatcher.recalcShockwaveStats();
         },
     },
     {
@@ -772,7 +682,7 @@ const NODE_DEFS = [
         treeX: 520,
         treeY: 490,
         effect: function () {
-            _recalcShockwaveStats();
+            upgradeDispatcher.recalcShockwaveStats();
         },
     },
     {
@@ -793,7 +703,7 @@ const NODE_DEFS = [
         treeX: 600,
         treeY: 530,
         effect: function () {
-            _recalcShockwaveStats();
+            upgradeDispatcher.recalcShockwaveStats();
         },
     },
     {
@@ -894,7 +804,7 @@ const NODE_DEFS = [
         treeX: 640,
         treeY: 610,
         effect: function () {
-            _recalcPacketSniffing();
+            upgradeDispatcher.recalcPacketSniffing();
         },
     },
     {
@@ -1042,8 +952,8 @@ const NODE_DEFS = [
         treeX: 290,
         treeY: 290,
         effect: function () {
-            _recalcPulseMode();
-            _recalcPulseSize();
+            upgradeDispatcher.recalcPulseMode();
+            upgradeDispatcher.recalcPulseSize();
         },
     },
     {
@@ -1066,8 +976,8 @@ const NODE_DEFS = [
         treeX: 350,
         treeY: 290,
         effect: function () {
-            _recalcPulseSize();
-            _recalcPulseMode();
+            upgradeDispatcher.recalcPulseSize();
+            upgradeDispatcher.recalcPulseMode();
         },
     },
     {
@@ -1103,7 +1013,7 @@ const NODE_DEFS = [
         treeX: 120,
         treeY: 250,
         effect: function () {
-            _recalcPulseDamage();
+            upgradeDispatcher.recalcPulseDamage();
         },
     },
     {
@@ -1120,7 +1030,7 @@ const NODE_DEFS = [
         treeX: 120,
         treeY: 330,
         effect: function () {
-            _recalcPulseRecharge();
+            upgradeDispatcher.recalcPulseRecharge();
         },
     },
     {
