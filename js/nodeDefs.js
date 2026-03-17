@@ -105,7 +105,7 @@ const NODE_DEFS = [
         parents: ['pulse_damage'],
         requiresMaxParent: true,
         childIds: ['packet_sniffing', 'farsight'],
-        treeX: 560,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 2,
         treeY: TREE_START_Y - TREE_UNIT_Y,
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
@@ -126,8 +126,8 @@ const NODE_DEFS = [
         parents: ['armor', 'data_compression'],
         childIds: ['placeholder_duo_2'],
 
-        treeX: 320,
-        treeY: 410,
+        treeX: TREE_CENTER_X - TREE_UNIT_X,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
 
@@ -150,7 +150,7 @@ const NODE_DEFS = [
         costStepScaling: 4,
         parents: ['awaken'],
         childIds: ['regen'],
-        treeX: 320,
+        treeX: TREE_CENTER_X - TREE_UNIT_X,
         treeY: TREE_START_Y,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -171,7 +171,7 @@ const NODE_DEFS = [
         costStepScaling: 5,
         parents: ['awaken'],
         childIds: ['focus'],
-        treeX: 480,
+        treeX: TREE_CENTER_X + TREE_UNIT_X,
         treeY: TREE_START_Y,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -211,7 +211,7 @@ const NODE_DEFS = [
         parents: ['focus', 'pulse_expansion'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: 640,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
         treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         effect: function () { },
     },
@@ -230,7 +230,7 @@ const NODE_DEFS = [
         costStepScaling: 10,
         parents: ['integrity', 'magnet'],
         childIds: ['base_hp_boost', 'junk_data_3'],
-        treeX: 240,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 2,
         treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -249,7 +249,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['regen'],
         childIds: [],
-        treeX: 200,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
         treeY: TREE_START_Y + TREE_UNIT_Y * 0.5,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
@@ -292,8 +292,8 @@ const NODE_DEFS = [
         parents: ['regen'],
         childIds: ['lore_1', 'resource_gate'],
 
-        treeX: 160,
-        treeY: 610,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -309,8 +309,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['base_hp_boost'],
         childIds: ['lore_2'],
-        treeX: 120,
-        treeY: 690,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_1');
@@ -330,8 +330,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_1'],
         childIds: ['lore_3'],
-        treeX: 40,
-        treeY: 690,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
@@ -351,8 +351,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_2'],
         childIds: ['lore_4'],
-        treeX: 40,
-        treeY: 610,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
@@ -372,8 +372,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_3'],
         childIds: ['lore_5'],
-        treeX: 40,
-        treeY: 530,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_4');
@@ -393,8 +393,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_4'],
         childIds: ['lore_6'],
-        treeX: 40,
-        treeY: 450,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_5');
@@ -414,8 +414,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_5'],
         childIds: ['lore_7'],
-        treeX: 40,
-        treeY: 370,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_6');
@@ -435,8 +435,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_6'],
         childIds: ['lore_8'],
-        treeX: 40,
-        treeY: 290,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_7');
@@ -456,8 +456,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_7'],
         childIds: ['lore_9'],
-        treeX: 40,
-        treeY: 210,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_8');
@@ -477,8 +477,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_8'],
         childIds: [],
-        treeX: 40,
-        treeY: 130,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 7.5,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_9');
@@ -497,8 +497,8 @@ const NODE_DEFS = [
         costType: 'data',
         parents: ['base_hp_boost'],
         childIds: ['threat_response', 'junk_data_1'],
-        treeX: 120,
-        treeY: 530,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(180);
@@ -517,8 +517,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resource_gate'],
         childIds: ['armor'],
-        treeX: 160,
-        treeY: 450,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -530,8 +530,8 @@ const NODE_DEFS = [
         monitorsDuoTier: 1,
         childIds: ['data_compression'],
 
-        treeX: 400,
-        treeY: 560,
+        treeX: TREE_CENTER_X,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.125, // Mid-point adjustment (non-clean)
         effect: function () { },
     },
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
@@ -553,8 +553,8 @@ const NODE_DEFS = [
         duoBoxTier: 1,
         shardId: 'lightning_weapon',
         duoSiblingId: 'shockwave_weapon',
-        treeX: 370,
-        treeY: 530,
+        treeX: TREE_CENTER_X - 30, // Symmetric Duo offset (non-clean)
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         effect: function () {
             lightningAttack.unlock();
             shockwaveAttack.lock();
@@ -578,8 +578,8 @@ const NODE_DEFS = [
         duoBoxTier: 1,
         shardId: 'shockwave_weapon',
         duoSiblingId: 'lightning_weapon',
-        treeX: 430,
-        treeY: 530,
+        treeX: TREE_CENTER_X + 30, // Symmetric Duo offset (non-clean)
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         effect: function () {
             shockwaveAttack.unlock();
             lightningAttack.lock();
@@ -599,8 +599,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
-        treeX: 280,
-        treeY: 570,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 1.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2,
         effect: function () {
             upgradeDispatcher.recalcLightningChains();
         },
@@ -619,8 +619,8 @@ const NODE_DEFS = [
         costStep: 30,
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
-        treeX: 280,
-        treeY: 490,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 1.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3,
         effect: function () {
             upgradeDispatcher.recalcLightningDamage();
         },
@@ -640,8 +640,8 @@ const NODE_DEFS = [
         parents: ['lightning_boost', 'lightning_chain'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: 200,
-        treeY: 530,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         effect: function () {
             upgradeDispatcher.recalcLightningDamage();
         },
@@ -660,8 +660,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
-        treeX: 520,
-        treeY: 570,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 1.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2,
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -680,8 +680,8 @@ const NODE_DEFS = [
         costStep: 30,
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
-        treeX: 520,
-        treeY: 490,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 1.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3,
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -701,8 +701,8 @@ const NODE_DEFS = [
         parents: ['shockwave_amplifier', 'shockwave_resonance'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: 600,
-        treeY: 530,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 2.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -722,8 +722,8 @@ const NODE_DEFS = [
         parents: ['threat_response'],
         childIds: ['overcharge'],
 
-        treeX: 240,
-        treeY: 410,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 2,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -742,8 +742,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['data_compression'],
         childIds: ['prismatic_array'],
-        treeX: 480,
-        treeY: 410,
+        treeX: TREE_CENTER_X + TREE_UNIT_X,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -762,8 +762,8 @@ const NODE_DEFS = [
         costStep: 50,
         parents: ['overclock'],
         childIds: [],
-        treeX: 560,
-        treeY: 410,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 2,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -782,8 +782,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['placeholder_duo_1'],
         childIds: ['overcharge', 'overclock'],
-        treeX: 400,
-        treeY: 410,
+        treeX: TREE_CENTER_X,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
         effect: function () {
             if (!gameState.revealedNodes) gameState.revealedNodes = {};
             gameState.revealedNodes['armor'] = true;
@@ -802,8 +802,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['pulse_expansion'],
         childIds: ['resource_gate_2', 'test_reveal_1'],
-        treeX: 640,
-        treeY: 610,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
         effect: function () {
             upgradeDispatcher.recalcPacketSniffing();
         },
@@ -818,8 +818,8 @@ const NODE_DEFS = [
         costType: 'data',
         parents: ['packet_sniffing'],
         childIds: ['test_reveal_2', 'junk_data_2'],
-        treeX: 680,
-        treeY: 530,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(180);
@@ -836,8 +836,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['packet_sniffing'],
         childIds: [],
-        treeX: 720,
-        treeY: 610,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 4,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
         effect: function () { },
     },
     {
@@ -851,8 +851,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resource_gate_2'],
         childIds: ['test_reveal_3'],
-        treeX: 640,
-        treeY: 450,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
         effect: function () { },
     },
     {
@@ -860,18 +860,18 @@ const NODE_DEFS = [
         name: 'FRAGMENT SALVAGE',
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'junk_data_1.desc'),
-        popupText: '+40 DATA RECOVERED',
+        popupText: '+15 DATA RECOVERED',
         popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
-        maxLevel: 1,
+        maxLevel: 10,
         baseCost: 10,
         costType: 'data',
         costScaling: 'static',
         parents: ['resource_gate'],
         childIds: [],
-        treeX: 80,
-        treeY: 450,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 4,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
         effect: function () {
-            resourceManager.addData(40);
+            resourceManager.addData(15);
         },
     },
     {
@@ -887,8 +887,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resource_gate_2'],
         childIds: [],
-        treeX: 720,
-        treeY: 450,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 4,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -904,8 +904,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['test_reveal_2'],
         childIds: ['test_reveal_4'],
-        treeX: 680,
-        treeY: 370,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 4.5,
         effect: function () { },
     },
     {
@@ -919,8 +919,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['test_reveal_3'],
         childIds: [],
-        treeX: 680,
-        treeY: 290,
+        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
         effect: function () { },
     },
     {
@@ -929,8 +929,8 @@ const NODE_DEFS = [
         parents: ['overcharge'],
         monitorsDuoTier: 2,
         childIds: ['manual_pulse', 'wide_pulse'],
-        treeX: 320,
-        treeY: 320,
+        treeX: TREE_CENTER_X - TREE_UNIT_X,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.125, // Mid-point adjustment (non-clean)
         effect: function () { },
     },
     {
@@ -950,8 +950,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'manual_pulse',
         duoSiblingId: 'wide_pulse',
-        treeX: 290,
-        treeY: 290,
+        treeX: (TREE_CENTER_X - TREE_UNIT_X) - 30, // Symmetric Duo offset (non-clean)
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
         effect: function () {
             upgradeDispatcher.recalcPulseMode();
             upgradeDispatcher.recalcPulseSize();
@@ -974,8 +974,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'wide_pulse',
         duoSiblingId: 'manual_pulse',
-        treeX: 350,
-        treeY: 290,
+        treeX: (TREE_CENTER_X - TREE_UNIT_X) + 30, // Symmetric Duo offset (non-clean)
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
             upgradeDispatcher.recalcPulseMode();
@@ -994,8 +994,8 @@ const NODE_DEFS = [
         costStepScaling: 20,
         parents: ['manual_pulse'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
-        treeX: 200,
-        treeY: 290,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
         effect: function () {
             upgradeDispatcher.recalcPulseCharges();
         },
@@ -1011,8 +1011,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['manual_pulse_child_1'],
         childIds: [],
-        treeX: 120,
-        treeY: 250,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 6,
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1028,8 +1028,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['manual_pulse_child_1'],
         childIds: [],
-        treeX: 120,
-        treeY: 330,
+        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
+        treeY: TREE_START_Y - TREE_UNIT_Y * 5,
         effect: function () {
             upgradeDispatcher.recalcPulseRecharge();
         },
@@ -1044,8 +1044,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: 310,
-        treeY: 210,
+        treeX: (TREE_CENTER_X - TREE_UNIT_X) - 10, // Non-clean
+        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
         effect: function () { },
     },
     {
@@ -1058,8 +1058,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: 390,
-        treeY: 210,
+        treeX: (TREE_CENTER_X - TREE_UNIT_X) + 70, // Non-clean
+        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
         effect: function () { },
     },
 ];
