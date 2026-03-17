@@ -44,7 +44,7 @@ class LoadingScreen {
                     this._bar.scaleX = (GAME_CONSTANTS.LOADING_BAR_WIDTH / 2) * progress;
                 }
                 if (statusText) {
-                    this._text.setText('Loading... (' + statusText + ')');
+                    this._text.setText(t('loading_screen', 'status', statusText));
                 }
             },
             () => { this._onSlowWarning(); },
@@ -74,7 +74,7 @@ class LoadingScreen {
             .setScale(0.5, barH / 2)
             .setDepth(2);
 
-        this._text = scene.add.text(cx, cy - 25, 'Loading...', {
+        this._text = scene.add.text(cx, cy - 25, t('ui', 'loading'), {
             fontFamily: 'Times New Roman',
             fontSize: 29,
             color: '#ffffff',
@@ -100,11 +100,11 @@ class LoadingScreen {
     }
 
     _onSlowWarning() {
-        if (this._text) this._text.setText('Slow loading detected');
+        if (this._text) this._text.setText(t('loading_screen', 'slow'));
     }
 
     _onTimeoutReached(forceFinish) {
-        if (this._text) this._text.setText('Load error, run game anyways?');
+        if (this._text) this._text.setText(t('loading_screen', 'error'));
         this._showRunAnywaysButton(forceFinish);
     }
 
@@ -119,7 +119,7 @@ class LoadingScreen {
             .setDepth(3)
             .setInteractive({ useHandCursor: true });
 
-        this._runBtnText = scene.add.text(cx, btnY, 'RUN ANYWAYS', {
+        this._runBtnText = scene.add.text(cx, btnY, t('loading_screen', 'run_anyways'), {
             fontFamily: 'Times New Roman',
             fontSize: 24,
             color: '#ffffff',
@@ -138,7 +138,7 @@ class LoadingScreen {
         if (this._runBtnBg) { this._runBtnBg.destroy(); this._runBtnBg = null; }
         if (this._runBtnText) { this._runBtnText.destroy(); this._runBtnText = null; }
         if (this._text) {
-            this._text.setText('Done');
+            this._text.setText(t('ui', 'done'));
             PhaserScene.tweens.add({
                 targets: this._text,
                 alpha: 0,

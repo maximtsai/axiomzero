@@ -64,7 +64,7 @@ const nodeTooltip = (() => {
         container.add(lvT);
 
         goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 26);
-        maxT = PhaserScene.add.text(0, 0, 'MAX', {
+        maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'VCR',
             fontSize: '22px',
             color: '#ffffff',
@@ -159,7 +159,7 @@ const nodeTooltip = (() => {
             lvT.setVisible(false);
         } else {
             lvT.setVisible(true);
-            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY);
+            lvT.setText(t('tooltips', 'level', node.level, node.maxLevel)).setPosition(0, currentY);
             currentY += lvT.height + 7;
         }
 
@@ -171,7 +171,7 @@ const nodeTooltip = (() => {
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 13);
             maxT.setVisible(true).setPosition(0, currentY + 13);
-            maxT.setText(isThisNodeActive ? 'ACTIVE' : 'MAX');
+            maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
             currentY += 26;
@@ -181,7 +181,7 @@ const nodeTooltip = (() => {
             costBg.setVisible(true).setPosition(0, currentY + 13);
             costBg.setTexture('pixels', 'dark_green_pixel.png');
             costT.setVisible(true).setPosition(0, currentY + 13);
-            costT.setText('CLICK TO SWAP');
+            costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
             currentY += 26;
         } else {

@@ -31,7 +31,7 @@ const cryptoMine = (() => {
         popupBg.setDepth(depth + 2);
         popupBg.setScrollFactor(0);
 
-        titleText = PhaserScene.add.text(cx - width / 2 + 30, cy - height / 2 + 20, '// CRYPTO MINE', {
+        titleText = PhaserScene.add.text(cx - width / 2 + 30, cy - height / 2 + 20, t('ui', 'crypto_mine'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '26px',
             color: '#ff9500',

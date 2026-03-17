@@ -169,7 +169,7 @@ const gameHUD = (() => {
             },
         });
         endIterationBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        endIterationBtn.addText('END ITERATION', {
+        endIterationBtn.addText(t('ui', 'end_iteration'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: helper.isMobileDevice() ? '18px' : '19px',
             color: '#ffffff',

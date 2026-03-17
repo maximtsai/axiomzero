@@ -33,7 +33,7 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 125, 'ITERATION COMPLETE', {
+        titleText = PhaserScene.add.text(cx, cy - 125, t('results', 'iteration_complete'), {
             fontFamily: 'Michroma',
             fontSize: '36px',
             color: '#00f5ff',
@@ -47,7 +47,7 @@ const iterationOverScreen = (() => {
         const fullWidth = titleText.width;
         titleText.setOrigin(0, 0.5);
         titleText.setX(cx - fullWidth / 2);
-        titleText.fullText = 'ITERATION COMPLETE';
+        titleText.fullText = t('results', 'iteration_complete');
         titleText.setText('');
 
         // Acquired resources
@@ -105,7 +105,7 @@ const iterationOverScreen = (() => {
             onMouseUp: _onUpgradesClicked,
         });
         upgradesBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        upgradesBtn.addText('UPGRADES', {
+        upgradesBtn.addText(t('ui', 'upgrades'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '25px',
             color: '#ffffff',
@@ -138,7 +138,7 @@ const iterationOverScreen = (() => {
             onMouseUp: _onRetryClicked,
         });
         retryBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        retryBtn.addText('RETRY', {
+        retryBtn.addText(t('ui', 'retry'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '25px',
             color: '#ffffff',
@@ -165,10 +165,10 @@ const iterationOverScreen = (() => {
         retryBtn.setState(NORMAL);
 
         if (isBossKill) {
-            titleText.fullText = 'BOSS DEFEATED';
+            titleText.fullText = t('results', 'boss_defeated');
             audio.play('victory', 1.0, false);
         } else {
-            titleText.fullText = 'ITERATION COMPLETE';
+            titleText.fullText = t('results', 'iteration_complete');
         }
 
         const cx = GAME_CONSTANTS.halfWidth;

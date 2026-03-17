@@ -12,7 +12,10 @@ window.TRANSLATIONS.en = {
         retry: 'RETRY',
         upgrades: 'UPGRADES',
         end_iteration: 'END ITERATION',
-        exp_percent: 'EXP {0}%',
+        neural_tree: 'NEURAL TREE',
+        deploy: 'DEPLOY',
+        mine: 'MINE',
+        crypto_mine: '// CRYPTO MINE',
         done: 'Done',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL'
@@ -146,11 +149,6 @@ window.TRANSLATIONS.en = {
     results: {
         iteration_complete: 'ITERATION COMPLETE',
         boss_defeated: 'BOSS DEFEATED',
-        no_resources: 'no resources',
-        data_collected: '◈ DATA collected: {0}',
-        insight_gained: '⦵ INSIGHT gained: {0}',
-        shards_found: '♦ SHARDS found: {0}',
-        processors_salvaged: '■ PROCESSORS salvaged: {0}',
         anomaly_detected: 'SYSTEM ANOMALY DETECTED'
     },
     loading_screen: {

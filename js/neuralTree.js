@@ -258,7 +258,7 @@ const neuralTree = (() => {
         treeGroup.add(dragSurface);
 
         // Title
-        titleText = PhaserScene.add.text(TREE_CENTER_X, 48, 'NEURAL TREE', {
+        titleText = PhaserScene.add.text(TREE_CENTER_X, 48, t('ui', 'neural_tree'), {
             fontFamily: 'Michroma',
             fontSize: '28px',
             color: '#00f5ff',
@@ -333,7 +333,7 @@ const neuralTree = (() => {
             onMouseUp: _onDeployClicked,
         });
         deployBtn.setScale(helper.isMobileDevice() ? 0.95 : 0.9, helper.isMobileDevice() ? 1.0 : 0.9);
-        deployBtn.addText('DEPLOY', {
+        deployBtn.addText(t('ui', 'deploy'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '25px',
             color: '#ffffff',
@@ -374,7 +374,7 @@ const neuralTree = (() => {
             },
         });
         cryptoMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        cryptoMineBtn.addText('MINE', {
+        cryptoMineBtn.addText(t('ui', 'mine'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '21px',
             color: '#ff9500',

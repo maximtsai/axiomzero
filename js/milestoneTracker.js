@@ -18,16 +18,16 @@ const milestoneTracker = (() => {
     // ── Milestone definitions ────────────────────────────────────────────
     // Each milestone: { id, name, description, statKey, target, reward: {type, amount} }
     const milestones = [
-        { id: 'kill_100', name: 'First Hundred', description: 'Kill 100 enemies', statKey: 'totalKills', target: 100, reward: { type: 'data', amount: 50 } },
-        { id: 'kill_500', name: 'Exterminator', description: 'Kill 500 enemies', statKey: 'totalKills', target: 500, reward: { type: 'data', amount: 200 } },
-        { id: 'kill_2000', name: 'Annihilator', description: 'Kill 2000 enemies', statKey: 'totalKills', target: 2000, reward: { type: 'insight', amount: 2 } },
-        { id: 'data_1000', name: 'Data Hoarder', description: 'Collect 1,000 DATA total', statKey: 'totalDataCollected', target: 1000, reward: { type: 'data', amount: 100 } },
-        { id: 'data_10000', name: 'Data Vault', description: 'Collect 10,000 DATA total', statKey: 'totalDataCollected', target: 10000, reward: { type: 'insight', amount: 3 } },
-        { id: 'waves_10', name: 'Veteran', description: 'Complete 10 waves', statKey: 'totalWavesCompleted', target: 10, reward: { type: 'data', amount: 75 } },
-        { id: 'waves_50', name: 'Seasoned', description: 'Complete 50 waves', statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 } },
-        { id: 'nodes_5', name: 'Branching Out', description: 'Purchase 5 nodes', statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 } },
-        { id: 'nodes_15', name: 'Neural Network', description: 'Purchase 15 nodes', statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 } },
-        { id: 'boss_1', name: 'System Override', description: 'Defeat a boss', statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
+        { id: 'kill_100', name: t('milestones', 'kill_100.name'), description: t('milestones', 'kill_100.desc'), statKey: 'totalKills', target: 100, reward: { type: 'data', amount: 50 } },
+        { id: 'kill_500', name: t('milestones', 'kill_500.name'), description: t('milestones', 'kill_500.desc'), statKey: 'totalKills', target: 500, reward: { type: 'data', amount: 200 } },
+        { id: 'kill_2000', name: t('milestones', 'kill_2000.name'), description: t('milestones', 'kill_2000.desc'), statKey: 'totalKills', target: 2000, reward: { type: 'insight', amount: 2 } },
+        { id: 'data_1000', name: t('milestones', 'data_1000.name'), description: t('milestones', 'data_1000.desc'), statKey: 'totalDataCollected', target: 1000, reward: { type: 'data', amount: 100 } },
+        { id: 'data_10000', name: t('milestones', 'data_10000.name'), description: t('milestones', 'data_10000.desc'), statKey: 'totalDataCollected', target: 10000, reward: { type: 'insight', amount: 3 } },
+        { id: 'waves_10', name: t('milestones', 'waves_10.name'), description: t('milestones', 'waves_10.desc'), statKey: 'totalWavesCompleted', target: 10, reward: { type: 'data', amount: 75 } },
+        { id: 'waves_50', name: t('milestones', 'waves_50.name'), description: t('milestones', 'waves_50.desc'), statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 } },
+        { id: 'nodes_5', name: t('milestones', 'nodes_5.name'), description: t('milestones', 'nodes_5.desc'), statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 } },
+        { id: 'nodes_15', name: t('milestones', 'nodes_15.name'), description: t('milestones', 'nodes_15.desc'), statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 } },
+        { id: 'boss_1', name: t('milestones', 'boss_1.name'), description: t('milestones', 'boss_1.desc'), statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
     ];
 
     // ── Wave timing ──────────────────────────────────────────────────────
