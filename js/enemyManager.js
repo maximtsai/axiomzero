@@ -600,7 +600,8 @@ const enemyManager = (() => {
         const died = enemy.takeDamage(amount);
 
         // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
-        const finalAmount = enemy.lastDamageAmount !== undefined ? enemy.lastDamageAmount : Math.round(amount);
+        // User requested visual numbers always round down
+        const finalAmount = Math.floor(enemy.lastDamageAmount !== undefined ? enemy.lastDamageAmount : amount);
         const isProtected = enemy.lastDamageWasProtected || false;
 
         // Color is HOSTILE (pink) normally, or grey-red if protected
@@ -611,6 +612,8 @@ const enemyManager = (() => {
                 fontFamily: 'VCR',
                 fontSize: 28,
                 color: textColor,
+                stroke: '#330000',
+                strokeThickness: 2,
                 depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
                 duration: 1000,
             });

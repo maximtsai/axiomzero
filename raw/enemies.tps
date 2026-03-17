@@ -320,6 +320,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">enemies/explosion_ray_thin.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>240,42,480,84</rect>
+                <key>scale9Paddings</key>
+                <rect>240,42,480,84</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">enemies/fast_enemy_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

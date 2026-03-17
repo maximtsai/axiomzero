@@ -293,7 +293,7 @@ const resourceManager = (() => {
         if (amount > 0 && currentPhase === GAME_CONSTANTS.PHASE_COMBAT) {
             sessionData += amount;
         }
-        
+
         messageBus.publish('currencyChanged', 'data', gameState.data, amount);
     }
 
@@ -423,7 +423,7 @@ const resourceManager = (() => {
             d.x = d.img.x;
             d.y = d.img.y;
             d.flying = true;
-            d.inertia = 0;
+            d.inertia = Math.random() * 0.35 - 0.3;
 
             flyingDrops.push(d);
             activeDrops.splice(i, 1);

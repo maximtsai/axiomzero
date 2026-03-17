@@ -23,7 +23,9 @@ const floatingText = (() => {
         t._cachedStyles = {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '22px',
-            color: '#ffffff'
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 0
         };
         return t;
     }
@@ -43,6 +45,8 @@ const floatingText = (() => {
         const fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
         const fontFamily = opts.fontFamily || 'JetBrainsMono_Regular';
         const color = opts.color || '#ffffff';
+        const stroke = opts.stroke || '#000000';
+        const strokeThickness = opts.strokeThickness !== undefined ? opts.strokeThickness : 0;
         const depth = opts.depth !== undefined ? opts.depth : 9999;
         const duration = opts.duration !== undefined ? opts.duration : 1200;
 
@@ -53,12 +57,16 @@ const floatingText = (() => {
         const fontStr = fontSize + 'px';
         if (t._cachedStyles.fontFamily !== fontFamily ||
             t._cachedStyles.fontSize !== fontStr ||
-            t._cachedStyles.color !== color) {
+            t._cachedStyles.color !== color ||
+            t._cachedStyles.stroke !== stroke ||
+            t._cachedStyles.strokeThickness !== strokeThickness) {
 
-            t.setStyle({ fontFamily, fontSize: fontStr, color });
+            t.setStyle({ fontFamily, fontSize: fontStr, color, stroke, strokeThickness });
             t._cachedStyles.fontFamily = fontFamily;
             t._cachedStyles.fontSize = fontStr;
             t._cachedStyles.color = color;
+            t._cachedStyles.stroke = stroke;
+            t._cachedStyles.strokeThickness = strokeThickness;
         }
 
         t.setPosition(x, y);

@@ -50,7 +50,7 @@ const customEmitters = (() => {
         (sprite) => {
             sprite.setActive(false);
             sprite.setVisible(false);
-            sprite.setScale(1);
+            sprite.setScale(0.5);
             sprite.setAlpha(1);
             sprite.setRotation(0);
         },
@@ -376,8 +376,8 @@ const customEmitters = (() => {
     }
 
     function createBossExplosionRays(x, y, baseDepth) {
-        const count = Phaser.Math.Between(4, 5);
-        const minGap = 0.5; // radians
+        const count = Phaser.Math.Between(5, 6);
+        const minGap = 0.4; // radians
         const placedAngles = [];
 
         for (let i = 0; i < count; i++) {
@@ -402,8 +402,14 @@ const customEmitters = (() => {
             placedAngles.push(angle);
 
             ray.setPosition(x, y);
+
+            // 50% chance to use thin ray
+            const rayFrame = Math.random() < 0.5 ? 'explosion_ray.png' : 'explosion_ray_thin.png';
+            ray.setFrame(rayFrame);
             ray.setOrigin(0, 0.5);
-            ray.setScale(1);
+
+            // Halve scales: start 0.5, end 1.0 (previously start 1.0, end 2.0)
+            ray.setScale(0.5);
             ray.setRotation(angle);
             ray.setDepth(baseDepth + 5);
             ray.setAlpha(0.5);
@@ -412,8 +418,8 @@ const customEmitters = (() => {
 
             PhaserScene.tweens.add({
                 targets: ray,
-                scaleX: 2,
-                scaleY: 2,
+                scaleX: 1.0,
+                scaleY: 1.0,
                 duration: 500,
                 ease: 'Cubic.easeOut'
             });

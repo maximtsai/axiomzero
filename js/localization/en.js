@@ -110,7 +110,7 @@ window.TRANSLATIONS.en = {
         test_reveal_4: { name: 'TEST REVEAL 4', desc: 'Testing revelation.' },
         junk_data_1: { name: 'FRAGMENT SALVAGE', desc: 'Scrape the system floor for discarded bits. Instantly grants 15 DATA.' },
         junk_data_2: { name: 'STALE CACHE', desc: '+0.2 tower max health' },
-        junk_data_3: { name: 'STRAY BITS', desc: '+1 tower basic damage' }
+        junk_data_3: { name: 'STRAY BITS', desc: '+0.2 tower basic damage' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },
@@ -168,7 +168,7 @@ window.TRANSLATIONS.en = {
     },
     hud: {
         data_title: 'DATA',
-        data_desc: 'Common resource gained from enemies. Used for basic evolutions.',
+        data_desc: 'Common resource gained from enemies. Used for basic upgrades.',
         insight_title: 'INSIGHT',
         insight_desc: 'Compressed experience. Used for economic upgrades.',
         shard_title: 'SHARD',

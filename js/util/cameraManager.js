@@ -10,9 +10,13 @@
 const cameraManager = (() => {
     let camera = null;
     let sliding = false;
+    let paused = false;
 
     function init() {
         camera = PhaserScene.cameras.main;
+
+        messageBus.subscribe('gamePaused', () => { paused = true; });
+        messageBus.subscribe('gameResumed', () => { paused = false; });
     }
 
     /**
@@ -53,7 +57,7 @@ const cameraManager = (() => {
      * @param {number} [intensity=0.01] - Shake intensity (0–1).
      */
     function shake(duration = 150, intensity = 0.01) {
-        if (!camera) return;
+        if (!camera || paused) return;
         camera.shake(duration, intensity);
     }
 
