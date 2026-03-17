@@ -24,6 +24,7 @@ const resourceManager = (() => {
     let sessionShards = 0;
     let sessionProcessors = 0;
     let sessionCoins = 0;
+    let sessionSniffedData = 0;
 
     let isPacketSniffingActive = false;
     let sniffTimer = 0;
@@ -340,6 +341,7 @@ const resourceManager = (() => {
     function getSessionShards() { return sessionShards; }
     function getSessionProcessors() { return sessionProcessors; }
     function getSessionCoins() { return sessionCoins; }
+    function getSessionSniffedData() { return sessionSniffedData; }
 
     function resetSession() {
         sessionData = 0;
@@ -347,6 +349,7 @@ const resourceManager = (() => {
         sessionShards = 0;
         sessionProcessors = 0;
         sessionCoins = 0;
+        sessionSniffedData = 0;
         totalDropsSpawned = 0;
         shardIsFlying = false;
     }
@@ -443,6 +446,7 @@ const resourceManager = (() => {
             sniffTimer += delta;
             if (sniffTimer >= 2000) {
                 addData(1);
+                sessionSniffedData += 1;
                 sniffTimer -= 2000;
             }
         }
@@ -636,7 +640,7 @@ const resourceManager = (() => {
         init, spawnDataDrop, spawnShardDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
         getData, getInsight, getShards, getProcessors, getCoins,
         canAfford, spend, // Added for cleaner spending logic
-        getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
+        getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins, getSessionSniffedData,
         resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
         setPacketSniffing: (active) => { isPacketSniffingActive = active; }
     };

@@ -56,6 +56,7 @@ const neuralTree = (() => {
         messageBus.subscribe('towerSpawned', _onTowerSpawned);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
+        messageBus.subscribe('node_purchase_feedback', _onNodePurchaseFeedback);
 
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
@@ -766,6 +767,44 @@ const neuralTree = (() => {
     function _onUpgradePurchased() {
         _refreshAllNodes();
         _updateLines();
+    }
+
+    function _onNodePurchaseFeedback(data) {
+        // 1. Audio feedback (Decoupled §5)
+        if (data.isLore) {
+            audio.play('flip3', 1.6).detune = -100 + Math.random() * 200;
+        } else {
+            const s = audio.play('upgrade', 1.35);
+            if (s) {
+                if (data.maxLevel === 1) {
+                    s.detune = 200;
+                } else {
+                    s.detune = (data.level - data.maxLevel) * 100 + 200;
+                }
+            }
+            if (data.isMaxed) {
+                audio.play('upgrade_max', 0.45 + Math.random() * 0.07);
+            }
+        }
+
+        // 2. Floating text popup
+        if (data.popupText) {
+            const pos = tower.getPosition();
+            floatingText.show(
+                pos.x + (Math.random() - 0.5) * 100,
+                pos.y + (Math.random() - 0.5) * 100,
+                data.popupText,
+                { fontFamily: 'JetBrainsMono_Bold', color: data.popupColor, fontSize: 24 }
+            );
+        }
+
+        // 3. Purchase pulses
+        playPurchasePulse(data.x, data.y + 1, data.isMaxed);
+
+        if (data.isDuoBox) {
+            const node = nodes[data.id];
+            if (node && node._playDuoPulse) node._playDuoPulse();
+        }
     }
 
     function _onDeployClicked() {

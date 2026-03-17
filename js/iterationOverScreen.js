@@ -5,6 +5,7 @@ const iterationOverScreen = (() => {
     let overlay = null;
     let titleText = null;
     let dataText = null;
+    let sniffedDataText = null;
     let insightText = null;
     let shardText = null;
     let processorText = null;
@@ -54,6 +55,13 @@ const iterationOverScreen = (() => {
         dataText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '24px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1);
+
+        sniffedDataText = PhaserScene.add.text(cx, 0, '', {
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '18px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -176,6 +184,7 @@ const iterationOverScreen = (() => {
 
         // Hide all initially
         dataText.setVisible(false);
+        sniffedDataText.setVisible(false);
         insightText.setVisible(false);
         shardText.setVisible(false);
         processorText.setVisible(false);
@@ -191,6 +200,13 @@ const iterationOverScreen = (() => {
                 dataText.setText('\u25C8 DATA collected: ' + sessionData);
                 dataText.setVisible(true);
                 activeTexts.push(dataText);
+
+                const sniffedData = resourceManager.getSessionSniffedData();
+                if (sniffedData > 0) {
+                    sniffedDataText.setText(t('results', 'packet_sniffing_data', [sniffedData]));
+                    sniffedDataText.setVisible(true);
+                    activeTexts.push(sniffedDataText);
+                }
             }
             if (sessionInsight > 0) {
                 insightText.setText('⦵ INSIGHT gained: ' + sessionInsight);
@@ -238,6 +254,7 @@ const iterationOverScreen = (() => {
         overlay.setVisible(false);
         titleText.setVisible(false);
         dataText.setVisible(false);
+        sniffedDataText.setVisible(false);
         insightText.setVisible(false);
         shardText.setVisible(false);
         processorText.setVisible(false);

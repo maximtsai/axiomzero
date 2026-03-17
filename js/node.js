@@ -337,10 +337,22 @@ class Node {
             if (sibling && sibling.childIds.length > 0) neuralTree._revealChildren(sibling.id);
         }
 
-        // Feedback: Audio, Popups, and Animations
-        this._playPurchaseAudio();
-        this._showPurchasePopup();
-        this._playPurchaseAnimations();
+        // Feedback via messageBus (Decoupled §5)
+        messageBus.publish('node_purchase_feedback', {
+            id: this.id,
+            x: this.btn.x,
+            y: this.btn.y,
+            popupText: this.popupText,
+            popupColor: this.popupColor,
+            isLore: this.lore,
+            level: this.level,
+            maxLevel: this.maxLevel,
+            isMaxed: this.isMaxed(),
+            isDuoBox: this.isDuoBox,
+            duoBoxTier: this.duoBoxTier
+        });
+
+        this._playLocalPurchaseAnimations();
 
         // System notifications
         messageBus.publish('upgradePurchased', this.id, this.level);
@@ -365,63 +377,30 @@ class Node {
         return true;
     }
 
-    _playPurchaseAudio() {
-        if (this.lore) {
-            audio.play('flip3', 1.6).detune = -100 + Math.random() * 200;
-        } else {
-            const s = audio.play('upgrade', 1.35);
-            if (s) {
-                if (this.maxLevel === 1) {
-                    s.detune = 200;
-                } else {
-                    s.detune = (this.level - this.maxLevel) * 100 + 200;
-                }
+    _playLocalPurchaseAnimations() {
+        if (!this.btn || this.isDuoBox) return;
+
+        const currentScaleX = this.btn.scaleX;
+        const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
+        this.btn.rotation = 0.2;
+        this.btn.setScale((currentScaleX >= 0 ? 0.95 : -0.95), 0.95);
+
+        PhaserScene.tweens.add({
+            targets: this.btn,
+            rotation: -0.1,
+            scaleX: targetScaleX,
+            scaleY: 1,
+            duration: 130,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: this.btn,
+                    rotation: 0,
+                    duration: 120,
+                    ease: 'Back.easeOut'
+                });
             }
-            if (this.isMaxed()) {
-                let maxSfx = audio.play('upgrade_max', 0.45 + Math.random() * 0.07);
-            }
-        }
-    }
-
-    _showPurchasePopup() {
-        if (!this.popupText) return;
-        const pos = tower.getPosition();
-        floatingText.show(
-            pos.x + (Math.random() - 0.5) * 100,
-            pos.y + (Math.random() - 0.5) * 100,
-            this.popupText,
-            { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 24 }
-        );
-    }
-
-    _playPurchaseAnimations() {
-        if (typeof neuralTree !== 'undefined') {
-            neuralTree.playPurchasePulse(this.btn.x, this.btn.y + 1, this.isMaxed());
-            if (this.isDuoBox) this._playDuoPulse();
-        }
-
-        if (this.btn && !this.isDuoBox) {
-            const currentScaleX = this.btn.scaleX;
-            const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
-            this.btn.rotation = 0.2;
-            this.btn.setScale((currentScaleX >= 0 ? 0.95 : -0.95), 0.95);
-            PhaserScene.tweens.add({
-                targets: this.btn,
-                rotation: -0.1,
-                scaleX: targetScaleX,
-                scaleY: 1,
-                duration: 130,
-                ease: 'Cubic.easeOut',
-                onComplete: () => {
-                    PhaserScene.tweens.add({
-                        targets: this.btn,
-                        rotation: 0,
-                        duration: 120,
-                        ease: 'Back.easeOut'
-                    });
-                }
-            });
-        }
+        });
     }
 
     _handleDuoBoxPurchase() {
@@ -432,9 +411,7 @@ class Node {
         gameState.activeShards[this.duoBoxTier] = this.shardId;
 
         if (isFirstDuoPurchaseEver) {
-            if (typeof tutorialManager !== 'undefined' && tutorialManager.showDuoSwapTutorial) {
-                tutorialManager.showDuoSwapTutorial();
-            }
+            messageBus.publish('trigger_tutorial', 'duo_swap');
         }
 
         const sibling = neuralTree.getNode(this.duoSiblingId);

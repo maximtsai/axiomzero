@@ -152,6 +152,7 @@ window.TRANSLATIONS.en = {
     results: {
         iteration_complete: 'ITERATION COMPLETE',
         boss_defeated: 'BOSS DEFEATED',
+        packet_sniffing_data: 'PASSIVE DATA EARNED: {0}',
         anomaly_detected: 'SYSTEM ANOMALY DETECTED'
     },
     loading_screen: {

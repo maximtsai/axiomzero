@@ -5,6 +5,9 @@ const tutorialManager = (() => {
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('trigger_tutorial', (id) => {
+            if (id === 'duo_swap') showDuoSwapTutorial();
+        });
     }
 
     function _onPhaseChanged(phase) {
