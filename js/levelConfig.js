@@ -23,7 +23,7 @@ const LEVEL_CONFIG = {
             protector: 0.0
         },
         swarmerGroupSize: { min: 2, max: 5 },
-        miniboss: 'Miniboss1', // String identifier for the miniboss type
+        miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss1',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
@@ -50,7 +50,7 @@ const LEVEL_CONFIG = {
             protector: 0.0
         },
         swarmerGroupSize: { min: 2, max: 5 },
-        miniboss: 'Miniboss1', // String identifier for the miniboss type
+        miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss1',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance

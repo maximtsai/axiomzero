@@ -331,6 +331,7 @@ const enemyManager = (() => {
         // and provides a clear list of supported boss types.
         const registry = {
             'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
+            'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
             'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null
         };
         return registry[className];
