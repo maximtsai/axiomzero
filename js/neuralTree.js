@@ -794,7 +794,7 @@ const neuralTree = (() => {
                 pos.x + (Math.random() - 0.5) * 100,
                 pos.y + (Math.random() - 0.5) * 100,
                 data.popupText,
-                { fontFamily: 'JetBrainsMono_Bold', color: data.popupColor, fontSize: 24 }
+                { fontFamily: 'JetBrainsMono_Bold', color: data.popupColor, fontSize: 24, travel: 70 }
             );
         }
 

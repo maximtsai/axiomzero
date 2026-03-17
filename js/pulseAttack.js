@@ -254,9 +254,6 @@ const pulseAttack = (() => {
 
     function init() {
         view.init(model.size);
-        if (typeof _recalcPulseDamage === 'function') _recalcPulseDamage();
-        if (typeof _recalcPulseSize === 'function') _recalcPulseSize();
-        if (typeof _recalcPulseMode === 'function') _recalcPulseMode();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });

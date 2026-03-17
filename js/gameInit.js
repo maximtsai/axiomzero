@@ -39,36 +39,36 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         }
     });
 
+    // Helper for Recovery Protocol passive
+    function _applyThreatAdaptation(yOffset) {
+        if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
+            const missingHealth = tower.getMaxHealth() - tower.getHealth();
+            const healAmount = missingHealth * 0.3;
+
+            if (healAmount > 0) {
+                tower.heal(healAmount);
+                const pos = tower.getPosition();
+                let healAmountText = Math.floor(healAmount);
+                if (healAmountText == 0) healAmountText = 1;
+                floatingText.show(pos.x, pos.y - yOffset, `+${healAmountText} HEALED`, {
+                    fontFamily: 'JetBrainsMono_Bold',
+                    fontSize: 22,
+                    color: '#00ff66',
+                    depth: GAME_CONSTANTS.DEPTH_TOWER
+                });
+            }
+        }
+    }
+
     // Start boss music when boss spawns
     messageBus.subscribe('bossSpawned', () => {
         debugLog('Playing boss music...');
         audio.playComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
-
-        // THREAT ADAPTATION: Heal on boss spawn
-        if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
-            tower.heal(10);
-            const pos = tower.getPosition();
-            floatingText.show(pos.x, pos.y - 80, '+10 HP (ADAPTATION)', {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 22,
-                color: '#00ff66',
-                depth: GAME_CONSTANTS.DEPTH_TOWER
-            });
-        }
+        _applyThreatAdaptation(80);
     });
 
     messageBus.subscribe('minibossSpawned', () => {
-        // THREAT ADAPTATION: Heal on miniboss spawn
-        if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
-            tower.heal(10);
-            const pos = tower.getPosition();
-            floatingText.show(pos.x, pos.y - 60, '+10 HP (ADAPTATION)', {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 22,
-                color: '#00ff66',
-                depth: GAME_CONSTANTS.DEPTH_TOWER
-            });
-        }
+        _applyThreatAdaptation(60);
     });
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
@@ -127,12 +127,11 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         } else if (activeShard === 'shockwave_weapon') {
             shockwaveAttack.unlock();
         }
-        // Recalc lightning upgrades if any were purchased
-        if (typeof upgradeDispatcher !== 'undefined') {
-            upgradeDispatcher.recalcLightningChains();
-            upgradeDispatcher.recalcLightningDamage();
-            upgradeDispatcher.recalcShockwaveStats();
-        }
+    }
+
+    // Initialize all upgrade effects
+    if (typeof upgradeDispatcher !== 'undefined') {
+        upgradeDispatcher.recalcEverything();
     }
 
     // Options button (top-right corner, always visible)

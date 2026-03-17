@@ -45,7 +45,7 @@ class TowerModel {
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
         this.armor = armorLv * 2; // 2 flat damage reduction per level
-        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.25 * overclockLv);
+        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
     }
 
     reset() {
@@ -497,7 +497,7 @@ const tower = (() => {
         const ups = gameState.upgrades || {};
         const prismaticLv = ups.prismatic_array || 0;
         if (prismaticLv > 0) {
-            const chance = 0.25 * prismaticLv;
+            const chance = 0.20 * prismaticLv;
             if (Math.random() < chance) {
                 PhaserScene.time.delayedCall(100, () => {
                     if (!model.alive || !model.active) return;
@@ -547,6 +547,8 @@ const tower = (() => {
         init, spawn, awaken, reset,
         takeDamage, heal, die, shake,
         getPosition, isAlive, getDamage,
+        getMaxHealth: () => model.maxHealth,
+        getHealth: () => model.health,
         setVisible, setPosition,
     };
 })();

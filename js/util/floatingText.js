@@ -49,6 +49,7 @@ const floatingText = (() => {
         const strokeThickness = opts.strokeThickness !== undefined ? opts.strokeThickness : 0;
         const depth = opts.depth !== undefined ? opts.depth : 9999;
         const duration = opts.duration !== undefined ? opts.duration : 1200;
+        const travel = opts.travel !== undefined ? opts.travel : 85;
 
         const t = _pool.get();
         t.setText(text);
@@ -81,7 +82,7 @@ const floatingText = (() => {
         t._totalDuration = duration;
         t._startY = y;
         // Travel distance is fixed regardless of duration for consistency
-        t._targetTravel = 85;
+        t._targetTravel = travel;
 
         _activeTexts.push(t);
     }

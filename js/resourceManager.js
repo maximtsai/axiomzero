@@ -423,7 +423,7 @@ const resourceManager = (() => {
             d.x = d.img.x;
             d.y = d.img.y;
             d.flying = true;
-            d.inertia = Math.random() * 0.35 - 0.3;
+            d.inertia = Math.random() * 0.45 - 0.4;
 
             flyingDrops.push(d);
             activeDrops.splice(i, 1);

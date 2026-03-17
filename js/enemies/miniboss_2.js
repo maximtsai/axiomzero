@@ -13,7 +13,7 @@
 const MB2 = {
     HEALTH: 180,
     DAMAGE: 9,
-    SELF_DAMAGE: 10,
+    SELF_DAMAGE: 5,
     SPEED_MULT: 2.4,
     CHARGE_RANGE: 200,
     RETREAT_PAST_RANGE: 150,
@@ -66,7 +66,7 @@ class Miniboss2View extends EnemyView {
             angle: { min: 0, max: 360 },
             speed: { min: 5, max: 20 },
             rotate: { start: 0, end: 180 }, // slow spin
-            frequency: 5,
+            frequency: 3,
             emitting: false,
             depth: GAME_CONSTANTS.DEPTH_ENEMIES - 2
         });

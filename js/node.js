@@ -327,8 +327,8 @@ class Node {
         gameState.upgrades[this.id] = this.level;
 
         // Effect and Metadata logic
-        this.effect(this.level);
         if (this.isDuoBox) this._handleDuoBoxPurchase();
+        this.effect(this.level);
 
         // Reveal logic
         if (this.childIds.length > 0) neuralTree._revealChildren(this.id);

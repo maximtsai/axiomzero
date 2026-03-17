@@ -418,9 +418,13 @@ const customEmitters = (() => {
 
             PhaserScene.tweens.add({
                 targets: ray,
-                scaleX: 1.0,
-                scaleY: 1.0,
-                duration: 500,
+                scaleY: 1.35,
+                duration: 700,
+            });
+            PhaserScene.tweens.add({
+                targets: ray,
+                scaleX: 1.2,
+                duration: 700,
                 ease: 'Cubic.easeOut'
             });
 
@@ -441,7 +445,7 @@ const customEmitters = (() => {
             activeExplosionRays.push(ray);
         }
 
-        PhaserScene.time.delayedCall(600, () => {
+        PhaserScene.time.delayedCall(700, () => {
             const pulse = explosionPulsePool.get();
             pulse.setPosition(x, y);
             pulse.setDepth(baseDepth + 6);

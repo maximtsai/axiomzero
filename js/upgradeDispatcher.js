@@ -97,7 +97,29 @@ const upgradeDispatcher = (() => {
         // Subscription handled in gameInit.js
     }
 
+    /** Recalculates all systems based on current upgrades. */
+    function recalcEverything() {
+        if (typeof pulseAttack !== 'undefined') {
+            recalcPulseDamage();
+            recalcPulseRecharge();
+            recalcPulseSize();
+            recalcPulseMode();
+        }
+        if (typeof lightningAttack !== 'undefined') {
+            recalcLightningChains();
+            recalcLightningDamage();
+        }
+        if (typeof shockwaveAttack !== 'undefined') {
+            recalcShockwaveStats();
+        }
+        if (typeof resourceManager !== 'undefined') {
+            recalcPacketSniffing();
+        }
+        recalcThreatResponse();
+    }
+
     return {
+        recalcEverything,
         recalcPulseDamage,
         recalcPulseRecharge,
         recalcPulseSize,

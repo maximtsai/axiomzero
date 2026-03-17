@@ -398,7 +398,7 @@ const enemyManager = (() => {
 
         // Spawn 2 fast enemies ONLY for Miniboss 2
         if (config.miniboss === 'Miniboss2') {
-            const offsets = [-0.3, 0.3];
+            const offsets = [-0.26, 0.26];
             const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
             offsets.forEach(offset => {

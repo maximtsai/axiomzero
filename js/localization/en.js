@@ -22,7 +22,7 @@ window.TRANSLATIONS.en = {
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'Begin existence.' },
-        basic_pulse: { name: 'COGNITION', desc: 'Your cursor now auto-attacks.', popup: 'PULSE UNLOCKED' },
+        basic_pulse: { name: 'COGNITION', desc: 'Your cursor pulses damage every 2 seconds.', popup: 'PULSE UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '+2 cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
         pulse_expansion: { name: 'EXPANSION', desc: '+20% cursor pulse size', popup: '+20% CURSOR PULSE SIZE' },
@@ -45,8 +45,8 @@ window.TRANSLATIONS.en = {
         shockwave_resonance: { name: 'RESONANCE', desc: 'Shockwave deals +1 dmg/lvl for each enemy hit', popup: 'RESONANCE FREQUENCY' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +50% damage per lvl to enemies below 50% HP', popup: 'SEISMIC CRUSH' },
         base_hp_boost: { name: 'STABILITY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },
-        overclock: { name: 'OVERCLOCK', desc: '-25% tower attack cooldown', popup: '-25% COOLDOWN' },
-        prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+25% chance to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
+        overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
+        prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         wide_pulse: { name: 'RESONANCE AREA', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
@@ -103,7 +103,7 @@ window.TRANSLATIONS.en = {
         },
         resource_gate: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
         resource_gate_2: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
-        threat_response: { name: 'THREAT ADAPTATION', desc: 'Recovery protocol. Heal up to 10 HP when a Boss or Miniboss appears.' },
+        threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
         test_reveal_1: { name: 'TEST REVEAL 1', desc: 'Testing revelation.' },
         test_reveal_2: { name: 'TEST REVEAL 2', desc: 'Testing revelation.' },
         test_reveal_3: { name: 'TEST REVEAL 3', desc: 'Testing revelation.' },
@@ -128,7 +128,7 @@ window.TRANSLATIONS.en = {
         combat_collect: 'COLLECT DATA ◈ TO EVOLVE',
         upgrade_use: 'USE DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
-        duo_swap_free: 'SWAPPING ABILITIES IS FREE',
+        duo_swap_free: 'SWAPPING ◆ ABILITIES IS FREE',
         controls_mouse: 'CONTROLS: MOUSE ONLY'
     },
     options: {
