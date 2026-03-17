@@ -12,19 +12,19 @@
 /** Local config — owned by this class, not exposed to globals. */
 const MB2 = {
     HEALTH: 180,
-    DAMAGE: 8,
+    DAMAGE: 9,
     SELF_DAMAGE: 10,
-    SPEED_MULT: 2.5,
+    SPEED_MULT: 2.4,
     CHARGE_RANGE: 200,
     RETREAT_PAST_RANGE: 150,
-    INITIAL_WAIT_MS: 3000,
+    INITIAL_WAIT_MS: 4000,
     CHARGE_WAIT_MS: 800,
     POST_ATTACK_WAIT_MS: 2000,
     KNOCKBACK_MOD: 0, // NO natural knockback or bounce
     ATTACK_ACCELERATION: 1500, // px/s^2 for the lunge
     ATTACK_MAX_SPEED: 800,
-    SPAWN_BURST_DURATION: 2,
-    SPAWN_BURST_MULT: 7,
+    SPAWN_BURST_DURATION: 1.5,
+    SPAWN_BURST_MULT: 9,
 };
 
 const MINIBOSS2_STATE = {

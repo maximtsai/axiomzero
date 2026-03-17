@@ -396,6 +396,30 @@ const enemyManager = (() => {
 
         mb.activate(sx, sy);
 
+        // Spawn 2 fast enemies ONLY for Miniboss 2
+        if (config.miniboss === 'Miniboss2') {
+            const offsets = [-0.3, 0.3];
+            const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
+
+            offsets.forEach(offset => {
+                const fe = pools.fast.get() || pools.basic.get();
+                if (fe) {
+                    const fa = angle + offset;
+                    // Middle enemies start 20px closer
+                    const extraDist = -20;
+                    const finalDist = distance + extraDist;
+
+                    const fsx = GAME_CONSTANTS.halfWidth + Math.cos(fa) * finalDist;
+                    const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
+
+                    fe.activate(fsx, fsy, currentScale);
+                    typeCounts[fe.type] = (typeCounts[fe.type] || 0) + 1;
+                    fe.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+                    activeEnemies.push(fe);
+                }
+            });
+        }
+
         typeCounts[mb.type] = (typeCounts[mb.type] || 0) + 1;
 
         mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
