@@ -12,7 +12,7 @@
 /** Local config — owned by this class, not exposed to globals. */
 const MB2 = {
     HEALTH: 180,
-    DAMAGE: 7,
+    DAMAGE: 8,
     SELF_DAMAGE: 10,
     SPEED_MULT: 2.5,
     CHARGE_RANGE: 200,
@@ -227,6 +227,9 @@ class Miniboss2 extends Miniboss {
                 if (distToTower <= m.size && !m.hasHitTowerInCurrentAttack) {
                     // Force the manual attack
                     tower.takeDamage(MB2.DAMAGE, m.x, m.y);
+                    if (typeof cameraManager !== 'undefined') {
+                        cameraManager.shake(300, 0.02);
+                    }
 
                     // Force manual self damage and text display by proxy
                     // We directly take damage since we disabled our native 'damage' stat

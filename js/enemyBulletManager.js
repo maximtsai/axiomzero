@@ -23,6 +23,7 @@ const enemyBulletManager = (() => {
                     vx: 0, vy: 0,
                     damage: 0,
                     life: 0,
+                    shakeOnHit: false,
                 };
             },
             (b) => {
@@ -39,7 +40,7 @@ const enemyBulletManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null) {
+    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null, shakeOnHit = false) {
         if (!pool) return;
         const b = pool.get();
         if (!b) return;
@@ -54,6 +55,7 @@ const enemyBulletManager = (() => {
         b.x = fromX;
         b.y = fromY;
         b.damage = dmg;
+        b.shakeOnHit = shakeOnHit;
         b.alive = true;
         b.life = 5000; // auto-expire after 5s
 
@@ -113,6 +115,9 @@ const enemyBulletManager = (() => {
             const dy = b.y - tPos.y;
             if (dx * dx + dy * dy < hitR2) {
                 tower.takeDamage(b.damage, b.x, b.y);
+                if (b.shakeOnHit && typeof cameraManager !== 'undefined') {
+                    cameraManager.shake(200, 0.015);
+                }
                 _deactivate(b);
                 activeBullets[i] = activeBullets[activeBullets.length - 1];
                 activeBullets.pop();

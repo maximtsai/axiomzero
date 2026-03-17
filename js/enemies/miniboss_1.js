@@ -268,7 +268,10 @@ class Miniboss1 extends Miniboss {
             enemyBulletManager.fire(
                 m.x + ux * 27, m.y + uy * 27,
                 targetX, targetY,
-                MB1.BULLET_DAMAGE
+                MB1.BULLET_DAMAGE,
+                'bullet.png',
+                null,
+                true
             );
         }
     }
