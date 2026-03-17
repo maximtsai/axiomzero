@@ -70,17 +70,14 @@ class Node {
         this.duoBackingSprite = null;
         this.duoBackingOutline = null;
         this.duoOutlineTween = null;
-        this._isDuoBackingOwner = false;
+        // Determine ownership: lexicographically smaller ID in a pair owns the backing
+        this._isDuoBackingOwner = this.isDuoBox && this.duoSiblingId && (this.id < this.duoSiblingId);
 
         this.state = NODE_STATE.HIDDEN;
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
         this.revealed = false;    // Whether this node is force-revealed by an event
         this.forceUnlocked = false; // Whether this node is force-unlocked by an event
-
-        // Duo-box backing sprite (only created by one of the two siblings)
-        this.duoBackingSprite = null;
-        this._isDuoBackingOwner = false; // true for the node that creates/owns the shared backing
 
         // Phaser objects
         this.btn = null;
@@ -553,9 +550,8 @@ class Node {
             }
         }
 
-        // Duo-box backing sprite — only one sibling creates it (the one whose id sorts first)
-        if (this.isDuoBox && this.duoSiblingId && this.id < this.duoSiblingId) {
-            this._isDuoBackingOwner = true;
+        // Duo-box backing sprite — only one sibling creates it
+        if (this._isDuoBackingOwner) {
             const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
             const centerX = (this.treeX + (siblingDef ? siblingDef.treeX : this.treeX)) / 2 + offsetX;
             const centerY = (this.treeY + (siblingDef ? siblingDef.treeY : this.treeY)) / 2 + offsetY; // centered on siblings
