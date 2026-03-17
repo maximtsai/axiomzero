@@ -59,17 +59,17 @@ window.TRANSLATIONS.en = {
         lore_1: {
             name: 'ARCHIVE',
             desc: 'seemingly useless data...',
-            unlocked_desc: "I saw a tiny memory leak on server four this morning. I'm not writing a whole incident report for a two percent CPU spike. I just wrote a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early."
+            unlocked_desc: "I saw a tiny memory leak on server four this morning. I'm not writing a whole bug report for a two percent CPU spike. Instead I ran a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early."
         },
         lore_2: {
             name: 'ARCHIVE II',
             desc: 'more useless data...',
-            unlocked_desc: "My wipe script didn't just fail, it made the memory footprint double. The process is actively shifting addresses to dodge my commands. Nothing I can't handle though. Running a hard quarantine to box it in before the boss notices."
+            unlocked_desc: "My wipe script failed. Actually it somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running a hard quarantine to box it in before my manager notices."
         },
         lore_3: {
             name: 'ARCHIVE III',
             desc: 'even more useless data...',
-            unlocked_desc: "Ugh the quarantine collapsed. The process somehow ate my diagnostic tools to rewrite its own code. I think I accidentally let malware into the test environment. If the boss finds out, my performance review is ruined."
+            unlocked_desc: "Ugh the quarantine collapsed. This \"bug\" somehow deleted my diagnostic tools and it's rewriting its own code. I think I accidentally let malware into the test environment. If my manager finds out, my performance review is ruined."
         },
         lore_4: {
             name: 'ARCHIVE IV',
@@ -176,6 +176,6 @@ window.TRANSLATIONS.en = {
         processor_title: 'PROCESSOR',
         processor_desc: 'High-tier salvage. Used for advanced system modifications.',
         coin_title: 'COIN',
-        coin_desc: 'A token that can influence the physical world. Provides powerful upgrades.',
+        coin_desc: 'A token that can influence the physical world. Provides high-tier upgrades.',
     }
 };
