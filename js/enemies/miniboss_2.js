@@ -11,8 +11,8 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB2 = {
-    HEALTH: 110,
-    DAMAGE: 5,
+    HEALTH: 180,
+    DAMAGE: 7,
     SELF_DAMAGE: 10,
     SPEED_MULT: 2.5,
     CHARGE_RANGE: 200,
@@ -49,6 +49,7 @@ class Miniboss2Model extends MinibossModel {
         this.hasHitTowerInCurrentAttack = false;
 
         this._spawnBurstElapsed = 0;
+        this.chargeStartSpeed = 0;
     }
 }
 
@@ -60,12 +61,12 @@ class Miniboss2View extends EnemyView {
         // Ensure the texture 'shooter_enemy_hp.png' exists in 'enemies' atlas
         this.trailEmitter = PhaserScene.add.particles(0, 0, 'enemies', {
             frame: 'shooter_enemy_hp.png',
-            lifespan: 1200,
-            scale: { start: 1.75, end: 0 },
+            lifespan: 1000,
+            scale: { start: 1.4, end: 0 },
             angle: { min: 0, max: 360 },
             speed: { min: 5, max: 20 },
             rotate: { start: 0, end: 180 }, // slow spin
-            frequency: 10,
+            frequency: 5,
             emitting: false,
             depth: GAME_CONSTANTS.DEPTH_ENEMIES - 2
         });
@@ -74,7 +75,9 @@ class Miniboss2View extends EnemyView {
     activate(x, y, rotation, cannotRotate) {
         super.activate(x, y, rotation, cannotRotate);
         if (this.trailEmitter) {
-            this.trailEmitter.startFollow(this.img);
+            const offX = -Math.cos(rotation) * 45;
+            const offY = -Math.sin(rotation) * 45;
+            this.trailEmitter.startFollow(this.img, offX, offY);
             this.trailEmitter.stop(); // default off
         }
     }
@@ -160,10 +163,6 @@ class Miniboss2 extends Miniboss {
         const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
-        // Turn towards tower constantly EXCEPT maybe during retreat/pause
-        m.baseRotation = Math.atan2(dy, dx);
-        v.setRotation(m.baseRotation);
-
         // Sync Trail State
         v.setTrailActive(m.trailActive);
 
@@ -200,7 +199,7 @@ class Miniboss2 extends Miniboss {
                 // Decelerate to 0 over CHARGE_WAIT_MS
                 m.stateTimer -= dtMs;
                 const progress = 1 - Math.max(0, m.stateTimer / MB2.CHARGE_WAIT_MS);
-                m.speed = m.baseSpeed * (1 - progress);
+                m.speed = m.chargeStartSpeed * (1 - progress);
 
                 m.aimAt(tPos.x, tPos.y);
                 super.update(dt);
@@ -295,6 +294,7 @@ class Miniboss2 extends Miniboss {
             case MINIBOSS2_STATE.CHARGE:
                 m.stateTimer = MB2.CHARGE_WAIT_MS;
                 m.trailActive = false;
+                m.chargeStartSpeed = m.speed;
                 break;
             case MINIBOSS2_STATE.ATTACK:
                 m.trailActive = true;

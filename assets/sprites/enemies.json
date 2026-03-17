@@ -160,6 +160,31 @@
 					}
 				},
 				{
+					"filename": "invis.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 3,
+						"h": 3
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 3,
+						"h": 3
+					},
+					"frame": {
+						"x": 1014,
+						"y": 59,
+						"w": 3,
+						"h": 3
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "sniper_projectile.png",
 					"rotated": false,
 					"trimmed": true,
@@ -1290,6 +1315,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:ca990b84abcb5ced95e12f82ca6f35b1:26e6c041ff50a7690601472a732fff51:6fb6b0320a454d189490d419aa3fa8e9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:88c8252fde9ad4ba163d833d2742d93a:89ff5d33a43a83fb149a40931cdb5418:6fb6b0320a454d189490d419aa3fa8e9$"
 	}
 }

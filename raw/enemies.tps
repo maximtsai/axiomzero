@@ -248,6 +248,7 @@
                 <false/>
             </struct>
             <key type="filename">enemies/default_enemy_glow.png</key>
+            <key type="filename">enemies/invis.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
