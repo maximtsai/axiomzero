@@ -37,7 +37,7 @@ class TowerModel {
         const overclockLv = ups.overclock || 0;
         const junkHpLv = ups.junk_data_2 || 0;
 
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 10 * baseHpLv + 2 * junkHpLv;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 10 * baseHpLv + 0.2 * junkHpLv;
 
         const junkDmgLv = ups.junk_data_3 || 0;
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + 1 * junkDmgLv;
