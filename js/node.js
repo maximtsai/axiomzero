@@ -588,54 +588,13 @@ class Node {
     _onClick() {
         if (this.state !== NODE_STATE.UNLOCKED) return;
 
-        // Duo-box swap logic: if this tier is already purchased and this is the inactive sibling
-        if (this.isDuoBox && this.duoBoxTier > 0) {
-            const tierPurchased = this._isDuoTierPurchased();
-            const activeShard = gameState.activeShards && gameState.activeShards[this.duoBoxTier];
-            // Also treat as swappable if this node's level is already > 0 (means it's been bought before)
-            const isAlreadyBought = this.level > 0;
+        // 1. Duo-box swap logic
+        if (this._handleDuoSwap()) return;
 
-            if ((tierPurchased || isAlreadyBought) && activeShard !== this.shardId) {
-                // Free swap — no cost
-                gameState.activeShards[this.duoBoxTier] = this.shardId;
+        // 2. Mobile interaction guard
+        if (this._handleMobileInteraction()) return;
 
-                // Apply this node's effect, deactivate sibling's
-                this.effect(this.level);
-
-                // Refresh both siblings and their entire sub-trees
-                this.refreshState();
-                const sibling = neuralTree.getNode(this.duoSiblingId);
-                if (sibling) sibling.refreshState();
-
-                // Explicitly update visuals for both siblings
-                this._updateVisual();
-                if (sibling) sibling._updateVisual();
-
-                // Refresh tooltip
-                if (nodeTooltip.getCurrentNode() === this) {
-                    this._showHover(true);
-                }
-
-                // Notify systems of state change
-                messageBus.publish('upgradePurchased');
-
-                this._playDuoPulse();
-
-                return;
-            }
-        }
-
-        // Mobile interaction refinement: First tap shows info, second tap buys.
-        if (GAME_VARS.wasTouch) {
-            if (!this._tapConfirmed) {
-                // First tap — show the tooltip and mark as confirmed for next tap
-                this._tapConfirmed = true;
-                this._showHover();
-                return;
-            }
-            // Second tap — fall through to purchase
-        }
-
+        // 3. Purchase logic
         if (this.canAfford()) {
             this.purchase();
         } else {
@@ -645,6 +604,56 @@ class Node {
             }
             nodeTooltip.shakeCost();
         }
+    }
+
+    _handleDuoSwap() {
+        if (!this.isDuoBox || this.duoBoxTier <= 0) return false;
+
+        const tierPurchased = this._isDuoTierPurchased();
+        const activeShard = gameState.activeShards && gameState.activeShards[this.duoBoxTier];
+        const isAlreadyBought = this.level > 0;
+
+        if ((tierPurchased || isAlreadyBought) && activeShard !== this.shardId) {
+            // Free swap — no cost
+            gameState.activeShards[this.duoBoxTier] = this.shardId;
+
+            // Apply this node's effect, deactivate sibling's
+            this.effect(this.level);
+
+            // Refresh both siblings and their entire sub-trees
+            this.refreshState();
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling) sibling.refreshState();
+
+            // Explicitly update visuals for both siblings
+            this._updateVisual();
+            if (sibling) sibling._updateVisual();
+
+            // Refresh tooltip
+            if (nodeTooltip.getCurrentNode() === this) {
+                this._showHover(true);
+            }
+
+            // Notify systems of state change
+            messageBus.publish('upgradePurchased');
+            this._playDuoPulse();
+
+            return true;
+        }
+        return false;
+    }
+
+    _handleMobileInteraction() {
+        if (!GAME_VARS.wasTouch) return false;
+
+        if (!this._tapConfirmed) {
+            // First tap — show the tooltip and mark as confirmed for next tap
+            this._tapConfirmed = true;
+            this._showHover();
+            return true;
+        }
+        // Second tap — fall through to purchase
+        return false;
     }
 
     getGhostAlpha() {
@@ -677,64 +686,18 @@ class Node {
         }
 
         let currentSpriteRef;
-
         switch (this.state) {
             case NODE_STATE.HIDDEN:
-                this.btn.setVisible(false);
-                this.btn.setState(DISABLE);
-                if (this.iconSprite) this.iconSprite.setVisible(false);
-                currentSpriteRef = null;
+                currentSpriteRef = this._applyHiddenVisuals();
                 break;
-
             case NODE_STATE.GHOST:
-                currentSpriteRef = `${this.prefix}_ghost.png`;
-                this.btn.setDisableRef(currentSpriteRef);
-                this.btn.setVisible(true);
-                this.btn.setState(DISABLE);
-                this.btn.setAlpha(this.getGhostAlpha());
-                if (this.iconSprite) this.iconSprite.setVisible(false);
+                currentSpriteRef = this._applyGhostVisuals();
                 break;
-
             case NODE_STATE.UNLOCKED:
-                const isSwappable = this.isDuoSwappable();
-                const canAfford = this.canAfford();
-                const isActive = isSwappable || canAfford;
-
-                // Always NORMAL (interactable) to allow tooltip shaking/logs
-                this.btn.setState(NORMAL);
-
-                if (isActive) {
-                    currentSpriteRef = this._getUnlockedSprite();
-                    this.btn.setNormalRef(currentSpriteRef);
-                    this.btn.setHoverRef(this._getHoverSprite());
-                    this.btn.setPressRef(this._getPressSprite());
-                } else {
-                    currentSpriteRef = this._getUnlockedDisabledSprite();
-                    this.btn.setNormalRef(currentSpriteRef);
-                    this.btn.setHoverRef(currentSpriteRef); // No hover highlight if inactive
-                    this.btn.setPressRef(currentSpriteRef); // No press effect if inactive
-                }
-
-                this.btn.setDisableRef(this._getUnlockedDisabledSprite());
-                this.btn.setVisible(true);
-                this.btn.setAlpha(1);
-
-                if (this.iconSprite) {
-                    this.iconSprite.setVisible(true);
-                    this.iconSprite.setAlpha(isActive ? 1 : 0.5);
-                }
+                currentSpriteRef = this._applyUnlockedVisuals();
                 break;
-
             case NODE_STATE.MAXED:
-                currentSpriteRef = `${this.prefix}_maxed.png`;
-                this.btn.setDisableRef(currentSpriteRef);
-                this.btn.setVisible(true);
-                this.btn.setState(DISABLE);
-                this.btn.setAlpha(1);
-                if (this.iconSprite) {
-                    this.iconSprite.setVisible(true);
-                    this.iconSprite.setAlpha(1);
-                }
+                currentSpriteRef = this._applyMaxedVisuals();
                 break;
         }
 
@@ -743,6 +706,68 @@ class Node {
         // Store current sprite for next state change
         this.lastSpriteRef = currentSpriteRef;
         this.lastVisualState = this.state;
+    }
+
+    _applyHiddenVisuals() {
+        this.btn.setVisible(false);
+        this.btn.setState(DISABLE);
+        if (this.iconSprite) this.iconSprite.setVisible(false);
+        return null;
+    }
+
+    _applyGhostVisuals() {
+        const sprite = `${this.prefix}_ghost.png`;
+        this.btn.setDisableRef(sprite);
+        this.btn.setVisible(true);
+        this.btn.setState(DISABLE);
+        this.btn.setAlpha(this.getGhostAlpha());
+        if (this.iconSprite) this.iconSprite.setVisible(false);
+        return sprite;
+    }
+
+    _applyUnlockedVisuals() {
+        const isSwappable = this.isDuoSwappable();
+        const canAfford = this.canAfford();
+        const isActive = isSwappable || canAfford;
+
+        // Always NORMAL (interactable) to allow tooltip shaking/logs
+        this.btn.setState(NORMAL);
+
+        let sprite;
+        if (isActive) {
+            sprite = this._getUnlockedSprite();
+            this.btn.setNormalRef(sprite);
+            this.btn.setHoverRef(this._getHoverSprite());
+            this.btn.setPressRef(this._getPressSprite());
+        } else {
+            sprite = this._getUnlockedDisabledSprite();
+            this.btn.setNormalRef(sprite);
+            this.btn.setHoverRef(sprite); // No hover highlight if inactive
+            this.btn.setPressRef(sprite); // No press effect if inactive
+        }
+
+        this.btn.setDisableRef(this._getUnlockedDisabledSprite());
+        this.btn.setVisible(true);
+        this.btn.setAlpha(1);
+
+        if (this.iconSprite) {
+            this.iconSprite.setVisible(true);
+            this.iconSprite.setAlpha(isActive ? 1 : 0.5);
+        }
+        return sprite;
+    }
+
+    _applyMaxedVisuals() {
+        const sprite = `${this.prefix}_maxed.png`;
+        this.btn.setDisableRef(sprite);
+        this.btn.setVisible(true);
+        this.btn.setState(DISABLE);
+        this.btn.setAlpha(1);
+        if (this.iconSprite) {
+            this.iconSprite.setVisible(true);
+            this.iconSprite.setAlpha(1);
+        }
+        return sprite;
     }
 
     _getUnlockedSprite() {
