@@ -6,6 +6,19 @@ const TREE_CENTER_X = 400; // Half of 800px panel width
 const TREE_START_Y = 730;
 const TREE_UNIT_X = 80;
 const TREE_UNIT_Y = 80;
+const DUO_OFFSET = 30; // Standard offset for choice nodes
+
+// Theme Colors for Popups/Effects
+const COLORS = {
+    COMBAT: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+    UTILITY: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+    RESOURCE: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+    LORE: '#a2a2a2'
+};
+
+// Grid Helpers
+const gridX = (units) => TREE_CENTER_X + TREE_UNIT_X * units;
+const gridY = (units) => TREE_START_Y - TREE_UNIT_Y * units;
 
 const NODE_DEFS = [
     {
@@ -20,8 +33,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: [],
         childIds: ['basic_pulse', 'integrity', 'intensity', 'crypto_mine_unlock'],
-        treeX: TREE_CENTER_X,
-        treeY: TREE_START_Y,
+        treeX: gridX(0),
+        treeY: gridY(0),
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
@@ -36,7 +49,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'basic_pulse.desc'),
         popupText: 'PULSE UNLOCKED',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
         costType: 'data',
@@ -44,8 +57,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['awaken'],
         childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
-        treeX: TREE_CENTER_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y,
+        treeX: gridX(0),
+        treeY: gridY(1),
         effect: function () {
             pulseAttack.unlock();
         },
@@ -56,7 +69,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'pulse_damage.desc'),
         popupText: '+2 CURSOR DMG',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 3,
         baseCost: 5,
         costType: 'data',
@@ -64,8 +77,8 @@ const NODE_DEFS = [
         costStep: 10,
         parents: ['basic_pulse'],
         childIds: ['pulse_expansion'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y,
+        treeX: gridX(1),
+        treeY: gridY(1),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -76,7 +89,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'magnet.desc'),
         popupText: '+40% PICKUP RANGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 1,
         costType: 'insight',
@@ -84,8 +97,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['basic_pulse'],
         childIds: ['regen'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y,
+        treeX: gridX(-1),
+        treeY: gridY(1),
         effect: function () {
             resourceManager.recalcPickupRadius();
         },
@@ -96,7 +109,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_07.png',
         description: t('nodes', 'pulse_expansion.desc'),
         popupText: '+20% CURSOR PULSE SIZE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 20,
         costType: 'data',
@@ -105,8 +118,8 @@ const NODE_DEFS = [
         parents: ['pulse_damage'],
         requiresMaxParent: true,
         childIds: ['packet_sniffing', 'farsight'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 2,
-        treeY: TREE_START_Y - TREE_UNIT_Y,
+        treeX: gridX(2),
+        treeY: gridY(1),
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
         },
@@ -117,7 +130,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'overcharge.desc'),
         popupText: '+4 CURSOR DMG',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 2,
         baseCost: 10,
         costType: 'data',
@@ -126,8 +139,8 @@ const NODE_DEFS = [
         parents: ['armor', 'data_compression'],
         childIds: ['placeholder_duo_2'],
 
-        treeX: TREE_CENTER_X - TREE_UNIT_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
+        treeX: gridX(-1),
+        treeY: gridY(4),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
 
@@ -141,7 +154,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_03.png',
         description: t('nodes', 'integrity.desc'),
         popupText: '+4 MAX HEALTH',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 8,
         baseCost: 4,
         costType: 'data',
@@ -150,8 +163,8 @@ const NODE_DEFS = [
         costStepScaling: 4,
         parents: ['awaken'],
         childIds: ['regen'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X,
-        treeY: TREE_START_Y,
+        treeX: gridX(-1),
+        treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -162,7 +175,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_04.png',
         description: t('nodes', 'intensity.desc'),
         popupText: '+2 DAMAGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 8,
         baseCost: 5,
         costType: 'data',
@@ -171,8 +184,8 @@ const NODE_DEFS = [
         costStepScaling: 5,
         parents: ['awaken'],
         childIds: ['focus'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X,
-        treeY: TREE_START_Y,
+        treeX: gridX(1),
+        treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -183,7 +196,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_15.png',
         description: t('nodes', 'focus.desc'),
         popupText: '+20% ATTACK RANGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 50,
         costType: 'data',
@@ -192,8 +205,8 @@ const NODE_DEFS = [
         parents: ['intensity'],
         requiresMaxParent: true,
         childIds: ['farsight'],
-        treeX: 560,
-        treeY: TREE_START_Y,
+        treeX: gridX(2),
+        treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -211,8 +224,8 @@ const NODE_DEFS = [
         parents: ['focus', 'pulse_expansion'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
+        treeX: gridX(3),
+        treeY: gridY(0.5),
         effect: function () { },
     },
     {
@@ -221,7 +234,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'regen.desc'),
         popupText: '+0.2 REGEN',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 3,
         baseCost: 10,
         costType: 'data',
@@ -230,8 +243,8 @@ const NODE_DEFS = [
         costStepScaling: 10,
         parents: ['integrity', 'magnet'],
         childIds: ['base_hp_boost', 'junk_data_3'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 2,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
+        treeX: gridX(-2),
+        treeY: gridY(0.5),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -242,15 +255,15 @@ const NODE_DEFS = [
         icon: 'Skillicon14_04.png',
         description: t('nodes', 'junk_data_3.desc'),
         popupText: '+1 DAMAGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 15,
         costType: 'data',
         costScaling: 'static',
         parents: ['regen'],
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
-        treeY: TREE_START_Y + TREE_UNIT_Y * 0.5,
+        treeX: gridX(-2.5),
+        treeY: gridY(-0.5),
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -261,7 +274,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'crypto_mine_unlock.desc'),
         popupText: 'MINE UNLOCKED',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 0,
         costType: 'data',
@@ -269,8 +282,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['awaken'],
         childIds: [],
-        treeX: 400,
-        treeY: TREE_START_Y + TREE_UNIT_Y * 2,
+        treeX: gridX(0),
+        treeY: gridY(-2),
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
                 neuralTree._showCryptoMineButton();
@@ -301,6 +314,7 @@ const NODE_DEFS = [
     {
         id: 'lore_1',
         name: 'ARCHIVE',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_1.desc'),
         maxLevel: 1,
@@ -309,8 +323,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['base_hp_boost'],
         childIds: ['lore_2'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
+        treeX: gridX(-3.5),
+        treeY: gridY(0.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_1');
@@ -322,6 +336,7 @@ const NODE_DEFS = [
     {
         id: 'lore_2',
         name: 'ARCHIVE II',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_2.desc'),
         maxLevel: 1,
@@ -330,8 +345,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_1'],
         childIds: ['lore_3'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 0.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(0.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
@@ -343,6 +358,7 @@ const NODE_DEFS = [
     {
         id: 'lore_3',
         name: 'ARCHIVE III',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_3.desc'),
         maxLevel: 1,
@@ -351,8 +367,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_2'],
         childIds: ['lore_4'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(1.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
@@ -364,6 +380,7 @@ const NODE_DEFS = [
     {
         id: 'lore_4',
         name: 'ARCHIVE IV',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_4.desc'),
         maxLevel: 1,
@@ -372,8 +389,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_3'],
         childIds: ['lore_5'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(2.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_4');
@@ -385,6 +402,7 @@ const NODE_DEFS = [
     {
         id: 'lore_5',
         name: 'ARCHIVE V',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_5.desc'),
         maxLevel: 1,
@@ -393,8 +411,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_4'],
         childIds: ['lore_6'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(3.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_5');
@@ -406,6 +424,7 @@ const NODE_DEFS = [
     {
         id: 'lore_6',
         name: 'ARCHIVE VI',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_6.desc'),
         maxLevel: 1,
@@ -414,8 +433,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_5'],
         childIds: ['lore_7'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(4.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_6');
@@ -427,6 +446,7 @@ const NODE_DEFS = [
     {
         id: 'lore_7',
         name: 'ARCHIVE VII',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_7.desc'),
         maxLevel: 1,
@@ -435,8 +455,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_6'],
         childIds: ['lore_8'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(5.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_7');
@@ -448,6 +468,7 @@ const NODE_DEFS = [
     {
         id: 'lore_8',
         name: 'ARCHIVE VIII',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_8.desc'),
         maxLevel: 1,
@@ -456,8 +477,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_7'],
         childIds: ['lore_9'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(6.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_8');
@@ -469,6 +490,7 @@ const NODE_DEFS = [
     {
         id: 'lore_9',
         name: 'ARCHIVE IX',
+        lore: true,
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'lore_9.desc'),
         maxLevel: 1,
@@ -477,8 +499,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['lore_8'],
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 7.5,
+        treeX: gridX(-4.5),
+        treeY: gridY(7.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_9');
@@ -497,8 +519,8 @@ const NODE_DEFS = [
         costType: 'data',
         parents: ['base_hp_boost'],
         childIds: ['threat_response', 'junk_data_1'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(-3.5),
+        treeY: gridY(2.5),
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(180);
@@ -510,15 +532,15 @@ const NODE_DEFS = [
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'threat_response.desc'),
         popupText: '+10 HP (ADAPTATION)',
-        popupColor: '#00ff66',
+        popupColor: COLORS.UTILITY,
         maxLevel: 1,
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         parents: ['resource_gate'],
         childIds: ['armor'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
+        treeX: gridX(-3),
+        treeY: gridY(3.5),
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -530,8 +552,8 @@ const NODE_DEFS = [
         monitorsDuoTier: 1,
         childIds: ['data_compression'],
 
-        treeX: TREE_CENTER_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.125, // Mid-point adjustment (non-clean)
+        treeX: gridX(0),
+        treeY: gridY(2.125), // Mid-point adjustment (non-clean)
         effect: function () { },
     },
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
@@ -541,7 +563,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_17.png',
         description: t('nodes', 'lightning_weapon.desc'),
         popupText: 'LIGHTNING WEAPON',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
         costType: 'shard',
@@ -553,8 +575,8 @@ const NODE_DEFS = [
         duoBoxTier: 1,
         shardId: 'lightning_weapon',
         duoSiblingId: 'shockwave_weapon',
-        treeX: TREE_CENTER_X - 30, // Symmetric Duo offset (non-clean)
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(0) - DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeY: gridY(2.5),
         effect: function () {
             lightningAttack.unlock();
             shockwaveAttack.lock();
@@ -566,7 +588,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_20.png',
         description: t('nodes', 'shockwave_weapon.desc'),
         popupText: 'SHOCKWAVE WEAPON',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
         costType: 'shard',
@@ -578,8 +600,8 @@ const NODE_DEFS = [
         duoBoxTier: 1,
         shardId: 'shockwave_weapon',
         duoSiblingId: 'lightning_weapon',
-        treeX: TREE_CENTER_X + 30, // Symmetric Duo offset (non-clean)
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(0) + DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeY: gridY(2.5),
         effect: function () {
             shockwaveAttack.unlock();
             lightningAttack.lock();
@@ -591,7 +613,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_17.png',
         description: t('nodes', 'lightning_chain.desc'),
         popupText: '+1 CHAIN',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 100,
         costType: 'data',
@@ -599,8 +621,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 1.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2,
+        treeX: gridX(-1.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcLightningChains();
         },
@@ -611,7 +633,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_18.png',
         description: t('nodes', 'lightning_boost.desc'),
         popupText: '+2 LIGHTNING DMG',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 3,
         baseCost: 30,
         costType: 'data',
@@ -619,8 +641,8 @@ const NODE_DEFS = [
         costStep: 30,
         parents: ['lightning_weapon'],
         childIds: ['lightning_static_charge'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 1.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3,
+        treeX: gridX(-1.5),
+        treeY: gridY(3),
         effect: function () {
             upgradeDispatcher.recalcLightningDamage();
         },
@@ -631,7 +653,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'lightning_static_charge.desc'),
         popupText: 'STATIC CHARGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 2,
         baseCost: 100,
         costType: 'data',
@@ -640,8 +662,8 @@ const NODE_DEFS = [
         parents: ['lightning_boost', 'lightning_chain'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(-2.5),
+        treeY: gridY(2.5),
         effect: function () {
             upgradeDispatcher.recalcLightningDamage();
         },
@@ -652,7 +674,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_21.png',
         description: t('nodes', 'shockwave_amplifier.desc'),
         popupText: '+30% RANGE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 40,
         costType: 'data',
@@ -660,8 +682,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 1.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2,
+        treeX: gridX(1.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -672,7 +694,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_22.png',
         description: t('nodes', 'shockwave_resonance.desc'),
         popupText: 'RESONANCE FREQUENCY',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 3,
         baseCost: 30,
         costType: 'data',
@@ -680,8 +702,8 @@ const NODE_DEFS = [
         costStep: 30,
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 1.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3,
+        treeX: gridX(1.5),
+        treeY: gridY(3),
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -692,7 +714,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'shockwave_seismic_crush.desc'),
         popupText: 'SEISMIC CRUSH',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 2,
         baseCost: 100,
         costType: 'data',
@@ -701,8 +723,8 @@ const NODE_DEFS = [
         parents: ['shockwave_amplifier', 'shockwave_resonance'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 2.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(2.5),
+        treeY: gridY(2.5),
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
         },
@@ -713,7 +735,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'armor.desc'),
         popupText: '+2 ARMOR',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 1,
         baseCost: 50,
         costType: 'data',
@@ -722,8 +744,8 @@ const NODE_DEFS = [
         parents: ['threat_response'],
         childIds: ['overcharge'],
 
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 2,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
+        treeX: gridX(-2),
+        treeY: gridY(4),
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -734,7 +756,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_04.png',
         description: t('nodes', 'overclock.desc'),
         popupText: '-25% COOLDOWN',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 1,
         baseCost: 100,
         costType: 'data',
@@ -742,8 +764,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['data_compression'],
         childIds: ['prismatic_array'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
+        treeX: gridX(1),
+        treeY: gridY(4),
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -754,7 +776,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_12.png',
         description: t('nodes', 'prismatic_array.desc'),
         popupText: 'PRISMATIC ARRAY',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 4,
         baseCost: 50,
         costType: 'data',
@@ -762,8 +784,8 @@ const NODE_DEFS = [
         costStep: 50,
         parents: ['overclock'],
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 2,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
+        treeX: gridX(2),
+        treeY: gridY(4),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -774,7 +796,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_19.png',
         description: t('nodes', 'data_compression.desc'),
         popupText: 'DATA COMPRESSION',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 2,
         costType: 'insight',
@@ -782,8 +804,8 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['placeholder_duo_1'],
         childIds: ['overcharge', 'overclock'],
-        treeX: TREE_CENTER_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4,
+        treeX: gridX(0),
+        treeY: gridY(4),
         effect: function () {
             if (!gameState.revealedNodes) gameState.revealedNodes = {};
             gameState.revealedNodes['armor'] = true;
@@ -795,15 +817,15 @@ const NODE_DEFS = [
         icon: 'Skillicon14_13.png',
         description: t('nodes', 'packet_sniffing.desc'),
         popupText: 'SNIFFER ACTIVE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 1,
         costType: 'insight',
         costScaling: 'static',
         parents: ['pulse_expansion'],
         childIds: ['resource_gate_2', 'test_reveal_1'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
+        treeX: gridX(3),
+        treeY: gridY(1.5),
         effect: function () {
             upgradeDispatcher.recalcPacketSniffing();
         },
@@ -818,8 +840,8 @@ const NODE_DEFS = [
         costType: 'data',
         parents: ['packet_sniffing'],
         childIds: ['test_reveal_2', 'junk_data_2'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 2.5,
+        treeX: gridX(3.5),
+        treeY: gridY(2.5),
         tooltipExtraWidth: 60,
         effect: function () {
             resourceManager.addData(180);
@@ -836,8 +858,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['packet_sniffing'],
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 4,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
+        treeX: gridX(4),
+        treeY: gridY(1.5),
         effect: function () { },
     },
     {
@@ -851,8 +873,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resource_gate_2'],
         childIds: ['test_reveal_3'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
+        treeX: gridX(3),
+        treeY: gridY(3.5),
         effect: function () { },
     },
     {
@@ -861,15 +883,15 @@ const NODE_DEFS = [
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'junk_data_1.desc'),
         popupText: '+15 DATA RECOVERED',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_RESOURCE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.RESOURCE,
         maxLevel: 10,
         baseCost: 10,
         costType: 'data',
         costScaling: 'static',
         parents: ['resource_gate'],
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 4,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
+        treeX: gridX(-4),
+        treeY: gridY(3.5),
         effect: function () {
             resourceManager.addData(15);
         },
@@ -880,15 +902,15 @@ const NODE_DEFS = [
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'junk_data_2.desc'),
         popupText: '+2 MAX HEALTH',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupColor: COLORS.UTILITY,
         maxLevel: 1,
         baseCost: 17,
         costType: 'data',
         costScaling: 'static',
         parents: ['resource_gate_2'],
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 4,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 3.5,
+        treeX: gridX(4),
+        treeY: gridY(3.5),
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -904,8 +926,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['test_reveal_2'],
         childIds: ['test_reveal_4'],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 4.5,
+        treeX: gridX(3.5),
+        treeY: gridY(4.5),
         effect: function () { },
     },
     {
@@ -919,8 +941,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['test_reveal_3'],
         childIds: [],
-        treeX: TREE_CENTER_X + TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
+        treeX: gridX(3.5),
+        treeY: gridY(5.5),
         effect: function () { },
     },
     {
@@ -929,8 +951,8 @@ const NODE_DEFS = [
         parents: ['overcharge'],
         monitorsDuoTier: 2,
         childIds: ['manual_pulse', 'wide_pulse'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.125, // Mid-point adjustment (non-clean)
+        treeX: gridX(-1),
+        treeY: gridY(5.125), // Mid-point adjustment (non-clean)
         effect: function () { },
     },
     {
@@ -939,7 +961,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'manual_pulse.desc'),
         popupText: 'MANUAL PULSE UNLOCKED',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
         costType: 'shard',
@@ -950,8 +972,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'manual_pulse',
         duoSiblingId: 'wide_pulse',
-        treeX: (TREE_CENTER_X - TREE_UNIT_X) - 30, // Symmetric Duo offset (non-clean)
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
+        treeX: gridX(-1) - DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeY: gridY(5.5),
         effect: function () {
             upgradeDispatcher.recalcPulseMode();
             upgradeDispatcher.recalcPulseSize();
@@ -963,7 +985,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_07.png',
         description: t('nodes', 'wide_pulse.desc'),
         popupText: '+30% CURSOR PULSE SIZE',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_HOSTILE.toString(16).padStart(6, '0'),
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
         costType: 'shard',
@@ -974,8 +996,8 @@ const NODE_DEFS = [
         duoBoxTier: 2,
         shardId: 'wide_pulse',
         duoSiblingId: 'manual_pulse',
-        treeX: (TREE_CENTER_X - TREE_UNIT_X) + 30, // Symmetric Duo offset (non-clean)
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
+        treeX: gridX(-1) + DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeY: gridY(5.5),
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
             upgradeDispatcher.recalcPulseMode();
@@ -994,8 +1016,8 @@ const NODE_DEFS = [
         costStepScaling: 20,
         parents: ['manual_pulse'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 2.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5.5,
+        treeX: gridX(-2.5),
+        treeY: gridY(5.5),
         effect: function () {
             upgradeDispatcher.recalcPulseCharges();
         },
@@ -1011,8 +1033,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['manual_pulse_child_1'],
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 6,
+        treeX: gridX(-3.5),
+        treeY: gridY(6),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1028,8 +1050,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['manual_pulse_child_1'],
         childIds: [],
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3.5,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 5,
+        treeX: gridX(-3.5),
+        treeY: gridY(5),
         effect: function () {
             upgradeDispatcher.recalcPulseRecharge();
         },
@@ -1044,8 +1066,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: (TREE_CENTER_X - TREE_UNIT_X) - 10, // Non-clean
-        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
+        treeX: gridX(-1) - 10, // Non-clean
+        treeY: gridY(6.5),
         effect: function () { },
     },
     {
@@ -1058,8 +1080,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: (TREE_CENTER_X - TREE_UNIT_X) + 70, // Non-clean
-        treeY: TREE_START_Y - TREE_UNIT_Y * 6.5,
+        treeX: gridX(-1) + 70, // Non-clean
+        treeY: gridY(6.5),
         effect: function () { },
     },
 ];

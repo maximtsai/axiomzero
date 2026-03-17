@@ -614,9 +614,28 @@ const resourceManager = (() => {
         }
     }
 
+    function canAfford(type, amount) {
+        if (type === 'shard') return getShards() >= amount;
+        if (type === 'insight') return getInsight() >= amount;
+        if (type === 'processor') return getProcessors() >= amount;
+        if (type === 'coin') return getCoins() >= amount;
+        return getData() >= amount;
+    }
+
+    function spend(type, amount) {
+        if (!canAfford(type, amount)) return false;
+        if (type === 'shard') addShard(-amount);
+        else if (type === 'insight') addInsight(-amount);
+        else if (type === 'processor') addProcessor(-amount);
+        else if (type === 'coin') addCoin(-amount);
+        else addData(-amount);
+        return true;
+    }
+
     return {
         init, spawnDataDrop, spawnShardDrop, spawnProcessorDrop, addData, addInsight, addShard, addProcessor, addCoin,
         getData, getInsight, getShards, getProcessors, getCoins,
+        canAfford, spend, // Added for cleaner spending logic
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins,
         resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
         setPacketSniffing: (active) => { isPacketSniffingActive = active; }

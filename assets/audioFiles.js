@@ -19,4 +19,5 @@ const audioFiles = [
     { name: 'victory', src: 'audio/victory.mp3' },
     { name: 'upgrade', src: 'audio/upgrade.mp3' },
     { name: 'upgrade_max', src: 'audio/upgrade_max.mp3' },
+    { name: 'flip3', src: 'audio/flip3.mp3' },
 ];

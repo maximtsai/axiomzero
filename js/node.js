@@ -54,6 +54,7 @@ class Node {
         this.treeX = def.treeX || 0;
         this.treeY = def.treeY || 0;
         this.icon = def.icon || null;
+        this.lore = def.lore || false;
 
         // Tier and Duo-Box properties
         this.isDuoBox = def.isDuoBox || false;
@@ -130,17 +131,11 @@ class Node {
     }
 
     canAfford() {
-        const cost = this.getCost();
-        // Updated to use resourceManager API
-        if (this.costType === 'shard') return resourceManager.getShards() >= cost;
-        if (this.costType === 'insight') return resourceManager.getInsight() >= cost;
-        return resourceManager.getData() >= cost;
+        return resourceManager.canAfford(this.costType, this.getCost());
     }
 
     _deductCost(cost) {
-        if (this.costType === 'shard') { resourceManager.addShard(-cost); }
-        else if (this.costType === 'insight') { resourceManager.addInsight(-cost); }
-        else { resourceManager.addData(-cost); }
+        return resourceManager.spend(this.costType, cost);
     }
 
     // ── state management ─────────────────────────────────────────────────
@@ -326,64 +321,88 @@ class Node {
         const cost = this.getCost();
         if (!this.canAfford()) return false;
 
-        // Deduct cost
+        // Deduct cost and increment level
         this._deductCost(cost);
-
         this.level++;
 
         // Persist
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
 
-        // Play sounds
+        // Effect and Metadata logic
+        this.effect(this.level);
+        if (this.isDuoBox) this._handleDuoBoxPurchase();
 
-        const s = audio.play('upgrade', 0.95);
-        if (s) {
-            if (this.maxLevel === 1) {
-                s.detune = 200;
-            } else {
-                s.detune = (this.level - this.maxLevel) * 100 + 200;
-            }
+        // Reveal logic
+        if (this.childIds.length > 0) neuralTree._revealChildren(this.id);
+        if (this.isDuoBox) {
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling && sibling.childIds.length > 0) neuralTree._revealChildren(sibling.id);
         }
-        if (this.isMaxed()) {
-            audio.play('upgrade_max', 0.25);
-        }
-        // Duo-Box first-purchase logic
-        if (this.isDuoBox && this.duoBoxTier > 0) {
-            if (!gameState.duoBoxPurchased) gameState.duoBoxPurchased = {};
-            const isFirstDuoPurchaseEver = Object.keys(gameState.duoBoxPurchased).length === 0;
-            gameState.duoBoxPurchased[this.duoBoxTier] = true;
-            if (!gameState.activeShards) gameState.activeShards = {};
-            gameState.activeShards[this.duoBoxTier] = this.shardId;
 
-            // First-purchase notification (GDD §11)
-            if (isFirstDuoPurchaseEver) {
-                if (typeof tutorialManager !== 'undefined' && tutorialManager.showDuoSwapTutorial) {
-                    tutorialManager.showDuoSwapTutorial();
-                }
-            }
+        // Feedback: Audio, Popups, and Animations
+        this._playPurchaseAudio();
+        this._showPurchasePopup();
+        this._playPurchaseAnimations();
 
-            // Refresh both siblings so their states update
+        // System notifications
+        messageBus.publish('upgradePurchased', this.id, this.level);
+
+        // Final state refresh
+        if (this.isDuoBox) {
+            this.refreshState();
             const sibling = neuralTree.getNode(this.duoSiblingId);
             if (sibling) {
-                sibling.level = 1;
-                if (!gameState.upgrades) gameState.upgrades = {};
-                gameState.upgrades[sibling.id] = sibling.level;
+                sibling.refreshState();
+                sibling._updateVisual();
             }
+            this._updateVisual();
+        } else if (this.isMaxed()) {
+            this.setState(NODE_STATE.MAXED);
+        } else {
+            this._updateVisual();
         }
 
-        // Apply effect
-        this.effect(this.level);
+        if (nodeTooltip.getCurrentNode() === this) this._showHover(true, cost);
 
-        // Visual pulse effect
+        return true;
+    }
+
+    _playPurchaseAudio() {
+        if (this.lore) {
+            audio.play('flip3', 1.6).detune = -100 + Math.random() * 200;
+        } else {
+            const s = audio.play('upgrade', 1.35);
+            if (s) {
+                if (this.maxLevel === 1) {
+                    s.detune = 200;
+                } else {
+                    s.detune = (this.level - this.maxLevel) * 100 + 200;
+                }
+            }
+            if (this.isMaxed()) {
+                let maxSfx = audio.play('upgrade_max', 0.45 + Math.random() * 0.07);
+            }
+        }
+    }
+
+    _showPurchasePopup() {
+        if (!this.popupText) return;
+        const pos = tower.getPosition();
+        floatingText.show(
+            pos.x + (Math.random() - 0.5) * 100,
+            pos.y + (Math.random() - 0.5) * 100,
+            this.popupText,
+            { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 24 }
+        );
+    }
+
+    _playPurchaseAnimations() {
         if (typeof neuralTree !== 'undefined') {
             neuralTree.playPurchasePulse(this.btn.x, this.btn.y + 1, this.isMaxed());
-            if (this.isDuoBox) {
-                this._playDuoPulse();
-            }
+            if (this.isDuoBox) this._playDuoPulse();
         }
 
-        // Successful purchase animation
         if (this.btn && !this.isDuoBox) {
             const currentScaleX = this.btn.scaleX;
             const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
@@ -406,54 +425,27 @@ class Node {
                 }
             });
         }
+    }
 
-        // Reveal children — any HIDDEN children become at least visible
-        if (this.childIds.length > 0) {
-            neuralTree._revealChildren(this.id);
-        }
+    _handleDuoBoxPurchase() {
+        if (!gameState.duoBoxPurchased) gameState.duoBoxPurchased = {};
+        const isFirstDuoPurchaseEver = Object.keys(gameState.duoBoxPurchased).length === 0;
+        gameState.duoBoxPurchased[this.duoBoxTier] = true;
+        if (!gameState.activeShards) gameState.activeShards = {};
+        gameState.activeShards[this.duoBoxTier] = this.shardId;
 
-        // For duo-box, we also need to reveal the sibling's children
-        if (this.isDuoBox) {
-            const sibling = neuralTree.getNode(this.duoSiblingId);
-            if (sibling && sibling.childIds.length > 0) {
-                neuralTree._revealChildren(sibling.id);
+        if (isFirstDuoPurchaseEver) {
+            if (typeof tutorialManager !== 'undefined' && tutorialManager.showDuoSwapTutorial) {
+                tutorialManager.showDuoSwapTutorial();
             }
         }
 
-        // Floating text popup (if defined on this node)
-        if (this.popupText) {
-            const pos = tower.getPosition();
-            floatingText.show(
-                pos.x + (Math.random() - 0.5) * 100,
-                pos.y + (Math.random() - 0.5) * 100,
-                this.popupText,
-                { fontFamily: 'JetBrainsMono_Bold', color: this.popupColor, fontSize: 24 }
-            );
+        const sibling = neuralTree.getNode(this.duoSiblingId);
+        if (sibling) {
+            sibling.level = 1;
+            if (!gameState.upgrades) gameState.upgrades = {};
+            gameState.upgrades[sibling.id] = sibling.level;
         }
-
-        // Check if maxed (for duo-box both siblings need a full refresh)
-        if (this.isDuoBox) {
-            this.refreshState();
-            const sibling = neuralTree.getNode(this.duoSiblingId);
-            if (sibling) {
-                sibling.refreshState();
-                sibling._updateVisual();
-            }
-            this._updateVisual();
-        } else if (this.isMaxed()) {
-            this.setState(NODE_STATE.MAXED);
-        } else {
-            this._updateVisual();
-        }
-
-        messageBus.publish('upgradePurchased', this.id, this.level);
-
-        // Refresh hover text if it was visible
-        if (nodeTooltip.getCurrentNode() === this) {
-            this._showHover(true, cost);
-        }
-
-        return true;
     }
 
     // ── rendering ────────────────────────────────────────────────────────
