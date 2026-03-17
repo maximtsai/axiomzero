@@ -272,8 +272,12 @@ const resourceManager = (() => {
     }
 
     function addData(amount) {
+        // Validation: Ensure amount is a valid number
+        if (typeof amount !== 'number' || isNaN(amount)) return;
+
         // DATA COMPRESSION effect - ONLY apply to gains (positive amount)
-        if (amount > 0) {
+        // SECURITY: Never trigger during Upgrade phase (node refunds, etc.)
+        if (amount > 0 && currentPhase !== GAME_CONSTANTS.PHASE_UPGRADE) {
             const ups = gameState.upgrades || {};
             const compressionLv = ups.data_compression || 0;
             if (compressionLv > 0 && Math.random() < 0.5) {
@@ -282,7 +286,13 @@ const resourceManager = (() => {
         }
 
         gameState.data = Math.max(0, (gameState.data || 0) + amount);
-        sessionData += Math.max(0, amount);
+
+        // SECURITY: Only track session stats during relevant phases to avoid inflating 
+        // combat results with upgrade-phase refunds
+        if (amount > 0 && currentPhase === GAME_CONSTANTS.PHASE_COMBAT) {
+            sessionData += amount;
+        }
+        
         messageBus.publish('currencyChanged', 'data', gameState.data, amount);
     }
 

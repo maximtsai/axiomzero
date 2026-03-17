@@ -107,7 +107,10 @@ window.TRANSLATIONS.en = {
         test_reveal_1: { name: 'TEST REVEAL 1', desc: 'Testing revelation.' },
         test_reveal_2: { name: 'TEST REVEAL 2', desc: 'Testing revelation.' },
         test_reveal_3: { name: 'TEST REVEAL 3', desc: 'Testing revelation.' },
-        test_reveal_4: { name: 'TEST REVEAL 4', desc: 'Testing revelation.' }
+        test_reveal_4: { name: 'TEST REVEAL 4', desc: 'Testing revelation.' },
+        junk_data_1: { name: 'FRAGMENT SALVAGE', desc: 'Scrape the system floor for discarded bits. Instantly grants 40 DATA.' },
+        junk_data_2: { name: 'STALE CACHE', desc: '+2 tower max health' },
+        junk_data_3: { name: 'SLACK BITS', desc: '+1 tower basic damage' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },
