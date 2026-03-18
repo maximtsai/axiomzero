@@ -17,7 +17,7 @@ const MB2 = {
     SPEED_MULT: 2.4,
     CHARGE_RANGE: 200,
     RETREAT_PAST_RANGE: 150,
-    INITIAL_WAIT_MS: 4000,
+    INITIAL_WAIT_MS: 2200,
     CHARGE_WAIT_MS: 800,
     POST_ATTACK_WAIT_MS: 2000,
     KNOCKBACK_MOD: 0, // NO natural knockback or bounce

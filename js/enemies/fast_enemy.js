@@ -36,13 +36,14 @@ class FastEnemy extends Enemy {
         this.view = new FastEnemyView();
     }
 
-    activate(x, y, scaleFactor) {
+    activate(x, y, scaleFactor, extraConfig = {}) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.501,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.5,
-            size: 20
+            size: 20,
+            ...extraConfig
         });
 
         this.setEnemyGlow('fast_glow.png');

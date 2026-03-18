@@ -412,7 +412,7 @@ const enemyManager = (() => {
                     const fsx = GAME_CONSTANTS.halfWidth + Math.cos(fa) * finalDist;
                     const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
 
-                    fe.activate(fsx, fsy, currentScale);
+                    fe.activate(fsx, fsy, currentScale, { initialSpeedMult: 6, rampDuration: 1.1 });
                     typeCounts[fe.type] = (typeCounts[fe.type] || 0) + 1;
                     fe.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
                     activeEnemies.push(fe);

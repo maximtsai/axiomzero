@@ -7,7 +7,7 @@ class Boss1Model extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
-        this.rampDuration = 1.3;
+        this.rampDuration = 1.4;
         this.size = 122;
     }
 }
