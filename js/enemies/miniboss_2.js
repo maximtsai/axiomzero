@@ -23,8 +23,8 @@ const MB2 = {
     KNOCKBACK_MOD: 0, // NO natural knockback or bounce
     ATTACK_ACCELERATION: 1500, // px/s^2 for the lunge
     ATTACK_MAX_SPEED: 800,
-    SPAWN_BURST_DURATION: 1.5,
-    SPAWN_BURST_MULT: 9,
+    INITIAL_SPEED_MULT: 9,
+    RAMP_DURATION: 1.5,
 };
 
 const MINIBOSS2_STATE = {
@@ -48,8 +48,9 @@ class Miniboss2Model extends MinibossModel {
         this.attackSpeed = 0;
         this.hasHitTowerInCurrentAttack = false;
 
-        this._spawnBurstElapsed = 0;
         this.chargeStartSpeed = 0;
+        this.initialSpeedMult = MB2.INITIAL_SPEED_MULT;
+        this.rampDuration = MB2.RAMP_DURATION;
     }
 }
 
@@ -129,7 +130,6 @@ class Miniboss2 extends Miniboss {
         m.trailActive = false;
         m.attackSpeed = 0;
         m.hasHitTowerInCurrentAttack = false;
-        m._spawnBurstElapsed = 0;
 
         // Reset visuals
         if (this.view.img) {
@@ -143,8 +143,10 @@ class Miniboss2 extends Miniboss {
         }
         this.view.setTrailActive(false);
 
-        // Uses Miniboss superclass activate (handles HP UI, tracking refs)
-        super.activate(x, y);
+        super.activate(x, y, {
+            initialSpeedMult: m.initialSpeedMult,
+            rampDuration: m.rampDuration
+        });
     }
 
     deactivate() {
@@ -181,14 +183,7 @@ class Miniboss2 extends Miniboss {
                 m.speed = m.baseSpeed;
                 m.aimAt(tPos.x, tPos.y);
 
-                let burstMult = 1;
-                if (m._spawnBurstElapsed < MB2.SPAWN_BURST_DURATION) {
-                    const t = m._spawnBurstElapsed / MB2.SPAWN_BURST_DURATION;
-                    burstMult = MB2.SPAWN_BURST_MULT + (1 - MB2.SPAWN_BURST_MULT) * t;
-                    m._spawnBurstElapsed += dt;
-                }
-
-                super.update(dt * burstMult);
+                super.update(dt);
 
                 if (distToTower <= MB2.CHARGE_RANGE) {
                     this._transitionTo(MINIBOSS2_STATE.CHARGE);

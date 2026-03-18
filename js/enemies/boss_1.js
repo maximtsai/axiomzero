@@ -152,14 +152,10 @@ class Boss1 extends Boss {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.8,
+            initialSpeedMult: this.model.initialSpeedMult,
+            rampDuration: this.model.rampDuration,
             size: this.model.size
         });
-
-        // Speed ramp state
-        this.model.baseSpeed = this.model.speed;
-        this.model.aliveTime = 0;
-        this.model.speedMult = this.model.initialSpeedMult;
-        this.model._applyAimedVelocity();
 
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('AnnounceText', t('ui', 'boss_1_name'));

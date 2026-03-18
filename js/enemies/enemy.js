@@ -29,6 +29,13 @@ class EnemyModel {
         this.isAttacking = false;
         this.type = '';
 
+        // Speed Ramp properties
+        this.initialSpeedMult = 1.0;
+        this.rampDuration = 0;
+        this.speedMult = 1.0;
+        this.aliveTime = 0;
+        this.baseSpeed = 1; // The un-multiplied speed
+
         // Velocity (px/sec)
         this.vx = 0;
         this.vy = 0;
@@ -56,10 +63,19 @@ class EnemyModel {
             this.maxHealth = config.maxHealth;
             this.health = config.maxHealth;
         }
-        if (config.speed !== undefined) this.speed = config.speed;
+        if (config.speed !== undefined) {
+            this.speed = config.speed;
+            this.baseSpeed = config.speed; // Store base speed for speed mult calculations
+        }
         if (config.damage !== undefined) this.damage = config.damage;
         if (config.size !== undefined) this.size = config.size;
         if (config.selfDamage !== undefined) this.selfDamage = config.selfDamage;
+
+        // Speed ramp initialization
+        if (config.initialSpeedMult !== undefined) this.initialSpeedMult = config.initialSpeedMult;
+        if (config.rampDuration !== undefined) this.rampDuration = config.rampDuration;
+        this.aliveTime = 0;
+        this.speedMult = this.initialSpeedMult;
 
         if (!this.cannotRotate) {
             const distToTowerX = GAME_CONSTANTS.halfWidth - x;
@@ -79,11 +95,34 @@ class EnemyModel {
         const dx = tx - this.x;
         const dy = ty - this.y;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        this.vx = (dx / dist) * this.speed;
-        this.vy = (dy / dist) * this.speed;
+
+        const effectiveSpeed = this.baseSpeed * Math.max(1, this.speedMult) * (this.speed / (this.baseSpeed || 1));
+
+        this.vx = (dx / dist) * effectiveSpeed;
+        this.vy = (dy / dist) * effectiveSpeed;
     }
 
     update(dt) {
+        if (!this.alive) return;
+
+        this.aliveTime += dt;
+
+        if (this.rampDuration > 0) {
+            if (this.aliveTime < this.rampDuration) {
+                const progress = Math.min(1.0, this.aliveTime / this.rampDuration);
+                this.speedMult = this.initialSpeedMult + ((1.0 - this.initialSpeedMult) * progress);
+                // Dynamically re-aim to apply the new speed
+                if (!this.stunned && !this.isAttacking) {
+                    this.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+                }
+            } else if (this.speedMult !== 1.0) {
+                this.speedMult = 1.0;
+                if (!this.stunned && !this.isAttacking) {
+                    this.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+                }
+            }
+        }
+
         if (!this.stunned && !this.isAttacking) {
             let moveMult = 1;
             if (this.hitStopTimer > 0) {

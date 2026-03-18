@@ -396,17 +396,17 @@ const enemyManager = (() => {
 
         mb.activate(sx, sy);
 
-        // Spawn 2 fast enemies ONLY for Miniboss 2
+        // Spawn 4 fast enemies for Miniboss 2 (2 in the middle, 2 on the edges)
         if (config.miniboss === 'Miniboss2') {
-            const offsets = [-0.26, 0.26];
+            const offsets = [-0.4, -0.25, 0.25, 0.4];
             const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
             offsets.forEach(offset => {
                 const fe = pools.fast.get() || pools.basic.get();
                 if (fe) {
                     const fa = angle + offset;
-                    // Middle enemies start 20px closer
-                    const extraDist = -20;
+                    // Middle enemies (offsets +/- 0.25) start 20px closer
+                    const extraDist = (Math.abs(offset) < 0.3) ? -20 : 0;
                     const finalDist = distance + extraDist;
 
                     const fsx = GAME_CONSTANTS.halfWidth + Math.cos(fa) * finalDist;
@@ -633,7 +633,7 @@ const enemyManager = (() => {
         const textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
 
         if (gameState.settings.showDamageNumbers) {
-            floatingText.show(enemy.x, enemy.y - 14, finalAmount.toString(), {
+            floatingText.show(enemy.x, enemy.y - 14, '\n ' + finalAmount.toString() + ' \n ', {
                 fontFamily: 'VCR',
                 fontSize: 28,
                 color: textColor,

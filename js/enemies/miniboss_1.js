@@ -16,8 +16,8 @@ const MB1 = {
     FIRE_INTERVAL: 4000,
     BULLET_DAMAGE: 4,
     KNOCKBACK_MOD: 0,
-    SPAWN_BURST_DURATION: 2,
-    SPAWN_BURST_MULT: 7,
+    INITIAL_SPEED_MULT: 7,
+    RAMP_DURATION: 2,
 };
 
 const MINIBOSS_STATE = {
@@ -35,7 +35,8 @@ class Miniboss1Model extends MinibossModel {
         this.chargeAttackPlayed = false;
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
-        this._spawnBurstElapsed = 0;
+        this.initialSpeedMult = MB1.INITIAL_SPEED_MULT;
+        this.rampDuration = MB1.RAMP_DURATION;
     }
 }
 
@@ -155,11 +156,13 @@ class Miniboss1 extends Miniboss {
 
         m.state = MINIBOSS_STATE.MOVING;
         m.fireCooldown = MB1.FIRE_INTERVAL;
-        m._spawnBurstElapsed = 0;
         m.isCharging = false;
         m.chargeAttackPlayed = false;
         m._isRampingUp = false;
         m._chargeWobbleTime = 0;
+
+        // Uses Miniboss superclass activate, passing the speed mult config implicitly via the class variables setup.
+        // But the EnemyModel activate config handles it explicitly. So let's pass it via super.activate.
 
         // Reset visuals
         if (this.view.img) {
@@ -172,7 +175,10 @@ class Miniboss1 extends Miniboss {
             this.view.hpImg.setScale(1);
         }
 
-        super.activate(x, y);
+        super.activate(x, y, {
+            initialSpeedMult: m.initialSpeedMult,
+            rampDuration: m.rampDuration
+        });
     }
 
     deactivate() {
@@ -192,15 +198,7 @@ class Miniboss1 extends Miniboss {
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
         if (m.state === MINIBOSS_STATE.MOVING) {
-            // Spawn burst
-            let burstMult = 1;
-            if (m._spawnBurstElapsed < MB1.SPAWN_BURST_DURATION) {
-                const t = m._spawnBurstElapsed / MB1.SPAWN_BURST_DURATION;
-                burstMult = MB1.SPAWN_BURST_MULT + (1 - MB1.SPAWN_BURST_MULT) * t;
-                m._spawnBurstElapsed += dt;
-            }
-
-            super.update(dt * burstMult);
+            super.update(dt);
 
             if (distToTower <= MB1.ATTACK_RANGE) {
                 m.state = MINIBOSS_STATE.ATTACKING;
