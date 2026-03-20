@@ -74,6 +74,7 @@ class PulseAttackView {
             initialSize, initialSize,
             this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE
         );
+        this.sprite.rotVel = 0;
         this.sprite.setOrigin(0.5, 0.5);
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         this.sprite.setAlpha(this.IDLE_ALPHA);
@@ -144,6 +145,11 @@ class PulseAttackView {
         this.spritePointer.setPosition(targetX, targetY);
         this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
 
+        const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.25;
+        this.sprite.rotVel += rotAccel;
+        this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
+        this.spriteBright.setRotation(this.sprite.rotation);
+
         const size = model.size;
         const topY = targetY - size / 2 - 4; // 4px above edge (matching user's recent change)
         const leftAnchorX = targetX - size / 2 + 4; // Offset from left edge
@@ -171,12 +177,17 @@ class PulseAttackView {
     playFireAnimation() {
         if (!this.sprite) return;
 
+        const flippedLeft = Math.random() < 0.5;
+        const goalRot = flippedLeft ? -0.3 : 0.3;
+
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale(1.2);
+        this.spriteBright.setScale(1.3);
+        this.spriteBright.setRotation(goalRot);
+        this.sprite.setRotation(this.spriteBright.rotation);
 
         this.spriteRed.setAlpha(0.35);
-        this.spriteRed.setScale(1.35);
+        this.spriteRed.setScale(1.4);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
@@ -188,10 +199,41 @@ class PulseAttackView {
             ease: 'Quart.easeOut',
         });
 
-        this.sprite.setScale(1.25);
+        // PhaserScene.tweens.add({
+        //     rotation: goalRot * -0.3,
+        //     targets: [this.spriteBright, this.sprite],
+        //     duration: 100,
+        //     ease: 'Quart.easeInOut',
+        //     onComplete: () => {
+        //         PhaserScene.tweens.add({
+        //             rotation: goalRot * 0.1,
+        //             targets: [this.spriteBright, this.sprite],
+        //             duration: 120,
+        //             ease: 'Cubic.easeInOut',
+        //             onComplete: () => {
+        //                 PhaserScene.tweens.add({
+        //                     rotation: 0,
+        //                     targets: [this.spriteBright, this.sprite],
+        //                     duration: 200,
+        //                     ease: 'Back.easeOut',
+        //                 });
+        //             }
+        //         });
+        //     }
+        // });
+
+        this.sprite.setScale(1.35);
 
         PhaserScene.tweens.add({
-            targets: [this.sprite, this.spriteBright, this.spriteRed],
+            targets: [this.sprite, this.spriteBright],
+            scaleX: 1,
+            scaleY: 1,
+            duration: 240,
+            ease: 'Cubic.easeOut',
+        });
+
+        PhaserScene.tweens.add({
+            targets: [this.spriteRed],
             scaleX: 1,
             scaleY: 1,
             rotation: 0,
@@ -318,7 +360,7 @@ const pulseAttack = (() => {
 
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
-        
+
         // ISOLATION PROTOCOL logic
         let actualDamage = model.damage;
         if (hits.length === 1 && model.isolationLevel > 0) {

@@ -30,7 +30,7 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 1 // Scales up *base* stats of enemies before wave scaling applies
     },
     2: {
-        spawnInterval: 1000, // ms between regular spawns (base)
+        spawnInterval: 800, // ms between regular spawns (base)
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -65,13 +65,15 @@ const LEVEL_CONFIG = {
 function getCurrentLevelConfig(progress = 0) {
     let level = gameState.currentLevel || 1;
     if (!LEVEL_CONFIG[level]) {
-        const maxLevel = Math.max(...Object.keys(LEVEL_CONFIG).map(Number));
-        level = maxLevel;
+        level = getMaxConfiguredLevel();
     }
     const config = LEVEL_CONFIG[level];
 
-    // Swap the public probabilities based on wave progress
-    config.enemyProbabilities = (progress > GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS + 0.01 && config._probs2) ? config._probs2 : config._probs1;
+    const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= level;
+    const isLatePhase = progress > GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS + 0.01;
+
+    // Swap the public probabilities based on wave progress or past victory
+    config.enemyProbabilities = ((isLatePhase || minibossBeaten) && config._probs2) ? config._probs2 : config._probs1;
 
     return config;
 }
@@ -108,3 +110,8 @@ function getCurrentLevelConfig(progress = 0) {
         return result;
     }
 })();
+
+function getMaxConfiguredLevel() {
+    return Math.max(...Object.keys(LEVEL_CONFIG).map(Number));
+}
+

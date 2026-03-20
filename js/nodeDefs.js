@@ -673,7 +673,7 @@ const NODE_DEFS = [
         name: 'AMPLIFIER',
         icon: 'Skillicon14_21.png',
         description: t('nodes', 'shockwave_amplifier.desc'),
-        popupText: '+30% RANGE',
+        popupText: '+25% RANGE',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 50,

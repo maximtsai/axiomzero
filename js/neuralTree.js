@@ -843,8 +843,8 @@ const neuralTree = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
         const depth = GAME_CONSTANTS.DEPTH_POPUPS + 1000;
 
-        // Default to highest unlocked level (highest boss defeated + 1)
-        const maxLevel = (gameState.levelsDefeated || 0) + 1;
+        // Default to highest unlocked level (highest boss defeated + 1), capped by max config
+        const maxLevel = Math.min((gameState.levelsDefeated || 0) + 1, getMaxConfiguredLevel());
         selectedLevel = maxLevel;
 
         // Black back screen
