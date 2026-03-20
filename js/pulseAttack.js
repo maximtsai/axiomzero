@@ -16,9 +16,10 @@ class PulseAttackModel {
         this.size = this.BASE_SIZE;  // current square side length (upgradeable)
         this.damage = this.BASE_DAMAGE; // current damage per pulse (upgradeable)
 
-        this.manualMode = false;
         this.charges = 0;
         this.maxCharges = 2;
+        this.isolationLevel = 0;
+        this.saturationLevel = 0;
     }
 
     resetTimer() {
@@ -317,8 +318,19 @@ const pulseAttack = (() => {
 
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
+        
+        // ISOLATION PROTOCOL logic
+        let actualDamage = model.damage;
+        if (hits.length === 1 && model.isolationLevel > 0) {
+            actualDamage *= (1 + 0.25 * model.isolationLevel);
+        }
+        // AREA SATURATION logic
+        else if (hits.length > 1 && model.saturationLevel > 0) {
+            actualDamage *= (1 + 0.05 * model.saturationLevel * (hits.length - 1));
+        }
+
         for (let i = 0; i < hits.length; i++) {
-            enemyManager.damageEnemy(hits[i], model.damage);
+            enemyManager.damageEnemy(hits[i], actualDamage);
         }
     }
 
@@ -350,5 +362,13 @@ const pulseAttack = (() => {
         model.maxCharges = newMax;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval };
+    function setIsolationLevel(level) {
+        model.isolationLevel = level;
+    }
+
+    function setSaturationLevel(level) {
+        model.saturationLevel = level;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel };
 })();

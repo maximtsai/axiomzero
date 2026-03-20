@@ -10,19 +10,23 @@ const upgradeDispatcher = (() => {
         const overchargeLv = ups.overcharge || 0;
 
         let base = 4 + 2 * ampLv + 4 * overchargeLv;
-
-        // Apply Kinetic Amplifier bonus (manual_pulse_child_1_1)
-        if (ups.manual_pulse_child_1_1) {
-            base *= 1.5;
-        }
-
         pulseAttack.setDamage(base);
+        
+        const manualActive = (gameState.activeShards && gameState.activeShards[2] === 'manual_pulse');
+        const wideActive = (gameState.activeShards && gameState.activeShards[2] === 'wide_pulse');
+
+        const isolationLv = manualActive ? (ups.manual_pulse_child_1_1 || 0) : 0;
+        pulseAttack.setIsolationLevel(isolationLv);
+
+        const saturationLv = wideActive ? (ups.wide_pulse_child_1 || 0) : 0;
+        pulseAttack.setSaturationLevel(saturationLv);
     }
 
     /** Recalculates pulse recharge interval. */
     function recalcPulseRecharge() {
         const ups = gameState.upgrades || {};
-        const intervalBonus = ups.manual_pulse_child_1_2 ? 0.75 : 1.0;
+        const manualActive = (gameState.activeShards && gameState.activeShards[2] === 'manual_pulse');
+        const intervalBonus = (manualActive && ups.manual_pulse_child_1_2) ? 0.75 : 1.0;
         pulseAttack.setFireInterval(2000 * intervalBonus);
     }
 
@@ -53,7 +57,8 @@ const upgradeDispatcher = (() => {
     /** Recalculates max pulse charges. */
     function recalcPulseCharges() {
         const ups = gameState.upgrades || {};
-        const extraCharges = ups.manual_pulse_child_1 || 0;
+        const manualActive = (gameState.activeShards && gameState.activeShards[2] === 'manual_pulse');
+        const extraCharges = manualActive ? (ups.manual_pulse_child_1 || 0) : 0;
         pulseAttack.setMaxCharges(2 + extraCharges);
     }
 

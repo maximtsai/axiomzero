@@ -982,7 +982,7 @@ const NODE_DEFS = [
     },
     {
         id: 'wide_pulse',
-        name: 'RESONANCE AREA',
+        name: 'BROADCAST PROTOCOL',
         icon: 'Skillicon14_07.png',
         description: t('nodes', 'wide_pulse.desc'),
         popupText: '+30% CURSOR PULSE SIZE',
@@ -1025,13 +1025,14 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse_child_1_1',
-        name: 'KINETIC AMPLIFIER',
+        name: 'ISOLATION PROTOCOL',
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'manual_pulse_child_1_1.desc'),
-        maxLevel: 1,
+        maxLevel: 4,
         baseCost: 100,
         costType: 'data',
-        costScaling: 'static',
+        costScaling: 'linear',
+        costStep: 100,
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: gridX(-3.5),
@@ -1059,17 +1060,21 @@ const NODE_DEFS = [
     },
     {
         id: 'wide_pulse_child_1',
-        name: '...',
+        name: 'AREA SATURATION',
+        icon: 'Skillicon14_07.png',
         description: t('nodes', 'wide_pulse_child_1.desc'),
-        maxLevel: 1,
-        baseCost: 1,
+        maxLevel: 4,
+        baseCost: 50,
         costType: 'data',
-        costScaling: 'static',
+        costScaling: 'linear',
+        costStep: 50,
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: gridX(-1) - 10, // Non-clean
-        treeY: gridY(6.5),
-        effect: function () { },
+        treeX: gridX(0.5),
+        treeY: gridY(6),
+        effect: function () {
+            upgradeDispatcher.recalcPulseDamage();
+        },
     },
     {
         id: 'wide_pulse_child_2',
@@ -1081,8 +1086,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['wide_pulse'],
         childIds: [],
-        treeX: gridX(-1) + 70, // Non-clean
-        treeY: gridY(6.5),
+        treeX: gridX(0.5),
+        treeY: gridY(5),
         effect: function () { },
     },
 ];
