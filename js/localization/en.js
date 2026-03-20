@@ -102,13 +102,14 @@ window.TRANSLATIONS.en = {
             desc: 'final system report...',
             unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
-        resource_gate: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
-        resource_gate_2: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
+        firewall_1: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
+        junk_barrier: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
+        firewall_2: { name: 'FIREWALL 2', desc: 'Second layer security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
         forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: 'Legacy vulnerability left behind by a sysadmin.' },
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },
         backdoor_3: { name: 'BACKDOOR 3', desc: 'The final vulnerability in the legacy system chain.' },
-        unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants 15 DATA each level.' },
+        unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants +15 DATA.' },
         junk_data_1: { name: 'FRAGMENT SALVAGE', desc: 'Scrape the system floor for discarded bits. Instantly grants 15 DATA.' },
         junk_data_2: { name: 'STALE CACHE', desc: '+0.2 tower max health' },
         junk_data_3: { name: 'STRAY BITS', desc: '+0.2 tower basic damage' }
