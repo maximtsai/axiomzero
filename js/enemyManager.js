@@ -353,6 +353,15 @@ const enemyManager = (() => {
         if (minibossSpawned) return;
 
         const config = getCurrentLevelConfig(lastWaveProgress);
+
+        // Check if miniboss for this level has already been defeated
+        const currentLevel = gameState.currentLevel || 1;
+        if ((gameState.minibossLevelsDefeated || 0) >= currentLevel) {
+            debugLog(`Miniboss for level ${currentLevel} already defeated. Skipping spawn.`);
+            minibossSpawned = true; // prevent re-attempts this wave
+            return;
+        }
+
         let mbClass = _resolveEnemyClass(config.miniboss);
         let mb = null;
         if (!mbClass) {
@@ -683,6 +692,14 @@ const enemyManager = (() => {
             if (enemy.img) {
                 customEmitters.minibossExplosion(enemy.img);
             }
+
+            // Update highest miniboss level defeated
+            const currentLevel = gameState.currentLevel || 1;
+            if (currentLevel > (gameState.minibossLevelsDefeated || 0)) {
+                gameState.minibossLevelsDefeated = currentLevel;
+                debugLog('New miniboss record: level ' + currentLevel);
+            }
+
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
         } else if (wasBoss) {

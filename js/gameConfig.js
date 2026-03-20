@@ -157,6 +157,8 @@ const GAME_STATE_DEFAULTS = {
     activeShards: {},      // { tierNum: 'shardId' } — which shard node is active per tier
     duoBoxPurchased: {},   // { tierNum: true } — has player purchased either node in this tier's duo-box?
     revealedNodes: {},     // { nodeId: true } — special events can reveal part of the tree
+    levelsDefeated: 0,     // highest boss level defeated
+    minibossLevelsDefeated: 0, // highest miniboss level defeated
 
     // Lifetime Stats
     stats: {

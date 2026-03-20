@@ -141,10 +141,13 @@ const waveManager = (() => {
     }
 
     function _onBossDefeated(x, y) {
-        debugLog('Boss 1 defeated — triggering victory sequence');
+        // Update level defeat state
+        const currentLevel = gameState.currentLevel || 1;
+        if (currentLevel > (gameState.levelsDefeated || 0)) {
+            gameState.levelsDefeated = currentLevel;
+            debugLog('New boss record: level ' + currentLevel);
+        }
 
-        // Increment tier for future unlocks
-        gameState.currentTier++;
         debugLog('Advanced to Tier ' + gameState.currentTier);
 
         // 1. Tower becomes invincible (no need to call, boss is dead and enemies are dying, plus transition handles this)

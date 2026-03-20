@@ -31,6 +31,12 @@ const neuralTree = (() => {
     let hasShownThisSession = false;
     let hintPulseTimer = null;
 
+    // Level Selection Popup
+    let levelSelectOverlay = null;
+    let levelSelectContainer = null;
+    let levelSelectButtons = [];
+    let selectedLevel = 1;
+
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
     const TREE_X_OFFSET = 8;
@@ -824,7 +830,140 @@ const neuralTree = (() => {
 
         _stopHintTimer();
 
-        transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
+        // If high level boss defeated, show level selector
+        if ((gameState.levelsDefeated || 0) >= 1) {
+            _showLevelSelectPopup();
+        } else {
+            transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
+        }
+    }
+
+    function _showLevelSelectPopup() {
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const depth = GAME_CONSTANTS.DEPTH_POPUPS + 1000;
+
+        // Default to highest unlocked level (highest boss defeated + 1)
+        const maxLevel = (gameState.levelsDefeated || 0) + 1;
+        selectedLevel = maxLevel;
+
+        // Black back screen
+        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'black_pixel');
+        levelSelectOverlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        levelSelectOverlay.setAlpha(0.45).setDepth(depth).setScrollFactor(0).setInteractive();
+
+        levelSelectContainer = PhaserScene.add.container(cx, cy).setDepth(depth + 1);
+        levelSelectContainer.setScrollFactor(0);
+
+        // Background box
+        const bg = PhaserScene.add.nineslice(0, 0, 'ui', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
+        levelSelectContainer.add(bg);
+
+        // Title
+        const title = PhaserScene.add.text(0, -140, "CHOOSE LEVEL", {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '34px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
+        levelSelectContainer.add(title);
+
+        // Level text
+        const levelDisplay = PhaserScene.add.text(0, -70, "LEVEL: " + selectedLevel, {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '40px',
+            color: '#ffffff',
+            align: 'center',
+        }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
+        levelSelectContainer.add(levelDisplay);
+
+        const updateLevelUI = () => {
+            levelDisplay.setText("LEVEL: " + selectedLevel);
+            // Update button states
+            minusBtn.setState(selectedLevel > 1 ? NORMAL : DISABLE);
+            plusBtn.setState(selectedLevel < maxLevel ? NORMAL : DISABLE);
+        };
+
+        // Minus button
+        const minusBtn = new Button({
+            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
+            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
+            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
+            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
+            onMouseUp: () => {
+                if (selectedLevel > 1) {
+                    selectedLevel--;
+                    updateLevelUI();
+                }
+            }
+        });
+        minusBtn.setScale(1.2);
+        minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
+        minusBtn.setDepth(depth + 2);
+        minusBtn.setScrollFactor(0);
+        levelSelectButtons.push(minusBtn);
+
+        // Plus button
+        const plusBtn = new Button({
+            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
+            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
+            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
+            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
+            onMouseUp: () => {
+                if (selectedLevel < maxLevel) {
+                    selectedLevel++;
+                    updateLevelUI();
+                }
+            }
+        });
+        plusBtn.setScale(1.2);
+        plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
+        plusBtn.setDepth(depth + 2);
+        plusBtn.setScrollFactor(0);
+        levelSelectButtons.push(plusBtn);
+
+        // START Button
+        const startBtn = new Button({
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 80 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 80 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 80 },
+            onMouseUp: () => {
+                gameState.currentLevel = selectedLevel;
+                _closeLevelSelect();
+                transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
+            }
+        });
+        startBtn.addText("START", { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff' });
+        startBtn.setDepth(depth + 2);
+        startBtn.setScrollFactor(0);
+        levelSelectButtons.push(startBtn);
+
+        // BACK Button
+        const backBtn = new Button({
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 140 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 140 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
+            onMouseUp: _closeLevelSelect
+        });
+        backBtn.addText("BACK", { fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#aaaaaa' });
+        backBtn.setDepth(depth + 2);
+        backBtn.setScrollFactor(0);
+        levelSelectButtons.push(backBtn);
+
+        updateLevelUI();
+    }
+
+    function _closeLevelSelect() {
+        if (levelSelectOverlay) {
+            levelSelectOverlay.destroy();
+            levelSelectOverlay = null;
+        }
+        if (levelSelectContainer) {
+            levelSelectContainer.destroy();
+            levelSelectContainer = null;
+        }
+        levelSelectButtons.forEach(b => b.destroy());
+        levelSelectButtons = [];
     }
 
     // ── public ───────────────────────────────────────────────────────────
