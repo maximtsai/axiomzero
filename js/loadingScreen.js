@@ -71,7 +71,7 @@ class LoadingScreen {
         // Text-based loading bar
         this._barText = scene.add.text(cx, cy + 50, '     [--------------------]   0%', {
             fontFamily: '"Courier New", Courier, monospace',
-            fontSize: 40,
+            fontSize: 24,
             color: '#ffd700',
             fontStyle: 'bold',
             align: 'center',
@@ -79,7 +79,7 @@ class LoadingScreen {
 
         this._text = scene.add.text(cx, cy - 25, t('ui', 'loading'), {
             fontFamily: 'Times New Roman',
-            fontSize: 29,
+            fontSize: 24,
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(2);

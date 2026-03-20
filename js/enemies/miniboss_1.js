@@ -269,7 +269,9 @@ class Miniboss1 extends Miniboss {
                 MB1.BULLET_DAMAGE,
                 'bullet.png',
                 null,
-                true
+                true,
+                100,
+                0.0075
             );
         }
     }

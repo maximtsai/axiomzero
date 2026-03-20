@@ -897,7 +897,6 @@ const neuralTree = (() => {
                 }
             }
         });
-        minusBtn.setScale(1.2);
         minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
         minusBtn.setDepth(depth + 2);
         minusBtn.setScrollFactor(0);
@@ -916,7 +915,6 @@ const neuralTree = (() => {
                 }
             }
         });
-        plusBtn.setScale(1.2);
         plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
         plusBtn.setDepth(depth + 2);
         plusBtn.setScrollFactor(0);

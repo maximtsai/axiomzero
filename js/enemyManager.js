@@ -734,7 +734,7 @@ const enemyManager = (() => {
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
         // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
-        let firstThreshold = 5;
+        let firstThreshold = 5.05;
         // Special case: if basic_pulse isn't researched, increase threshold to 5.75
         if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
             firstThreshold = 5.15;

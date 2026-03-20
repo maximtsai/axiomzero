@@ -6,7 +6,7 @@ const LEVEL_CONFIG = {
         spawnInterval: 900, // ms between regular spawns (base)
         initialWeights: {
             basic: 1,
-            fast: 0.08,
+            fast: 0,
             shooter: 0,
             swarmer: 0.06,
             sniper: 0,
@@ -18,7 +18,7 @@ const LEVEL_CONFIG = {
             shooter: 0.1,
             swarmer: 0.12,
             heavy: 0,
-            fast: 0.1,
+            fast: 0,
             sniper: 0,
             protector: 0.0
         },
@@ -30,26 +30,26 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 1 // Scales up *base* stats of enemies before wave scaling applies
     },
     2: {
-        spawnInterval: 900, // ms between regular spawns (base)
+        spawnInterval: 1000, // ms between regular spawns (base)
         initialWeights: {
             basic: 1,
-            fast: 0.08,
-            shooter: 0,
-            swarmer: 0.06,
+            fast: 0,
+            shooter: 0.15,
+            swarmer: 0.1,
             sniper: 0,
             heavy: 0,
             logic_stray: 0,
             protector: 0
         },
         lateWeights: {
-            shooter: 0.1,
-            swarmer: 0.12,
+            shooter: 0,
+            swarmer: 0.05,
             heavy: 0,
-            fast: 0.1,
+            fast: 0.3,
             sniper: 0,
             protector: 0.0
         },
-        swarmerGroupSize: { min: 2, max: 5 },
+        swarmerGroupSize: { min: 3, max: 5 },
         miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss1',        // Identifier for the main boss

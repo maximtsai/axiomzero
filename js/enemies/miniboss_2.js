@@ -7,11 +7,11 @@
 //   • Lunges rapidly to deal exactly 1 attack (ATTACK). Takes 0 knockback from all tower hits.
 //   • After hit, sticks to tower for 1.5s (PAUSED_POST_ATTACK).
 //   • Retreats until >150px away (RETREAT), then repeats from CHARGE.
-//   • 110 HP, 5 Damage, 10 Self-Damage. Drops 1 SHARD on death.
+//   • 210 HP, 9 Damage, 10 Self-Damage. Drops 1 SHARD on death.
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB2 = {
-    HEALTH: 180,
+    HEALTH: 210,
     DAMAGE: 9,
     SELF_DAMAGE: 5,
     SPEED_MULT: 2.4,

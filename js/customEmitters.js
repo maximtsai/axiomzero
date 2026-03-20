@@ -242,12 +242,13 @@ const customEmitters = (() => {
         const targetScaleMultiplier = 1 + (90 / (90 + (enemy.size || 20)));
         const baseScaleX = enemy.view.img.scaleX;
         const baseScaleY = enemy.view.img.scaleY;
+        const randRot = Math.random() * 0.3 - 0.15;
 
         const copies = spritesToAnimate.map(origSprite => {
             const copy = enemyDeathAnimPool.get();
             copy.setFrame(origSprite.frame.name);
             copy.setPosition(origSprite.x, origSprite.y);
-            copy.setRotation(origSprite.rotation);
+            copy.setRotation(origSprite.rotation + randRot);
             copy.setDepth(origSprite.depth + 5);
 
             const signX = origSprite.scaleX < 0 ? -1 : 1;
