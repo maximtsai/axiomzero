@@ -41,7 +41,15 @@ class LoadingScreen {
             () => { this._onComplete(); },
             (progress, statusText) => {
                 if (progress !== null && progress !== undefined) {
-                    this._bar.scaleX = (GAME_CONSTANTS.LOADING_BAR_WIDTH / 2) * progress;
+                    if (this._barText) {
+                        const totalSegments = 20;
+                        const filledSegments = Math.round(progress * totalSegments);
+                        const emptySegments = Math.max(0, totalSegments - filledSegments);
+                        const pct = Math.floor(progress * 100);
+                        const pctStr = pct.toString().padStart(3, ' ');
+                        const stringProgress = '     [' + '█'.repeat(filledSegments) + '-'.repeat(emptySegments) + '] ' + pctStr + '%';
+                        this._barText.setText(stringProgress);
+                    }
                 }
                 if (statusText) {
                     this._text.setText(t('loading_screen', 'status', statusText));
@@ -62,17 +70,14 @@ class LoadingScreen {
 
         this._bg = scene.add.image(cx, cy, 'bg').setDepth(0);
 
-        // Bar track
-        this._barTrack = scene.add.image(cx, cy + 50, 'white_pixel')
-            .setAlpha(0.3)
-            .setScale(barW / 2, barH / 2)
-            .setDepth(1);
-
-        // Bar fill – grows rightward from the left edge
-        this._bar = scene.add.image(cx - barW / 2, cy + 50, 'white_pixel')
-            .setOrigin(0, 0.5)
-            .setScale(0.5, barH / 2)
-            .setDepth(2);
+        // Text-based loading bar
+        this._barText = scene.add.text(cx, cy + 50, '     [--------------------]   0%', {
+            fontFamily: '"Courier New", Courier, monospace',
+            fontSize: 48,
+            color: '#ffd700',
+            fontStyle: 'bold',
+            align: 'center',
+        }).setOrigin(0.5, 0.5).setDepth(2);
 
         this._text = scene.add.text(cx, cy - 25, t('ui', 'loading'), {
             fontFamily: 'Times New Roman',
@@ -133,8 +138,7 @@ class LoadingScreen {
 
     _onComplete() {
         if (this._bg) { this._bg.destroy(); this._bg = null; }
-        if (this._barTrack) { this._barTrack.destroy(); this._barTrack = null; }
-        if (this._bar) { this._bar.destroy(); this._bar = null; }
+        if (this._barText) { this._barText.destroy(); this._barText = null; }
         if (this._runBtnBg) { this._runBtnBg.destroy(); this._runBtnBg = null; }
         if (this._runBtnText) { this._runBtnText.destroy(); this._runBtnText = null; }
         if (this._text) {
@@ -142,16 +146,14 @@ class LoadingScreen {
             PhaserScene.tweens.add({
                 targets: this._text,
                 alpha: 0,
-                delay: 300,
-                duration: 400,
+                duration: 100,
                 onComplete: () => {
                     if (this._text) { this._text.destroy(); this._text = null; }
-                    messageBus.publish('assetsLoaded');
                 }
             });
-        } else {
-            messageBus.publish('assetsLoaded');
         }
+        messageBus.publish('assetsLoaded');
+
     }
 }
 
