@@ -65,15 +65,13 @@ class LoadingScreen {
     _buildUI(scene) {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
-        const barW = GAME_CONSTANTS.LOADING_BAR_WIDTH;
-        const barH = GAME_CONSTANTS.LOADING_BAR_HEIGHT;
 
         this._bg = scene.add.image(cx, cy, 'bg').setDepth(0);
 
         // Text-based loading bar
         this._barText = scene.add.text(cx, cy + 50, '     [--------------------]   0%', {
             fontFamily: '"Courier New", Courier, monospace',
-            fontSize: 48,
+            fontSize: 40,
             color: '#ffd700',
             fontStyle: 'bold',
             align: 'center',
@@ -142,16 +140,21 @@ class LoadingScreen {
         if (this._runBtnBg) { this._runBtnBg.destroy(); this._runBtnBg = null; }
         if (this._runBtnText) { this._runBtnText.destroy(); this._runBtnText = null; }
         if (this._text) {
-            this._text.setText(t('ui', 'done'));
-            PhaserScene.tweens.add({
-                targets: this._text,
-                alpha: 0,
-                duration: 100,
-                onComplete: () => {
-                    if (this._text) { this._text.destroy(); this._text = null; }
-                }
-            });
+            this._text.destroy(); this._text = null;
         }
+        // create blackpixel here
+        this._blackPixel = this._scene.add.image(0, 0, 'black_pixel').setDepth(999999).setAlpha(0.9);
+        this._blackPixel.setScale(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        // tween black here
+        this._scene.tweens.add({
+            targets: this._blackPixel,
+            alpha: 0,
+            duration: 450,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                this._blackPixel.destroy(); this._blackPixel = null;
+            }
+        });
         messageBus.publish('assetsLoaded');
 
     }
