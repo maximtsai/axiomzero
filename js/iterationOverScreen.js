@@ -209,7 +209,7 @@ const iterationOverScreen = (() => {
                 }
             }
             if (sessionInsight > 0) {
-                insightText.setText('⦵ INSIGHT gained: ' + sessionInsight);
+                insightText.setText('◐ INSIGHT gained: ' + sessionInsight);
                 insightText.setVisible(true);
                 activeTexts.push(insightText);
             }

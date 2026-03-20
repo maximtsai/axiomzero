@@ -816,6 +816,8 @@ const NODE_DEFS = [
         name: 'TWO-STEP AUTH',
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'two_step_auth.desc'),
+        popupText: '+100 DATA',
+        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 2,
         costType: 'insight',
@@ -826,7 +828,7 @@ const NODE_DEFS = [
         treeY: gridY(4),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addInsight(1); // Refund? Or maybe something else. User didn't specify effect.
+                resourceManager.addData(100);
             }
         },
     },

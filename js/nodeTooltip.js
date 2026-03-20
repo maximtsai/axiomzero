@@ -194,7 +194,7 @@ const nodeTooltip = (() => {
                 iconStr = '◆';
                 currentRes = resourceManager.getShards();
             } else if (node.costType === 'insight') {
-                iconStr = '⦵';
+                iconStr = '◐';
                 currentRes = resourceManager.getInsight();
             } else {
                 iconStr = '◈';
