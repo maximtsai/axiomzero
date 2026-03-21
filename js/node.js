@@ -581,6 +581,7 @@ class Node {
             this.purchase();
         } else {
             // Can't afford — show hover and shake the cost text
+            audio.play('retro1', 0.82);
             if (!nodeTooltip.isVisible() || nodeTooltip.getCurrentNode() !== this) {
                 this._showHover();
             }
@@ -747,7 +748,7 @@ class Node {
         this.btn.setAlpha(1);
         if (this.iconSprite) {
             this.iconSprite.setVisible(true);
-            this.iconSprite.setAlpha(1);
+            this.iconSprite.setAlpha(0.85);
         }
         return sprite;
     }

@@ -24,6 +24,11 @@ const neuralTree = (() => {
     let buyPulsePool = null;
     let maxPulsePool = null;
 
+    let scrollUpBtn = null;
+    let scrollDownBtn = null;
+    let isScrollingUp = false;
+    let isScrollingDown = false;
+
     let lastDragX = 0;
     let lastDragY = 0;
 
@@ -52,6 +57,7 @@ const neuralTree = (() => {
         _createNodes();
         _createDeployButton();
         _createCryptoMineButton();
+        _createScrollButtons();
         _initPools();
 
         if (FLAGS.DEBUG) {
@@ -64,6 +70,7 @@ const neuralTree = (() => {
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('node_purchase_feedback', _onNodePurchaseFeedback);
 
+        updateManager.addFunction(_updateScroll);
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
 
@@ -600,6 +607,15 @@ const neuralTree = (() => {
         dragSurface.setVisible(true);
         titleText.setVisible(true);
 
+        if (scrollUpBtn) {
+            scrollUpBtn.setVisible(true);
+            scrollUpBtn.setState(NORMAL);
+        }
+        if (scrollDownBtn) {
+            scrollDownBtn.setVisible(true);
+            scrollDownBtn.setState(NORMAL);
+        }
+
         _refreshAllNodes();
 
         // Show DEPLOY button only if tower has been spawned
@@ -631,6 +647,17 @@ const neuralTree = (() => {
             cryptoMineBtn.setVisible(false);
             cryptoMineBtn.setState(DISABLE);
         }
+
+        if (scrollUpBtn) {
+            scrollUpBtn.setVisible(false);
+            scrollUpBtn.setState(DISABLE);
+        }
+        if (scrollDownBtn) {
+            scrollDownBtn.setVisible(false);
+            scrollDownBtn.setState(DISABLE);
+        }
+        isScrollingUp = false;
+        isScrollingDown = false;
 
         for (const id in nodes) {
             nodes[id].setVisible(false);
@@ -810,6 +837,60 @@ const neuralTree = (() => {
         if (data.isDuoBox) {
             const node = nodes[data.id];
             if (node && node._playDuoPulse) node._playDuoPulse();
+        }
+    }
+
+    function _createScrollButtons() {
+        const x = 62;
+        const baseY = GAME_CONSTANTS.HEIGHT - 65;
+        const spacing = 62;
+
+        scrollUpBtn = new Button({
+            normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing },
+            hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing },
+            press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
+            onMouseDown: () => { isScrollingUp = true; },
+            onMouseUp: () => { isScrollingUp = false; },
+            onMouseOut: () => { isScrollingUp = false; }
+        });
+        scrollUpBtn.addText("▲", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
+        scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+        scrollUpBtn.setScrollFactor(0);
+        scrollUpBtn.setVisible(false);
+        treeGroup.add(scrollUpBtn);
+
+        scrollDownBtn = new Button({
+            normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY },
+            hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY },
+            press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY },
+            onMouseDown: () => { isScrollingDown = true; },
+            onMouseUp: () => { isScrollingDown = false; },
+            onMouseOut: () => { isScrollingDown = false; }
+        });
+        scrollDownBtn.addText("▼", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
+        scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+        scrollDownBtn.setScrollFactor(0);
+        scrollDownBtn.setVisible(false);
+        treeGroup.add(scrollDownBtn);
+    }
+
+    function _updateScroll(delta) {
+        if (!visible || (!isScrollingUp && !isScrollingDown)) return;
+
+        const dt = delta / 1000;
+        const scrollSpeed = 650; // px per second
+        let dy = 0;
+        if (isScrollingUp) dy = scrollSpeed * dt;
+        if (isScrollingDown) dy = -scrollSpeed * dt;
+
+        if (dy !== 0) {
+            const currentY = draggableGroup.y;
+            const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
+            const finalDy = nextY - currentY;
+
+            if (finalDy !== 0) {
+                draggableGroup.moveBy(0, finalDy);
+            }
         }
     }
 

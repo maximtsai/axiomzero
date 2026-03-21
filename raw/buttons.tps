@@ -358,6 +358,8 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/increment_dim.png</key>
+            <key type="filename">buttons/increment_dim_press.png</key>
             <key type="filename">buttons/increment_disable.png</key>
             <key type="filename">buttons/increment_hover.png</key>
             <key type="filename">buttons/increment_normal.png</key>
