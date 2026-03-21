@@ -28,6 +28,8 @@ const neuralTree = (() => {
     let scrollDownBtn = null;
     let isScrollingUp = false;
     let isScrollingDown = false;
+    let debugLogBtn = null;
+
 
     let lastDragX = 0;
     let lastDragY = 0;
@@ -611,7 +613,12 @@ const neuralTree = (() => {
             scrollUpBtn.setVisible(true);
             scrollUpBtn.setState(NORMAL);
         }
+        if (debugLogBtn) {
+            debugLogBtn.setVisible(true);
+            debugLogBtn.setState(NORMAL);
+        }
         if (scrollDownBtn) {
+
             scrollDownBtn.setVisible(true);
             scrollDownBtn.setState(NORMAL);
         }
@@ -652,7 +659,12 @@ const neuralTree = (() => {
             scrollUpBtn.setVisible(false);
             scrollUpBtn.setState(DISABLE);
         }
+        if (debugLogBtn) {
+            debugLogBtn.setVisible(false);
+            debugLogBtn.setState(DISABLE);
+        }
         if (scrollDownBtn) {
+
             scrollDownBtn.setVisible(false);
             scrollDownBtn.setState(DISABLE);
         }
@@ -734,7 +746,6 @@ const neuralTree = (() => {
             const n = nodes[line.childId];
 
             if (!p || !n) continue;
-
             // Determine visibility: Hide if either p or n is HIDDEN.
             // SPECIAL CASE: Duo node children/lines show if Duo parent is purchased (level > 0)
             let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
@@ -845,7 +856,31 @@ const neuralTree = (() => {
         const baseY = GAME_CONSTANTS.HEIGHT - 65;
         const spacing = 62;
 
+        if (FLAGS.DEBUG) {
+            debugLogBtn = new Button({
+                normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
+                hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
+                press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
+                onMouseUp: () => {
+                    console.log("%c [DEBUG] Neural Tree Node Status: ", "background: #111; color: #ff00ff; border: 1px solid #ff00ff; font-weight: bold;");
+                    for (const id in nodes) {
+                        const n = nodes[id];
+                        const idStr = (n.id || "unknown").padEnd(25);
+                        const nameStr = (n.name || "[Placeholder]").padEnd(20);
+                        const stateStr = (n.state || "UNKNOWN").padEnd(10);
+                        console.log(`Node ID: ${idStr} | Name: ${nameStr} | State: ${stateStr} | Level: ${n.level}/${n.maxLevel}`);
+                    }
+                }
+            });
+            debugLogBtn.addText("?", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ff00ff' });
+            debugLogBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+            debugLogBtn.setScrollFactor(0);
+            debugLogBtn.setVisible(false);
+            treeGroup.add(debugLogBtn);
+        }
+
         scrollUpBtn = new Button({
+
             normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing },
             hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing },
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
