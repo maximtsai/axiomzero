@@ -21,7 +21,7 @@ window.TRANSLATIONS.en = {
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL'
     },
     nodes: {
-        awaken: { name: 'AWAKEN', desc: 'Begin existence.' },
+        awaken: { name: 'AWAKEN', desc: 'You begin... thinking' },
         basic_pulse: { name: 'COGNITION', desc: 'Your cursor pulses damage every 2 seconds.', popup: 'PULSE UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '+2 cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
@@ -47,8 +47,8 @@ window.TRANSLATIONS.en = {
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
-        two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Second line security. Gives a small +100 data bonus.' },
-        firewall: { name: 'LICENSE VERIFICATION', desc: "Confirm you aren't a hostile AI. Costs 250 DATA (Refunded).", popup: 'LICENSE VERIFIED' },
+        two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with +100 DATA.' },
+        security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Rewards your patience with 250 DATA.", popup: 'TEST PASSED' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Cursor attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         wide_pulse: { name: 'BROADCAST PROTOCOL', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
@@ -57,7 +57,7 @@ window.TRANSLATIONS.en = {
         wide_pulse_child_1: { name: 'AREA SATURATION', desc: '+5% cursor damage per level for each additional enemy hit.', popup: 'AREA SATURATION' },
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
-        packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Intercepts 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
+        packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
         lore_1: {
             name: 'ARCHIVE',
             desc: 'seemingly useless data...',
@@ -104,15 +104,15 @@ window.TRANSLATIONS.en = {
             unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
 
-        junk_barrier: { name: 'UNSORTED LOGS', desc: 'A literal pile of data fragments.' },
-        firewall_2: { name: 'FIREWALL 2', desc: 'Second layer security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
+        junk_barrier: { name: 'UNSORTED LOGS', desc: 'A digital mountain of error logs and forgotten TODOs.' },
+        security_test_2: { name: 'SECURITY TEST 2', desc: "Confirm you REALLY aren't a hostile AI. Requires DATA to override, but refunds 90% of spent resources." },
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
-        forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: 'Legacy vulnerability left behind by a sysadmin.' },
+        forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: '"password123" unlocks a surprising number of legacy server rooms.' },
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },
         backdoor_3: { name: 'BACKDOOR 3', desc: 'The final vulnerability in the legacy system chain.' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants +15 DATA.' },
 
-        junk_data_2: { name: 'GARBAGE COLLECTION', desc: 'Process fragments for a small data gain. (+10 DATA)' }
+        junk_data_2: { name: 'JUNK PROCESSING', desc: "One man's trash... (+10 DATA)" }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },

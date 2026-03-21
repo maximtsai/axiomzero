@@ -269,7 +269,7 @@ const nodeTooltip = (() => {
             container.setScale(0.75, 1.1).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1.1, scaleY: 0.95, angle: -2, y: node.btn.y - verticalOffset,
+                scaleX: 1.11, scaleY: 0.95, angle: -2, y: node.btn.y - verticalOffset,
                 duration: 95, ease: 'Quart.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({
@@ -282,8 +282,8 @@ const nodeTooltip = (() => {
         } else {
             const targets = [lvT, (node.state === NODE_STATE.MAXED ? maxT : costT)];
             targets.forEach(t => {
-                t.setScale(0.82, 1);
-                PhaserScene.tweens.add({ targets: t, scaleX: 1, duration: 400, ease: 'Back.easeOut' });
+                t.setScale(0.78, 1);
+                PhaserScene.tweens.add({ targets: t, scaleX: 1, duration: 440, easeParams: [3], ease: 'Back.easeOut' });
             });
         }
     }
