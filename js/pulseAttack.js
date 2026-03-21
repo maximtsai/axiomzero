@@ -20,6 +20,7 @@ class PulseAttackModel {
         this.maxCharges = 2;
         this.isolationLevel = 0;
         this.saturationLevel = 0;
+        this.aftershockLevel = 0;
     }
 
     resetTimer() {
@@ -58,12 +59,15 @@ class PulseAttackView {
         this.spriteBright = null;
         this.spritePointer = null;
         this.spriteRed = null;
+        this.aftershockBright = null;
+        this.aftershockRed = null;
 
         this.shakeVelX = 0;
         this.shakeVelY = 0;
         this.shakeX = 0;
         this.shakeY = 0;
         this.chargeSprites = [];
+        this.aftershockLevel = 0;
     }
 
     init(initialSize) {
@@ -108,6 +112,32 @@ class PulseAttackView {
         this.spriteBright.setScrollFactor(0);
         this.spriteBright.setVisible(false);
 
+        // Aftershock sprites (100 units larger than base)
+        this.aftershockRed = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_attack_red.png',
+            initialSize + 104, initialSize + 104,
+            this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE
+        );
+        this.aftershockRed.setOrigin(0.5, 0.5);
+        this.aftershockRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+        this.aftershockRed.setAlpha(0);
+        this.aftershockRed.setScrollFactor(0);
+        this.aftershockRed.setVisible(false);
+
+        this.aftershockBright = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_attack.png',
+            initialSize + 100, initialSize + 100,
+            this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE
+        );
+        this.aftershockBright.setOrigin(0.5, 0.5);
+        this.aftershockBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
+        this.aftershockBright.setAlpha(0);
+        this.aftershockBright.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.aftershockBright.setScrollFactor(0);
+        this.aftershockBright.setVisible(false);
+
         // Pointer sprite
         this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
@@ -147,6 +177,7 @@ class PulseAttackView {
 
         const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.25;
         this.sprite.rotVel += rotAccel;
+
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
         this.spriteBright.setRotation(this.sprite.rotation);
 
@@ -271,6 +302,10 @@ class PulseAttackView {
         this.spriteBright.setVisible(visible);
         this.spriteRed.setVisible(visible);
 
+        const showAftershock = visible && this.aftershockLevel > 0;
+        this.aftershockBright.setVisible(showAftershock);
+        this.aftershockRed.setVisible(showAftershock);
+
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
             this.spriteBright.setAlpha(0);
@@ -278,6 +313,31 @@ class PulseAttackView {
         }
 
         this.updateCharges(charges, 0, manualMode);
+    }
+
+    playAftershockAnimation(x, y, baseSize) {
+        if (!this.aftershockBright) return;
+
+        this.aftershockRed.setPosition(x, y);
+        this.aftershockBright.setPosition(x, y);
+
+        const size = baseSize + 100;
+        this.aftershockBright.setSize(size, size);
+        this.aftershockRed.setSize(size + 4, size + 4);
+
+        this.aftershockBright.setAlpha(0.65);
+        this.aftershockRed.setAlpha(0.35);
+        this.aftershockBright.setScale(1.1);
+        this.aftershockRed.setScale(1.15);
+
+        PhaserScene.tweens.add({
+            targets: [this.aftershockBright, this.aftershockRed],
+            alpha: 0,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 600,
+            ease: 'Quart.easeOut',
+        });
     }
 
     setPointerVisibility(visible) {
@@ -374,6 +434,22 @@ const pulseAttack = (() => {
         for (let i = 0; i < hits.length; i++) {
             enemyManager.damageEnemy(hits[i], actualDamage);
         }
+
+        // AFTERSHOCK logic
+        if (model.aftershockLevel > 0) {
+            PhaserScene.time.delayedCall(125, () => {
+                if (!model.active || model.paused || !tower.isAlive() || gameStateMachine.getPhase() !== GAME_CONSTANTS.PHASE_COMBAT) return;
+
+                view.playAftershockAnimation(cx, cy, model.size);
+
+                const aftershockDamage = 4 * model.aftershockLevel;
+                const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
+                const aftershockHits = enemyManager.getEnemiesInSquareRange(cx, cy, aftershockSizeRadius, _hitBuffer);
+                for (let i = 0; i < aftershockHits.length; i++) {
+                    enemyManager.damageEnemy(aftershockHits[i], aftershockDamage);
+                }
+            });
+        }
     }
 
     function _onPhaseChanged(phase) {
@@ -412,5 +488,10 @@ const pulseAttack = (() => {
         model.saturationLevel = level;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel };
+    function setAftershockLevel(level) {
+        model.aftershockLevel = level;
+        view.aftershockLevel = level;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel };
 })();

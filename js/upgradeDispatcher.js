@@ -22,6 +22,16 @@ const upgradeDispatcher = (() => {
         pulseAttack.setSaturationLevel(saturationLv);
     }
 
+    /** Recalculates aftershock level. */
+    function recalcAftershock() {
+        const ups = gameState.upgrades || {};
+        const wideActive = (gameState.activeShards && gameState.activeShards[2] === 'wide_pulse');
+        const level = wideActive ? (ups.aftershock || 0) : 0;
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.setAftershockLevel) {
+            pulseAttack.setAftershockLevel(level);
+        }
+    }
+
     /** Recalculates pulse recharge interval. */
     function recalcPulseRecharge() {
         const ups = gameState.upgrades || {};
@@ -38,8 +48,9 @@ const upgradeDispatcher = (() => {
         // Only apply Resonance Area size bonus if it is the active selection for Duo Tier 2
         const aoeActive = (gameState.activeShards && gameState.activeShards[2] === 'wide_pulse');
         const aoeBonus = aoeActive ? (ups.wide_pulse || 0) : 0;
+        const colossalBonus = aoeActive ? (ups.colossal_cursor || 0) : 0;
 
-        pulseAttack.setSize(100 * (1 + 0.2 * expansionLv + 0.3 * aoeBonus));
+        pulseAttack.setSize(100 * (1 + 0.2 * expansionLv + 0.3 * aoeBonus + 0.5 * colossalBonus));
     }
 
     /** Recalculates pulse manual mode. */
@@ -109,6 +120,7 @@ const upgradeDispatcher = (() => {
             recalcPulseRecharge();
             recalcPulseSize();
             recalcPulseMode();
+            recalcAftershock();
         }
         if (typeof lightningAttack !== 'undefined') {
             recalcLightningChains();
@@ -134,6 +146,7 @@ const upgradeDispatcher = (() => {
         recalcLightningDamage,
         recalcPacketSniffing,
         recalcShockwaveStats,
-        recalcThreatResponse
+        recalcThreatResponse,
+        recalcAftershock
     };
 })();

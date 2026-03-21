@@ -55,7 +55,8 @@ window.TRANSLATIONS.en = {
         manual_pulse_child_1_1: { name: 'ISOLATION PROTOCOL', desc: '+25% cursor damage per lvl if only one enemy is hit.', popup: 'ISOLATION PROTOCOL' },
         manual_pulse_child_1_2: { name: 'RECHARGE EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RECHARGE OPTIMIZED' },
         wide_pulse_child_1: { name: 'AREA SATURATION', desc: '+5% cursor damage per level for each additional enemy hit.', popup: 'AREA SATURATION' },
-        wide_pulse_child_2: { name: '...', desc: 'Searching for extra data.', popup: '...' },
+        aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
+        colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Intercepts 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
         lore_1: {
             name: 'ARCHIVE',
