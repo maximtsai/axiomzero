@@ -327,7 +327,14 @@ class Node {
         gameState.upgrades[this.id] = this.level;
 
         // Effect and Metadata logic
-        if (this.isDuoBox) this._handleDuoBoxPurchase();
+        if (this.isDuoBox) {
+            this._handleDuoBoxPurchase();
+            // Refresh both siblings and their entire sub-trees BEFORE calling effect
+            this.refreshState();
+            const sibling = neuralTree.getNode(this.duoSiblingId);
+            if (sibling) sibling.refreshState();
+        }
+
         this.effect(this.level);
 
         // Reveal logic
@@ -357,12 +364,10 @@ class Node {
         // System notifications
         messageBus.publish('upgradePurchased', this.id, this.level);
 
-        // Final state refresh
+        // Final visual refresh
         if (this.isDuoBox) {
-            this.refreshState();
             const sibling = neuralTree.getNode(this.duoSiblingId);
             if (sibling) {
-                sibling.refreshState();
                 sibling._updateVisual();
             }
             this._updateVisual();
@@ -594,13 +599,13 @@ class Node {
             // Free swap — no cost
             gameState.activeShards[this.duoBoxTier] = this.shardId;
 
-            // Apply this node's effect, deactivate sibling's
-            this.effect(this.level);
-
-            // Refresh both siblings and their entire sub-trees
+            // Refresh both siblings and their entire sub-trees BEFORE calling effect
             this.refreshState();
             const sibling = neuralTree.getNode(this.duoSiblingId);
             if (sibling) sibling.refreshState();
+
+            // Apply this node's effect, deactivate sibling's (now with correct branchActive states)
+            this.effect(this.level);
 
             // Explicitly update visuals for both siblings
             this._updateVisual();

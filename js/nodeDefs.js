@@ -1062,7 +1062,7 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse_child_1_2',
-        name: 'RECHARGE EFFICIENCY',
+        name: 'RELOAD EFFICIENCY',
         icon: 'Skillicon14_04.png',
         description: t('nodes', 'manual_pulse_child_1_2.desc'),
         maxLevel: 1,
@@ -1074,7 +1074,7 @@ const NODE_DEFS = [
         treeX: gridX(-3.5),
         treeY: gridY(5),
         effect: function () {
-            upgradeDispatcher.recalcPulseRecharge();
+            upgradeDispatcher.recalcPulseReload();
         },
     },
     {

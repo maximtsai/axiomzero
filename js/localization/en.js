@@ -53,7 +53,7 @@ window.TRANSLATIONS.en = {
         wide_pulse: { name: 'BROADCAST PROTOCOL', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
         manual_pulse_child_1_1: { name: 'ISOLATION PROTOCOL', desc: '+25% cursor damage per lvl if only one enemy is hit.', popup: 'ISOLATION PROTOCOL' },
-        manual_pulse_child_1_2: { name: 'RECHARGE EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RECHARGE OPTIMIZED' },
+        manual_pulse_child_1_2: { name: 'RELOAD EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RELOAD OPTIMIZED' },
         wide_pulse_child_1: { name: 'AREA SATURATION', desc: '+5% cursor damage per level for each additional enemy hit.', popup: 'AREA SATURATION' },
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
