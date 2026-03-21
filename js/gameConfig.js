@@ -28,7 +28,7 @@ GAME_CONSTANTS.TOWER_BASE_HEALTH = 20;
 GAME_CONSTANTS.TOWER_BASE_DAMAGE = 5;
 GAME_CONSTANTS.TOWER_ATTACK_RANGE = 230;
 GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
-GAME_CONSTANTS.TOWER_BASE_REGEN = -0.3;   // HP/sec (negative = drain)
+
 
 // ─── EXP ──────────────────────────────────────────────────────────────────────
 
@@ -131,7 +131,7 @@ const GAME_STATE_DEFAULTS = {
     towerMaxHealth: 20,
     towerDamage: 6,
     towerAttackRange: 230,
-    towerHealthRegen: -0.3,   // HP/sec (negative = drain)
+    towerHealthRegen: 0,   // Now driven by per-level healthDecay property
 
     // Resources
     data: 0,

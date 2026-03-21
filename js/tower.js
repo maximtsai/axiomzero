@@ -41,7 +41,9 @@ class TowerModel {
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv;
 
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
-        this.healthRegen = GAME_CONSTANTS.TOWER_BASE_REGEN + 0.2 * regenLv;
+        const lvlCfg = getCurrentLevelConfig();
+        const baseDecay = lvlCfg.healthDecay || 0;
+        this.healthRegen = baseDecay + 0.2 * regenLv;
         this.armor = armorLv * 2; // 2 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
     }
@@ -362,6 +364,9 @@ const tower = (() => {
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('enemyKilled', _onEnemyDeath);
+        messageBus.subscribe('minibossDefeated', _onEnemyDeath);
+        messageBus.subscribe('bossDefeated', _onEnemyDeath);
         messageBus.subscribe('towerShakeRequested', function (duration) {
             view.shake(duration, function () { messageBus.publish('towerShakeComplete'); });
         });
@@ -541,6 +546,21 @@ const tower = (() => {
             model.isInvincible = false;
         });
         debugLog('Tower invincible for 2.8s after boss defeat');
+    }
+
+    function _onEnemyDeath(x, y) {
+        if (!model.alive || !model.awakened) return;
+        const ups = gameState.upgrades || {};
+        if (ups.malware_siphon > 0) {
+            const towerPos = view.getPosition();
+            const dx = x - towerPos.x;
+            const dy = y - towerPos.y;
+            const distSq = dx * dx + dy * dy;
+            const range = 250;
+            if (distSq < range * range) {
+                heal(0.5);
+            }
+        }
     }
 
     return {

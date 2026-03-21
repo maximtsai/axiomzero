@@ -59,8 +59,8 @@ window.TRANSLATIONS.en = {
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
-        shredder_protocol: { name: 'SHREDDER PROTOCOL', desc: 'Optimized destructive routines. Increased efficiency.' },
-        penetration_protocol: { name: 'PENETRATION PROTOCOL', desc: 'Enhanced bypass subroutines. Ignore security layers.' },
+        laser: { name: 'LASER', desc: 'Optimized destructive routines. Increased efficiency.' },
+        artillery: { name: 'ARTILLERY', desc: 'Enhanced bypass subroutines. Ignore security layers.' },
         lore_1: {
             name: 'ARCHIVE',
             desc: 'seemingly useless data...',
