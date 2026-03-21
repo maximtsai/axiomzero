@@ -111,7 +111,7 @@ window.TRANSLATIONS.en = {
         },
 
         junk_barrier: { name: 'UNSORTED LOGS', desc: 'A digital mountain of error logs and forgotten TODOs.' },
-        security_test_2: { name: 'SECURITY TEST 2', desc: "Confirm you REALLY aren't a hostile AI. Requires DATA to override, but refunds 90% of spent resources." },
+        security_test_2: { name: 'SECURITY TEST 2', desc: "Confirm you REALLY aren't a hostile AI. Requires DATA to override, but refunds 100% of spent resources." },
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
         forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: '"password123" unlocks a surprising number of legacy server rooms.' },
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },

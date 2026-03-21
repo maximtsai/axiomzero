@@ -3,7 +3,7 @@
 
 // Tree Layout Constants
 const TREE_CENTER_X = 400; // Half of 800px panel width
-const TREE_START_Y = 730;
+const TREE_START_Y = 740;
 const TREE_UNIT_X = 80;
 const TREE_UNIT_Y = 80;
 const DUO_OFFSET = 30; // Standard offset for choice nodes
@@ -756,28 +756,13 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['security_test_2'],
-        childIds: ['temp_node_5'],
+        parents: ['security_test_2', 'temp_node_5'],
+        childIds: [],
         treeX: gridX(-1.5),
         treeY: gridY(8),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
-    },
-    {
-        id: 'temp_node_5',
-        name: 'TEMP PROCESS 5',
-        icon: 'Skillicon14_09.png',
-        description: t('nodes', 'temp_node_5.desc'),
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['prismatic_array'],
-        childIds: [],
-        treeX: gridX(-2.5),
-        treeY: gridY(8),
-        effect: function () { },
     },
     {
         id: 'data_compression',
@@ -1017,13 +1002,27 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['security_test_2'],
-        childIds: [],
+        childIds: ['temp_node_5'],
         treeX: gridX(0.0),
         treeY: gridY(7),
         effect: function () { },
     },
     {
-
+        id: 'temp_node_5',
+        name: 'TEMP PROCESS 5',
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'temp_node_5.desc'),
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['temp_node_4'],
+        childIds: ['prismatic_array'],
+        treeX: gridX(-0.5),
+        treeY: gridY(8),
+        effect: function () { },
+    },
+    {
         id: 'unsecured_files',
         name: 'UNSECURED FILES',
         icon: 'Skillicon14_08.png',
@@ -1060,7 +1059,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_2.desc'),
         maxLevel: 1,
-        baseCost: 1000,
+        baseCost: 500,
         costType: 'data',
         costScaling: 'static',
         parents: ['placeholder_duo_2'],
@@ -1070,7 +1069,7 @@ const NODE_DEFS = [
         tooltipExtraWidth: 60,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(900);
+                resourceManager.addData(500);
             }
         },
     },

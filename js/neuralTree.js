@@ -851,7 +851,7 @@ const neuralTree = (() => {
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
             onMouseDown: () => { isScrollingUp = true; },
             onMouseUp: () => { isScrollingUp = false; },
-            onMouseOut: () => { isScrollingUp = false; }
+            onHoverOut: () => { isScrollingUp = false; }
         });
         scrollUpBtn.addText("▲", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
         scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
@@ -865,7 +865,7 @@ const neuralTree = (() => {
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY },
             onMouseDown: () => { isScrollingDown = true; },
             onMouseUp: () => { isScrollingDown = false; },
-            onMouseOut: () => { isScrollingDown = false; }
+            onHoverOut: () => { isScrollingDown = false; }
         });
         scrollDownBtn.addText("▼", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
         scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
@@ -878,7 +878,7 @@ const neuralTree = (() => {
         if (!visible || (!isScrollingUp && !isScrollingDown)) return;
 
         const dt = delta / 1000;
-        const scrollSpeed = 650; // px per second
+        const scrollSpeed = 800; // px per second
         let dy = 0;
         if (isScrollingUp) dy = scrollSpeed * dt;
         if (isScrollingDown) dy = -scrollSpeed * dt;
