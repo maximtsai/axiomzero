@@ -25,30 +25,30 @@ window.TRANSLATIONS.en = {
         basic_pulse: { name: 'COGNITION', desc: 'Your cursor pulses damage every 2 seconds.', popup: 'PULSE UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '+2 cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
-        pulse_expansion: { name: 'EXPANSION', desc: '+20% cursor pulse size', popup: '+20% CURSOR PULSE SIZE' },
+        pulse_expansion: { name: 'SIGNAL STRENGTH', desc: '+20% cursor pulse size', popup: '+20% SIGNAL STRENGTH' },
         overcharge: { name: 'OVERCHARGE', desc: '+4 cursor damage', popup: '+4 CURSOR DMG' },
         integrity: { name: 'INTEGRITY', desc: '+4 tower max health', popup: '+4 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
-        focus: { name: 'INFLUENCE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
-        farsight: { name: 'FARSIGHT', desc: 'A converged perspective.' },
+        focus: { name: 'COVERAGE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
 
-        base_hp_boost: { name: 'STABILITY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },
-        regen: { name: 'RECOVERY', desc: '+0.2 health regen', popup: '+0.2 REGEN' },
+        base_hp_boost: { name: 'SYSTEM REDUNDANCY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },
+        regen: { name: 'AUTO-RESTORE', desc: '+0.2 health regen', popup: '+0.2 REGEN' },
         crypto_mine_unlock: { name: 'CRYPTO MINE', desc: 'Unlocks the Crypto Mine.', popup: 'MINE UNLOCKED' },
-        armor: { name: 'SECURITY', desc: 'Reduces incoming damage by 2.', popup: '+2 ARMOR' },
+        armor: { name: 'RESILIENCE', desc: 'Reduces incoming damage by 2.', popup: '+2 RESILIENCE' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots lightning every 3s that chains across enemies.', popup: 'LIGHTNING WEAPON' },
         shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a shockwave every 3s, damaging nearby enemies.', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '+1 lightning chain target', popup: '+1 CHAIN' },
         lightning_boost: { name: 'VOLTAGE', desc: '+2 lightning damage', popup: '+2 LIGHTNING DMG' },
-        lightning_static_charge: { name: 'STATIC CHARGE', desc: 'Lightning deals +50% damage per lvl to enemies above 80% HP', popup: 'STATIC CHARGE' },
+        lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals +50% damage per lvl to enemies above 80% HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '+25% shockwave range', popup: '+25% RANGE' },
         shockwave_resonance: { name: 'RESONANCE', desc: 'Shockwave deals +1 dmg/lvl for each enemy hit', popup: 'RESONANCE FREQUENCY' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +50% damage per lvl to enemies below 50% HP', popup: 'SEISMIC CRUSH' },
-        base_hp_boost: { name: 'STABILITY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },
+
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
-        two_step_auth: { name: 'TWO-STEP AUTH', desc: 'A reward for your security diligence. Instantly grants 100 DATA.' },
+        two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Second line security. Gives a small +100 data bonus.' },
+        firewall: { name: 'LICENSE VERIFICATION', desc: "Confirm you aren't a hostile AI. Costs 250 DATA (Refunded).", popup: 'LICENSE VERIFIED' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Cursor attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         wide_pulse: { name: 'BROADCAST PROTOCOL', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
@@ -104,7 +104,7 @@ window.TRANSLATIONS.en = {
             unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
 
-        junk_barrier: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
+        junk_barrier: { name: 'UNSORTED LOGS', desc: 'A literal pile of data fragments.' },
         firewall_2: { name: 'FIREWALL 2', desc: 'Second layer security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
         forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: 'Legacy vulnerability left behind by a sysadmin.' },
@@ -112,8 +112,7 @@ window.TRANSLATIONS.en = {
         backdoor_3: { name: 'BACKDOOR 3', desc: 'The final vulnerability in the legacy system chain.' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants +15 DATA.' },
 
-        junk_data_2: { name: 'STALE CACHE', desc: '+0.2 tower max health' },
-        auth_damage_boost: { name: 'AUTH OVERRIDE', desc: '+4 Base Damage per level.' }
+        junk_data_2: { name: 'GARBAGE COLLECTION', desc: 'Process fragments for a small data gain. (+10 DATA)' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },

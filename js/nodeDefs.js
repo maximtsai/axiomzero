@@ -105,10 +105,10 @@ const NODE_DEFS = [
     },
     {
         id: 'pulse_expansion',
-        name: 'EXPANSION',
-        icon: 'Skillicon14_07.png',
+        name: 'SIGNAL STRENGTH',
+        icon: 'Skillicon14_09.png',
         description: t('nodes', 'pulse_expansion.desc'),
-        popupText: '+20% CURSOR PULSE SIZE',
+        popupText: '+20% SIGNAL STRENGTH',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 40,
@@ -117,7 +117,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['pulse_damage'],
         requiresMaxParent: true,
-        childIds: ['packet_sniffing', 'farsight'],
+        childIds: ['packet_sniffing'],
         treeX: gridX(2),
         treeY: gridY(1),
         effect: function () {
@@ -192,7 +192,7 @@ const NODE_DEFS = [
     },
     {
         id: 'focus',
-        name: 'INFLUENCE',
+        name: 'COVERAGE',
         icon: 'Skillicon14_15.png',
         description: t('nodes', 'focus.desc'),
         popupText: '+20% ATTACK RANGE',
@@ -204,7 +204,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['intensity'],
         requiresMaxParent: true,
-        childIds: ['farsight'],
+        childIds: [],
         treeX: gridX(2),
         treeY: gridY(0),
         effect: function () {
@@ -213,24 +213,8 @@ const NODE_DEFS = [
     },
 
     {
-        id: 'farsight',
-        name: 'FARSIGHT',
-        icon: 'Skillicon14_12.png',
-        description: t('nodes', 'farsight.desc'),
-        maxLevel: 1,
-        baseCost: 1,
-        costType: 'insight',
-        costScaling: 'static',
-        parents: ['focus', 'pulse_expansion'],
-        requiresMaxParent: true,
-        childIds: [],
-        treeX: gridX(3),
-        treeY: gridY(0.5),
-        effect: function () { },
-    },
-    {
         id: 'regen',
-        name: 'RECOVERY',
+        name: 'AUTO-RESTORE',
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'regen.desc'),
         popupText: '+0.2 REGEN',
@@ -274,7 +258,7 @@ const NODE_DEFS = [
     },
     {
         id: 'base_hp_boost',
-        name: 'STABILITY',
+        name: 'SYSTEM REDUNDANCY',
         icon: 'Skillicon14_13.png',
         description: t('nodes', 'base_hp_boost.desc'),
         popupText: '+10 MAX HEALTH',
@@ -616,10 +600,10 @@ const NODE_DEFS = [
     },
     {
         id: 'lightning_static_charge',
-        name: 'STATIC CHARGE',
+        name: 'INITIAL SHOCK',
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'lightning_static_charge.desc'),
-        popupText: 'STATIC CHARGE',
+        popupText: 'INITIAL SHOCK',
         popupColor: COLORS.COMBAT,
         maxLevel: 2,
         baseCost: 100,
@@ -698,10 +682,10 @@ const NODE_DEFS = [
     },
     {
         id: 'armor',
-        name: 'SECURITY',
+        name: 'RESILIENCE',
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'armor.desc'),
-        popupText: '+2 ARMOR',
+        popupText: '+2 RESILIENCE',
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
         baseCost: 50,
@@ -729,10 +713,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['forgotten_backdoor', 'auth_damage_boost'],
+        parents: ['forgotten_backdoor', 'two_step_auth'],
         childIds: ['prismatic_array'],
         treeX: gridX(3),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -752,7 +736,7 @@ const NODE_DEFS = [
         parents: ['overclock'],
         childIds: [],
         treeX: gridX(2.5),
-        treeY: gridY(5),
+        treeY: gridY(5.5),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -770,12 +754,31 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['overcharge', 'two_step_auth'],
+        childIds: ['overcharge', 'firewall'],
         treeX: gridX(0),
         treeY: gridY(4),
+        effect: function () { },
+    },
+    {
+        id: 'firewall',
+        name: 'LICENSE VERIFICATION',
+        icon: 'Skillicon14_14.png',
+        description: t('nodes', 'firewall.desc'),
+        popupText: 'LICENSE VERIFIED',
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 250,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['data_compression'],
+        childIds: ['two_step_auth'],
+        treeX: gridX(1),
+        treeY: gridY(4),
+        tooltipExtraWidth: 40,
         effect: function () {
-            // if (!gameState.revealedNodes) gameState.revealedNodes = {};
-            // gameState.revealedNodes['armor'] = true;
+            if (typeof resourceManager !== 'undefined') {
+                resourceManager.addData(250);
+            }
         },
     },
     {
@@ -789,35 +792,15 @@ const NODE_DEFS = [
         baseCost: 2,
         costType: 'insight',
         costScaling: 'static',
-        parents: ['data_compression'],
-        childIds: ['auth_damage_boost'],
-        treeX: gridX(1),
+        parents: ['firewall'],
+        childIds: ['overclock'],
+        tooltipExtraWidth: 40,
+        treeX: gridX(2),
         treeY: gridY(4),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(100);
             }
-        },
-    },
-    {
-        id: 'auth_damage_boost',
-        name: 'AUTH OVERRIDE',
-        icon: 'Skillicon14_06.png',
-        description: t('nodes', 'auth_damage_boost.desc'),
-        popupText: '+4 DAMAGE',
-        popupColor: COLORS.UTILITY,
-        maxLevel: 5,
-        baseCost: 50,
-        costType: 'data',
-        costScaling: 'linear',
-        costStep: 100,
-        costStepScaling: 50,
-        parents: ['two_step_auth'],
-        childIds: ['overclock'],
-        treeX: gridX(2),
-        treeY: gridY(4),
-        effect: function () {
-            // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
     {
@@ -841,7 +824,7 @@ const NODE_DEFS = [
     },
     {
         id: 'junk_barrier',
-        name: 'JUNK DATA',
+        name: 'UNSORTED LOGS',
         icon: 'Skillicon14_14.png',
         description: t('nodes', 'junk_barrier.desc'),
         maxLevel: 5,
@@ -869,20 +852,20 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['junk_barrier'],
         childIds: ['backdoor_2', 'overclock'],
-        treeX: gridX(4),
+        treeX: gridX(3.5),
         treeY: gridY(3.5),
         effect: function () { },
     },
 
     {
         id: 'junk_data_2',
-        name: 'STALE CACHE',
+        name: 'GARBAGE COLLECTION',
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'junk_data_2.desc'),
-        popupText: '+0.2 MAX HEALTH',
-        popupColor: COLORS.UTILITY,
+        popupText: '+10 DATA',
+        popupColor: COLORS.RESOURCE,
         maxLevel: 10,
-        baseCost: 5,
+        baseCost: 2,
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
@@ -891,7 +874,9 @@ const NODE_DEFS = [
         treeX: gridX(4),
         treeY: gridY(1.5),
         effect: function () {
-            // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+            if (typeof resourceManager !== 'undefined') {
+                resourceManager.addData(10);
+            }
         },
     },
     {
