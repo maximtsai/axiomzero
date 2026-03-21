@@ -115,7 +115,8 @@ window.TRANSLATIONS.en = {
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
         forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: '"password123" unlocks a surprising number of legacy server rooms.' },
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },
-        backdoor_3: { name: 'BACKDOOR 3', desc: 'The final vulnerability in the legacy system chain.' },
+        backdoor_3: { name: 'BACKDOOR 3', desc: 'Almost through the firewall. Rewards your curiosity with 50 DATA.' },
+        backdoor_4: { name: 'BACKDOOR 4', desc: 'The final vulnerability in the legacy system chain.' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants +15 DATA.' },
 
         junk_data_2: { name: 'JUNK PROCESSING', desc: "One man's trash... (+10 DATA)" }

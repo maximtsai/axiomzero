@@ -458,7 +458,8 @@ const gameHUD = (() => {
             fontFamily: 'VCR',
             fontSize: '44px',
             color: '#ffffff',
-            align: 'center'
+            align: 'center',
+            lineSpacing: 2
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 2, '#000000', 2, true, true);
 
         const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'ui', 'white_line.png');

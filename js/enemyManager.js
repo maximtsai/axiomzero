@@ -284,21 +284,21 @@ const enemyManager = (() => {
                 const layerSize = Math.min(maxPerLayer, numToSpawn - (layer * maxPerLayer));
 
                 // Spread them along the arc for this specific layer
-                const angleStep = 0.1; // ~5.7 degrees
+                const angleStep = 0.14; // ~8 degrees
                 let angleOffset = (indexInLayer - (layerSize - 1) / 2) * angleStep;
 
-                // Offset every second layer by 0.05 radians to break up straight lines
+                // Offset every second layer by 0.07 radians to break up straight lines
                 if (layer % 2 === 1) {
-                    angleOffset += 0.05;
+                    angleOffset += 0.07;
                 }
 
                 const finalAngle = angle + angleOffset;
 
-                // Push each subsequent layer further away from the tower
-                const layerDistance = layer * 40;
+                // Push each subsequent layer further away from the tower (increased from 40 to 55)
+                const layerDistance = layer * 55;
 
-                // Minor random distance staggering within the layer (increased by 33%)
-                const distanceVariation = Phaser.Math.Between(-12, 12);
+                // Minor random distance staggering within the layer (increased for more natural feel)
+                const distanceVariation = Phaser.Math.Between(-16, 16);
 
                 // Recalculate coordinate using base distance + layer push back + random stagger
                 const finalDist = distance + layerDistance + distanceVariation;
@@ -306,9 +306,9 @@ const enemyManager = (() => {
                 sx = GAME_CONSTANTS.halfWidth + Math.cos(finalAngle) * finalDist;
                 sy = GAME_CONSTANTS.halfHeight + Math.sin(finalAngle) * finalDist;
 
-                // Minor jitter (increased by 33%)
-                sx += Phaser.Math.Between(-8, 8);
-                sy += Phaser.Math.Between(-8, 8);
+                // Minor jitter (increased for more natural feel)
+                sx += Phaser.Math.Between(-12, 12);
+                sy += Phaser.Math.Between(-12, 12);
             }
 
             // Activate (sets stats and resets visuals inside Enemy subclass)

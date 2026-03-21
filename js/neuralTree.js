@@ -151,14 +151,14 @@ const neuralTree = (() => {
 
         // Static outline frame for the left half
         panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 15);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
         panelOutlineGlitch = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
         panelOutlineGlitch.setTint(0x888888); // Grey tint
         panelOutlineGlitch.setVisible(false);
@@ -345,7 +345,7 @@ const neuralTree = (() => {
             fontSize: '25px',
             color: '#ffffff',
         });
-        deployBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 5);
+        deployBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
         deployBtn.setScrollFactor(0);
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
@@ -1029,7 +1029,7 @@ const neuralTree = (() => {
                 const bh = 120 * 0.6;
 
                 const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
                 deployBtn.indicator = ind2;
 
                 deployBtn.hiTimer = PhaserScene.time.delayedCall(5000, () => {
@@ -1037,7 +1037,7 @@ const neuralTree = (() => {
                         deployBtn.indicator.destroy();
                     }
                     const ind3 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                    ind3.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                    ind3.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
                     deployBtn.indicator = ind3;
                     deployBtn.hiTimer = null;
                 });
