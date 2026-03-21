@@ -310,6 +310,12 @@ class Node {
         return this.level >= this.maxLevel;
     }
 
+    getAlpha() {
+        if (!this.btn || !this.btn.currImageRef) return 0;
+        const img = this.btn.imageRefs[this.btn.currImageRef];
+        return img ? img.alpha : 0;
+    }
+
     // ── purchase ─────────────────────────────────────────────────────────
 
     purchase() {

@@ -183,13 +183,37 @@ const NODE_DEFS = [
         costStep: 5,
         costStepScaling: 5,
         parents: ['awaken'],
-        childIds: ['focus'],
+        childIds: ['focus', 'test_node_unlock_sec2'],
         treeX: gridX(1),
         treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
+    {
+        id: 'test_node_unlock_sec2',
+        name: 'DEBUG: SEC2 UNLOCK',
+        icon: 'Skillicon14_38.png',
+        description: 'Bypass Duo requirements for security_test_2.',
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['intensity'],
+        childIds: [],
+        treeX: gridX(1.15),
+        treeY: gridY(-1),
+        effect: function () {
+            if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
+            gameState.unlockedNodes['security_test_2'] = true;
+            
+            // Re-refresh tree to show changes
+            if (typeof neuralTree !== 'undefined') {
+                neuralTree._refreshAllNodes();
+            }
+        },
+    },
+
     {
         id: 'focus',
         name: 'COVERAGE',

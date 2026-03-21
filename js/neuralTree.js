@@ -749,6 +749,12 @@ const neuralTree = (() => {
             // Determine visibility: Hide if either p or n is HIDDEN.
             // SPECIAL CASE: Duo node children/lines show if Duo parent is purchased (level > 0)
             let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
+
+            // Hide lines for normal nodes if alpha is 0 (placeholders are always alpha 0)
+            if (!p.isPlaceholder && p.getAlpha() === 0) shouldHide = true;
+            if (!n.isPlaceholder && n.getAlpha() === 0) shouldHide = true;
+
+
             if (shouldHide && n.isDuoDescendant && n.isDuoDescendant()) {
                 if (n.isDuoPathPurchased()) {
                     shouldHide = false;
@@ -1171,5 +1177,5 @@ const neuralTree = (() => {
     function getGroup() { return treeGroup; }
     function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _showDeployButton, _showCryptoMineButton, playPurchasePulse, getGroup, getDraggableGroup };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCryptoMineButton, playPurchasePulse, getGroup, getDraggableGroup };
 })();
