@@ -48,6 +48,7 @@ const enemyManager = (() => {
         swarmer: { minCombatTime: 6, avoidRecentAngles: 0.45, maxAttempts: 6 },
         sniper: { minCombatTime: 6 },
         shooter: {},
+        bomb: {},
         heavy: {},
         protector: {
             minCombatTime: 6,
@@ -82,6 +83,7 @@ const enemyManager = (() => {
         pools.sniper = new ObjectPool(() => new SniperEnemy(), resetFn, POOL_SIZE).preAllocate(20);
         pools.logic_stray = new ObjectPool(() => new LogicStrayEnemy(), resetFn, POOL_SIZE).preAllocate(20);
         pools.protector = new ObjectPool(() => new ProtectorEnemy(), resetFn, POOL_SIZE).preAllocate(5);
+        pools.bomb = new ObjectPool(() => new BombEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
     }
 
@@ -266,6 +268,8 @@ const enemyManager = (() => {
                 e = pools.sniper.get();
             } else if (chosenType === 'logic_stray') {
                 e = pools.logic_stray.get();
+            } else if (chosenType === 'bomb') {
+                e = pools.bomb.get();
             } else if (chosenType === 'protector') {
                 e = pools.protector.get();
             }
@@ -626,6 +630,33 @@ const enemyManager = (() => {
         return result;
     }
 
+    /**
+     * Get all active enemies within a diamond shape (Manhattan distance).
+     * @param {number} cx        Center X of the AOE
+     * @param {number} cy        Center Y of the AOE
+     * @param {number} radius    Radius (Manhattan distance)
+     * @param {number} [ignoreEnemy=null] Optional enemy to ignore.
+     * @param {Array}  [out]     Optional reusable array to avoid GC
+     * @returns {Array} Enemies in range
+     */
+    function getEnemiesInDiamondRange(cx, cy, radius, ignoreEnemy = null, out) {
+        const result = out || [];
+        result.length = 0;
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const e = activeEnemies[i];
+            if (!e.alive || e === ignoreEnemy) continue;
+
+            const dx = Math.abs(e.x - cx);
+            const dy = Math.abs(e.y - cy);
+            
+            // Manhattan distance defines a diamond
+            if (dx + dy <= radius + (e.size || 0)) {
+                result.push(e);
+            }
+        }
+        return result;
+    }
+
     // ── damage ───────────────────────────────────────────────────────────────
 
     function damageEnemy(enemy, amount) {
@@ -713,6 +744,24 @@ const enemyManager = (() => {
         } else {
             if (enemy.type === 'logic_stray') {
                 resourceManager.spawnProcessorDrop(ex, ey);
+            } else if (enemy.type === 'bomb') {
+                const ups = gameState.upgrades || {};
+                const payloadLv = ups.volatile_payload || 0;
+                const explosionRange = 150 * (1 + 0.2 * payloadLv);
+                const explosionDamage = enemy.maxHealth * 1.25;
+                const bx = ex;
+                const by = ey;
+
+                PhaserScene.time.delayedCall(75, () => {
+                    if (typeof customEmitters !== 'undefined' && customEmitters.createBombExplosion) {
+                        customEmitters.createBombExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
+                    }
+
+                    const targets = getEnemiesInDiamondRange(bx, by, explosionRange);
+                    for (let i = 0; i < targets.length; i++) {
+                        damageEnemy(targets[i], explosionDamage);
+                    }
+                });
             }
             messageBus.publish('enemyKilled', ex, ey, enemy.baseResourceDrop);
         }

@@ -81,6 +81,42 @@ const customEmitters = (() => {
         5
     );
 
+    const bombExplosionBrightPool = new ObjectPool(
+        () => {
+            const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack.png', 10, 10, 38, 38, 38, 38);
+            node.setActive(false);
+            node.setVisible(false);
+            return node;
+        },
+        (node) => {
+            node.setActive(false);
+            node.setVisible(false);
+            node.setAlpha(1);
+            node.setScale(1);
+            node.setRotation(0);
+            node.clearTint();
+        },
+        12
+    );
+
+    const bombExplosionRedPool = new ObjectPool(
+        () => {
+            const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack_red.png', 10, 10, 38, 38, 38, 38);
+            node.setActive(false);
+            node.setVisible(false);
+            return node;
+        },
+        (node) => {
+            node.setActive(false);
+            node.setVisible(false);
+            node.setAlpha(1);
+            node.setScale(1);
+            node.setRotation(0);
+            node.clearTint();
+        },
+        12
+    );
+
     // ── basicStrike ──────────────────────────────────────────────────────────
     const strikeParams = {
         frame: 'blue_pixel.png',
@@ -463,6 +499,66 @@ const customEmitters = (() => {
         });
     }
 
+    // ── Bomb Explosion ──────────────────────────────────────────────────────────
+    function createBombExplosion(x, y, rangeSq, damage) {
+        const size = Math.sqrt(rangeSq) * 1.5;
+        const randRot = Math.random() < 0.5 ? -0.1 : 0.1;
+        const finalRot = Math.PI / 4 + randRot;
+        const bright = bombExplosionBrightPool.get();
+        bright.setPosition(x, y);
+        bright.setSize(size, size);
+        bright.setOrigin(0.5, 0.5);
+        bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
+        bright.setBlendMode(Phaser.BlendModes.ADD);
+        bright.setRotation(finalRot);
+        bright.setAlpha(1);
+        bright.setVisible(true);
+        bright.setActive(true);
+
+        const red = bombExplosionRedPool.get();
+        red.setPosition(x, y);
+        red.setSize(size + 3, size + 3);
+        red.setOrigin(0.5, 0.5);
+        red.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+        red.setBlendMode(Phaser.BlendModes.ADD);
+        red.setRotation(finalRot);
+        red.setAlpha(0.8);
+        red.setVisible(true);
+        red.setActive(true);
+
+        bright.setScale(1.1);
+        red.setScale(1.15);
+
+        PhaserScene.cameras.main.shake(150, 0.005);
+        PhaserScene.tweens.add({
+            targets: [bright, red],
+            duration: 90,
+            rotation: Math.PI / 4 + randRot * -0.7,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: [bright, red],
+                    duration: 160,
+                    rotation: Math.PI / 4,
+                    ease: 'Back.easeOut',
+                });
+            }
+        });
+        PhaserScene.tweens.add({
+            targets: [bright, red],
+            scaleX: 1.0,
+            scaleY: 1.0,
+            delay: 50,
+            alpha: 0,
+            duration: 350,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                bombExplosionBrightPool.release(bright);
+                bombExplosionRedPool.release(red);
+            }
+        });
+    }
+
     function _update(delta) {
         if (activeManualStrikes.length > 0) {
             for (let i = activeManualStrikes.length - 1; i >= 0; i--) {
@@ -542,8 +638,10 @@ const customEmitters = (() => {
     }
 
     function init() {
-        explosionRayPool.preAllocate(5);
+        explosionRayPool.preAllocate(6);
         explosionPulsePool.preAllocate(1);
+        bombExplosionBrightPool.preAllocate(5);
+        bombExplosionRedPool.preAllocate(5);
     }
 
     updateManager.addFunction(_update);
@@ -556,6 +654,7 @@ const customEmitters = (() => {
         logicStrayGhost,
         createEnemyDeathAnim,
         minibossExplosion,
-        createBossExplosionRays
+        createBossExplosionRays,
+        createBombExplosion
     };
 })();

@@ -176,6 +176,7 @@
             <key type="filename">enemies/basic.png</key>
             <key type="filename">enemies/basic_enemy_glow.png</key>
             <key type="filename">enemies/bomb.png</key>
+            <key type="filename">enemies/bomb_glow.png</key>
             <key type="filename">enemies/bullet.png</key>
             <key type="filename">enemies/chargeup.png</key>
             <key type="filename">enemies/enemy_glow.png</key>
@@ -214,6 +215,21 @@
                 <rect>5,5,9,9</rect>
                 <key>scale9Paddings</key>
                 <rect>5,5,9,9</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">enemies/bomb_hp.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>9,9,19,19</rect>
+                <key>scale9Paddings</key>
+                <rect>9,9,19,19</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
