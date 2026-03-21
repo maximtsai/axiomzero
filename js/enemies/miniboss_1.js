@@ -9,9 +9,9 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB1 = {
-    HEALTH: 70,
+    HEALTH: 80,
     SPEED_MULT: 1.5,
-    ATTACK_RANGE: 195,
+    ATTACK_RANGE: 200,
     RETREAT_RANGE: 235,
     FIRE_INTERVAL: 4000,
     BULLET_DAMAGE: 4,

@@ -48,6 +48,7 @@ class ShockwaveAttackView {
         this.sprite.setScrollFactor(0);
         this.sprite.setScale(0.05);
         this.sprite.setAlpha(0);
+        this.sprite.setBlendMode(Phaser.BlendModes.ADD);
         this.sprite.setVisible(false);
     }
 

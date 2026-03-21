@@ -83,6 +83,7 @@ class PulseAttackView {
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         this.sprite.setAlpha(this.IDLE_ALPHA);
         this.sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.sprite.setBlendMode(Phaser.BlendModes.ADD);
         this.sprite.setScrollFactor(0);
         this.sprite.setVisible(false);
 
@@ -96,6 +97,7 @@ class PulseAttackView {
         this.spriteRed.setOrigin(0.5, 0.5);
         this.spriteRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.spriteRed.setAlpha(0);
+        this.spriteRed.setBlendMode(Phaser.BlendModes.ADD);
         this.spriteRed.setScrollFactor(0);
         this.spriteRed.setVisible(false);
 
@@ -109,6 +111,7 @@ class PulseAttackView {
         this.spriteBright.setOrigin(0.5, 0.5);
         this.spriteBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
         this.spriteBright.setAlpha(0);
+        this.spriteBright.setBlendMode(Phaser.BlendModes.ADD);
         this.spriteBright.setScrollFactor(0);
         this.spriteBright.setVisible(false);
 
@@ -122,6 +125,7 @@ class PulseAttackView {
         this.aftershockRed.setOrigin(0.5, 0.5);
         this.aftershockRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.aftershockRed.setAlpha(0);
+        this.aftershockRed.setBlendMode(Phaser.BlendModes.ADD);
         this.aftershockRed.setScrollFactor(0);
         this.aftershockRed.setVisible(false);
 
@@ -135,12 +139,14 @@ class PulseAttackView {
         this.aftershockBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         this.aftershockBright.setAlpha(0);
         this.aftershockBright.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.aftershockBright.setBlendMode(Phaser.BlendModes.ADD);
         this.aftershockBright.setScrollFactor(0);
         this.aftershockBright.setVisible(false);
 
         // Pointer sprite
         this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
+        this.spritePointer.setBlendMode(Phaser.BlendModes.ADD);
         this.spritePointer.setScrollFactor(0);
         this.spritePointer.setVisible(false);
 

@@ -155,7 +155,7 @@ const NODE_DEFS = [
         description: t('nodes', 'integrity.desc'),
         popupText: '+4 MAX HEALTH',
         popupColor: COLORS.UTILITY,
-        maxLevel: 8,
+        maxLevel: 6,
         baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
@@ -176,7 +176,7 @@ const NODE_DEFS = [
         description: t('nodes', 'intensity.desc'),
         popupText: '+2 DAMAGE',
         popupColor: COLORS.COMBAT,
-        maxLevel: 8,
+        maxLevel: 6,
         baseCost: 5,
         costType: 'data',
         costScaling: 'linear',
@@ -647,10 +647,10 @@ const NODE_DEFS = [
         popupText: 'RESONANCE FREQUENCY',
         popupColor: COLORS.COMBAT,
         maxLevel: 3,
-        baseCost: 30,
+        baseCost: 40,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 30,
+        costStep: 40,
         parents: ['shockwave_weapon'],
         childIds: ['shockwave_seismic_crush'],
         treeX: gridX(1.5),
@@ -937,8 +937,6 @@ const NODE_DEFS = [
         name: 'BACKDOOR 3',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'backdoor_3.desc'),
-        popupText: '+50 DATA',
-        popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 1,
         costType: 'data',
@@ -947,11 +945,7 @@ const NODE_DEFS = [
         childIds: ['backdoor_4', 'base_hp_boost'],
         treeX: gridX(4),
         treeY: gridY(5.5),
-        effect: function () {
-            if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(50);
-            }
-        },
+        effect: function () { },
     },
     {
         id: 'backdoor_4',

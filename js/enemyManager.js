@@ -283,22 +283,22 @@ const enemyManager = (() => {
                 const indexInLayer = i % maxPerLayer;
                 const layerSize = Math.min(maxPerLayer, numToSpawn - (layer * maxPerLayer));
 
-                // Spread them along the arc for this specific layer
-                const angleStep = 0.14; // ~8 degrees
+                // Spread them along the arc for this specific layer (further widened)
+                const angleStep = 0.16; // ~10.3 degrees
                 let angleOffset = (indexInLayer - (layerSize - 1) / 2) * angleStep;
 
-                // Offset every second layer by 0.07 radians to break up straight lines
+                // Offset every second layer to break up straight lines
                 if (layer % 2 === 1) {
-                    angleOffset += 0.07;
+                    angleOffset += 0.09;
                 }
 
                 const finalAngle = angle + angleOffset;
 
-                // Push each subsequent layer further away from the tower (increased from 40 to 55)
-                const layerDistance = layer * 55;
+                // Push each subsequent layer further away from the tower (increased to 65)
+                const layerDistance = layer * 65;
 
-                // Minor random distance staggering within the layer (increased for more natural feel)
-                const distanceVariation = Phaser.Math.Between(-16, 16);
+                // Minor random distance staggering within the layer (further increased)
+                const distanceVariation = Phaser.Math.Between(-22, 22);
 
                 // Recalculate coordinate using base distance + layer push back + random stagger
                 const finalDist = distance + layerDistance + distanceVariation;
@@ -306,9 +306,9 @@ const enemyManager = (() => {
                 sx = GAME_CONSTANTS.halfWidth + Math.cos(finalAngle) * finalDist;
                 sy = GAME_CONSTANTS.halfHeight + Math.sin(finalAngle) * finalDist;
 
-                // Minor jitter (increased for more natural feel)
-                sx += Phaser.Math.Between(-12, 12);
-                sy += Phaser.Math.Between(-12, 12);
+                // Minor jitter (further increased)
+                sx += Phaser.Math.Between(-16, 16);
+                sy += Phaser.Math.Between(-16, 16);
             }
 
             // Activate (sets stats and resets visuals inside Enemy subclass)
@@ -405,9 +405,9 @@ const enemyManager = (() => {
 
         mb.activate(sx, sy);
 
-        // Spawn 4 fast enemies for Miniboss 2 (2 in the middle, 2 on the edges)
+        // Spawn 2 fast enemies for Miniboss 2
         if (config.miniboss === 'Miniboss2') {
-            const offsets = [-0.4, -0.25, 0.25, 0.4];
+            const offsets = [-0.25, 0.25];
             const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
             offsets.forEach(offset => {
@@ -783,7 +783,7 @@ const enemyManager = (() => {
                 const distSq = dx * dx + dy * dy;
 
                 // Attack range based exactly on size for melee units
-                const contactR = 10 + (e.size || 15) * 1.25;
+                const contactR = 10 + (e.size || 15) * 1.2;
                 const contactR2 = contactR * contactR;
 
                 if (distSq < contactR2) {

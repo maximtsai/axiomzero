@@ -104,6 +104,7 @@ class TowerView {
         this.sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sparkleSprite.setAlpha(0.8);
         this.sparkleSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.sparkleSprite.setBlendMode(Phaser.BlendModes.ADD);
 
         this.sparkleTween = PhaserScene.tweens.add({
             targets: this.sparkleSprite,
@@ -141,6 +142,7 @@ class TowerView {
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
         this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
+        this.rangeSprite.setBlendMode(Phaser.BlendModes.ADD);
         this.rangeSprite.setAlpha(0.40 / 3);
         this.rangeSprite.setScale(rangeScale * 0.2);
         this.updateRangeSprite(rangeScale);
