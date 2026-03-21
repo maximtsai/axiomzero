@@ -55,8 +55,63 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss1',        // Identifier for the main boss
         dataDropMultiplier: 1.5, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.5 // Scales up *base* stats of enemies before wave scaling applies
+    },
+    3: {
+        spawnInterval: 900,
+        initialWeights: {
+            basic: 1,
+            fast: 0,
+            shooter: 0,
+            swarmer: 0.06,
+            sniper: 0,
+            heavy: 0,
+            logic_stray: 0,
+            protector: 0
+        },
+        lateWeights: {
+            shooter: 0.1,
+            swarmer: 0.12,
+            heavy: 0,
+            fast: 0,
+            sniper: 0,
+            protector: 0.0
+        },
+        swarmerGroupSize: { min: 3, max: 6 },
+        miniboss: 'Miniboss1',
+
+        mainBoss: 'Boss1',
+        dataDropMultiplier: 2.25,
+        levelScalingModifier: 2.25
+    },
+    4: {
+        spawnInterval: 900,
+        initialWeights: {
+            basic: 1,
+            fast: 0,
+            shooter: 0,
+            swarmer: 0.06,
+            sniper: 0,
+            heavy: 0,
+            logic_stray: 0,
+            protector: 0
+        },
+        lateWeights: {
+            shooter: 0.1,
+            swarmer: 0.12,
+            heavy: 0,
+            fast: 0,
+            sniper: 0,
+            protector: 0.0
+        },
+        swarmerGroupSize: { min: 4, max: 8 },
+        miniboss: 'Miniboss1',
+
+        mainBoss: 'Boss1',
+        dataDropMultiplier: 3,
+        levelScalingModifier: 3
     }
 };
+
 
 /**
  * Helper to get the config for the current level.

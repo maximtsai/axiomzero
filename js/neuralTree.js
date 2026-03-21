@@ -151,14 +151,14 @@ const neuralTree = (() => {
 
         // Static outline frame for the left half
         panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 4);
+        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
         panelOutlineGlitch = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 4);
+        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
         panelOutlineGlitch.setScrollFactor(0);
         panelOutlineGlitch.setTint(0x888888); // Grey tint
         panelOutlineGlitch.setVisible(false);

@@ -1,0 +1,79 @@
+01: An eye (vision, perception, or stealth detection)
+
+02: Two upward-pointing chevrons (speed boost, rank up, or upgrade)
+
+03: A radiation hazard symbol (toxicity, nuclear material, or environmental hazard)
+
+04: A piece of body armor or a shirt (defense, clothing, or gear)
+
+05: An hourglass (time, waiting, or cooldowns)
+
+06: A circle with a diagonal slash (cancellation, prohibition, or a nullified effect)
+
+07: An upward-pointing arrow coming out of a base (an upload, extraction, or upgrade)
+
+08: A data pad or document with text lines (a menu, logs, or inventory list)
+
+09: A question mark (the unknown, help, or an undiscovered quest)
+
+10: An exclamation mark (an alert, warning, or an active quest)
+
+11: A medical cross (health, healing, or medics)
+
+12: Two crossed wrenches (repair, crafting, or engineering)
+
+13: A flexed muscular arm (strength, power, or melee capabilities)
+
+14: A solid upward-pointing arrow (an increase, jump, or upward movement)
+
+15: A knife or dagger (a melee attack or a rogue-style ability)
+
+16: A heart (health, life, or vitality)
+
+17: Two arrows forming a circle (a refresh, reload, or cycle action)
+
+18: A shield (defense, armor, or protection)
+
+19: A skull (death, danger, poison, or a kill count)
+
+20: A downward-pointing arrow inside a circle (a download, decrease, or moving down)
+
+21: An upward-pointing arrow with motion lines (a dash, sprint, or fast vertical movement)
+
+22: Three diagonal claw marks (a scratch, bleed effect, or monster attack)
+
+23: A circular crosshair (aiming, accuracy, or targeting)
+
+24: A handgun or pistol (a ranged attack or firearm)
+
+25: A stylized square reticle (targeting or a focal point)
+
+26: A large rifle or rocket launcher (a heavy weapon or long-range attack)
+
+27: Two overlapping bandages forming a cross (healing or first aid)
+
+28: Four arrows pointing diagonally outward (expansion, area of effect, or full screen)
+
+29: A running figure with motion lines (sprinting, speed, or evasion)
+
+30: A single bullet casing or cartridge (ammunition)
+
+31: A brain (intelligence, mental capacity, or psionics)
+
+32: A mechanical gear or cog (settings, machinery, or engineering)
+
+33: A battery with three charge bars (energy, power levels, or charge capacity)
+
+34: A bullseye target with an arrow hitting the center (accuracy or a direct hit)
+
+35: A microchip or CPU (technology, hacking, or cybernetics)
+
+36: An automated sentry turret or security camera (defense systems or surveillance)
+
+37: An arrow striking a surface with impact lines (a ground slam, drop, or heavy impact)
+
+38: A closed padlock (something locked, secured, or unavailable)
+
+39: A looped square / Command symbol (a specific command, knot, or junction)
+
+40: A network node diagram (a skill tree, connectivity, or tech tree)
