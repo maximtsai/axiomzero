@@ -49,7 +49,7 @@ window.TRANSLATIONS.en = {
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'A reward for your security diligence. Instantly grants 100 DATA.' },
-        manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Pulse attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
+        manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Cursor attack is now manual. Click to fire. Stores up to 2 charges.', popup: 'MANUAL PULSE' },
         wide_pulse: { name: 'BROADCAST PROTOCOL', desc: '+30% cursor pulse size.', popup: '+30% CURSOR PULSE SIZE' },
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '+1 max pulse charges', popup: 'CAPACITY INCREASED' },
         manual_pulse_child_1_1: { name: 'ISOLATION PROTOCOL', desc: '+25% cursor damage per lvl if only one enemy is hit.', popup: 'ISOLATION PROTOCOL' },
@@ -102,7 +102,7 @@ window.TRANSLATIONS.en = {
             desc: 'final system report...',
             unlocked_desc: "Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did."
         },
-        firewall_1: { name: 'FIREWALL', desc: 'Legacy security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
+
         junk_barrier: { name: 'JUNK DATA', desc: 'An obstacle of garbage.' },
         firewall_2: { name: 'FIREWALL 2', desc: 'Second layer security protocol. Requires DATA to override, but refunds 90% of spent resources.' },
         threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
@@ -110,9 +110,9 @@ window.TRANSLATIONS.en = {
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },
         backdoor_3: { name: 'BACKDOOR 3', desc: 'The final vulnerability in the legacy system chain.' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Collect scraps of discarded data. Instantly grants +15 DATA.' },
-        junk_data_1: { name: 'FRAGMENT SALVAGE', desc: 'Scrape the system floor for discarded bits. Instantly grants 15 DATA.' },
+
         junk_data_2: { name: 'STALE CACHE', desc: '+0.2 tower max health' },
-        junk_data_3: { name: 'STRAY BITS', desc: '+0.2 tower basic damage' }
+        auth_damage_boost: { name: 'AUTH OVERRIDE', desc: '+4 Base Damage per level.' }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },

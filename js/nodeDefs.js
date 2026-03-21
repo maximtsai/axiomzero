@@ -136,8 +136,8 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['armor', 'data_compression'],
-        childIds: ['placeholder_duo_2'],
+        parents: ['data_compression'],
+        childIds: ['placeholder_duo_2', 'armor'],
 
         treeX: gridX(-1),
         treeY: gridY(4),
@@ -242,32 +242,14 @@ const NODE_DEFS = [
         costStep: 10,
         costStepScaling: 10,
         parents: ['integrity', 'magnet'],
-        childIds: ['base_hp_boost'],
+        childIds: ['lore_1'],
         treeX: gridX(-2),
         treeY: gridY(0.5),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
-    {
-        id: 'junk_data_3',
-        name: 'STRAY BITS',
-        icon: 'Skillicon14_04.png',
-        description: t('nodes', 'junk_data_3.desc'),
-        popupText: '+0.2 DAMAGE',
-        popupColor: COLORS.COMBAT,
-        maxLevel: 10,
-        baseCost: 2,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['base_hp_boost'],
-        childIds: [],
-        treeX: gridX(-3.5),
-        treeY: gridY(0.5),
-        effect: function () {
-            // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
-        },
-    },
+
     {
         id: 'crypto_mine_unlock',
         name: 'CRYPTO MINE',
@@ -302,11 +284,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['regen'],
-        childIds: ['firewall_1', 'junk_data_3'],
+        parents: ['armor'],
+        childIds: [],
 
-        treeX: TREE_CENTER_X - TREE_UNIT_X * 3,
-        treeY: TREE_START_Y - TREE_UNIT_Y * 1.5,
+        treeX: gridX(-2.5),
+        treeY: gridY(3.5),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -321,10 +303,11 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: [],
-        childIds: ['lore_2'],
-        treeX: gridX(-5),
-        treeY: gridY(-0.5),
+        parents: ['regen'],
+        childIds: [],
+        treeX: gridX(-3),
+        treeY: gridY(0.5),
+        requiresMaxParent: true,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_1');
@@ -343,10 +326,10 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_1'],
+        parents: ['threat_response'],
         childIds: ['lore_3'],
-        treeX: gridX(-5),
-        treeY: gridY(0.5),
+        treeX: gridX(-4),
+        treeY: gridY(4),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
@@ -509,23 +492,7 @@ const NODE_DEFS = [
             }
         },
     },
-    {
-        id: 'firewall_1',
-        name: 'FIREWALL',
-        icon: 'Skillicon14_14.png',
-        description: t('nodes', 'firewall_1.desc'),
-        maxLevel: 1,
-        baseCost: 200,
-        costType: 'data',
-        parents: ['base_hp_boost'],
-        childIds: ['threat_response', 'junk_data_1'],
-        treeX: gridX(-3.5),
-        treeY: gridY(2.5),
-        tooltipExtraWidth: 60,
-        effect: function () {
-            resourceManager.addData(180);
-        },
-    },
+
     {
         id: 'threat_response',
         name: 'RECOVERY PROTOCOL',
@@ -537,10 +504,10 @@ const NODE_DEFS = [
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
-        parents: ['firewall_1'],
-        childIds: ['armor'],
+        parents: ['armor'],
+        childIds: ['lore_2'],
         treeX: gridX(-3),
-        treeY: gridY(3.5),
+        treeY: gridY(4),
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -741,8 +708,8 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['threat_response'],
-        childIds: ['overcharge'],
+        parents: ['overcharge'],
+        childIds: ['threat_response', 'base_hp_boost'],
 
         treeX: gridX(-2),
         treeY: gridY(4),
@@ -762,9 +729,9 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['two_step_auth', 'forgotten_backdoor'],
+        parents: ['forgotten_backdoor', 'auth_damage_boost'],
         childIds: ['prismatic_array'],
-        treeX: gridX(2),
+        treeX: gridX(3),
         treeY: gridY(4),
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
@@ -807,8 +774,8 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(4),
         effect: function () {
-            if (!gameState.revealedNodes) gameState.revealedNodes = {};
-            gameState.revealedNodes['armor'] = true;
+            // if (!gameState.revealedNodes) gameState.revealedNodes = {};
+            // gameState.revealedNodes['armor'] = true;
         },
     },
     {
@@ -823,13 +790,34 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['data_compression'],
-        childIds: ['overclock'],
+        childIds: ['auth_damage_boost'],
         treeX: gridX(1),
         treeY: gridY(4),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(100);
             }
+        },
+    },
+    {
+        id: 'auth_damage_boost',
+        name: 'AUTH OVERRIDE',
+        icon: 'Skillicon14_06.png',
+        description: t('nodes', 'auth_damage_boost.desc'),
+        popupText: '+4 DAMAGE',
+        popupColor: COLORS.UTILITY,
+        maxLevel: 5,
+        baseCost: 50,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 100,
+        costStepScaling: 50,
+        parents: ['two_step_auth'],
+        childIds: ['overclock'],
+        treeX: gridX(2),
+        treeY: gridY(4),
+        effect: function () {
+            // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
     {
@@ -861,7 +849,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['packet_sniffing'],
-        childIds: ['forgotten_backdoor'],
+        childIds: ['forgotten_backdoor', 'junk_data_2'],
         treeX: gridX(3.5),
         treeY: gridY(2.5),
         tooltipExtraWidth: 60,
@@ -880,30 +868,12 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         costScaling: 'static',
         parents: ['junk_barrier'],
-        childIds: ['backdoor_2', 'junk_data_2', 'overclock'],
-        treeX: gridX(3),
+        childIds: ['backdoor_2', 'overclock'],
+        treeX: gridX(4),
         treeY: gridY(3.5),
         effect: function () { },
     },
-    {
-        id: 'junk_data_1',
-        name: 'FRAGMENT SALVAGE',
-        icon: 'Skillicon14_10.png',
-        description: t('nodes', 'junk_data_1.desc'),
-        popupText: '+15 DATA RECOVERED',
-        popupColor: COLORS.RESOURCE,
-        maxLevel: 10,
-        baseCost: 10,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['firewall_1'],
-        childIds: [],
-        treeX: gridX(-4),
-        treeY: gridY(3.5),
-        effect: function () {
-            resourceManager.addData(15);
-        },
-    },
+
     {
         id: 'junk_data_2',
         name: 'STALE CACHE',
@@ -916,10 +886,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
-        parents: ['forgotten_backdoor'],
+        parents: ['junk_barrier'],
         childIds: [],
         treeX: gridX(4),
-        treeY: gridY(3.5),
+        treeY: gridY(1.5),
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -935,7 +905,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['forgotten_backdoor'],
         childIds: ['backdoor_3'],
-        treeX: gridX(3.5),
+        treeX: gridX(4),
         treeY: gridY(4.5),
         effect: function () { },
     },
