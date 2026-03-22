@@ -33,6 +33,7 @@ function createOptionsButton(x, y) {
 
 function _showOptionsPopup() {
     messageBus.publish('gamePaused');
+    audio.play('popup', 1.0);
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
