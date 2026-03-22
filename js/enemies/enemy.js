@@ -28,6 +28,9 @@ class EnemyModel {
         this.attackTimer = 0;
         this.isAttacking = false;
         this.type = '';
+        this.burnDuration = 0;
+        this.burnDamage = 0;
+        this.burnTimer = 0;
 
         // Speed Ramp properties
         this.initialSpeedMult = 1.0;
@@ -58,6 +61,9 @@ class EnemyModel {
         this.alive = true;
         this.stunned = false;
         this.isAttacking = false;
+        this.burnDuration = 0;
+        this.burnDamage = 0;
+        this.burnTimer = 0;
 
         if (config.maxHealth !== undefined) {
             this.maxHealth = config.maxHealth;
@@ -89,6 +95,9 @@ class EnemyModel {
     deactivate() {
         this.alive = false;
         this.stunned = false;
+        this.burnDuration = 0;
+        this.burnDamage = 0;
+        this.burnTimer = 0;
     }
 
     aimAt(tx, ty) {
@@ -196,6 +205,17 @@ class EnemyModel {
         const stunDuration = 150 * this.knockBackModifier;
 
         return { newX: this.x, newY: this.y, stunDuration };
+    }
+
+    /**
+     * Set burn status for periodic damage.
+     * @param {number} duration Seconds of burn remaining
+     * @param {number} damage   Damage dealt per 1-second tick
+     */
+    applyBurn(duration, damage) {
+        this.burnDuration = duration;
+        this.burnDamage = damage;
+        this.burnTimer = 0; // Fresh apply resets the tick accumulator
     }
 
     /** Health fraction 0–1. */
@@ -442,6 +462,10 @@ class Enemy {
         });
     }
 
+    applyBurn(duration, damage) {
+        this.model.applyBurn(duration, damage);
+    }
+
     // ── Property proxies (backward-compatible API for enemyManager etc.) ─────
 
     get x() { return this.model.x; }
@@ -497,6 +521,15 @@ class Enemy {
 
     get isAttacking() { return this.model.isAttacking; }
     set isAttacking(v) { this.model.isAttacking = v; }
+
+    get burnDuration() { return this.model.burnDuration; }
+    set burnDuration(v) { this.model.burnDuration = v; }
+
+    get burnDamage() { return this.model.burnDamage; }
+    set burnDamage(v) { this.model.burnDamage = v; }
+
+    get burnTimer() { return this.model.burnTimer; }
+    set burnTimer(v) { this.model.burnTimer = v; }
 
     get vx() { return this.model.vx; }
     set vx(v) { this.model.vx = v; }

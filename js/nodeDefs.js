@@ -1041,7 +1041,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['privilege_escalation_3'],
-        childIds: [],
+        childIds: ['laser_duration'],
         isDuoBox: true,
         duoBoxTier: 3,
         shardId: 'laser',
@@ -1073,6 +1073,76 @@ const NODE_DEFS = [
         shardId: 'artillery',
         effect: function () {
             // upgradeDispatcher.recalcX();
+        },
+    },
+    {
+        id: 'laser_duration',
+        name: 'DURATION',
+        icon: 'Skillicon14_05.png',
+        description: '+1 second to laser duration',
+        maxLevel: 5,
+        baseCost: 50,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 50,
+        parents: ['laser'],
+        childIds: ['laser_aperture', 'laser_incendiary'],
+        treeX: gridX(1.0 - 1.5) - DUO_OFFSET,
+        treeY: gridY(9.0),
+        effect: function () {
+            // Stub: upgradeDispatcher.recalcLaserDuration();
+        },
+    },
+    {
+        id: 'laser_aperture',
+        name: 'PHOTON SATURATION',
+        icon: 'Skillicon14_22.png',
+        description: 'Increases the beam divergence threshold, creating a significantly wider laser.',
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['laser_duration'],
+        childIds: ['laser_twin_beams'],
+        treeX: gridX(1.0 - 1.5 - 1.0) - DUO_OFFSET,
+        treeY: gridY(9.0),
+        effect: function () {
+            // Stub: upgradeDispatcher.recalcLaserWidth();
+        },
+    },
+    {
+        id: 'laser_incendiary',
+        name: 'INCENDIARY',
+        icon: 'Skillicon14_26.png',
+        description: 'Sets enemies on fire for 5 seconds, +2 damage per level.',
+        maxLevel: 3,
+        baseCost: 80,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 80,
+        parents: ['laser_duration'],
+        childIds: [],
+        treeX: gridX(1.0 - 1.5) - DUO_OFFSET,
+        treeY: gridY(10.0),
+        effect: function () {
+            // Stub for fire/damage logic
+        },
+    },
+    {
+        id: 'laser_twin_beams',
+        name: 'TWIN BEAMS',
+        icon: 'Skillicon14_30.png',
+        description: 'You now fire two lasers.',
+        maxLevel: 1,
+        baseCost: 150,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['laser_aperture'],
+        childIds: [],
+        treeX: gridX(1.0 - 1.5 - 1.0) - DUO_OFFSET,
+        treeY: gridY(10.0),
+        effect: function () {
+            // Stub for twin beam logic
         },
     },
     {

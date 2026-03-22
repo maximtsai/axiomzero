@@ -2,11 +2,13 @@ const floatingText = (() => {
     let _scene = null;
     let _pool = null;
     let _activeTexts = [];
-    const MAX_ACTIVE = 120; // Hard cap on simultaneous damage numbers
+    let _frameCounter = 0;
+    const MAX_ACTIVE = 200; // Hard cap on simultaneous damage numbers
+    const MAX_PER_FRAME = 15; // Limit to prevent spikes from DoT or AoE events
 
     function init(scene) {
         _scene = scene;
-        _pool = new ObjectPool(_factory, _reset, 30);
+        _pool = new ObjectPool(_factory, _reset, 200).preAllocate(50);
         updateManager.addFunction(_update);
     }
 
@@ -40,6 +42,8 @@ const floatingText = (() => {
 
         // Safety cap: don't spawn more than MAX_ACTIVE to prevent frame spikes
         if (_activeTexts.length >= MAX_ACTIVE) return;
+        if (_frameCounter >= MAX_PER_FRAME) return;
+        _frameCounter++;
 
         opts = opts || {};
         const fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
@@ -88,6 +92,7 @@ const floatingText = (() => {
     }
 
     function _update(delta) {
+        _frameCounter = 0; // Reset every frame
         if (_activeTexts.length === 0) return;
 
         for (let i = _activeTexts.length - 1; i >= 0; i--) {
