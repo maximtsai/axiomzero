@@ -44,6 +44,8 @@ class ShooterEnemy extends Enemy {
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 19
         });
+        
+        this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
 
         this.model.fireCooldown = 0;
         this.model.baseAttackInterval = 2500;
@@ -60,14 +62,14 @@ class ShooterEnemy extends Enemy {
         if (m.state === SHOOTER_STATE.MOVING) {
             super.update(dt);
 
-            if (distToTower <= 120) {
+            if (distToTower <= 150) {
                 m.state = SHOOTER_STATE.ATTACKING;
                 m.vx = 0;
                 m.vy = 0;
                 m.fireCooldown = 0;
             }
         } else if (m.state === SHOOTER_STATE.ATTACKING) {
-            if (distToTower > 130) {
+            if (distToTower > 160) {
                 m.state = SHOOTER_STATE.MOVING;
                 m.aimAt(tPos.x, tPos.y);
                 return;

@@ -32,7 +32,7 @@ GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
 
 // ─── EXP ──────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.EXP_FILL_RATE = 1.0;   // per second during combat
+GAME_CONSTANTS.EXP_FILL_RATE = 0.9;   // per second during combat
 GAME_CONSTANTS.EXP_TO_INSIGHT = 100;  // EXP needed to award 1 INSIGHT
 
 // ─── Enemy — Basic type (Phase 1) ─────────────────────────────────────────────

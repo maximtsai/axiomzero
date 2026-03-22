@@ -558,7 +558,7 @@ const tower = (() => {
             const dx = x - towerPos.x;
             const dy = y - towerPos.y;
             const distSq = dx * dx + dy * dy;
-            const range = model.attackRange;
+            const range = model.attackRange + 20;
             if (distSq < range * range) {
                 heal(0.5);
                 if (typeof customEmitters !== 'undefined') {

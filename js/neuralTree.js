@@ -1139,12 +1139,13 @@ const neuralTree = (() => {
             deployBtn.setVisible(true);
             deployBtn.setState(NORMAL);
 
-            // Only pulse if the only node purchased is Awaken
+            // Only pulse if the only node purchased is Awaken and player has 0 data
             const upgrades = gameState.upgrades || {};
             const keys = Object.keys(upgrades).filter(k => upgrades[k] > 0);
             const onlyAwaken = keys.length === 1 && keys[0] === 'awaken';
+            const hasNoData = resourceManager.getData() <= 0;
 
-            if (onlyAwaken) {
+            if (onlyAwaken && hasNoData) {
                 const bx = PANEL_W - 110 + TREE_X_OFFSET;
                 const by = GAME_CONSTANTS.HEIGHT - 57;
                 const bw = 344 * 0.6;

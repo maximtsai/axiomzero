@@ -22,6 +22,7 @@ const waveManager = (() => {
     let frozen = false;
     let paused = false; // true during options menu
     let progressPaused = false; // true while a miniboss/boss is alive
+    let currentWaveDuration = 45;
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
 
     function init() {
@@ -50,6 +51,10 @@ const waveManager = (() => {
         waveActive = true;
         frozen = false;
         progressPaused = false;
+
+        const currentLevel = gameState.currentLevel || 1;
+        const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
+        currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
 
         // Reset tower for this combat session
         tower.reset(true);
@@ -185,7 +190,7 @@ const waveManager = (() => {
                 // 3. Inform enemyManager to instantly kill all non-boss enemies
                 if (typeof enemyManager !== 'undefined') {
                     enemyManager.killAllNonBossEnemies();
-                    PhaserScene.cameras.main.shake(1000, 0.03);
+                    PhaserScene.cameras.main.shake(1000, 0.023);
                 }
 
                 // 4. Trigger resource vacuum (implemented in resourceManager)
@@ -214,7 +219,7 @@ const waveManager = (() => {
         const dt = delta / 1000;
 
         if (!progressPaused) {
-            waveProgress = Math.min(1, waveProgress + dt / GAME_CONSTANTS.WAVE_DURATION);
+            waveProgress = Math.min(1, waveProgress + dt / currentWaveDuration);
             messageBus.publish('waveProgressChanged', waveProgress);
         }
     }
