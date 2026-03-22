@@ -321,6 +321,7 @@ const customEmitters = (() => {
 
         let duration = isSlow ? 420 : 90;
         if (enemy && enemy.isBoss) duration = 800;
+        else if (enemy && enemy.type === 'bomb') duration = 250;
 
         PhaserScene.tweens.add({
             targets: copies,
@@ -657,6 +658,7 @@ const customEmitters = (() => {
     }
 
     function malwareSiphonFX(x, y, tx, ty) {
+        if (gameState.settings.minimalParticles) return;
         console.log("fx malware")
         const sprite = malwareSiphonPool.get();
         sprite.setPosition(x, y);

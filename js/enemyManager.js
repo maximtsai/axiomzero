@@ -40,6 +40,10 @@ const enemyManager = (() => {
     let fastPackLastOffsetSign = 1;
     let fastPackCooldown = 0;
 
+    // Trojan Access tracking
+    let nextSpawnIsBomb = false;
+    let spawnCountSinceLastBomb = 0;
+
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
         basic: {},
@@ -98,6 +102,8 @@ const enemyManager = (() => {
         minibossSpawned = false;
         minibossAlive = false;
         bossSpawned = false;
+        nextSpawnIsBomb = false;
+        spawnCountSinceLastBomb = 0;
         bossAlive = false;
         lastWaveProgress = 0;
         recentSpawnIndex = 0;
@@ -160,6 +166,27 @@ const enemyManager = (() => {
                     break;
                 }
                 r -= config.enemyProbabilities[type];
+            }
+        }
+
+        // Trojan Access conversion logic
+        const trojanLevel = (gameState.upgrades && gameState.upgrades.trojan_access) || 0;
+        if (trojanLevel > 0) {
+            // Roll for next spawn to be a bomb if cooldown is over
+            if (!nextSpawnIsBomb && spawnCountSinceLastBomb >= 3) {
+                if (Math.random() < 0.1) {
+                    nextSpawnIsBomb = true;
+                }
+            }
+
+            // If we have a pending bomb conversion, check if this is a basic enemy
+            if (nextSpawnIsBomb && (chosenType === 'basic')) {
+                chosenType = 'bomb';
+                nextSpawnIsBomb = false;
+                spawnCountSinceLastBomb = 0;
+            } else {
+                // Only increment cooldown/count if it wasn't converted or wasn't a basic enemy
+                spawnCountSinceLastBomb++;
             }
         }
 
@@ -752,7 +779,7 @@ const enemyManager = (() => {
                 const bx = ex;
                 const by = ey;
 
-                PhaserScene.time.delayedCall(75, () => {
+                PhaserScene.time.delayedCall(220, () => {
                     if (typeof customEmitters !== 'undefined' && customEmitters.createBombExplosion) {
                         customEmitters.createBombExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
                     }
