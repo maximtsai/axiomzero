@@ -155,7 +155,7 @@ const NODE_DEFS = [
         description: t('nodes', 'integrity.desc'),
         popupText: '+4 MAX HEALTH',
         popupColor: COLORS.UTILITY,
-        maxLevel: 6,
+        maxLevel: 5,
         baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
@@ -176,44 +176,20 @@ const NODE_DEFS = [
         description: t('nodes', 'intensity.desc'),
         popupText: '+2 DAMAGE',
         popupColor: COLORS.COMBAT,
-        maxLevel: 6,
+        maxLevel: 5,
         baseCost: 5,
         costType: 'data',
         costScaling: 'linear',
         costStep: 5,
         costStepScaling: 5,
         parents: ['awaken'],
-        childIds: ['focus', 'test_node_unlock_sec2', 'prismatic_array', 'overclock'],
+        childIds: ['focus', 'prismatic_array', 'overclock'],
         treeX: gridX(1),
         treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
     },
-    {
-        id: 'test_node_unlock_sec2',
-        name: 'DEBUG: SEC2 UNLOCK',
-        icon: 'Skillicon14_38.png',
-        description: 'Bypass Duo requirements for security_test_2.',
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['intensity'],
-        childIds: [],
-        treeX: gridX(1.15),
-        treeY: gridY(-1),
-        effect: function () {
-            if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
-            gameState.unlockedNodes['security_test_2'] = true;
-
-            // Re-refresh tree to show changes
-            if (typeof neuralTree !== 'undefined') {
-                neuralTree._refreshAllNodes();
-            }
-        },
-    },
-
     {
         id: 'focus',
         name: 'COVERAGE',

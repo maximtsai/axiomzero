@@ -155,7 +155,7 @@ const projectileManager = (() => {
                     const projDirDist = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 1;
                     const projDirX = p.vx / projDirDist;
                     const projDirY = p.vy / projDirDist;
-                    e.applyKnockback(projDirX, projDirY, 10);
+                    e.applyKnockback(projDirX, projDirY, 4);
 
                     if (hitAnimPool) {
                         const hitSpr = hitAnimPool.get();

@@ -328,20 +328,56 @@ class PulseAttackView {
         this.aftershockBright.setPosition(x, y);
 
         const size = baseSize + 100;
-        this.aftershockBright.setSize(size, size);
-        this.aftershockRed.setSize(size + 4, size + 4);
+        this.aftershockBright.setSize(size - 2, size - 2);
+        this.aftershockRed.setSize(size, size);
 
-        this.aftershockBright.setAlpha(0.65);
-        this.aftershockRed.setAlpha(0.35);
+        // const randRot = Math.random() < 0.5 ? -0.04 : 0.04;
+        // this.aftershockBright.setRotation(randRot);
+        // this.aftershockRed.setRotation(randRot);
+
+        this.aftershockBright.setAlpha(0.9);
+        this.aftershockRed.setAlpha(0.6);
         this.aftershockBright.setScale(1.1);
-        this.aftershockRed.setScale(1.15);
+        this.aftershockRed.setScale(1.17);
+
+        // Rotation snap animation
+        // PhaserScene.tweens.add({
+        //     targets: [this.aftershockBright, this.aftershockRed],
+        //     duration: 70,
+        //     rotation: randRot * -0.9,
+        //     ease: 'Cubic.easeOut',
+        //     onComplete: () => {
+        //         PhaserScene.tweens.add({
+        //             targets: [this.aftershockBright, this.aftershockRed],
+        //             duration: 130,
+        //             rotation: 0,
+        //             easeParams: [2],
+        //             ease: 'Back.easeOut',
+        //         });
+        //     }
+        // });
 
         PhaserScene.tweens.add({
-            targets: [this.aftershockBright, this.aftershockRed],
-            alpha: 0,
+            targets: [this.aftershockBright],
             scaleX: 1,
             scaleY: 1,
-            duration: 600,
+            duration: 450,
+            easeParams: [2],
+            ease: 'Back.easeOut',
+        });
+        PhaserScene.tweens.add({
+            targets: [this.aftershockRed],
+            scaleX: 0.98,
+            scaleY: 0.98,
+            duration: 450,
+            easeParams: [2],
+            ease: 'Back.easeOut',
+        });
+        PhaserScene.tweens.add({
+            targets: [this.aftershockBright, this.aftershockRed],
+            delay: 75,
+            alpha: 0,
+            duration: 525,
             ease: 'Quart.easeOut',
         });
     }
@@ -443,7 +479,7 @@ const pulseAttack = (() => {
 
         // AFTERSHOCK logic
         if (model.aftershockLevel > 0) {
-            PhaserScene.time.delayedCall(125, () => {
+            PhaserScene.time.delayedCall(100, () => {
                 if (!model.active || model.paused || !tower.isAlive() || gameStateMachine.getPhase() !== GAME_CONSTANTS.PHASE_COMBAT) return;
 
                 view.playAftershockAnimation(cx, cy, model.size);

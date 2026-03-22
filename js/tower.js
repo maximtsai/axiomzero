@@ -452,8 +452,10 @@ const tower = (() => {
 
         const dt = delta / 1000; // seconds
 
-        // Negative health regen
-        model.health += model.healthRegen * dt;
+        // Negative health regen — skip decay if invincible (victory sequence)
+        if (!(model.isInvincible && model.healthRegen < 0)) {
+            model.health += model.healthRegen * dt;
+        }
         if (model.health > model.maxHealth) model.health = model.maxHealth;
         if (model.health <= 0) {
             model.health = 0;
@@ -556,9 +558,12 @@ const tower = (() => {
             const dx = x - towerPos.x;
             const dy = y - towerPos.y;
             const distSq = dx * dx + dy * dy;
-            const range = 250;
+            const range = model.attackRange;
             if (distSq < range * range) {
                 heal(0.5);
+                if (typeof customEmitters !== 'undefined') {
+                    customEmitters.malwareSiphonFX(x, y, towerPos.x, towerPos.y);
+                }
             }
         }
     }

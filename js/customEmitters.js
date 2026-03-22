@@ -117,6 +117,25 @@ const customEmitters = (() => {
         12
     );
 
+    const malwareSiphonPool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.sprite(0, 0, 'player', 'heal.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            sprite.setAlpha(1);
+            sprite.setScale(1);
+            sprite.setRotation(0);
+            sprite.clearTint();
+        },
+        15
+    );
+
+
     // ── basicStrike ──────────────────────────────────────────────────────────
     const strikeParams = {
         frame: 'blue_pixel.png',
@@ -637,11 +656,64 @@ const customEmitters = (() => {
         }
     }
 
+    function malwareSiphonFX(x, y, tx, ty) {
+        console.log("fx malware")
+        const sprite = malwareSiphonPool.get();
+        sprite.setPosition(x, y);
+        sprite.setVisible(true);
+        sprite.setActive(true);
+        sprite.setAlpha(1);
+        sprite.setScale(2);
+        sprite.setDepth(1);
+        sprite.setBlendMode(Phaser.BlendModes.ADD);
+        PhaserScene.tweens.add({
+            targets: sprite,
+            alpha: 0,
+            duration: 560,
+        });
+        const curveLeft = Math.random() < 0.5;
+        let curveX = 'linear';
+        let curveY = 'linear';
+        if (curveLeft) {
+            curveX = 'Cubic.easeOut';
+            if (Math.random() < 0.5) {
+                curveY = 'Quad.easeIn';
+            }
+        } else {
+            curveY = 'Cubic.easeOut';
+            if (Math.random() < 0.5) {
+                curveX = 'Quad.easeIn';
+            }
+        }
+
+        PhaserScene.tweens.add({
+            targets: sprite,
+            x: tx,
+            duration: 580,
+            ease: curveX,
+        });
+        PhaserScene.tweens.add({
+            targets: sprite,
+            y: ty,
+            duration: 580,
+            ease: curveY,
+        });
+        PhaserScene.tweens.add({
+            targets: sprite,
+            scale: 1,
+            duration: 580,
+            onComplete: () => {
+                malwareSiphonPool.release(sprite);
+            }
+        });
+    }
+
     function init() {
         explosionRayPool.preAllocate(6);
         explosionPulsePool.preAllocate(1);
         bombExplosionBrightPool.preAllocate(5);
         bombExplosionRedPool.preAllocate(5);
+        malwareSiphonPool.preAllocate(8);
     }
 
     updateManager.addFunction(_update);
@@ -655,6 +727,7 @@ const customEmitters = (() => {
         createEnemyDeathAnim,
         minibossExplosion,
         createBossExplosionRays,
-        createBombExplosion
+        createBombExplosion,
+        malwareSiphonFX
     };
 })();

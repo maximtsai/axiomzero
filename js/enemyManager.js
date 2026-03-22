@@ -648,7 +648,7 @@ const enemyManager = (() => {
 
             const dx = Math.abs(e.x - cx);
             const dy = Math.abs(e.y - cy);
-            
+
             // Manhattan distance defines a diamond
             if (dx + dy <= radius + (e.size || 0)) {
                 result.push(e);
@@ -747,7 +747,7 @@ const enemyManager = (() => {
             } else if (enemy.type === 'bomb') {
                 const ups = gameState.upgrades || {};
                 const payloadLv = ups.volatile_payload || 0;
-                const explosionRange = 150 * (1 + 0.2 * payloadLv);
+                const explosionRange = 160 * (1 + 0.17 * payloadLv);
                 const explosionDamage = enemy.maxHealth * 1.25;
                 const bx = ex;
                 const by = ey;
