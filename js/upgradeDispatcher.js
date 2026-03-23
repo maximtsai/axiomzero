@@ -85,6 +85,17 @@ const upgradeDispatcher = (() => {
         shockwaveAttack.setSeismicCrushLevel(getLevel('shockwave_seismic_crush'));
     }
 
+    /** Recalculates artillery stats from upgrade nodes. */
+    function recalcArtillery() {
+        if (typeof artilleryAttack === 'undefined') return;
+        artilleryAttack.setLevels({
+            radius: getLevel('artillery_shells'),
+            volley: getLevel('artillery_volley'),
+            firstStrike: getLevel('artillery_first_strike'),
+            stun: getLevel('artillery_stun')
+        });
+    }
+
     /** Recalculates threat response healing on boss spawn. */
     function recalcThreatResponse() {
         // Subscription handled in gameInit.js
@@ -109,6 +120,9 @@ const upgradeDispatcher = (() => {
         if (typeof resourceManager !== 'undefined') {
             recalcPacketSniffing();
         }
+        if (typeof artilleryAttack !== 'undefined') {
+            recalcArtillery();
+        }
         recalcThreatResponse();
     }
 
@@ -124,6 +138,7 @@ const upgradeDispatcher = (() => {
         recalcPacketSniffing,
         recalcShockwaveStats,
         recalcThreatResponse,
-        recalcAftershock
+        recalcAftershock,
+        recalcArtillery
     };
 })();

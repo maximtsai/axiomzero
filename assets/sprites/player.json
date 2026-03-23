@@ -585,6 +585,31 @@
 					}
 				},
 				{
+					"filename": "artillery_center.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 24,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 24
+					},
+					"frame": {
+						"x": 763,
+						"y": 383,
+						"w": 24,
+						"h": 24
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "lightning_core.png",
 					"rotated": false,
 					"trimmed": false,
@@ -665,6 +690,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:6fd4e385b29aa1e37a001e18614b6bbb:04190ca154ea0403e48b8fe5dd25b55a:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:0d6e7fa4f0b826a2a2ae1a0e173dd4e8:0a2c89355cfc34382c59b84484f94af7:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

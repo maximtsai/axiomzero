@@ -462,6 +462,14 @@ class Enemy {
         });
     }
 
+    stun(duration) {
+        if (this.isBoss) return;
+        this.model.stunned = true;
+        PhaserScene.time.delayedCall(duration, () => {
+            this.model.stunned = false;
+        });
+    }
+
     applyBurn(duration, damage) {
         this.model.applyBurn(duration, damage);
     }

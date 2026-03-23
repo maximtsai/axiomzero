@@ -1049,14 +1049,15 @@ const NODE_DEFS = [
         treeX: gridX(1.0) - DUO_OFFSET,
         treeY: gridY(9.0),
         effect: function () {
-            // upgradeDispatcher.recalcX();
+            if (typeof laserAttack !== 'undefined') laserAttack.unlock();
+            artilleryAttack.lock();
         },
     },
     {
         id: 'artillery',
         name: 'ARTILLERY',
         icon: 'Skillicon14_11.png',
-        description: t('nodes', 'artillery.desc'),
+        description: 'Orders an automated long-range artillery strike every 6 seconds on random battlefield positions.',
         popupText: 'ARTILLERY ACTIVE',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
@@ -1072,7 +1073,8 @@ const NODE_DEFS = [
         duoBoxTier: 3,
         shardId: 'artillery',
         effect: function () {
-            // upgradeDispatcher.recalcX();
+            artilleryAttack.unlock();
+            if (typeof laserAttack !== 'undefined') laserAttack.lock();
         },
     },
     {
@@ -1147,7 +1149,7 @@ const NODE_DEFS = [
     },
     {
         id: 'artillery_volley',
-        name: 'BATTERY VOLLEY',
+        name: 'TRIPLE VOLLEY',
         icon: 'Skillicon14_09.png',
         description: 'Orders multiple artillery strikes per activation.',
         maxLevel: 1,
@@ -1164,10 +1166,10 @@ const NODE_DEFS = [
 
     {
         id: 'artillery_shells',
-        name: 'HE SHELLS',
+        name: 'HIGH EXPLOSIVE',
         icon: 'Skillicon14_09.png',
-        description: 'Increases the blast radius of artillery strikes.',
-        maxLevel: 3,
+        description: '+10% blast radius of artillery.',
+        maxLevel: 5,
         baseCost: 80,
         costType: 'data',
         costScaling: 'linear',
