@@ -47,11 +47,15 @@ class ArtilleryAttackModel {
 class ArtilleryAttackView {
     constructor() {
         this.CORNER_SIZE = 30;
-        this._strikePool = []; // Simple internal pool for reuse
+        this._strikePool = []; 
     }
 
     init() {
-        // Any global view init
+        // Pre-allocate 6 strikes (sufficient for Triple Volley + overlaps)
+        for (let i = 0; i < 6; i++) {
+            const obj = this._createStrikeObject(320); 
+            this._strikePool.push(obj);
+        }
     }
 
     update(delta) {
@@ -323,59 +327,38 @@ const artilleryAttack = (() => {
 
     function _findRandomTarget() {
         const towerPos = tower.getPosition();
-        const halfSize = model.getDamageArea() / 2;
+        const activeEnemies = enemyManager.getActiveEnemies();
+        
         const minX = model.SCREEN_BORDER_WIDTH;
         const maxX = GAME_CONSTANTS.WIDTH - model.SCREEN_BORDER_WIDTH;
         const minY = model.SCREEN_BORDER_HEIGHT;
         const maxY = GAME_CONSTANTS.HEIGHT - model.SCREEN_BORDER_HEIGHT;
 
-        const activeEnemies = enemyManager.getActiveEnemies();
-
-        let tx, ty;
-        let attempts = 0;
-        let validSpotFound = false;
-
-        do {
-            tx = Phaser.Math.Between(minX, maxX);
-            ty = Phaser.Math.Between(minY, maxY);
-            attempts++;
-
-            const distFromTower = Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y);
-            if (distFromTower < model.TOWER_MARGIN) continue;
-
-            const activeEnemies = enemyManager.getActiveEnemies();
-            if (activeEnemies.length === 0) {
-                validSpotFound = true;
-                break;
-            }
-
-            // Target clustering: Try to find at least 2 enemies for first 8 attempts, 1 thereafter
-            let enemiesInArea = 0;
-            const targetMinEnemies = (attempts <= 8) ? 2 : 1;
-
+        // Predictive Targeting: Instead of hunting for a random valid spot,
+        // we start with a random enemy and check if their future position is valid.
+        if (activeEnemies.length > 0) {
+            const startIndex = Math.floor(Math.random() * activeEnemies.length);
             for (let i = 0; i < activeEnemies.length; i++) {
-                const e = activeEnemies[i];
-                const futureX = e.x + (e.vx * 1.2);
-                const futureY = e.y + (e.vy * 1.2);
+                const idx = (startIndex + i) % activeEnemies.length;
+                const e = activeEnemies[idx];
+                
+                // Strike delay is ~1.5s total (targeting sequence)
+                const futureX = e.x + (e.vx * 1.5);
+                const futureY = e.y + (e.vy * 1.5);
 
-                if (Math.abs(futureX - tx) <= halfSize && Math.abs(futureY - ty) <= halfSize) {
-                    enemiesInArea++;
-                }
+                const valid = futureX >= minX && futureX <= maxX &&
+                              futureY >= minY && futureY <= maxY &&
+                              (Math.abs(futureX - towerPos.x) + Math.abs(futureY - towerPos.y) >= model.TOWER_MARGIN);
 
-                if (enemiesInArea >= targetMinEnemies) {
-                    validSpotFound = true;
-                    break;
-                }
+                if (valid) return { x: futureX, y: futureY };
             }
+        }
 
-            // Hard limit: If we've tried 25 times and can't find a perfect spot, accept the last far spot
-            if (attempts >= 25) {
-                validSpotFound = true;
-            }
-
-        } while (!validSpotFound && attempts < 35);
-
-        return { x: tx, y: ty };
+        // Fallback: If no enemies are valid or screen is empty, pick a safe random spot.
+        return {
+            x: Phaser.Math.Between(minX, maxX),
+            y: Phaser.Math.Between(minY, maxY)
+        };
     }
 
     function _onPhaseChanged(phase) {
