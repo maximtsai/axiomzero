@@ -160,6 +160,9 @@ class SniperEnemy extends Enemy {
         const distToTower = Math.sqrt(dx * dx + dy * dy);
         const range = 250;
 
+        // Sync model/view first (burn, position)
+        super.update(dt);
+
         // Sync charge sprite position
         v.syncChargePosition(m.x, m.y);
 
@@ -169,8 +172,6 @@ class SniperEnemy extends Enemy {
         }
 
         if (m.state === SNIPER_STATE.MOVING) {
-            super.update(dt);
-
             if (m.isCharging) {
                 v.stopCharge();
                 m.isCharging = false;
@@ -179,6 +180,7 @@ class SniperEnemy extends Enemy {
 
             if (distToTower <= range) {
                 m.state = SNIPER_STATE.ATTACKING;
+                m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
                 m.fireCooldown = 3000;
@@ -186,6 +188,7 @@ class SniperEnemy extends Enemy {
         } else if (m.state === SNIPER_STATE.ATTACKING) {
             if (distToTower > range + 20) {
                 m.state = SNIPER_STATE.MOVING;
+                m.isAttacking = false;
                 v.stopCharge();
                 m.isCharging = false;
                 m._isRampingUp = false;

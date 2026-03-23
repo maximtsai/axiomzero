@@ -163,6 +163,23 @@ class EnemyModel {
         if (this.attackTimer > 0) {
             this.attackTimer -= dt;
         }
+
+        // Burn logic (ticks every 1.0s)
+        let burnTick = 0;
+        if (this.burnDuration > 0) {
+            this.burnDuration -= dt;
+            this.burnTimer += dt;
+            if (this.burnTimer >= 1.0) {
+                this.burnTimer -= 1.0;
+                burnTick = this.burnDamage;
+            }
+            if (this.burnDuration <= 0) {
+                this.burnDuration = 0;
+                this.burnTimer = 0;
+            }
+        }
+        
+        return burnTick; // Return the amount for the controller to trigger manager.damageEnemy (to get floating numbers)
     }
 
     /**
@@ -299,6 +316,18 @@ class EnemyView {
 
         if (!cannotRotate) {
             this.setRotation(rotation);
+        }
+        this.update(0);
+    }
+
+    update(dt, model) {
+        if (model && model.burnDuration > 0) {
+            // Apply a pulsating orange/red tint when on fire
+            const pulse = 0.8 + 0.2 * Math.sin(PhaserScene.time.now * 0.01);
+            const tint = model.isBoss ? 0xff4400 : 0xff6600;
+            this.img.setTint(tint);
+        } else {
+            this.img.clearTint();
         }
     }
 
@@ -439,9 +468,13 @@ class Enemy {
     }
 
     update(dt) {
-        this.model.update(dt);
+        const tickAmt = this.model.update(dt);
+        if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
+            enemyManager.damageEnemy(this, tickAmt);
+        }
         this.view.syncPosition(this.model.x, this.model.y);
         this.view.updateHPCrop(this.model.getHealthPct());
+        this.view.update(dt, this.model);
     }
 
     // ── Damage ────────────────────────────────────────────────────────────────

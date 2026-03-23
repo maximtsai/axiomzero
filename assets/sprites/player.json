@@ -185,7 +185,7 @@
 					}
 				},
 				{
-					"filename": "laser.png",
+					"filename": "laser_turret.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -690,6 +690,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:0d6e7fa4f0b826a2a2ae1a0e173dd4e8:0a2c89355cfc34382c59b84484f94af7:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9a2e7b28920d5148531e356255c71fb3:5c28accf1790314dfe0b8d75b441b910:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

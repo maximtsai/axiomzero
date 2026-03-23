@@ -165,6 +165,9 @@ class Miniboss2 extends Miniboss {
         const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
+        // Always update the base model (burn, scaling, stun/hitstop)
+        super.update(dt);
+
         // Sync Trail State
         v.setTrailActive(m.trailActive);
 
@@ -183,8 +186,6 @@ class Miniboss2 extends Miniboss {
                 m.speed = m.baseSpeed;
                 m.aimAt(tPos.x, tPos.y);
 
-                super.update(dt);
-
                 if (distToTower <= MB2.CHARGE_RANGE) {
                     this._transitionTo(MINIBOSS2_STATE.CHARGE);
                 }
@@ -197,7 +198,6 @@ class Miniboss2 extends Miniboss {
                 m.speed = m.chargeStartSpeed * (1 - progress);
 
                 m.aimAt(tPos.x, tPos.y);
-                super.update(dt);
 
                 if (m.stateTimer <= 0) {
                     this._transitionTo(MINIBOSS2_STATE.ATTACK);
@@ -206,6 +206,8 @@ class Miniboss2 extends Miniboss {
 
             case MINIBOSS2_STATE.ATTACK:
                 m.trailActive = true;
+                m.vx = 0;
+                m.vy = 0;
 
                 // Rapidly accelerate directly towards the tower
                 m.attackSpeed += MB2.ATTACK_ACCELERATION * dt;
@@ -216,7 +218,6 @@ class Miniboss2 extends Miniboss {
 
                 m.x += ux * m.attackSpeed * dt;
                 m.y += uy * m.attackSpeed * dt;
-                v.syncPosition(m.x, m.y);
 
                 // Collision detection
                 if (distToTower <= m.size && !m.hasHitTowerInCurrentAttack) {
@@ -245,10 +246,9 @@ class Miniboss2 extends Miniboss {
                 const snapUy = dy / (distToTower || 1);
                 m.x = tPos.x - snapUx * m.size;
                 m.y = tPos.y - snapUy * m.size;
-                v.syncPosition(m.x, m.y);
-
                 m.vx = 0;
                 m.vy = 0;
+
                 m.stateTimer -= dtMs;
                 if (m.stateTimer <= 0) {
                     this._transitionTo(MINIBOSS2_STATE.RETREAT);
@@ -258,6 +258,8 @@ class Miniboss2 extends Miniboss {
             case MINIBOSS2_STATE.RETREAT:
                 // Negative speed to move backwards
                 m.speed = -m.baseSpeed;
+                m.vx = 0;
+                m.vy = 0;
 
                 // Move AWAY from tower
                 const rx = dx / (distToTower || 1);
@@ -265,16 +267,12 @@ class Miniboss2 extends Miniboss {
 
                 m.x += rx * m.speed * dt;
                 m.y += ry * m.speed * dt;
-                v.syncPosition(m.x, m.y);
 
                 if (distToTower > MB2.RETREAT_PAST_RANGE) {
                     this._transitionTo(MINIBOSS2_STATE.CHARGE);
                 }
                 break;
         }
-
-        // Ensure HP UI strictly follows final visual position
-        if (v.hpBarVisible) v.updateHpPosition(m.x, m.y);
     }
 
     _transitionTo(newState) {
@@ -285,26 +283,32 @@ class Miniboss2 extends Miniboss {
             case MINIBOSS2_STATE.SPAWN_PAUSE:
                 m.stateTimer = MB2.INITIAL_WAIT_MS;
                 m.trailActive = false;
+                m.isAttacking = true;
                 break;
             case MINIBOSS2_STATE.TRAVEL:
                 m.trailActive = true;
+                m.isAttacking = false;
                 break;
             case MINIBOSS2_STATE.CHARGE:
                 m.stateTimer = MB2.CHARGE_WAIT_MS;
                 m.trailActive = false;
                 m.chargeStartSpeed = m.speed;
+                m.isAttacking = false;
                 break;
             case MINIBOSS2_STATE.ATTACK:
                 m.trailActive = true;
                 m.attackSpeed = 0;
                 m.hasHitTowerInCurrentAttack = false;
+                m.isAttacking = true;
                 break;
             case MINIBOSS2_STATE.POST_ATTACK_PAUSE:
                 m.stateTimer = MB2.POST_ATTACK_WAIT_MS;
                 m.trailActive = false;
+                m.isAttacking = true;
                 break;
             case MINIBOSS2_STATE.RETREAT:
                 m.trailActive = false;
+                m.isAttacking = true;
                 break;
         }
     }

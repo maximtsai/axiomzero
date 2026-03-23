@@ -54,16 +54,19 @@ class ShooterEnemy extends Enemy {
 
     update(dt) {
         const m = this.model;
+        const v = this.view;
         const tPos = tower.getPosition();
         const dx = tPos.x - m.x;
         const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
-        if (m.state === SHOOTER_STATE.MOVING) {
-            super.update(dt);
+        // Process burn, scaling, and sync view
+        super.update(dt);
 
+        if (m.state === SHOOTER_STATE.MOVING) {
             if (distToTower <= 150) {
                 m.state = SHOOTER_STATE.ATTACKING;
+                m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
                 m.fireCooldown = 0;
@@ -71,13 +74,14 @@ class ShooterEnemy extends Enemy {
         } else if (m.state === SHOOTER_STATE.ATTACKING) {
             if (distToTower > 160) {
                 m.state = SHOOTER_STATE.MOVING;
+                m.isAttacking = false;
                 m.aimAt(tPos.x, tPos.y);
                 return;
             }
 
             // Keep facing the tower
             m.baseRotation = Math.atan2(dy, dx);
-            this.view.setRotation(m.baseRotation);
+            v.setRotation(m.baseRotation);
 
             m.vx = 0;
             m.vy = 0;

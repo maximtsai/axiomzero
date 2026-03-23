@@ -119,6 +119,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // Duo-box weapons (must be unlocked via Neural Tree shard purchase)
     lightningAttack.init();
     shockwaveAttack.init();
+    laserAttack.init();
     artilleryAttack.init();
     // Restore weapon state from save
     if (gameState.duoBoxPurchased && gameState.duoBoxPurchased[1]) {
@@ -133,6 +134,8 @@ messageBus.subscribeOnce('assetsLoaded', () => {
         const activeShard = gameState.activeShards && gameState.activeShards[3];
         if (activeShard === 'artillery') {
             artilleryAttack.unlock();
+        } else if (activeShard === 'laser') {
+            laserAttack.unlock();
         }
     }
 

@@ -852,21 +852,6 @@ const enemyManager = (() => {
 
             e.update(dt * spawnSpeedMultiplier);
             
-            // Scalable burn processing
-            if (e.burnDuration > 0) {
-                e.burnTimer += dt;
-                if (e.burnTimer >= 1.0) {
-                    e.burnTimer -= 1.0;
-                    e.burnDuration -= 1;
-                    
-                    damageEnemy(e, e.burnDamage);
-                    
-                    // damageEnemy might trigger _killEnemy, which could empty activeEnemies or change indices
-                    if (activeEnemies.length === 0) break;
-                    if (!e.alive) continue;
-                }
-            }
-
             // Tower contact check — minibosses do NOT die on contact currently
             if (!e.isMiniboss) {
                 const dx = e.x - tPos.x;

@@ -149,27 +149,38 @@ class ProtectorEnemy extends Enemy {
         const m = this.model;
         const v = this.view;
 
-        v.syncAuraPosition(m.x, m.y);
-
         const tPos = tower.getPosition();
         const dx = tPos.x - m.x;
         const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
-        if (m.state === PROTECTOR_STATE.RUSHING) {
-            m.rushElapsed += dt;
+        // Always sync the model state (burn, health, position)
+        if (m.state === PROTECTOR_STATE.RUSHING && distToTower > 210 && m.rushElapsed < PROTECTOR_RUSH_DURATION) {
             const t = Math.min(1, m.rushElapsed / PROTECTOR_RUSH_DURATION);
             const mult = 12 - (11 * t);
+            super.update(dt * mult);
+        } else {
+            super.update(dt);
+        }
+
+        v.syncAuraPosition(m.x, m.y);
+
+        if (m.state === PROTECTOR_STATE.RUSHING) {
+            m.rushElapsed += dt;
 
             if (distToTower <= 210) {
                 m.vx = 0;
                 m.vy = 0;
-            } else {
-                super.update(dt * mult);
             }
 
             if (m.rushElapsed >= PROTECTOR_RUSH_DURATION) {
-                m.state = (distToTower <= 220) ? PROTECTOR_STATE.IDLE : PROTECTOR_STATE.MOVING;
+                if (distToTower <= 220) {
+                    m.state = PROTECTOR_STATE.IDLE;
+                    m.isAttacking = true;
+                } else {
+                    m.state = PROTECTOR_STATE.MOVING;
+                    m.isAttacking = false;
+                }
                 v.deployAura(m.x, m.y, () => {
                     m.auraActive = true;
                 });
@@ -177,14 +188,16 @@ class ProtectorEnemy extends Enemy {
         } else if (m.state === PROTECTOR_STATE.MOVING) {
             if (distToTower <= 210) {
                 m.state = PROTECTOR_STATE.IDLE;
+                m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
-            } else {
-                super.update(dt);
             }
         } else if (m.state === PROTECTOR_STATE.IDLE) {
+            m.vx = 0;
+            m.vy = 0;
             if (distToTower > 220) {
                 m.state = PROTECTOR_STATE.MOVING;
+                m.isAttacking = false;
                 m.aimAt(tPos.x, tPos.y);
             }
         }

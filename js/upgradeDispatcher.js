@@ -85,6 +85,17 @@ const upgradeDispatcher = (() => {
         shockwaveAttack.setSeismicCrushLevel(getLevel('shockwave_seismic_crush'));
     }
 
+    /** Recalculates laser stats from upgrade nodes. */
+    function recalcLaser() {
+        if (typeof laserAttack === 'undefined') return;
+        laserAttack.setLevels({
+            duration: getLevel('laser_duration'),
+            aperture: getLevel('laser_aperture'),
+            incendiary: getLevel('laser_incendiary'),
+            twin: getLevel('laser_twin_beams')
+        });
+    }
+
     /** Recalculates artillery stats from upgrade nodes. */
     function recalcArtillery() {
         if (typeof artilleryAttack === 'undefined') return;
@@ -120,6 +131,9 @@ const upgradeDispatcher = (() => {
         if (typeof resourceManager !== 'undefined') {
             recalcPacketSniffing();
         }
+        if (typeof laserAttack !== 'undefined') {
+            recalcLaser();
+        }
         if (typeof artilleryAttack !== 'undefined') {
             recalcArtillery();
         }
@@ -139,6 +153,7 @@ const upgradeDispatcher = (() => {
         recalcShockwaveStats,
         recalcThreatResponse,
         recalcAftershock,
+        recalcLaser,
         recalcArtillery
     };
 })();

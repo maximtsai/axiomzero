@@ -197,11 +197,13 @@ class Miniboss1 extends Miniboss {
         const dy = tPos.y - m.y;
         const distToTower = Math.sqrt(dx * dx + dy * dy);
 
-        if (m.state === MINIBOSS_STATE.MOVING) {
-            super.update(dt);
+        // Call super.update to process model updates (burn, stun) and base view updates
+        super.update(dt);
 
+        if (m.state === MINIBOSS_STATE.MOVING) {
             if (distToTower <= MB1.ATTACK_RANGE) {
                 m.state = MINIBOSS_STATE.ATTACKING;
+                m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
                 m.fireTimer = 0;
@@ -220,6 +222,7 @@ class Miniboss1 extends Miniboss {
             // Check if pushed out of range
             if (distToTower > MB1.RETREAT_RANGE) {
                 m.state = MINIBOSS_STATE.MOVING;
+                m.isAttacking = false;
                 v.stopCharge();
                 m.isCharging = false;
                 m._isRampingUp = false;
