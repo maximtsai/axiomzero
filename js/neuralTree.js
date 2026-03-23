@@ -961,7 +961,7 @@ const neuralTree = (() => {
     }
 
     function _showLevelSelectPopup() {
-        audio.play('popup', 1.0);
+        audio.play('retro1', 1.0);
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
         const depth = GAME_CONSTANTS.DEPTH_POPUPS + 1000;

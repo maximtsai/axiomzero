@@ -84,7 +84,7 @@ function _createFullscreenBlocker(depth) {
  * @returns {Function} closePopup
  */
 function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], depth = _POPUP.DEPTH, fast = false }) {
-    if (typeof audio !== 'undefined') audio.play('popup', 1.0);
+    if (typeof audio !== 'undefined') audio.play('retro1', 1.0);
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
 
