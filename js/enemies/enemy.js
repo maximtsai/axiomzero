@@ -53,6 +53,9 @@ class EnemyModel {
         // Damage tracking (set per-hit for external readers)
         this.lastDamageAmount = 0;
         this.lastDamageWasProtected = false;
+
+        this.forceSlowMult = 1.0;
+        this.forceSlowTimer = 0;
     }
 
     activate(x, y, config = {}) {
@@ -90,6 +93,9 @@ class EnemyModel {
         } else {
             this.baseRotation = 0;
         }
+
+        this.forceSlowMult = 1.0;
+        this.forceSlowTimer = 0;
     }
 
     deactivate() {
@@ -138,8 +144,20 @@ class EnemyModel {
                 moveMult = 0.1;
                 this.hitStopTimer -= dt;
             }
+            
+            // Force slow applies separately and stacks with hit-stop
+            moveMult *= this.forceSlowMult;
+
             this.x += this.vx * dt * moveMult;
             this.y += this.vy * dt * moveMult;
+        }
+
+        if (this.forceSlowTimer > 0) {
+            this.forceSlowTimer -= dt;
+            if (this.forceSlowTimer <= 0) {
+                this.forceSlowMult = 1.0;
+                this.forceSlowTimer = 0;
+            }
         }
 
         if (this.attackTimer > 0) {
@@ -472,6 +490,11 @@ class Enemy {
 
     applyBurn(duration, damage) {
         this.model.applyBurn(duration, damage);
+    }
+
+    forceSlow(mult, duration) {
+        this.model.forceSlowMult = mult;
+        this.model.forceSlowTimer = duration;
     }
 
     // ── Property proxies (backward-compatible API for enemyManager etc.) ─────

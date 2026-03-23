@@ -6,15 +6,14 @@ class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
         this.BASE_DAMAGE = 30;
-        this.BASE_SIZE = 240; // px — damage area side length (square)
+        this.BASE_SIZE = 320; // px — damage area side length (square)
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false; // true after artillery node purchased
         this.paused = false;
         this.fireTimer = 0;
 
-        this.SCREEN_BORDER = 200;
-        this.TOWER_MARGIN = 200;
+        this.setTargetingMargins(this.BASE_SIZE);
 
         // Upgrade levels
         this.radiusLevel = 0;     // artillery_shells
@@ -34,13 +33,14 @@ class ArtilleryAttackModel {
     }
 
     getDamageArea() {
-        // Increases size by 20% per level
+        // Increases size by 10% per level
         return this.BASE_SIZE * (1 + 0.1 * this.radiusLevel);
     }
 
     setTargetingMargins(n) {
-        this.SCREEN_BORDER = n;
-        this.TOWER_MARGIN = n * 1.1 + 10;
+        this.SCREEN_BORDER_WIDTH = n;
+        this.SCREEN_BORDER_HEIGHT = n * 0.6;
+        this.TOWER_MARGIN = n + 10;
     }
 }
 
@@ -108,7 +108,7 @@ class ArtilleryAttackView {
         obj.base.setSize(size, size);
         // center is a plain image, no setSize needed
         obj.bright.setSize(size, size);
-        obj.red.setSize(size + 4, size + 4);
+        obj.red.setSize(size + 2, size + 2);
         obj.base.setRotation(0);
         obj.center.setRotation(0);
         obj.bright.setRotation(0);
@@ -130,7 +130,7 @@ class ArtilleryAttackView {
         PhaserScene.tweens.killTweensOf([obj.base, obj.center, obj.bright, obj.red]);
     }
 
-    playStrikeSequence(x, y, size, onDamage) {
+    playStrikeSequence(x, y, size, onDamage, durationOffset = 0) {
         const obj = this._getStrikeObject(size);
         const { base, center, bright, red } = obj;
 
@@ -149,7 +149,7 @@ class ArtilleryAttackView {
                 PhaserScene.tweens.add({
                     targets: [base, center],
                     alpha: 0.9,
-                    duration: 1100,
+                    duration: 1100 + durationOffset,
                     ease: 'Linear',
                     onComplete: () => {
                         // Deal damage
@@ -181,7 +181,7 @@ class ArtilleryAttackView {
         bright.setPosition(x, y).setVisible(true).setAlpha(1.0).setScale(1.25).setRotation(goalRot);
         base.setAlpha(1.0).setScale(1.2).setRotation(goalRot);
         center.setAlpha(1.0).setScale(1.2).setRotation(goalRot);
-        red.setPosition(x, y).setVisible(true).setAlpha(0.45).setScale(1.15).setRotation((Math.random() - 0.5) * 0.09);
+        red.setPosition(x, y).setVisible(true).setAlpha(0.45).setScale(1.1).setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween flash back to 0
         PhaserScene.tweens.add({
@@ -203,8 +203,8 @@ class ArtilleryAttackView {
 
         PhaserScene.tweens.add({
             targets: [red],
-            scaleX: 1,
-            scaleY: 1,
+            scaleX: 0.98,
+            scaleY: 0.98,
             rotation: 0,
             duration: 240,
             ease: 'Back.easeIn',
@@ -245,44 +245,89 @@ const artilleryAttack = (() => {
     }
 
     function _fire() {
-        const pos = _findRandomTarget();
+        const pos1 = _findRandomTarget();
         const size = model.getDamageArea();
 
-        view.playStrikeSequence(pos.x, pos.y, size, () => {
+        _createStrikeAt(pos1.x, pos1.y, size, 0);
+
+        if (model.volleyLevel > 0) {
+            // Volley adds 2 extra strikes nearby
+            const pos2 = _getNearbyTarget(pos1.x, pos1.y);
+            PhaserScene.time.delayedCall(100, () => {
+                _createStrikeAt(pos2.x, pos2.y, size, 100);
+            });
+
+            // For the third strike, attempt to find a position not overlapping Strike 2
+            let pos3;
+            let tries = 0;
+            const maxTries = 15;
+            do {
+                pos3 = _getNearbyTarget(pos1.x, pos1.y);
+                tries++;
+                if (tries >= maxTries) break;
+
+                const distToStrike2 = Phaser.Math.Distance.Between(pos3.x, pos3.y, pos2.x, pos2.y);
+                const minAllowedDist = (tries <= 5) ? 250 : (tries <= 10 ? 150 : 0);
+
+                if (distToStrike2 >= minAllowedDist) break;
+            } while (true);
+
+            PhaserScene.time.delayedCall(200, () => {
+                _createStrikeAt(pos3.x, pos3.y, size, 200);
+            });
+        }
+    }
+
+    function _createStrikeAt(x, y, size, durationOffset) {
+        view.playStrikeSequence(x, y, size, () => {
             // Damage callback
+            PhaserScene.cameras.main.shake(60, 0.007);
             const halfSize = size / 2;
-            const hits = enemyManager.getEnemiesInSquareRange(pos.x, pos.y, halfSize + 5, _hitBuffer);
+            const hits = enemyManager.getEnemiesInSquareRange(x, y, halfSize + 5, _hitBuffer);
 
             for (let i = 0; i < hits.length; i++) {
                 const enemy = hits[i];
                 let damage = model.BASE_DAMAGE;
 
-                // FIRST STRIKE logic: +50% damage per level to enemies above 80% HP
+                // FIRST STRIKE logic: +10 damage per level to enemies above 80% HP
                 if (model.firstStrikeLevel > 0) {
                     const healthPct = enemy.health / enemy.maxHealth;
                     if (healthPct > 0.8) {
-                        damage *= (1 + 0.5 * model.firstStrikeLevel);
+                        damage += 10 * model.firstStrikeLevel;
                     }
                 }
 
                 enemyManager.damageEnemy(enemy, damage);
 
-                // SHELLSHOCKED logic: stun for +1 second
-                if (model.stunLevel > 0 && typeof enemy.stun === 'function') {
-                    enemy.stun(1000); // 1s stun
+                // SHELLSHOCKED logic: 90% slow for 2s
+                if (model.stunLevel > 0 && typeof enemy.forceSlow === 'function') {
+                    enemy.forceSlow(0.1, 2);
                 }
             }
-        });
+        }, durationOffset);
+    }
+
+    function _getNearbyTarget(cx, cy) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Phaser.Math.Between(250, 300);
+
+        let tx = cx + Math.cos(angle) * dist;
+        let ty = cy + Math.sin(angle) * dist;
+
+        // Keep at least partially on screen
+        tx = Phaser.Math.Clamp(tx, 10, GAME_CONSTANTS.WIDTH - 10);
+        ty = Phaser.Math.Clamp(ty, 10, GAME_CONSTANTS.HEIGHT - 10);
+
+        return { x: tx, y: ty };
     }
 
     function _findRandomTarget() {
         const towerPos = tower.getPosition();
-        const border = model.SCREEN_BORDER;
         const halfSize = model.getDamageArea() / 2;
-        const minX = border;
-        const maxX = GAME_CONSTANTS.WIDTH - border;
-        const minY = border;
-        const maxY = GAME_CONSTANTS.HEIGHT - border;
+        const minX = model.SCREEN_BORDER_WIDTH;
+        const maxX = GAME_CONSTANTS.WIDTH - model.SCREEN_BORDER_WIDTH;
+        const minY = model.SCREEN_BORDER_HEIGHT;
+        const maxY = GAME_CONSTANTS.HEIGHT - model.SCREEN_BORDER_HEIGHT;
 
         const activeEnemies = enemyManager.getActiveEnemies();
 
@@ -298,31 +343,37 @@ const artilleryAttack = (() => {
             const distFromTower = Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y);
             if (distFromTower < model.TOWER_MARGIN) continue;
 
-            // If no enemies, any far spot is fine
+            const activeEnemies = enemyManager.getActiveEnemies();
             if (activeEnemies.length === 0) {
                 validSpotFound = true;
                 break;
             }
 
-            // Check if any enemy is predicted to be in this square in 1.5s
+            // Target clustering: Try to find at least 2 enemies for first 8 attempts, 1 thereafter
+            let enemiesInArea = 0;
+            const targetMinEnemies = (attempts <= 8) ? 2 : 1;
+
             for (let i = 0; i < activeEnemies.length; i++) {
                 const e = activeEnemies[i];
-                const futureX = e.x + (e.vx * 1.5);
-                const futureY = e.y + (e.vy * 1.5);
+                const futureX = e.x + (e.vx * 1.2);
+                const futureY = e.y + (e.vy * 1.2);
 
                 if (Math.abs(futureX - tx) <= halfSize && Math.abs(futureY - ty) <= halfSize) {
+                    enemiesInArea++;
+                }
+
+                if (enemiesInArea >= targetMinEnemies) {
                     validSpotFound = true;
                     break;
                 }
             }
 
-            // Fallback: If we have tried many times (e.g. 50) and failed to find an enemy match, 
-            // accept the current random spot as long as it is far from tower
-            if (attempts > 20) {
+            // Hard limit: If we've tried 25 times and can't find a perfect spot, accept the last far spot
+            if (attempts >= 25) {
                 validSpotFound = true;
             }
 
-        } while (!validSpotFound && attempts < 30);
+        } while (!validSpotFound && attempts < 35);
 
         return { x: tx, y: ty };
     }
