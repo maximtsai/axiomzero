@@ -614,6 +614,9 @@ class Node {
             // Apply this node's effect, deactivate sibling's (now with correct branchActive states)
             this.effect(this.level);
 
+            // Recalculate ALL upgrade effects so deactivated branch children are properly zeroed out
+            upgradeDispatcher.recalcEverything();
+
             // Explicitly update visuals for both siblings
             this._updateVisual();
             if (sibling) sibling._updateVisual();
