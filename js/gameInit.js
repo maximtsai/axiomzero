@@ -43,7 +43,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     function _applyThreatAdaptation(yOffset) {
         if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
             const missingHealth = tower.getMaxHealth() - tower.getHealth();
-            const healAmount = missingHealth * 0.3;
+            const healAmount = missingHealth * 0.5;
 
             if (healAmount > 0) {
                 tower.heal(healAmount);

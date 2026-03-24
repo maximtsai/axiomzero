@@ -28,7 +28,7 @@ window.TRANSLATIONS.en = {
         magnet: { name: 'CONVERGENCE', desc: '+40% resource pickup range', popup: '+40% PICKUP RANGE' },
         pulse_expansion: { name: 'SIGNAL STRENGTH', desc: '+20% cursor pulse size', popup: '+20% SIGNAL STRENGTH' },
         overcharge: { name: 'OVERCHARGE', desc: '+4 cursor damage', popup: '+4 CURSOR DMG' },
-        integrity: { name: 'INTEGRITY', desc: '+4 tower max health', popup: '+4 MAX HEALTH' },
+        integrity: { name: 'INTEGRITY', desc: '+5 tower max health', popup: '+5 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
         focus: { name: 'COVERAGE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
 
@@ -42,7 +42,7 @@ window.TRANSLATIONS.en = {
         lightning_boost: { name: 'VOLTAGE', desc: '+2 lightning damage', popup: '+2 LIGHTNING DMG' },
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals +50% damage per lvl to enemies above 80% HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '+25% shockwave range', popup: '+25% RANGE' },
-        shockwave_resonance: { name: 'GRAV-LOCK', desc: 'Shockwave pulse causes extreme temporary slowdown on the first hit.', popup: 'GRAV-LOCK ACTIVE' },
+        shockwave_resonance: { name: 'GRAV-LOCK', desc: 'Shockwave pulse slows and knocks back enemies on hit.', popup: 'GRAV-LOCK ACTIVE' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +1 damage for every 10 missing health per level.', popup: 'SEISMIC CRUSH' },
 
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
@@ -110,7 +110,7 @@ window.TRANSLATIONS.en = {
 
         junk_barrier: { name: 'UNSORTED LOGS', desc: 'A digital mountain of error logs and forgotten TODOs.' },
         security_test_2: { name: 'SECURITY TEST 2', desc: "Confirm you REALLY aren't a hostile AI. Requires DATA to override, but refunds 100% of spent resources." },
-        threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 30% missing HP when a Boss or Miniboss appears.' },
+        threat_response: { name: 'RECOVERY PROTOCOL', desc: 'Heal 50% missing HP when a Boss or Miniboss appears.' },
         forgotten_backdoor: { name: 'FORGOTTEN BACKDOOR', desc: '"password123" unlocks a surprising number of legacy server rooms.' },
         backdoor_2: { name: 'BACKDOOR 2', desc: 'Deeper vulnerability within the legacy system.' },
         backdoor_3: { name: 'BACKDOOR 3', desc: 'Almost through the firewall. Proximity to core detected.' },

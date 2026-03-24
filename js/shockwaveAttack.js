@@ -6,7 +6,7 @@ class ShockwaveAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between pulses
         this.BASE_DAMAGE = 10;
-        this.BASE_RADIUS = 130;     // px — damage radius
+        this.BASE_RADIUS = 135;     // px — damage radius
 
         this.active = false;
         this.unlocked = false;
@@ -192,12 +192,15 @@ const shockwaveAttack = (() => {
 
             enemyManager.damageEnemy(e, actualDamage);
 
-            // Grav Lock logic: 90% slow for 1s on first hit
-            if (model.gravLockEnabled && !e.hitByShockwave) {
+            // Grav Lock logic: 80% slow on hit + Knockback
+            if (model.gravLockEnabled) {
                 if (typeof e.forceSlow === 'function') {
-                    e.forceSlow(0.1, 1);
+                    e.forceSlow(0.2, 1.1);
                 }
-                e.hitByShockwave = true;
+                const dx = e.x - pos.x;
+                const dy = e.y - pos.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                e.applyKnockback(dx / dist, dy / dist, 5);
             }
         }
 

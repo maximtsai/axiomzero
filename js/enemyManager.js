@@ -800,7 +800,8 @@ const enemyManager = (() => {
             } else if (enemy.type === 'bomb') {
                 const ups = gameState.upgrades || {};
                 const payloadLv = ups.volatile_payload || 0;
-                const explosionRange = 160 * (1 + 0.17 * payloadLv);
+                // Intentionally slightly fudged numbers compared to description
+                const explosionRange = 175 * (1 + 0.16 * payloadLv);
                 const explosionDamage = enemy.maxHealth * 1.25;
                 const bx = ex;
                 const by = ey;
