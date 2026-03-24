@@ -120,7 +120,7 @@ const audio = {
         }
         const s = soundList[name];
         s.fullVolume = volume;
-        s.volume = s.fullVolume * globalVolume;
+        s.volume = s.fullVolume * (isMusic ? globalMusicVol : globalVolume);
         s.loop = loop;
         s.isMusic = isMusic;
 
@@ -136,7 +136,7 @@ const audio = {
             if (isMusicMuted || isMuted) {
                 globalMusic.volume = 0;
             } else {
-                audio.fadeIn(globalMusic, volume * globalMusicVol);
+                audio.fadeIn(globalMusic, volume);
             }
         }
 
@@ -180,7 +180,7 @@ const audio = {
             s.currTween = null;
         }
 
-        if (isMuted) s.volume = 0;
+        if (isMuted || (s.isMusic && isMusicMuted)) s.volume = 0;
 
         s.stop();
         s.play();
@@ -236,7 +236,7 @@ const audio = {
      * @param {Object} config - Transition parameters.
      */
     playComplexTransition: function (config) {
-        if (!config || isMuted || (config.isMusic && isMusicMuted)) return;
+        if (!config || isMuted || (config.isMusic !== false && isMusicMuted)) return;
 
         // 1. Fade out current music
         if (globalMusic) {
