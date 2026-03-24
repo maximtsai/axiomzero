@@ -363,7 +363,8 @@ const enemyManager = (() => {
         const registry = {
             'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
             'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
-            'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null
+            'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
+            'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
         };
         return registry[className];
     }
@@ -884,7 +885,7 @@ const enemyManager = (() => {
                 const distSq = dx * dx + dy * dy;
 
                 // Attack range based exactly on size for melee units
-                const contactR = 10 + (e.size || 15) * 1.2;
+                const contactR = 12 + (e.size || 15) * 1.06;
                 const contactR2 = contactR * contactR;
 
                 if (distSq < contactR2) {

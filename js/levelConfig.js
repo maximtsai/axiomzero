@@ -56,10 +56,10 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss1',        // Identifier for the main boss
         dataDropMultiplier: 1.6, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
-        healthDecay: -0.5
+        healthDecay: -0.4
     },
     3: {
-        spawnInterval: 900,
+        spawnInterval: 750,
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -84,10 +84,10 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss1',
         dataDropMultiplier: 2.4,
         levelScalingModifier: 2.4,
-        healthDecay: -0.7
+        healthDecay: -0.5
     },
     4: {
-        spawnInterval: 900,
+        spawnInterval: 700,
         initialWeights: {
             basic: 1,
             bomb: 0,
@@ -111,10 +111,10 @@ const LEVEL_CONFIG = {
         swarmerGroupSize: { min: 4, max: 8 },
         miniboss: 'Miniboss1',
 
-        mainBoss: 'Boss1',
+        mainBoss: 'Boss5',
         dataDropMultiplier: 3.2,
         levelScalingModifier: 3.2,
-        healthDecay: -0.9
+        healthDecay: -0.6
     }
 };
 

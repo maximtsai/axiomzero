@@ -18,7 +18,8 @@ window.TRANSLATIONS.en = {
         crypto_mine: '// CRYPTO MINE',
         done: 'Done',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
-        boss_1_name: 'ENTITY APPROACHING:\n#THE WALL'
+        boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
+        boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking' },
@@ -41,8 +42,8 @@ window.TRANSLATIONS.en = {
         lightning_boost: { name: 'VOLTAGE', desc: '+2 lightning damage', popup: '+2 LIGHTNING DMG' },
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals +50% damage per lvl to enemies above 80% HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '+25% shockwave range', popup: '+25% RANGE' },
-        shockwave_resonance: { name: 'RESONANCE', desc: 'Shockwave deals +1 dmg/lvl for each enemy hit', popup: 'RESONANCE FREQUENCY' },
-        shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +50% damage per lvl to enemies below 50% HP', popup: 'SEISMIC CRUSH' },
+        shockwave_resonance: { name: 'GRAV-LOCK', desc: 'Shockwave pulse causes extreme temporary slowdown on the first hit.', popup: 'GRAV-LOCK ACTIVE' },
+        shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals +1 damage for every 10 missing health per level.', popup: 'SEISMIC CRUSH' },
 
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },

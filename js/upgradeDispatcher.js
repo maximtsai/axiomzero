@@ -81,7 +81,7 @@ const upgradeDispatcher = (() => {
     function recalcShockwaveStats() {
         if (typeof shockwaveAttack === 'undefined') return;
         shockwaveAttack.setAmplifierLevel(getLevel('shockwave_amplifier'));
-        shockwaveAttack.setResonanceLevel(getLevel('shockwave_resonance'));
+        shockwaveAttack.setGravLockEnabled(getLevel('shockwave_resonance') > 0);
         shockwaveAttack.setSeismicCrushLevel(getLevel('shockwave_seismic_crush'));
     }
 

@@ -47,13 +47,13 @@ class ArtilleryAttackModel {
 class ArtilleryAttackView {
     constructor() {
         this.CORNER_SIZE = 30;
-        this._strikePool = []; 
+        this._strikePool = [];
     }
 
     init() {
         // Pre-allocate 6 strikes (sufficient for Triple Volley + overlaps)
         for (let i = 0; i < 6; i++) {
-            const obj = this._createStrikeObject(315); 
+            const obj = this._createStrikeObject(315);
             this._strikePool.push(obj);
         }
     }
@@ -305,7 +305,7 @@ const artilleryAttack = (() => {
 
                 // SHELLSHOCKED logic: 80% slow for 1.25s
                 if (model.stunLevel > 0 && typeof enemy.forceSlow === 'function') {
-                    enemy.forceSlow(0.2, 1.25);
+                    enemy.forceSlow(0.15, 1);
                 }
             }
         }, durationOffset);
@@ -328,7 +328,7 @@ const artilleryAttack = (() => {
     function _findRandomTarget() {
         const towerPos = tower.getPosition();
         const activeEnemies = enemyManager.getActiveEnemies();
-        
+
         const minX = model.SCREEN_BORDER_WIDTH;
         const maxX = GAME_CONSTANTS.WIDTH - model.SCREEN_BORDER_WIDTH;
         const minY = model.SCREEN_BORDER_HEIGHT;
@@ -341,14 +341,14 @@ const artilleryAttack = (() => {
             for (let i = 0; i < activeEnemies.length; i++) {
                 const idx = (startIndex + i) % activeEnemies.length;
                 const e = activeEnemies[idx];
-                
+
                 // Strike delay is ~1.5s total (targeting sequence)
                 const futureX = e.x + (e.vx * 1.5);
                 const futureY = e.y + (e.vy * 1.5);
 
                 const valid = futureX >= minX && futureX <= maxX &&
-                              futureY >= minY && futureY <= maxY &&
-                              (Math.abs(futureX - towerPos.x) + Math.abs(futureY - towerPos.y) >= model.TOWER_MARGIN);
+                    futureY >= minY && futureY <= maxY &&
+                    (Math.abs(futureX - towerPos.x) + Math.abs(futureY - towerPos.y) >= model.TOWER_MARGIN);
 
                 if (valid) return { x: futureX, y: futureY };
             }

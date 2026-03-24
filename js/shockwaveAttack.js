@@ -5,7 +5,7 @@
 class ShockwaveAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between pulses
-        this.BASE_DAMAGE = 6;
+        this.BASE_DAMAGE = 10;
         this.BASE_RADIUS = 130;     // px — damage radius
 
         this.active = false;
@@ -14,8 +14,8 @@ class ShockwaveAttackModel {
         this.fireTimer = 0;
         this.radius = this.BASE_RADIUS;
         this.damage = this.BASE_DAMAGE;
-        this.resonanceDmgPerHit = 0;
-        this.seismicCrushMultiplier = 0; // 0.5 per level
+        this.gravLockEnabled = false;
+        this.seismicCrushLevel = 0;
     }
 
     resetTimer() {
@@ -104,7 +104,6 @@ const shockwaveAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
-        messageBus.subscribe('gameResumed', () => { model.paused = false; });
         updateManager.addFunction(_update);
     }
 
@@ -125,12 +124,12 @@ const shockwaveAttack = (() => {
         }
     }
 
-    function setResonanceLevel(level) {
-        model.resonanceDmgPerHit = level;
+    function setGravLockEnabled(enabled) {
+        model.gravLockEnabled = enabled;
     }
 
     function setSeismicCrushLevel(level) {
-        model.seismicCrushMultiplier = level * 0.5;
+        model.seismicCrushLevel = level;
     }
 
     function setDamage(amount) {
@@ -179,18 +178,27 @@ const shockwaveAttack = (() => {
             }
         }
 
-        const totalDamage = model.damage + (model.resonanceDmgPerHit * validHits.length);
+        const totalDamage = model.damage;
 
         for (let i = 0; i < validHits.length; i++) {
             const e = validHits[i];
             let actualDamage = totalDamage;
 
-            // Seismic Crush checks if enemy is below 50% HP
-            if (model.seismicCrushMultiplier > 0 && e.health < e.maxHealth * 0.5) {
-                actualDamage *= (1 + model.seismicCrushMultiplier);
+            // Seismic Crush: +1 damage for every 10 missing health * level
+            if (model.seismicCrushLevel > 0) {
+                const missingHealth = Math.max(0, e.maxHealth - e.health);
+                actualDamage += Math.floor(missingHealth / 10) * model.seismicCrushLevel;
             }
 
             enemyManager.damageEnemy(e, actualDamage);
+
+            // Grav Lock logic: 90% slow for 1s on first hit
+            if (model.gravLockEnabled && !e.hitByShockwave) {
+                if (typeof e.forceSlow === 'function') {
+                    e.forceSlow(0.1, 1);
+                }
+                e.hitByShockwave = true;
+            }
         }
 
         // Subtle camera shake
@@ -209,5 +217,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setAmplifierLevel, setResonanceLevel, setSeismicCrushLevel, setDamage };
+    return { init, unlock, lock, setAmplifierLevel, setGravLockEnabled, setSeismicCrushLevel, setDamage };
 })();

@@ -478,9 +478,9 @@ const pulseAttack = (() => {
             const enemy = hits[i];
             let damageToApply = actualDamage;
 
-            // PERSISTENT EXPLOIT logic
+            // REPEAT EXPLOIT logic
             if (model.persistentExploitLevel > 0 && enemy.hitByPulse) {
-                damageToApply += (6 * model.persistentExploitLevel);
+                damageToApply += (4 * model.persistentExploitLevel);
             }
 
             enemyManager.damageEnemy(enemy, damageToApply);

@@ -58,6 +58,7 @@ class EnemyModel {
         this.forceSlowTimer = 0;
         this.isGhosting = false;
         this.hitByPulse = false;
+        this.hitByShockwave = false;
     }
 
     activate(x, y, config = {}) {
