@@ -253,12 +253,18 @@ const lightningAttack = (() => {
 
                 const dx = e.x - lastHit.x;
                 const dy = e.y - lastHit.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const effectiveDist = dist - (e.size || 0) - (lastHit.size || 0);
-
-                if (effectiveDist < bestDist) {
-                    bestDist = effectiveDist;
-                    bestEnemy = e;
+                const d2 = dx * dx + dy * dy;
+                
+                // Pre-check with squared distance to avoid sqrt in 99% of cases
+                const maxDR = bestDist + (e.size || 0) + (lastHit.size || 0);
+                if (d2 < maxDR * maxDR) {
+                    const dist = Math.sqrt(d2);
+                    const effectiveDist = dist - (e.size || 0) - (lastHit.size || 0);
+    
+                    if (effectiveDist < bestDist) {
+                        bestDist = effectiveDist;
+                        bestEnemy = e;
+                    }
                 }
             }
 

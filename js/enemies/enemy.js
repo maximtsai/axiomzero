@@ -56,6 +56,7 @@ class EnemyModel {
 
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
+        this.isGhosting = false;
     }
 
     activate(x, y, config = {}) {
@@ -100,6 +101,7 @@ class EnemyModel {
 
     deactivate() {
         this.alive = false;
+        this.isGhosting = false;
         this.stunned = false;
         this.burnDuration = 0;
         this.burnDamage = 0;
@@ -621,4 +623,7 @@ class Enemy {
 
     /** Texture key shared by all enemy instances. */
     static get TEX_KEY() { return 'enemies'; }
+
+    get isGhosting() { return this.model.isGhosting; }
+    set isGhosting(v) { this.model.isGhosting = v; }
 }

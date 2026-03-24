@@ -6,7 +6,7 @@ class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
         this.BASE_DAMAGE = 30;
-        this.BASE_SIZE = 320; // px — damage area side length (square)
+        this.BASE_SIZE = 315; // px — damage area side length (square)
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false; // true after artillery node purchased
@@ -53,7 +53,7 @@ class ArtilleryAttackView {
     init() {
         // Pre-allocate 6 strikes (sufficient for Triple Volley + overlaps)
         for (let i = 0; i < 6; i++) {
-            const obj = this._createStrikeObject(320); 
+            const obj = this._createStrikeObject(315); 
             this._strikePool.push(obj);
         }
     }
@@ -303,9 +303,9 @@ const artilleryAttack = (() => {
 
                 enemyManager.damageEnemy(enemy, damage);
 
-                // SHELLSHOCKED logic: 90% slow for 2s
+                // SHELLSHOCKED logic: 80% slow for 1.25s
                 if (model.stunLevel > 0 && typeof enemy.forceSlow === 'function') {
-                    enemy.forceSlow(0.1, 2);
+                    enemy.forceSlow(0.2, 1.25);
                 }
             }
         }, durationOffset);
@@ -385,8 +385,6 @@ const artilleryAttack = (() => {
 
         // Auto-update margins based on AOE change
         let marginBase = model.getDamageArea();
-        if (model.volleyLevel > 0) marginBase += 60;
-
         artilleryAttack.setTargetingMargins(marginBase);
     }
 

@@ -59,8 +59,8 @@ window.TRANSLATIONS.en = {
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
-        laser: { name: 'LASER', desc: 'Optimized destructive routines. Increased efficiency.' },
-        artillery: { name: 'ARTILLERY', desc: 'Enhanced bypass subroutines. Ignore security layers.' },
+        laser: { name: 'LASER', desc: 'Fires a powerful orbiting beam that pierces through all enemies it touches.' },
+        artillery: { name: 'ARTILLERY', desc: 'Orders automated long-range strikes against random targets on the battlefield.' },
         lore_1: {
             name: 'ARCHIVE',
             desc: 'seemingly useless data...',

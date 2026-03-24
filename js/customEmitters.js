@@ -50,7 +50,7 @@ const customEmitters = (() => {
         (sprite) => {
             sprite.setActive(false);
             sprite.setVisible(false);
-            sprite.setScale(0.5);
+            sprite.setScale(0.75);
             sprite.setAlpha(1);
             sprite.setRotation(0);
         },
@@ -465,8 +465,8 @@ const customEmitters = (() => {
             ray.setFrame(rayFrame);
             ray.setOrigin(0, 0.5);
 
-            // Halve scales: start 0.5, end 1.0 (previously start 1.0, end 2.0)
-            ray.setScale(0.5);
+            // Increased scales: start 0.75
+            ray.setScale(1.5, 0.75);
             ray.setRotation(angle);
             ray.setDepth(baseDepth + 5);
             ray.setAlpha(0.5);
@@ -475,14 +475,13 @@ const customEmitters = (() => {
 
             PhaserScene.tweens.add({
                 targets: ray,
-                scaleY: 1.35,
+                scaleY: 1.6,
                 duration: 700,
             });
             PhaserScene.tweens.add({
                 targets: ray,
-                scaleX: 1.2,
+                scaleX: 1.8,
                 duration: 700,
-                ease: 'Cubic.easeOut'
             });
 
             ray._duration = 760;

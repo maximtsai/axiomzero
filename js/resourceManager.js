@@ -182,8 +182,11 @@ const resourceManager = (() => {
 
         const angle = Math.random() * Math.PI * 2;
         const dist = 1;
-        const endX = x + Math.cos(angle) * dist;
-        const endY = y + Math.sin(angle) * dist;
+        const margin = 40 + Math.random() * 12;
+        const cx = Math.max(margin, Math.min(GAME_CONSTANTS.WIDTH - margin, x));
+        const cy = Math.max(margin, Math.min(GAME_CONSTANTS.HEIGHT - margin, y));
+        const endX = cx + Math.cos(angle) * dist;
+        const endY = cy + Math.sin(angle) * dist;
 
         d.spawnTween = PhaserScene.tweens.add({
             targets: d.img,
@@ -245,14 +248,14 @@ const resourceManager = (() => {
 
         const distAwayX = Math.cos(angle) * dist + (awayDx / awayLen) * 5;
         const distAwayY = Math.sin(angle) * dist + (awayDy / awayLen) * 5;
-        let endX = x + distAwayX;
-        let endY = y + distAwayY;
-
         d.img.setPosition(x + 0.6 * distAwayX, y + 0.6 * distAwayY);
 
+        const margin = 40 + Math.random() * 12;
+        const cx = Math.max(margin, Math.min(GAME_CONSTANTS.WIDTH - margin, x));
+        const cy = Math.max(margin, Math.min(GAME_CONSTANTS.HEIGHT - margin, y));
 
-        endX = Math.max(-1, Math.min(GAME_CONSTANTS.WIDTH + 1, endX));
-        endY = Math.max(-1, Math.min(GAME_CONSTANTS.HEIGHT + 1, endY));
+        let endX = cx + distAwayX;
+        let endY = cy + distAwayY;
 
 
 
@@ -260,7 +263,7 @@ const resourceManager = (() => {
             targets: d.img,
             x: endX,
             y: endY,
-            duration: 220 + dist * 12,
+            duration: 240 + dist * 12,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 d.x = d.img.x;

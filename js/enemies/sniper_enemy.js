@@ -42,6 +42,16 @@ class SniperEnemyView extends EnemyView {
         this.chargeSprite.setVisible(false);
     }
 
+    activate(x, y, rotation, cannotRotate) {
+        super.activate(x, y, rotation, cannotRotate);
+        if (this.chargeSprite) {
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.setVisible(false);
+            this.chargeSprite.setScale(0.2);
+            this.chargeSprite.setAlpha(1);
+        }
+    }
+
     startCharge() {
         if (!this.chargeSprite) return;
         this.chargeSprite.setVisible(true);

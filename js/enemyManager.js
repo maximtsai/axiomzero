@@ -607,14 +607,18 @@ const enemyManager = (() => {
 
             const dx = e.x - x;
             const dy = e.y - y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const d2 = dx * dx + dy * dy;
 
-            // effectiveDist is the distance from tower to the edge of the enemy
-            const effectiveDist = dist - (e.size || 0);
+            // Pre-check squared distance before sqrt
+            const maxDR = bestEffectiveDist + (e.size || 0);
+            if (d2 < maxDR * maxDR) {
+                const dist = Math.sqrt(d2);
+                const effectiveDist = dist - (e.size || 0);
 
-            if (effectiveDist < bestEffectiveDist) {
-                bestEffectiveDist = effectiveDist;
-                best = e;
+                if (effectiveDist < bestEffectiveDist) {
+                    bestEffectiveDist = effectiveDist;
+                    best = e;
+                }
             }
         }
         return best;
@@ -710,8 +714,17 @@ const enemyManager = (() => {
                 duration: 1000,
             });
         }
-        if (died) {
-            _killEnemy(enemy);
+        if (died && !enemy.isGhosting) {
+            if (enemy.type === 'protector') {
+                enemy.isGhosting = true;
+                // Fade out to signify its "dying" state while aura remains
+                if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
+                PhaserScene.time.delayedCall(10, () => {
+                    _killEnemy(enemy);
+                });
+            } else {
+                _killEnemy(enemy);
+            }
         }
     }
 
@@ -851,7 +864,7 @@ const enemyManager = (() => {
             if (!e || !e.alive) continue;
 
             e.update(dt * spawnSpeedMultiplier);
-            
+
             // Tower contact check — minibosses do NOT die on contact currently
             if (!e.isMiniboss) {
                 const dx = e.x - tPos.x;

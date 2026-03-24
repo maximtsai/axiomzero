@@ -66,16 +66,16 @@ const LEVEL_CONFIG = {
             shooter: 0,
             swarmer: 0.06,
             sniper: 0,
-            heavy: 0,
+            heavy: 0.08,
             logic_stray: 0,
             protector: 0
         },
         lateWeights: {
             shooter: 0.1,
             swarmer: 0.12,
-            heavy: 0,
+            heavy: 0.18,
             fast: 0,
-            sniper: 0,
+            sniper: 0.1,
             protector: 0.0
         },
         swarmerGroupSize: { min: 3, max: 6 },
@@ -95,18 +95,18 @@ const LEVEL_CONFIG = {
             shooter: 0,
             swarmer: 0.06,
             sniper: 0,
-            heavy: 0,
+            heavy: 0.1,
             logic_stray: 0,
-            protector: 0
+            protector: 0.05
         },
         lateWeights: {
             shooter: 0.1,
             swarmer: 0.12,
             bomb: 0,
-            heavy: 0,
+            heavy: 0.25,
             fast: 0,
-            sniper: 0,
-            protector: 0.0
+            sniper: 0.1,
+            protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
         miniboss: 'Miniboss1',

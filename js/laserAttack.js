@@ -5,13 +5,13 @@
 class LaserAttackModel {
     constructor() {
         this.ORBIT_RADIUS = 40;          // px from tower center
-        this.ORBIT_SPEED = 0.4;        // radians/second
+        this.ORBIT_SPEED = 0.36;        // radians/second
         this.BEAM_LENGTH = 1000;         // px
         this.BEAM_VISUAL_HALF_WIDTH = 20;// visual beam half-width (40px total)
         this.BEAM_DAMAGE_HALF_WIDTH = 30;// damage half-width (60px total)
-        this.BASE_DAMAGE_PER_TICK = 1;
+        this.BASE_DAMAGE_PER_TICK = 6;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
-        this.FIRE_DURATION = 3000;       // ms beam is active
+        this.FIRE_DURATION = 2500;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
 
         this.active = false;    // true when combat phase AND node purchased
@@ -72,10 +72,12 @@ class LaserAttackView {
     init() {
         this._beamGraphics = PhaserScene.add.graphics();
         this._beamGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 10);
+        this._beamGraphics.setBlendMode(Phaser.BlendModes.ADD);
         this._beamGraphics.setVisible(false);
 
         this._glowGraphics = PhaserScene.add.graphics();
         this._glowGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 11);
+        this._glowGraphics.setBlendMode(Phaser.BlendModes.ADD);
         this._glowGraphics.setVisible(false);
 
         this._turret = PhaserScene.add.image(0, 0, 'player', 'laser_turret.png');
@@ -142,8 +144,8 @@ class LaserAttackView {
         }
 
         // Only draw beams if firing
-        const alpha = 0.5 + 0.5 * Math.random(); 
-        
+        const alpha = 0.5 + 0.5 * Math.random();
+
         // Beam points (laser fires from turret away from tower)
         const bx = tx + Math.cos(model.angle) * model.BEAM_LENGTH;
         const by = ty + Math.sin(model.angle) * model.BEAM_LENGTH;
