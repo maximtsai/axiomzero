@@ -57,6 +57,7 @@ class EnemyModel {
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
         this.isGhosting = false;
+        this.invincible = false;
         this.hitByPulse = false;
         this.hitByShockwave = false;
     }
@@ -192,6 +193,11 @@ class EnemyModel {
      * Pure math — no visuals.
      */
     takeDamage(amount) {
+        if (this.invincible && (this.isBoss || this.isMiniboss)) {
+            this.lastDamageAmount = 0;
+            return false;
+        }
+
         this.lastDamageWasProtected = false;
 
         // Protector aura logic
@@ -629,4 +635,7 @@ class Enemy {
 
     get isGhosting() { return this.model.isGhosting; }
     set isGhosting(v) { this.model.isGhosting = v; }
+
+    get invincible() { return this.model.invincible; }
+    set invincible(v) { this.model.invincible = v; }
 }

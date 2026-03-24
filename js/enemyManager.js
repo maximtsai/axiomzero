@@ -74,6 +74,7 @@ const enemyManager = (() => {
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
         messageBus.subscribe('waveProgressChanged', _onWaveProgress);
+        messageBus.subscribe('towerDied', _onTowerDied);
     }
 
     function _buildPools() {
@@ -594,6 +595,15 @@ const enemyManager = (() => {
         }
 
         return null;
+    }
+
+    function _onTowerDied() {
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const e = activeEnemies[i];
+            if (e.isBoss || e.isMiniboss) {
+                e.invincible = true;
+            }
+        }
     }
 
     // ── public queries ───────────────────────────────────────────────────────

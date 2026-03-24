@@ -18,6 +18,9 @@ class PulseAttackModel {
 
         this.charges = 0;
         this.maxCharges = 2;
+        this.canQueueClick = false;
+        this.wasCanQueueClick = false; // Track previous state for animation
+        this.clickQueued = false;
         this.isolationLevel = 0;
         this.saturationLevel = 0;
         this.aftershockLevel = 0;
@@ -34,16 +37,32 @@ class PulseAttackModel {
 
     updateTimer(delta) {
         this.fireTimer += delta;
+
+        // Check if within 225ms window for a new charge
+        if (this.manualMode && this.charges < this.maxCharges) {
+            this.canQueueClick = (this.fireTimer >= this.FIRE_INTERVAL - 225);
+        } else {
+            this.canQueueClick = false;
+        }
+
         if (this.fireTimer >= this.FIRE_INTERVAL) {
             this.fireTimer -= this.FIRE_INTERVAL;
+            this.canQueueClick = false; // Gained charge, reset window
 
             if (this.manualMode) {
                 if (this.charges < this.maxCharges) {
                     this.charges++;
                 }
-                return false; // Manual mode doesn't auto-fire
+
+                // If a click was queued, fire it immediately
+                if (this.clickQueued && this.charges > 0) {
+                    this.charges--;
+                    this.clickQueued = false;
+                    return true;
+                }
+                return false;
             }
-            return true; // Should fire
+            return true;
         }
         return false;
     }
@@ -68,6 +87,9 @@ class PulseAttackView {
         this.shakeX = 0;
         this.shakeY = 0;
         this.chargeSprites = [];
+        this.playerReloadSprite = null;
+        this.reloadSizeTween = null;
+        this.reloadAlphaTween = null;
         this.aftershockLevel = 0;
     }
 
@@ -160,6 +182,19 @@ class PulseAttackView {
             s.setVisible(false);
             this.chargeSprites.push(s);
         }
+
+        // Reload animation sprite (nineslice with 2px corners)
+        this.playerReloadSprite = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_nineslice.png',
+            32, 32,
+            2, 2, 2, 2
+        );
+        this.playerReloadSprite.setOrigin(0.5, 0.5);
+        this.playerReloadSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 6);
+        this.playerReloadSprite.setScrollFactor(0);
+        this.playerReloadSprite.setAlpha(0);
+        this.playerReloadSprite.setVisible(false);
     }
 
     setSize(newSize) {
@@ -197,6 +232,14 @@ class PulseAttackView {
             const s = this.chargeSprites[i];
             // i=0 is the first charge (leftmost), i=1 is the second (to its right), etc.
             s.setPosition(leftAnchorX + i * spacing + 3, topY - 2);
+        }
+
+        // Position reload sprite over the NEXT available slot
+        if (this.playerReloadSprite.visible) {
+            const nextIdx = model.charges;
+            if (nextIdx < this.chargeSprites.length) {
+                this.playerReloadSprite.setPosition(leftAnchorX + nextIdx * spacing + 3, topY - 2);
+            }
         }
 
         this.shakeX += this.shakeVelX * delta;
@@ -322,6 +365,48 @@ class PulseAttackView {
         this.updateCharges(charges, 0, manualMode);
     }
 
+    playReloadAnimation() {
+        if (!this.playerReloadSprite) return;
+
+        if (this.reloadSizeTween) this.reloadSizeTween.stop();
+        if (this.reloadAlphaTween) this.reloadAlphaTween.stop();
+
+        this.playerReloadSprite.setVisible(true);
+        this.playerReloadSprite.setAlpha(0);
+        this.playerReloadSprite.width = 36;
+        this.playerReloadSprite.height = 36;
+
+        this.reloadSizeTween = PhaserScene.tweens.add({
+            targets: this.playerReloadSprite,
+            width: 6,
+            height: 6,
+            duration: 225,
+            ease: 'Quad.easeIn'
+        });
+
+        this.reloadAlphaTween = PhaserScene.tweens.add({
+            targets: this.playerReloadSprite,
+            alpha: 1,
+            duration: 225,
+            ease: 'Linear',
+            onComplete: () => {
+                this.playerReloadSprite.alpha = 0;
+            }
+        });
+    }
+
+    stopReloadAnimation() {
+        if (this.reloadSizeTween) this.reloadSizeTween.stop();
+        if (this.reloadAlphaTween) this.reloadAlphaTween.stop();
+        this.reloadSizeTween = null;
+        this.reloadAlphaTween = null;
+
+        if (this.playerReloadSprite) {
+            this.playerReloadSprite.setAlpha(0);
+            this.playerReloadSprite.setVisible(false);
+        }
+    }
+
     playAftershockAnimation(x, y, baseSize) {
         if (!this.aftershockBright) return;
 
@@ -410,7 +495,10 @@ const pulseAttack = (() => {
             if (model.manualMode && model.active && !model.paused) {
                 if (model.charges > 0) {
                     model.charges--;
+                    model.clickQueued = false; // Cancel any queue if we clicked naturally
                     _fire();
+                } else if (model.canQueueClick) {
+                    model.clickQueued = true;
                 }
             }
         });
@@ -437,6 +525,15 @@ const pulseAttack = (() => {
         if (isCombat) {
             view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy, model);
             view.updateCharges(model.charges, model.maxCharges, model.manualMode);
+
+            // Handle reload animation trigger
+            if (model.active && model.manualMode && model.canQueueClick && !model.wasCanQueueClick) {
+                view.playReloadAnimation();
+            }
+            if ((!model.canQueueClick && model.wasCanQueueClick) || !model.active) {
+                view.stopReloadAnimation();
+            }
+            model.wasCanQueueClick = model.canQueueClick;
         }
 
         if (!model.active || !tower.isAlive()) {
