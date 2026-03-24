@@ -145,7 +145,7 @@ class ArtilleryAttackView {
         // Alpha 0.2 -> 0.35 over 400ms (Back.easeOut, easeParams: 5)
         PhaserScene.tweens.add({
             targets: [base, center],
-            alpha: 0.4,
+            alpha: 0.36,
             duration: 400,
             ease: 'Back.easeOut',
             easeParams: [4],
@@ -154,7 +154,7 @@ class ArtilleryAttackView {
                     targets: [base, center],
                     alpha: 0.9,
                     duration: 1100 + durationOffset,
-                    ease: 'Linear',
+                    ease: 'Quad.easeIn',
                     onComplete: () => {
                         // Deal damage
                         onDamage();
@@ -182,10 +182,39 @@ class ArtilleryAttackView {
         const goalRot = flippedLeft ? -0.3 : 0.3;
 
         // Flash everything (similar to cursor's playFireAnimation)
-        bright.setPosition(x, y).setVisible(true).setAlpha(1.0).setScale(1.25).setRotation(goalRot);
-        base.setAlpha(1.0).setScale(1.2).setRotation(goalRot);
-        center.setAlpha(1.0).setScale(1.2).setRotation(goalRot);
+        bright.setPosition(x, y).setVisible(true).setAlpha(0.9).setScale(1.25).setRotation(goalRot);
+        base.setAlpha(1).setScale(1.2).setRotation(goalRot);
+        center.setAlpha(1).setScale(1.2).setRotation(goalRot);
         red.setPosition(x, y).setVisible(true).setAlpha(0.45).setScale(1.1).setRotation((Math.random() - 0.5) * 0.09);
+
+        // White tint flash — instant detonation feel
+        bright.setTintFill(0xffffff);
+        center.setTintFill(0xffffff);
+        PhaserScene.time.delayedCall(50, () => {
+            if (obj.inUse) {
+                bright.setAlpha(0.4).clearTint();
+                center.clearTint();
+            }
+        });
+
+        /** Recoil: briefly shrink the base sprite then spring back. */
+        PhaserScene.tweens.add({
+            targets: base,
+            scaleX: 0.92,
+            scaleY: 0.92,
+            duration: 40,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: base,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 180,
+                    ease: 'Back.easeOut',
+                    easeParams: [3],
+                });
+            }
+        });
 
         // Tween flash back to 0
         PhaserScene.tweens.add({
@@ -198,7 +227,7 @@ class ArtilleryAttackView {
 
         // Scale back to original size
         PhaserScene.tweens.add({
-            targets: [base, center, bright],
+            targets: [center, bright],
             scaleX: 1,
             scaleY: 1,
             duration: 240,
