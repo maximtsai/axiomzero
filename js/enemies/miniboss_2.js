@@ -288,6 +288,9 @@ class Miniboss2 extends Miniboss {
             case MINIBOSS2_STATE.TRAVEL:
                 m.trailActive = true;
                 m.isAttacking = false;
+                // Re-trigger speed ramp so it happens AFTER the pause
+                m.aliveTime = 0;
+                m.speedMult = m.initialSpeedMult;
                 break;
             case MINIBOSS2_STATE.CHARGE:
                 m.stateTimer = MB2.CHARGE_WAIT_MS;

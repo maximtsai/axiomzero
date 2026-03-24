@@ -693,25 +693,37 @@ const enemyManager = (() => {
     function damageEnemy(enemy, amount) {
         if (!enemy || !enemy.alive) return;
 
-        const died = enemy.takeDamage(amount);
+        let died = enemy.takeDamage(amount);
+        let isExecuted = false;
+
+        const zeroDayLevel = (gameState.upgrades && (gameState.upgrades['zero_day_exploit'] || gameState.upgrades.zero_day_exploit)) || 0;
+        if (!died && zeroDayLevel > 0 && !enemy.isBoss && !enemy.isMiniboss && enemy.health <= enemy.maxHealth * 0.15) {
+            // Execution condition met: enemy survived but is now at or below 15% HP.
+            // Force lethal damage without a second hit-flash (using model directly)
+            enemy.model.takeDamage(enemy.health + 1000);
+            died = true;
+            isExecuted = true;
+        }
 
         // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
-        // User requested visual numbers always round down
         const finalAmount = Math.floor(enemy.lastDamageAmount !== undefined ? enemy.lastDamageAmount : amount);
         const isProtected = enemy.lastDamageWasProtected || false;
 
-        // Color is HOSTILE (pink) normally, or grey-red if protected
-        const textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
+        // Color is HOSTILE (pink) normally. Purple for execution.
+        let textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
+        if (isExecuted) textColor = '#bf24ff';
 
         if (gameState.settings.showDamageNumbers) {
-            floatingText.show(enemy.x, enemy.y - 14, '\n ' + finalAmount.toString() + ' \n ', {
+            const displayText = isExecuted ? ' EXECUTED ' : finalAmount.toString();
+            floatingText.show(enemy.x, enemy.y - 14, '\n ' + displayText + ' \n ', {
                 fontFamily: 'VCR',
-                fontSize: 28,
+                fontSize: isExecuted ? 24 : 28,
                 color: textColor,
-                stroke: '#330000',
-                strokeThickness: 2,
+                stroke: isExecuted ? '#1a0033' : '#330000',
+                strokeThickness: isExecuted ? 3 : 2,
                 depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
-                duration: 1000,
+                duration: isExecuted ? 1200 : 1000,
+                scaleX: isExecuted ? 0.92 : 1,
             });
         }
         if (died && !enemy.isGhosting) {

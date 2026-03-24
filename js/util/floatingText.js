@@ -21,6 +21,7 @@ const floatingText = (() => {
         t.setOrigin(0.5, 0.5);
         t.setAlpha(0);
         t.setVisible(false);
+        t.setScale(1, 1);
         // Cache current styles on the object to avoid redundant setStyle calls
         t._cachedStyles = {
             fontFamily: 'JetBrainsMono_Regular',
@@ -54,6 +55,8 @@ const floatingText = (() => {
         const depth = opts.depth !== undefined ? opts.depth : 9999;
         const duration = opts.duration !== undefined ? opts.duration : 1200;
         const travel = opts.travel !== undefined ? opts.travel : 85;
+        const scaleX = opts.scaleX !== undefined ? opts.scaleX : 1;
+        const scaleY = opts.scaleY !== undefined ? opts.scaleY : 1;
 
         const t = _pool.get();
         t.setText(text);
@@ -78,6 +81,7 @@ const floatingText = (() => {
         t.setAlpha(1);
         t.setDepth(depth);
         t.setVisible(true);
+        t.setScale(scaleX, scaleY);
 
         // Custom state for manual update loop (avoids Tween overhead)
         t._floatY = y;
