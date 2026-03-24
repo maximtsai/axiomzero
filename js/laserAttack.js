@@ -5,11 +5,11 @@
 class LaserAttackModel {
     constructor() {
         this.ORBIT_RADIUS = 40;          // px from tower center
-        this.ORBIT_SPEED = 0.36;        // radians/second
+        this.ORBIT_SPEED = 0.41;        // radians/second
         this.BEAM_LENGTH = 1000;         // px
         this.BEAM_VISUAL_HALF_WIDTH = 20;// visual beam half-width (40px total)
         this.BEAM_DAMAGE_HALF_WIDTH = 30;// damage half-width (60px total)
-        this.BASE_DAMAGE_PER_TICK = 6;
+        this.BASE_DAMAGE_PER_TICK = 8;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
         this.FIRE_DURATION = 2500;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
@@ -30,6 +30,12 @@ class LaserAttackModel {
         this.apertureLevel = 0; // laser_aperture (+60px width)
         this.incendiaryLevel = 0; // laser_incendiary (ignite chance)
         this.twinLevel = 0;       // laser_twin_beams (dual turret)
+
+        // Visual feedback
+        this.tickFlash = 0;       // 0-1, spikes on damage tick, decays quickly
+        this.tapering = false;    // true during taper-down phase
+        this.taperProgress = 0;   // 0-1, how far through taper-down
+        this.TAPER_DURATION = 200; // ms to taper beam down
     }
 
     getVisualHalfWidth() {
@@ -124,6 +130,7 @@ class LaserAttackView {
         // Turret always follows orbit
         this._turret.setPosition(tx, ty);
         this._turret.setRotation(model.angle);
+        this._turret.setVisible(true); // Ensure visible when active
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
@@ -135,7 +142,7 @@ class LaserAttackView {
             this._turret2.setVisible(false);
         }
 
-        if (!model.firing) {
+        if (!model.firing && !model.tapering) {
             this._beamGraphics.setVisible(false);
             this._glowGraphics.setVisible(false);
             this._beamGraphics.clear();
@@ -143,7 +150,7 @@ class LaserAttackView {
             return;
         }
 
-        // Only draw beams if firing
+        // Only draw beams if firing or tapering
         const alpha = 0.5 + 0.5 * Math.random();
 
         // Beam points (laser fires from turret away from tower)
@@ -152,25 +159,30 @@ class LaserAttackView {
 
         // Pulsing: moment of damage should be biggest (tickTimer=0 right after tick)
         const pulse = 1.0 + 0.15 * Math.pow(1.0 - (model.tickTimer / model.TICK_INTERVAL), 3);
-        const currentHalfW = model.getVisualHalfWidth() * pulse;
+
+        // Taper-down multiplier (shrinks beam width to 0 over TAPER_DURATION)
+        const taperMult = model.tapering ? Math.max(0, 1.0 - model.taperProgress) : 1.0;
+        const currentHalfW = model.getVisualHalfWidth() * pulse * taperMult;
 
         this._glowGraphics.setVisible(true);
         this._glowGraphics.clear();
         this._beamGraphics.setVisible(true);
         this._beamGraphics.clear();
 
-        this._drawBeam(tx, ty, bx, by, currentHalfW, alpha);
+        this._drawBeam(tx, ty, bx, by, currentHalfW, alpha, model);
+        this._drawOriginHotspot(tx, ty, currentHalfW, alpha);
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
             const ty2 = model.getTurretY(towerY, Math.PI);
             const bx2 = tx2 + Math.cos(model.angle + Math.PI) * model.BEAM_LENGTH;
             const by2 = ty2 + Math.sin(model.angle + Math.PI) * model.BEAM_LENGTH;
-            this._drawBeam(tx2, ty2, bx2, by2, currentHalfW, alpha);
+            this._drawBeam(tx2, ty2, bx2, by2, currentHalfW, alpha, model);
+            this._drawOriginHotspot(tx2, ty2, currentHalfW, alpha);
         }
     }
 
-    _drawBeam(x1, y1, x2, y2, halfW, alpha) {
+    _drawBeam(x1, y1, x2, y2, halfW, alpha, model) {
         const dx = x2 - x1;
         const dy = y2 - y1;
         const len = Math.sqrt(dx * dx + dy * dy);
@@ -180,39 +192,59 @@ class LaserAttackView {
         const px = -dy / len;
         const py = dx / len;
 
-        // Draw glow (wider, more transparent)
-        this._glowGraphics.setVisible(true);
-        this._glowGraphics.clear();
+        // Edge jitter — random ±1.5px offset per vertex for "living energy" feel
+        const j = () => (Math.random() - 0.5) * 3;
+
+        // Draw glow (barely wider than beam)
         this._glowGraphics.fillStyle(0x00ffff, 0.2 * alpha);
         this._glowGraphics.fillPoints([
-            { x: x1 + px * halfW * 2, y: y1 + py * halfW * 2 },
-            { x: x2 + px * halfW * 2, y: y2 + py * halfW * 2 },
-            { x: x2 - px * halfW * 2, y: y2 - py * halfW * 2 },
-            { x: x1 - px * halfW * 2, y: y1 - py * halfW * 2 },
+            { x: x1 + px * halfW * 1.25 + j(), y: y1 + py * halfW * 1.25 + j() },
+            { x: x2 + px * halfW * 1.25 + j(), y: y2 + py * halfW * 1.25 + j() },
+            { x: x2 - px * halfW * 1.25 + j(), y: y2 - py * halfW * 1.25 + j() },
+            { x: x1 - px * halfW * 1.25 + j(), y: y1 - py * halfW * 1.25 + j() },
         ], true);
 
-        // Draw main beam (core white center)
-        this._beamGraphics.setVisible(true);
-        this._beamGraphics.clear();
-
-        // Outer color layer
+        // Draw main beam (slightly wider)
+        const midW = halfW * 1.15;
         this._beamGraphics.fillStyle(0x00ffff, 0.7 * alpha);
         this._beamGraphics.fillPoints([
-            { x: x1 + px * halfW, y: y1 + py * halfW },
-            { x: x2 + px * halfW, y: y2 + py * halfW },
-            { x: x2 - px * halfW, y: y2 - py * halfW },
-            { x: x1 - px * halfW, y: y1 - py * halfW },
+            { x: x1 + px * midW + j(), y: y1 + py * midW + j() },
+            { x: x2 + px * midW + j(), y: y2 + py * midW + j() },
+            { x: x2 - px * midW + j(), y: y2 - py * midW + j() },
+            { x: x1 - px * midW + j(), y: y1 - py * midW + j() },
         ], true);
 
-        // Inner bright core
-        const coreW = halfW * 0.4;
-        this._beamGraphics.fillStyle(0xe0ffff, 1.0 * alpha);
+        // Inner bright core — flashes white on damage tick
+        const coreW = halfW * 0.55;
+        const flashT = model ? model.tickFlash : 0;
+        const coreColor = flashT > 0.5 ? 0xffffff : 0xe0ffff;
+        const coreAlpha = Math.min(1.0, (1.0 + flashT * 0.5)) * alpha;
+        const coreWidthMult = 1.0 + flashT * 0.5; // Spike core width on tick
+
+        this._beamGraphics.fillStyle(coreColor, coreAlpha);
         this._beamGraphics.fillPoints([
-            { x: x1 + px * coreW, y: y1 + py * coreW },
-            { x: x2 + px * coreW, y: y2 + py * coreW },
-            { x: x2 - px * coreW, y: y2 - py * coreW },
-            { x: x1 - px * coreW, y: y1 - py * coreW },
+            { x: x1 + px * coreW * coreWidthMult, y: y1 + py * coreW * coreWidthMult },
+            { x: x2 + px * coreW * coreWidthMult, y: y2 + py * coreW * coreWidthMult },
+            { x: x2 - px * coreW * coreWidthMult, y: y2 - py * coreW * coreWidthMult },
+            { x: x1 - px * coreW * coreWidthMult, y: y1 - py * coreW * coreWidthMult },
         ], true);
+    }
+
+    /** Origin hotspot — bright pulsing circle at beam source. */
+    _drawOriginHotspot(x, y, halfW, alpha) {
+        const radius = halfW * 0.6 + 3;
+
+        // Outer glow ring
+        this._glowGraphics.fillStyle(0x00ffff, 0.4 * alpha);
+        this._glowGraphics.fillCircle(x, y, radius * 1.8);
+
+        // Inner bright core
+        this._beamGraphics.fillStyle(0xe0ffff, 0.9 * alpha);
+        this._beamGraphics.fillCircle(x, y, radius);
+
+        // White-hot center
+        this._beamGraphics.fillStyle(0xffffff, alpha);
+        this._beamGraphics.fillCircle(x, y, radius * 0.4);
     }
 }
 
@@ -261,6 +293,7 @@ const laserAttack = (() => {
             model.cooldownTimer = 0;
             model.fireTimer = 0;
             model.tickTimer = 0;
+            if (model.unlocked) view.show(model);
         } else {
             model.active = false;
             model.firing = false;
@@ -280,7 +313,7 @@ const laserAttack = (() => {
 
         // Always orbit
         if (!model.paused) {
-            const speedMult = model.firing ? 1.0 : 0.5;
+            const speedMult = model.firing ? 1.0 : 0.35;
             model.angle += model.ORBIT_SPEED * speedMult * (delta / 1000);
         }
 
@@ -295,12 +328,27 @@ const laserAttack = (() => {
             // Damage tick
             while (model.tickTimer >= model.TICK_INTERVAL) {
                 model.tickTimer -= model.TICK_INTERVAL;
+                model.tickFlash = 1.0; // Spike flash
                 _dealDamage(towerPos);
             }
 
-            // End firing phase
+            // Decay tick flash
+            if (model.tickFlash > 0) {
+                model.tickFlash = Math.max(0, model.tickFlash - delta / 80);
+            }
+
+            // End firing phase → begin taper-down
             if (model.fireTimer >= model.getFireDuration()) {
                 model.firing = false;
+                model.tapering = true;
+                model.taperProgress = 0;
+            }
+        } else if (model.tapering) {
+            // Taper-down phase — shrink beam to 0
+            model.taperProgress += delta / model.TAPER_DURATION;
+            if (model.taperProgress >= 1.0) {
+                model.tapering = false;
+                model.taperProgress = 0;
                 model.cooldownTimer = 0;
             }
         } else {

@@ -28,7 +28,11 @@ class Boss extends Enemy {
     update(dt) {
         if (!this.model.alive) return;
 
-        this.model.update(dt);
+        const tickAmt = this.model.update(dt);
+        if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
+            enemyManager.damageEnemy(this, tickAmt);
+        }
+
         this.view.syncPosition(this.model.x, this.model.y);
         this.view.updateHPCrop(this.model.getHealthPct());
 
