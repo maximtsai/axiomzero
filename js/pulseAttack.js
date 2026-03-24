@@ -21,6 +21,7 @@ class PulseAttackModel {
         this.isolationLevel = 0;
         this.saturationLevel = 0;
         this.aftershockLevel = 0;
+        this.persistentExploitLevel = 0;
     }
 
     resetTimer() {
@@ -474,7 +475,16 @@ const pulseAttack = (() => {
         }
 
         for (let i = 0; i < hits.length; i++) {
-            enemyManager.damageEnemy(hits[i], actualDamage);
+            const enemy = hits[i];
+            let damageToApply = actualDamage;
+
+            // PERSISTENT EXPLOIT logic
+            if (model.persistentExploitLevel > 0 && enemy.hitByPulse) {
+                damageToApply += (6 * model.persistentExploitLevel);
+            }
+
+            enemyManager.damageEnemy(enemy, damageToApply);
+            enemy.hitByPulse = true;
         }
 
         // AFTERSHOCK logic
@@ -535,5 +545,9 @@ const pulseAttack = (() => {
         view.aftershockLevel = level;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel };
+    function setPersistentExploitLevel(level) {
+        model.persistentExploitLevel = level;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel };
 })();

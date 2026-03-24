@@ -57,6 +57,7 @@ class EnemyModel {
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
         this.isGhosting = false;
+        this.hitByPulse = false;
     }
 
     activate(x, y, config = {}) {
@@ -97,6 +98,7 @@ class EnemyModel {
 
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
+        this.hitByPulse = false;
     }
 
     deactivate() {

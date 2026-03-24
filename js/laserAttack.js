@@ -280,7 +280,8 @@ const laserAttack = (() => {
 
         // Always orbit
         if (!model.paused) {
-            model.angle += model.ORBIT_SPEED * (delta / 1000);
+            const speedMult = model.firing ? 1.0 : 0.5;
+            model.angle += model.ORBIT_SPEED * speedMult * (delta / 1000);
         }
 
         view.update(model, towerPos.x, towerPos.y);

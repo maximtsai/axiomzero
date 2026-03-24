@@ -112,6 +112,13 @@ const upgradeDispatcher = (() => {
         // Subscription handled in gameInit.js
     }
 
+    /** Recalculates repeat exploit level. */
+    function recalcRepeatExploit() {
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.setPersistentExploitLevel) {
+            pulseAttack.setPersistentExploitLevel(getLevel('repeat_exploit'));
+        }
+    }
+
     /** Recalculates all systems based on current upgrades. */
     function recalcEverything() {
         if (typeof pulseAttack !== 'undefined') {
@@ -120,6 +127,7 @@ const upgradeDispatcher = (() => {
             recalcPulseSize();
             recalcPulseMode();
             recalcAftershock();
+            recalcRepeatExploit();
         }
         if (typeof lightningAttack !== 'undefined') {
             recalcLightningChains();
@@ -153,6 +161,7 @@ const upgradeDispatcher = (() => {
         recalcShockwaveStats,
         recalcThreatResponse,
         recalcAftershock,
+        recalcRepeatExploit,
         recalcLaser,
         recalcArtillery
     };
