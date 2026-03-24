@@ -7,7 +7,18 @@ class Boss5Model extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.5;
-        this.size = 195; // 130 * 1.5
+        this.size = 273; // 195 * 1.4
+    }
+
+    getSpawnDistanceOffset() {
+        return 150;
+    }
+
+    getSpawnAngle() {
+        const halfCone = (4 / 2) * (Math.PI / 180); // 2 degrees either way
+        const side = Math.random() < 0.5 ? 0 : Math.PI;
+        const offset = (Math.random() * 2 - 1) * halfCone;
+        return side + offset;
     }
 }
 
@@ -16,8 +27,8 @@ class Boss5View extends EnemyView {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
         super(Enemy.TEX_KEY, 'boss_5.png', 'boss5_hp.png', baseDepth);
 
-        // Scaled pink pulse effect (1.5x larger than Boss 1)
-        const startSize = 395;
+        // Scaled pink pulse effect (1.4x larger than current Boss 5)
+        const startSize = 553;
         this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
@@ -65,8 +76,8 @@ class Boss5View extends EnemyView {
 
             const triggerOne = (p, finalSize) => {
                 if (!p || !p.scene) return;
-                p.width = 405; // 270 * 1.5
-                p.height = 405;
+                p.width = 567; // 405 * 1.4
+                p.height = 567;
                 p.setAlpha(1);
 
                 PhaserScene.tweens.add({
@@ -86,12 +97,12 @@ class Boss5View extends EnemyView {
             };
 
             // Scaled pulse final sizes
-            triggerOne(this.pulse, 750); // 500 * 1.5
+            triggerOne(this.pulse, 1050); // 750 * 1.4
             PhaserScene.time.delayedCall(100, () => {
-                triggerOne(this.pulse2, 675); // 450 * 1.5
+                triggerOne(this.pulse2, 945); // 675 * 1.4
             });
             PhaserScene.time.delayedCall(200, () => {
-                triggerOne(this.pulse3, 600); // Continuation pattern
+                triggerOne(this.pulse3, 840); // 600 * 1.4
             });
 
             if (typeof cameraManager !== 'undefined') {

@@ -280,6 +280,10 @@ const artilleryAttack = (() => {
     function _fire() {
         const pos1 = _findRandomTarget();
         const size = model.getDamageArea();
+        if (typeof audio !== 'undefined') {
+            const s = audio.play('artillery_selected', 1.1);
+            if (s) s.detune = (Math.random() - 0.5) * 160;
+        }
 
         _createStrikeAt(pos1.x, pos1.y, size, 0);
 
@@ -314,6 +318,10 @@ const artilleryAttack = (() => {
     function _createStrikeAt(x, y, size, durationOffset) {
         view.playStrikeSequence(x, y, size, () => {
             // Damage callback
+            if (typeof audio !== 'undefined') {
+                const s = audio.play('artillery_explode', 0.9);
+                if (s) s.detune = (Math.random() - 0.5) * 160;
+            }
             PhaserScene.cameras.main.shake(60, 0.007);
             const halfSize = size / 2;
             const hits = enemyManager.getEnemiesInSquareRange(x, y, halfSize + 5, _hitBuffer);

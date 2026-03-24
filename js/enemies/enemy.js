@@ -150,7 +150,7 @@ class EnemyModel {
                 moveMult = 0.1;
                 this.hitStopTimer -= dt;
             }
-            
+
             // Force slow applies separately and stacks with hit-stop
             moveMult *= this.forceSlowMult;
 
@@ -184,7 +184,7 @@ class EnemyModel {
                 this.burnTimer = 0;
             }
         }
-        
+
         return burnTick; // Return the amount for the controller to trigger manager.damageEnemy (to get floating numbers)
     }
 
@@ -377,7 +377,7 @@ class EnemyView {
 
         let cropPct = 1.0;
         if (healthPct < 1.0) {
-            cropPct = 0.05 + (healthPct * 0.90);
+            cropPct = healthPct * 0.975;
         }
 
         const fullWidth = this.hpImg.width;

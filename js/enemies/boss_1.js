@@ -8,7 +8,7 @@ class Boss1Model extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.4;
-        this.size = 130;
+        this.size = 163; // Increased 25% from 130
     }
 }
 
@@ -19,12 +19,12 @@ class Boss1View extends EnemyView {
 
         // Add pink pulse nineslice — corner size 65px
         // Phaser 3.60+ nineslice: (x, y, texture, frame, width, height, left, right, top, bottom)
-        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 265, 265, 65, 65, 65, 65);
+        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 265, 265, 65, 65, 65, 65);
+        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
@@ -40,15 +40,15 @@ class Boss1View extends EnemyView {
             this.pulse.setVisible(true);
             this.pulse.setAlpha(0);
             this.pulse.setRotation(rotation);
-            this.pulse.width = 265;
-            this.pulse.height = 265;
+            this.pulse.width = 331;
+            this.pulse.height = 331;
 
             this.pulse2.setPosition(x, y);
             this.pulse2.setVisible(true);
             this.pulse2.setAlpha(0);
             this.pulse2.setRotation(rotation);
-            this.pulse2.width = 260;
-            this.pulse2.height = 260;
+            this.pulse2.width = 325;
+            this.pulse2.height = 325;
 
             this._startPulseEffect();
         }
@@ -61,8 +61,8 @@ class Boss1View extends EnemyView {
             const triggerOne = (p, finalSize) => {
                 if (!p || !p.scene) return;
                 // Reset state
-                p.width = 270;
-                p.height = 270;
+                p.width = 338;
+                p.height = 338;
                 p.setAlpha(1);
 
                 // Tween size
@@ -84,11 +84,11 @@ class Boss1View extends EnemyView {
             };
 
             // First pulse
-            triggerOne(this.pulse, 500);
+            triggerOne(this.pulse, 625);
 
             // Second pulse 0.1s later
             PhaserScene.time.delayedCall(100, () => {
-                triggerOne(this.pulse2, 450);
+                triggerOne(this.pulse2, 563);
             });
 
             // Subtle screenshake

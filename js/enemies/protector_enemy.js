@@ -1,7 +1,7 @@
 // js/enemies/protector_enemy.js — Supportive enemy providing a defensive aura (MVC).
 //
 // Behaviour:
-//   • Health is 3x base health, speed is 0.5x base speed.
+//   • Health is 2.5x base health, speed is 0.5x base speed.
 //   • Cannot rotate. Stops at 210px from tower.
 //   • No attack, no self damage.
 //   • Aura reduces damage by half to non-protectors within 185px.
@@ -126,7 +126,7 @@ class ProtectorEnemy extends Enemy {
 
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
-            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 2.5,
             damage: 0,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.5,
@@ -157,7 +157,7 @@ class ProtectorEnemy extends Enemy {
         // Always sync the model state (burn, health, position)
         if (m.state === PROTECTOR_STATE.RUSHING && distToTower > 210 && m.rushElapsed < PROTECTOR_RUSH_DURATION) {
             const t = Math.min(1, m.rushElapsed / PROTECTOR_RUSH_DURATION);
-            const mult = 12 - (11 * t);
+            const mult = 14 - (13 * t);
             super.update(dt * mult);
         } else {
             super.update(dt);

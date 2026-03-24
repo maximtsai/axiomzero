@@ -21,4 +21,6 @@ const audioFiles = [
     { name: 'upgrade_max', src: 'audio/upgrade_max.mp3' },
     { name: 'flip3', src: 'audio/flip3.mp3' },
     { name: 'retro1', src: 'audio/retro1.mp3' },
+    { name: 'artillery_selected', src: 'audio/artillery_selected.mp3' },
+    { name: 'artillery_explode', src: 'audio/artillery_explode.mp3' },
 ];

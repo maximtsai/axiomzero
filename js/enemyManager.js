@@ -370,16 +370,20 @@ const enemyManager = (() => {
         return registry[className];
     }
 
-    function _getValidBossSpawnAngle() {
+    function _getValidBossSpawnAngle(bossInstance) {
+        const generator = (bossInstance && bossInstance.model && bossInstance.model.getSpawnAngle) 
+            ? () => bossInstance.model.getSpawnAngle() 
+            : Miniboss.getSpawnAngle;
+
         const rules5 = { avoidActiveTypes: ['protector'], minSeparation: 0.5, maxAttempts: 5 };
-        let angle = findValidAngle(Miniboss.getSpawnAngle, rules5);
+        let angle = findValidAngle(generator, rules5);
         if (angle !== null) return angle;
 
         const rules3 = { avoidActiveTypes: ['protector'], minSeparation: 0.3, maxAttempts: 5 };
-        angle = findValidAngle(Miniboss.getSpawnAngle, rules3);
+        angle = findValidAngle(generator, rules3);
         if (angle !== null) return angle;
 
-        return Miniboss.getSpawnAngle();
+        return generator();
     }
 
     function _spawnMiniboss() {
@@ -490,8 +494,9 @@ const enemyManager = (() => {
         bossSpawned = true;
         bossAlive = true;
 
-        const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE;
-        const angle = _getValidBossSpawnAngle();
+        const distanceOffset = (b && b.model && b.model.getSpawnDistanceOffset) ? b.model.getSpawnDistanceOffset() : 0;
+        const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE + distanceOffset;
+        const angle = _getValidBossSpawnAngle(b);
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
