@@ -6,11 +6,13 @@ const gameHUD = (() => {
     // ── HUD elements ─────────────────────────────────────────────────────────
     let healthBarBg = null;
     let healthBarFill = null;
+    let healthBarFlare = null;
     let healthText = null;
     let expBarBg = null;
     let expBarFill = null;
     let expText = null;
     let resourceUI = {}; // { data: { icon, text }, ... }
+    let lastHealth = -1;
 
     let endIterationBtn = null;
     let waveProgressBar = null;
@@ -57,8 +59,12 @@ const gameHUD = (() => {
         healthBarBg = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
         healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth).setScrollFactor(0);
 
+        healthBarFlare = PhaserScene.add.image(groupX, HUD_Y + BAR_H / 2, 'ui', 'white_vertical_line.png');
+        healthBarFlare.setOrigin(0.5, 0.5).setScale(1, 0.75).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
+        healthBarFlare.setAlpha(0);
+
         healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
-        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 1).setScrollFactor(0);
+        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 2).setScrollFactor(0);
 
         healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 1, '', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -139,6 +145,7 @@ const gameHUD = (() => {
             if (treeGroup) {
                 treeGroup.add(healthBarBg);
                 treeGroup.add(healthBarFill);
+                treeGroup.add(healthBarFlare);
                 treeGroup.add(healthText);
                 treeGroup.add(expBarBg);
                 treeGroup.add(expBarFill);
@@ -204,6 +211,7 @@ const gameHUD = (() => {
         visible = true;
         healthBarBg.setVisible(true);
         healthBarFill.setVisible(true);
+        healthBarFlare.setVisible(true);
         healthText.setVisible(true);
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
@@ -217,6 +225,7 @@ const gameHUD = (() => {
         visible = false;
         healthBarBg.setVisible(false);
         healthBarFill.setVisible(false);
+        healthBarFlare.setVisible(false);
         healthText.setVisible(false);
         expBarBg.setVisible(false);
         expBarFill.setVisible(false);
@@ -250,6 +259,7 @@ const gameHUD = (() => {
         // Show all HUD elements grouped with the Neural Tree
         healthBarBg.setVisible(true);
         healthBarFill.setVisible(true);
+        healthBarFlare.setVisible(true);
         healthText.setVisible(true);
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
@@ -325,6 +335,27 @@ const gameHUD = (() => {
         } else {
             healthBarFill.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
         }
+
+        // Damage flare
+        healthBarFlare.x = healthBarBg.x + dynamicW * ratio;
+
+        if (lastHealth !== -1 && (lastHealth - current) >= 0.5) {
+            healthBarFlare.setAlpha(1);
+            healthBarFlare.scaleY = 2;
+            PhaserScene.tweens.killTweensOf(healthBarFlare);
+            PhaserScene.tweens.add({
+                targets: healthBarFlare,
+                scaleY: 0.85,
+                ease: 'Quad.easeOut',
+                duration: 500,
+            });
+            PhaserScene.tweens.add({
+                targets: healthBarFlare,
+                alpha: 0,
+                duration: 500,
+            });
+        }
+        lastHealth = current;
 
         healthText.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
     }
