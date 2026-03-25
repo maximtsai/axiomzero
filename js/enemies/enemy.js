@@ -538,7 +538,8 @@ class Enemy {
 
     forceSlow(mult, duration) {
         this.model.forceSlowMult = mult;
-        this.model.forceSlowTimer = duration;
+        const finalDuration = (this.isBoss || this.isMiniboss) ? duration * 0.66 : duration;
+        this.model.forceSlowTimer = finalDuration;
     }
 
     // ── Property proxies (backward-compatible API for enemyManager etc.) ─────

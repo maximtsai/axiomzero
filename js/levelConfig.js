@@ -115,6 +115,36 @@ const LEVEL_CONFIG = {
         dataDropMultiplier: 3.2,
         levelScalingModifier: 3.2,
         healthDecay: -0.6
+    },
+    5: {
+        spawnInterval: 650,
+        initialWeights: {
+            basic: 1,
+            bomb: 0,
+            fast: 0,
+            shooter: 0,
+            swarmer: 0.06,
+            sniper: 0,
+            heavy: 0.1,
+            logic_stray: 0,
+            protector: 0.05
+        },
+        lateWeights: {
+            shooter: 0.1,
+            swarmer: 0.12,
+            bomb: 0,
+            heavy: 0.25,
+            fast: 0,
+            sniper: 0.1,
+            protector: 0.12
+        },
+        swarmerGroupSize: { min: 4, max: 8 },
+        miniboss: 'Miniboss2',
+
+        mainBoss: 'Boss5',
+        dataDropMultiplier: 4.2,
+        levelScalingModifier: 4.2,
+        healthDecay: -0.8
     }
 };
 

@@ -982,11 +982,32 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['backdoor_4', 'malware_siphon'],
-        childIds: ['privilege_escalation_2'],
+        childIds: ['privilege_escalation_2', 'unsecured_wallet'],
         treeX: gridX(3.0),
         treeY: gridY(6.5),
         effect: function () {
             upgradeDispatcher.recalcRepeatExploit();
+        },
+    },
+    {
+        id: 'unsecured_wallet',
+        name: 'ENCRYPTED WALLET',
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'unsecured_wallet.desc'),
+        popupText: '+1 COIN',
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['repeat_exploit'],
+        childIds: [],
+        treeX: gridX(3.0),
+        treeY: gridY(7.5),
+        effect: function () {
+            if (typeof resourceManager !== 'undefined') {
+                resourceManager.addCoin(1);
+            }
         },
     },
     {
