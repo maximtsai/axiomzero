@@ -38,9 +38,9 @@ class ArtilleryAttackModel {
     }
 
     setTargetingMargins(n) {
-        this.SCREEN_BORDER_WIDTH = n;
-        this.SCREEN_BORDER_HEIGHT = n * 0.6;
-        this.TOWER_MARGIN = n + 10;
+        this.SCREEN_BORDER_WIDTH = n * 0.7;
+        this.SCREEN_BORDER_HEIGHT = n * 0.35;
+        this.TOWER_MARGIN = n;
     }
 }
 
@@ -379,24 +379,30 @@ const artilleryAttack = (() => {
                 const idx = (startIndex + i) % activeEnemies.length;
                 const e = activeEnemies[idx];
 
-                // Strike delay is ~0.5s total (targeting sequence)
-                let tx = e.x + (e.vx * 0.6);
-                let ty = e.y + (e.vy * 0.6);
+                // Strike delay is ~1.5s total (targeting sequence)
+                let tx = e.x + (e.vx * 1);
+                let ty = e.y + (e.vy * 1);
 
                 const onScreen = tx >= minX && tx <= maxX && ty >= minY && ty <= maxY;
-                if (!onScreen) continue;
 
-                // If predicted target is too close to tower, shift it to where the enemy was 0.75s ago
-                if (Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y) < model.TOWER_MARGIN) {
-                    tx = e.x - (e.vx * 0.75);
-                    ty = e.y - (e.vy * 0.75);
+                if (onScreen) {
+                    // If predicted target is too close to tower, shift it to where the enemy was 0.75s ago
+                    if (Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y) < model.TOWER_MARGIN) {
+                        tx = e.x - (e.vx * 0.75);
+                        ty = e.y - (e.vy * 0.75);
+                        console.log("used close shift");
+                    }
+                    console.log(`[DEBUG] Artillery found target after ${i + 1} attempts.`);
+                    return {
+                        x: tx + Phaser.Math.Between(-30, 30),
+                        y: ty + Phaser.Math.Between(-30, 30)
+                    };
                 }
-
-                return { x: tx, y: ty };
             }
         }
 
         // Fallback: If no enemies are valid or screen is empty, pick a safe random spot.
+        console.log('[DEBUG] Artillery using fallback (0 valid enemy predictions).');
         return {
             x: Phaser.Math.Between(minX, maxX),
             y: Phaser.Math.Between(minY, maxY)

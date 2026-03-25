@@ -9,6 +9,7 @@ class Boss1Model extends BossModel {
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.4;
         this.size = 163; // Increased 25% from 130
+        this.bossId = 'boss1';
     }
 }
 

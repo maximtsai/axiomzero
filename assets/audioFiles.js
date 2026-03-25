@@ -23,4 +23,5 @@ const audioFiles = [
     { name: 'retro1', src: 'audio/retro1.mp3' },
     { name: 'artillery_selected', src: 'audio/artillery_selected.mp3' },
     { name: 'artillery_explode', src: 'audio/artillery_explode.mp3' },
+    { name: '8_bit_explosion', src: 'audio/8_bit_explosion.mp3' },
 ];

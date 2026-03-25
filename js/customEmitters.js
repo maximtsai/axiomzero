@@ -506,20 +506,27 @@ const customEmitters = (() => {
 
         if (!skipPulse) {
             const pulseDelay = Math.min(700, Math.round(rayDuration * 0.92));
+            const startScale = config.pulseScale || 1.4;
+            const endScale = startScale * 1.1; // Grow by ~10%
+
             PhaserScene.time.delayedCall(pulseDelay, () => {
                 const pulse = explosionPulsePool.get();
                 pulse.setPosition(x, y);
                 pulse.setDepth(baseDepth + 6);
-                pulse.setScale(1.4);
+                pulse.setScale(startScale);
                 PhaserScene.tweens.add({
                     targets: pulse,
-                    scale: 1.55,
+                    scale: endScale,
                     duration: 300,
                     ease: 'Cubic.easeOut',
                 });
                 pulse.setVisible(true);
                 pulse.setActive(true);
                 pulse.play('explosion_pulse');
+
+                if (config.soundKey && typeof audio !== 'undefined') {
+                    audio.play(config.soundKey, 0.9);
+                }
             });
         }
     }
@@ -541,6 +548,10 @@ const customEmitters = (() => {
                 duration: config.duration || 300,
                 ease: config.ease || 'Linear'
             });
+        }
+
+        if (config.soundKey && typeof audio !== 'undefined') {
+            audio.play(config.soundKey, 0.9);
         }
     }
 

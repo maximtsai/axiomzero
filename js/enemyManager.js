@@ -829,7 +829,8 @@ const enemyManager = (() => {
                 if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
                     customEmitters.createBossExplosionRays(ex, ey, bossDepth, {
                         count: 3,
-                        rayDuration: DEATH_DURATION
+                        rayDuration: DEATH_DURATION,
+                        pulseScale: 2
                     });
                 }
 
@@ -872,7 +873,8 @@ const enemyManager = (() => {
                         customEmitters.playExplosionPulse(ex, ey, bossDepth, 4.75, 'explosion_pulse_slow', {
                             targetScale: 6,
                             duration: 300,
-                            ease: 'Quart.easeOut'
+                            ease: 'Quart.easeOut',
+                            soundKey: '8_bit_explosion'
                         });
                     }
                     if (typeof cameraManager !== 'undefined') {
@@ -881,8 +883,12 @@ const enemyManager = (() => {
                 });
             } else {
                 // Standard boss death
+                const bossId = (enemy.model && enemy.model.bossId) ? enemy.model.bossId : '';
+                const config = {};
+                if (bossId === 'boss1') config.soundKey = '8_bit_explosion';
+
                 if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
-                    customEmitters.createBossExplosionRays(ex, ey, bossDepth);
+                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
                 }
             }
 
