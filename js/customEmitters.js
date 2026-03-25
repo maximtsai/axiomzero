@@ -54,7 +54,7 @@ const customEmitters = (() => {
             sprite.setAlpha(1);
             sprite.setRotation(0);
         },
-        5
+        16
     );
 
     const explosionPulsePool = new ObjectPool(
@@ -284,7 +284,7 @@ const customEmitters = (() => {
         30
     );
 
-    function createEnemyDeathAnim(enemy, isSlow = false) {
+    function createEnemyDeathAnim(enemy, isSlow = false, durationOverride = 0) {
         if (!enemy || !enemy.view || !enemy.view.img) return;
 
         const spritesToAnimate = [enemy.view.img];
@@ -322,6 +322,7 @@ const customEmitters = (() => {
         let duration = isSlow ? 420 : 90;
         if (enemy && enemy.isBoss) duration = 800;
         else if (enemy && enemy.type === 'bomb') duration = 250;
+        if (durationOverride > 0) duration = durationOverride;
 
         PhaserScene.tweens.add({
             targets: copies,
@@ -432,8 +433,10 @@ const customEmitters = (() => {
         });
     }
 
-    function createBossExplosionRays(x, y, baseDepth) {
-        const count = Phaser.Math.Between(5, 6);
+    function createBossExplosionRays(x, y, baseDepth, config = {}) {
+        const count = (config.count !== undefined) ? config.count : Phaser.Math.Between(5, 6);
+        const rayDuration = config.rayDuration || 760;
+        const skipPulse = config.skipPulse || false;
         const minGap = 0.4; // radians
         const placedAngles = [];
 
@@ -473,18 +476,19 @@ const customEmitters = (() => {
             ray.setVisible(true);
             ray.setActive(true);
 
+            const tweenDuration = Math.round(rayDuration * 0.92);
             PhaserScene.tweens.add({
                 targets: ray,
                 scaleY: 1.6,
-                duration: 700,
+                duration: tweenDuration,
             });
             PhaserScene.tweens.add({
                 targets: ray,
                 scaleX: 1.8,
-                duration: 700,
+                duration: tweenDuration,
             });
 
-            ray._duration = 760;
+            ray._duration = rayDuration;
             ray._elapsed = 0;
             ray._startRotation = ray.rotation;
             ray._targetRotationOffset = Phaser.Math.FloatBetween(-0.6, 0.6);
@@ -493,29 +497,51 @@ const customEmitters = (() => {
             ray._flickerCount = Phaser.Math.Between(2, 3);
             ray._flickerTimes = [];
             for (let j = 0; j < ray._flickerCount; j++) {
-                // Flicker between 75ms and 650ms (leaving time to finish at 1)
-                ray._flickerTimes.push(125 + Math.random() * 525);
+                ray._flickerTimes.push(125 + Math.random() * (rayDuration * 0.7));
             }
             ray._flickerTimes.sort((a, b) => a - b);
 
             activeExplosionRays.push(ray);
         }
 
-        PhaserScene.time.delayedCall(700, () => {
-            const pulse = explosionPulsePool.get();
-            pulse.setPosition(x, y);
-            pulse.setDepth(baseDepth + 6);
-            pulse.setScale(1.4);
+        if (!skipPulse) {
+            const pulseDelay = Math.min(700, Math.round(rayDuration * 0.92));
+            PhaserScene.time.delayedCall(pulseDelay, () => {
+                const pulse = explosionPulsePool.get();
+                pulse.setPosition(x, y);
+                pulse.setDepth(baseDepth + 6);
+                pulse.setScale(1.4);
+                PhaserScene.tweens.add({
+                    targets: pulse,
+                    scale: 1.55,
+                    duration: 300,
+                    ease: 'Cubic.easeOut',
+                });
+                pulse.setVisible(true);
+                pulse.setActive(true);
+                pulse.play('explosion_pulse');
+            });
+        }
+    }
+
+    function playExplosionPulse(x, y, baseDepth, scale, animKey = 'explosion_pulse', config = {}) {
+        const pulse = explosionPulsePool.get();
+        if (!pulse) return;
+        pulse.setPosition(x, y);
+        pulse.setDepth(baseDepth + 6);
+        pulse.setScale(scale);
+        pulse.setVisible(true);
+        pulse.setActive(true);
+        pulse.play(animKey);
+
+        if (config.targetScale !== undefined) {
             PhaserScene.tweens.add({
                 targets: pulse,
-                scale: 1.55,
-                duration: 300,
-                ease: 'Cubic.easeOut',
+                scale: config.targetScale,
+                duration: config.duration || 300,
+                ease: config.ease || 'Linear'
             });
-            pulse.setVisible(true);
-            pulse.setActive(true);
-            pulse.play('explosion_pulse');
-        });
+        }
     }
 
     // ── Bomb Explosion ──────────────────────────────────────────────────────────
@@ -710,8 +736,8 @@ const customEmitters = (() => {
     }
 
     function init() {
-        explosionRayPool.preAllocate(6);
-        explosionPulsePool.preAllocate(1);
+        explosionRayPool.preAllocate(16);
+        explosionPulsePool.preAllocate(3);
         bombExplosionBrightPool.preAllocate(5);
         bombExplosionRedPool.preAllocate(5);
         malwareSiphonPool.preAllocate(8);
@@ -728,6 +754,7 @@ const customEmitters = (() => {
         createEnemyDeathAnim,
         minibossExplosion,
         createBossExplosionRays,
+        playExplosionPulse,
         createBombExplosion,
         malwareSiphonFX
     };

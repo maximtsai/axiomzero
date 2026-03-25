@@ -8,6 +8,9 @@ class Boss5Model extends BossModel {
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.5;
         this.size = 273; // 195 * 1.4
+        this.bossId = 'boss5';
+        this.staggering = false;
+        this.staggerPhaseComplete = false;
     }
 
     getSpawnDistanceOffset() {
@@ -173,8 +176,93 @@ class Boss5 extends Boss {
             size: this.model.size
         });
 
+        this.model.staggering = false;
+        this.model.staggerPhaseComplete = false;
+
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('AnnounceText', t('ui', 'boss_5_name'));
+        });
+    }
+
+    // ── Option C: Pre-death stagger ──────────────────────────────────────────
+
+    takeDamage(amount) {
+        // Block all damage during stagger phase
+        if (this.model.staggering) return false;
+
+        const died = super.takeDamage(amount);
+
+        if (died && !this.model.staggerPhaseComplete) {
+            // Intercept death — enter stagger instead
+            this.model.health = 1;
+            this.model.alive = true;
+            this.model.staggering = true;
+            this.model.invincible = true;
+            this._startStagger();
+            return false;
+        }
+
+        return died;
+    }
+
+    _startStagger() {
+        const v = this.view;
+        const m = this.model;
+
+        // Stop pulse effects immediately
+        if (v.pulseTimer) {
+            v.pulseTimer.remove();
+            v.pulseTimer = null;
+        }
+        [v.pulse, v.pulse2, v.pulse3].forEach(p => {
+            if (p) { PhaserScene.tweens.killTweensOf(p); p.setVisible(false); }
+        });
+
+        // Freeze the boss in place
+        m.vx = 0;
+        m.vy = 0;
+        m.stunned = true;
+
+        // Show empty HP bar
+        v.updateHPCrop(0);
+
+        // Sustained camera rumble
+        if (typeof cameraManager !== 'undefined') {
+            cameraManager.shake(1500, 0.004);
+        }
+
+        // Rapid white/pink flicker
+        const targets = [v.img, v.hpImg].filter(s => s && s.scene);
+        let flickerCount = 0;
+        const flickerInterval = PhaserScene.time.addEvent({
+            delay: 80,
+            callback: () => {
+                flickerCount++;
+                if (flickerCount % 2 === 1) {
+                    targets.forEach(t => t.setTintFill(0xffffff));
+                } else {
+                    targets.forEach(t => t.clearTint());
+                    if (Math.random() < 0.35) {
+                        targets.forEach(t => t.setTint(0xff2d78));
+                    }
+                }
+            },
+            repeat: 18
+        });
+
+        // After 1.5s stagger, actually die
+        PhaserScene.time.delayedCall(1500, () => {
+            if (flickerInterval) flickerInterval.remove();
+            targets.forEach(t => t.clearTint());
+
+            m.staggering = false;
+            m.invincible = false;
+            m.staggerPhaseComplete = true;
+
+            // Force lethal damage to trigger the real death sequence
+            if (typeof enemyManager !== 'undefined') {
+                enemyManager.damageEnemy(this, 9999);
+            }
         });
     }
 }

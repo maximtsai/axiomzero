@@ -52,4 +52,16 @@ function createAnimations(scene) {
         frameRate: 24,
         repeat: 0,
     });
+    scene.anims.create({
+        key: 'explosion_pulse_slow',
+        frames: scene.anims.generateFrameNames('attacks', {
+            prefix: 'explosion_pulse',
+            suffix: '.png',
+            start: 0,
+            end: 12,
+            zeroPad: 0,
+        }),
+        frameRate: 12,
+        repeat: 0,
+    });
 }

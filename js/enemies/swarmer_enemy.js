@@ -27,12 +27,13 @@ class SwarmerEnemy extends Enemy {
     }
 
     activate(x, y, scaleFactor) {
-        this.model.maxHealth = 3; // Always 3
-        this.model.health = this.model.maxHealth;
-        this.model.selfDamage = this.model.maxHealth * 3;
-        this.model.damage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
-        this.model.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25;
-        this.model.size = 14;
+        super.activate(x, y, {
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.6,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
+            selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.6,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25,
+            size: 14
+        });
 
         if (this.view.img) {
             this.view.img.setAlpha(1);
@@ -42,7 +43,5 @@ class SwarmerEnemy extends Enemy {
             this.view.hpImg.setAlpha(1);
             this.view.hpImg.setScale(1);
         }
-
-        super.activate(x, y);
     }
 }

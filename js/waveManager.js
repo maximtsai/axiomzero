@@ -155,6 +155,8 @@ const waveManager = (() => {
 
         debugLog('Advanced to Tier ' + gameState.currentTier);
 
+        const isBoss5 = currentLevel >= 5;
+
         // 1. Tower becomes invincible (no need to call, boss is dead and enemies are dying, plus transition handles this)
         // Also handled safely by the incoming phase change
 
@@ -197,8 +199,43 @@ const waveManager = (() => {
                 messageBus.publish('triggerResourceVacuum');
             });
 
-            // 5. Short delay, then transition to iteration over
-            PhaserScene.time.delayedCall(2400, () => {
+            // Option A: Boss5-specific — second aftershock shockwave
+            if (isBoss5) {
+                PhaserScene.time.delayedCall(1500, () => {
+                    const aftershock = PhaserScene.add.nineslice(
+                        x, y, 'enemies', 'pink_pulse.png',
+                        200, 200, 65, 65, 65, 65
+                    );
+                    aftershock.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
+                    aftershock.setAlpha(0.9);
+
+                    PhaserScene.tweens.add({
+                        targets: aftershock,
+                        width: 2400,
+                        height: 2400,
+                        duration: 900,
+                        ease: 'Cubic.easeOut',
+                    });
+
+                    PhaserScene.tweens.add({
+                        targets: aftershock,
+                        alpha: 0,
+                        duration: 900,
+                        ease: 'Quad.easeIn',
+                        onComplete: () => {
+                            aftershock.destroy();
+                        }
+                    });
+
+                    if (typeof cameraManager !== 'undefined') {
+                        cameraManager.shake(500, 0.035);
+                    }
+                });
+            }
+
+            // 5. Delay then transition — extended for Boss5
+            const transitionDelay = isBoss5 ? 4000 : 2400;
+            PhaserScene.time.delayedCall(transitionDelay, () => {
                 gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE, { bossKill: true });
             });
         });

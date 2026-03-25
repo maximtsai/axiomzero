@@ -101,6 +101,7 @@ class EnemyModel {
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
         this.hitByPulse = false;
+        this.hitByShockwave = false;
     }
 
     deactivate() {
@@ -201,7 +202,7 @@ class EnemyModel {
         this.lastDamageWasProtected = false;
 
         // Protector aura logic
-        if (this.type !== 'protector') {
+        if (this.type !== 'protector' && !this.isBoss) {
             const protectors = typeof enemyManager !== 'undefined' ? enemyManager.getActiveProtectors() : [];
             let protectedBy = null;
             for (let i = 0; i < protectors.length; i++) {
@@ -638,4 +639,10 @@ class Enemy {
 
     get invincible() { return this.model.invincible; }
     set invincible(v) { this.model.invincible = v; }
+
+    get hitByPulse() { return this.model.hitByPulse; }
+    set hitByPulse(v) { this.model.hitByPulse = v; }
+
+    get hitByShockwave() { return this.model.hitByShockwave; }
+    set hitByShockwave(v) { this.model.hitByShockwave = v; }
 }
