@@ -415,8 +415,8 @@ const laserAttack = (() => {
             const e = enemies[i];
 
             // Project enemy position onto the beam ray
-            const ex = e.x - ox;
-            const ey = e.y - oy;
+            const ex = e.model.x - ox;
+            const ey = e.model.y - oy;
 
             // t = dot(E, D) clamped to [1, L]
             const t = Math.max(0, Math.min(L, ex * cos + ey * sin));
@@ -426,9 +426,9 @@ const laserAttack = (() => {
             const cpy = oy + sin * t;
 
             // Optimization 2: Squared distance comparison (avoids expensive Math.sqrt)
-            const dx = e.x - cpx;
-            const dy = e.y - cpy;
-            const reach = halfDmgW + (e.size || 0);
+            const dx = e.model.x - cpx;
+            const dy = e.model.y - cpy;
+            const reach = halfDmgW + (e.model.size || 0);
 
             if ((dx * dx + dy * dy) < (reach * reach)) {
                 enemyManager.damageEnemy(e, dmg);

@@ -146,17 +146,17 @@ const projectileManager = (() => {
             let hit = false;
             for (let j = 0; j < enemies.length; j++) {
                 const e = enemies[j];
-                if (!e.alive) continue;
+                if (!e.model.alive) continue;
 
                 // Scale hit detection by enemy size (Standard basic size is 12)
-                const hitRadius = (e.size || 12) * hitRadiusRatio;
+                const hitRadius = (e.model.size || 12) * hitRadiusRatio;
 
-                const dx = p.x - e.x;
-                const dy = p.y - e.y;
+                const dx = p.x - e.model.x;
+                const dy = p.y - e.model.y;
                 if (dx * dx + dy * dy < hitRadius * hitRadius) {
                     // Spark burst pointing from enemy toward tower
                     const tPos = tower.getPosition();
-                    const hitAngle = Math.atan2(tPos.y - e.y, tPos.x - e.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;
+                    const hitAngle = Math.atan2(tPos.y - e.model.y, tPos.x - e.model.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;
                     customEmitters.basicStrikeManual(p.x, p.y, hitAngle);
 
                     // Apply knockback in projectile direction

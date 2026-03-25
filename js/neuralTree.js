@@ -1,6 +1,6 @@
 // neuralTree.js — Upgrade Tree UI (left half of screen during Upgrade Phase).
 // Phase 1: AWAKEN root node + 3 children (Basic Pulse, Reinforce, Sharpen).
-// Uses Node class from node.js for individual node logic.
+// Uses Node class from treeNode.js for individual node logic.
 
 const neuralTree = (() => {
     // Panel container position (the left half slides on/off)
@@ -86,6 +86,25 @@ const neuralTree = (() => {
 
         for (const def of NODE_DEFS) {
             const id = def.id;
+
+            // 0. Schema Validation
+            if (!id) {
+                console.warn(`[NODE INTEGRITY] A node is missing 'id'.`, def);
+                warnings++;
+                continue;
+            }
+            if (!def.isPlaceholder && !def.name) {
+                console.warn(`[NODE INTEGRITY] Node '${id}' is missing a 'name'.`);
+                warnings++;
+            }
+            if (!def.isPlaceholder && !def.costType) {
+                console.warn(`[NODE INTEGRITY] Node '${id}' is missing a 'costType'.`);
+                warnings++;
+            }
+            if (!def.isPlaceholder && typeof def.maxLevel !== 'number') {
+                console.warn(`[NODE INTEGRITY] Node '${id}' is missing a valid 'maxLevel' number.`);
+                warnings++;
+            }
 
             // 1. Check all children list this node as a parent
             if (def.childIds) {

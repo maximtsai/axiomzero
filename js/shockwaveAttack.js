@@ -167,12 +167,12 @@ const shockwaveAttack = (() => {
         let validHits = [];
         for (let i = 0; i < hits.length; i++) {
             const e = hits[i];
-            const dx = e.x - pos.x;
-            const dy = e.y - pos.y;
+            const dx = e.model.x - pos.x;
+            const dy = e.model.y - pos.y;
             const distSq = dx * dx + dy * dy;
 
             // Inclusion check: shockwave edge touches enemy edge
-            const checkR = model.radius + (e.size || 12);
+            const checkR = model.radius + (e.model.size || 12);
             if (distSq <= checkR * checkR) {
                 validHits.push(e);
             }
@@ -186,7 +186,7 @@ const shockwaveAttack = (() => {
 
             // Seismic Crush: +1 damage for every 10 missing health * level
             if (model.seismicCrushLevel > 0) {
-                const missingHealth = Math.max(0, e.maxHealth - e.health);
+                const missingHealth = Math.max(0, e.model.maxHealth - e.model.health);
                 actualDamage += Math.floor(missingHealth / 10) * model.seismicCrushLevel;
             }
 
@@ -197,8 +197,8 @@ const shockwaveAttack = (() => {
                 if (typeof e.forceSlow === 'function') {
                     e.forceSlow(0.2, 1.1);
                 }
-                const dx = e.x - pos.x;
-                const dy = e.y - pos.y;
+                const dx = e.model.x - pos.x;
+                const dy = e.model.y - pos.y;
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
                 e.applyKnockback(dx / dist, dy / dist, 5);
             }

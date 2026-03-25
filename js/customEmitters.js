@@ -294,7 +294,7 @@ const customEmitters = (() => {
             spritesToAnimate.push(enemy.view.hpImg);
         }
 
-        const targetScaleMultiplier = 1 + (90 / (90 + (enemy.size || 20)));
+        const targetScaleMultiplier = 1 + (90 / (90 + (enemy.model.size || 20)));
         const baseScaleX = enemy.view.img.scaleX;
         const baseScaleY = enemy.view.img.scaleY;
         const randRot = Math.random() * 0.3 - 0.15;
@@ -320,8 +320,8 @@ const customEmitters = (() => {
         });
 
         let duration = isSlow ? 420 : 90;
-        if (enemy && enemy.isBoss) duration = 800;
-        else if (enemy && enemy.type === 'bomb') duration = 250;
+        if (enemy && enemy.model.isBoss) duration = 800;
+        else if (enemy && enemy.model.type === 'bomb') duration = 250;
         if (durationOverride > 0) duration = durationOverride;
 
         PhaserScene.tweens.add({
@@ -408,9 +408,9 @@ const customEmitters = (() => {
                             const radiusSq = radius * radius;
                             for (let i = enemies.length - 1; i >= 0; i--) {
                                 const e = enemies[i];
-                                if (e && e.alive) {
-                                    const dx = e.x - x;
-                                    const dy = e.y - y;
+                                if (e && e.model.alive) {
+                                    const dx = e.model.x - x;
+                                    const dy = e.model.y - y;
                                     if (dx * dx + dy * dy <= radiusSq) {
                                         enemyManager.damageEnemy(e, 99);
                                     }

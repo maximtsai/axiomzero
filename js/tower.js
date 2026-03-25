@@ -524,7 +524,7 @@ const tower = (() => {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
-        projectileManager.fire(pos.x, pos.y, target.x, target.y, model.damage);
+        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, model.damage);
 
         // PRISMATIC ARRAY effect
         const ups = gameState.upgrades || {};
@@ -536,7 +536,7 @@ const tower = (() => {
                     if (!model.alive || !model.active) return;
                     const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
                     if (newTarget) {
-                        const angle = Math.atan2(newTarget.y - pos.y, newTarget.x - pos.x) + (Math.random() * 0.06 - 0.03);
+                        const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);
                         projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, model.damage);
                     }
                 });

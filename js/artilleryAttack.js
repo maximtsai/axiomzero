@@ -332,7 +332,7 @@ const artilleryAttack = (() => {
 
                 // FIRST STRIKE logic: +10 damage per level to enemies above 80% HP
                 if (model.firstStrikeLevel > 0) {
-                    const healthPct = enemy.health / enemy.maxHealth;
+                    const healthPct = enemy.model.health / enemy.model.maxHealth;
                     if (healthPct > 0.8) {
                         damage += 10 * model.firstStrikeLevel;
                     }
@@ -380,16 +380,16 @@ const artilleryAttack = (() => {
                 const e = activeEnemies[idx];
 
                 // Strike delay is ~1.5s total (targeting sequence)
-                let tx = e.x + (e.vx * 1);
-                let ty = e.y + (e.vy * 1);
+                let tx = e.model.x + (e.model.vx * 1);
+                let ty = e.model.y + (e.model.vy * 1);
 
                 const onScreen = tx >= minX && tx <= maxX && ty >= minY && ty <= maxY;
 
                 if (onScreen) {
                     // If predicted target is too close to tower, shift it to where the enemy was 0.75s ago
                     if (Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y) < model.TOWER_MARGIN) {
-                        tx = e.x - (e.vx * 0.75);
-                        ty = e.y - (e.vy * 0.75);
+                        tx = e.model.x - (e.model.vx * 0.75);
+                        ty = e.model.y - (e.model.vy * 0.75);
                         console.log("used close shift");
                     }
                     console.log(`[DEBUG] Artillery found target after ${i + 1} attempts.`);

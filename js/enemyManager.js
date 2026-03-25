@@ -145,10 +145,10 @@ const enemyManager = (() => {
     function killAllNonBossEnemies() {
         for (let i = activeEnemies.length - 1; i >= 0; i--) {
             const e = activeEnemies[i];
-            if (e && e.alive && !e.isBoss) {
+            if (e && e.model.alive && !e.model.isBoss) {
                 // Inflict lethal damage using selfDamage to ensure it dies and triggers drops
-                e.takeDamage(e.maxHealth * 10);
-                if (e.alive) {
+                e.takeDamage(e.model.maxHealth * 10);
+                if (e.model.alive) {
                     _killEnemy(e);
                 }
             }
@@ -347,8 +347,8 @@ const enemyManager = (() => {
             e.activate(sx, sy, currentScale);
 
             // Maintain type counts and protector lists
-            typeCounts[e.type] = (typeCounts[e.type] || 0) + 1;
-            if (e.type === 'protector') activeProtectors.push(e);
+            typeCounts[e.model.type] = (typeCounts[e.model.type] || 0) + 1;
+            if (e.model.type === 'protector') activeProtectors.push(e);
 
             // Aim at tower center
             e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
@@ -459,14 +459,14 @@ const enemyManager = (() => {
                     const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
 
                     fe.activate(fsx, fsy, currentScale, { initialSpeedMult: 6, rampDuration: 1.1 });
-                    typeCounts[fe.type] = (typeCounts[fe.type] || 0) + 1;
+                    typeCounts[fe.model.type] = (typeCounts[fe.model.type] || 0) + 1;
                     fe.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
                     activeEnemies.push(fe);
                 }
             });
         }
 
-        typeCounts[mb.type] = (typeCounts[mb.type] || 0) + 1;
+        typeCounts[mb.model.type] = (typeCounts[mb.model.type] || 0) + 1;
 
         mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(mb);
@@ -523,7 +523,7 @@ const enemyManager = (() => {
         // Use standard scale factor or custom logic if needed
         b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
 
-        typeCounts[b.type] = (typeCounts[b.type] || 0) + 1;
+        typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
 
         b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(b);
@@ -533,10 +533,10 @@ const enemyManager = (() => {
     }
 
     function _releaseToPool(e) {
-        if (e.isBoss || e.isMiniboss) return; // Bosses are not pooled
+        if (e.model.isBoss || e.model.isMiniboss) return; // Bosses are not pooled
 
-        if (pools[e.type]) {
-            pools[e.type].release(e);
+        if (pools[e.model.type]) {
+            pools[e.model.type].release(e);
         } else {
             // Fallback for types not explicitly in pools (shouldn't happen with current logic)
             pools.basic.release(e);
@@ -573,9 +573,9 @@ const enemyManager = (() => {
 
                     for (let i = 0; i < activeEnemies.length; i++) {
                         const target = activeEnemies[i];
-                        if (!target.alive || target.type !== typeToAvoid) continue;
+                        if (!target.model.alive || target.model.type !== typeToAvoid) continue;
 
-                        const targetAngle = Math.atan2(target.y - GAME_CONSTANTS.halfHeight, target.x - GAME_CONSTANTS.halfWidth);
+                        const targetAngle = Math.atan2(target.model.y - GAME_CONSTANTS.halfHeight, target.model.x - GAME_CONSTANTS.halfWidth);
                         const diff = Phaser.Math.Angle.ShortestBetween(
                             Phaser.Math.RadToDeg(angle),
                             Phaser.Math.RadToDeg(targetAngle)
@@ -605,8 +605,8 @@ const enemyManager = (() => {
     function _onTowerDied() {
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
-            if (e.isBoss || e.isMiniboss) {
-                e.invincible = true;
+            if (e.model.isBoss || e.model.isMiniboss) {
+                e.model.invincible = true;
             }
         }
     }
@@ -619,17 +619,17 @@ const enemyManager = (() => {
 
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
-            if (!e.alive) continue;
+            if (!e.model.alive) continue;
 
-            const dx = e.x - x;
-            const dy = e.y - y;
+            const dx = e.model.x - x;
+            const dy = e.model.y - y;
             const d2 = dx * dx + dy * dy;
 
             // Pre-check squared distance before sqrt
-            const maxDR = bestEffectiveDist + (e.size || 0);
+            const maxDR = bestEffectiveDist + (e.model.size || 0);
             if (d2 < maxDR * maxDR) {
                 const dist = Math.sqrt(d2);
-                const effectiveDist = dist - (e.size || 0);
+                const effectiveDist = dist - (e.model.size || 0);
 
                 if (effectiveDist < bestEffectiveDist) {
                     bestEffectiveDist = effectiveDist;
@@ -668,9 +668,9 @@ const enemyManager = (() => {
         result.length = 0;
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
-            if (!e.alive) continue;
-            const reach = halfSize + e.size;
-            if (Math.abs(e.x - cx) <= reach && Math.abs(e.y - cy) <= reach) {
+            if (!e.model.alive) continue;
+            const reach = halfSize + e.model.size;
+            if (Math.abs(e.model.x - cx) <= reach && Math.abs(e.model.y - cy) <= reach) {
                 result.push(e);
             }
         }
@@ -691,13 +691,13 @@ const enemyManager = (() => {
         result.length = 0;
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
-            if (!e.alive || e === ignoreEnemy) continue;
+            if (!e.model.alive || e === ignoreEnemy) continue;
 
-            const dx = Math.abs(e.x - cx);
-            const dy = Math.abs(e.y - cy);
+            const dx = Math.abs(e.model.x - cx);
+            const dy = Math.abs(e.model.y - cy);
 
             // Manhattan distance defines a diamond
-            if (dx + dy <= radius + (e.size || 0)) {
+            if (dx + dy <= radius + (e.model.size || 0)) {
                 result.push(e);
             }
         }
@@ -707,23 +707,23 @@ const enemyManager = (() => {
     // ── damage ───────────────────────────────────────────────────────────────
 
     function damageEnemy(enemy, amount) {
-        if (!enemy || !enemy.alive) return;
+        if (!enemy || !enemy.model.alive) return;
 
         let died = enemy.takeDamage(amount);
         let isExecuted = false;
 
         const zeroDayLevel = (gameState.upgrades && (gameState.upgrades['zero_day_exploit'] || gameState.upgrades.zero_day_exploit)) || 0;
-        if (!died && zeroDayLevel > 0 && !enemy.isBoss && !enemy.isMiniboss && enemy.health <= enemy.maxHealth * 0.15) {
+        if (!died && zeroDayLevel > 0 && !enemy.model.isBoss && !enemy.model.isMiniboss && enemy.model.health <= enemy.model.maxHealth * 0.15) {
             // Execution condition met: enemy survived but is now at or below 15% HP.
             // Force lethal damage without a second hit-flash (using model directly)
-            enemy.model.takeDamage(enemy.health + 1000);
+            enemy.model.takeDamage(enemy.model.health + 1000);
             died = true;
             isExecuted = true;
         }
 
         // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
-        const finalAmount = Math.floor(enemy.lastDamageAmount !== undefined ? enemy.lastDamageAmount : amount);
-        const isProtected = enemy.lastDamageWasProtected || false;
+        const finalAmount = Math.floor(enemy.model.lastDamageAmount !== undefined ? enemy.model.lastDamageAmount : amount);
+        const isProtected = enemy.model.lastDamageWasProtected || false;
 
         // Color is HOSTILE (pink) normally. Purple for execution.
         let textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
@@ -731,7 +731,7 @@ const enemyManager = (() => {
 
         if (gameState.settings.showDamageNumbers) {
             const displayText = isExecuted ? ' EXECUTED ' : finalAmount.toString();
-            floatingText.show(enemy.x, enemy.y - 14, '\n ' + displayText + ' \n ', {
+            floatingText.show(enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', {
                 fontFamily: 'VCR',
                 fontSize: isExecuted ? 24 : 28,
                 color: textColor,
@@ -742,9 +742,9 @@ const enemyManager = (() => {
                 scaleX: isExecuted ? 0.92 : 1,
             });
         }
-        if (died && !enemy.isGhosting) {
-            if (enemy.type === 'protector') {
-                enemy.isGhosting = true;
+        if (died && !enemy.model.isGhosting) {
+            if (enemy.model.type === 'protector') {
+                enemy.model.isGhosting = true;
                 // Fade out to signify its "dying" state while aura remains
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
                 PhaserScene.time.delayedCall(10, () => {
@@ -759,13 +759,13 @@ const enemyManager = (() => {
     function _killEnemy(enemy) {
         if (typeof customEmitters !== 'undefined' && customEmitters.createEnemyDeathAnim) {
             const boss5Duration = (enemy.model && enemy.model.bossId === 'boss5') ? 1800 : 0;
-            customEmitters.createEnemyDeathAnim(enemy, (enemy.isBoss || enemy.isMiniboss), boss5Duration);
+            customEmitters.createEnemyDeathAnim(enemy, (enemy.model.isBoss || enemy.model.isMiniboss), boss5Duration);
         }
 
-        const ex = enemy.x;
-        const ey = enemy.y;
-        const wasMiniboss = enemy.isMiniboss;
-        const wasBoss = enemy.isBoss;
+        const ex = enemy.model.x;
+        const ey = enemy.model.y;
+        const wasMiniboss = enemy.model.isMiniboss;
+        const wasBoss = enemy.model.isBoss;
 
         enemy.deactivate();
 
@@ -778,8 +778,8 @@ const enemyManager = (() => {
         }
 
         // Maintain type counts and protector lists
-        typeCounts[enemy.type] = Math.max(0, (typeCounts[enemy.type] || 1) - 1);
-        if (enemy.type === 'protector') {
+        typeCounts[enemy.model.type] = Math.max(0, (typeCounts[enemy.model.type] || 1) - 1);
+        if (enemy.model.type === 'protector') {
             const pIdx = activeProtectors.indexOf(enemy);
             if (pIdx !== -1) {
                 activeProtectors[pIdx] = activeProtectors[activeProtectors.length - 1];
@@ -789,8 +789,8 @@ const enemyManager = (() => {
 
         if (wasMiniboss) {
             minibossAlive = false;
-            if (enemy.img) {
-                customEmitters.minibossExplosion(enemy.img);
+            if (enemy.view.img) {
+                customEmitters.minibossExplosion(enemy.view.img);
             }
 
             // Update highest miniboss level defeated
@@ -895,14 +895,14 @@ const enemyManager = (() => {
             messageBus.publish('bossDefeated', ex, ey);
             debugLog('Boss defeated');
         } else {
-            if (enemy.type === 'logic_stray') {
+            if (enemy.model.type === 'logic_stray') {
                 resourceManager.spawnProcessorDrop(ex, ey);
-            } else if (enemy.type === 'bomb') {
+            } else if (enemy.model.type === 'bomb') {
                 const ups = gameState.upgrades || {};
                 const payloadLv = ups.volatile_payload || 0;
                 // Intentionally slightly fudged numbers compared to description
                 const explosionRange = 175 * (1 + 0.16 * payloadLv);
-                const explosionDamage = enemy.maxHealth * 1.25;
+                const explosionDamage = enemy.model.maxHealth * 1.25;
                 const bx = ex;
                 const by = ey;
 
@@ -917,7 +917,7 @@ const enemyManager = (() => {
                     }
                 });
             }
-            messageBus.publish('enemyKilled', ex, ey, enemy.baseResourceDrop);
+            messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop);
         }
     }
 
@@ -975,29 +975,29 @@ const enemyManager = (() => {
 
         for (let i = activeEnemies.length - 1; i >= 0; i--) {
             const e = activeEnemies[i];
-            if (!e || !e.alive) continue;
+            if (!e || !e.model.alive) continue;
 
             e.update(dt * spawnSpeedMultiplier);
 
             // Tower contact check — minibosses do NOT die on contact currently
-            if (!e.isMiniboss) {
-                const dx = e.x - tPos.x;
-                const dy = e.y - tPos.y;
+            if (!e.model.isMiniboss) {
+                const dx = e.model.x - tPos.x;
+                const dy = e.model.y - tPos.y;
                 const distSq = dx * dx + dy * dy;
 
                 // Attack range based exactly on size for melee units
-                const contactR = 10 + (e.size || 15) * 1.105;
+                const contactR = 10 + (e.model.size || 15) * 1.105;
                 const contactR2 = contactR * contactR;
 
                 if (distSq < contactR2) {
-                    e.isAttacking = true;
+                    e.model.isAttacking = true;
 
-                    if (e.attackTimer <= 0 && e.damage > 0) {
-                        tower.takeDamage(e.damage, e.x, e.y);
-                        e.attackTimer = e.attackCooldown;
+                    if (e.model.attackTimer <= 0 && e.model.damage > 0) {
+                        tower.takeDamage(e.model.damage, e.model.x, e.model.y);
+                        e.model.attackTimer = e.model.attackCooldown;
 
                         // Apply self-damage only when it hits
-                        if (e.takeDamage(e.selfDamage)) {
+                        if (e.takeDamage(e.model.selfDamage)) {
                             // Only kill if the self-damage was lethal
                             _killEnemy(e);
                         }
@@ -1007,7 +1007,7 @@ const enemyManager = (() => {
                     // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;
                 } else {
-                    e.isAttacking = false;
+                    e.model.isAttacking = false;
                 }
             }
         }

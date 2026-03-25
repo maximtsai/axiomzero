@@ -226,10 +226,10 @@ const lightningAttack = (() => {
         if (!first) return;
 
         const hitEnemies = [first];
-        view.drawBolt(pos.x, pos.y, first.x, first.y);
+        view.drawBolt(pos.x, pos.y, first.model.x, first.model.y);
 
         let actualDamage = model.damage;
-        if (model.staticChargeMultiplier > 0 && first.health >= first.maxHealth * 0.8) {
+        if (model.staticChargeMultiplier > 0 && first.model.health >= first.model.maxHealth * 0.8) {
             actualDamage *= (1 + model.staticChargeMultiplier);
         }
         enemyManager.damageEnemy(first, actualDamage);
@@ -243,7 +243,7 @@ const lightningAttack = (() => {
             const enemies = enemyManager.getActiveEnemies();
             for (let i = 0; i < enemies.length; i++) {
                 const e = enemies[i];
-                if (!e.alive) continue;
+                if (!e.model.alive) continue;
                 // Skip already hit enemies
                 let alreadyHit = false;
                 for (let j = 0; j < hitEnemies.length; j++) {
@@ -251,15 +251,15 @@ const lightningAttack = (() => {
                 }
                 if (alreadyHit) continue;
 
-                const dx = e.x - lastHit.x;
-                const dy = e.y - lastHit.y;
+                const dx = e.model.x - lastHit.model.x;
+                const dy = e.model.y - lastHit.model.y;
                 const d2 = dx * dx + dy * dy;
                 
                 // Pre-check with squared distance to avoid sqrt in 99% of cases
-                const maxDR = bestDist + (e.size || 0) + (lastHit.size || 0);
+                const maxDR = bestDist + (e.model.size || 0) + (lastHit.model.size || 0);
                 if (d2 < maxDR * maxDR) {
                     const dist = Math.sqrt(d2);
-                    const effectiveDist = dist - (e.size || 0) - (lastHit.size || 0);
+                    const effectiveDist = dist - (e.model.size || 0) - (lastHit.model.size || 0);
     
                     if (effectiveDist < bestDist) {
                         bestDist = effectiveDist;
@@ -270,10 +270,10 @@ const lightningAttack = (() => {
 
             if (!bestEnemy) break;
 
-            view.drawBolt(lastHit.x, lastHit.y, bestEnemy.x, bestEnemy.y);
+            view.drawBolt(lastHit.model.x, lastHit.model.y, bestEnemy.model.x, bestEnemy.model.y);
 
             let chainDamage = model.damage;
-            if (model.staticChargeMultiplier > 0 && bestEnemy.health >= bestEnemy.maxHealth * 0.8) {
+            if (model.staticChargeMultiplier > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
                 chainDamage *= (1 + model.staticChargeMultiplier);
             }
             enemyManager.damageEnemy(bestEnemy, chainDamage);
