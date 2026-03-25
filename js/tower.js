@@ -362,6 +362,7 @@ const tower = (() => {
 
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
+        messageBus.subscribe('statsRecalculated', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });

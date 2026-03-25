@@ -146,6 +146,9 @@ const upgradeDispatcher = (() => {
             recalcArtillery();
         }
         recalcThreatResponse();
+        
+        // Notify any global listeners that a bulk update occurred
+        messageBus.publish('statsRecalculated');
     }
 
     return {
