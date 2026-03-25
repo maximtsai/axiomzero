@@ -24,4 +24,11 @@ const audioFiles = [
     { name: 'artillery_selected', src: 'audio/artillery_selected.mp3' },
     { name: 'artillery_explode', src: 'audio/artillery_explode.mp3' },
     { name: '8_bit_explosion', src: 'audio/8_bit_explosion.mp3' },
+    { name: 'tower_hurt', src: 'audio/tower_hurt.mp3' },
+    { name: 'tower_hurt2', src: 'audio/tower_hurt2.mp3' },
+    { name: 'cursor_pulse', src: 'audio/cursor_pulse.mp3' },
+    { name: 'laser_long', src: 'audio/laser_long.mp3' },
+    { name: 'laser_end', src: 'audio/laser_end.mp3' },
+    { name: 'basic_shoot', src: 'audio/basic_shoot.mp3' },
+    { name: 'basic_shoot2', src: 'audio/basic_shoot2.mp3' },
 ];

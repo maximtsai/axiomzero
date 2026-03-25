@@ -337,6 +337,7 @@ class TowerView {
 const tower = (() => {
     const model = new TowerModel();
     const view = new TowerView();
+    let _hurtSoundIndex = 0;
 
     function init() {
         view._hitAnimPool = new ObjectPool(
@@ -405,7 +406,32 @@ const tower = (() => {
     }
 
     function takeDamage(amount, x, y) {
+        const canTakeDamage = model.alive && !model.isInvincible;
+        const damageTaken = Math.max(0, amount - model.armor);
         const survived = model.takeDamage(amount);
+
+        if (canTakeDamage && damageTaken > 0.5) {
+            let volume = 0.9;
+            let detune = 25;
+            const pct = damageTaken / model.maxHealth;
+
+            if (pct < 0.03) {
+                volume = 0.45;
+                detune = -200;
+            } else if (pct < 0.08) {
+                volume = 0.6;
+                detune = -75;
+            }
+
+            detune += (Math.random() * 30 - 15); // Small random variation
+
+            const key = (_hurtSoundIndex === 0) ? 'tower_hurt' : 'tower_hurt2';
+            _hurtSoundIndex = (_hurtSoundIndex + 1) % 2;
+
+            const s = audio.play(key, volume);
+            if (s) s.detune = detune;
+        }
+
         if (survived) {
             view.playHitFlash();
             zoomShake(1.007);

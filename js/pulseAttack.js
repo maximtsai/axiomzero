@@ -491,6 +491,7 @@ class PulseAttackView {
 const pulseAttack = (() => {
     const model = new PulseAttackModel();
     const view = new PulseAttackView();
+    let _lastPulseDetune = 0;
 
     // Reusable array for enemy queries — avoids GC
     const _hitBuffer = [];
@@ -564,6 +565,15 @@ const pulseAttack = (() => {
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
         const damageSize = (model.size / 2) + 5;
+
+        // Play cursor pulse sound with unique detune
+        let detune = (Math.random() * 500 - 250);
+        if (Math.abs(detune - _lastPulseDetune) < 50) {
+            detune = (Math.random() * 500 - 250);
+        }
+        _lastPulseDetune = detune;
+        const s = audio.play('cursor_pulse', 0.3);
+        if (s) s.detune = detune;
 
         view.playFireAnimation();
 

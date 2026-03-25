@@ -254,6 +254,7 @@ const laserAttack = (() => {
     const model = new LaserAttackModel();
     const view = new LaserAttackView();
     const _hitBuffer = [];
+    let _beamSound = null;
 
     function init() {
         view.init();
@@ -297,6 +298,10 @@ const laserAttack = (() => {
         } else {
             model.active = false;
             model.firing = false;
+            if (_beamSound) {
+                audio.fadeAway(_beamSound, 200);
+                _beamSound = null;
+            }
             view.hide();
             if (model.unlocked) view.show(model); // keep turret visible but beam off
         }
@@ -305,6 +310,10 @@ const laserAttack = (() => {
     function _update(delta) {
         if (!model.unlocked) return;
         if (!tower.isAlive()) {
+            if (_beamSound) {
+                audio.fadeAway(_beamSound, 100);
+                _beamSound = null;
+            }
             view.hide();
             return;
         }
@@ -342,6 +351,12 @@ const laserAttack = (() => {
                 model.firing = false;
                 model.tapering = true;
                 model.taperProgress = 0;
+
+                if (_beamSound) {
+                    audio.fadeAway(_beamSound, 150);
+                    _beamSound = null;
+                    audio.play('laser_end', 0.85);
+                }
             }
         } else if (model.tapering) {
             // Taper-down phase — shrink beam to 0
@@ -367,6 +382,10 @@ const laserAttack = (() => {
 
         view.show(model);
         messageBus.publish('SoundPlay', 'laser_start');
+        
+        let volume = 1.0;
+        if (model.apertureLevel > 0) volume += 0.1;
+        _beamSound = audio.play('laser_long', volume, true);
     }
 
     function _dealDamage(towerPos) {

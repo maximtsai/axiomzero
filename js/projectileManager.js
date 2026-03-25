@@ -3,6 +3,7 @@
 
 const projectileManager = (() => {
     const POOL_SIZE = 40;
+    let shootSoundIndex = 0;
 
     let pool = [];
     let activeProjectiles = [];
@@ -91,6 +92,13 @@ const projectileManager = (() => {
         p.img.setActive(true);
 
         activeProjectiles.push(p);
+
+        if (typeof audio !== 'undefined') {
+            const key = (shootSoundIndex === 0) ? 'basic_shoot' : 'basic_shoot2';
+            shootSoundIndex = (shootSoundIndex + 1) % 2;
+            const s = audio.play(key, 0.85);
+            if (s) s.detune = (Math.random() * 200 - 100);
+        }
     }
 
     function clearAll() {
