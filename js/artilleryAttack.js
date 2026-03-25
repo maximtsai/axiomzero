@@ -379,15 +379,20 @@ const artilleryAttack = (() => {
                 const idx = (startIndex + i) % activeEnemies.length;
                 const e = activeEnemies[idx];
 
-                // Strike delay is ~1.5s total (targeting sequence)
-                const futureX = e.x + (e.vx * 1.5);
-                const futureY = e.y + (e.vy * 1.5);
+                // Strike delay is ~0.5s total (targeting sequence)
+                let tx = e.x + (e.vx * 0.6);
+                let ty = e.y + (e.vy * 0.6);
 
-                const valid = futureX >= minX && futureX <= maxX &&
-                    futureY >= minY && futureY <= maxY &&
-                    (Math.abs(futureX - towerPos.x) + Math.abs(futureY - towerPos.y) >= model.TOWER_MARGIN);
+                const onScreen = tx >= minX && tx <= maxX && ty >= minY && ty <= maxY;
+                if (!onScreen) continue;
 
-                if (valid) return { x: futureX, y: futureY };
+                // If predicted target is too close to tower, shift it to where the enemy was 0.75s ago
+                if (Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y) < model.TOWER_MARGIN) {
+                    tx = e.x - (e.vx * 0.75);
+                    ty = e.y - (e.vy * 0.75);
+                }
+
+                return { x: tx, y: ty };
             }
         }
 
