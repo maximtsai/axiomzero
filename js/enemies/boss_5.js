@@ -100,12 +100,12 @@ class Boss5View extends EnemyView {
             };
 
             // Scaled pulse final sizes
-            triggerOne(this.pulse, 1050); // 750 * 1.4
-            PhaserScene.time.delayedCall(100, () => {
-                triggerOne(this.pulse2, 945); // 675 * 1.4
+            triggerOne(this.pulse, 915);
+            PhaserScene.time.delayedCall(90, () => {
+                triggerOne(this.pulse2, 825);
             });
-            PhaserScene.time.delayedCall(200, () => {
-                triggerOne(this.pulse3, 840); // 600 * 1.4
+            PhaserScene.time.delayedCall(180, () => {
+                triggerOne(this.pulse3, 735);
             });
 
             if (typeof cameraManager !== 'undefined') {

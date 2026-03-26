@@ -403,17 +403,18 @@ const customEmitters = (() => {
                         PhaserScene.cameras.main.shake(250, 0.015);
                         if (typeof audio !== 'undefined') audio.play('explosion_death', 0.82);
                         if (typeof enemyManager !== 'undefined') {
-                            const enemies = enemyManager.getActiveEnemies();
                             const radius = 240 * effectScale;
                             const radiusSq = radius * radius;
-                            for (let i = enemies.length - 1; i >= 0; i--) {
-                                const e = enemies[i];
-                                if (e && e.model.alive) {
-                                    const dx = e.model.x - x;
-                                    const dy = e.model.y - y;
-                                    if (dx * dx + dy * dy <= radiusSq) {
-                                        enemyManager.damageEnemy(e, 99);
-                                    }
+                            
+                            // Use spatial hash to quickly get targets in the bounding box
+                            const boxTargets = enemyManager.getEnemiesInSquareRange(x, y, radius);
+                            for (let i = 0; i < boxTargets.length; i++) {
+                                const e = boxTargets[i];
+                                const dx = e.model.x - x;
+                                const dy = e.model.y - y;
+                                // Exact circle check
+                                if (dx * dx + dy * dy <= radiusSq) {
+                                    enemyManager.damageEnemy(e, 99);
                                 }
                             }
                         }

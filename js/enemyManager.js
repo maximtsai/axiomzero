@@ -12,6 +12,10 @@ const enemyManager = (() => {
 
     let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
+    let spatialGrid = {};   // Fast spatial hash grid (Map of cellKey -> { enemies: [], active: boolean })
+    let specialEnemies = []; // Bosses and Minibosses not in grid
+    const CELL_SIZE = 150;  // Spatial grid bin size 
+    const GRID_PADDING = 60; // Max enemy radius for safe neighbor checks
     let activeProtectors = []; // persistent list of protectors for aura checks
     let typeCounts = {};    // tracks number of active enemies per type (for spawn limits)
     let spawnTimer = 0;
@@ -139,6 +143,11 @@ const enemyManager = (() => {
         }
         activeEnemies.length = 0;
         activeProtectors.length = 0;
+        specialEnemies.length = 0;
+        // Zero-garbage clear of the spatial grid
+        for (let key in spatialGrid) {
+            spatialGrid[key].length = 0;
+        }
         for (let key in typeCounts) typeCounts[key] = 0;
     }
 
@@ -602,6 +611,14 @@ const enemyManager = (() => {
         return null;
     }
 
+    /** 
+     * Converts a (cx, cy) grid coordinate to a unique integer key for spatial hashing. 
+     * Offset by 5000 to handle potential negative coordinates up to -750,000px reliably.
+     */
+    function _getGridKey(cx, cy) {
+        return (cx + 5000) * 10000 + (cy + 5000);
+    }
+
     function _onTowerDied() {
         for (let i = 0; i < activeEnemies.length; i++) {
             const e = activeEnemies[i];
@@ -617,23 +634,50 @@ const enemyManager = (() => {
         let best = null;
         let bestEffectiveDist = range;
 
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const e = activeEnemies[i];
-            if (!e.model.alive) continue;
-
+        // 1. Check special large enemies
+        for (let i = 0; i < specialEnemies.length; i++) {
+            const e = specialEnemies[i];
+            const maxDR = bestEffectiveDist + (e.model.size || 0);
             const dx = e.model.x - x;
             const dy = e.model.y - y;
             const d2 = dx * dx + dy * dy;
 
-            // Pre-check squared distance before sqrt
-            const maxDR = bestEffectiveDist + (e.model.size || 0);
             if (d2 < maxDR * maxDR) {
                 const dist = Math.sqrt(d2);
                 const effectiveDist = dist - (e.model.size || 0);
-
                 if (effectiveDist < bestEffectiveDist) {
                     bestEffectiveDist = effectiveDist;
                     best = e;
+                }
+            }
+        }
+
+        // 2. Check spatial grid (padded to account for max enemy radius)
+        const minCellX = Math.floor((x - range - GRID_PADDING) / CELL_SIZE);
+        const maxCellX = Math.floor((x + range + GRID_PADDING) / CELL_SIZE);
+        const minCellY = Math.floor((y - range - GRID_PADDING) / CELL_SIZE);
+        const maxCellY = Math.floor((y + range + GRID_PADDING) / CELL_SIZE);
+
+        for (let cx = minCellX; cx <= maxCellX; cx++) {
+            for (let cy = minCellY; cy <= maxCellY; cy++) {
+                const arr = spatialGrid[_getGridKey(cx, cy)];
+                if (arr) {
+                    for (let i = 0; i < arr.length; i++) {
+                        const e = arr[i];
+                        const maxDR = bestEffectiveDist + (e.model.size || 0);
+                        const dx = e.model.x - x;
+                        const dy = e.model.y - y;
+                        const d2 = dx * dx + dy * dy;
+
+                        if (d2 < maxDR * maxDR) {
+                            const dist = Math.sqrt(d2);
+                            const effectiveDist = dist - (e.model.size || 0);
+                            if (effectiveDist < bestEffectiveDist) {
+                                bestEffectiveDist = effectiveDist;
+                                best = e;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -654,51 +698,73 @@ const enemyManager = (() => {
         return activeProtectors;
     }
 
-    /**
-     * Get all alive enemies whose hitbox overlaps a square AOE.
-     * Uses simple abs-based box overlap — no sqrt.
-     * @param {number} cx        Center X of the AOE square
-     * @param {number} cy        Center Y of the AOE square
-     * @param {number} halfSize  Half-width of the AOE square
-     * @param {Array}  [out]     Optional reusable array to avoid GC
-     * @returns {Array} Enemies in range
-     */
     function getEnemiesInSquareRange(cx, cy, halfSize, out) {
         const result = out || [];
         result.length = 0;
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const e = activeEnemies[i];
-            if (!e.model.alive) continue;
-            const reach = halfSize + e.model.size;
+        
+        for (let i = 0; i < specialEnemies.length; i++) {
+            const e = specialEnemies[i];
+            const reach = halfSize + (e.model.size || 0);
             if (Math.abs(e.model.x - cx) <= reach && Math.abs(e.model.y - cy) <= reach) {
                 result.push(e);
+            }
+        }
+
+        const minCellX = Math.floor((cx - halfSize - GRID_PADDING) / CELL_SIZE);
+        const maxCellX = Math.floor((cx + halfSize + GRID_PADDING) / CELL_SIZE);
+        const minCellY = Math.floor((cy - halfSize - GRID_PADDING) / CELL_SIZE);
+        const maxCellY = Math.floor((cy + halfSize + GRID_PADDING) / CELL_SIZE);
+
+        for (let x = minCellX; x <= maxCellX; x++) {
+            for (let y = minCellY; y <= maxCellY; y++) {
+                const arr = spatialGrid[_getGridKey(x, y)];
+                if (arr) {
+                    for (let i = 0; i < arr.length; i++) {
+                        const e = arr[i];
+                        const reach = halfSize + (e.model.size || 0);
+                        if (Math.abs(e.model.x - cx) <= reach && Math.abs(e.model.y - cy) <= reach) {
+                            result.push(e);
+                        }
+                    }
+                }
             }
         }
         return result;
     }
 
-    /**
-     * Get all active enemies within a diamond shape (Manhattan distance).
-     * @param {number} cx        Center X of the AOE
-     * @param {number} cy        Center Y of the AOE
-     * @param {number} radius    Radius (Manhattan distance)
-     * @param {number} [ignoreEnemy=null] Optional enemy to ignore.
-     * @param {Array}  [out]     Optional reusable array to avoid GC
-     * @returns {Array} Enemies in range
-     */
     function getEnemiesInDiamondRange(cx, cy, radius, ignoreEnemy = null, out) {
         const result = out || [];
         result.length = 0;
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const e = activeEnemies[i];
-            if (!e.model.alive || e === ignoreEnemy) continue;
-
+        
+        for (let i = 0; i < specialEnemies.length; i++) {
+            const e = specialEnemies[i];
+            if (e === ignoreEnemy) continue;
             const dx = Math.abs(e.model.x - cx);
             const dy = Math.abs(e.model.y - cy);
-
-            // Manhattan distance defines a diamond
             if (dx + dy <= radius + (e.model.size || 0)) {
                 result.push(e);
+            }
+        }
+
+        const minCellX = Math.floor((cx - radius - GRID_PADDING) / CELL_SIZE);
+        const maxCellX = Math.floor((cx + radius + GRID_PADDING) / CELL_SIZE);
+        const minCellY = Math.floor((cy - radius - GRID_PADDING) / CELL_SIZE);
+        const maxCellY = Math.floor((cy + radius + GRID_PADDING) / CELL_SIZE);
+
+        for (let x = minCellX; x <= maxCellX; x++) {
+            for (let y = minCellY; y <= maxCellY; y++) {
+                const arr = spatialGrid[_getGridKey(x, y)];
+                if (arr) {
+                    for (let i = 0; i < arr.length; i++) {
+                        const e = arr[i];
+                        if (e === ignoreEnemy) continue;
+                        const dx = Math.abs(e.model.x - cx);
+                        const dy = Math.abs(e.model.y - cy);
+                        if (dx + dy <= radius + (e.model.size || 0)) {
+                            result.push(e);
+                        }
+                    }
+                }
             }
         }
         return result;
@@ -968,16 +1034,40 @@ const enemyManager = (() => {
             _spawnOne();
         }
 
-        // Move enemies & check tower contact
+        // Move enemies & populate spatial grid
+        // Zero-garbage clear: just set length=0 on existing arrays
+        for (let key in spatialGrid) {
+            spatialGrid[key].length = 0;
+        }
+        specialEnemies.length = 0;
+        
         const tPos = tower.getPosition();
         const contactR = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
         const contactR2 = contactR * contactR;
 
+        // Note: we iterate forward or backward, it doesn't matter for grid build
         for (let i = activeEnemies.length - 1; i >= 0; i--) {
             const e = activeEnemies[i];
             if (!e || !e.model.alive) continue;
 
             e.update(dt * spawnSpeedMultiplier);
+            
+            // Populate grid
+            if (e.model.isBoss || e.model.isMiniboss) {
+                specialEnemies.push(e);
+            } else {
+                const cx = Math.floor(e.model.x / CELL_SIZE);
+                const cy = Math.floor(e.model.y / CELL_SIZE);
+                const key = _getGridKey(cx, cy);
+                
+                // Keep the array reference to avoid re-allocating
+                let cell = spatialGrid[key];
+                if (!cell) {
+                    cell = [];
+                    spatialGrid[key] = cell;
+                }
+                cell.push(e);
+            }
 
             // Tower contact check — minibosses do NOT die on contact currently
             if (!e.model.isMiniboss) {
