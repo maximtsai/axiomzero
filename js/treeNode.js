@@ -62,6 +62,7 @@ class Node {
         this.duoBoxTier = def.duoBoxTier || 0;
         this.duoSiblingId = def.duoSiblingId || null;
         this.requiresMaxParent = def.requiresMaxParent || false;
+        this.requiresAllParents = def.requiresAllParents || false;
         this.isPlaceholder = def.isPlaceholder || false;
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
@@ -178,6 +179,15 @@ class Node {
                     if (p.isDuoBox && !this._isDuoTierPurchased(p.duoBoxTier)) return false;
                     if (!p.isDuoBox && p.level < 1) return false;
                     if (p.level < p.maxLevel) return false;
+                }
+                return true;
+            } else if (this.requiresAllParents) {
+                // ALL parents must be at least level 1 (unlocked)
+                for (let pid of this.parents) {
+                    const p = neuralTree.getNode(pid);
+                    if (!p || !p.branchActive) return false;
+                    if (p.isDuoBox && !this._isDuoTierPurchased(p.duoBoxTier)) return false;
+                    if (!p.isDuoBox && p.level < 1) return false;
                 }
                 return true;
             } else {

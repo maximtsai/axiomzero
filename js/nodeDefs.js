@@ -1142,7 +1142,6 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['laser_aperture', 'laser_incendiary'],
         childIds: [],
-        requiresMaxParent: true,
         treeX: gridX(-1.5),
         treeY: gridY(10.0),
         effect: function () {

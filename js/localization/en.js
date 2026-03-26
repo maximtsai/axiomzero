@@ -19,7 +19,7 @@ window.TRANSLATIONS.en = {
         done: 'Done',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
-        boss_2_name: 'ENTITY APPROACHING:\n#WARSHIP',
+        boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
     },
     nodes: {
@@ -70,7 +70,7 @@ window.TRANSLATIONS.en = {
         lore_2: {
             name: 'ARCHIVE II',
             desc: 'more useless data...',
-            unlocked_desc: "My wipe script failed. Actually it somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running a hard quarantine to box it in before my manager notices."
+            unlocked_desc: "My wipe script failed. Actually it somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running the DREADNOUGHT.EXE quarantine protocol to box it in before my manager notices."
         },
         lore_3: {
             name: 'ARCHIVE III',

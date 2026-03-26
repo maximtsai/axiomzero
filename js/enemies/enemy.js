@@ -418,6 +418,10 @@ class EnemyView {
         if (this.enemyGlow) this.enemyGlow.setScale(scale);
     }
 
+    setHPOrigin(x, y) {
+        if (this.hpImg) this.hpImg.setOrigin(x, y);
+    }
+
     playHitFeedback(config = {}) {
         if (!this.img || !this.img.scene) return;
 
@@ -479,6 +483,10 @@ class Enemy {
 
     setScale(scale) {
         this.view.setScale(scale);
+    }
+
+    setHPOrigin(x, y) {
+        this.view.setHPOrigin(x, y);
     }
 
     update(dt) {
