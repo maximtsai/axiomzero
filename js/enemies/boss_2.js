@@ -1,6 +1,6 @@
 // js/enemies/boss_2.js — Phase 2 boss (MVC).
 // Spawns when wave progress reaches 100% on Level 2.
-// Moves 2.5x as fast as a basic enemy and has a similar starting speed boost to Boss 1.
+// Moves 3.0x as fast as a basic enemy and has a similar starting speed boost to Boss 1.
 // 200 base health.
 
 const BOSS_2_STATES = {
@@ -60,6 +60,7 @@ class Boss2Model extends BossModel {
             if (dist < 400) {
                 this.state = BOSS_2_STATES.CIRCLING;
                 this.circlingTime = 0;
+                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.0;
             }
         } else if (this.state === BOSS_2_STATES.CIRCLING) {
             this.circlingTime += dt;
@@ -260,7 +261,7 @@ class Boss2 extends Boss {
             maxHealth: bossHealth,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE,
             selfDamage: 0,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.0, // 2.0x speed
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0, // 3.0x speed
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
