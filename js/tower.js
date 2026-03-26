@@ -35,10 +35,12 @@ class TowerModel {
         const armorLv = ups.armor || 0;
         const baseHpLv = ups.base_hp_boost || 0;
         const overclockLv = ups.overclock || 0;
+        const anchorHp = (ups.physical_anchor || 0) * 40;
 
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 10 * baseHpLv;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 10 * baseHpLv + anchorHp;
+        const shellDamage = (ups.shell_access || 0) * 4;
 
-        this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv;
+        this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + shellDamage;
 
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         const lvlCfg = getCurrentLevelConfig();

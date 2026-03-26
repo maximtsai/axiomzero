@@ -10,6 +10,7 @@ const projectileManager = (() => {
     let paused = false;
 
     let hitAnimPool = null;
+    const _queryResults = [];
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -120,8 +121,11 @@ const projectileManager = (() => {
         if (activeProjectiles.length === 0 || paused) return;
 
         const dt = delta / 1000;
-        const enemies = enemyManager.getActiveEnemies();
         const hitRadiusRatio = GAME_CONSTANTS.PROJECTILE_HIT_RADIUS / 12;
+        // The spatial grid natively pads by 60px (max standard enemy size).
+        // If bullet hits are physically scaled up by hitRadiusRatio, we must expand our search area 
+        // to guarantee we catch large enemies that are mathematically "touching" the bullet from far away.
+        const searchRadius = 60 * Math.max(0, hitRadiusRatio - 1);
 
         for (let i = activeProjectiles.length - 1; i >= 0; i--) {
             const p = activeProjectiles[i];
@@ -142,10 +146,13 @@ const projectileManager = (() => {
             // Lifetime
             p.life -= delta;
 
-            // Collision with enemies
+            // Collision with enemies via fast spatial hash
             let hit = false;
-            for (let j = 0; j < enemies.length; j++) {
-                const e = enemies[j];
+            _queryResults.length = 0; // Zero-garbage clear
+            enemyManager.getEnemiesInSquareRange(p.x, p.y, searchRadius, _queryResults);
+
+            for (let j = 0; j < _queryResults.length; j++) {
+                const e = _queryResults[j];
                 if (!e.model.alive) continue;
 
                 // Scale hit detection by enemy size (Standard basic size is 12)

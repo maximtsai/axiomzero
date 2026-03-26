@@ -174,6 +174,7 @@ class LightningAttackView {
 const lightningAttack = (() => {
     const model = new LightningAttackModel();
     const view = new LightningAttackView();
+    const _queryResults = []; // Reusable array to eliminate GC during chain lookups
 
     function init() {
         view.init();
@@ -239,10 +240,13 @@ const lightningAttack = (() => {
         for (let c = 1; c < model.chainCount; c++) {
             let bestDist = model.CHAIN_RANGE;
             let bestEnemy = null;
+    
+            // Fast lookup in range
+            _queryResults.length = 0;
+            enemyManager.getEnemiesInSquareRange(lastHit.model.x, lastHit.model.y, model.CHAIN_RANGE, _queryResults);
 
-            const enemies = enemyManager.getActiveEnemies();
-            for (let i = 0; i < enemies.length; i++) {
-                const e = enemies[i];
+            for (let i = 0; i < _queryResults.length; i++) {
+                const e = _queryResults[i];
                 if (!e.model.alive) continue;
                 // Skip already hit enemies
                 let alreadyHit = false;
@@ -250,7 +254,7 @@ const lightningAttack = (() => {
                     if (hitEnemies[j] === e) { alreadyHit = true; break; }
                 }
                 if (alreadyHit) continue;
-
+    
                 const dx = e.model.x - lastHit.model.x;
                 const dy = e.model.y - lastHit.model.y;
                 const d2 = dx * dx + dy * dy;
