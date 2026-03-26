@@ -7,11 +7,11 @@ class LaserAttackModel {
         this.ORBIT_RADIUS = 40;          // px from tower center
         this.ORBIT_SPEED = 0.41;        // radians/second
         this.BEAM_LENGTH = 1000;         // px
-        this.BEAM_VISUAL_HALF_WIDTH = 20;// visual beam half-width (40px total)
-        this.BEAM_DAMAGE_HALF_WIDTH = 30;// damage half-width (60px total)
+        this.BEAM_VISUAL_HALF_WIDTH = 25;// visual beam half-width (50px total)
+        this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
         this.BASE_DAMAGE_PER_TICK = 8;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
-        this.FIRE_DURATION = 2500;       // ms beam is active
+        this.FIRE_DURATION = 3000;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
 
         this.active = false;    // true when combat phase AND node purchased
@@ -47,7 +47,7 @@ class LaserAttackModel {
     }
 
     getFireDuration() {
-        return this.FIRE_DURATION + this.durationLevel * 500;
+        return this.FIRE_DURATION + this.durationLevel * 400;
     }
 
     getTurretX(towerX, offset = 0) {
@@ -382,7 +382,7 @@ const laserAttack = (() => {
 
         view.show(model);
         messageBus.publish('SoundPlay', 'laser_start');
-        
+
         let volume = 1.0;
         if (model.apertureLevel > 0) volume += 0.1;
         _beamSound = audio.play('laser_long', volume, true);

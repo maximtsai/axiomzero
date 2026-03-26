@@ -1,7 +1,7 @@
-// cryptoMine.js — Phase 3 UI for depositing DATA and mining NETCOIN.
+// coinMine.js — Phase 3 UI for depositing DATA and mining NETCOIN.
 // Accessed via a button in the Neural Tree.
 
-const cryptoMine = (() => {
+const coinMine = (() => {
     let bgOverlay = null;
     let blocker = null;
     let popupBg = null;
@@ -31,7 +31,7 @@ const cryptoMine = (() => {
         popupBg.setDepth(depth + 2);
         popupBg.setScrollFactor(0);
 
-        titleText = PhaserScene.add.text(cx - width / 2 + 30, cy - height / 2 + 20, t('ui', 'crypto_mine'), {
+        titleText = PhaserScene.add.text(cx - width / 2 + 30, cy - height / 2 + 20, t('ui', 'coin_mine'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '26px',
             color: '#ff9500',

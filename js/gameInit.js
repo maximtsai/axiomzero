@@ -97,7 +97,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     neuralTree.init();
     gameHUD.init();
     iterationOverScreen.init();
-    cryptoMine.init();
+    coinMine.init();
     tutorialManager.init();
 
     // Camera & transition — cameraManager before transitionManager

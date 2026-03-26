@@ -204,8 +204,22 @@ const audio = {
         globalMusicVol = newVol;
         gameState.settings.globalMusicVol = newVol;
         saveGame();
-        if (globalMusic) globalMusic.volume = globalMusic.fullVolume * newVol;
-        if (globalTempMusic) globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
+        // Cancel any active fade tweens before overriding volume, so they
+        // don't race against and undo the value we are about to set.
+        if (globalMusic) {
+            if (globalMusic.currTween) {
+                globalMusic.currTween.stop();
+                globalMusic.currTween = null;
+            }
+            globalMusic.volume = globalMusic.fullVolume * newVol;
+        }
+        if (globalTempMusic) {
+            if (globalTempMusic.currTween) {
+                globalTempMusic.currTween.stop();
+                globalTempMusic.currTween = null;
+            }
+            globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
+        }
         if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;
         if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * newVol;
     },
@@ -312,12 +326,19 @@ const audio = {
     /** Fade a sound in from current volume to target volume. */
     fadeIn: function (sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURATION) {
         const globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
-        return PhaserScene.tweens.add({
+        // Stop any in-flight tween so this one becomes the authoritative fade.
+        if (sound.currTween) {
+            sound.currTween.stop();
+            sound.currTween = null;
+        }
+        sound.currTween = PhaserScene.tweens.add({
             delay: AUDIO_CONSTANTS.FADE_IN_DELAY,
             targets: sound,
             volume: volume * globalToUse,
             duration,
-            ease: 'Quad.easeIn'
+            ease: 'Quad.easeIn',
+            onComplete: () => { sound.currTween = null; }
         });
+        return sound.currTween;
     }
 };

@@ -374,6 +374,7 @@ const enemyManager = (() => {
             'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
             'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
             'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
+            'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
         };
         return registry[className];

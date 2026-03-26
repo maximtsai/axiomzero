@@ -16,7 +16,7 @@ const neuralTree = (() => {
     let dragSurface = null;
     let titleText = null;
     let deployBtn = null;
-    let cryptoMineBtn = null;
+    let coinMineBtn = null;
     let lines = [];  // Phaser Graphics lines connecting parent → child
     let treeGroup = null;
     let draggableGroup = null;
@@ -58,7 +58,7 @@ const neuralTree = (() => {
         _createPanel();
         _createNodes();
         _createDeployButton();
-        _createCryptoMineButton();
+        _createCoinMineButton();
         _createScrollButtons();
         _initPools();
 
@@ -382,8 +382,8 @@ const neuralTree = (() => {
         treeGroup.add(deployBtn.getContainer ? deployBtn.getContainer() : deployBtn); // Note: Button doesn't expose container generally, maybe add multiple
     }
 
-    function _createCryptoMineButton() {
-        cryptoMineBtn = new Button({
+    function _createCoinMineButton() {
+        coinMineBtn = new Button({
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
@@ -403,24 +403,24 @@ const neuralTree = (() => {
                 y: 48,
             },
             onMouseUp: () => {
-                if (typeof cryptoMine !== 'undefined') {
-                    cryptoMine.show();
+                if (typeof coinMine !== 'undefined') {
+                    coinMine.show();
                 }
             },
         });
-        cryptoMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        cryptoMineBtn.addText(t('ui', 'mine'), {
+        coinMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
+        coinMineBtn.addText(t('ui', 'mine'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '21px',
             color: '#ff9500',
         });
-        cryptoMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);
-        cryptoMineBtn.setScrollFactor(0);
+        coinMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);
+        coinMineBtn.setScrollFactor(0);
 
-        cryptoMineBtn.setVisible(false);
-        cryptoMineBtn.setState(DISABLE);
+        coinMineBtn.setVisible(false);
+        coinMineBtn.setState(DISABLE);
 
-        treeGroup.add(cryptoMineBtn.getContainer ? cryptoMineBtn.getContainer() : cryptoMineBtn);
+        treeGroup.add(coinMineBtn.getContainer ? coinMineBtn.getContainer() : coinMineBtn);
     }
 
     function _initPools() {
@@ -650,10 +650,10 @@ const neuralTree = (() => {
             _showDeployButton();
         }
 
-        const mineLevel = (gameState.upgrades && gameState.upgrades.crypto_mine_unlock) || 0;
+        const mineLevel = (gameState.upgrades && gameState.upgrades.coin_mine_unlock) || 0;
         if (mineLevel > 0) {
-            cryptoMineBtn.setVisible(true);
-            cryptoMineBtn.setState(NORMAL);
+            coinMineBtn.setVisible(true);
+            coinMineBtn.setState(NORMAL);
         }
 
         _updateLines();
@@ -669,9 +669,9 @@ const neuralTree = (() => {
 
         deployBtn.setState(DISABLE);
 
-        if (cryptoMineBtn) {
-            cryptoMineBtn.setVisible(false);
-            cryptoMineBtn.setState(DISABLE);
+        if (coinMineBtn) {
+            coinMineBtn.setVisible(false);
+            coinMineBtn.setState(DISABLE);
         }
 
         if (scrollUpBtn) {
@@ -1188,15 +1188,15 @@ const neuralTree = (() => {
         }
     }
 
-    function _showCryptoMineButton() {
-        if (cryptoMineBtn) {
-            cryptoMineBtn.setVisible(true);
-            cryptoMineBtn.setState(NORMAL);
+    function _showCoinMineButton() {
+        if (coinMineBtn) {
+            coinMineBtn.setVisible(true);
+            coinMineBtn.setState(NORMAL);
         }
     }
 
     function getGroup() { return treeGroup; }
     function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCryptoMineButton, playPurchasePulse, getGroup, getDraggableGroup };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup };
 })();

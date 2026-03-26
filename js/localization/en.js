@@ -15,10 +15,11 @@ window.TRANSLATIONS.en = {
         neural_tree: 'NEURAL TREE',
         deploy: 'DEPLOY',
         mine: 'MINE',
-        crypto_mine: '// CRYPTO MINE',
+        coin_mine: '// COIN MINE',
         done: 'Done',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
+        boss_2_name: 'ENTITY APPROACHING:\n#WARSHIP',
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
     },
     nodes: {
@@ -34,7 +35,7 @@ window.TRANSLATIONS.en = {
 
         base_hp_boost: { name: 'SYSTEM REDUNDANCY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },
         regen: { name: 'AUTO-RESTORE', desc: '+0.2 health regen', popup: '+0.2 REGEN' },
-        crypto_mine_unlock: { name: 'CRYPTO MINE', desc: 'Unlocks the Crypto Mine.', popup: 'MINE UNLOCKED' },
+        coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'RESILIENCE', desc: 'Reduces incoming damage by 2.', popup: '+2 RESILIENCE' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots lightning every 3s that chains across enemies.', popup: 'LIGHTNING WEAPON' },
         shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a shockwave every 3s, damaging nearby enemies.', popup: 'SHOCKWAVE WEAPON' },

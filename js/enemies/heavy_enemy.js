@@ -25,7 +25,7 @@ class HeavyEnemyModel extends EnemyModel {
 
 class HeavyEnemyView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'heavy.png', 'basic_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(Enemy.TEX_KEY, 'heavy.png', 'heavy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
     }
 }
 
@@ -46,5 +46,6 @@ class HeavyEnemy extends Enemy {
         });
 
         if (this.view.img) this.view.img.setTint(0xffffff);
+        this.setEnemyGlow('heavy_glow.png');
     }
 }

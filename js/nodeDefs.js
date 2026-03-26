@@ -970,7 +970,7 @@ const NODE_DEFS = [
     },
     {
         id: 'unsecured_wallet',
-        name: 'ENCRYPTED WALLET',
+        name: 'UNSECURE WALLET',
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'unsecured_wallet.desc'),
         popupText: '+1 COIN',
@@ -1517,7 +1517,7 @@ const NODE_DEFS = [
         baseCost: 10,
         costType: 'data',
         parents: ['security_test_2', 'base_hp_boost'],
-        childIds: ['system_redundancy_placeholder', 'physical_anchor', 'crypto_mine_unlock'],
+        childIds: ['system_redundancy_placeholder', 'physical_anchor', 'coin_mine_unlock'],
         treeX: gridX(-2.0),
         treeY: gridY(7.5),
         effect: function () { },
@@ -1556,7 +1556,7 @@ const NODE_DEFS = [
         effect: function () { },
     },
     {
-        id: 'crypto_mine_unlock',
+        id: 'coin_mine_unlock',
         name: 'COIN MINE',
         icon: 'Skillicon14_35.png',
         description: 'Unlocks the Coin Mine.',
@@ -1573,7 +1573,7 @@ const NODE_DEFS = [
         treeY: gridY(7.5),
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
-                neuralTree._showCryptoMineButton();
+                neuralTree._showCoinMineButton();
             }
         },
     },

@@ -199,39 +199,6 @@ const waveManager = (() => {
                 messageBus.publish('triggerResourceVacuum');
             });
 
-            // Option A: Boss5-specific — second aftershock shockwave
-            if (isBoss5) {
-                PhaserScene.time.delayedCall(1500, () => {
-                    const aftershock = PhaserScene.add.nineslice(
-                        x, y, 'enemies', 'pink_pulse.png',
-                        200, 200, 65, 65, 65, 65
-                    );
-                    aftershock.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
-                    aftershock.setAlpha(0.9);
-
-                    PhaserScene.tweens.add({
-                        targets: aftershock,
-                        width: 2400,
-                        height: 2400,
-                        duration: 900,
-                        ease: 'Cubic.easeOut',
-                    });
-
-                    PhaserScene.tweens.add({
-                        targets: aftershock,
-                        alpha: 0,
-                        duration: 900,
-                        ease: 'Quad.easeIn',
-                        onComplete: () => {
-                            aftershock.destroy();
-                        }
-                    });
-
-                    if (typeof cameraManager !== 'undefined') {
-                        cameraManager.shake(500, 0.035);
-                    }
-                });
-            }
 
             // 5. Delay then transition — extended for Boss5
             const transitionDelay = isBoss5 ? 4000 : 2400;
