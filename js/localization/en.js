@@ -57,7 +57,7 @@ window.TRANSLATIONS.en = {
         manual_pulse_child_1_1: { name: 'ISOLATION PROTOCOL', desc: '+25% cursor damage per lvl if only one enemy is hit.', popup: 'ISOLATION PROTOCOL' },
         manual_pulse_child_1_2: { name: 'RELOAD EFFICIENCY', desc: 'Charges refill 25% faster', popup: 'RELOAD OPTIMIZED' },
         wide_pulse_child_1: { name: 'AREA SATURATION', desc: '+5% cursor damage per level for each additional enemy hit.', popup: 'AREA SATURATION' },
-        aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 4/8/12 damage.', popup: 'AFTERSHOCK' },
+        aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack that deals 6/8/10 damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '+50% cursor pulse size.', popup: 'COLOSSAL CURSOR' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain 1 DATA every 2s during combat.', popup: 'SNIFFER ACTIVE' },
         laser: { name: 'LASER', desc: 'Fires a powerful orbiting beam that pierces through all enemies it touches.' },
@@ -118,7 +118,7 @@ window.TRANSLATIONS.en = {
         backdoor_4: { name: 'BACKDOOR 4', desc: 'The final vulnerability in the legacy system chain.' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Instantly grants +15 DATA. Scavenging fragments from a discarded, open directory.' },
         junk_data_1: { name: 'COLLECT DATA', desc: 'Instantly grants +5 DATA.' },
-        junk_data_2: { name: 'JUNK PROCESSING', desc: "Instantly grants +10 DATA. One machine's trash is an AI's upgrade." }
+        junk_data_2: { name: 'JUNK DATA', desc: "Instantly grants +10 DATA. One machine's trash is an AI's upgrade." }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },

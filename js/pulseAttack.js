@@ -614,7 +614,7 @@ const pulseAttack = (() => {
                 view.playAftershockAnimation(cx, cy, model.size);
                 view.playRecoil();
 
-                const aftershockDamage = 4 * model.aftershockLevel;
+                const aftershockDamage = 4 + 2 * model.aftershockLevel;
                 const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
                 const aftershockHits = enemyManager.getEnemiesInSquareRange(cx, cy, aftershockSizeRadius, _hitBuffer);
                 for (let i = 0; i < aftershockHits.length; i++) {
