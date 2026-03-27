@@ -1127,7 +1127,24 @@ const enemyManager = (() => {
         }
     }
 
+    function spawnAt(type, x, y, config = {}) {
+        const p = pools[type];
+        if (!p) return null;
+        const e = p.get();
+        if (!e) return null;
+        
+        const scale = config.scale || (GAME_VARS.scaleFactor || 1);
+        e.activate(x, y, scale, config);
+        
+        typeCounts[e.model.type] = (typeCounts[e.model.type] || 0) + 1;
+        if (e.model.type === 'protector') activeProtectors.push(e);
+        
+        e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+        activeEnemies.push(e);
+        return e;
+    }
+
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
 })();

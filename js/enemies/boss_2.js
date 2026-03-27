@@ -5,13 +5,16 @@
 
 const BOSS_2_STATES = {
     TRAVEL: 'travel',
-    CIRCLING: 'circling'
+    CIRCLING: 'circling',
+    SETUP: 'setup',
+    AIMING: 'aiming',
+    BOMBARD: 'bombard'
 };
 
 class Boss2Model extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
-        this.initialSpeedMult = 7.0; // Same burst of speed as Boss 1
+        this.initialSpeedMult = 4.5; // Same burst of speed as Boss 1
         this.rampDuration = 1.5;
         this.size = 60;
         this.bossId = 'boss2';
@@ -24,6 +27,21 @@ class Boss2Model extends BossModel {
         this.circlingTime = 0;
         this.attackCooldown = 0;
         this.projectileDamage = 1;
+
+        // SETUP state
+        this.attackCount = 0;      // attacks fired while circling
+        this.setupDelay = 0;       // 1.5 s countdown before movement begins
+        this.setupTarget = null;   // { x, y } chosen flank position
+
+        // AIMING stage
+        this.turretRotation = 0;
+        this.maxTurretRotationSpeed = 1; // Radians per second
+
+        // BOMBARD stage
+        this.bombardTimer = 0;
+        this.spawnCount = 0;
+        this.spawnTimer = 0;
+        this.barrageCount = 0;
     }
 
     activate(x, y, config = {}) {
@@ -32,6 +50,14 @@ class Boss2Model extends BossModel {
         this.circlingTime = 0;
         this.attackCooldown = 0;
         this.projectileDamage = config.projectileDamage || 1.5;
+        this.attackCount = 0;
+        this.setupDelay = 0;
+        this.setupTarget = null;
+        this.turretRotation = this.baseRotation;
+        this.bombardTimer = 0;
+        this.spawnCount = 0;
+        this.spawnTimer = 0;
+        this.barrageCount = 0;
 
         // Initial rotation towards tower
         const dx = GAME_CONSTANTS.halfWidth - x;
@@ -43,6 +69,32 @@ class Boss2Model extends BossModel {
     update(dt) {
         const burnTick = super.update(dt);
         if (!this.alive || this.stunned || this.isAttacking) return burnTick;
+
+        const getDiff = (a, b) => {
+            let d = a - b;
+            while (d > Math.PI) d -= Math.PI * 2;
+            while (d < -Math.PI) d += Math.PI * 2;
+            return d;
+        };
+
+        const rotateTowards = (current, target, maxChange) => {
+            const diff = getDiff(target, current);
+
+            // Snap directly to target if distance is tiny
+            if (Math.abs(diff) < 0.01) return target;
+
+            // Arrival Smoothing: move a fraction (20%) of the way each frame
+            // This naturally eases out the rotation as we get closer to the target.
+            const smoothedStep = diff * 0.20;
+            return current + Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
+        };
+
+        const syncVelocity = (s) => {
+            if (s !== undefined) this.speed = s;
+            const effectiveSpeed = this.speed * this.speedMult;
+            this.vx = Math.cos(this.currentMoveRotation) * effectiveSpeed;
+            this.vy = Math.sin(this.currentMoveRotation) * effectiveSpeed;
+        };
 
         // Update attack cooldown
         if (this.attackCooldown > 0) {
@@ -56,12 +108,28 @@ class Boss2Model extends BossModel {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (this.state === BOSS_2_STATES.TRAVEL) {
+            // Rotate gradually towards the player
+            const angleToTower = Math.atan2(-dy, -dx);
+            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, angleToTower, this.maxRotationSpeed * dt);
+            this.baseRotation = this.currentMoveRotation;
+
             // Move directly towards tower (aimAt is already called by Enemy.update/ramp)
-            if (dist < 400) {
+            if (dist < 370) {
                 this.state = BOSS_2_STATES.CIRCLING;
                 this.circlingTime = 0;
+                this.attackCount = 0; // Reset circling attack count
                 this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.0;
+            } else {
+                const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0;
+                if (this.speed < targetSpeed) {
+                    // Gradually accelerate towards 3x base speed
+                    this.speed += 80 * dt;
+                    if (this.speed > targetSpeed) this.speed = targetSpeed;
+                }
             }
+
+            // Sync velocity with speed and rotation to ensure movement continues
+            syncVelocity();
         } else if (this.state === BOSS_2_STATES.CIRCLING) {
             this.circlingTime += dt;
             // 1. Calculate desired velocity vector
@@ -88,15 +156,131 @@ class Boss2Model extends BossModel {
             while (diff > Math.PI) diff -= Math.PI * 2;
             while (diff < -Math.PI) diff += Math.PI * 2;
 
-            const maxChange = this.maxRotationSpeed * dt;
-            const actualChange = Phaser.Math.Clamp(diff, -maxChange, maxChange);
-            this.currentMoveRotation += actualChange;
+            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
             this.baseRotation = this.currentMoveRotation;
 
             // 3. Update velocity based on current rotation and current speed
-            const effectiveSpeed = this.baseSpeed * (this.speed / (this.baseSpeed || 1)) * this.speedMult;
-            this.vx = Math.cos(this.currentMoveRotation) * effectiveSpeed;
-            this.vy = Math.sin(this.currentMoveRotation) * effectiveSpeed;
+            syncVelocity();
+        } else if (this.state === BOSS_2_STATES.SETUP) {
+            if (this.setupDelay > 0) {
+                // Drift with momentum — just let position update happen naturally
+                this.setupDelay -= dt;
+
+                // Choose flank target at the very end of the delay
+                if (this.setupDelay <= 0 && this.setupTarget === null) {
+                    this.setupDelay = 0;
+                    this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0; // Return to 3x speed
+                    const futureX = this.x + this.vx * 3;
+                    if (futureX < GAME_CONSTANTS.halfWidth) {
+                        this.setupTarget = { x: 210, y: GAME_CONSTANTS.halfHeight };
+                    } else {
+                        this.setupTarget = { x: GAME_CONSTANTS.WIDTH - 210, y: GAME_CONSTANTS.halfHeight };
+                    }
+                }
+            } else if (this.setupTarget !== null) {
+                // Steer toward setup target using same weighted-rotation system
+                const tdx = this.setupTarget.x - this.x;
+                const tdy = this.setupTarget.y - this.y;
+                const targetDist = Math.sqrt(tdx * tdx + tdy * tdy) || 1;
+
+                if (targetDist < 100) {
+                    this.state = BOSS_2_STATES.AIMING;
+                } else {
+                    // Normalize steering vector to ensure weights are consistent
+                    let desiredVx = tdx / targetDist;
+                    let desiredVy = tdy / targetDist;
+
+                    // Tower avoidance: if within 250 units, add radial push outward
+                    const avoidRadius = 250;
+                    if (dist < avoidRadius) {
+                        const pushStrength = Phaser.Math.Clamp((avoidRadius - dist) / avoidRadius, 0, 1);
+                        // Radial push (dx, dy are already the center-to-boss vector)
+                        desiredVx += (dx / (dist || 1)) * pushStrength * 3.0;
+                        desiredVy += (dy / (dist || 1)) * pushStrength * 3.0;
+                    }
+
+                    const targetRotation = Math.atan2(desiredVy, desiredVx);
+                    this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
+                    this.baseRotation = this.currentMoveRotation;
+
+                    syncVelocity();
+                }
+            }
+        } else if (this.state === BOSS_2_STATES.AIMING) {
+            // Speed steadily slows down
+            const speedMag = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+            if (speedMag > 0) {
+                const decel = 120 * dt;
+                const newSpeed = Math.max(0, speedMag - decel);
+                syncVelocity(newSpeed);
+            }
+
+            // Boss Rotation (perpendicular to tower)
+            const angleToTowerCenter = Math.atan2(-dy, -dx);
+            const opt1 = angleToTowerCenter + Math.PI / 2;
+            const opt2 = angleToTowerCenter - Math.PI / 2;
+
+            const targetBodyRot = Math.abs(getDiff(opt1, this.currentMoveRotation)) < Math.abs(getDiff(opt2, this.currentMoveRotation)) ? opt1 : opt2;
+            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetBodyRot, this.maxRotationSpeed * dt);
+            this.baseRotation = this.currentMoveRotation;
+
+            // Turret Rotation (slowly towards tower)
+            let tChange = this.maxTurretRotationSpeed * dt;
+            if (speedMag > 0.01) tChange *= 0.25;
+
+            const tDiff = getDiff(angleToTowerCenter, this.turretRotation);
+            if (Math.abs(tDiff) < 0.01) {
+                this.turretRotation = angleToTowerCenter;
+                this.state = BOSS_2_STATES.BOMBARD;
+                this.bombardTimer = 2.0;
+                this.spawnCount = 0;
+                this.spawnTimer = 0;
+                this.barrageCount = 0;
+            } else {
+                this.turretRotation = rotateTowards(this.turretRotation, angleToTowerCenter, tChange);
+            }
+        } else if (this.state === BOSS_2_STATES.BOMBARD) {
+            // Decelerate if still moving
+            const speedMag = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+            if (speedMag > 0) {
+                const decel = 120 * dt;
+                const newSpeed = Math.max(0, speedMag - decel);
+                syncVelocity(newSpeed);
+            }
+
+            // Turret Rotation: Track tower normally, but realign with ship during the final delay
+            const angleToTowerCenter = Math.atan2(-dy, -dx);
+            const targetTurretRot = (this.barrageCount === 2) ? this.baseRotation : angleToTowerCenter;
+
+            this.turretRotation = rotateTowards(this.turretRotation, targetTurretRot, this.maxTurretRotationSpeed * dt);
+
+            if (this.bombardTimer > 0) {
+                this.bombardTimer -= dt;
+            } else {
+                // Done spawning this barrage?
+                if (this.spawnCount >= 3) {
+                    if (this.barrageCount < 1) { // 1 barrage completed, we want 1 more
+                        this.barrageCount++;
+                        // 1.5s cooldown + 2s chargeup
+                        this.bombardTimer = 3.5;
+                        this.spawnCount = 0;
+                        this.spawnTimer = 0;
+                    } else if (this.barrageCount < 2) {
+                        // Second barrage done, 2s pause before circling
+                        // Turret will begin realigning here
+                        this.barrageCount++;
+                        this.bombardTimer = 1.9;
+                    } else {
+                        // Return to travel after all barrages and exit delay complete
+                        this.state = BOSS_2_STATES.TRAVEL;
+                    }
+                }
+            }
+        }
+
+        // Default: turret always follows boss unless in AIMING or BOMBARD phase
+        if (this.state !== BOSS_2_STATES.AIMING && this.state !== BOSS_2_STATES.BOMBARD) {
+            this.turretRotation = this.baseRotation;
         }
 
         return burnTick;
@@ -115,6 +299,11 @@ class Boss2View extends EnemyView {
         this.turret.setDepth(baseDepth + 1);
         this.turret.setVisible(false);
         this.turret.setActive(false);
+
+        // Charge-up visual logic (like Miniboss 1)
+        this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
+        this.chargeSprite.setDepth(baseDepth + 2);
+        this.chargeSprite.setVisible(false);
 
         // Optional pink pulse nineslice effect identical to Boss 1 (if standard for bosses)
         this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 199, 199, 65, 65, 65, 65);
@@ -225,6 +414,43 @@ class Boss2View extends EnemyView {
         if (this.turret) this.turret.setRotation(rot);
     }
 
+    setTurretRotation(rot) {
+        if (this.turret) this.turret.setRotation(rot);
+    }
+
+    startCharge() {
+        if (!this.chargeSprite) return;
+        this.chargeSprite.setVisible(true);
+        this.chargeSprite.setScale(0.1);
+        this.chargeSprite.setAlpha(0.2);
+
+        PhaserScene.tweens.killTweensOf(this.chargeSprite);
+        PhaserScene.tweens.add({
+            targets: this.chargeSprite,
+            scale: 1.5,
+            alpha: 1,
+            duration: 2000,
+            ease: 'Quint.easeIn'
+        });
+    }
+
+    stopCharge() {
+        if (this.chargeSprite) {
+            this.chargeSprite.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+        }
+    }
+
+    syncChargePosition(x, y, turretRot) {
+        if (!this.chargeSprite || !this.chargeSprite.visible) return;
+        const nozzleDist = 125;
+        this.chargeSprite.setPosition(
+            x + Math.cos(turretRot) * nozzleDist,
+            y + Math.sin(turretRot) * nozzleDist
+        );
+        this.chargeSprite.setRotation(turretRot);
+    }
+
     deactivate() {
         super.deactivate();
         if (this.turret) {
@@ -234,6 +460,10 @@ class Boss2View extends EnemyView {
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
+        }
+        if (this.chargeSprite) {
+            this.chargeSprite.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
         }
         if (this.pulse) {
             this.pulse.setVisible(false);
@@ -251,6 +481,7 @@ class Boss2 extends Boss {
         super(levelScalingModifier);
         this.model = new Boss2Model(levelScalingModifier);
         this.view = new Boss2View();
+        this._isCharging = false;
     }
 
     activate(x, y, scaleFactor = 1.0) {
@@ -279,11 +510,50 @@ class Boss2 extends Boss {
         super.update(dt);
         // Sync visual rotation with the model's calculated steering rotation
         this.setRotation(this.model.baseRotation);
+        this.view.setTurretRotation(this.model.turretRotation);
+        this.view.syncChargePosition(this.model.x, this.model.y, this.model.turretRotation);
 
-        // Ranged Attack logic
+        // Chargeup visual state tracking
+        if (this.model.state === BOSS_2_STATES.BOMBARD) {
+            // Only start chargeup visual when we are 2 seconds or less from barrage launch
+            if (!this._isCharging && this.model.bombardTimer <= 2.0 && this.model.spawnCount === 0) {
+                this._isCharging = true;
+                this.view.startCharge();
+            }
+
+            // Handle Spawning sequence after chargeup (bombardTimer reaches 0)
+            if (this.model.bombardTimer <= 0 && this.model.spawnCount < 3) {
+                this.model.spawnTimer -= dt;
+                if (this.model.spawnTimer <= 0) {
+                    this._spawnFastEnemy();
+                    this.model.spawnCount++;
+                    this.model.spawnTimer = 0.5;
+
+                    // If this was the last enemy in the barrage, reset charging flag for next loop/cooldown
+                    if (this.model.spawnCount >= 3) {
+                        this._isCharging = false;
+                        this.view.stopCharge();
+                    }
+                }
+            }
+        } else {
+            if (this._isCharging) {
+                this._isCharging = false;
+                this.view.stopCharge();
+            }
+        }
+
+        // Ranged Attack logic (Circling phase)
         if (this.model.state === BOSS_2_STATES.CIRCLING && this.model.circlingTime >= 3.0) {
             if (this.model.attackCooldown <= 0) {
                 this._fireProjectilePair();
+                this.model.attackCount++;
+                if (this.model.attackCount >= 3) {
+                    this.model.attackCount = 0;
+                    this.model.setupDelay = 1.5;
+                    this.model.setupTarget = null;
+                    this.model.state = BOSS_2_STATES.SETUP;
+                }
             }
         }
     }
@@ -336,6 +606,20 @@ class Boss2 extends Boss {
         // Second projectile: Left offset 30px, 0.15s delay
         PhaserScene.time.delayedCall(150, () => {
             fireSingle(-27);
+        });
+    }
+
+    _spawnFastEnemy() {
+        if (typeof enemyManager === 'undefined') return;
+
+        const nozzleDist = 125;
+        const spawnX = this.model.x + Math.cos(this.model.turretRotation) * nozzleDist;
+        const spawnY = this.model.y + Math.sin(this.model.turretRotation) * nozzleDist;
+
+        // Spawn at the nozzle position with an initial speed boost
+        enemyManager.spawnAt('fast', spawnX, spawnY, {
+            initialSpeedMult: 4,
+            rampDuration: 1.2
         });
     }
 }
