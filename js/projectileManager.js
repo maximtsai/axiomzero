@@ -81,13 +81,14 @@ const projectileManager = (() => {
 
         p.vx = (dx / dist) * speed;
         p.vy = (dy / dist) * speed;
-        p.x = fromX;
-        p.y = fromY;
+        const leadTime = 0.02;
+        p.x = fromX + p.vx * leadTime;
+        p.y = fromY + p.vy * leadTime;
         p.damage = dmg;
         p.alive = true;
         p.life = 3000; // auto-expire after 3s
 
-        p.img.setPosition(fromX, fromY);
+        p.img.setPosition(p.x, p.y);
         p.img.setRotation(Math.atan2(dy, dx));
         p.img.setVisible(true);
         p.img.setActive(true);

@@ -55,6 +55,7 @@ const GAME_VARS = {
     gameScale: 1,
     lastmousedown: { x: 0, y: 0 },
     scaleFactor: 1,
+    roundTimeElapsed: 0,
 };
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────

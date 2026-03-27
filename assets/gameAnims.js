@@ -64,4 +64,16 @@ function createAnimations(scene) {
         frameRate: 12,
         repeat: 0,
     });
+    scene.anims.create({
+        key: 'enemy_hit_circle',
+        frames: scene.anims.generateFrameNames('attacks', {
+            prefix: 'enemy_hit_circle',
+            suffix: '.png',
+            start: 1,
+            end: 8,
+            zeroPad: 0,
+        }),
+        frameRate: 24,
+        repeat: 0,
+    });
 }

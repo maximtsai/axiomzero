@@ -75,6 +75,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 10,
+        costStepScaling: 10,
         parents: ['basic_pulse'],
         childIds: ['pulse_expansion'],
         treeX: gridX(1),
@@ -111,7 +112,7 @@ const NODE_DEFS = [
         popupText: '+20% SIGNAL STRENGTH',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 40,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -129,18 +130,18 @@ const NODE_DEFS = [
         name: 'OVERCHARGE',
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'overcharge.desc'),
-        popupText: '+4 CURSOR DMG',
+        popupText: '+2 CURSOR DMG',
         popupColor: COLORS.COMBAT,
-        maxLevel: 1,
+        maxLevel: 2,
         baseCost: 150,
         costType: 'data',
-        costScaling: 'static',
-        costStep: 0,
+        costScaling: 'linear',
+        costStep: 50,
         parents: ['data_compression'],
         childIds: ['placeholder_duo_2', 'armor'],
 
         treeX: gridX(-1),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
 
@@ -153,14 +154,14 @@ const NODE_DEFS = [
         name: 'INTEGRITY',
         icon: 'Skillicon14_16.png',
         description: t('nodes', 'integrity.desc'),
-        popupText: '+5 MAX HEALTH',
+        popupText: '+4 MAX HEALTH',
         popupColor: COLORS.UTILITY,
-        maxLevel: 6,
+        maxLevel: 5,
         baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
         costStep: 4,
-        costStepScaling: 4,
+        costStepScaling: 6,
         parents: ['awaken'],
         childIds: ['regen'],
         treeX: gridX(-1),
@@ -183,7 +184,7 @@ const NODE_DEFS = [
         costStep: 5,
         costStepScaling: 5,
         parents: ['awaken'],
-        childIds: ['focus', 'prismatic_array', 'overclock'],
+        childIds: ['focus', 'prismatic_array'],
         treeX: gridX(1),
         treeY: gridY(0),
         effect: function () {
@@ -237,20 +238,20 @@ const NODE_DEFS = [
 
     {
         id: 'base_hp_boost',
-        name: 'SYSTEM REDUNDANCY',
-        icon: 'Skillicon14_18.png',
+        name: 'AUXILIARY POWER',
+        icon: 'Skillicon14_11.png',
         description: t('nodes', 'base_hp_boost.desc'),
-        popupText: '+10 MAX HEALTH',
-        popupColor: '#' + GAME_CONSTANTS.COLOR_FRIENDLY.toString(16).padStart(6, '0'),
+        popupText: '+4 TOWER DMG',
+        popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['security_test_2', 'privilege_escalation_5'],
+        parents: ['security_test_2', 'overclock'],
         childIds: ['gateway_discovery'],
         treeX: gridX(-1.0),
-        treeY: gridY(8),
+        treeY: gridY(8.5),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -269,7 +270,7 @@ const NODE_DEFS = [
         parents: ['trojan_access', 'backdoor_3'],
         childIds: ['repeat_exploit'],
         treeX: gridX(3),
-        treeY: gridY(5.5),
+        treeY: gridY(6.0),
         effect: function () { },
     },
     {
@@ -331,7 +332,7 @@ const NODE_DEFS = [
         parents: ['threat_response'],
         childIds: ['lore_4'],
         treeX: gridX(-4),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
@@ -353,7 +354,7 @@ const NODE_DEFS = [
         parents: ['lore_3'],
         childIds: ['lore_5'],
         treeX: gridX(-4.5),
-        treeY: gridY(2.5),
+        treeY: gridY(3.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_4');
@@ -375,7 +376,7 @@ const NODE_DEFS = [
         parents: ['lore_4'],
         childIds: ['lore_6'],
         treeX: gridX(-4.5),
-        treeY: gridY(3.5),
+        treeY: gridY(4.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_5');
@@ -397,7 +398,7 @@ const NODE_DEFS = [
         parents: ['lore_5'],
         childIds: ['lore_7'],
         treeX: gridX(-4.5),
-        treeY: gridY(4.5),
+        treeY: gridY(5.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_6');
@@ -419,7 +420,7 @@ const NODE_DEFS = [
         parents: ['lore_6'],
         childIds: ['lore_8'],
         treeX: gridX(-4.5),
-        treeY: gridY(5.5),
+        treeY: gridY(6.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_7');
@@ -441,7 +442,7 @@ const NODE_DEFS = [
         parents: ['lore_7'],
         childIds: ['lore_9'],
         treeX: gridX(-4.5),
-        treeY: gridY(6.5),
+        treeY: gridY(7.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_8');
@@ -463,7 +464,7 @@ const NODE_DEFS = [
         parents: ['lore_8'],
         childIds: [],
         treeX: gridX(-4.5),
-        treeY: gridY(7.5),
+        treeY: gridY(8.5),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_9');
@@ -487,7 +488,7 @@ const NODE_DEFS = [
         parents: ['armor'],
         childIds: ['lore_3', 'junk_data_2'],
         treeX: gridX(-3),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -582,7 +583,7 @@ const NODE_DEFS = [
         popupText: '+2 LIGHTNING DMG',
         popupColor: COLORS.COMBAT,
         maxLevel: 3,
-        baseCost: 60,
+        baseCost: 75,
         costType: 'data',
         costScaling: 'linear',
         costStep: 0,
@@ -623,7 +624,7 @@ const NODE_DEFS = [
         popupText: '+25% RANGE',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 50,
+        baseCost: 100,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -641,7 +642,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_03.png',
         description: t('nodes', 'shockwave_resonance.desc'),
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 100,
         costType: 'data',
         costScaling: 'static',
         parents: ['shockwave_weapon'],
@@ -660,10 +661,10 @@ const NODE_DEFS = [
         popupText: 'SEISMIC CRUSH',
         popupColor: COLORS.COMBAT,
         maxLevel: 2,
-        baseCost: 100,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 300,
+        costStep: 150,
         parents: ['shockwave_amplifier', 'shockwave_resonance'],
         requiresMaxParent: true,
         childIds: [],
@@ -686,13 +687,29 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['overcharge'],
-        childIds: ['threat_response'],
-
         treeX: gridX(-2),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
+        childIds: ['threat_response', 'system_redundancy_new'],
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
+    },
+    {
+        id: 'system_redundancy_new',
+        name: 'SYSTEM REDUNDANCY',
+        icon: 'Skillicon14_18.png',
+        description: t('nodes', 'system_redundancy_new.desc'),
+        popupText: '+10 MAX HEALTH',
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['armor'],
+        childIds: [],
+        treeX: gridX(-2.5),
+        treeY: gridY(3.5),
+        effect: function () { },
     },
     {
         id: 'overclock',
@@ -706,10 +723,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['intensity'],
-        childIds: [],
-        treeX: gridX(0.5),
-        treeY: gridY(-1.0),
+        parents: ['privilege_escalation_3'],
+        childIds: ['base_hp_boost'],
+        treeX: gridX(0.0),
+        treeY: gridY(8.5),
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -726,7 +743,7 @@ const NODE_DEFS = [
         parents: ['backdoor_2', 'two_step_auth'],
         childIds: ['volatile_payload', 'malware_siphon'],
         treeX: gridX(3),
-        treeY: gridY(4.5),
+        treeY: gridY(5.0),
         effect: function () { },
     },
     {
@@ -737,14 +754,14 @@ const NODE_DEFS = [
         popupText: '+20% EXPLOSION RADIUS',
         popupColor: COLORS.UTILITY,
         maxLevel: 5,
-        baseCost: 100,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
         parents: ['trojan_access'],
         childIds: [],
         treeX: gridX(2.0),
-        treeY: gridY(5.0),
+        treeY: gridY(5.5),
         effect: function () { },
     },
     {
@@ -793,7 +810,7 @@ const NODE_DEFS = [
         popupText: 'TEST PASSED',
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 250,
+        baseCost: 300,
         costType: 'data',
         costScaling: 'static',
         parents: ['data_compression'],
@@ -803,7 +820,7 @@ const NODE_DEFS = [
         tooltipExtraWidth: 40,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(250);
+                resourceManager.addData(300);
             }
         },
     },
@@ -822,7 +839,7 @@ const NODE_DEFS = [
         childIds: ['trojan_access'],
         tooltipExtraWidth: 40,
         treeX: gridX(2),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(100);
@@ -898,7 +915,7 @@ const NODE_DEFS = [
         parents: ['threat_response'],
         childIds: [],
         treeX: gridX(-3.5),
-        treeY: gridY(3),
+        treeY: gridY(3.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -962,9 +979,9 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['backdoor_4', 'malware_siphon'],
-        childIds: ['privilege_escalation_2', 'unsecured_wallet'],
+        childIds: ['injection_attack', 'unsecured_wallet'],
         treeX: gridX(3.0),
-        treeY: gridY(6.5),
+        treeY: gridY(7.0),
         effect: function () {
             upgradeDispatcher.recalcRepeatExploit();
         },
@@ -984,28 +1001,14 @@ const NODE_DEFS = [
         childIds: [],
         tooltipExtraWidth: 100,
         treeX: gridX(3.0),
-        treeY: gridY(7.5),
+        treeY: gridY(8.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addCoin(1);
             }
         },
     },
-    {
-        id: 'privilege_escalation_2',
-        name: 'PRIVILEGE ESCALATION II',
-        icon: 'Skillicon14_09.png',
-        description: 'Scanning for admin credentials.',
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['repeat_exploit'],
-        childIds: ['privilege_escalation_3'],
-        treeX: gridX(2.0),
-        treeY: gridY(7),
-        effect: function () { },
-    },
+
 
     {
         id: 'privilege_escalation_3',
@@ -1016,10 +1019,10 @@ const NODE_DEFS = [
         baseCost: 0,
         costType: 'data',
         costScaling: 'static',
-        parents: ['privilege_escalation_2', 'shell_access'],
-        childIds: ['placeholder_duo_3', 'laser', 'artillery', 'privilege_escalation_5'],
+        parents: ['injection_attack', 'shell_access'],
+        childIds: ['placeholder_duo_3', 'laser', 'artillery', 'overclock'],
         treeX: gridX(1.0),
-        treeY: gridY(7.5),
+        treeY: gridY(8.0),
         effect: function () { },
     },
     {
@@ -1029,7 +1032,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 3,
         childIds: ['security_test_3'],
         treeX: gridX(1.0),
-        treeY: gridY(9.0),
+        treeY: gridY(9.5),
         effect: function () { },
     },
     {
@@ -1050,7 +1053,7 @@ const NODE_DEFS = [
         shardId: 'laser',
         duoSiblingId: 'artillery',
         treeX: gridX(1.0) - DUO_OFFSET,
-        treeY: gridY(9.0),
+        treeY: gridY(9.5),
         effect: function () {
             if (typeof laserAttack !== 'undefined') laserAttack.unlock();
             artilleryAttack.lock();
@@ -1069,7 +1072,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         duoSiblingId: 'laser',
         treeX: gridX(1.0) + DUO_OFFSET,
-        treeY: gridY(9.0),
+        treeY: gridY(9.5),
         parents: ['privilege_escalation_3'],
         childIds: ['artillery_shells', 'artillery_first_strike'],
         isDuoBox: true,
@@ -1092,7 +1095,7 @@ const NODE_DEFS = [
         parents: ['laser'],
         childIds: ['laser_aperture', 'laser_incendiary'],
         treeX: gridX(1.0 - 1.5),
-        treeY: gridY(9.0),
+        treeY: gridY(9.5),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1109,7 +1112,7 @@ const NODE_DEFS = [
         parents: ['laser_duration'],
         childIds: ['laser_twin_beams'],
         treeX: gridX(1.0 - 1.5 - 1.0),
-        treeY: gridY(9.0),
+        treeY: gridY(9.5),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1127,7 +1130,7 @@ const NODE_DEFS = [
         parents: ['laser_duration'],
         childIds: ['laser_twin_beams'],
         treeX: gridX(1.0 - 1.5),
-        treeY: gridY(10.0),
+        treeY: gridY(10.5),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1144,7 +1147,7 @@ const NODE_DEFS = [
         parents: ['laser_aperture', 'laser_incendiary'],
         childIds: [],
         treeX: gridX(-1.5),
-        treeY: gridY(10.0),
+        treeY: gridY(10.5),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1161,7 +1164,7 @@ const NODE_DEFS = [
         parents: ['artillery_shells'],
         childIds: [],
         treeX: gridX(3.5),
-        treeY: gridY(9.5),
+        treeY: gridY(10.0),
         requiresMaxParent: true,
         effect: function () { upgradeDispatcher.recalcArtillery(); },
     },
@@ -1179,7 +1182,7 @@ const NODE_DEFS = [
         parents: ['artillery'],
         childIds: ['artillery_volley'],
         treeX: gridX(2.5),
-        treeY: gridY(9.5),
+        treeY: gridY(10.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
     },
     {
@@ -1195,7 +1198,7 @@ const NODE_DEFS = [
         parents: ['artillery'],
         childIds: ['artillery_stun'],
         treeX: gridX(2.5),
-        treeY: gridY(8.5),
+        treeY: gridY(9.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
     },
     {
@@ -1210,7 +1213,7 @@ const NODE_DEFS = [
         parents: ['artillery_first_strike'],
         childIds: [],
         treeX: gridX(3.5),
-        treeY: gridY(8.5),
+        treeY: gridY(9.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
     },
     {
@@ -1225,28 +1228,14 @@ const NODE_DEFS = [
         parents: ['security_test_2'],
         childIds: ['privilege_escalation_3'],
         treeX: gridX(0.0),
-        treeY: gridY(7),
+        treeY: gridY(7.5),
         popupText: '+4 TOWER DMG',
         popupColor: COLORS.COMBAT,
         effect: function () {
             // Recalculated by tower.js listener
         },
     },
-    {
-        id: 'privilege_escalation_5',
-        name: 'PRIVILEGE ESCALATION V',
-        icon: 'Skillicon14_09.png',
-        description: 'Establishing shadow account.',
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['privilege_escalation_3'],
-        childIds: ['base_hp_boost'],
-        treeX: gridX(0.0),
-        treeY: gridY(8),
-        effect: function () { },
-    },
+
     {
         id: 'unsecured_files',
         name: 'UNSECURED FILES',
@@ -1259,7 +1248,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['backdoor_4'],
-        childIds: ['injection_attack'],
+        childIds: [],
         treeX: gridX(4),
         treeY: gridY(7.5),
         effect: function () {
@@ -1280,11 +1269,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 100,
-        parents: ['unsecured_files'],
-        requiresMaxParent: true,
-        childIds: [],
-        treeX: gridX(4),
-        treeY: gridY(8.5),
+        parents: ['repeat_exploit'],
+        childIds: ['privilege_escalation_3'],
+        treeX: gridX(2.0),
+        treeY: gridY(7.5),
         effect: function () { },
     },
     {
@@ -1295,7 +1283,7 @@ const NODE_DEFS = [
         popupText: 'ZERO-DAY ACTIVE',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 300,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         parents: ['forgotten_backdoor'],
@@ -1311,7 +1299,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 2,
         childIds: ['manual_pulse', 'wide_pulse', 'security_test_2'],
         treeX: gridX(-1),
-        treeY: gridY(5.5),
+        treeY: gridY(6.0),
         effect: function () { },
     },
     {
@@ -1326,7 +1314,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_2'],
         childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
         treeX: gridX(-1),
-        treeY: gridY(7),
+        treeY: gridY(7.5),
         tooltipExtraWidth: 60,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
@@ -1352,7 +1340,7 @@ const NODE_DEFS = [
         shardId: 'manual_pulse',
         duoSiblingId: 'wide_pulse',
         treeX: gridX(-1) - DUO_OFFSET, // Symmetric Duo offset (standardized)
-        treeY: gridY(5.5),
+        treeY: gridY(6),
         effect: function () {
             upgradeDispatcher.recalcPulseMode();
             upgradeDispatcher.recalcPulseSize();
@@ -1376,7 +1364,7 @@ const NODE_DEFS = [
         shardId: 'wide_pulse',
         duoSiblingId: 'manual_pulse',
         treeX: gridX(-1) + DUO_OFFSET, // Symmetric Duo offset (standardized)
-        treeY: gridY(5.5),
+        treeY: gridY(6),
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
             upgradeDispatcher.recalcPulseMode();
@@ -1395,7 +1383,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
         treeX: gridX(-2.5),
-        treeY: gridY(5.5),
+        treeY: gridY(6),
         effect: function () {
             upgradeDispatcher.recalcPulseCharges();
         },
@@ -1413,7 +1401,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: gridX(-3.5),
-        treeY: gridY(6),
+        treeY: gridY(6.5),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1430,7 +1418,7 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: gridX(-3.5),
-        treeY: gridY(5),
+        treeY: gridY(5.5),
         effect: function () {
             upgradeDispatcher.recalcPulseReload();
         },
@@ -1448,7 +1436,7 @@ const NODE_DEFS = [
         parents: ['wide_pulse'],
         childIds: ['colossal_cursor'],
         treeX: gridX(0.5),
-        treeY: gridY(6),
+        treeY: gridY(6.5),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1468,7 +1456,7 @@ const NODE_DEFS = [
         parents: ['wide_pulse'],
         childIds: [],
         treeX: gridX(0.5),
-        treeY: gridY(5),
+        treeY: gridY(5.5),
         effect: function () {
             upgradeDispatcher.recalcAftershock();
         },
@@ -1487,7 +1475,7 @@ const NODE_DEFS = [
         parents: ['wide_pulse_child_1'],
         childIds: [],
         treeX: gridX(1.5),
-        treeY: gridY(6),
+        treeY: gridY(6.5),
         requiresMaxParent: true,
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
@@ -1504,7 +1492,7 @@ const NODE_DEFS = [
         parents: ['gateway_discovery'],
         childIds: ['stray_logs_child_above'],
         treeX: gridX(-2.5),
-        treeY: gridY(8.5),
+        treeY: gridY(9.0),
         effect: function () { },
     },
     {
@@ -1518,7 +1506,7 @@ const NODE_DEFS = [
         parents: ['security_test_2', 'base_hp_boost'],
         childIds: ['system_redundancy_placeholder', 'physical_anchor', 'coin_mine_unlock'],
         treeX: gridX(-2.0),
-        treeY: gridY(7.5),
+        treeY: gridY(8.0),
         effect: function () { },
     },
     {
@@ -1533,7 +1521,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_3'],
         childIds: [],
         treeX: gridX(1.0),
-        treeY: gridY(10.5),
+        treeY: gridY(11.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(1000);
@@ -1551,7 +1539,7 @@ const NODE_DEFS = [
         parents: ['system_redundancy_placeholder'],
         childIds: [],
         treeX: gridX(-3.0),
-        treeY: gridY(9.5),
+        treeY: gridY(10.0),
         effect: function () { },
     },
     {
@@ -1569,7 +1557,7 @@ const NODE_DEFS = [
         parents: ['gateway_discovery'],
         childIds: [],
         treeX: gridX(-3.0),
-        treeY: gridY(7.5),
+        treeY: gridY(8.0),
         effect: function () {
             if (typeof neuralTree !== 'undefined') {
                 neuralTree._showCoinMineButton();
@@ -1588,7 +1576,7 @@ const NODE_DEFS = [
         parents: ['gateway_discovery'],
         childIds: [],
         treeX: gridX(-2.5),
-        treeY: gridY(6.5),
+        treeY: gridY(7.0),
         popupText: '+40 MAX HEALTH',
         popupColor: COLORS.UTILITY,
         effect: function () {

@@ -37,8 +37,9 @@ class TowerModel {
         const overclockLv = ups.overclock || 0;
         const anchorHp = (ups.physical_anchor || 0) * 40;
 
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 10 * baseHpLv + anchorHp;
-        const shellDamage = (ups.shell_access || 0) * 4;
+        const systemRedundancyLv = ups.system_redundancy_new || 0;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 10 * systemRedundancyLv + anchorHp;
+        const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + shellDamage;
 
@@ -129,12 +130,11 @@ class TowerView {
         // Clean up any existing range sprite (safety check)
         if (this.rangeSprite) { this.rangeSprite.destroy(); this.rangeSprite = null; }
 
-        // Glow layer — additive blend, slightly larger, pulses
-        this.glowSprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
+        // Glow layer — additive blend, subtle breathe animation
+        this.glowSprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1_glow.png');
         this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-        this.glowSprite.setScale(1.35);
-        this.glowSprite.setAlpha(0.35);
-        this.glowSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+        this.glowSprite.setScale(1.0);
+        this.glowSprite.setAlpha(1);
         this.glowSprite.setBlendMode(Phaser.BlendModes.ADD);
 
         // Main tower sprite
@@ -154,9 +154,8 @@ class TowerView {
         // Breathe / pulse tween on glow
         this.breatheTween = PhaserScene.tweens.add({
             targets: this.glowSprite,
-            alpha: { from: 0.2, to: 0.5 },
-            scale: { from: 1.3, to: 1.45 },
-            duration: 1800,
+            scale: { from: 1.0, to: 1.1 },
+            duration: 2200,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut',

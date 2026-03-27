@@ -32,7 +32,7 @@ GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
 
 // ─── EXP ──────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.EXP_FILL_RATE = 0.9;   // per second during combat
+GAME_CONSTANTS.EXP_FILL_RATE = 0.82;   // per second during combat
 GAME_CONSTANTS.EXP_TO_INSIGHT = 100;  // EXP needed to award 1 INSIGHT
 
 // ─── Enemy — Basic type (Phase 1) ─────────────────────────────────────────────
@@ -42,7 +42,7 @@ GAME_CONSTANTS.ENEMY_BASE_HEALTH = 6;
 GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
 GAME_CONSTANTS.ENEMY_BASE_SPEED = 30;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
-GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.1;  // Multiplicative multiplier applied every interval
+GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.085;  // Multiplicative multiplier applied every interval
 GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 6; // seconds between scaling jumps
 GAME_CONSTANTS.PROTECTOR_AURA_RANGE = 195;
 GAME_CONSTANTS.PROTECTOR_AURA_SQUARED = 38025; // 195 * 195

@@ -23,6 +23,7 @@ const enemyManager = (() => {
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
     let paused = false;     // true when options menu opens
     let combatTime = 4;    // seconds since wave start — drives scaling
+    let roundTimeElapsed = 0; // Total time in wave, including boss/miniboss fights
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
     // Miniboss tracking
@@ -103,7 +104,9 @@ const enemyManager = (() => {
         frozen = false;
         spawnTimer = -950;
         combatTime = 4;
-        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
+        roundTimeElapsed = 0;
+        GAME_VARS.roundTimeElapsed = roundTimeElapsed;
+        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         minibossSpawned = false;
         minibossAlive = false;
         bossSpawned = false;
@@ -702,7 +705,7 @@ const enemyManager = (() => {
     function getEnemiesInSquareRange(cx, cy, halfSize, out) {
         const result = out || [];
         result.length = 0;
-        
+
         for (let i = 0; i < specialEnemies.length; i++) {
             const e = specialEnemies[i];
             const reach = halfSize + (e.model.size || 0);
@@ -736,7 +739,7 @@ const enemyManager = (() => {
     function getEnemiesInDiamondRange(cx, cy, radius, ignoreEnemy = null, out) {
         const result = out || [];
         result.length = 0;
-        
+
         for (let i = 0; i < specialEnemies.length; i++) {
             const e = specialEnemies[i];
             if (e === ignoreEnemy) continue;
@@ -995,13 +998,17 @@ const enemyManager = (() => {
 
         const dt = delta / 1000;
 
-        // Pause combatTime (scaling) while major enemies are alive
+        // Update timers
         if (!minibossAlive && !bossAlive) {
             combatTime += dt;
         }
+        if (!minibossAlive) {
+            roundTimeElapsed += dt;
+        }
+        GAME_VARS.roundTimeElapsed = roundTimeElapsed;
 
         // Update wave scale factor
-        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(combatTime / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
+        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
         // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
         let firstThreshold = 5.05;
@@ -1041,7 +1048,7 @@ const enemyManager = (() => {
             spatialGrid[key].length = 0;
         }
         specialEnemies.length = 0;
-        
+
         const tPos = tower.getPosition();
         const contactR = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
         const contactR2 = contactR * contactR;
@@ -1052,7 +1059,7 @@ const enemyManager = (() => {
             if (!e || !e.model.alive) continue;
 
             e.update(dt * spawnSpeedMultiplier);
-            
+
             // Populate grid
             if (e.model.isBoss || e.model.isMiniboss) {
                 specialEnemies.push(e);
@@ -1060,7 +1067,7 @@ const enemyManager = (() => {
                 const cx = Math.floor(e.model.x / CELL_SIZE);
                 const cy = Math.floor(e.model.y / CELL_SIZE);
                 const key = _getGridKey(cx, cy);
-                
+
                 // Keep the array reference to avoid re-allocating
                 let cell = spatialGrid[key];
                 if (!cell) {
@@ -1132,13 +1139,13 @@ const enemyManager = (() => {
         if (!p) return null;
         const e = p.get();
         if (!e) return null;
-        
+
         const scale = config.scale || (GAME_VARS.scaleFactor || 1);
         e.activate(x, y, scale, config);
-        
+
         typeCounts[e.model.type] = (typeCounts[e.model.type] || 0) + 1;
         if (e.model.type === 'protector') activeProtectors.push(e);
-        
+
         e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         activeEnemies.push(e);
         return e;
@@ -1146,5 +1153,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime };
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed };
 })();

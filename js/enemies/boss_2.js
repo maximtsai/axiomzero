@@ -27,7 +27,7 @@ class Boss2Model extends BossModel {
         // Attack timers
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = 1;
+        this.projectileDamage = 4.5;
 
         // SETUP state
         this.attackCount = 0;      // attacks fired while circling
@@ -50,7 +50,7 @@ class Boss2Model extends BossModel {
         this.state = BOSS_2_STATES.TRAVEL;
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = config.projectileDamage || 1.5;
+        this.projectileDamage = config.projectileDamage || 4.5;
         this.attackCount = 0;
         this.setupDelay = 0;
         this.setupTarget = null;
@@ -122,7 +122,7 @@ class Boss2Model extends BossModel {
                 this.state = BOSS_2_STATES.CIRCLING;
                 this.circlingTime = 0;
                 this.attackCount = 0; // Reset circling attack count
-                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.0;
+                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.6;
             } else {
                 const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0;
                 if (this.speed < targetSpeed) {
@@ -321,6 +321,22 @@ class Boss2View extends EnemyView {
         this.pulse2.setAlpha(0);
 
         this.pulseTimer = null;
+
+        // Pooled launch effects
+        this._launchEffectPool = new ObjectPool(
+            () => {
+                const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_hit_circle1.png');
+                spr.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 4);
+                spr.setVisible(false);
+                spr.setActive(false);
+                return spr;
+            },
+            (spr) => {
+                spr.setVisible(false);
+                spr.setActive(false);
+            },
+            2
+        ).preAllocate(2);
     }
 
     activate(x, y, rotation, cannotRotate) {
@@ -477,6 +493,22 @@ class Boss2View extends EnemyView {
             this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
         }
+        if (this._launchEffectPool) {
+            this._launchEffectPool.clear();
+        }
+    }
+
+    playLaunchEffect(x, y) {
+        const spr = this._launchEffectPool.get();
+        if (!spr) return;
+
+        spr.setPosition(x, y);
+        spr.setVisible(true);
+        spr.setActive(true);
+        spr.play('enemy_hit_circle');
+        spr.once('animationcomplete', () => {
+            if (this._launchEffectPool) this._launchEffectPool.release(spr);
+        });
     }
 }
 
@@ -497,13 +529,13 @@ class Boss2 extends Boss {
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
-            projectileDamage: 4
+            projectileDamage: 4.5
         });
 
         this.setHPOrigin(0.475, 0.5);
 
-        // Play warcry 0.5s after spawn
-        PhaserScene.time.delayedCall(900, () => {
+        // Play warcry 0.75s after spawn
+        PhaserScene.time.delayedCall(750, () => {
             if (typeof audio !== 'undefined') {
                 const pan = (x < GAME_CONSTANTS.halfWidth) ? -0.15 : 0.15;
                 audio.play('boss2_warcry', 1.0, false, false, pan);
@@ -553,7 +585,7 @@ class Boss2 extends Boss {
         }
 
         // Ranged Attack logic (Circling phase)
-        if (this.model.state === BOSS_2_STATES.CIRCLING && this.model.circlingTime >= 3.0) {
+        if (this.model.state === BOSS_2_STATES.CIRCLING && this.model.circlingTime >= 4) {
             if (this.model.attackCooldown <= 0) {
                 this._fireProjectilePair();
                 this.model.attackCount++;
@@ -573,7 +605,7 @@ class Boss2 extends Boss {
         const centerX = GAME_CONSTANTS.halfWidth;
         const centerY = GAME_CONSTANTS.halfHeight;
 
-        const fireSingle = (lateralOffset) => {
+        const fireSingle = (lateralOffset, detuneOffset) => {
             if (!this.model.alive) return;
             if (typeof enemyBulletManager === 'undefined') return;
 
@@ -597,8 +629,8 @@ class Boss2 extends Boss {
             const ry = vx;
 
             // Spawn pos: Boss + 85 forward + lateral
-            const spawnX = this.model.x + vx * 85 + rx * lateralOffset;
-            const spawnY = this.model.y + vy * 85 + ry * lateralOffset;
+            const spawnX = this.model.x + vx * 90 + rx * lateralOffset;
+            const spawnY = this.model.y + vy * 90 + ry * lateralOffset;
 
             enemyBulletManager.fire(
                 spawnX, spawnY,
@@ -607,14 +639,22 @@ class Boss2 extends Boss {
                 'projectile.png',
                 GAME_CONSTANTS.ENEMY_PROJECTILE_SPEED
             );
+
+            this.view.playLaunchEffect(spawnX, spawnY);
+
+            if (typeof audio !== 'undefined') {
+                const s = audio.play('gunshot', 0.82);
+                if (s) s.detune = detuneOffset;
+            }
         };
 
         // First projectile: Right offset 30px
-        fireSingle(27);
+        const detuneRand = Math.random() * 200 - 100;
+        fireSingle(28, detuneRand - 100);
 
         // Second projectile: Left offset 30px, 0.15s delay
-        PhaserScene.time.delayedCall(150, () => {
-            fireSingle(-27);
+        PhaserScene.time.delayedCall(400, () => {
+            fireSingle(-26, detuneRand + 100);
         });
     }
 
