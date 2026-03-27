@@ -596,6 +596,11 @@ const pulseAttack = (() => {
         for (let i = 0; i < hits.length; i++) {
             const enemy = hits[i];
             let damageToApply = actualDamage;
+            
+            // ISOLATION bonus visual flag
+            if (hits.length === 1 && model.isolationLevel > 0) {
+                enemy.model.wasIsolatedHit = true;
+            }
 
             // REPEAT EXPLOIT logic
             if (model.persistentExploitLevel > 0 && enemy.model.hitByPulse) {

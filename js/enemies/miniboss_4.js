@@ -25,6 +25,7 @@ class Miniboss4Model extends MinibossModel {
         this.isCharging = false;
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
+        this.cannotRotate = true;
         
         // Use standard initial speed boost for minibosses
         this.initialSpeedMult = 7;
@@ -164,10 +165,6 @@ class Miniboss4 extends Miniboss {
                 m.fireCooldown = MB4.FIRE_INTERVAL * 0.5; // Half cooldown for first shot
             }
         } else if (m.state === 'ATTACKING') {
-            // Keep facing tower
-            m.baseRotation = Math.atan2(dy, dx);
-            v.setRotation(m.baseRotation);
-            
             // Sync visuals
             v.syncChargePosition(m.x, m.y);
             if (m._isRampingUp) {

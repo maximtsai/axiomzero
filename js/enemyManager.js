@@ -809,7 +809,14 @@ const enemyManager = (() => {
         if (isExecuted) textColor = '#bf24ff';
 
         if (gameState.settings.showDamageNumbers) {
-            const displayText = isExecuted ? ' EXECUTED ' : finalAmount.toString();
+            let displayText = isExecuted ? ' EXECUTED ' : finalAmount.toString();
+
+            // ISOLATION visual wrap
+            if (enemy.model.wasIsolatedHit) {
+                displayText = `»${displayText}«`;
+                enemy.model.wasIsolatedHit = false; // Reset after use
+            }
+
             floatingText.show(enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', {
                 fontFamily: 'VCR',
                 fontSize: isExecuted ? 24 : 28,
