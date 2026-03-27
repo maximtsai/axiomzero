@@ -20,8 +20,9 @@ class Boss2Model extends BossModel {
         this.bossId = 'boss2';
 
         this.state = BOSS_2_STATES.TRAVEL;
-        this.maxRotationSpeed = 0.7; // Radians per second, give it some "weight"
+        this.maxRotationSpeed = 0.6; // Radians per second, give it some "weight"
         this.currentMoveRotation = 0;
+        this.pastRotationChange = 0;
 
         // Attack timers
         this.circlingTime = 0;
@@ -81,12 +82,15 @@ class Boss2Model extends BossModel {
             const diff = getDiff(target, current);
 
             // Snap directly to target if distance is tiny
-            if (Math.abs(diff) < 0.01) return target;
+            if (Math.abs(diff) < 0.02) return target;
 
             // Arrival Smoothing: move a fraction (20%) of the way each frame
             // This naturally eases out the rotation as we get closer to the target.
             const smoothedStep = diff * 0.20;
-            return current + Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
+            let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
+            rotationChange = this.pastRotationChange * 0.65 + rotationChange * 0.35;
+            this.pastRotationChange = rotationChange;
+            return current + rotationChange
         };
 
         const syncVelocity = (s) => {
@@ -110,7 +114,7 @@ class Boss2Model extends BossModel {
         if (this.state === BOSS_2_STATES.TRAVEL) {
             // Rotate gradually towards the player
             const angleToTower = Math.atan2(-dy, -dx);
-            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, angleToTower, this.maxRotationSpeed * dt);
+            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, angleToTower, 0.6 * this.maxRotationSpeed * dt);
             this.baseRotation = this.currentMoveRotation;
 
             // Move directly towards tower (aimAt is already called by Enemy.update/ramp)
@@ -485,11 +489,8 @@ class Boss2 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        // Base boss health for Boss 2 is 280 (increased from 200)
-        const bossHealth = 280;
-
         super.activate(x, y, {
-            maxHealth: bossHealth,
+            maxHealth: 340,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0, // 3.0x speed
