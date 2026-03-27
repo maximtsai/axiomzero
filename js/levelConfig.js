@@ -108,7 +108,7 @@ const LEVEL_CONFIG = {
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
-        miniboss: 'Miniboss1',
+        miniboss: 'Miniboss4',
 
         mainBoss: 'Boss5',
         dataDropMultiplier: 3.2,
@@ -138,7 +138,7 @@ const LEVEL_CONFIG = {
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
-        miniboss: 'Miniboss2',
+        miniboss: 'Miniboss4',
 
         mainBoss: 'Boss5',
         dataDropMultiplier: 4.2,

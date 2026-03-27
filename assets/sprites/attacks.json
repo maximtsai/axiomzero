@@ -85,6 +85,31 @@
 					}
 				},
 				{
+					"filename": "enemy_hit_circle0.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 1,
+						"y": 805,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "enemy_hit_circle1.png",
 					"rotated": false,
 					"trimmed": false,
@@ -1040,6 +1065,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:afcbcf46ca19ad101078e383fdbd3590:b0beba189733a83a8049156a5e03a1dd:824c311b23d45c8185d8536d4540223d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:1b0d5de7e9a6125ea2bb1ddeb6f529cf:eec73e0e0bf0e8986a063008267cbddb:824c311b23d45c8185d8536d4540223d$"
 	}
 }

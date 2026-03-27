@@ -8,7 +8,7 @@
 //   • SLAM ATTACK: 10 damage after a wind-up and lunge animation.
 
 const MB3 = {
-    HEALTH: 430,
+    HEALTH: 450,
     SPEED_MULT: 0.85,
     INITIAL_SPEED_MULT: 7,
     RAMP_DURATION: 2.5,

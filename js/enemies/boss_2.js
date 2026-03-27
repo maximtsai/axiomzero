@@ -262,7 +262,7 @@ class Boss2Model extends BossModel {
                 this.bombardTimer -= dt;
             } else {
                 // Done spawning this barrage?
-                if (this.spawnCount >= 3) {
+                if (this.spawnCount >= 1) {
                     if (this.barrageCount < 1) { // 1 barrage completed, we want 1 more
                         this.barrageCount++;
                         // 0.75 cooldown + 2s chargeup
@@ -441,16 +441,42 @@ class Boss2View extends EnemyView {
     startCharge() {
         if (!this.chargeSprite) return;
         this.chargeSprite.setVisible(true);
-        this.chargeSprite.setScale(0.1);
-        this.chargeSprite.setAlpha(0.2);
+        this.chargeSprite.setScale(0.28);
+        this.chargeSprite.setAlpha(1);
 
         PhaserScene.tweens.killTweensOf(this.chargeSprite);
+
+        // 1.4x scale relative to Miniboss 1 (0.2 -> 0.28, 1.1 -> 1.54, 0.4 -> 0.56, 1.2 -> 1.68)
         PhaserScene.tweens.add({
             targets: this.chargeSprite,
-            scale: 1.5,
-            alpha: 1,
-            duration: 2000,
-            ease: 'Quint.easeIn'
+            scale: 1.54,
+            duration: 250,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                if (!this.chargeSprite.visible) return;
+                PhaserScene.tweens.add({
+                    targets: this.chargeSprite,
+                    scale: 0.56,
+                    alpha: 0.7,
+                    duration: 350,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => {
+                        if (!this.chargeSprite.visible) return;
+                        PhaserScene.tweens.add({
+                            targets: this.chargeSprite,
+                            scale: 1.68,
+                            alpha: 1,
+                            duration: 1400, // Total 2000ms chargeup check in controller
+                            ease: 'Linear',
+                            onComplete: () => {
+                                if (!this.chargeSprite.visible) return;
+                                this.chargeSprite.setScale(1.96);
+                                this.chargeSprite.setAlpha(1);
+                            }
+                        });
+                    }
+                });
+            }
         });
     }
 
@@ -563,15 +589,15 @@ class Boss2 extends Boss {
             }
 
             // Handle Spawning sequence after chargeup (bombardTimer reaches 0)
-            if (this.model.bombardTimer <= 0 && this.model.spawnCount < 3) {
+            if (this.model.bombardTimer <= 0 && this.model.spawnCount < 1) {
                 this.model.spawnTimer -= dt;
                 if (this.model.spawnTimer <= 0) {
-                    this._spawnFastEnemy();
+                    this._spawnShellEnemy();
                     this.model.spawnCount++;
                     this.model.spawnTimer = 0.5;
 
                     // If this was the last enemy in the barrage, reset charging flag for next loop/cooldown
-                    if (this.model.spawnCount >= 3) {
+                    if (this.model.spawnCount >= 1) {
                         this._isCharging = false;
                         this.view.stopCharge();
                     }
@@ -658,16 +684,16 @@ class Boss2 extends Boss {
         });
     }
 
-    _spawnFastEnemy() {
+    _spawnShellEnemy() {
         if (typeof enemyManager === 'undefined') return;
 
-        const nozzleDist = 125;
+        const nozzleDist = 135;
         const spawnX = this.model.x + Math.cos(this.model.turretRotation) * nozzleDist;
         const spawnY = this.model.y + Math.sin(this.model.turretRotation) * nozzleDist;
 
         // Spawn at the nozzle position with an initial speed boost
-        enemyManager.spawnAt('fast', spawnX, spawnY, {
-            initialSpeedMult: 4,
+        enemyManager.spawnAt('shell', spawnX, spawnY, {
+            initialSpeedMult: 2,
             rampDuration: 1.2
         });
     }

@@ -95,6 +95,8 @@ const enemyManager = (() => {
         pools.protector = new ObjectPool(() => new ProtectorEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.bomb = new ObjectPool(() => new BombEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
+        pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
+        pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -310,6 +312,8 @@ const enemyManager = (() => {
                 e = pools.logic_stray.get();
             } else if (chosenType === 'bomb') {
                 e = pools.bomb.get();
+            } else if (chosenType === 'shell') {
+                e = pools.shell.get();
             } else if (chosenType === 'protector') {
                 e = pools.protector.get();
             }
@@ -377,6 +381,7 @@ const enemyManager = (() => {
             'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
             'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
             'Miniboss3': typeof Miniboss3 !== 'undefined' ? Miniboss3 : null,
+            'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
             'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
@@ -831,9 +836,19 @@ const enemyManager = (() => {
     }
 
     function _killEnemy(enemy) {
-        if (typeof customEmitters !== 'undefined' && customEmitters.createEnemyDeathAnim) {
-            const boss5Duration = (enemy.model && enemy.model.bossId === 'boss5') ? 1800 : 0;
-            customEmitters.createEnemyDeathAnim(enemy, (enemy.model.isBoss || enemy.model.isMiniboss), boss5Duration);
+        if (typeof customEmitters !== 'undefined') {
+            if (enemy.model.type === 'shell') {
+                const vx = enemy.model.vx || 0;
+                const vy = enemy.model.vy || 0;
+                const dist = Math.sqrt(vx * vx + vy * vy) || 1;
+                const offX = (vx / dist) * 10;
+                const offY = (vy / dist) * 10;
+                customEmitters.playShellDeath(enemy.model.x + offX, enemy.model.y + offY, enemy.view.img ? enemy.view.img.depth : GAME_CONSTANTS.DEPTH_ENEMIES);
+                if (typeof audio !== 'undefined') audio.play('small_destruction', 0.85);
+            } else if (customEmitters.createEnemyDeathAnim) {
+                const boss5Duration = (enemy.model && enemy.model.bossId === 'boss5') ? 1800 : 0;
+                customEmitters.createEnemyDeathAnim(enemy, (enemy.model.isBoss || enemy.model.isMiniboss), boss5Duration);
+            }
         }
 
         const ex = enemy.model.x;
@@ -1102,6 +1117,11 @@ const enemyManager = (() => {
                         if (e.takeDamage(e.model.selfDamage)) {
                             // Only kill if the self-damage was lethal
                             _killEnemy(e);
+                        }
+
+                        // Shell specific shake effect
+                        if (e.model.type === 'shell' && typeof cameraManager !== 'undefined') {
+                            cameraManager.shake(120, 0.006);
                         }
                     }
 

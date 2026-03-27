@@ -134,6 +134,29 @@ const customEmitters = (() => {
         },
         15
     );
+ 
+    const shellDeathPool = new ObjectPool(
+        () => {
+            const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_hit_circle1.png');
+            spr.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 4);
+            spr.setVisible(false);
+            spr.setActive(false);
+            spr.on('animationcomplete', (anim) => {
+                if (anim.key === 'enemy_hit_circle_slow') {
+                    spr.setVisible(false);
+                    spr.setActive(false);
+                    shellDeathPool.release(spr);
+                }
+            });
+            return spr;
+        },
+        (spr) => {
+            spr.setVisible(false);
+            spr.setActive(false);
+            spr.setScale(2);
+        },
+        10
+    );
 
 
     // ── basicStrike ──────────────────────────────────────────────────────────
@@ -755,6 +778,7 @@ const customEmitters = (() => {
         bombExplosionBrightPool.preAllocate(5);
         bombExplosionRedPool.preAllocate(5);
         malwareSiphonPool.preAllocate(8);
+        shellDeathPool.preAllocate(5);
     }
 
     updateManager.addFunction(_update);
@@ -770,6 +794,16 @@ const customEmitters = (() => {
         createBossExplosionRays,
         playExplosionPulse,
         createBombExplosion,
-        malwareSiphonFX
+        malwareSiphonFX,
+        playShellDeath: (x, y, depth) => {
+            const spr = shellDeathPool.get();
+            if (!spr) return;
+            spr.setPosition(x, y);
+            spr.setDepth(depth + 2);
+            spr.setVisible(true);
+            spr.setActive(true);
+            spr.setScale(2);
+            spr.play('enemy_hit_circle_slow');
+        }
     };
 })();
