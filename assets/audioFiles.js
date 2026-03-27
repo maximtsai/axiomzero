@@ -31,4 +31,5 @@ const audioFiles = [
     { name: 'laser_end', src: 'audio/laser_end.mp3' },
     { name: 'basic_shoot', src: 'audio/basic_shoot.mp3' },
     { name: 'basic_shoot2', src: 'audio/basic_shoot2.mp3' },
+    { name: 'boss2_warcry', src: 'audio/boss2_warcry.mp3' },
 ];

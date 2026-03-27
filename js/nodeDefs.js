@@ -132,7 +132,7 @@ const NODE_DEFS = [
         popupText: '+4 CURSOR DMG',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 100,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -305,10 +305,11 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['threat_response'],
-        childIds: ['lore_3'],
-        treeX: gridX(-4),
-        treeY: gridY(4),
+        parents: ['junk_barrier'],
+        childIds: [],
+        treeX: gridX(4),
+        treeY: gridY(1.5),
+        requiresMaxParent: true,
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_2');
@@ -327,10 +328,10 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_2'],
+        parents: ['threat_response'],
         childIds: ['lore_4'],
-        treeX: gridX(-4.5),
-        treeY: gridY(1.5),
+        treeX: gridX(-4),
+        treeY: gridY(4),
         tooltipExtraWidth: 300,
         effect: function () {
             const node = neuralTree.getNode('lore_3');
@@ -484,7 +485,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['armor'],
-        childIds: ['lore_2'],
+        childIds: ['lore_3', 'junk_data_2'],
         treeX: gridX(-3),
         treeY: gridY(4),
         effect: function () {
@@ -680,7 +681,7 @@ const NODE_DEFS = [
         popupText: '+2 RESILIENCE',
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 200,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -857,7 +858,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['packet_sniffing'],
-        childIds: ['forgotten_backdoor', 'junk_data_2'],
+        childIds: ['forgotten_backdoor', 'lore_2'],
         treeX: gridX(3.5),
         treeY: gridY(2.5),
         tooltipExtraWidth: 60,
@@ -884,7 +885,7 @@ const NODE_DEFS = [
 
     {
         id: 'junk_data_2',
-        name: 'JUNK PROCESSING',
+        name: 'JUNK DATA',
         icon: 'Skillicon14_12.png',
         description: t('nodes', 'junk_data_2.desc'),
         popupText: '+10 DATA',
@@ -894,10 +895,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
-        parents: ['junk_barrier'],
+        parents: ['threat_response'],
         childIds: [],
-        treeX: gridX(4),
-        treeY: gridY(1.5),
+        treeX: gridX(-3.5),
+        treeY: gridY(3),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -1290,7 +1291,7 @@ const NODE_DEFS = [
         id: 'zero_day_exploit',
         name: 'ZERO-DAY EXPLOIT',
         icon: 'Skillicon14_09.png',
-        description: 'Non boss enemies are executed if they fall below 15% hp.',
+        description: 'Non boss enemies are EXECUTED if they fall below 15% hp.',
         popupText: 'ZERO-DAY ACTIVE',
         popupColor: COLORS.COMBAT,
         maxLevel: 1,

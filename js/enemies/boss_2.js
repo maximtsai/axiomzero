@@ -265,12 +265,12 @@ class Boss2Model extends BossModel {
                 if (this.spawnCount >= 3) {
                     if (this.barrageCount < 1) { // 1 barrage completed, we want 1 more
                         this.barrageCount++;
-                        // 1.5s cooldown + 2s chargeup
-                        this.bombardTimer = 3.5;
+                        // 0.75 cooldown + 2s chargeup
+                        this.bombardTimer = 2.75;
                         this.spawnCount = 0;
                         this.spawnTimer = 0;
                     } else if (this.barrageCount < 2) {
-                        // Second barrage done, 2s pause before circling
+                        // Second barrage done, 1.9s pause before circling
                         // Turret will begin realigning here
                         this.barrageCount++;
                         this.bombardTimer = 1.9;
@@ -501,6 +501,14 @@ class Boss2 extends Boss {
         });
 
         this.setHPOrigin(0.475, 0.5);
+
+        // Play warcry 0.5s after spawn
+        PhaserScene.time.delayedCall(900, () => {
+            if (typeof audio !== 'undefined') {
+                const pan = (x < GAME_CONSTANTS.halfWidth) ? -0.15 : 0.15;
+                audio.play('boss2_warcry', 1.0, false, false, pan);
+            }
+        });
 
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('AnnounceText', t('ui', 'boss_2_name'));

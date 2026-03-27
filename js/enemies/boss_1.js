@@ -146,7 +146,7 @@ class Boss1 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 180;
+        const bossHealth = 200;
 
         super.activate(x, y, {
             maxHealth: bossHealth,

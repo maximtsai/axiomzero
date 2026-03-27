@@ -31,7 +31,7 @@ const LEVEL_CONFIG = {
         healthDecay: -0.3 // HP/sec (negative = drain)
     },
     2: {
-        spawnInterval: 800, // ms between regular spawns (base)
+        spawnInterval: 750, // ms between regular spawns (base)
         initialWeights: {
             basic: 1,
             fast: 0,

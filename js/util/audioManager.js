@@ -105,16 +105,16 @@ const audio = {
         isSFXMuted = gameState.settings.sfxMuted;
         isMusicMuted = gameState.settings.musicMuted;
     },
-
     /**
      * Play a sound or music track. Auto-creates the Phaser sound if needed.
      * @param {string} name - Asset key.
      * @param {number} [volume=1]
      * @param {boolean} [loop=false]
      * @param {boolean} [isMusic=false] - If true, becomes the global music track.
+     * @param {number} [pan=0] - Stereo pan (-1.0 to 1.0).
      * @returns {Phaser.Sound.BaseSound}
      */
-    play: function (name, volume = 1, loop = false, isMusic = false) {
+    play: function (name, volume = 1, loop = false, isMusic = false, pan = 0) {
         if (!soundList[name]) {
             soundList[name] = PhaserScene.sound.add(name);
         }
@@ -153,7 +153,7 @@ const audio = {
             s.volume = 0;
         }
 
-        s.pan = 0;
+        s.pan = pan;
         s.play();
         return s;
     },
