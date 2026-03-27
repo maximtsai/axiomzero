@@ -305,6 +305,7 @@ const customEmitters = (() => {
             copy.setPosition(origSprite.x, origSprite.y);
             copy.setRotation(origSprite.rotation + randRot);
             copy.setDepth(origSprite.depth + 5);
+            copy.setOrigin(origSprite.originX, origSprite.originY);
 
             const signX = origSprite.scaleX < 0 ? -1 : 1;
             const signY = origSprite.scaleY < 0 ? -1 : 1;
@@ -353,6 +354,7 @@ const customEmitters = (() => {
         const frame = originalSprite.frame.name;
 
         const copy = PhaserScene.add.image(x, y, texture, frame);
+        copy.setOrigin(originalSprite.originX, originalSprite.originY);
         copy.setRotation(rotation);
         copy.setScale(scaleX, scaleY);
         copy.setDepth(depth);
@@ -405,7 +407,7 @@ const customEmitters = (() => {
                         if (typeof enemyManager !== 'undefined') {
                             const radius = 240 * effectScale;
                             const radiusSq = radius * radius;
-                            
+
                             // Use spatial hash to quickly get targets in the bounding box
                             const boxTargets = enemyManager.getEnemiesInSquareRange(x, y, radius);
                             for (let i = 0; i < boxTargets.length; i++) {

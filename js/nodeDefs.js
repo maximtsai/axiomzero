@@ -1566,7 +1566,7 @@ const NODE_DEFS = [
     },
     {
         id: 'physical_anchor',
-        name: 'PHYSICAL ANCHOR',
+        name: 'PURCHASE SERVERS',
         icon: 'Skillicon14_16.png',
         description: '+40 max health.',
         maxLevel: 1,

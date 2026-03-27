@@ -376,6 +376,7 @@ const enemyManager = (() => {
         const registry = {
             'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
             'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
+            'Miniboss3': typeof Miniboss3 !== 'undefined' ? Miniboss3 : null,
             'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
@@ -517,7 +518,10 @@ const enemyManager = (() => {
         const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning_big.png');
         warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         warningImg.setOrigin(0, 0.5);
-        warningImg.setScale(1.5, 1.4);
+
+        const isBoss5 = config.mainBoss === 'Boss5';
+        const wScale = isBoss5 ? 1.4 : 1.0;
+        warningImg.setScale(1.5 * wScale, 1.4 * wScale);
         warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
         warningImg.setAlpha(0);
 

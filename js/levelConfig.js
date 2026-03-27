@@ -35,7 +35,7 @@ const LEVEL_CONFIG = {
         initialWeights: {
             basic: 1,
             fast: 0,
-            shooter: 0.15,
+            shooter: 0.12,
             swarmer: 0.1,
             sniper: 0,
             heavy: 0,
@@ -54,36 +54,35 @@ const LEVEL_CONFIG = {
         miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss2',        // Identifier for the main boss
-        dataDropMultiplier: 1.6, // Multiplies the base DATA drop value or chance
+        dataDropMultiplier: 1.5, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
         healthDecay: -0.4
     },
     3: {
-        spawnInterval: 750,
+        spawnInterval: 700,
         initialWeights: {
             basic: 1,
-            fast: 0,
-            shooter: 0,
-            swarmer: 0.06,
+            fast: 0.04,
+            shooter: 0.2,
+            swarmer: 0.13,
             sniper: 0,
-            heavy: 0.08,
             logic_stray: 0,
             protector: 0
         },
         lateWeights: {
-            shooter: 0.1,
-            swarmer: 0.12,
-            heavy: 0.18,
+            shooter: 0.12,
+            swarmer: 0.08,
+            heavy: 0.15,
             fast: 0,
-            sniper: 0.1,
+            sniper: 0,
             protector: 0.0
         },
         swarmerGroupSize: { min: 3, max: 6 },
-        miniboss: 'Miniboss1',
+        miniboss: 'Miniboss3',
 
         mainBoss: 'Boss1',
-        dataDropMultiplier: 2.4,
-        levelScalingModifier: 2.4,
+        dataDropMultiplier: 2,
+        levelScalingModifier: 2.2,
         healthDecay: -0.5
     },
     4: {

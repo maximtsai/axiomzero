@@ -340,8 +340,10 @@ class EnemyView {
             const pulse = 0.8 + 0.2 * Math.sin(PhaserScene.time.now * 0.01);
             const tint = model.isBoss ? 0xff4400 : 0xff6600;
             this.img.setTint(tint);
-        } else {
+            this._wasBurning = true;
+        } else if (this._wasBurning) {
             this.img.clearTint();
+            this._wasBurning = false;
         }
     }
 

@@ -532,7 +532,7 @@ class Boss2 extends Boss {
             projectileDamage: 4.5
         });
 
-        this.setHPOrigin(0.475, 0.5);
+        this.setHPOrigin(0.47, 0.5);
 
         // Play warcry 0.75s after spawn
         PhaserScene.time.delayedCall(750, () => {

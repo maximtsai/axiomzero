@@ -196,6 +196,12 @@ const nodeTooltip = (() => {
             } else if (node.costType === 'insight') {
                 iconStr = '◐';
                 currentRes = resourceManager.getInsight();
+            } else if (node.costType === 'coin') {
+                iconStr = 'ⓒ';
+                currentRes = resourceManager.getCoins();
+            } else if (node.costType === 'processor') {
+                iconStr = '■';
+                currentRes = resourceManager.getProcessors();
             } else {
                 iconStr = '◈';
                 currentRes = resourceManager.getData();
