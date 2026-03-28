@@ -15,6 +15,11 @@ class BossModel extends EnemyModel {
         this.isMiniboss = false;
         this.knockBackModifier = 0;
         this.size = 100;
+        this.hasPostUpdate = false;
+    }
+
+    postUpdate(dt) {
+        // Optional hook for complex multi-unit behaviors (like HP sharing)
     }
 }
 
@@ -38,5 +43,31 @@ class Boss extends Enemy {
 
         // Bosses consistently face their target (the tower)
         this.view.setRotation(this.model.baseRotation);
+    }
+
+    onDeath(isFinal = true) {
+        if (!isFinal) return;
+
+        if (typeof customEmitters !== 'undefined') {
+            const ex = this.model.x;
+            const ey = this.model.y;
+            const bossDepth = (this.view && this.view.img) ? this.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
+
+            // Default standard boss death
+            if (customEmitters.createBossExplosionRays) {
+                customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
+            }
+            if (customEmitters.killAllNonBossEnemies) {
+                customEmitters.killAllNonBossEnemies();
+            }
+        }
+    }
+
+    /**
+     * Defines how this boss group spawns. Returns an array of partial activations.
+     * Default is just one unit at sx, sy.
+     */
+    static getSpawnLayout(sx, sy, angle, distance) {
+        return [{ x: sx, y: sy, angle: angle }];
     }
 }

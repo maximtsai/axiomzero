@@ -492,33 +492,30 @@ const enemyManager = (() => {
         if (bossSpawned) return;
 
         const config = getCurrentLevelConfig(lastWaveProgress);
-        let bossClass = _resolveEnemyClass(config.mainBoss);
-        let b = null;
-        if (!bossClass) {
+        let Class = _resolveEnemyClass(config.mainBoss);
+        if (!Class) {
             console.warn(`[EnemyManager] Boss class '${config.mainBoss}' not found. Defaulting to Boss1.`);
-            bossClass = Boss1;
-            b = new bossClass(config.levelScalingModifier || 1);
-        } else {
-            b = new bossClass(1);
+            Class = Boss1;
         }
-
-        if (!b) return;
 
         bossSpawned = true;
         bossAlive = true;
 
-        const distanceOffset = (b && b.model && b.model.getSpawnDistanceOffset) ? b.model.getSpawnDistanceOffset() : 0;
+        // Temporary instance to check for class-specific distance offsets/angles
+        const tempB = new Class(1);
+        const distanceOffset = (tempB.model && tempB.model.getSpawnDistanceOffset) ? tempB.model.getSpawnDistanceOffset() : 0;
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE + distanceOffset;
-        const angle = _getValidBossSpawnAngle(b);
+        const angle = _getValidBossSpawnAngle(tempB);
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
+
         if (config.mainBoss === 'Boss3') {
             const cardinals = [
-                { x: GAME_CONSTANTS.halfWidth, y: -90, rot: Math.PI / 2 },
-                { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.HEIGHT + 90, rot: -Math.PI / 2 },
-                { x: -120, y: GAME_CONSTANTS.halfHeight, rot: 0 },
-                { x: GAME_CONSTANTS.WIDTH + 120, y: GAME_CONSTANTS.halfHeight, rot: Math.PI }
+                { x: GAME_CONSTANTS.halfWidth, y: -190, rot: Math.PI / 2 },
+                { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.HEIGHT + 190, rot: -Math.PI / 2 },
+                { x: -220, y: GAME_CONSTANTS.halfHeight, rot: 0 },
+                { x: GAME_CONSTANTS.WIDTH + 220, y: GAME_CONSTANTS.halfHeight, rot: Math.PI }
             ];
             cardinals.forEach(c => {
                 const w = PhaserScene.add.image(c.x, c.y, 'enemies', 'warning_big.png');
@@ -564,55 +561,27 @@ const enemyManager = (() => {
             });
         }
 
-        // Use standard scale factor or custom logic if needed
-        if (config.mainBoss === 'Boss3') {
-            _spawnBoss3(sx, sy, angle, distance, config);
-        } else {
-            b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
-            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
+        const layout = Class.getSpawnLayout(sx, sy, angle, distance);
+        const spawnedUnits = [];
+
+        layout.forEach(item => {
+            const b = new Class(config.levelScalingModifier || 1);
+            const finalConfig = { ...config, ...item.config };
+            b.activate(item.x, item.y, GAME_VARS.scaleFactor || 1, finalConfig);
             b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+
             activeEnemies.push(b);
-        }
+            spawnedUnits.push(b);
+            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
+        });
+
+        if (Class.postSpawn) Class.postSpawn(spawnedUnits);
 
         messageBus.publish('bossSpawned');
         debugLog('Boss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
     }
 
-    function _spawnBoss3(sx, sy, angle, distance, config) {
-        const pieces = [];
-        const count = 8;
-        const step = (Math.PI * 2) / count;
 
-        for (let i = 0; i < count; i++) {
-            // Spawn 8 shards equally spaced in a ring around the tower
-            const curAngle = angle + i * step;
-            const px = GAME_CONSTANTS.halfWidth + Math.cos(curAngle) * distance;
-            const py = GAME_CONSTANTS.halfHeight + Math.sin(curAngle) * distance;
-
-            const b = new Boss3(config.levelScalingModifier || 1);
-            b.activate(px, py, GAME_VARS.scaleFactor || 1, {
-                maxHealth: 250,
-                damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5,
-                speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1
-            });
-            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
-
-            // Point towards tower
-            b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-            activeEnemies.push(b);
-            pieces.push(b);
-        }
-
-        // Link neighbors in a local ring (0-1, 1-2 ... 7-0)
-        for (let i = 0; i < count; i++) {
-            const next = pieces[(i + 1) % count];
-            const prev = pieces[(i - 1 + count) % count];
-            pieces[i].setNeighbors(next, prev);
-        }
-
-        bossSpawned = true;
-        bossAlive = true;
-    }
 
     function _releaseToPool(e) {
         if (e.model.isBoss || e.model.isMiniboss) return; // Bosses are not pooled
@@ -890,32 +859,24 @@ const enemyManager = (() => {
         }
 
         if (died && !enemy.model.isGhosting) {
+            // Handle multi-part bosses (Legion/Boss3)
             if (enemy.model.type === 'boss3') {
                 const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
                 if (pieces.length > 1) {
-                    // Small death
-                    if (typeof cameraManager !== 'undefined') cameraManager.shake(120, 0.005);
-                    if (customEmitters.createEnemyDeathAnim) {
-                        customEmitters.createEnemyDeathAnim(enemy, true); // Slowed death
-                    }
-                    if (customEmitters.playExplosionPulse) {
-                        customEmitters.playExplosionPulse(enemy.model.x, enemy.model.y, enemy.view.img.depth, 0.75, 'explosion_pulse');
-                    }
-                    if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
-                    _killEnemy(enemy, true); // Corrected: Pass true to skip the boss explosion/rays
-                    return; // Bypass standard rays
-                } else {
-                    // Final death - trigger standard boss effects
-                    bossAlive = false;
-                    _killEnemy(enemy);
+                    enemy.onDeath(false); // Staged death
+                    _killEnemy(enemy, true);
+                    return;
                 }
-            } else if (enemy.model.type === 'protector') {
+            }
+
+            // Standard death
+            enemy.onDeath(true); // Final/Core death
+            if (enemy.model.isBoss) bossAlive = false;
+
+            if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
-                // Fade out to signify its "dying" state while aura remains
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
-                PhaserScene.time.delayedCall(10, () => {
-                    _killEnemy(enemy);
-                });
+                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy));
             } else {
                 _killEnemy(enemy);
             }
@@ -1139,15 +1100,15 @@ const enemyManager = (() => {
             if (fastPackCooldown < 0) fastPackCooldown = 0;
         }
 
-        // Boss 3 HP Sharing calculation
+        // Boss 3 (Legion) HP sharing synchronization (orchestrated at manager level)
         if (bossAlive && !frozen) {
-            boss3ShareTimer -= dt;
-            if (boss3ShareTimer <= 0) {
-                boss3ShareTimer = 1.0;
-                const b3Pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
-                if (b3Pieces.length > 0) {
-                    b3Pieces.forEach(p => p.model.calculateSiphon());
-                    b3Pieces.forEach(p => p.model.applySiphon());
+            const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
+            if (shards.length > 0) {
+                boss3ShareTimer -= dt;
+                if (boss3ShareTimer <= 0) {
+                    boss3ShareTimer = 1.0;
+                    shards.forEach(p => p.model.calculateSiphon());
+                    shards.forEach(p => p.model.applySiphon());
                 }
             }
         }
@@ -1178,6 +1139,11 @@ const enemyManager = (() => {
             if (!e || !e.model.alive) continue;
 
             e.update(dt * spawnSpeedMultiplier);
+
+            // Refactor 2: Generalized post-update hook for custom boss behaviors
+            if (e.model.hasPostUpdate) {
+                e.model.postUpdate(dt);
+            }
 
             // Populate grid
             if (e.model.isBoss || e.model.isMiniboss) {

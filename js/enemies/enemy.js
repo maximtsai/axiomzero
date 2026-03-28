@@ -472,6 +472,15 @@ class Enemy {
         this.view.deactivate();
     }
 
+    /**
+     * Optional hook called by enemyManager when the enemy dies.
+     * @param {boolean} isFinal - For bosses with multiple parts, true if it's the last one.
+     */
+    onDeath(isFinal = true) {
+        // Default behavior: just die normally.
+        // Subclasses can override for staged animations or rays.
+    }
+
     // ── Movement ──────────────────────────────────────────────────────────────
 
     setRotation(rot) {

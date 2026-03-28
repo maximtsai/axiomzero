@@ -265,4 +265,92 @@ class Boss5 extends Boss {
             }
         });
     }
+
+    onDeath(isFinal = true) {
+        if (!isFinal) return;
+
+        const ex = this.model.x;
+        const ey = this.model.y;
+        const bossDepth = (this.view && this.view.img) ? this.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
+
+        // ── Boss5 enhanced death sequence ──────────────────────────────
+        const DEATH_DURATION = 1800;
+        
+        if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
+
+        // 3 small, jittered explosion_pulse effects
+        const pulseDelays = [50, 250, 450];
+        pulseDelays.forEach(delay => {
+            PhaserScene.time.delayedCall(delay, () => {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Phaser.Math.Between(30, 60);
+                const jx = ex + Math.cos(angle) * dist;
+                const jy = ey + Math.sin(angle) * dist;
+                if (typeof customEmitters !== 'undefined' && customEmitters.playExplosionPulse) {
+                    customEmitters.playExplosionPulse(jx, jy, bossDepth + 1, 1.0);
+                }
+            });
+        });
+
+        if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+            customEmitters.createBossExplosionRays(ex, ey, bossDepth, {
+                count: 3,
+                rayDuration: DEATH_DURATION,
+                pulseScale: 2
+            });
+        }
+
+        // Add 3 more individual rays over 60% of the duration
+        const raySpacing = Math.round((DEATH_DURATION * 0.6) / 3);
+        for (let i = 0; i < 3; i++) {
+            const delay = raySpacing * (i + 1);
+            PhaserScene.time.delayedCall(delay, () => {
+                if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, {
+                        count: 1,
+                        rayDuration: DEATH_DURATION - delay,
+                        skipPulse: true
+                    });
+                }
+            });
+        }
+
+        // Clusters
+        const offsets = [{ x: -90, y: -55 }, { x: 95, y: 50 }, { x: -50, y: 85 }];
+        offsets.forEach((offset, idx) => {
+            const delay = 300 + idx * 350;
+            PhaserScene.time.delayedCall(delay, () => {
+                if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+                    customEmitters.createBossExplosionRays(ex + offset.x, ey + offset.y, bossDepth, {
+                        count: 2,
+                        rayDuration: DEATH_DURATION - delay,
+                        skipPulse: true
+                    });
+                }
+                if (typeof cameraManager !== 'undefined') {
+                    cameraManager.shake(200, 0.012);
+                }
+            });
+        });
+
+        PhaserScene.time.delayedCall(DEATH_DURATION, () => {
+            if (typeof customEmitters !== 'undefined' && customEmitters.playExplosionPulse) {
+                customEmitters.playExplosionPulse(ex, ey, bossDepth, 4.75, 'explosion_pulse_slow', {
+                    targetScale: 6,
+                    duration: 300,
+                    ease: 'Quart.easeOut',
+                    soundKey: '8_bit_explosion'
+                });
+            }
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(1500, 0.04);
+            }
+        });
+
+        if (typeof customEmitters !== 'undefined' && customEmitters.killAllNonBossEnemies) {
+            customEmitters.killAllNonBossEnemies();
+        }
+
+        messageBus.publish('bossDefeated', ex, ey);
+    }
 }

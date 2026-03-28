@@ -18,9 +18,10 @@ class Boss3PieceModel extends BossModel {
         this.shareTimer = 1.0;
         this.pendingHPChange = 0;
 
-        this.initialSpeedMult = 4.0;
-        this.rampDuration = 1.2;
-        this.siphonPulse = 0;
+        this.initialSpeedMult = 10.0;
+        this.rampDuration = 2;
+        this.siphonPulse = 0; // Remains for view sync, but will be purely visual
+        this.hasPostUpdate = true;
     }
 
     activate(x, y, config = {}) {
@@ -62,12 +63,22 @@ class Boss3PieceModel extends BossModel {
             this.vy = 0;
         }
 
-        if (this.siphonPulse > 0) {
-            this.siphonPulse -= dt * 2.0;
-            if (this.siphonPulse < 0) this.siphonPulse = 0;
+        return burnTick;
+    }
+
+    // Refactor 2: Post-update hook for HP sharing
+    postUpdate(dt) {
+        this.shareTimer -= dt;
+        if (this.shareTimer <= 0) {
+            this.shareTimer = 1.0;
+            // The manager will orchestrate the actual calculate/apply calls
+            // since it has access to the full enemy list for cross-piece sync.
         }
 
-        return burnTick;
+        if (this.siphonPulse > 0) {
+            this.siphonPulse -= dt * 2.5;
+            if (this.siphonPulse < 0) this.siphonPulse = 0;
+        }
     }
 
     calculateSiphon() {
@@ -195,16 +206,16 @@ class Boss3 extends Boss {
         super(levelScalingModifier);
         this.model = new Boss3PieceModel(levelScalingModifier);
         this.view = new Boss3PieceView();
-        this._isMaster = false; // Used if we want one piece to trigger the group siphon
+        this._isMaster = false;
     }
 
     activate(x, y, scale = 1.0, config = {}) {
         super.activate(x, y, {
             maxHealth: 250,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.2,
-            initialSpeedMult: 8.0,
-            rampDuration: 1.4,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
+            initialSpeedMult: this.model.initialSpeedMult,
+            rampDuration: this.model.rampDuration,
             size: 50,
             ...config
         });
@@ -216,13 +227,62 @@ class Boss3 extends Boss {
 
     update(dt) {
         super.update(dt);
+    }
 
-        if (this._isMaster) {
-            // Master logic could go here, but enemyManager will handle cross-piece synchronization
+    // Refactor 1: Staged Death logic
+    onDeath(isFinal = true) {
+        if (!isFinal) {
+            // Shard shattered animation
+            if (typeof customEmitters !== 'undefined') {
+                const depth = (this.view && this.view.img) ? this.view.img.depth : GAME_CONSTANTS.DEPTH_ENEMIES;
+                customEmitters.playExplosionPulse(this.model.x, this.model.y, depth, 0.75, 'explosion_pulse');
+            }
+            if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
+        } else {
+            // Core Legion death
+            super.onDeath(true);
+            if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
         }
     }
 
     setNeighbors(n1, n2) {
         this.model.neighbors = [n1, n2];
+    }
+
+    /**
+     * Refactor 3: Static Spawn Layout for the 8-piece octagon
+     */
+    static getSpawnLayout(sx, sy, angle, distance) {
+        const layout = [];
+        const count = 6;
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+
+        for (let i = 0; i < count; i++) {
+            const shardAngle = angle + (i * (Math.PI * 2 / count));
+            const px = cx + Math.cos(shardAngle) * distance;
+            const py = cy + Math.sin(shardAngle) * distance;
+            layout.push({
+                x: px,
+                y: py,
+                angle: shardAngle,
+                config: {
+                    legionIndex: i
+                }
+            });
+        }
+        return layout;
+    }
+
+    /**
+     * Refactor 4: Post-spawn logic to link neighbors in a ring
+     */
+    static postSpawn(spawnedPieces) {
+        const count = spawnedPieces.length;
+        for (let i = 0; i < count; i++) {
+            const prev = spawnedPieces[(i + count - 1) % count];
+            const next = spawnedPieces[(i + 1) % count];
+            spawnedPieces[i].setNeighbors(next, prev);
+        }
     }
 }
