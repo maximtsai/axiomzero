@@ -190,7 +190,7 @@ const shockwaveAttack = (() => {
                 actualDamage += Math.floor(missingHealth / 10) * model.seismicCrushLevel;
             }
 
-            enemyManager.damageEnemy(e, actualDamage);
+            enemyManager.damageEnemy(e, actualDamage, 'shockwave');
 
             // Grav Lock logic: 80% slow on hit + Knockback
             if (model.gravLockEnabled) {

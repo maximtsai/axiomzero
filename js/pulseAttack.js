@@ -596,7 +596,7 @@ const pulseAttack = (() => {
         for (let i = 0; i < hits.length; i++) {
             const enemy = hits[i];
             let damageToApply = actualDamage;
-            
+
             // ISOLATION bonus visual flag
             if (hits.length === 1 && model.isolationLevel > 0) {
                 enemy.model.wasIsolatedHit = true;
@@ -607,7 +607,7 @@ const pulseAttack = (() => {
                 damageToApply += (4 * model.persistentExploitLevel);
             }
 
-            enemyManager.damageEnemy(enemy, damageToApply);
+            enemyManager.damageEnemy(enemy, damageToApply, 'cursor');
             enemy.model.hitByPulse = true;
         }
 
@@ -623,7 +623,7 @@ const pulseAttack = (() => {
                 const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
                 const aftershockHits = enemyManager.getEnemiesInSquareRange(cx, cy, aftershockSizeRadius, _hitBuffer);
                 for (let i = 0; i < aftershockHits.length; i++) {
-                    enemyManager.damageEnemy(aftershockHits[i], aftershockDamage);
+                    enemyManager.damageEnemy(aftershockHits[i], aftershockDamage, 'cursor');
                 }
             });
         }

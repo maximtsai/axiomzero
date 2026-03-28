@@ -261,7 +261,7 @@ class Boss5 extends Boss {
 
             // Force lethal damage to trigger the real death sequence
             if (typeof enemyManager !== 'undefined') {
-                enemyManager.damageEnemy(this, 9999);
+                enemyManager.damageEnemy(this, 9999, 'notrecorded');
             }
         });
     }
@@ -275,7 +275,7 @@ class Boss5 extends Boss {
 
         // ── Boss5 enhanced death sequence ──────────────────────────────
         const DEATH_DURATION = 1800;
-        
+
         if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
 
         // 3 small, jittered explosion_pulse effects

@@ -233,7 +233,7 @@ const lightningAttack = (() => {
         if (model.staticChargeMultiplier > 0 && first.model.health >= first.model.maxHealth * 0.8) {
             actualDamage *= (1 + model.staticChargeMultiplier);
         }
-        enemyManager.damageEnemy(first, actualDamage);
+        enemyManager.damageEnemy(first, actualDamage, 'lightning');
 
         // Chain to additional enemies
         let lastHit = first;
@@ -280,7 +280,7 @@ const lightningAttack = (() => {
             if (model.staticChargeMultiplier > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
                 chainDamage *= (1 + model.staticChargeMultiplier);
             }
-            enemyManager.damageEnemy(bestEnemy, chainDamage);
+            enemyManager.damageEnemy(bestEnemy, chainDamage, 'lightning');
 
             hitEnemies.push(bestEnemy);
             lastHit = bestEnemy;

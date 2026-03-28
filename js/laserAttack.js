@@ -431,7 +431,7 @@ const laserAttack = (() => {
             const reach = halfDmgW + (e.model.size || 0);
 
             if ((dx * dx + dy * dy) < (reach * reach)) {
-                enemyManager.damageEnemy(e, dmg);
+                enemyManager.damageEnemy(e, dmg, 'laser');
 
                 // Thermal Overload (guaranteed ignition)
                 if (model.incendiaryLevel > 0) {

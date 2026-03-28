@@ -79,7 +79,7 @@ class Miniboss3 extends Miniboss {
         // This must run every frame, even during slam animation, to ensure burn damage works.
         const tickAmt = m.update(dt);
         if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
-            enemyManager.damageEnemy(this, tickAmt);
+            enemyManager.damageEnemy(this, tickAmt, 'burn');
         }
 
         this.view.updateHPCrop(m.getHealthPct());

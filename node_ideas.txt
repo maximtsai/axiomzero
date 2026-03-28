@@ -1,6 +1,38 @@
-# NODE IDEAS
+# Axiom Zero - Gameplay and Node Ideas
 
-Title: END USER LICENSE AGREEMENT
-Effect: Nothing.
-Cost: 20 DATA
-Description: A massive wall of legal text. You click accept without comprehending a single word.
+## 1. Incremental Economy & Flow
+- **Turbo / Overclock Mode:** A "Call Wave Early" toggle for when the player's build is steamrolling. Increases spawn rate but rewards extra resources.
+- **Node Cost Scaling:** Apply `costStepScaling` to high-value linear nodes (e.g., Overclock, Prismatic Array) to maintain the economy long-term.
+- **Goal:** Maintains the challenge-to-growth ratio.
+- **Note:** This is an incremental game, not an idle one. No offline progress is planned.
+
+## 2. Information & Stats (Buyable Node)
+- **Concept:** An upgrade node that unlocks "Diagnostic Analytics."
+- **Feature:** Shows a percentage breakdown of Damage Sources (Pulse, Lightning, etc.) on the **End of Iteration report.**
+- **Goal:** Helps players understand which build specialization is carrying their performance.
+
+## 3. Visual & Audio "Juice" Scaling
+- **Concept:** Stats should have a visible and audible impact on the game's presentation.
+- **Milestone Idea:** High fire rates create a continuous white-hot muzzle glow.
+- **Milestone Idea:** Damage intensity scales screen-shake and bass depth.
+- **Visual Clarity:** "Damage Number Compression" - Combine many fast small hits into a single "Totalizing" number that updates rapidly.
+
+## 4. Cursor & Tower Synergies (The "Target Paint" System)
+- **Concept:** Cursor hits "Mark" enemies.
+- **Node Idea:** "Signal Boost" - Marked enemies take +50% total damage from the tower for 2 seconds.
+- **Goal:** Strategic target selection during intense boss phases.
+
+## 5. New Enemy Types (Tactical Variety)
+- **The "Data Chest":** Zero-threat, high-HP "loot goblin" for massive shard bursts.
+- **The "Shielded" Enemy:** Has a one-time hit shield that absorbs **any** single amount of damage. 
+- **Shielded Miniboss:** Extends the shield mechanic to a more dangerous threat, forcing the player to waste a shot or use a high fire-rate weapon to break the protection.
+- **Goal:** Breaks raw DPS "steamrolling" by requiring multiple hits regardless of damage numbers.
+
+## 6. Emergency & Panic Protocols (Active Survival)
+- **Concept:** High-cooldown manual abilities.
+- **Node Idea:** "System Flush" (EMP screen-clear) and "Hardened Shell" (temporary hit-absorption shield).
+- **Goal:** Clutch player agency in high-stress combat phases.
+
+## 7. Build Specializations (Duo Capstones)
+- **Concept:** Mutually exclusive Capstone nodes.
+- **Goal:** Unique build identities per iteration.

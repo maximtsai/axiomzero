@@ -835,8 +835,12 @@ const enemyManager = (() => {
 
     // ── damage ───────────────────────────────────────────────────────────────
 
-    function damageEnemy(enemy, amount) {
+    function damageEnemy(enemy, amount, source = 'other') {
         if (!enemy || !enemy.model.alive) return;
+
+        // Record damage in stats tracker BEFORE applying it (to handle overkill based on current health)
+        const actualApplied = Math.min(amount, enemy.model.health);
+        statsTracker.recordDamage(actualApplied, source);
 
         let died = enemy.takeDamage(amount);
         let isExecuted = false;
@@ -848,6 +852,7 @@ const enemyManager = (() => {
             enemy.model.takeDamage(enemy.model.health + 1000);
             died = true;
             isExecuted = true;
+            statsTracker.recordExecution();
         }
 
         // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
@@ -996,7 +1001,7 @@ const enemyManager = (() => {
 
                     const targets = getEnemiesInDiamondRange(bx, by, explosionRange);
                     for (let i = 0; i < targets.length; i++) {
-                        damageEnemy(targets[i], explosionDamage);
+                        damageEnemy(targets[i], explosionDamage, 'friendlyfire');
                     }
                 });
             }

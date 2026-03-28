@@ -503,7 +503,7 @@ class Enemy {
     update(dt) {
         const tickAmt = this.model.update(dt);
         if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
-            enemyManager.damageEnemy(this, tickAmt);
+            enemyManager.damageEnemy(this, tickAmt, 'burn');
         }
         this.view.syncPosition(this.model.x, this.model.y);
         this.view.updateHPCrop(this.model.getHealthPct());

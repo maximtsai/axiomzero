@@ -227,9 +227,9 @@ const NODE_DEFS = [
         costStep: 10,
         costStepScaling: 10,
         parents: ['integrity'],
-        childIds: ['lore_1'],
+        childIds: ['lore_1', 'system_redundancy_new'],
         treeX: gridX(-2),
-        treeY: gridY(0.5),
+        treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -286,7 +286,7 @@ const NODE_DEFS = [
         parents: ['regen'],
         childIds: [],
         treeX: gridX(-3),
-        treeY: gridY(0.5),
+        treeY: gridY(0),
         requiresMaxParent: true,
         tooltipExtraWidth: 300,
         effect: function () {
@@ -689,7 +689,7 @@ const NODE_DEFS = [
         parents: ['overcharge'],
         treeX: gridX(-2),
         treeY: gridY(4.5),
-        childIds: ['threat_response', 'system_redundancy_new'],
+        childIds: ['threat_response'],
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -705,10 +705,10 @@ const NODE_DEFS = [
         baseCost: 100,
         costType: 'data',
         costScaling: 'static',
-        parents: ['armor'],
+        parents: ['regen'],
         childIds: [],
         treeX: gridX(-2.5),
-        treeY: gridY(3.5),
+        treeY: gridY(0.5),
         effect: function () { },
     },
     {
@@ -723,6 +723,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
+        costStepScaling: 10,
         parents: ['privilege_escalation_3'],
         childIds: ['base_hp_boost'],
         treeX: gridX(0.0),
@@ -758,6 +759,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
+        costStepScaling: 8,
         parents: ['trojan_access'],
         childIds: [],
         treeX: gridX(2.0),
@@ -776,6 +778,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
+        costStepScaling: 12,
         parents: ['intensity'],
         childIds: [],
         treeX: gridX(2.0),

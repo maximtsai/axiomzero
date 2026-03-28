@@ -231,7 +231,7 @@ class Miniboss2 extends Miniboss {
 
                     // Force manual self damage and text display by proxy
                     // We directly take damage since we disabled our native 'damage' stat
-                    enemyManager.damageEnemy(this, MB2.SELF_DAMAGE);
+                    enemyManager.damageEnemy(this, MB2.SELF_DAMAGE, 'notrecorded');
 
                     m.hasHitTowerInCurrentAttack = true;
 

@@ -182,7 +182,7 @@ const projectileManager = (() => {
                         hitSpr.play('hit_circle');
                     }
 
-                    enemyManager.damageEnemy(e, p.damage);
+                    enemyManager.damageEnemy(e, p.damage, 'tower');
                     hit = true;
                     break;
                 }

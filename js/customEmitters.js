@@ -439,7 +439,7 @@ const customEmitters = (() => {
                                 const dy = e.model.y - y;
                                 // Exact circle check
                                 if (dx * dx + dy * dy <= radiusSq) {
-                                    enemyManager.damageEnemy(e, 99);
+                                    enemyManager.damageEnemy(e, 99, 'other');
                                 }
                             }
                         }

@@ -56,8 +56,9 @@ const waveManager = (() => {
         const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
         currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
 
-        // Reset tower for this combat session
+        // Reset tower and stats for this combat session
         tower.reset(true);
+        statsTracker.reset();
 
         // Listen for tower death
         towerDiedSub = messageBus.subscribe('towerDied', _onTowerDied);

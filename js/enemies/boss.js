@@ -35,7 +35,7 @@ class Boss extends Enemy {
 
         const tickAmt = this.model.update(dt);
         if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
-            enemyManager.damageEnemy(this, tickAmt);
+            enemyManager.damageEnemy(this, tickAmt, 'burn');
         }
 
         this.view.syncPosition(this.model.x, this.model.y);

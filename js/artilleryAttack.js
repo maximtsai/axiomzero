@@ -338,7 +338,7 @@ const artilleryAttack = (() => {
                     }
                 }
 
-                enemyManager.damageEnemy(enemy, damage);
+                enemyManager.damageEnemy(enemy, damage, 'artillery');
 
                 // SHELLSHOCKED logic: 80% slow for 1.25s
                 if (model.stunLevel > 0 && typeof enemy.forceSlow === 'function') {
