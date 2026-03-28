@@ -248,6 +248,22 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">enemies/boss3_attack.png</key>
+            <key type="filename">enemies/boss3_attack_thick.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>155,155,310,310</rect>
+                <key>scale9Paddings</key>
+                <rect>155,155,310,310</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">enemies/boss5_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -320,6 +336,24 @@
                 <rect>100,100,200,200</rect>
                 <key>scale9Paddings</key>
                 <rect>100,100,200,200</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">enemies/boss_3_charge.png</key>
+            <key type="filename">enemies/explosion_flash.png</key>
+            <key type="filename">enemies/explosion_white.png</key>
+            <key type="filename">enemies/warning_area.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>118,118,235,235</rect>
+                <key>scale9Paddings</key>
+                <rect>118,118,235,235</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -407,23 +441,6 @@
                 <rect>30,30,59,59</rect>
                 <key>scale9Paddings</key>
                 <rect>30,30,59,59</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/explosion_flash.png</key>
-            <key type="filename">enemies/explosion_white.png</key>
-            <key type="filename">enemies/warning_area.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>118,118,235,235</rect>
-                <key>scale9Paddings</key>
-                <rect>118,118,235,235</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

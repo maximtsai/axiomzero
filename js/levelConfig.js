@@ -70,7 +70,7 @@ const LEVEL_CONFIG = {
             protector: 0
         },
         lateWeights: {
-            shooter: 0.12,
+            shooter: 0,
             swarmer: 0.08,
             heavy: 0.15,
             fast: 0,

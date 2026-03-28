@@ -120,6 +120,26 @@ class Boss3PieceModel extends BossModel {
     }
 }
 
+let _sharedAttackSprite = null;
+let _sharedAttackActive = false;
+let _sharedAttackCooldown = 0;
+let _sharedAttackBuildUp = 0;
+
+// Cleanup static assets on phase change/game reset
+if (typeof messageBus !== 'undefined') {
+    messageBus.subscribe('phaseChanged', (phase) => {
+        if (phase !== GAME_CONSTANTS.PHASE_COMBAT) {
+            _sharedAttackActive = false;
+            _sharedAttackCooldown = 0;
+            _sharedAttackBuildUp = 0;
+            if (_sharedAttackSprite) {
+                _sharedAttackSprite.setVisible(false);
+                PhaserScene.tweens.killTweensOf(_sharedAttackSprite);
+            }
+        }
+    });
+}
+
 class Boss3PieceView extends EnemyView {
     constructor() {
         super(Enemy.TEX_KEY, 'boss_3.png', 'boss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
@@ -133,6 +153,13 @@ class Boss3PieceView extends EnemyView {
         this.pulse.setDepth(this.img.depth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
+
+        // Charge sprite
+        this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_3_charge.png');
+        this.chargeSprite.setDepth(this.img.depth + 1);
+        this.chargeSprite.setScale(1);
+        this.chargeSprite.setAlpha(0);
+        this.chargeSprite.setVisible(false);
     }
 
     activate(x, y, rotation, cannotRotate) {
@@ -141,6 +168,11 @@ class Boss3PieceView extends EnemyView {
         this.pulse.setVisible(true);
         this.pulse.setPosition(x, y);
         this._startPulseEffect();
+
+        this.chargeSprite.setVisible(true);
+        this.chargeSprite.setPosition(x, y);
+        this.chargeSprite.setRotation(rotation);
+        this.chargeSprite.setAlpha(0);
     }
 
     _startPulseEffect() {
@@ -191,13 +223,35 @@ class Boss3PieceView extends EnemyView {
     syncPosition(x, y) {
         super.syncPosition(x, y);
         if (this.pulse) this.pulse.setPosition(x, y);
+        if (this.chargeSprite) this.chargeSprite.setPosition(x, y);
     }
 
     deactivate() {
         super.deactivate();
         if (this.lineGraphics) this.lineGraphics.clear().setVisible(false);
-        if (this.pulse) this.pulse.setVisible(false);
-        if (this.pulseTimer) this.pulseTimer.remove();
+        if (this.pulse) {
+            this.pulse.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.pulse);
+        }
+        if (this.chargeSprite) {
+            this.chargeSprite.setVisible(false);
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+        }
+        if (this.pulseTimer) {
+            this.pulseTimer.remove();
+            this.pulseTimer = null;
+        }
+    }
+
+    playChargeAnimation() {
+        if (!this.chargeSprite) return;
+        this.chargeSprite.setAlpha(0);
+
+        // 0.0 -> 0.1 -> 0.2 -> 1.5 sequence handled by Boss3 controller collectively
+    }
+
+    setChargeAlpha(alpha) {
+        if (this.chargeSprite) this.chargeSprite.setAlpha(alpha);
     }
 }
 
@@ -210,9 +264,12 @@ class Boss3 extends Boss {
     }
 
     activate(x, y, scale = 1.0, config = {}) {
+        this.model.config = config; // Persistent config for shard indexing
+        this._isMaster = false;     // Reset master status on pool reuse
+
         super.activate(x, y, {
             maxHealth: 250,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5,
+            damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
@@ -227,11 +284,122 @@ class Boss3 extends Boss {
 
     update(dt) {
         super.update(dt);
+
+        // Core Attack orchestration
+        if (!_sharedAttackActive && _sharedAttackCooldown <= 0) {
+            // Trigger if any unit (this one) is IDLE (ready)
+            if (this.model.state === BOSS_3_PIECE_STATES.IDLE) {
+                this.startGroupAttack();
+            }
+        }
+
+        if (_sharedAttackCooldown > 0) {
+            // Only update shared timers once per frame (triggered by the master shard)
+            // If the master shard dies, its update won't run - handled in onDeath logic
+            if (this._isMaster) {
+                _sharedAttackCooldown -= dt;
+            }
+        }
+
+        // Shared view update handled in Enemy loop, but we proxy the alpha here
+        if (_sharedAttackActive) {
+            if (this._isMaster) {
+                _sharedAttackBuildUp += dt;
+                _sharedAttackCooldown = 0; // Explicit reset while charging
+            }
+
+            const b = _sharedAttackBuildUp;
+            let alpha = 0;
+
+            if (b < 0.1) {
+                alpha = (b / 0.1) * 0.5;
+            } else if (b < 0.2) {
+                alpha = 0.5 - ((b - 0.1) / 0.1) * 0.4;
+            } else if (b < 2.5) {
+                const progress = (b - 0.2) / 2.3;
+                alpha = 0.1 + (Math.pow(progress, 2) * 0.9);
+            } else {
+                alpha = 1.0;
+            }
+
+            this.view.setChargeAlpha(alpha);
+
+            if (_sharedAttackBuildUp >= 2.5 && _sharedAttackActive) {
+                // Impact Phase! Handled by one shard to avoid multiple hits
+                this.finishGroupAttack();
+            }
+        } else {
+            this.view.setChargeAlpha(0);
+        }
+    }
+
+    startGroupAttack() {
+        if (_sharedAttackActive) return;
+        _sharedAttackActive = true;
+        _sharedAttackBuildUp = 0;
+
+        const tx = GAME_CONSTANTS.halfWidth;
+        const ty = GAME_CONSTANTS.halfHeight;
+
+        if (!_sharedAttackSprite) {
+            _sharedAttackSprite = PhaserScene.add.image(tx, ty, Enemy.TEX_KEY, 'boss3_attack.png');
+            _sharedAttackSprite.setDepth(205); // Above tower (200)
+        }
+
+        _sharedAttackSprite.setPosition(tx, ty);
+        _sharedAttackSprite.setScale(1.03);
+        _sharedAttackSprite.setAlpha(0);
+        _sharedAttackSprite.setVisible(true);
+
+        _sharedAttackSprite.currAnim = PhaserScene.tweens.add({
+            targets: _sharedAttackSprite,
+            alpha: 0.9,
+            duration: 2500,
+            ease: 'Quad.easeIn'
+        });
+    }
+
+    finishGroupAttack() {
+        _sharedAttackActive = false;
+        _sharedAttackCooldown = 3.0;
+
+        if (_sharedAttackSprite) {
+            if (_sharedAttackSprite.currAnim) {
+                _sharedAttackSprite.currAnim.stop();
+            }
+            _sharedAttackSprite.setFrame('boss3_attack_thick.png');
+            _sharedAttackSprite.setScale(1.045);
+            PhaserScene.tweens.add({
+                targets: _sharedAttackSprite,
+                scaleX: 0.06,
+                scaleY: 0.06,
+                alpha: 1,
+                duration: 450,
+                ease: 'Quad.easeIn',
+                onComplete: () => {
+                    _sharedAttackSprite.setFrame('boss3_attack.png');
+                    _sharedAttackSprite.setVisible(false);
+                    if (typeof tower !== 'undefined' && tower.isAlive()) {
+                        tower.takeDamage(10);
+                        if (typeof cameraManager !== 'undefined') {
+                            cameraManager.shake(300, 0.015);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // Refactor 1: Staged Death logic
     onDeath(isFinal = true) {
         if (!isFinal) {
+            // Master reassignment if the controller shard dies
+            if (this._isMaster) {
+                const shards = enemyManager.getEnemiesByType('boss3');
+                const nextMaster = shards.find(s => s !== this && s.model.alive);
+                if (nextMaster) nextMaster._isMaster = true;
+            }
+
             // Shard shattered animation
             if (typeof customEmitters !== 'undefined') {
                 const depth = (this.view && this.view.img) ? this.view.img.depth : GAME_CONSTANTS.DEPTH_ENEMIES;
@@ -239,7 +407,14 @@ class Boss3 extends Boss {
             }
             if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
         } else {
-            // Core Legion death
+            // Core Legion death - cleanup group effects
+            _sharedAttackActive = false;
+            _sharedAttackBuildUp = 0;
+            if (_sharedAttackSprite) {
+                _sharedAttackSprite.setVisible(false);
+                PhaserScene.tweens.killTweensOf(_sharedAttackSprite);
+            }
+
             super.onDeath(true);
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
         }
@@ -282,6 +457,10 @@ class Boss3 extends Boss {
      */
     static postSpawn(spawnedPieces) {
         const count = spawnedPieces.length;
+        if (count > 0) {
+            spawnedPieces[0]._isMaster = true; // First spawned shard is the global timer manager
+        }
+
         for (let i = 0; i < count; i++) {
             const prev = spawnedPieces[(i + count - 1) % count];
             const next = spawnedPieces[(i + 1) % count];

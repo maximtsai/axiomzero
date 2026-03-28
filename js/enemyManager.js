@@ -1233,6 +1233,10 @@ const enemyManager = (() => {
         }
     }
 
+    function getEnemiesByType(type) {
+        return activeEnemies.filter(e => e.model.type === type && e.model.alive);
+    }
+
     function spawnAt(type, x, y, config = {}) {
         const p = pools[type];
         if (!p) return null;
@@ -1252,5 +1256,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed };
-})();
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed };
+} )();
