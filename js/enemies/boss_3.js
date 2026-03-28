@@ -268,7 +268,7 @@ class Boss3 extends Boss {
         this._isMaster = false;     // Reset master status on pool reuse
 
         super.activate(x, y, {
-            maxHealth: 250,
+            maxHealth: 260,
             damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,
@@ -400,6 +400,14 @@ class Boss3 extends Boss {
                 if (nextMaster) nextMaster._isMaster = true;
             }
 
+            // Optimization: Remove ourself from the neighbor chain to keep connections and HP sharing active
+            const prev = this.model.neighbors[1];
+            const next = this.model.neighbors[0];
+            if (prev && next) {
+                prev.model.neighbors[0] = next;
+                next.model.neighbors[1] = prev;
+            }
+
             // Shard shattered animation
             if (typeof customEmitters !== 'undefined') {
                 const depth = (this.view && this.view.img) ? this.view.img.depth : GAME_CONSTANTS.DEPTH_ENEMIES;
@@ -407,7 +415,7 @@ class Boss3 extends Boss {
             }
             if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
         } else {
-            // Core Legion death - cleanup group effects
+            // Core Phalanx death - cleanup group effects
             _sharedAttackActive = false;
             _sharedAttackBuildUp = 0;
             if (_sharedAttackSprite) {
@@ -459,6 +467,13 @@ class Boss3 extends Boss {
         const count = spawnedPieces.length;
         if (count > 0) {
             spawnedPieces[0]._isMaster = true; // First spawned shard is the global timer manager
+
+            // Standard boss announcement text with a 1s delay
+            PhaserScene.time.delayedCall(1000, () => {
+                if (typeof messageBus !== 'undefined' && typeof t === 'function') {
+                    messageBus.publish('AnnounceText', t('ui', 'boss_3_name'));
+                }
+            });
         }
 
         for (let i = 0; i < count; i++) {

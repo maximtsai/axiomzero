@@ -25,7 +25,7 @@ class Miniboss4Model extends MinibossModel {
         this.isCharging = false;
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
-        this.cannotRotate = true;
+        this.cannotRotate = true; // Intended: does not rotate to face tower (Sniper style)
         
         // Use standard initial speed boost for minibosses
         this.initialSpeedMult = 7;
@@ -109,6 +109,8 @@ class Miniboss4View extends EnemyView {
         const wx = Math.sin(wobbleTime * 25) * 0.08;
         const wy = Math.cos(wobbleTime * 21) * 0.08;
         const baseScale = this.chargeSprite.scaleX;
+        
+        // Intended: wobble is cumulative for a more frantic, unstable visual feel
         this.chargeSprite.scaleX = baseScale + wx;
         this.chargeSprite.scaleY = baseScale + wy;
         return wobbleTime;
@@ -129,9 +131,12 @@ class Miniboss4 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
+        const v = this.view;
+        
+        // Intended: Minibosses/Bosses do not scale with level progression
         m.maxHealth = MB4.HEALTH;
         m.health = m.maxHealth;
-        m.damage = 0; // Does not deal contact damage usually
+        m.damage = 15; // Does not deal contact damage usually
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB4.SPEED_MULT;
         m.size = 65;
 

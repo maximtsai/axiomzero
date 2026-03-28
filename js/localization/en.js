@@ -20,6 +20,7 @@ window.TRANSLATIONS.en = {
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
         boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
+        boss_3_name: 'ENTITY APPROACHING:\n#PHALANX',
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
     },
     nodes: {

@@ -868,7 +868,7 @@ const enemyManager = (() => {
         }
 
         if (died && !enemy.model.isGhosting) {
-            // Handle multi-part bosses (Legion/Boss3)
+            // Handle multi-part bosses (Phalanx/Boss3)
             if (enemy.model.type === 'boss3') {
                 const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
                 if (pieces.length > 1) {
@@ -1109,7 +1109,7 @@ const enemyManager = (() => {
             if (fastPackCooldown < 0) fastPackCooldown = 0;
         }
 
-        // Boss 3 (Legion) HP sharing synchronization (orchestrated at manager level)
+        // Boss 3 (Phalanx) HP sharing synchronization (orchestrated at manager level)
         if (bossAlive && !frozen) {
             const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
             if (shards.length > 0) {
@@ -1257,4 +1257,4 @@ const enemyManager = (() => {
     updateManager.addFunction(_update);
 
     return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed };
-} )();
+})();
