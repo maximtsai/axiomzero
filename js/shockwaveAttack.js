@@ -195,7 +195,7 @@ const shockwaveAttack = (() => {
             // Grav Lock logic: 80% slow on hit + Knockback
             if (model.gravLockEnabled) {
                 if (typeof e.forceSlow === 'function') {
-                    e.forceSlow(0.2, 1.1);
+                    e.forceSlow(0.2, 0.8);
                 }
                 const dx = e.model.x - pos.x;
                 const dy = e.model.y - pos.y;

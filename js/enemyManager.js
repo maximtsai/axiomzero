@@ -511,18 +511,27 @@ const enemyManager = (() => {
 
 
         if (config.mainBoss === 'Boss3') {
-            const cardinals = [
-                { x: GAME_CONSTANTS.halfWidth, y: -190, rot: Math.PI / 2 },
-                { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.HEIGHT + 190, rot: -Math.PI / 2 },
-                { x: -220, y: GAME_CONSTANTS.halfHeight, rot: 0 },
-                { x: GAME_CONSTANTS.WIDTH + 220, y: GAME_CONSTANTS.halfHeight, rot: Math.PI }
-            ];
-            cardinals.forEach(c => {
-                const w = PhaserScene.add.image(c.x, c.y, 'enemies', 'warning_big.png');
+            const layout = Class.getSpawnLayout(sx, sy, angle, distance);
+            layout.forEach(item => {
+                let wx = item.x;
+                let wy = item.y;
+
+                // Move the Top 2 and Bottom 2 indicators (the diagonals) 250px closer
+                // We identify them by checking that they aren't the purely horizontal shards (West=180, East=0)
+                if (Math.abs(Math.cos(item.angle)) < 0.9) {
+                    const dx = item.x - GAME_CONSTANTS.halfWidth;
+                    const dy = item.y - GAME_CONSTANTS.halfHeight;
+                    const d = Math.sqrt(dx * dx + dy * dy) || 1;
+                    const newD = Math.max(0, d - 250);
+                    wx = GAME_CONSTANTS.halfWidth + (dx / d) * newD;
+                    wy = GAME_CONSTANTS.halfHeight + (dy / d) * newD;
+                }
+
+                const w = PhaserScene.add.image(wx, wy, 'enemies', 'warning.png');
                 w.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
                 w.setOrigin(0, 0.5);
-                w.setScale(1.5, 1.4);
-                w.setRotation(c.rot);
+                w.setScale(1.2);
+                w.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - wy, GAME_CONSTANTS.halfWidth - wx));
                 w.setAlpha(0);
                 PhaserScene.tweens.add({
                     targets: w,

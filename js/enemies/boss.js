@@ -43,6 +43,7 @@ class Boss extends Enemy {
 
         // Bosses consistently face their target (the tower)
         this.view.setRotation(this.model.baseRotation);
+        this.view.update(dt, this.model);
     }
 
     onDeath(isFinal = true) {

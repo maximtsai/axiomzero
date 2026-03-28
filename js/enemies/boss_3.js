@@ -18,8 +18,8 @@ class Boss3PieceModel extends BossModel {
         this.shareTimer = 1.0;
         this.pendingHPChange = 0;
 
-        this.initialSpeedMult = 10.0;
-        this.rampDuration = 2;
+        this.initialSpeedMult = 18.0;
+        this.rampDuration = 2.8;
         this.siphonPulse = 0; // Remains for view sync, but will be purely visual
         this.hasPostUpdate = true;
     }
@@ -53,7 +53,7 @@ class Boss3PieceModel extends BossModel {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (this.state === BOSS_3_PIECE_STATES.TRAVEL) {
-            if (dist < 120) {
+            if (dist < 260) {
                 this.state = BOSS_3_PIECE_STATES.IDLE;
                 this.vx = 0;
                 this.vy = 0;
@@ -213,7 +213,7 @@ class Boss3 extends Boss {
         super.activate(x, y, {
             maxHealth: 250,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: 50,
@@ -258,8 +258,11 @@ class Boss3 extends Boss {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
+        // Offset by 30 degrees (PI/6) to avoid top/bottom units and create 3 left/3 right clusters
+        const angleOffset = Math.PI / 6;
+
         for (let i = 0; i < count; i++) {
-            const shardAngle = angle + (i * (Math.PI * 2 / count));
+            const shardAngle = (angle + angleOffset) + (i * (Math.PI * 2 / count));
             const px = cx + Math.cos(shardAngle) * distance;
             const py = cy + Math.sin(shardAngle) * distance;
             layout.push({

@@ -11,6 +11,7 @@ class HeavyEnemyModel extends EnemyModel {
         super();
         this.type = 'heavy';
         this.baseResourceDrop = 4;
+        this.knockBackModifier = 0.6;
     }
 
     getHitFeedbackConfig() {
