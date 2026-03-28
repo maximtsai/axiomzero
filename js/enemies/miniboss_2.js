@@ -112,6 +112,8 @@ class Miniboss2 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
+
+        // Intended: Minibosses/Bosses do not scale health or damage with level progression
         m.maxHealth = MB2.HEALTH;
         m.health = m.maxHealth;
 

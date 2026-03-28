@@ -146,11 +146,12 @@ class Boss1 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
+        // Intended: Minibosses/Bosses do not scale with level progression
         const bossHealth = 200;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3, // Intended static damage
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.8,
             initialSpeedMult: this.model.initialSpeedMult,

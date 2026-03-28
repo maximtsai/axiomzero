@@ -8,13 +8,12 @@
 //   • SLAM ATTACK: 10 damage after a wind-up and lunge animation.
 
 const MB3 = {
-    HEALTH: 450,
+    HEALTH: 470,
     SPEED_MULT: 0.85,
     INITIAL_SPEED_MULT: 7,
     RAMP_DURATION: 2.5,
-    ATTACK_COOLDOWN: 3000,
-    ATTACK_DAMAGE: 7,
-    ATTACK_RANGE_BUFFER: 1,
+    ATTACK_COOLDOWN: 2500,
+    ATTACK_DAMAGE: 6,
 };
 
 class Miniboss3Model extends MinibossModel {
@@ -45,13 +44,14 @@ class Miniboss3 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
-        // Apply level scaling to the base 350 HP
-        m.maxHealth = MB3.HEALTH * (this.levelScalingModifier || 1);
+
+        // Intended: Minibosses/Bosses do not scale health or damage with level progression
+        m.maxHealth = MB3.HEALTH;
         m.health = m.maxHealth;
-        m.damage = MB3.ATTACK_DAMAGE;
+        m.damage = MB3.ATTACK_DAMAGE; // Intended static damage
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB3.SPEED_MULT;
         m.knockBackModifier = 0; // Immune to knockback
-        m.size = 78; // Chunky hitbox
+        m.size = 94;
 
         m.attackCooldown = 0; // Ready immediately
         m.isSlamming = false;
@@ -75,23 +75,23 @@ class Miniboss3 extends Miniboss {
         const m = this.model;
         if (!m.alive) return;
 
-        // Custom update to allow position tweening during attacks
+        // Process model updates (burn ticks, stun timers, hitstop, speed ramp)
+        // This must run every frame, even during slam animation, to ensure burn damage works.
         const tickAmt = m.update(dt);
         if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
             enemyManager.damageEnemy(this, tickAmt);
-        }
-
-        // Sync position ONLY if not currently in the lunge animation
-        if (!m.isSlamming) {
-            this.view.syncPosition(m.x, m.y);
         }
 
         this.view.updateHPCrop(m.getHealthPct());
         this.view.update(dt, m);
 
         if (m.isSlamming) {
+            // Position is currently being controlled by Phaser tweens in _performSlam
             return;
         }
+
+        // Sync position to model only when not slamming
+        this.view.syncPosition(m.x, m.y);
 
         if (m.attackCooldown > 0) {
             m.attackCooldown -= dt * 1000;
@@ -131,7 +131,7 @@ class Miniboss3 extends Miniboss {
         const angle = Math.atan2(dy, dx);
 
         // Tween "back" (away from tower)
-        const backDist = 30;
+        const backDist = 25;
         const backX = -Math.cos(angle) * backDist;
         const backY = -Math.sin(angle) * backDist;
 
@@ -157,15 +157,30 @@ class Miniboss3 extends Miniboss {
                     onComplete: () => {
                         if (!m.alive) return;
 
-                        // Deal damage at the collision point
-                        tower.takeDamage(MB3.ATTACK_DAMAGE, m.x, m.y);
+                        // Deal damage at the collision point using model's damage value
+                        tower.takeDamage(m.damage, m.x, m.y);
 
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.02);
                         }
 
-                        m.isSlamming = false;
-                        m.attackCooldown = MB3.ATTACK_COOLDOWN;
+                        // Added bounce back: Cubic.easeOut over 200ms
+                        const bounceDist = 5;
+                        const bx = -Math.cos(angle) * bounceDist;
+                        const by = -Math.sin(angle) * bounceDist;
+
+                        PhaserScene.tweens.add({
+                            targets: [v.img, v.hpImg],
+                            x: m.x + bx,
+                            y: m.y + by,
+                            duration: 200,
+                            ease: 'Cubic.easeOut',
+                            onComplete: () => {
+                                if (!m.alive) return;
+                                m.isSlamming = false;
+                                m.attackCooldown = MB3.ATTACK_COOLDOWN;
+                            }
+                        });
                     }
                 });
             }

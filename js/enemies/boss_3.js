@@ -124,6 +124,7 @@ let _sharedAttackSprite = null;
 let _sharedAttackActive = false;
 let _sharedAttackCooldown = 0;
 let _sharedAttackBuildUp = 0;
+let _sharedAttackSfx = null;
 
 // Cleanup static assets on phase change/game reset
 if (typeof messageBus !== 'undefined') {
@@ -132,6 +133,10 @@ if (typeof messageBus !== 'undefined') {
             _sharedAttackActive = false;
             _sharedAttackCooldown = 0;
             _sharedAttackBuildUp = 0;
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
             if (_sharedAttackSprite) {
                 _sharedAttackSprite.setVisible(false);
                 PhaserScene.tweens.killTweensOf(_sharedAttackSprite);
@@ -324,7 +329,7 @@ class Boss3 extends Boss {
 
             this.view.setChargeAlpha(alpha);
 
-            if (_sharedAttackBuildUp >= 2.5 && _sharedAttackActive) {
+            if (this._isMaster && _sharedAttackBuildUp >= 2.5 && _sharedAttackActive) {
                 // Impact Phase! Handled by one shard to avoid multiple hits
                 this.finishGroupAttack();
             }
@@ -337,6 +342,9 @@ class Boss3 extends Boss {
         if (_sharedAttackActive) return;
         _sharedAttackActive = true;
         _sharedAttackBuildUp = 0;
+        if (typeof audio !== 'undefined') {
+            _sharedAttackSfx = audio.play('power_surge', 0.85);
+        }
 
         const tx = GAME_CONSTANTS.halfWidth;
         const ty = GAME_CONSTANTS.halfHeight;
@@ -364,6 +372,10 @@ class Boss3 extends Boss {
         _sharedAttackCooldown = 3.0;
 
         if (_sharedAttackSprite) {
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
             if (_sharedAttackSprite.currAnim) {
                 _sharedAttackSprite.currAnim.stop();
             }
@@ -418,6 +430,10 @@ class Boss3 extends Boss {
             // Core Phalanx death - cleanup group effects
             _sharedAttackActive = false;
             _sharedAttackBuildUp = 0;
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
             if (_sharedAttackSprite) {
                 _sharedAttackSprite.setVisible(false);
                 PhaserScene.tweens.killTweensOf(_sharedAttackSprite);

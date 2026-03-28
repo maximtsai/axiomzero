@@ -489,7 +489,7 @@ class Boss2View extends EnemyView {
 
     syncChargePosition(x, y, turretRot) {
         if (!this.chargeSprite || !this.chargeSprite.visible) return;
-        const nozzleDist = 125;
+        const nozzleDist = 135; // Unified nozzle distance
         this.chargeSprite.setPosition(
             x + Math.cos(turretRot) * nozzleDist,
             y + Math.sin(turretRot) * nozzleDist
@@ -519,9 +519,8 @@ class Boss2View extends EnemyView {
             this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
         }
-        if (this._launchEffectPool) {
-            this._launchEffectPool.clear();
-        }
+        // NOTE: Don't clear the pool as this instance is pooled and reused.
+        // Let objects stay in the pool idle for the next activation.
     }
 
     playLaunchEffect(x, y) {
@@ -547,15 +546,18 @@ class Boss2 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
+        // Intended: Minibosses/Bosses do not scale with level progression
+        const bossHealth = 340;
+
         super.activate(x, y, {
-            maxHealth: 340,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE,
+            maxHealth: bossHealth,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE, // Static hull damage
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0, // 3.0x speed
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
-            projectileDamage: 4.5
+            projectileDamage: 4.5 // Static projectile damage
         });
 
         this.setHPOrigin(0.47, 0.5);
@@ -669,7 +671,7 @@ class Boss2 extends Boss {
             this.view.playLaunchEffect(spawnX, spawnY);
 
             if (typeof audio !== 'undefined') {
-                const s = audio.play('gunshot', 0.82);
+                const s = audio.play('pew', 0.82);
                 if (s) s.detune = detuneOffset;
             }
         };

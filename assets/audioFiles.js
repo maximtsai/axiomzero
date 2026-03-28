@@ -33,5 +33,7 @@ const audioFiles = [
     { name: 'basic_shoot2', src: 'audio/basic_shoot2.mp3' },
     { name: 'boss2_warcry', src: 'audio/boss2_warcry.mp3' },
     { name: 'gunshot', src: 'audio/gunshot.mp3' },
+    { name: 'pew', src: 'audio/pew.mp3' },
+    { name: 'power_surge', src: 'audio/power_surge.mp3' },
     { name: 'small_destruction', src: 'audio/small_destruction.mp3' },
 ];

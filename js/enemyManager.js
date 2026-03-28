@@ -395,8 +395,18 @@ const enemyManager = (() => {
     }
 
     function _getValidBossSpawnAngle(bossInstance) {
-        // Force a consistent spawn angle from the top (90 degrees / 1.5 PI)
-        return Math.PI * 1.5;
+        // If the boss specifies its own logic (like Boss 5 or custom classes), use it
+        if (bossInstance && bossInstance.model && (bossInstance.model.getSpawnAngle || bossInstance.model.__proto__.getSpawnAngle)) {
+            return bossInstance.model.getSpawnAngle();
+        }
+
+        // Default: Spawn from the sides (West or East) with a 60-degree leeway (30 degrees each way)
+        // West = PI, East = 0
+        const side = Math.random() < 0.5 ? 0 : Math.PI;
+        const leeway = 30 * (Math.PI / 180); // 30 degrees in radians
+        const offset = (Math.random() * 2 - 1) * leeway;
+
+        return Phaser.Math.Angle.Wrap(side + offset);
     }
 
     function _spawnMiniboss() {
@@ -434,7 +444,9 @@ const enemyManager = (() => {
 
         // Visual warning before spawning
         const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
-        audio.play('miniboss_warning');
+        setTimeout(() => {
+            audio.play('miniboss_warning');
+        }, 350);
         warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         warningImg.setOrigin(0, 0.5);
         warningImg.setScale(1.2, 1);
@@ -953,89 +965,14 @@ const enemyManager = (() => {
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
-            if (enemy.model && enemy.model.bossId === 'boss5') {
-                // ── Boss5 enhanced death sequence ──────────────────────────────
-                const DEATH_DURATION = 1800;
+            // Standard boss death
+            const bossId = (enemy.model && enemy.model.bossId) ? enemy.model.bossId : '';
+            const config = {};
+            if (bossId === 'boss1') config.soundKey = '8_bit_explosion';
 
-                // 3 small, jittered explosion_pulse effects
-                const pulseDelays = [50, 250, 450];
-                pulseDelays.forEach(delay => {
-                    PhaserScene.time.delayedCall(delay, () => {
-                        const angle = Math.random() * Math.PI * 2;
-                        const dist = Phaser.Math.Between(300, 360);
-                        const jx = ex + Math.cos(angle) * dist;
-                        const jy = ey + Math.sin(angle) * dist;
-                        if (typeof customEmitters !== 'undefined' && customEmitters.playExplosionPulse) {
-                            customEmitters.playExplosionPulse(jx, jy, bossDepth + 9999, 1.0);
-                        }
-                    });
-                });
-
-                // Fewer initial rays with longer duration
-                if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
-                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, {
-                        count: 3,
-                        rayDuration: DEATH_DURATION,
-                        pulseScale: 2
-                    });
-                }
-
-                // Add 3 more individual rays over 60% of the duration
-                const raySpacing = Math.round((DEATH_DURATION * 0.6) / 3);
-                for (let i = 0; i < 3; i++) {
-                    const delay = raySpacing * (i + 1);
-                    PhaserScene.time.delayedCall(delay, () => {
-                        if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
-                            customEmitters.createBossExplosionRays(ex, ey, bossDepth, {
-                                count: 1,
-                                rayDuration: DEATH_DURATION - delay,
-                                skipPulse: true
-                            });
-                        }
-                    });
-                }
-
-                // Option B: offset explosion clusters with synced durations
-                const offsets = [{ x: -90, y: -55 }, { x: 95, y: 50 }, { x: -50, y: 85 }];
-                offsets.forEach((offset, idx) => {
-                    const delay = 300 + idx * 350;
-                    PhaserScene.time.delayedCall(delay, () => {
-                        if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
-                            customEmitters.createBossExplosionRays(ex + offset.x, ey + offset.y, bossDepth, {
-                                count: 2,
-                                rayDuration: DEATH_DURATION - delay,
-                                skipPulse: true
-                            });
-                        }
-                        if (typeof cameraManager !== 'undefined') {
-                            cameraManager.shake(200, 0.012);
-                        }
-                    });
-                });
-
-                // Second explosion pulse when body disappears — 2.5x bigger
-                PhaserScene.time.delayedCall(DEATH_DURATION, () => {
-                    if (typeof customEmitters !== 'undefined' && customEmitters.playExplosionPulse) {
-                        customEmitters.playExplosionPulse(ex, ey, bossDepth, 4.75, 'explosion_pulse_slow', {
-                            targetScale: 6,
-                            duration: 300,
-                            ease: 'Quart.easeOut',
-                            soundKey: '8_bit_explosion'
-                        });
-                    }
-                    if (typeof cameraManager !== 'undefined') {
-                        cameraManager.shake(1500, 0.04);
-                    }
-                });
-            } else {
-                // Standard boss death
-                const bossId = (enemy.model && enemy.model.bossId) ? enemy.model.bossId : '';
-                const config = {};
-                if (bossId === 'boss1') config.soundKey = '8_bit_explosion';
-
-                if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
-                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
-                }
+            // Standard rays for all bosses (including Boss 5 if it calls super.onDeath)
+            if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+                customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
 
             messageBus.publish('bossDefeated', ex, ey);

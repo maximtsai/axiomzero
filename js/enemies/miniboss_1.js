@@ -147,6 +147,8 @@ class Miniboss1 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
+        
+        // Intended: Minibosses/Bosses do not scale health or damage with level progression
         m.maxHealth = MB1.HEALTH;
         m.health = m.maxHealth;
         m.damage = 0;
@@ -206,7 +208,7 @@ class Miniboss1 extends Miniboss {
                 m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
-                m.fireTimer = 0;
+                m.fireCooldown = 2500; // Intended: faster first shot delay upon entering range
             }
         } else if (m.state === MINIBOSS_STATE.ATTACKING) {
             m.baseRotation = Math.atan2(dy, dx);

@@ -58,8 +58,8 @@ class Boss extends Enemy {
             if (customEmitters.createBossExplosionRays) {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
             }
-            if (customEmitters.killAllNonBossEnemies) {
-                customEmitters.killAllNonBossEnemies();
+            if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
+                enemyManager.killAllNonBossEnemies();
             }
         }
     }
