@@ -49,6 +49,9 @@ const enemyManager = (() => {
     let nextSpawnIsBomb = false;
     let spawnCountSinceLastBomb = 0;
 
+    // Boss 3 specifically
+    let boss3ShareTimer = 1.0;
+
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
         basic: {},
@@ -97,6 +100,7 @@ const enemyManager = (() => {
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
         pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
+        pools.boss3 = new ObjectPool(() => new Boss3(), resetFn, 8).preAllocate(8);
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -384,25 +388,15 @@ const enemyManager = (() => {
             'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
             'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
+            'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
         };
         return registry[className];
     }
 
     function _getValidBossSpawnAngle(bossInstance) {
-        const generator = (bossInstance && bossInstance.model && bossInstance.model.getSpawnAngle)
-            ? () => bossInstance.model.getSpawnAngle()
-            : Miniboss.getSpawnAngle;
-
-        const rules5 = { avoidActiveTypes: ['protector'], minSeparation: 0.5, maxAttempts: 5 };
-        let angle = findValidAngle(generator, rules5);
-        if (angle !== null) return angle;
-
-        const rules3 = { avoidActiveTypes: ['protector'], minSeparation: 0.3, maxAttempts: 5 };
-        angle = findValidAngle(generator, rules3);
-        if (angle !== null) return angle;
-
-        return generator();
+        // Force a consistent spawn angle from the top (90 degrees / 1.5 PI)
+        return Math.PI * 1.5;
     }
 
     function _spawnMiniboss() {
@@ -477,7 +471,7 @@ const enemyManager = (() => {
                     const fsx = GAME_CONSTANTS.halfWidth + Math.cos(fa) * finalDist;
                     const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
 
-                    fe.activate(fsx, fsy, currentScale, { initialSpeedMult: 6, rampDuration: 1.1 });
+                    fe.activate(fsx, fsy, currentScale, { initialSpeedMult: 6, rampDuration: 1.5 });
                     typeCounts[fe.model.type] = (typeCounts[fe.model.type] || 0) + 1;
                     fe.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
                     activeEnemies.push(fe);
@@ -519,39 +513,105 @@ const enemyManager = (() => {
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
-        // Visual warning before spawning
-        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning_big.png');
-        warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
-        warningImg.setOrigin(0, 0.5);
+        if (config.mainBoss === 'Boss3') {
+            const cardinals = [
+                { x: GAME_CONSTANTS.halfWidth, y: -90, rot: Math.PI / 2 },
+                { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.HEIGHT + 90, rot: -Math.PI / 2 },
+                { x: -120, y: GAME_CONSTANTS.halfHeight, rot: 0 },
+                { x: GAME_CONSTANTS.WIDTH + 120, y: GAME_CONSTANTS.halfHeight, rot: Math.PI }
+            ];
+            cardinals.forEach(c => {
+                const w = PhaserScene.add.image(c.x, c.y, 'enemies', 'warning_big.png');
+                w.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+                w.setOrigin(0, 0.5);
+                w.setScale(1.5, 1.4);
+                w.setRotation(c.rot);
+                w.setAlpha(0);
+                PhaserScene.tweens.add({
+                    targets: w,
+                    alpha: 1,
+                    duration: 750,
+                    ease: 'Sine.easeInOut',
+                    yoyo: true,
+                    repeat: 1,
+                    onComplete: () => { w.destroy(); }
+                });
+            });
+        } else {
+            // Visual warning before spawning (single unit)
+            const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning_big.png');
+            warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
+            warningImg.setOrigin(0, 0.5);
 
-        const isBoss5 = config.mainBoss === 'Boss5';
-        const wScale = isBoss5 ? 1.4 : 1.0;
-        warningImg.setScale(1.5 * wScale, 1.4 * wScale);
-        warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
-        warningImg.setAlpha(0);
+            const isBoss5 = config.mainBoss === 'Boss5';
+            const isBoss3 = config.mainBoss === 'Boss3';
+            let wScale = isBoss5 ? 1.4 : 1.0;
+            wScale = isBoss3 ? 0.75 : 1.0;
+            warningImg.setScale(1.5 * wScale, 1.4 * wScale);
+            warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
+            warningImg.setAlpha(0);
 
-        PhaserScene.tweens.add({
-            targets: warningImg,
-            alpha: 1,
-            duration: 750,
-            ease: 'Sine.easeInOut',
-            yoyo: true,
-            repeat: 1,
-            onComplete: () => {
-                warningImg.destroy();
-            }
-        });
+            PhaserScene.tweens.add({
+                targets: warningImg,
+                alpha: 1,
+                duration: 750,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: 1,
+                onComplete: () => {
+                    warningImg.destroy();
+                }
+            });
+        }
 
         // Use standard scale factor or custom logic if needed
-        b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
-
-        typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
-
-        b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-        activeEnemies.push(b);
+        if (config.mainBoss === 'Boss3') {
+            _spawnBoss3(sx, sy, angle, distance, config);
+        } else {
+            b.activate(sx, sy, GAME_VARS.scaleFactor || 1);
+            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
+            b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+            activeEnemies.push(b);
+        }
 
         messageBus.publish('bossSpawned');
         debugLog('Boss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
+    }
+
+    function _spawnBoss3(sx, sy, angle, distance, config) {
+        const pieces = [];
+        const count = 8;
+        const step = (Math.PI * 2) / count;
+
+        for (let i = 0; i < count; i++) {
+            // Spawn 8 shards equally spaced in a ring around the tower
+            const curAngle = angle + i * step;
+            const px = GAME_CONSTANTS.halfWidth + Math.cos(curAngle) * distance;
+            const py = GAME_CONSTANTS.halfHeight + Math.sin(curAngle) * distance;
+
+            const b = new Boss3(config.levelScalingModifier || 1);
+            b.activate(px, py, GAME_VARS.scaleFactor || 1, {
+                maxHealth: 250,
+                damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5,
+                speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1
+            });
+            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
+
+            // Point towards tower
+            b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+            activeEnemies.push(b);
+            pieces.push(b);
+        }
+
+        // Link neighbors in a local ring (0-1, 1-2 ... 7-0)
+        for (let i = 0; i < count; i++) {
+            const next = pieces[(i + 1) % count];
+            const prev = pieces[(i - 1 + count) % count];
+            pieces[i].setNeighbors(next, prev);
+        }
+
+        bossSpawned = true;
+        bossAlive = true;
     }
 
     function _releaseToPool(e) {
@@ -828,8 +888,28 @@ const enemyManager = (() => {
                 scaleX: isExecuted ? 0.92 : 1,
             });
         }
+
         if (died && !enemy.model.isGhosting) {
-            if (enemy.model.type === 'protector') {
+            if (enemy.model.type === 'boss3') {
+                const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
+                if (pieces.length > 1) {
+                    // Small death
+                    if (typeof cameraManager !== 'undefined') cameraManager.shake(120, 0.005);
+                    if (customEmitters.createEnemyDeathAnim) {
+                        customEmitters.createEnemyDeathAnim(enemy, true); // Slowed death
+                    }
+                    if (customEmitters.playExplosionPulse) {
+                        customEmitters.playExplosionPulse(enemy.model.x, enemy.model.y, enemy.view.img.depth, 0.75, 'explosion_pulse');
+                    }
+                    if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
+                    _killEnemy(enemy, true); // Corrected: Pass true to skip the boss explosion/rays
+                    return; // Bypass standard rays
+                } else {
+                    // Final death - trigger standard boss effects
+                    bossAlive = false;
+                    _killEnemy(enemy);
+                }
+            } else if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
                 // Fade out to signify its "dying" state while aura remains
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
@@ -842,7 +922,7 @@ const enemyManager = (() => {
         }
     }
 
-    function _killEnemy(enemy) {
+    function _killEnemy(enemy, skipBossEffects = false) {
         if (typeof customEmitters !== 'undefined') {
             if (enemy.model.type === 'shell') {
                 const vx = enemy.model.vx || 0;
@@ -898,7 +978,7 @@ const enemyManager = (() => {
 
             messageBus.publish('minibossDefeated', ex, ey);
             debugLog('Miniboss defeated');
-        } else if (wasBoss) {
+        } else if (wasBoss && !skipBossEffects) {
             bossAlive = false;
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
@@ -1057,6 +1137,19 @@ const enemyManager = (() => {
         if (fastPackCooldown > 0) {
             fastPackCooldown -= dt;
             if (fastPackCooldown < 0) fastPackCooldown = 0;
+        }
+
+        // Boss 3 HP Sharing calculation
+        if (bossAlive && !frozen) {
+            boss3ShareTimer -= dt;
+            if (boss3ShareTimer <= 0) {
+                boss3ShareTimer = 1.0;
+                const b3Pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
+                if (b3Pieces.length > 0) {
+                    b3Pieces.forEach(p => p.model.calculateSiphon());
+                    b3Pieces.forEach(p => p.model.applySiphon());
+                }
+            }
         }
 
         // Spawn timer
