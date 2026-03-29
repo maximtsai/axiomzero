@@ -1231,15 +1231,16 @@ const enemyManager = (() => {
     }
 
     function startTestingDefenses() {
-        const maxLevelUnlocked = gameState.maxLevelUnlocked || 1;
+        const lastBeaten = gameState.levelsDefeated || 0;
+        const maxLevelUnlocked = lastBeaten + 1;
         const count = 4 + maxLevelUnlocked;
 
         // Reset combatTime to ensure spawnSpeedMultiplier stays at 1.0 during the test
         combatTime = 0;
 
         let scaleFactor = 1;
-        if (typeof GAME_LEVELS !== 'undefined' && GAME_LEVELS[maxLevelUnlocked]) {
-            scaleFactor = GAME_LEVELS[maxLevelUnlocked].levelScalingModifier || 1;
+        if (typeof LEVEL_CONFIG !== 'undefined' && LEVEL_CONFIG[maxLevelUnlocked]) {
+            scaleFactor = LEVEL_CONFIG[maxLevelUnlocked].levelScalingModifier || 1;
         }
 
         testEnemyCount += count;

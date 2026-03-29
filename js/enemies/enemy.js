@@ -341,15 +341,11 @@ class EnemyView {
     }
 
     update(dt, model) {
-        if (model && model.burnDuration > 0) {
-            // Apply a pulsating orange/red tint when on fire
-            const pulse = 0.8 + 0.2 * Math.sin(PhaserScene.time.now * 0.01);
-            const tint = model.isBoss ? 0xff4400 : 0xff6600;
-            this.img.setTint(tint);
-            this._wasBurning = true;
-        } else if (this._wasBurning) {
+        if (this._wasBurning && (!model || model.burnDuration <= 0)) {
             this.img.clearTint();
             this._wasBurning = false;
+        } else if (model && model.burnDuration > 0) {
+            this._wasBurning = true;
         }
     }
 

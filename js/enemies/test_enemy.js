@@ -44,7 +44,7 @@ class TestEnemy extends Enemy {
             selfDamage: 99999, // Dies instantly when hitting tower
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 14, // standard basic size
-            initialSpeedMult: 18, // Start 300% faster
+            initialSpeedMult: 20, // Start faster
             rampDuration: 0.9     // Decay to normal speed over 1.5s
         });
 

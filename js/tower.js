@@ -140,6 +140,8 @@ class TowerView {
         // Main tower sprite
         this.sprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+        this.sprite.setAlpha(1);
+        this.sprite.clearTint();
 
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
@@ -226,11 +228,11 @@ class TowerView {
 
     playHitFlash() {
         if (this.sprite) {
-            PhaserScene.tweens.add({
-                targets: this.sprite,
-                alpha: { from: 0.5, to: 1 },
-                duration: 120,
-                ease: 'Linear',
+            this.sprite.setTintFill(0xffffff);
+            PhaserScene.time.delayedCall(80, () => {
+                if (this.sprite && this.sprite.scene) {
+                    this.sprite.clearTint();
+                }
             });
         }
     }
@@ -596,6 +598,10 @@ const tower = (() => {
             model.health = model.maxHealth;
             messageBus.publish('healthChanged', model.health, model.maxHealth);
             view.playUpgradePhaseAnimation(model.attackRange);
+            if (view.sprite) {
+                view.sprite.setAlpha(1);
+                view.sprite.clearTint();
+            }
         } else {
             model.active = false;
         }
@@ -608,6 +614,11 @@ const tower = (() => {
         if (!model.active) {
             model.health = model.maxHealth;
             messageBus.publish('healthChanged', model.health, model.maxHealth);
+        }
+
+        if (view.sprite) {
+            view.sprite.setAlpha(1);
+            view.sprite.clearTint();
         }
     }
 
