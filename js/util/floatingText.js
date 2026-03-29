@@ -47,8 +47,18 @@ const floatingText = (() => {
         _frameCounter++;
 
         opts = opts || {};
-        const fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
+        let fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
         const fontFamily = opts.fontFamily || 'JetBrainsMono_Regular';
+
+        // Dynamic scaling based on numerical value
+        const numVal = parseFloat(text.trim());
+        if (!isNaN(numVal)) {
+            const baseSize = fontSize;
+            const minSize = baseSize - 6;
+            const scalar = 2.2;
+            fontSize = Math.floor(minSize + (scalar * Math.sqrt(numVal)) + numVal * 0.03);
+        }
+
         const color = opts.color || '#ffffff';
         const stroke = opts.stroke || '#000000';
         const strokeThickness = opts.strokeThickness !== undefined ? opts.strokeThickness : 0;

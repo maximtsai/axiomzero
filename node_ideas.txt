@@ -6,16 +6,7 @@
 - **Goal:** Maintains the challenge-to-growth ratio.
 - **Note:** This is an incremental game, not an idle one. No offline progress is planned.
 
-## 2. Information & Stats (Buyable Node)
-- **Concept:** An upgrade node that unlocks "Diagnostic Analytics."
-- **Feature:** Shows a percentage breakdown of Damage Sources (Pulse, Lightning, etc.) on the **End of Iteration report.**
-- **Goal:** Helps players understand which build specialization is carrying their performance.
-
-## 3. Visual & Audio "Juice" Scaling
-- **Concept:** Stats should have a visible and audible impact on the game's presentation.
-- **Milestone Idea:** High fire rates create a continuous white-hot muzzle glow.
-- **Milestone Idea:** Damage intensity scales screen-shake and bass depth.
-- **Visual Clarity:** "Damage Number Compression" - Combine many fast small hits into a single "Totalizing" number that updates rapidly.
+## 2. Information & Stats - Implemented
 
 ## 4. Cursor & Tower Synergies (The "Target Paint" System)
 - **Concept:** Cursor hits "Mark" enemies.
@@ -33,6 +24,4 @@
 - **Node Idea:** "System Flush" (EMP screen-clear) and "Hardened Shell" (temporary hit-absorption shield).
 - **Goal:** Clutch player agency in high-stress combat phases.
 
-## 7. Build Specializations (Duo Capstones)
-- **Concept:** Mutually exclusive Capstone nodes.
-- **Goal:** Unique build identities per iteration.
+## 7. Build Specializations - Implemented
