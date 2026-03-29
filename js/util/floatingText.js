@@ -91,6 +91,8 @@ const floatingText = (() => {
         t._startY = y;
         // Travel distance is fixed regardless of duration for consistency
         t._targetTravel = travel;
+        t._baseScaleX = scaleX;
+        t._baseScaleY = scaleY;
 
         _activeTexts.push(t);
     }
@@ -115,6 +117,17 @@ const floatingText = (() => {
                 t.setAlpha(1 - (fadeProgress * fadeProgress));
             } else {
                 t.setAlpha(1);
+            }
+
+            // Scale down: last 250ms, Cubic.easeIn to 0.45
+            const scaleAnimDuration = 250;
+            const scaleStartTime = t._totalDuration - scaleAnimDuration;
+            if (t._elapsed > scaleStartTime) {
+                const scaleProgress = Math.min(1, (t._elapsed - scaleStartTime) / scaleAnimDuration);
+                const easedScale = 1 - (Math.pow(scaleProgress, 3) * 0.55);
+                t.setScale(t._baseScaleX * easedScale, t._baseScaleY * easedScale);
+            } else {
+                t.setScale(t._baseScaleX, t._baseScaleY);
             }
 
             // Expiry Check

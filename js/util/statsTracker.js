@@ -5,7 +5,7 @@
 
 const statsTracker = (function() {
     // Damage source taxonomy:
-    // 'pulse', 'lightning', 'artillery', 'shockwave', 'laser' (includes burn), 'other'
+    // 'cursor', 'lightning', 'artillery', 'shockwave', 'laser' (includes burn), 'other'
     
     let currentRun = {
         damage: {

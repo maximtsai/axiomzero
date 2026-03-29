@@ -33,7 +33,7 @@ window.TRANSLATIONS.en = {
         integrity: { name: 'INTEGRITY', desc: '+4 tower max health', popup: '+4 MAX HEALTH' },
         intensity: { name: 'INTENSITY', desc: '+2 tower basic damage', popup: '+2 DAMAGE' },
         focus: { name: 'COVERAGE', desc: '+20% tower attack range', popup: '+20% ATTACK RANGE' },
-        diagnostic_analytics: { name: 'DIAGNOSTICS', desc: 'Unlock a detailed damage source breakdown when you finish a level.', popup: 'DIAGNOSTICS UNLOCKED' },
+        diagnostic_analytics: { name: 'DIAGNOSTICS', desc: 'Show how much damage each weapon dealt during combat.', popup: 'DIAGNOSTICS UNLOCKED' },
 
         base_hp_boost: { name: 'AUXILIARY POWER', desc: '+4 tower basic damage', popup: '+4 TOWER DMG' },
         system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '+10 tower max health', popup: '+10 MAX HEALTH' },

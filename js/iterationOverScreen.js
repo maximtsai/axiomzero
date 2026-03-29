@@ -374,6 +374,7 @@ const iterationOverScreen = (() => {
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
+        if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
         diagElements.forEach(el => el.destroy());
         diagElements = [];
     }

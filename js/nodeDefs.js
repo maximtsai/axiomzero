@@ -726,8 +726,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['regen'],
         childIds: [],
-        treeX: gridX(-2.5),
-        treeY: gridY(0.5),
+        treeX: gridX(-3.0),
+        treeY: gridY(1.0),
         effect: function () { },
     },
     {
