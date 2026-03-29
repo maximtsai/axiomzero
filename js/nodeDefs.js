@@ -118,7 +118,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['pulse_damage'],
         requiresMaxParent: true,
-        childIds: ['packet_sniffing'],
+        childIds: ['packet_sniffing', 'diagnostic_analytics'],
         treeX: gridX(2),
         treeY: gridY(1),
         effect: function () {
@@ -205,11 +205,30 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['intensity'],
         requiresMaxParent: true,
-        childIds: [],
+        childIds: ['diagnostic_analytics'],
         treeX: gridX(2),
         treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'diagnostic_analytics',
+        name: 'DIAGNOSTICS',
+        icon: 'Skillicon14_06.png',
+        description: t('nodes', 'diagnostic_analytics.desc'),
+        popupText: 'DIAGNOSTICS UNLOCKED',
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['pulse_expansion', 'focus'],
+        requiresMaxParent: true,
+        treeX: gridX(3),
+        treeY: gridY(0.5),
+        effect: function () {
+            // This is checked by iterationOverScreen.js
         },
     },
 

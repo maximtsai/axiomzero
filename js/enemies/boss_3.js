@@ -457,11 +457,12 @@ class Boss3 extends Boss {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
-        // Offset by 30 degrees (PI/6) to avoid top/bottom units and create 3 left/3 right clusters
-        const angleOffset = Math.PI / 6;
+        // Use a fixed orientation (ignore incoming random angle) for consistent spawning
+        // This ensures the 6 pieces always form the same hexagonal formation relative to the world
+        const fixedAngle = 0;
 
         for (let i = 0; i < count; i++) {
-            const shardAngle = (angle + angleOffset) + (i * (Math.PI * 2 / count));
+            const shardAngle = fixedAngle + (i * (Math.PI * 2 / count));
             const px = cx + Math.cos(shardAngle) * distance;
             const py = cy + Math.sin(shardAngle) * distance;
             layout.push({

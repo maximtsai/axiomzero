@@ -224,6 +224,7 @@ class EnemyModel {
             }
         }
 
+        const hpBefore = this.health;
         this.lastDamageAmount = amount;
         this.health -= amount;
 
@@ -234,9 +235,9 @@ class EnemyModel {
 
         if (this.health <= 0) {
             this.health = 0;
-            return true;
+            return { died: true, actualApplied: hpBefore };
         }
-        return false;
+        return { died: false, actualApplied: amount };
     }
 
     /**
@@ -513,7 +514,7 @@ class Enemy {
     // ── Damage ────────────────────────────────────────────────────────────────
 
     takeDamage(amount) {
-        const died = this.model.takeDamage(amount);
+        const result = this.model.takeDamage(amount);
 
         // Visual feedback
         this.view.playHitFlash();
@@ -524,7 +525,7 @@ class Enemy {
         this.view.updateHPCrop(this.model.getHealthPct());
         this.view.playHitFeedback(this.model.getHitFeedbackConfig());
 
-        return died;
+        return result;
     }
 
     refreshTint() {

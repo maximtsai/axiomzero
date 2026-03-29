@@ -9,7 +9,7 @@ const statsTracker = (function() {
     
     let currentRun = {
         damage: {
-            pulse: 0,
+            cursor: 0,
             tower: 0,
             lightning: 0,
             artillery: 0,
@@ -25,7 +25,7 @@ const statsTracker = (function() {
     /** Clears statistics for a new iteration. */
     function reset() {
         currentRun.damage = {
-            pulse: 0,
+            cursor: 0,
             tower: 0,
             lightning: 0,
             artillery: 0,

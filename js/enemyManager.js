@@ -838,11 +838,12 @@ const enemyManager = (() => {
     function damageEnemy(enemy, amount, source = 'other') {
         if (!enemy || !enemy.model.alive) return;
 
-        // Record damage in stats tracker BEFORE applying it (to handle overkill based on current health)
-        const actualApplied = Math.min(amount, enemy.model.health);
-        statsTracker.recordDamage(actualApplied, source);
+        const result = enemy.takeDamage(amount);
+        let died = result.died;
+        
+        // Use the actual damage applied to health for statistics
+        statsTracker.recordDamage(result.actualApplied, source);
 
-        let died = enemy.takeDamage(amount);
         let isExecuted = false;
 
         const zeroDayLevel = (gameState.upgrades && (gameState.upgrades['zero_day_exploit'] || gameState.upgrades.zero_day_exploit)) || 0;
@@ -1131,7 +1132,7 @@ const enemyManager = (() => {
                         e.model.attackTimer = e.model.attackCooldown;
 
                         // Apply self-damage only when it hits
-                        if (e.takeDamage(e.model.selfDamage)) {
+                        if (e.takeDamage(e.model.selfDamage).died) {
                             // Only kill if the self-damage was lethal
                             _killEnemy(e);
                         }

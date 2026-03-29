@@ -11,6 +11,7 @@ const iterationOverScreen = (() => {
     let processorText = null;
     let upgradesBtn = null;
     let retryBtn = null;
+    let diagElements = []; // Track diagnostic sprites/text for cleanup
 
     let visible = false;
     let isBossKill = false;
@@ -34,7 +35,7 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 125, t('results', 'iteration_complete'), {
+        titleText = PhaserScene.add.text(cx, cy - 175, t('results', 'iteration_complete'), {
             fontFamily: 'Michroma',
             fontSize: '36px',
             color: '#00f5ff',
@@ -93,21 +94,21 @@ const iterationOverScreen = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: cx - 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: cx - 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: cx - 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             onMouseUp: _onUpgradesClicked,
@@ -126,21 +127,21 @@ const iterationOverScreen = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: cx + 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: cx + 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: cx + 113,
-                y: cy + 160,
+                y: cy + 310,
                 depth: depth + 2,
             },
             onMouseUp: _onRetryClicked,
@@ -228,7 +229,7 @@ const iterationOverScreen = (() => {
         // Center block dynamically
         const lineSpacing = 30;
         const totalHeight = (activeTexts.length - 1) * lineSpacing;
-        let startY = cy - 20 - (totalHeight / 2);
+        let startY = cy - 70 - (totalHeight / 2);
 
         for (let i = 0; i < activeTexts.length; i++) {
             activeTexts[i].setY(startY + (i * lineSpacing));
@@ -247,6 +248,117 @@ const iterationOverScreen = (() => {
                 audio.play('digital_typewriter_short', 0.75);
             }
         });
+
+        // ── Diagnostics ──────────────────────────────────────────────────
+        _populateDiagnostics(cx, cy);
+    }
+
+    function _populateDiagnostics(cx, cy) {
+        // Clear old elements if any
+        diagElements.forEach(el => el.destroy());
+        diagElements = [];
+
+        const hasDiagnostics = (gameState.upgrades || {}).diagnostic_analytics > 0;
+        if (!hasDiagnostics) return;
+
+        const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER + 1;
+        const stats = statsTracker.getStats();
+        const dmg = stats.damage;
+        const totalDmg = Object.values(dmg).reduce((a, b) => a + b, 0);
+
+        // "DIAGNOSTIC REPORT" Header
+        const reportTitle = PhaserScene.add.text(cx, cy + 35, '— DIAGNOSTIC REPORT —', {
+            fontFamily: 'Michroma',
+            fontSize: '20px',
+            color: '#00f5ff',
+        }).setOrigin(0.5).setDepth(depth).setAlpha(0.8);
+        diagElements.push(reportTitle);
+
+        if (totalDmg <= 0) {
+            const noDataText = PhaserScene.add.text(cx, cy + 70, 'NO DAMAGE DEALT', {
+                fontFamily: 'JetBrainsMono_Regular',
+                fontSize: '18px',
+                color: '#aaaaaa',
+            }).setOrigin(0.5).setDepth(depth).setAlpha(0.9);
+            diagElements.push(noDataText);
+            return;
+        }
+
+        const sources = [
+            { id: 'cursor', label: 'CURSOR', color: 0x00f5ff },
+            { id: 'tower', label: 'TOWER', color: 0xffe600 },
+            { id: 'lightning', label: 'LIGHTNING', color: 0xffe600 },
+            { id: 'shockwave', label: 'SHOCKWAVE', color: 0x00f5ff },
+            { id: 'laser', label: 'LASER', color: 0xff2d78 },
+            { id: 'artillery', label: 'ARTILLERY', color: 0xff9500 },
+            { id: 'friendlyfire', label: 'COLLATERAL', color: 0xff2d78 },
+            { id: 'other', label: 'SYSTEM', color: 0x777777 },
+        ];
+
+        // Combine endgame into collateral if needed, or group
+        dmg.friendlyfire += (dmg.endgame || 0);
+
+        const activeSources = sources.filter(s => dmg[s.id] > 0);
+        const startY = cy + 70;
+        const barWidth = 240;
+        const entryHeight = 22;
+
+        activeSources.forEach((s, i) => {
+            const y = startY + (i * entryHeight);
+            const pct = dmg[s.id] / totalDmg;
+
+            // Label
+            const lbl = PhaserScene.add.text(cx - (barWidth / 2) - 10, y, s.label, {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: '13px',
+                color: '#ffffff',
+            }).setOrigin(1, 0.5).setDepth(depth).setAlpha(0.9);
+
+            // Bar BG
+            const bg = PhaserScene.add.image(cx, y, 'white_pixel')
+                .setDepth(depth)
+                .setDisplaySize(barWidth, 10)
+                .setTint(0x222222)
+                .setAlpha(0.6)
+                .setOrigin(0.5);
+
+            // Bar Fill
+            const fill = PhaserScene.add.image(cx - (barWidth / 2), y, 'white_pixel')
+                .setDepth(depth + 1)
+                .setDisplaySize(barWidth * pct, 10)
+                .setTint(s.color)
+                .setOrigin(0, 0.5);
+
+            // Percentage
+            const pText = PhaserScene.add.text(cx + (barWidth / 2) + 10, y, Math.round(pct * 100) + '%', {
+                fontFamily: 'JetBrainsMono_Regular',
+                fontSize: '13px',
+                color: '#ffffff',
+            }).setOrigin(0, 0.5).setDepth(depth).setAlpha(0.9);
+
+            diagElements.push(lbl, bg, fill, pText);
+        });
+
+        // Executions
+        if (stats.executions > 0) {
+            const execY = startY + (activeSources.length * entryHeight);
+            
+            // Label - Aligned with weapon labels
+            const lbl = PhaserScene.add.text(cx - (barWidth / 2) - 10, execY, 'EXECUTIONS', {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: '13px',
+                color: '#ff2d78',
+            }).setOrigin(1, 0.5).setDepth(depth).setAlpha(0.9);
+
+            // Count - Aligned with bar start
+            const valText = PhaserScene.add.text(cx - (barWidth / 2), execY, stats.executions.toString(), {
+                fontFamily: 'JetBrainsMono_Bold',
+                fontSize: '13px',
+                color: '#ff2d78',
+            }).setOrigin(0, 0.5).setDepth(depth).setAlpha(0.9);
+
+            diagElements.push(lbl, valText);
+        }
     }
 
     function _hideAll() {
@@ -262,6 +374,8 @@ const iterationOverScreen = (() => {
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
+        diagElements.forEach(el => el.destroy());
+        diagElements = [];
     }
 
     // ── button handlers ──────────────────────────────────────────────────
