@@ -97,7 +97,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['basic_pulse'],
-        childIds: [],
+        childIds: ['data_compression'],
         treeX: gridX(-1),
         treeY: gridY(1),
         effect: function () {
@@ -137,7 +137,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['data_compression'],
+        parents: ['test_defenses'],
         childIds: ['placeholder_duo_2', 'armor'],
 
         treeX: gridX(-1),
@@ -517,7 +517,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['basic_pulse'],
         monitorsDuoTier: 1,
-        childIds: ['data_compression'],
+        childIds: ['test_defenses'],
 
         treeX: gridX(0),
         treeY: gridY(2.125), // Mid-point adjustment (non-clean)
@@ -807,6 +807,29 @@ const NODE_DEFS = [
         },
     },
     {
+        id: 'test_defenses',
+        name: 'SANDBOX MODE',
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'test_defenses.desc'),
+        popupText: 'SANDBOX UNLOCKED',
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        costStep: 0,
+        parents: ['placeholder_duo_1'],
+        childIds: ['overcharge', 'security_test_1'],
+        treeX: gridX(0),
+        treeY: gridY(4),
+        effect: function () {
+            gameState.upgrades.test_defenses_unlocked = true;
+            if (typeof gameHUD !== 'undefined' && gameHUD.refreshTestDefensesButton) {
+                gameHUD.refreshTestDefensesButton();
+            }
+        },
+    },
+    {
         id: 'data_compression',
         name: 'DATA COMPRESSION',
         icon: 'Skillicon14_20.png',
@@ -818,10 +841,10 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         costStep: 0,
-        parents: ['placeholder_duo_1'],
-        childIds: ['overcharge', 'security_test_1'],
-        treeX: gridX(0),
-        treeY: gridY(4),
+        parents: ['magnet'],
+        childIds: [],
+        treeX: gridX(-2),
+        treeY: gridY(1),
         effect: function () { },
     },
     {
@@ -835,7 +858,7 @@ const NODE_DEFS = [
         baseCost: 300,
         costType: 'data',
         costScaling: 'static',
-        parents: ['data_compression'],
+        parents: ['test_defenses'],
         childIds: ['two_step_auth'],
         treeX: gridX(1),
         treeY: gridY(4.5),
@@ -1336,7 +1359,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_2'],
         childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
         treeX: gridX(-1),
-        treeY: gridY(8.0),
+        treeY: gridY(7.5),
         tooltipExtraWidth: 60,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
@@ -1543,7 +1566,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_3'],
         childIds: [],
         treeX: gridX(1.0),
-        treeY: gridY(11.5),
+        treeY: gridY(11.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(1000);

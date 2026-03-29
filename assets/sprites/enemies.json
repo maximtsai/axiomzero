@@ -1471,6 +1471,31 @@
 					}
 				},
 				{
+					"filename": "test.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 141,
+						"h": 141
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 4,
+						"w": 133,
+						"h": 133
+					},
+					"frame": {
+						"x": 911,
+						"y": 296,
+						"w": 133,
+						"h": 133
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "sniper.png",
 					"rotated": false,
 					"trimmed": false,
@@ -1851,6 +1876,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:7753f189ed17a2b19c3f08f1fbaeae15:40ebc0ed6ff8010974e995fb04fe63b7:b46d94f51ab09644cd324819ab72f7d7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:038751d136e8670eca6e5c9846e9a015:1cd056a4942b43b0959abc71b2d03cfe:b46d94f51ab09644cd324819ab72f7d7$"
 	}
 }

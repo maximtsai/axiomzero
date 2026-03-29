@@ -211,6 +211,7 @@ const gameHUD = (() => {
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.halfWidth,
                 y: GAME_CONSTANTS.HEIGHT - 57,
+                alpha: 1
             },
             hover: {
                 ref: 'button_hover.png',
@@ -224,8 +225,20 @@ const gameHUD = (() => {
                 x: GAME_CONSTANTS.halfWidth,
                 y: GAME_CONSTANTS.HEIGHT - 57,
             },
+            disable: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.HEIGHT - 57,
+                alpha: 0
+            },
             onMouseUp: () => {
-                console.log('test');
+                if (typeof GAME_VARS !== 'undefined') {
+                    GAME_VARS.testingDefenses = true;
+                }
+                if (typeof enemyManager !== 'undefined') {
+                    enemyManager.startTestingDefenses();
+                }
             },
         });
         testDefensesBtn.setScale(0.9);
@@ -235,7 +248,9 @@ const gameHUD = (() => {
             color: '#ffffff',
         });
         testDefensesBtn.setDepth(depth + 3);
-        testDefensesBtn.setVisible(false);
+        const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+        testDefensesBtn.setVisible(isUnlocked);
+        if (!isUnlocked) testDefensesBtn.setState(DISABLE);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -324,10 +339,15 @@ const gameHUD = (() => {
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
 
-        // Show test defenses button
+        // Show test defenses button if unlocked
         if (testDefensesBtn) {
-            testDefensesBtn.setVisible(true);
-            testDefensesBtn.setState(NORMAL);
+            const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+            testDefensesBtn.setVisible(isUnlocked);
+            if (isUnlocked) {
+                testDefensesBtn.setState(NORMAL);
+            } else {
+                testDefensesBtn.setState(DISABLE);
+            }
         }
     }
 
@@ -739,5 +759,17 @@ const gameHUD = (() => {
         }
     }
 
-    return { init, showTransitionMessage, setWaveProgressBarVisible };
+    function refreshTestDefensesButton() {
+        if (testDefensesBtn) {
+            const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+            testDefensesBtn.setVisible(isUnlocked);
+            if (isUnlocked) {
+                testDefensesBtn.setState(NORMAL);
+            } else {
+                testDefensesBtn.setState(DISABLE);
+            }
+        }
+    }
+
+    return { init, showTransitionMessage, setWaveProgressBarVisible, refreshTestDefensesButton };
 })();

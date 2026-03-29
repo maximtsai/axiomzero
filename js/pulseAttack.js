@@ -501,11 +501,19 @@ const pulseAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesEnded', () => {
+            model.charges = model.maxCharges;
+            model.cooldownTimer = 0;
+            model.queueTimer = 0;
+            model.clickQueued = false;
+            view.setVisibility(false);
+        });
         updateManager.addFunction(_update);
 
         // Global click listener for manual firing
         PhaserScene.input.on('pointerdown', () => {
-            if (model.manualMode && model.active && !model.paused) {
+            const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+            if (model.manualMode && (model.active || isTesting) && !model.paused) {
                 if (model.charges > 0) {
                     model.charges--;
                     model.clickQueued = false; // Cancel any queue if we clicked naturally
@@ -533,8 +541,8 @@ const pulseAttack = (() => {
     function _update(delta) {
         if (model.paused) return;
 
-        // The pointer is always tracked and updated if combat is active
-        const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
+        // The pointer is always tracked and updated if combat is active or testing
+        const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
         if (isCombat) {
             view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy, model);
             view.updateCharges(model.charges, model.maxCharges, model.manualMode);

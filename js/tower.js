@@ -408,6 +408,7 @@ const tower = (() => {
         messageBus.subscribe('towerShakeRequested', function (duration) {
             view.shake(duration, function () { messageBus.publish('towerShakeComplete'); });
         });
+        messageBus.subscribe('testingDefensesEnded', () => { model.attackTimer = 0; });
         updateManager.addFunction(_update);
     }
 
@@ -511,41 +512,44 @@ const tower = (() => {
     function shake(duration, onComplete) { view.shake(duration, onComplete); }
 
     function _update(delta) {
-        if (!model.alive || !model.active || model.paused) return;
+        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+        if (!model.alive || (!model.active && !isTesting) || model.paused) return;
 
         const dt = delta / 1000; // seconds
 
-        // Negative health regen — skip decay if invincible (victory sequence)
-        if (!(model.isInvincible && model.healthRegen < 0)) {
-            model.health += model.healthRegen * dt;
-        }
-        if (model.health > model.maxHealth) model.health = model.maxHealth;
-        if (model.health <= 0) {
-            model.health = 0;
-            model.die();
-            view.cleanupRangeSprite();
-            debugLog('Tower destroyed');
-            return;
-        }
-        messageBus.publish('healthChanged', model.health, model.maxHealth);
+        if (model.active) {
+            // Negative health regen — skip decay if invincible (victory sequence)
+            if (!(model.isInvincible && model.healthRegen < 0)) {
+                model.health += model.healthRegen * dt;
+            }
+            if (model.health > model.maxHealth) model.health = model.maxHealth;
+            if (model.health <= 0) {
+                model.health = 0;
+                model.die();
+                view.cleanupRangeSprite();
+                debugLog('Tower destroyed');
+                return;
+            }
+            messageBus.publish('healthChanged', model.health, model.maxHealth);
 
-        // EXP accumulation
-        model.exp += GAME_CONSTANTS.EXP_FILL_RATE * dt;
-        if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {
-            model.exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
-            resourceManager.addInsight(1);
-            messageBus.publish('insightGained');
-            audio.play('levelup', 1.0, false);
-            const towerPos = view.getPosition();
-            floatingText.show(towerPos.x, towerPos.y - 15, '+INSIGHT', {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 22,
-                color: '#ffe600',
-                depth: GAME_CONSTANTS.DEPTH_TOWER,
-            });
+            // EXP accumulation
+            model.exp += GAME_CONSTANTS.EXP_FILL_RATE * dt;
+            if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {
+                model.exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
+                resourceManager.addInsight(1);
+                messageBus.publish('insightGained');
+                audio.play('levelup', 1.0, false);
+                const towerPos = view.getPosition();
+                floatingText.show(towerPos.x, towerPos.y - 15, '+INSIGHT', {
+                    fontFamily: 'JetBrainsMono_Bold',
+                    fontSize: 22,
+                    color: '#ffe600',
+                    depth: GAME_CONSTANTS.DEPTH_TOWER,
+                });
+            }
+            gameState.exp = model.exp;
+            messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
         }
-        gameState.exp = model.exp;
-        messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
 
         // Auto-attack
         if (model.awakened) {
@@ -571,7 +575,8 @@ const tower = (() => {
             const chance = 0.20 * prismaticLv;
             if (Math.random() < chance) {
                 PhaserScene.time.delayedCall(100, () => {
-                    if (!model.alive || !model.active) return;
+                    const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+                    if (!model.alive || (!model.active && !isTesting)) return;
                     const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
                     if (newTarget) {
                         const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);

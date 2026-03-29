@@ -23,7 +23,8 @@ class ArtilleryAttackModel {
     }
 
     updateTimer(delta) {
-        if (!this.active || this.paused) return false;
+        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+        if ((!this.active && !isTesting) || this.paused) return false;
         this.fireTimer += delta;
         if (this.fireTimer >= this.FIRE_INTERVAL) {
             this.fireTimer -= this.FIRE_INTERVAL;
@@ -261,6 +262,7 @@ const artilleryAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesEnded', () => { model.fireTimer = 0; });
         updateManager.addFunction(_update);
     }
 
@@ -270,7 +272,8 @@ const artilleryAttack = (() => {
 
     function _update(delta) {
         view.update(delta);
-        if (!model.unlocked || !model.active || model.paused || !tower.isAlive()) return;
+        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+        if (!model.unlocked || (!model.active && !isTesting) || model.paused || !tower.isAlive()) return;
 
         if (model.updateTimer(delta)) {
             _fire();

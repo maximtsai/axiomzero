@@ -51,6 +51,7 @@ window.TRANSLATIONS.en = {
 
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
+        test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Defenses" button during the Upgrade Phase to practice.', popup: 'SANDBOX UNLOCKED' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected DATA', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with +100 DATA.' },
         security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Fully refunds DATA cost upon purchase.", popup: 'TEST PASSED' },

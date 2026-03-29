@@ -84,10 +84,15 @@ class EnemyModel {
         if (config.size !== undefined) this.size = config.size;
         if (config.selfDamage !== undefined) this.selfDamage = config.selfDamage;
 
-        // Speed ramp initialization
+        // Reset state for pooling (prevents bleeding from previous use)
+        this.initialSpeedMult = 1.0;
+        this.rampDuration = 0;
+        this.aliveTime = 0;
+
+        // Apply new config
         if (config.initialSpeedMult !== undefined) this.initialSpeedMult = config.initialSpeedMult;
         if (config.rampDuration !== undefined) this.rampDuration = config.rampDuration;
-        this.aliveTime = 0;
+        
         this.speedMult = this.initialSpeedMult;
 
         if (!this.cannotRotate) {

@@ -734,7 +734,6 @@ const customEmitters = (() => {
 
     function malwareSiphonFX(x, y, tx, ty) {
         if (gameState.settings.minimalParticles) return;
-        console.log("fx malware")
         const sprite = malwareSiphonPool.get();
         sprite.setPosition(x, y);
         sprite.setVisible(true);

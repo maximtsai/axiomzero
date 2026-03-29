@@ -52,6 +52,8 @@ const enemyManager = (() => {
     // Boss 3 specifically
     let boss3ShareTimer = 1.0;
 
+    let testEnemyCount = 0;
+
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
         basic: {},
@@ -103,6 +105,7 @@ const enemyManager = (() => {
         pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
         pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
         pools.boss3 = new ObjectPool(() => new Boss3(), resetFn, 8).preAllocate(8);
+        pools.test = new ObjectPool(() => new TestEnemy(), resetFn, 20).preAllocate(10);
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -155,6 +158,7 @@ const enemyManager = (() => {
         activeEnemies.length = 0;
         activeProtectors.length = 0;
         specialEnemies.length = 0;
+        testEnemyCount = 0;
         // Zero-garbage clear of the spatial grid
         for (let key in spatialGrid) {
             spatialGrid[key].length = 0;
@@ -943,6 +947,14 @@ const enemyManager = (() => {
             activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
             activeEnemies.pop();
             _releaseToPool(enemy);
+
+            if (enemy.model.type === 'test') {
+                testEnemyCount--;
+                if (testEnemyCount <= 0 && typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+                    GAME_VARS.testingDefenses = false;
+                    messageBus.publish('testingDefensesEnded');
+                }
+            }
         }
 
 
@@ -1020,68 +1032,76 @@ const enemyManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function _update(delta) {
-        if (!spawning || frozen || paused) return;
+        if ((!spawning && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) || frozen || paused) return;
 
         const dt = delta / 1000;
 
-        // Update timers
-        if (!minibossAlive && !bossAlive) {
-            combatTime += dt;
-        }
-        if (!minibossAlive) {
-            roundTimeElapsed += dt;
-        }
-        GAME_VARS.roundTimeElapsed = roundTimeElapsed;
+        if (spawning) {
+            // Update timers
+            if (!minibossAlive && !bossAlive) {
+                combatTime += dt;
+            }
+            if (!minibossAlive) {
+                roundTimeElapsed += dt;
+            }
+            GAME_VARS.roundTimeElapsed = roundTimeElapsed;
 
-        // Update wave scale factor
-        GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
+            // Update wave scale factor
+            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
 
-        // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
-        let firstThreshold = 5.05;
-        // Special case: if basic_pulse isn't researched, increase threshold to 5.75
-        if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
-            firstThreshold = 5.15;
-        }
-        const secondThreshold = 1.25;
-        if (combatTime < firstThreshold) {
-            spawnSpeedMultiplier = 27;
-        } else if (combatTime < firstThreshold + secondThreshold) {
-            // Linear interpolation from 27 to 1
-            const progress = (combatTime - firstThreshold) / secondThreshold;
-            spawnSpeedMultiplier = 27 - 26 * progress;
-        } else {
-            spawnSpeedMultiplier = 1;
-        }
+            // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
+            let firstThreshold = 5.05;
+            // Special case: if basic_pulse isn't researched, increase threshold to 5.75
+            if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
+                firstThreshold = 5.15;
+            }
+            const secondThreshold = 1.25;
+            if (combatTime < firstThreshold) {
+                spawnSpeedMultiplier = 27;
+            } else if (combatTime < firstThreshold + secondThreshold) {
+                // Linear interpolation from 27 to 1
+                const progress = (combatTime - firstThreshold) / secondThreshold;
+                spawnSpeedMultiplier = 27 - 26 * progress;
+            } else {
+                spawnSpeedMultiplier = 1;
+            }
 
-        // Decrement fast pack cooldown
-        if (fastPackCooldown > 0) {
-            fastPackCooldown -= dt;
-            if (fastPackCooldown < 0) fastPackCooldown = 0;
-        }
+            // Decrement fast pack cooldown
+            if (fastPackCooldown > 0) {
+                fastPackCooldown -= dt;
+                if (fastPackCooldown < 0) fastPackCooldown = 0;
+            }
 
-        // Boss 3 (Phalanx) HP sharing synchronization (orchestrated at manager level)
-        if (bossAlive && !frozen) {
-            const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
-            if (shards.length > 0) {
-                boss3ShareTimer -= dt;
-                if (boss3ShareTimer <= 0) {
-                    boss3ShareTimer = 1.0;
-                    shards.forEach(p => p.model.calculateSiphon());
-                    shards.forEach(p => p.model.applySiphon());
+            // Boss 3 (Phalanx) HP sharing synchronization (orchestrated at manager level)
+            if (bossAlive && !frozen) {
+                const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
+                if (shards.length > 0) {
+                    boss3ShareTimer -= dt;
+                    if (boss3ShareTimer <= 0) {
+                        boss3ShareTimer = 1.0;
+                        shards.forEach(p => p.model.calculateSiphon());
+                        shards.forEach(p => p.model.applySiphon());
+                    }
                 }
+            }
+
+            // Spawn timer
+            spawnTimer += delta;
+            const config = getCurrentLevelConfig();
+            const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
+            if (spawnTimer >= trueSpawnInterval) {
+                spawnTimer -= trueSpawnInterval;
+                _spawnOne();
             }
         }
 
-        // Spawn timer
-        spawnTimer += delta;
-        const config = getCurrentLevelConfig();
-        const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
-        if (spawnTimer >= trueSpawnInterval) {
-            spawnTimer -= trueSpawnInterval;
-            _spawnOne();
+        // Force multiplier to 1.0 during Sandbox Mode to prevent "rush" speed on test enemies
+        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            spawnSpeedMultiplier = 1.0;
         }
 
         // Move enemies & populate spatial grid
+
         // Zero-garbage clear: just set length=0 on existing arrays
         for (let key in spatialGrid) {
             spatialGrid[key].length = 0;
@@ -1170,6 +1190,10 @@ const enemyManager = (() => {
         } else {
             _stopSpawning();
             if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE) {
+                if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+                    GAME_VARS.testingDefenses = false;
+                    stopTestingDefenses();
+                }
                 clearAllEnemies();
             }
         }
@@ -1206,7 +1230,44 @@ const enemyManager = (() => {
         return e;
     }
 
+    function startTestingDefenses() {
+        const maxLevelUnlocked = gameState.maxLevelUnlocked || 1;
+        const count = 4 + maxLevelUnlocked;
+
+        // Reset combatTime to ensure spawnSpeedMultiplier stays at 1.0 during the test
+        combatTime = 0;
+
+        let scaleFactor = 1;
+        if (typeof GAME_LEVELS !== 'undefined' && GAME_LEVELS[maxLevelUnlocked]) {
+            scaleFactor = GAME_LEVELS[maxLevelUnlocked].levelScalingModifier || 1;
+        }
+
+        testEnemyCount += count;
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 550 + Math.random() * (120 + maxLevelUnlocked * 15);
+            const x = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
+            const y = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
+
+            spawnAt('test', x, y, { scale: scaleFactor });
+        }
+    }
+
+    function stopTestingDefenses() {
+        testEnemyCount = 0;
+        for (let i = activeEnemies.length - 1; i >= 0; i--) {
+            const e = activeEnemies[i];
+            if (e && e.model.type === 'test') {
+                e.deactivate();
+                activeEnemies[i] = activeEnemies[activeEnemies.length - 1];
+                activeEnemies.pop();
+                _releaseToPool(e);
+            }
+        }
+        messageBus.publish('testingDefensesEnded');
+    }
+
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed };
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed, startTestingDefenses, stopTestingDefenses };
 })();

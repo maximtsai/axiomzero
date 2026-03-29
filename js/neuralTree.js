@@ -957,6 +957,13 @@ const neuralTree = (() => {
     function _onDeployClicked() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
 
+        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            GAME_VARS.testingDefenses = false;
+            if (typeof enemyManager !== 'undefined' && enemyManager.stopTestingDefenses) {
+                enemyManager.stopTestingDefenses();
+            }
+        }
+
         if (deployBtn.indicator) {
             deployBtn.indicator.setVisible(false);
         }

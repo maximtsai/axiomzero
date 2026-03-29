@@ -261,6 +261,17 @@ const laserAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesEnded', () => {
+            model.firing = false;
+            model.tapering = false;
+            model.cooldownTimer = 0;
+            if (_beamSound) {
+                audio.fadeAway(_beamSound, 150);
+                _beamSound = null;
+            }
+            view.hide();
+            if (model.unlocked) view.show(model);
+        });
         updateManager.addFunction(_update);
     }
 
@@ -276,6 +287,10 @@ const laserAttack = (() => {
         model.unlocked = false;
         model.active = false;
         model.firing = false;
+        if (_beamSound) {
+            audio.fadeAway(_beamSound, 150);
+            _beamSound = null;
+        }
         view.hide();
     }
 
@@ -328,7 +343,8 @@ const laserAttack = (() => {
 
         view.update(model, towerPos.x, towerPos.y);
 
-        if (!model.active || model.paused) return;
+        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+        if ((!model.active && !isTesting) || model.paused) return;
 
         if (model.firing) {
             model.fireTimer += delta;

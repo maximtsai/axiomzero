@@ -46,7 +46,6 @@ class LightningAttackView {
             () => {
                 const img = PhaserScene.add.image(0, 0, 'player', 'lightning_glow.png');
                 img.setDepth(150);
-                img.setScrollFactor(0);
                 img.setOrigin(0, 0.5);
                 img.setVisible(false);
                 img.setActive(false);
@@ -63,7 +62,6 @@ class LightningAttackView {
             () => {
                 const img = PhaserScene.add.image(0, 0, 'player', 'lightning_core.png');
                 img.setDepth(151);
-                img.setScrollFactor(0);
                 img.setOrigin(0, 0.5);
                 img.setVisible(false);
                 img.setActive(false);
@@ -181,6 +179,7 @@ const lightningAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesEnded', () => { model.resetTimer(); });
         updateManager.addFunction(_update);
     }
 
@@ -211,7 +210,8 @@ const lightningAttack = (() => {
     }
 
     function _update(delta) {
-        if (model.paused || !model.active || !tower.isAlive()) return;
+        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+        if (!model.unlocked || model.paused || (!model.active && !isTesting) || !tower.isAlive()) return;
 
         if (model.updateTimer(delta)) {
             _fire();
@@ -240,7 +240,7 @@ const lightningAttack = (() => {
         for (let c = 1; c < model.chainCount; c++) {
             let bestDist = model.CHAIN_RANGE;
             let bestEnemy = null;
-    
+
             // Fast lookup in range
             _queryResults.length = 0;
             enemyManager.getEnemiesInSquareRange(lastHit.model.x, lastHit.model.y, model.CHAIN_RANGE, _queryResults);
@@ -254,17 +254,17 @@ const lightningAttack = (() => {
                     if (hitEnemies[j] === e) { alreadyHit = true; break; }
                 }
                 if (alreadyHit) continue;
-    
+
                 const dx = e.model.x - lastHit.model.x;
                 const dy = e.model.y - lastHit.model.y;
                 const d2 = dx * dx + dy * dy;
-                
+
                 // Pre-check with squared distance to avoid sqrt in 99% of cases
                 const maxDR = bestDist + (e.model.size || 0) + (lastHit.model.size || 0);
                 if (d2 < maxDR * maxDR) {
                     const dist = Math.sqrt(d2);
                     const effectiveDist = dist - (e.model.size || 0) - (lastHit.model.size || 0);
-    
+
                     if (effectiveDist < bestDist) {
                         bestDist = effectiveDist;
                         bestEnemy = e;
