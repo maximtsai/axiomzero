@@ -221,6 +221,7 @@
                 <false/>
             </struct>
             <key type="filename">player/laser_turret.png</key>
+            <key type="filename">player/tower1 - Copy.png</key>
             <key type="filename">player/tower1_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

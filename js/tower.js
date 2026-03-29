@@ -105,7 +105,7 @@ class TowerView {
     spawn(cx, cy) {
         if (this.sparkleSprite) return; // already spawned
 
-        this.sparkleSprite = PhaserScene.add.sprite(cx, cy, 'player', 'sparkle.png');
+        this.sparkleSprite = PhaserScene.add.image(cx, cy, 'player', 'sparkle.png');
         this.sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sparkleSprite.setAlpha(0.8);
         this.sparkleSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
@@ -131,7 +131,7 @@ class TowerView {
         if (this.rangeSprite) { this.rangeSprite.destroy(); this.rangeSprite = null; }
 
         // Glow layer — additive blend, subtle breathe animation
-        this.glowSprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1_glow.png');
+        this.glowSprite = PhaserScene.add.image(cx, cy, 'player', 'tower1_glow.png');
         this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.glowSprite.setScale(1.0);
         this.glowSprite.setAlpha(1);
@@ -144,7 +144,7 @@ class TowerView {
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
-        this.rangeSprite = PhaserScene.add.sprite(cx, cy, 'player', 'range.png');
+        this.rangeSprite = PhaserScene.add.image(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
         this.rangeSprite.setBlendMode(Phaser.BlendModes.ADD);
         this.rangeSprite.setAlpha(0.40 / 3);
@@ -165,7 +165,7 @@ class TowerView {
     refreshRangeSprite(attackRange, pos, isIntense = false) {
         const rangeScale = attackRange / 202;
         if (!this.rangeSprite) {
-            this.rangeSprite = PhaserScene.add.sprite(pos.x, pos.y, 'player', 'range.png');
+            this.rangeSprite = PhaserScene.add.image(pos.x, pos.y, 'player', 'range.png');
             this.rangeSprite.setDepth(1);
             this.rangeSprite.setAlpha(0);
             this.rangeSprite.setScale(rangeScale * 0.2);
@@ -268,13 +268,48 @@ class TowerView {
         }
     }
 
+    /** Briefly recoil away from the target then spring back. */
+    playRecoil(targetX, targetY) {
+        if (!this.sprite || !this.sprite.scene) return;
+
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const dx = targetX - cx;
+        const dy = targetY - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const recoilDist = 5; // Pixels to move backward
+
+        const rx = cx - (dx / dist) * recoilDist;
+        const ry = cy - (dy / dist) * recoilDist;
+        const rx2 = cx - (dx / dist) * recoilDist * -0.6;
+        const ry2 = cy - (dy / dist) * recoilDist * -0.6;
+        // Kill existing recoil tweens
+        PhaserScene.tweens.killTweensOf([this.sprite, this.glowSprite], ['x', 'y']);
+
+        PhaserScene.tweens.add({
+            targets: [this.sprite, this.glowSprite],
+            x: rx,
+            y: ry,
+            duration: 150,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: [this.sprite, this.glowSprite],
+                    x: cx,
+                    y: cy,
+                    duration: 250,
+                    ease: 'Back.easeOut',
+                    easeParams: [2.5]
+                });
+            }
+        });
+    }
+
     cleanupRangeSprite() {
         if (this.rangeSprite) { this.rangeSprite.destroy(); this.rangeSprite = null; }
     }
 
     getPosition() {
-        if (this.sprite) return { x: this.sprite.x, y: this.sprite.y };
-        if (this.sparkleSprite) return { x: this.sparkleSprite.x, y: this.sparkleSprite.y };
         return { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.halfHeight };
     }
 
@@ -527,6 +562,7 @@ const tower = (() => {
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
         projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, model.damage);
+        view.playRecoil(target.model.x, target.model.y);
 
         // PRISMATIC ARRAY effect
         const ups = gameState.upgrades || {};

@@ -18,7 +18,7 @@ const customEmitters = (() => {
     // ── Sprite pool for basicStrikeManual ─────────────────────────────────────
     const strikeSpritePool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.sprite(0, 0, 'pixels', 'blue_pixel.png');
+            const sprite = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -42,7 +42,7 @@ const customEmitters = (() => {
     // ── Explosion Rays (Boss Death) ──────────────────────────────────────────
     const explosionRayPool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.sprite(0, 0, 'enemies', 'explosion_ray.png');
+            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'explosion_ray.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -119,7 +119,7 @@ const customEmitters = (() => {
 
     const malwareSiphonPool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.sprite(0, 0, 'player', 'heal.png');
+            const sprite = PhaserScene.add.image(0, 0, 'player', 'heal.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -275,7 +275,7 @@ const customEmitters = (() => {
     // ── Logic Stray Ghost ──────────────────────────────────────────────────────────
     const logicStrayGhostPool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.sprite(0, 0, 'enemies', 'logic_stray.png');
+            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'logic_stray.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
