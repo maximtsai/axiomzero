@@ -57,6 +57,7 @@ const floatingText = (() => {
             const minSize = baseSize - 6;
             const scalar = 2.2;
             fontSize = Math.floor(minSize + (scalar * Math.sqrt(numVal)) + numVal * 0.03);
+            fontSize = Math.min(fontSize, 150);
         }
 
         const color = opts.color || '#ffffff';

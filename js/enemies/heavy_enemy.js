@@ -10,7 +10,7 @@ class HeavyEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'heavy';
-        this.baseResourceDrop = 4;
+        this.baseResourceDrop = 3;
         this.knockBackModifier = 0.6;
     }
 

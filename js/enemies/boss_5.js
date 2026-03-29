@@ -190,9 +190,10 @@ class Boss5 extends Boss {
         // Block all damage during stagger phase
         if (this.model.staggering) return false;
 
-        const died = super.takeDamage(amount);
+        const result = super.takeDamage(amount);
+        if (!result) return false;
 
-        if (died && !this.model.staggerPhaseComplete) {
+        if (result.died && !this.model.staggerPhaseComplete) {
             // Intercept death — enter stagger instead
             this.model.health = 1;
             this.model.alive = true;
@@ -202,7 +203,7 @@ class Boss5 extends Boss {
             return false;
         }
 
-        return died;
+        return result;
     }
 
     _startStagger() {

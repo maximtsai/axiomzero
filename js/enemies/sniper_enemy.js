@@ -16,7 +16,7 @@ class SniperEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'sniper';
-        this.baseResourceDrop = 5;
+        this.baseResourceDrop = 4;
         this.cannotRotate = true;
         this.knockBackModifier = 0;
 

@@ -40,6 +40,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0,
             logic_stray: 0,
+            cache: 0.005,
             protector: 0
         },
         lateWeights: {
@@ -48,13 +49,14 @@ const LEVEL_CONFIG = {
             heavy: 0,
             fast: 0.3,
             sniper: 0,
+            cache: 0.005,
             protector: 0.0
         },
         swarmerGroupSize: { min: 3, max: 5 },
         miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss2',        // Identifier for the main boss
-        dataDropMultiplier: 1.5, // Multiplies the base DATA drop value or chance
+        dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
         healthDecay: -0.4
     },
@@ -67,6 +69,7 @@ const LEVEL_CONFIG = {
             swarmer: 0.13,
             sniper: 0,
             logic_stray: 0,
+            cache: 0.08,
             protector: 0
         },
         lateWeights: {
@@ -75,13 +78,14 @@ const LEVEL_CONFIG = {
             heavy: 0.15,
             fast: 0,
             sniper: 0,
+            cache: 0.08,
             protector: 0.0
         },
         swarmerGroupSize: { min: 3, max: 6 },
         miniboss: 'Miniboss3',
 
         mainBoss: 'Boss3',
-        dataDropMultiplier: 2,
+        dataDropMultiplier: 1.6,
         levelScalingModifier: 2.2,
         healthDecay: -0.5
     },
@@ -96,6 +100,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0.1,
             logic_stray: 0,
+            cache: 0.12,
             protector: 0.05
         },
         lateWeights: {
@@ -105,13 +110,14 @@ const LEVEL_CONFIG = {
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,
+            cache: 0.12,
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
         miniboss: 'Miniboss4',
 
         mainBoss: 'Boss5',
-        dataDropMultiplier: 3.2,
+        dataDropMultiplier: 2,
         levelScalingModifier: 3.2,
         healthDecay: -0.6
     },
@@ -126,6 +132,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0.1,
             logic_stray: 0,
+            cache: 0.95,
             protector: 0.05
         },
         lateWeights: {
@@ -135,13 +142,14 @@ const LEVEL_CONFIG = {
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,
+            cache: 0.95,
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
         miniboss: 'Miniboss4',
 
         mainBoss: 'Boss5',
-        dataDropMultiplier: 4.2,
+        dataDropMultiplier: 2.5,
         levelScalingModifier: 4.2,
         healthDecay: -0.8
     }

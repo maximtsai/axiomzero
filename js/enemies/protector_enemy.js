@@ -21,7 +21,7 @@ class ProtectorEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'protector';
-        this.baseResourceDrop = 4;
+        this.baseResourceDrop = 3;
         this.cannotRotate = true;
         this.auraActive = false;
         this.state = PROTECTOR_STATE.MOVING;

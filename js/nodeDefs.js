@@ -838,7 +838,7 @@ const NODE_DEFS = [
         parents: ['data_compression'],
         childIds: ['two_step_auth'],
         treeX: gridX(1),
-        treeY: gridY(4),
+        treeY: gridY(4.5),
         tooltipExtraWidth: 40,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
@@ -1336,7 +1336,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_2'],
         childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
         treeX: gridX(-1),
-        treeY: gridY(7.5),
+        treeY: gridY(8.0),
         tooltipExtraWidth: 60,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
@@ -1543,7 +1543,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_3'],
         childIds: [],
         treeX: gridX(1.0),
-        treeY: gridY(11.0),
+        treeY: gridY(11.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(1000);

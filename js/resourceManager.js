@@ -48,6 +48,7 @@ const resourceManager = (() => {
                     x: 0, y: 0,
                     type: 'data',
                     spawnTween: null,
+                    collectLockTime: 0
                 };
             },
             _resetDrop,
@@ -69,6 +70,7 @@ const resourceManager = (() => {
                     x: 0, y: 0,
                     type: 'processor',
                     spawnTween: null,
+                    collectLockTime: 0
                 };
             },
             _resetDrop,
@@ -258,12 +260,14 @@ const resourceManager = (() => {
         let endY = cy + distAwayY;
 
 
+        const spawnDuration = 240 + dist * 12;
+        d.collectLockTime = PhaserScene.time.now + 100 + (spawnDuration * 0.1);
 
         d.spawnTween = PhaserScene.tweens.add({
             targets: d.img,
             x: endX,
             y: endY,
-            duration: 240 + dist * 12,
+            duration: spawnDuration,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 d.x = d.img.x;
@@ -423,6 +427,7 @@ const resourceManager = (() => {
             const d = activeDrops[i];
 
             if (d.spawnTween) { d.spawnTween.stop(); d.spawnTween = null; }
+            d.collectLockTime = 0;
             d.x = d.img.x;
             d.y = d.img.y;
             d.flying = true;
@@ -465,7 +470,9 @@ const resourceManager = (() => {
         // Check if cursor entered pickup radius → start flying
         for (let i = activeDrops.length - 1; i >= 0; i--) {
             const d = activeDrops[i];
-            if (!d.alive || d.isLocked) {
+
+            // SECURITY: Never pick up drops during their initial spawn/slide grace period
+            if (!d.alive || d.isLocked || PhaserScene.time.now < d.collectLockTime) {
                 if (!d.alive) {
                     activeDrops[i] = activeDrops[activeDrops.length - 1];
                     activeDrops.pop();

@@ -62,6 +62,7 @@ const enemyManager = (() => {
         shooter: {},
         bomb: {},
         heavy: {},
+        cache: { minCombatTime: 8, maxActive: 1 },
         protector: {
             minCombatTime: 6,
             maxActive: 2,
@@ -99,6 +100,7 @@ const enemyManager = (() => {
         pools.bomb = new ObjectPool(() => new BombEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
+        pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
         pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
         pools.boss3 = new ObjectPool(() => new Boss3(), resetFn, 8).preAllocate(8);
     }
@@ -320,6 +322,8 @@ const enemyManager = (() => {
                 e = pools.shell.get();
             } else if (chosenType === 'protector') {
                 e = pools.protector.get();
+            } else if (chosenType === 'cache') {
+                e = pools.cache.get();
             }
 
             if (!e) e = pools.basic.get(); // fallback to basic if target pool is exhausted
@@ -840,7 +844,7 @@ const enemyManager = (() => {
 
         const result = enemy.takeDamage(amount);
         let died = result.died;
-        
+
         // Use the actual damage applied to health for statistics
         statsTracker.recordDamage(result.actualApplied, source);
 
@@ -865,7 +869,7 @@ const enemyManager = (() => {
         if (isExecuted) textColor = '#bf24ff';
 
         if (gameState.settings.showDamageNumbers) {
-            let displayText = isExecuted ? ' EXECUTED ' : finalAmount.toString();
+            let displayText = isExecuted ? ' EXE ' : finalAmount.toString();
 
             // ISOLATION visual wrap
             if (enemy.model.wasIsolatedHit) {
@@ -879,7 +883,7 @@ const enemyManager = (() => {
                 color: textColor,
                 stroke: isExecuted ? '#1a0033' : '#330000',
                 strokeThickness: isExecuted ? 3 : 2,
-                depth: GAME_CONSTANTS.DEPTH_PROJECTILES,
+                depth: isExecuted ? GAME_CONSTANTS.DEPTH_HUD - 10 : GAME_CONSTANTS.DEPTH_RESOURCES + 50,
                 duration: isExecuted ? 1200 : 1000,
                 scaleX: isExecuted ? 0.92 : 1,
             });
@@ -941,6 +945,8 @@ const enemyManager = (() => {
             _releaseToPool(enemy);
         }
 
+
+
         // Maintain type counts and protector lists
         typeCounts[enemy.model.type] = Math.max(0, (typeCounts[enemy.model.type] || 1) - 1);
         if (enemy.model.type === 'protector') {
@@ -995,7 +1001,7 @@ const enemyManager = (() => {
                 const bx = ex;
                 const by = ey;
 
-                PhaserScene.time.delayedCall(220, () => {
+                PhaserScene.time.delayedCall(270, () => {
                     if (typeof customEmitters !== 'undefined' && customEmitters.createBombExplosion) {
                         customEmitters.createBombExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
                     }
@@ -1006,6 +1012,7 @@ const enemyManager = (() => {
                     }
                 });
             }
+
             messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop);
         }
     }
@@ -1152,6 +1159,8 @@ const enemyManager = (() => {
             }
         }
     }
+
+
 
     // ── event handlers ───────────────────────────────────────────────────────
 

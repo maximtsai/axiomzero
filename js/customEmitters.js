@@ -134,7 +134,7 @@ const customEmitters = (() => {
         },
         15
     );
- 
+
     const shellDeathPool = new ObjectPool(
         () => {
             const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'enemy_hit_circle1.png');
@@ -157,6 +157,19 @@ const customEmitters = (() => {
         },
         10
     );
+
+    const cacheSparkParams = {
+        frame: 'blue_pixel.png',
+        speed: { min: 40, max: 120 },
+        lifespan: { min: 300, max: 600 },
+        scale: { start: 5, end: 0, ease: 'Quad.easeIn' },
+        alpha: { start: 1, end: 0 },
+        frequency: -1,
+        gravityY: 0,
+        emitting: false,
+    };
+
+    const _cacheSpark = _make('pixels', cacheSparkParams, GAME_CONSTANTS.DEPTH_ENEMIES - 1);
 
 
     // ── basicStrike ──────────────────────────────────────────────────────────
@@ -439,7 +452,7 @@ const customEmitters = (() => {
                                 const dy = e.model.y - y;
                                 // Exact circle check
                                 if (dx * dx + dy * dy <= radiusSq) {
-                                    enemyManager.damageEnemy(e, 99, 'other');
+                                    enemyManager.damageEnemy(e, 99, 'friendlyfire');
                                 }
                             }
                         }
@@ -783,6 +796,11 @@ const customEmitters = (() => {
 
     updateManager.addFunction(_update);
 
+    function cacheTrail(x, y) {
+        const e = _cacheSpark();
+        e.explode(1, x, y);
+    }
+
     return {
         init,
         basicStrike,
@@ -795,6 +813,7 @@ const customEmitters = (() => {
         playExplosionPulse,
         createBombExplosion,
         malwareSiphonFX,
+        cacheTrail,
         playShellDeath: (x, y, depth) => {
             const spr = shellDeathPool.get();
             if (!spr) return;

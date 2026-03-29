@@ -14,7 +14,7 @@ class ShooterEnemyModel extends EnemyModel {
     constructor() {
         super();
         this.type = 'shooter';
-        this.baseResourceDrop = 2;
+        this.baseResourceDrop = 1.5;
         this.state = SHOOTER_STATE.MOVING;
         this.fireCooldown = 0;
         this.baseProjectileDamage = 1.5;
@@ -44,7 +44,7 @@ class ShooterEnemy extends Enemy {
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 19
         });
-        
+
         this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
 
         this.model.fireCooldown = 0;
