@@ -15,6 +15,7 @@ const gameHUD = (() => {
     let lastHealth = -1;
 
     let endIterationBtn = null;
+    let testDefensesBtn = null;
     let waveProgressBar = null;
 
     // Layout
@@ -203,6 +204,38 @@ const gameHUD = (() => {
             depth: depth
         });
         waveProgressBar.setVisible(false);
+
+        testDefensesBtn = new Button({
+            normal: {
+                ref: 'button_normal.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.HEIGHT - 57,
+            },
+            hover: {
+                ref: 'button_hover.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.HEIGHT - 57,
+            },
+            press: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.HEIGHT - 57,
+            },
+            onMouseUp: () => {
+                console.log('test');
+            },
+        });
+        testDefensesBtn.setScale(0.9);
+        testDefensesBtn.addText("Test Defenses", {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '19px',
+            color: '#ffffff',
+        });
+        testDefensesBtn.setDepth(depth + 3);
+        testDefensesBtn.setVisible(false);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -219,6 +252,10 @@ const gameHUD = (() => {
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
+        if (testDefensesBtn) {
+            testDefensesBtn.setVisible(false);
+            testDefensesBtn.setState(DISABLE);
+        }
     }
 
     function _hideAll() {
@@ -237,6 +274,10 @@ const gameHUD = (() => {
         });
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
+        if (testDefensesBtn) {
+            testDefensesBtn.setVisible(false);
+            testDefensesBtn.setState(DISABLE);
+        }
         if (waveProgressBar) waveProgressBar.setVisible(false);
     }
 
@@ -282,6 +323,12 @@ const gameHUD = (() => {
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
+
+        // Show test defenses button
+        if (testDefensesBtn) {
+            testDefensesBtn.setVisible(true);
+            testDefensesBtn.setState(NORMAL);
+        }
     }
 
     /**
