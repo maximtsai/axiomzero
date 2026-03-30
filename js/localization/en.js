@@ -138,6 +138,7 @@ window.TRANSLATIONS.en = {
     },
     tutorial: {
         combat_collect: 'COLLECT DATA ◈ TO EVOLVE',
+        cognition_damage: 'YOUR CURSOR ⛶ NOW DEALS DAMAGE',
         upgrade_use: 'USE DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
         duo_swap_free: 'SWAPPING ◆ ABILITIES IS FREE',

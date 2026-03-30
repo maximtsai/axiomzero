@@ -15,6 +15,7 @@ const tutorialManager = (() => {
 
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _checkEarlyGameTutorial();
+            _checkCognitionTutorial();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             PhaserScene.time.delayedCall(GAME_CONSTANTS.TRANSITION_DURATION || 600, () => {
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) {
@@ -53,6 +54,23 @@ const tutorialManager = (() => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
                     _showCombatTutorial();
+                }
+            });
+        }
+    }
+
+    function _checkCognitionTutorial() {
+        if (gameState.tutorialsSeen['cognition_damage']) return;
+
+        const upgrades = gameState.upgrades || {};
+        // Condition: Has purchased basic_pulse (Cognition)
+        if (upgrades.basic_pulse >= 1) {
+            PhaserScene.time.delayedCall(5000, () => {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT) && !gameState.tutorialsSeen['cognition_damage']) {
+                    const msg = t('tutorial', 'cognition_damage');
+                    const x = GAME_CONSTANTS.halfWidth;
+                    const y = GAME_CONSTANTS.halfHeight - 270;
+                    _createTutorialPopup(msg, x, y, false, undefined, undefined, 'cognition_damage', '30px');
                 }
             });
         }
