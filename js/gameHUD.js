@@ -584,7 +584,14 @@ const gameHUD = (() => {
 
         // Apply chromatic glitch 0.75s after it pops up
         PhaserScene.time.delayedCall(750, () => {
-            if (txt.active) glitchFX.triggerChromaticAberration(txt, 500, 1.75);
+            if (txt.active) {
+                glitchFX.triggerChromaticAberration(txt, 500, 1.75);
+            }
+        });
+        PhaserScene.time.delayedCall(250, () => {
+            if (txt.active) {
+                glitchFX.triggerAnnounceGlow(GAME_CONSTANTS.halfWidth, txt.y + fullHeight / 2, 1200, fullHeight + 30);
+            }
         });
 
         let charIdx = 0;

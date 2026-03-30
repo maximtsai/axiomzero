@@ -11,7 +11,7 @@ const enemyBulletManager = (() => {
     function init() {
         pool = new ObjectPool(
             () => {
-                const img = PhaserScene.add.image(0, 0, 'enemies', 'bullet.png');
+                const img = PhaserScene.add.sprite(0, 0, 'enemies', 'bullet.png');
                 img.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
                 img.setScale(1);
                 img.setVisible(false);
@@ -30,6 +30,7 @@ const enemyBulletManager = (() => {
             },
             (b) => {
                 b.alive = false;
+                b.img.stop();
                 b.img.setVisible(false);
                 b.img.setActive(false);
             },
@@ -42,7 +43,7 @@ const enemyBulletManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null, shakeOnHit = false, shakeDur = 200, shakeInt = 0.015) {
+    function fire(fromX, fromY, toX, toY, dmg, frameName = 'bullet.png', speedOverride = null, shakeOnHit = false, shakeDur = 200, shakeInt = 0.015, animKey = null) {
         if (!pool) return;
         const b = pool.get();
         if (!b) return;
@@ -63,11 +64,17 @@ const enemyBulletManager = (() => {
         b.alive = true;
         b.life = 5000; // auto-expire after 5s
 
-        b.img.setFrame(frameName);
         b.img.setPosition(fromX, fromY);
         b.img.setRotation(Math.atan2(dy, dx));
         b.img.setVisible(true);
         b.img.setActive(true);
+
+        if (animKey) {
+            b.img.play(animKey, true);
+        } else {
+            b.img.stop();
+            b.img.setFrame(frameName);
+        }
 
         activeBullets.push(b);
     }

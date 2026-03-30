@@ -188,6 +188,9 @@
             <key type="filename">enemies/shooter.png</key>
             <key type="filename">enemies/sniper.png</key>
             <key type="filename">enemies/sniper_projectile.png</key>
+            <key type="filename">enemies/sniper_projectile_big.png</key>
+            <key type="filename">enemies/sniper_projectile_big1.png</key>
+            <key type="filename">enemies/sniper_projectile_big2.png</key>
             <key type="filename">enemies/swarmer.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

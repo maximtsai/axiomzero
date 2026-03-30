@@ -219,7 +219,8 @@ class Miniboss4 extends Miniboss {
                 550, // Ultra fast projectile
                 true, // isCritical/Heavy
                 140, // Sound detune
-                0.012 // Extra screenshake on hit
+                0.012, // Extra screenshake on hit
+                'sniper_bullet'
             );
             
             if (typeof audio !== 'undefined') {

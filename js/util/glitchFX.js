@@ -15,6 +15,10 @@ const glitchFX = (() => {
     let intensity = 1;     // 0–1 global multiplier
     let scanlines = [];
     let bgGrid = null;      // Background grid sprite
+    let wave = null;        // Pooled central shockwave
+    let blueLine = null;    // Pooled horizontal scan-sweep
+    let scanFade1 = null;   // Pooled diagonal scan-line
+    let scanFade2 = null;
     let _color1 = 0xffffff;  // primary scanline tint
     let _color2 = 0xaaaaaa;  // secondary scanline tint
     let _ghostTint = 0xffffff;  // ghost overlay tint
@@ -35,6 +39,12 @@ const glitchFX = (() => {
         // Pre-create permanent background grid (for system scans etc)
         bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'backgrounds', 'black_grid.png');
         bgGrid.setDepth(1).setVisible(false);
+
+        // Pre-allocate system scan assets (Pooling)
+        wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+        blueLine = PhaserScene.add.image(0, 0, 'white_pixel').setVisible(false).setBlendMode(Phaser.BlendModes.ADD).setOrigin(0.5, 0.5);
+        scanFade1 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.MULTIPLY).setAngle(-45);
+        scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD).setAngle(45);
     }
 
     /**
@@ -221,15 +231,14 @@ const glitchFX = (() => {
      * @param {number} [duration=1300] - Speed of the sweep.
      */
     function triggerSystemScan(duration = 1300) {
-        if (intensity <= 0 || !bgGrid) return;
-        console.log("actually run");
+        if (intensity <= 0 || !bgGrid || !wave) return;
 
         // Reset and show permanent grid
         bgGrid.setVisible(true).setScale(1);
 
         // 1. Central Deathwave Pulse
-        const wave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'deathwave.png');
-        wave.setDepth(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD).setScale(0.1);
+        wave.setPosition(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight)
+            .setVisible(true).setDepth(0).setAlpha(0).setScale(0.1);
 
         // Wave Tweens
         PhaserScene.tweens.add({
@@ -243,7 +252,7 @@ const glitchFX = (() => {
         PhaserScene.tweens.add({
             delay: 200,
             targets: wave,
-            alpha: 0.25,
+            alpha: 0.15,
             duration: 250,
             ease: 'Quad.easeOut',
             onComplete: () => {
@@ -252,29 +261,20 @@ const glitchFX = (() => {
                     alpha: 0,
                     duration: duration - 250,
                     ease: 'Linear',
-                    onComplete: () => wave.destroy()
+                    onComplete: () => wave.setVisible(false)
                 });
             }
         });
 
-        // 2. Wide Faint Blue Line (1 above tower depth)
-        const blueLine = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'white_pixel');
-        const towerDepth = GAME_CONSTANTS.DEPTH_TOWER || 200;
-        blueLine.setOrigin(0.5, 0.5)
-            .setDepth(2)
-            .setDisplaySize(GAME_CONSTANTS.WIDTH, 50)
-            .setTint(0x00f5ff) // Cyan/Blue
-            .setAlpha(0)
-            .setBlendMode(Phaser.BlendModes.ADD);
+        // 2. Clear blueLine from scan (it's now for announcements)
+        blueLine.setVisible(false);
 
         // 3. Scan Line Fades (from backgrounds atlas)
-        const scanFade1 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
-        scanFade1.setDepth(-1).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
-            .setScale(1000, 1.9).setAngle(-45);
+        scanFade1.setPosition(GAME_CONSTANTS.halfWidth, -100)
+            .setVisible(true).setDepth(-1).setAlpha(0).setScale(1000, 1.9);
 
-        const scanFade2 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
-        scanFade2.setDepth(-1).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
-            .setScale(1000, 1.9).setAngle(45);
+        scanFade2.setPosition(GAME_CONSTANTS.halfWidth, -100)
+            .setVisible(true).setDepth(-1).setAlpha(0).setScale(1000, 1.9);
 
         const fxState = { alpha: 0, y: -100 };
 
@@ -294,8 +294,7 @@ const glitchFX = (() => {
             duration: 250,
             ease: 'Cubic.easeOut',
             onUpdate: () => {
-                blueLine.setAlpha(0.08 * fxState.alpha);
-                scanFade1.setAlpha(0.12 * fxState.alpha);
+                scanFade1.setAlpha(0.7 * fxState.alpha);
                 scanFade2.setAlpha(0.12 * fxState.alpha);
             },
             onComplete: () => {
@@ -309,8 +308,6 @@ const glitchFX = (() => {
                         const H = GAME_CONSTANTS.HEIGHT;
                         const progress = (fxState.y + 100) / (H + 500);
                         const drift = progress * 60 - 30; // 60px sym-drift
-
-                        blueLine.y = fxState.y;
 
                         // Scan fades start 200 higher (-300) and end 300 lower (H + 700)
                         const fadeY = -300 + (progress * (H + 1000));
@@ -326,20 +323,78 @@ const glitchFX = (() => {
                             alpha: 0,
                             duration: 500,
                             onUpdate: () => {
-                                blueLine.setAlpha(0.08 * fxState.alpha);
-                                scanFade1.setAlpha(0.12 * fxState.alpha);
+                                scanFade1.setAlpha(0.7 * fxState.alpha);
                                 scanFade2.setAlpha(0.12 * fxState.alpha);
                             },
                             onComplete: () => {
-                                blueLine.destroy();
-                                scanFade1.destroy();
-                                scanFade2.destroy();
+                                scanFade1.setVisible(false);
+                                scanFade2.setVisible(false);
                                 bgGrid.setVisible(false); // Hide permanent grid again
                             }
                         });
                     }
                 });
             }
+        });
+    }
+
+    /**
+     * Shows a jittering blue glow at a specific position (used for announcements).
+     * @param {number} x
+     * @param {number} y
+     * @param {number} [duration=1200]
+     * @param {number} [overrideHeight=80]
+     */
+    function triggerAnnounceGlow(x, y, duration = 1200, overrideHeight = 80) {
+        if (intensity <= 0 || !blueLine) return;
+
+        const finalHeight = overrideHeight;
+        const startHeight = finalHeight * 0.25;
+        const halfDur = duration / 2;
+        const state = { h: startHeight, alphaMult: 0.16 };
+
+        blueLine.setPosition(x, y)
+            .setVisible(true)
+            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1)
+            .setAlpha(0.05)
+            .setDisplaySize(GAME_CONSTANTS.WIDTH, startHeight)
+            .setTint(0x00f5ff);
+
+        // expansion + fade in tween
+        PhaserScene.tweens.add({
+            targets: state,
+            h: finalHeight,
+            alphaMult: 1,
+            duration: halfDur,
+            ease: 'Quart.easeOut', // Keep height ease but alpha is linear enough
+            onComplete: () => {
+                // shrink and fade tween
+                PhaserScene.tweens.add({
+                    targets: state,
+                    h: 0,
+                    alphaMult: 0,
+                    duration: halfDur,
+                    ease: 'Quad.easeOut'
+                });
+            }
+        });
+
+        // Shaking + Jittering logic
+        const shakeTimer = PhaserScene.time.addEvent({
+            delay: 20,
+            repeat: Math.floor(duration / 20),
+            callback: () => {
+                const jitter = (0.75 + Math.random() * 0.5) * intensity;
+                blueLine.x = x + (Math.random() - 0.5) * 20 * intensity;
+                blueLine.y = y + (Math.random() - 0.5) * 8 * intensity;
+                blueLine.displayHeight = state.h * jitter;
+                blueLine.setAlpha((0.12 + 0.18 * Math.random()) * state.alphaMult);
+            }
+        });
+
+        PhaserScene.time.delayedCall(duration, () => {
+            shakeTimer.remove();
+            blueLine.setVisible(false);
         });
     }
 
@@ -355,5 +410,5 @@ const glitchFX = (() => {
         });
     }
 
-    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerDeathGrid };
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid };
 })();

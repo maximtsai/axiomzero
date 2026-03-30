@@ -88,4 +88,14 @@ function createAnimations(scene) {
         frameRate: 16,
         repeat: 0,
     });
+
+    scene.anims.create({
+        key: 'sniper_bullet',
+        frames: [
+            { key: 'enemies', frame: 'sniper_projectile_big1.png' },
+            { key: 'enemies', frame: 'sniper_projectile_big2.png' }
+        ],
+        frameRate: 12,
+        repeat: -1
+    });
 }

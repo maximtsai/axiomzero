@@ -235,7 +235,12 @@ class SniperEnemy extends Enemy {
                 this.model.x, this.model.y,
                 targetX, targetY,
                 this.model.projectileDamage,
-                'sniper_projectile.png'
+                'sniper_projectile.png',
+                null,
+                false,
+                200,
+                0.015,
+                'sniper_bullet'
             );
         }
     }
