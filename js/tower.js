@@ -100,6 +100,7 @@ class TowerView {
         this.glowSprite = null;
         this.rangeSprite = null;  // Range indicator circle below tower
         this.breatheTween = null;
+        this.deathShockwave = null;
     }
 
     spawn(cx, cy) {
@@ -136,6 +137,10 @@ class TowerView {
         this.glowSprite.setScale(1.0);
         this.glowSprite.setAlpha(1);
         this.glowSprite.setBlendMode(Phaser.BlendModes.ADD);
+
+        // Pre-create death shockwave (temp depth 0 for visibility)
+        this.deathShockwave = PhaserScene.add.image(cx, cy, 'player', 'deathwave.png');
+        this.deathShockwave.setDepth(0).setAlpha(0);
 
         // Main tower sprite
         this.sprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
@@ -369,6 +374,35 @@ class TowerView {
             });
         });
     }
+
+    playDeathShockwave(duration = 750) {
+        if (!this.deathShockwave) {
+            // Safety: create it if it doesn't exist for some reason
+            this.deathShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'deathwave.png');
+            this.deathShockwave.setDepth(0).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
+        }
+        // Reset and trigger
+        this.deathShockwave.setVisible(true).setAlpha(1).setScale(0.1);
+
+        // Environment grid pulse via glitch system
+        if (typeof glitchFX !== 'undefined') {
+            glitchFX.triggerDeathGrid(duration);
+        }
+
+        PhaserScene.tweens.add({
+            targets: this.deathShockwave,
+            scale: 2,
+            duration: duration,
+            ease: 'Cubic.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            targets: this.deathShockwave,
+            alpha: 0,
+            duration: duration,
+            ease: 'Cubic.easeOut',
+        });
+    }
 }
 
 // Controller IIFE
@@ -487,8 +521,8 @@ const tower = (() => {
                 view.playHitEffect(ox, oy);
             }
         } else {
-            view.cleanupRangeSprite();
-            debugLog('Tower destroyed');
+            // fatality path
+            die();
         }
     }
 
@@ -499,6 +533,7 @@ const tower = (() => {
     function die() {
         model.die();
         view.cleanupRangeSprite();
+        view.playDeathShockwave();
         debugLog('Tower destroyed');
     }
 
@@ -529,6 +564,7 @@ const tower = (() => {
                 model.health = 0;
                 model.die();
                 view.cleanupRangeSprite();
+                view.playDeathShockwave();
                 debugLog('Tower destroyed');
                 return;
             }

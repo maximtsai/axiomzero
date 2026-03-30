@@ -14,6 +14,7 @@
 const glitchFX = (() => {
     let intensity = 1;     // 0–1 global multiplier
     let scanlines = [];
+    let bgGrid = null;      // Background grid sprite
     let _color1 = 0xffffff;  // primary scanline tint
     let _color2 = 0xaaaaaa;  // secondary scanline tint
     let _ghostTint = 0xffffff;  // ghost overlay tint
@@ -30,6 +31,10 @@ const glitchFX = (() => {
                 .setBlendMode(Phaser.BlendModes.ADD);
             scanlines.push(line);
         }
+
+        // Pre-create permanent background grid (for system scans etc)
+        bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'backgrounds', 'black_grid.png');
+        bgGrid.setDepth(1).setScrollFactor(0).setVisible(false);
     }
 
     /**
@@ -210,5 +215,128 @@ const glitchFX = (() => {
         intensity = Math.max(0, Math.min(1, level));
     }
 
-    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration };
+    /**
+     * Vertical "scan" lines that sweep the whole screen top-to-bottom.
+     * Dual layered: thin baseline and broad faint blue glow.
+     * @param {number} [duration=1300] - Speed of the sweep.
+     */
+    function triggerSystemScan(duration = 1300) {
+        if (intensity <= 0 || !bgGrid) return;
+
+        // Reset and show permanent grid
+        bgGrid.setVisible(true).setScale(1);
+        // 1. Original Thin White Line (at depth 0)
+        const scanLine = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'white_pixel');
+        scanLine.setOrigin(0.5, 0)
+            .setDepth(1)
+            .setScrollFactor(0)
+            .setDisplaySize(GAME_CONSTANTS.WIDTH, 1.5)
+            .setTint(0xffffff)
+            .setAlpha(0)
+            .setBlendMode(Phaser.BlendModes.ADD);
+
+        // 2. Wide Faint Blue Line (1 above tower depth)
+        const blueLine = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'white_pixel');
+        const towerDepth = GAME_CONSTANTS.DEPTH_TOWER || 200;
+        blueLine.setOrigin(0.5, 0.5)
+            .setDepth(towerDepth + 1)
+            .setScrollFactor(0)
+            .setDisplaySize(GAME_CONSTANTS.WIDTH, 50)
+            .setTint(0x00f5ff) // Cyan/Blue
+            .setAlpha(0)
+            .setBlendMode(Phaser.BlendModes.ADD);
+
+        // 3. Scan Line Fades (from backgrounds atlas)
+        const scanFade1 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
+        scanFade1.setDepth(-1).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+            .setScale(1000, 1.9).setAngle(-45);
+
+        const scanFade2 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
+        scanFade2.setDepth(-1).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+            .setScale(1000, 1.9).setAngle(45);
+
+        const fxState = { alpha: 0, y: -100 };
+
+        // 0b. Grid scaling (covers entrance + sweep + exit durations)
+        const totalDuration = 250 + duration + 500;
+        PhaserScene.tweens.add({
+            targets: bgGrid,
+            scale: 1.05,
+            duration: totalDuration * 0.5,
+            yoyo: true,
+            ease: 'Sine.easeInOut'
+        });
+        // Entrance flicker for all
+        PhaserScene.tweens.add({
+            targets: fxState,
+            alpha: 1,
+            duration: 250,
+            ease: 'Cubic.easeOut',
+            onUpdate: () => {
+                scanLine.setAlpha(0.24 * fxState.alpha);
+                blueLine.setAlpha(0.08 * fxState.alpha);
+                scanFade1.setAlpha(0.12 * fxState.alpha);
+                scanFade2.setAlpha(0.12 * fxState.alpha);
+            },
+            onComplete: () => {
+                // Sweep all in sync
+                PhaserScene.tweens.add({
+                    targets: fxState,
+                    y: GAME_CONSTANTS.HEIGHT + 400,
+                    duration: duration,
+                    ease: 'Quad.easeInOut',
+                    onUpdate: () => {
+                        const H = GAME_CONSTANTS.HEIGHT;
+                        const progress = (fxState.y + 100) / (H + 500);
+                        const drift = progress * 60 - 30; // 60px sym-drift
+
+                        scanLine.y = fxState.y;
+                        blueLine.y = fxState.y;
+
+                        // Scan fades start 200 higher (-300) and end 300 lower (H + 700)
+                        const fadeY = -300 + (progress * (H + 1000));
+                        scanFade1.y = fadeY;
+                        scanFade1.x = GAME_CONSTANTS.halfWidth + drift;
+                        scanFade2.y = fadeY;
+                        scanFade2.x = GAME_CONSTANTS.halfWidth - drift;
+                    },
+                    onComplete: () => {
+                        // Exit fade
+                        PhaserScene.tweens.add({
+                            targets: fxState,
+                            alpha: 0,
+                            duration: 500,
+                            onUpdate: () => {
+                                scanLine.setAlpha(0.24 * fxState.alpha);
+                                blueLine.setAlpha(0.08 * fxState.alpha);
+                                scanFade1.setAlpha(0.12 * fxState.alpha);
+                                scanFade2.setAlpha(0.12 * fxState.alpha);
+                            },
+                            onComplete: () => {
+                                scanLine.destroy();
+                                blueLine.destroy();
+                                scanFade1.destroy();
+                                scanFade2.destroy();
+                                bgGrid.setVisible(false); // Hide permanent grid again
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Momentarily shows the background grid for a death event.
+     * @param {number} [duration=1000]
+     */
+    function triggerDeathGrid(duration = 1000) {
+        if (!bgGrid) return;
+        bgGrid.setVisible(true).setScale(1);
+        PhaserScene.time.delayedCall(duration, () => {
+            bgGrid.setVisible(false);
+        });
+    }
+
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerDeathGrid };
 })();

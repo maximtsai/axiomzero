@@ -4,11 +4,36 @@
 			"image": "ui-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 819,
-				"h": 1930
+				"w": 1682,
+				"h": 1988
 			},
 			"scale": 1,
 			"frames": [
+				{
+					"filename": "black_grid.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1680,
+						"h": 960
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1680,
+						"h": 960
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 1680,
+						"h": 960
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
 				{
 					"filename": "upgrade_outline.png",
 					"rotated": false,
@@ -25,7 +50,7 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 1,
+						"y": 963,
 						"w": 817,
 						"h": 902
 					},
@@ -49,10 +74,35 @@
 						"h": 1024
 					},
 					"frame": {
-						"x": 1,
-						"y": 905,
+						"x": 820,
+						"y": 963,
 						"w": 728,
 						"h": 1024
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "scan_line_fade.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 2,
+						"h": 350
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 2,
+						"h": 281
+					},
+					"frame": {
+						"x": 1550,
+						"y": 963,
+						"w": 2,
+						"h": 281
 					},
 					"anchor": {
 						"x": 0.5,
@@ -65,6 +115,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:d2a287e141d7185ce3456ff24b425f53:8b51c6024c916d45ad5d20653d926469:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:e79e4b1b9c4ac998ec12d652d81449c9:de1de0dad7d30d3259d6feee670eaf91:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

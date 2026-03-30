@@ -49,7 +49,12 @@ const transitionManager = (() => {
                     neuralTree.hide();
                 }
                 gameHUD.setWaveProgressBarVisible(true);
+
             });
+            // Trigger visual "System Scan" on wave start
+            if (typeof glitchFX !== 'undefined') {
+                glitchFX.triggerSystemScan(1300);
+            }
         } else if (targetPhase === GAME_CONSTANTS.PHASE_UPGRADE) {
             // Stop boss track & bring back main BGM if applicable
             audio.stopComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
