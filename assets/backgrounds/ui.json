@@ -4,8 +4,94 @@
 			"image": "ui-0.webp",
 			"format": "RGBA8888",
 			"size": {
+				"w": 1964,
+				"h": 1592
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "upgrade_background.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 1143,
+						"h": 1590
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 1143,
+						"h": 1590
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 1143,
+						"h": 1590
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "upgrade_outline.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 830,
+						"h": 902
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 817,
+						"h": 902
+					},
+					"frame": {
+						"x": 1146,
+						"y": 1,
+						"w": 817,
+						"h": 902
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "scan_line_fade.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 2,
+						"h": 350
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 2,
+						"h": 281
+					},
+					"frame": {
+						"x": 1146,
+						"y": 905,
+						"w": 2,
+						"h": 281
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				}
+			]
+		},
+		{
+			"image": "ui-1.webp",
+			"format": "RGBA8888",
+			"size": {
 				"w": 1682,
-				"h": 1988
+				"h": 962
 			},
 			"scale": 1,
 			"frames": [
@@ -33,81 +119,6 @@
 						"x": 0.5,
 						"y": 0.5
 					}
-				},
-				{
-					"filename": "upgrade_outline.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 830,
-						"h": 902
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 817,
-						"h": 902
-					},
-					"frame": {
-						"x": 1,
-						"y": 963,
-						"w": 817,
-						"h": 902
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "upgrade_background.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 728,
-						"h": 1024
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 728,
-						"h": 1024
-					},
-					"frame": {
-						"x": 820,
-						"y": 963,
-						"w": 728,
-						"h": 1024
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "scan_line_fade.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 2,
-						"h": 350
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 2,
-						"w": 2,
-						"h": 281
-					},
-					"frame": {
-						"x": 1550,
-						"y": 963,
-						"w": 2,
-						"h": 281
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
 				}
 			]
 		}
@@ -115,6 +126,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:e79e4b1b9c4ac998ec12d652d81449c9:de1de0dad7d30d3259d6feee670eaf91:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:49c23ff4f15733fe3f75a99c103265c7:024b34b06190a319f7336811aa9cf143:440d22268fb50c3f20563a1a226c8fda$"
 	}
 }

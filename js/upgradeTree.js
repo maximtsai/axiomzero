@@ -167,8 +167,7 @@ const upgradeTree = (() => {
 
     function _createPanel() {
         // Pretty background image - moves with the nodes
-        panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_background.png');
-        panelBg.setScale(1.2);
+        panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight - 350, 'backgrounds', 'upgrade_background.png');
         panelBg.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
@@ -1126,34 +1125,31 @@ const upgradeTree = (() => {
         const groupY = treeGroup ? treeGroup.y : 0;
 
         const minVisX = groupX;
-        const maxVisX = groupX + GAME_CONSTANTS.halfWidth - 20;
-        const minVisY = groupY + 22;
-        const maxVisY = groupY + GAME_CONSTANTS.HEIGHT - 22;
+        const maxVisX = groupX + GAME_CONSTANTS.halfWidth;
 
-        const scale = 1.2;
-        const texW = 728;
-        const texH = 1024;
+        const texW = 1143;
+        const texH = 1590;
 
-        // Bounds of the scaled sprite
-        const spriteLeft = panelBg.x - (texW * scale) / 2;
-        const spriteRight = panelBg.x + (texW * scale) / 2;
-        const spriteTop = panelBg.y - (texH * scale) / 2;
-        const spriteBottom = panelBg.y + (texH * scale) / 2;
+        // Bounds of the sprite (assuming scale 1)
+        const spriteLeft = panelBg.x - texW / 2;
+        const spriteRight = panelBg.x + texW / 2;
+        const spriteTop = panelBg.y - texH / 2;
+        const spriteBottom = panelBg.y + texH / 2;
 
         // Calculate visible portion
         const cropLeft = Math.max(spriteLeft, minVisX);
         const cropRight = Math.min(spriteRight, maxVisX);
-        const cropTop = Math.max(spriteTop, minVisY);
-        const cropBottom = Math.min(spriteBottom, maxVisY);
+        const cropTop = spriteTop;
+        const cropBottom = spriteBottom;
 
-        const cropW = (cropRight - cropLeft) / scale;
-        const cropH = (cropBottom - cropTop) / scale;
+        const cropW = cropRight - cropLeft;
+        const cropH = cropBottom - cropTop;
 
         if (cropW <= 0 || cropH <= 0) {
             panelBg.setCrop(0, 0, 0.1, 0.1);
         } else {
-            const cropX = (cropLeft - spriteLeft) / scale;
-            const cropY = (cropTop - spriteTop) / scale;
+            const cropX = cropLeft - spriteLeft;
+            const cropY = cropTop - spriteTop;
             panelBg.setCrop(cropX, cropY, cropW, cropH);
         }
 

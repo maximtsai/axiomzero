@@ -37,7 +37,7 @@ const glitchFX = (() => {
         }
 
         // Pre-create permanent background grid (for system scans etc)
-        bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'backgrounds', 'black_grid.png');
+        bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
         bgGrid.setDepth(1).setVisible(false);
 
         // Pre-allocate system scan assets (Pooling)
