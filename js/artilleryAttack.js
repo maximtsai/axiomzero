@@ -262,6 +262,7 @@ const artilleryAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesStarted', () => { model.fireTimer = 0; });
         messageBus.subscribe('testingDefensesEnded', () => { model.fireTimer = 0; });
         updateManager.addFunction(_update);
     }

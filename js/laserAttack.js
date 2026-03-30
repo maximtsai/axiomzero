@@ -261,6 +261,17 @@ const laserAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesStarted', () => {
+            model.firing = false;
+            model.tapering = false;
+            model.cooldownTimer = 0;
+            if (_beamSound) {
+                audio.fadeAway(_beamSound, 150);
+                _beamSound = null;
+            }
+            view.hide();
+            if (model.unlocked) view.show(model);
+        });
         messageBus.subscribe('testingDefensesEnded', () => {
             model.firing = false;
             model.tapering = false;

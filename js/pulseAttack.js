@@ -501,10 +501,14 @@ const pulseAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesStarted', () => {
+            model.charges = model.maxCharges;
+            model.fireTimer = 0;
+            model.clickQueued = false;
+        });
         messageBus.subscribe('testingDefensesEnded', () => {
             model.charges = model.maxCharges;
-            model.cooldownTimer = 0;
-            model.queueTimer = 0;
+            model.fireTimer = 0;
             model.clickQueued = false;
             view.setVisibility(false);
         });

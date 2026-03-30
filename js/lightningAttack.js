@@ -15,6 +15,7 @@ class LightningAttackModel {
         this.damage = this.BASE_DAMAGE;
         this.chainCount = this.BASE_CHAIN_COUNT;
         this.staticChargeMultiplier = 0; // 0.5 per level
+        this.fireTimer = 0;
     }
 
     resetTimer() {
@@ -179,6 +180,7 @@ const lightningAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
+        messageBus.subscribe('testingDefensesStarted', () => { model.resetTimer(); });
         messageBus.subscribe('testingDefensesEnded', () => { model.resetTimer(); });
         updateManager.addFunction(_update);
     }
