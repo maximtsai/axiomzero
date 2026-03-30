@@ -34,7 +34,7 @@ const glitchFX = (() => {
 
         // Pre-create permanent background grid (for system scans etc)
         bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 40, 'backgrounds', 'black_grid.png');
-        bgGrid.setDepth(1).setScrollFactor(0).setVisible(false);
+        bgGrid.setDepth(1).setVisible(false);
     }
 
     /**
@@ -222,25 +222,46 @@ const glitchFX = (() => {
      */
     function triggerSystemScan(duration = 1300) {
         if (intensity <= 0 || !bgGrid) return;
+        console.log("actually run");
 
         // Reset and show permanent grid
         bgGrid.setVisible(true).setScale(1);
-        // 1. Original Thin White Line (at depth 0)
-        const scanLine = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'white_pixel');
-        scanLine.setOrigin(0.5, 0)
-            .setDepth(1)
-            .setScrollFactor(0)
-            .setDisplaySize(GAME_CONSTANTS.WIDTH, 1.5)
-            .setTint(0xffffff)
-            .setAlpha(0)
-            .setBlendMode(Phaser.BlendModes.ADD);
+
+        // 1. Central Deathwave Pulse
+        const wave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'deathwave.png');
+        wave.setDepth(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD).setScale(0.1);
+
+        // Wave Tweens
+        PhaserScene.tweens.add({
+            delay: 250,
+            targets: wave,
+            scale: 2.5,
+            duration: duration,
+            ease: 'Cubic.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            delay: 200,
+            targets: wave,
+            alpha: 0.25,
+            duration: 250,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: wave,
+                    alpha: 0,
+                    duration: duration - 250,
+                    ease: 'Linear',
+                    onComplete: () => wave.destroy()
+                });
+            }
+        });
 
         // 2. Wide Faint Blue Line (1 above tower depth)
         const blueLine = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'white_pixel');
         const towerDepth = GAME_CONSTANTS.DEPTH_TOWER || 200;
         blueLine.setOrigin(0.5, 0.5)
-            .setDepth(towerDepth + 1)
-            .setScrollFactor(0)
+            .setDepth(2)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, 50)
             .setTint(0x00f5ff) // Cyan/Blue
             .setAlpha(0)
@@ -248,11 +269,11 @@ const glitchFX = (() => {
 
         // 3. Scan Line Fades (from backgrounds atlas)
         const scanFade1 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
-        scanFade1.setDepth(-1).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+        scanFade1.setDepth(-1).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
             .setScale(1000, 1.9).setAngle(-45);
 
         const scanFade2 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, -100, 'backgrounds', 'scan_line_fade.png');
-        scanFade2.setDepth(-1).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
+        scanFade2.setDepth(-1).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD)
             .setScale(1000, 1.9).setAngle(45);
 
         const fxState = { alpha: 0, y: -100 };
@@ -261,8 +282,8 @@ const glitchFX = (() => {
         const totalDuration = 250 + duration + 500;
         PhaserScene.tweens.add({
             targets: bgGrid,
-            scale: 1.05,
-            duration: totalDuration * 0.5,
+            scale: 1.06,
+            duration: totalDuration * 0.48,
             yoyo: true,
             ease: 'Sine.easeInOut'
         });
@@ -273,7 +294,6 @@ const glitchFX = (() => {
             duration: 250,
             ease: 'Cubic.easeOut',
             onUpdate: () => {
-                scanLine.setAlpha(0.24 * fxState.alpha);
                 blueLine.setAlpha(0.08 * fxState.alpha);
                 scanFade1.setAlpha(0.12 * fxState.alpha);
                 scanFade2.setAlpha(0.12 * fxState.alpha);
@@ -290,7 +310,6 @@ const glitchFX = (() => {
                         const progress = (fxState.y + 100) / (H + 500);
                         const drift = progress * 60 - 30; // 60px sym-drift
 
-                        scanLine.y = fxState.y;
                         blueLine.y = fxState.y;
 
                         // Scan fades start 200 higher (-300) and end 300 lower (H + 700)
@@ -307,13 +326,11 @@ const glitchFX = (() => {
                             alpha: 0,
                             duration: 500,
                             onUpdate: () => {
-                                scanLine.setAlpha(0.24 * fxState.alpha);
                                 blueLine.setAlpha(0.08 * fxState.alpha);
                                 scanFade1.setAlpha(0.12 * fxState.alpha);
                                 scanFade2.setAlpha(0.12 * fxState.alpha);
                             },
                             onComplete: () => {
-                                scanLine.destroy();
                                 blueLine.destroy();
                                 scanFade1.destroy();
                                 scanFade2.destroy();

@@ -5,7 +5,7 @@
 class LaserAttackModel {
     constructor() {
         this.ORBIT_RADIUS = 40;          // px from tower center
-        this.ORBIT_SPEED = 0.41;        // radians/second
+        this.ORBIT_SPEED = 0.4;        // radians/second
         this.BEAM_LENGTH = 1000;         // px
         this.BEAM_VISUAL_HALF_WIDTH = 25;// visual beam half-width (50px total)
         this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
@@ -70,21 +70,52 @@ class LaserAttackView {
     constructor() {
         this._turret = null;
         this._turret2 = null;
-        this._beamGraphics = null;
+
+        // Beam 1 sprites
+        this._glow1 = null;
+        this._body1 = null;
+        this._core1 = null;
+
+        // Beam 2 sprites (Duo)
+        this._glow2 = null;
+        this._body2 = null;
+        this._core2 = null;
+
+        this._originGraphics = null; // Still use graphics for hotspot
         this._initialized = false;
-        this._glowGraphics = null;
     }
 
     init() {
-        this._beamGraphics = PhaserScene.add.graphics();
-        this._beamGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 10);
-        this._beamGraphics.setBlendMode(Phaser.BlendModes.ADD);
-        this._beamGraphics.setVisible(false);
+        const createBeamSet = () => {
+            const glow = PhaserScene.add.image(0, 0, 'player', 'laser_glow.png');
+            const body = PhaserScene.add.image(0, 0, 'player', 'laser_body.png');
+            const core = PhaserScene.add.image(0, 0, 'player', 'laser_core.png');
 
-        this._glowGraphics = PhaserScene.add.graphics();
-        this._glowGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 11);
-        this._glowGraphics.setBlendMode(Phaser.BlendModes.ADD);
-        this._glowGraphics.setVisible(false);
+            [glow, body, core].forEach(s => {
+                s.setOrigin(0, 0.5)
+                    .setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 10)
+                    .setBlendMode(Phaser.BlendModes.ADD)
+                    .setVisible(false)
+                    .setScrollFactor(1);
+            });
+            return { glow, body, core };
+        };
+
+        const b1 = createBeamSet();
+        this._glow1 = b1.glow;
+        this._body1 = b1.body;
+        this._core1 = b1.core;
+
+        const b2 = createBeamSet();
+        this._glow2 = b2.glow;
+        this._body2 = b2.body;
+        this._core2 = b2.core;
+
+        // Still using graphics for orig hotspot for now as requested
+        this._originGraphics = PhaserScene.add.graphics();
+        this._originGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 9);
+        this._originGraphics.setBlendMode(Phaser.BlendModes.ADD);
+        this._originGraphics.setVisible(false);
 
         this._turret = PhaserScene.add.image(0, 0, 'player', 'laser_turret.png');
         this._turret.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
@@ -115,10 +146,10 @@ class LaserAttackView {
         if (!this._initialized) return;
         this._turret.setVisible(false);
         this._turret2.setVisible(false);
-        this._beamGraphics.setVisible(false);
-        this._glowGraphics.setVisible(false);
-        this._beamGraphics.clear();
-        this._glowGraphics.clear();
+        this._originGraphics.setVisible(false);
+        this._originGraphics.clear();
+
+        [this._glow1, this._body1, this._core1, this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
     }
 
     update(model, towerX, towerY) {
@@ -127,10 +158,9 @@ class LaserAttackView {
         const tx = model.getTurretX(towerX);
         const ty = model.getTurretY(towerY);
 
-        // Turret always follows orbit
         this._turret.setPosition(tx, ty);
         this._turret.setRotation(model.angle);
-        this._turret.setVisible(true); // Ensure visible when active
+        this._turret.setVisible(true);
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
@@ -143,91 +173,46 @@ class LaserAttackView {
         }
 
         if (!model.firing && !model.tapering) {
-            this._beamGraphics.setVisible(false);
-            this._glowGraphics.setVisible(false);
-            this._beamGraphics.clear();
-            this._glowGraphics.clear();
+            // Hide beam and hotspot, but NOT turrets
+            this._originGraphics.setVisible(false);
+            this._originGraphics.clear();
+            [this._glow1, this._body1, this._core1, this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
             return;
         }
 
-        // Only draw beams if firing or tapering
         const alpha = 0.5 + 0.5 * Math.random();
-
-        // Beam points (laser fires from turret away from tower)
-        const bx = tx + Math.cos(model.angle) * model.BEAM_LENGTH;
-        const by = ty + Math.sin(model.angle) * model.BEAM_LENGTH;
-
-        // Pulsing: moment of damage should be biggest (tickTimer=0 right after tick)
         const pulse = 1.0 + 0.15 * Math.pow(1.0 - (model.tickTimer / model.TICK_INTERVAL), 3);
-
-        // Taper-down multiplier (shrinks beam width to 0 over TAPER_DURATION)
         const taperMult = model.tapering ? Math.max(0, 1.0 - model.taperProgress) : 1.0;
         const currentHalfW = model.getVisualHalfWidth() * pulse * taperMult;
 
-        this._glowGraphics.setVisible(true);
-        this._glowGraphics.clear();
-        this._beamGraphics.setVisible(true);
-        this._beamGraphics.clear();
+        this._originGraphics.setVisible(true);
+        this._originGraphics.clear();
 
-        this._drawBeam(tx, ty, bx, by, currentHalfW, alpha, model);
+        this._updateBeamSet(this._glow1, this._body1, this._core1, tx, ty, model.angle, model.BEAM_LENGTH, currentHalfW, alpha, model);
         this._drawOriginHotspot(tx, ty, currentHalfW, alpha);
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
             const ty2 = model.getTurretY(towerY, Math.PI);
-            const bx2 = tx2 + Math.cos(model.angle + Math.PI) * model.BEAM_LENGTH;
-            const by2 = ty2 + Math.sin(model.angle + Math.PI) * model.BEAM_LENGTH;
-            this._drawBeam(tx2, ty2, bx2, by2, currentHalfW, alpha, model);
+            this._updateBeamSet(this._glow2, this._body2, this._core2, tx2, ty2, model.angle + Math.PI, model.BEAM_LENGTH, currentHalfW, alpha, model);
             this._drawOriginHotspot(tx2, ty2, currentHalfW, alpha);
+        } else {
+            [this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
         }
     }
 
-    _drawBeam(x1, y1, x2, y2, halfW, alpha, model) {
-        const dx = x2 - x1;
-        const dy = y2 - y1;
-        const len = Math.sqrt(dx * dx + dy * dy);
-        if (len === 0) return;
+    _updateBeamSet(glow, body, core, x, y, angle, length, halfW, alpha, model) {
+        glow.setPosition(x, y).setRotation(angle).setVisible(true).setAlpha(0.25 * alpha);
+        body.setPosition(x, y).setRotation(angle).setVisible(true).setAlpha(0.75 * alpha);
+        core.setPosition(x, y).setRotation(angle).setVisible(true).setAlpha(0.95 * alpha);
 
-        // Perpendicular vector (normalized)
-        const px = -dy / len;
-        const py = dx / len;
+        // Multipliers match the original graphics code style
+        glow.setDisplaySize(length, halfW * 2.5);
+        body.setDisplaySize(length, halfW * 2.3);
 
-        // Edge jitter — random ±1.5px offset per vertex for "living energy" feel
-        const j = () => (Math.random() - 0.5) * 3;
-
-        // Draw glow (barely wider than beam)
-        this._glowGraphics.fillStyle(0x00ffff, 0.2 * alpha);
-        this._glowGraphics.fillPoints([
-            { x: x1 + px * halfW * 1.25 + j(), y: y1 + py * halfW * 1.25 + j() },
-            { x: x2 + px * halfW * 1.25 + j(), y: y2 + py * halfW * 1.25 + j() },
-            { x: x2 - px * halfW * 1.25 + j(), y: y2 - py * halfW * 1.25 + j() },
-            { x: x1 - px * halfW * 1.25 + j(), y: y1 - py * halfW * 1.25 + j() },
-        ], true);
-
-        // Draw main beam (slightly wider)
-        const midW = halfW * 1.15;
-        this._beamGraphics.fillStyle(0x00ffff, 0.7 * alpha);
-        this._beamGraphics.fillPoints([
-            { x: x1 + px * midW + j(), y: y1 + py * midW + j() },
-            { x: x2 + px * midW + j(), y: y2 + py * midW + j() },
-            { x: x2 - px * midW + j(), y: y2 - py * midW + j() },
-            { x: x1 - px * midW + j(), y: y1 - py * midW + j() },
-        ], true);
-
-        // Inner bright core — flashes white on damage tick
-        const coreW = halfW * 0.55;
         const flashT = model ? model.tickFlash : 0;
-        const coreColor = flashT > 0.5 ? 0xffffff : 0xe0ffff;
-        const coreAlpha = Math.min(1.0, (1.0 + flashT * 0.5)) * alpha;
-        const coreWidthMult = 1.0 + flashT * 0.5; // Spike core width on tick
-
-        this._beamGraphics.fillStyle(coreColor, coreAlpha);
-        this._beamGraphics.fillPoints([
-            { x: x1 + px * coreW * coreWidthMult, y: y1 + py * coreW * coreWidthMult },
-            { x: x2 + px * coreW * coreWidthMult, y: y2 + py * coreW * coreWidthMult },
-            { x: x2 - px * coreW * coreWidthMult, y: y2 - py * coreW * coreWidthMult },
-            { x: x1 - px * coreW * coreWidthMult, y: y1 - py * coreW * coreWidthMult },
-        ], true);
+        const coreWidthMult = (1.0 + flashT * 0.5) * 1.1; // Spike and default thicc core
+        core.setDisplaySize(length, halfW * coreWidthMult);
     }
 
     /** Origin hotspot — bright pulsing circle at beam source. */
@@ -235,16 +220,16 @@ class LaserAttackView {
         const radius = halfW * 0.6 + 3;
 
         // Outer glow ring
-        this._glowGraphics.fillStyle(0x00ffff, 0.4 * alpha);
-        this._glowGraphics.fillCircle(x, y, radius * 1.8);
+        this._originGraphics.fillStyle(0x00ffff, 0.4 * alpha);
+        this._originGraphics.fillCircle(x, y, radius * 1.8);
 
         // Inner bright core
-        this._beamGraphics.fillStyle(0xe0ffff, 0.9 * alpha);
-        this._beamGraphics.fillCircle(x, y, radius);
+        this._originGraphics.fillStyle(0xe0ffff, 0.9 * alpha);
+        this._originGraphics.fillCircle(x, y, radius);
 
         // White-hot center
-        this._beamGraphics.fillStyle(0xffffff, alpha);
-        this._beamGraphics.fillCircle(x, y, radius * 0.4);
+        this._originGraphics.fillStyle(0xffffff, alpha);
+        this._originGraphics.fillCircle(x, y, radius * 0.4);
     }
 }
 

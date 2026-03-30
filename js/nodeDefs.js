@@ -41,6 +41,9 @@ const NODE_DEFS = [
             if (neuralTree.isVisible()) {
                 neuralTree._showDeployButton();
             }
+            if (typeof glitchFX !== 'undefined') {
+                glitchFX.triggerSystemScan();
+            }
         },
     },
     {
