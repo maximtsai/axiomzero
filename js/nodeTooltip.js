@@ -1,5 +1,5 @@
 /**
- * Singleton tooltip for Neural Tree nodes.
+ * Singleton tooltip for Upgrade Tree nodes.
  * Reuses a single set of Phaser objects to avoid GC pressure.
  */
 const nodeTooltip = (() => {
@@ -43,12 +43,12 @@ const nodeTooltip = (() => {
         }).setOrigin(0, 0.5);
         container.add(nameT);
 
-        descT = PhaserScene.add.text(0, 0, '', {
+        descT = PhaserScene.add.rexBBCodeText(0, 0, '', {
             fontFamily: 'VCR',
             fontSize: '22px',
             color: '#ffffff',
             align: 'center',
-            wordWrap: { width: 255 },
+            wrap: { mode: 'word', width: 255 },
             lineSpacing: 4,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -82,8 +82,8 @@ const nodeTooltip = (() => {
         container.add([costBg, costT]);
 
         // Add to tree groups if available
-        const treeGroup = neuralTree.getGroup();
-        const draggableGroup = neuralTree.getDraggableGroup();
+        const treeGroup = upgradeTree.getGroup();
+        const draggableGroup = upgradeTree.getDraggableGroup();
         if (treeGroup) treeGroup.add(container);
         if (draggableGroup) draggableGroup.add(container);
     }
@@ -116,8 +116,12 @@ const nodeTooltip = (() => {
         const currentBgWidth = 280 + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
 
-        // Update word wrap for description
-        descT.setWordWrapWidth(currentWordWrap);
+        // Update wrap width for description
+        if (descT.setWrapWidth) {
+            descT.setWrapWidth(currentWordWrap);
+        } else if (descT.setWordWrapWidth) {
+            descT.setWordWrapWidth(currentWordWrap);
+        }
 
         // Update background elements display sizes
         goldBg.setDisplaySize(currentBgWidth - 6, 26);
@@ -249,7 +253,7 @@ const nodeTooltip = (() => {
             else if (side === 'right') horizontalOffset = -16;
         }
 
-        // Clamp X position to stay within the 800px Neural Tree panel bounds
+        // Clamp X position to stay within the 800px Upgrade Tree panel bounds
         let targetX = node.btn.x + horizontalOffset;
         const halfW = currentBgWidth / 2;
         const margin = 10;

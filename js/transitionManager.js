@@ -7,7 +7,7 @@ const transitionManager = (() => {
     let blocker = null;
 
     function init() {
-        // No subscriptions needed — called directly by neuralTree / iterationOverScreen
+        // No subscriptions needed — called directly by upgradeTree / iterationOverScreen
     }
 
     /**
@@ -45,8 +45,8 @@ const transitionManager = (() => {
             _tweenTreeGroup(targetX, duration);
             cameraManager.toCombatView(duration, () => {
                 _endTransition();
-                if (typeof neuralTree !== 'undefined') {
-                    neuralTree.hide();
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.hide();
                 }
                 gameHUD.setWaveProgressBarVisible(true);
 
@@ -78,8 +78,8 @@ const transitionManager = (() => {
     }
 
     function _tweenTreeGroup(targetX, duration) {
-        if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
-            const group = neuralTree.getGroup();
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
+            const group = upgradeTree.getGroup();
             if (group) {
                 group.tweenTo(targetX, 0, { duration, ease: 'Cubic.easeOut' });
             }

@@ -94,7 +94,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     upgradeManager.init();
 
     // UI systems — depend on resource / tower for data display
-    neuralTree.init();
+    upgradeTree.init();
     gameHUD.init();
     iterationOverScreen.init();
     coinMine.init();
@@ -110,13 +110,13 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
 
-    // cursor AOE (must be unlocked via Neural Tree)
+    // cursor AOE (must be unlocked via Upgrade Tree)
     pulseAttack.init();
     if ((gameState.upgrades && gameState.upgrades.basic_pulse) >= 1) {
         pulseAttack.unlock();
     }
 
-    // Duo-box weapons (must be unlocked via Neural Tree shard purchase)
+    // Duo-box weapons (must be unlocked via Upgrade Tree shard purchase)
     lightningAttack.init();
     shockwaveAttack.init();
     laserAttack.init();

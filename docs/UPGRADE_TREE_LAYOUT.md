@@ -1,6 +1,6 @@
-# Neural Tree Layout Guide
+# Upgrade Tree Layout Guide
 
-This document defines the conventions for positioning nodes within the Neural Tree in `nodeDefs.js`.
+This document defines the conventions for positioning nodes within the Upgrade Tree in `nodeDefs.js`.
 
 ## Coordinate System
 

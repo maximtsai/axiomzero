@@ -1,4 +1,4 @@
-// node.js — Modular Node logic for the Neural Tree.
+// node.js — Modular Node logic for the Upgrade Tree.
 // Each Node instance represents a single upgrade in the tree.
 // Handles: state (HIDDEN/GHOST/UNLOCKED/MAXED), rendering, hover info, click-to-purchase.
 
@@ -141,7 +141,7 @@ class Node {
         if (this.isDuoBox) return true;
         if (this.parents.length === 0) return false;
         for (let pid of this.parents) {
-            const p = neuralTree.getNode(pid);
+            const p = upgradeTree.getNode(pid);
             if (p && p.isDuoDescendant()) return true;
         }
         return false;
@@ -156,7 +156,7 @@ class Node {
         }
         if (this.parents.length === 0) return false;
         for (let pid of this.parents) {
-            const p = neuralTree.getNode(pid);
+            const p = upgradeTree.getNode(pid);
             if (p && p.isDuoPathPurchased()) return true;
         }
         return false;
@@ -173,7 +173,7 @@ class Node {
             if (this.requiresMaxParent) {
                 // ALL parents must be maxed
                 for (let pid of this.parents) {
-                    const p = neuralTree.getNode(pid);
+                    const p = upgradeTree.getNode(pid);
                     if (!p || !p.branchActive) return false;
                     if (p.isDuoBox && !this._isDuoTierPurchased(p.duoBoxTier)) return false;
                     if (!p.isDuoBox && p.level < 1) return false;
@@ -183,7 +183,7 @@ class Node {
             } else {
                 // AT LEAST ONE parent must be unlocked (level >= 1)
                 for (let pid of this.parents) {
-                    const p = neuralTree.getNode(pid);
+                    const p = upgradeTree.getNode(pid);
                     if (p && p.branchActive) {
                         if (p.isDuoBox && this._isDuoTierPurchased(p.duoBoxTier)) return true;
                         if (!p.isDuoBox && p.level >= 1) return true;
@@ -209,7 +209,7 @@ class Node {
             }
         } else if (this.parents.length > 0) {
             this.branchActive = this.parents.some(pid => {
-                const p = neuralTree.getNode(pid);
+                const p = upgradeTree.getNode(pid);
                 return p ? p.branchActive : true;
             });
         }
@@ -222,7 +222,7 @@ class Node {
         if (this.parents.length > 0) {
             let anyRevealed = false;
             for (let pid of this.parents) {
-                const parent = neuralTree.getNode(pid);
+                const parent = upgradeTree.getNode(pid);
                 if (parent) {
                     let isHidden = parent.state === NODE_STATE.HIDDEN;
                     if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
@@ -253,7 +253,7 @@ class Node {
                 this.setState(NODE_STATE.MAXED);
                 if (!gameState.upgrades) gameState.upgrades = {};
                 gameState.upgrades[this.id] = this.level;
-                if (justUnlocked) neuralTree._revealChildren(this.id);
+                if (justUnlocked) upgradeTree._revealChildren(this.id);
             } else {
                 this.setState(NODE_STATE.GHOST);
             }
@@ -292,7 +292,7 @@ class Node {
 
         // 4. Recursively refresh children so ghost/active state cascades down the tree
         for (let i = 0; i < this.childIds.length; i++) {
-            const child = neuralTree.getNode(this.childIds[i]);
+            const child = upgradeTree.getNode(this.childIds[i]);
             if (child) child.refreshState();
         }
     }
@@ -337,17 +337,17 @@ class Node {
             this._handleDuoBoxPurchase();
             // Refresh both siblings and their entire sub-trees BEFORE calling effect
             this.refreshState();
-            const sibling = neuralTree.getNode(this.duoSiblingId);
+            const sibling = upgradeTree.getNode(this.duoSiblingId);
             if (sibling) sibling.refreshState();
         }
 
         this.effect(this.level);
 
         // Reveal logic
-        if (this.childIds.length > 0) neuralTree._revealChildren(this.id);
+        if (this.childIds.length > 0) upgradeTree._revealChildren(this.id);
         if (this.isDuoBox) {
-            const sibling = neuralTree.getNode(this.duoSiblingId);
-            if (sibling && sibling.childIds.length > 0) neuralTree._revealChildren(sibling.id);
+            const sibling = upgradeTree.getNode(this.duoSiblingId);
+            if (sibling && sibling.childIds.length > 0) upgradeTree._revealChildren(sibling.id);
         }
 
         // Feedback via messageBus (Decoupled §5)
@@ -372,7 +372,7 @@ class Node {
 
         // Final visual refresh
         if (this.isDuoBox) {
-            const sibling = neuralTree.getNode(this.duoSiblingId);
+            const sibling = upgradeTree.getNode(this.duoSiblingId);
             if (sibling) {
                 sibling._updateVisual();
             }
@@ -425,7 +425,7 @@ class Node {
             messageBus.publish('trigger_tutorial', 'duo_swap');
         }
 
-        const sibling = neuralTree.getNode(this.duoSiblingId);
+        const sibling = upgradeTree.getNode(this.duoSiblingId);
         if (sibling) {
             sibling.level = 1;
             if (!gameState.upgrades) gameState.upgrades = {};
@@ -455,7 +455,7 @@ class Node {
             }
         }
 
-        const nodeDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
+        const nodeDepth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2;
         this.btn = new Button({
             normal: {
                 ref: this._getUnlockedSprite(),
@@ -505,8 +505,8 @@ class Node {
             .setDepth(nodeDepth + 1)
             .setScrollFactor(0);
 
-        const treeGroup = neuralTree.getGroup();
-        const draggableGroup = neuralTree.getDraggableGroup();
+        const treeGroup = upgradeTree.getGroup();
+        const draggableGroup = upgradeTree.getDraggableGroup();
         if (treeGroup) {
             const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
             treeGroup.add(btnObj);
@@ -543,7 +543,7 @@ class Node {
             const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
             const centerX = (this.treeX + (siblingDef ? siblingDef.treeX : this.treeX)) / 2 + offsetX;
             const centerY = (this.treeY + (siblingDef ? siblingDef.treeY : this.treeY)) / 2 + offsetY; // centered on siblings
-            const backingDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1.5; // Behind nodes but above lines
+            const backingDepth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 1.5; // Behind nodes but above lines
 
             this.duoBackingSprite = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing.png')
                 .setOrigin(0.5, 0.5)
@@ -608,7 +608,7 @@ class Node {
 
             // Refresh both siblings and their entire sub-trees BEFORE calling effect
             this.refreshState();
-            const sibling = neuralTree.getNode(this.duoSiblingId);
+            const sibling = upgradeTree.getNode(this.duoSiblingId);
             if (sibling) sibling.refreshState();
 
             // Apply this node's effect, deactivate sibling's (now with correct branchActive states)
@@ -654,7 +654,7 @@ class Node {
 
         let allGhostOrHidden = true;
         for (let pid of this.parents) {
-            const p = neuralTree.getNode(pid);
+            const p = upgradeTree.getNode(pid);
             if (p && p.state !== NODE_STATE.GHOST && p.state !== NODE_STATE.HIDDEN) {
                 allGhostOrHidden = false;
                 break;
@@ -797,7 +797,7 @@ class Node {
         const isVisibleTier = (tierLevel <= currentTier);
         let anyParentActive = (this.parents.length === 0);
         for (let pid of this.parents) {
-            const p = neuralTree.getNode(pid);
+            const p = upgradeTree.getNode(pid);
             if (p && p.state !== NODE_STATE.HIDDEN && p.state !== NODE_STATE.GHOST) {
                 anyParentActive = true;
                 break;
@@ -818,7 +818,7 @@ class Node {
         let parentPurchased = false;
         if (this.parents && this.parents.length > 0) {
             for (let pid of this.parents) {
-                const p = neuralTree.getNode(pid);
+                const p = upgradeTree.getNode(pid);
                 if (p && p.level > 0) {
                     parentPurchased = true;
                     break;
@@ -975,7 +975,7 @@ class Node {
             x = this.duoBackingSprite.x;
             y = this.duoBackingSprite.y;
         } else {
-            const sibling = neuralTree.getNode(this.duoSiblingId);
+            const sibling = upgradeTree.getNode(this.duoSiblingId);
             if (sibling && sibling.duoBackingSprite) {
                 x = sibling.duoBackingSprite.x;
                 y = sibling.duoBackingSprite.y;
@@ -991,8 +991,8 @@ class Node {
             .setAlpha(1.1)
             .setScale(0.95);
 
-        const treeGroup = neuralTree.getGroup();
-        const draggableGroup = neuralTree.getDraggableGroup();
+        const treeGroup = upgradeTree.getGroup();
+        const draggableGroup = upgradeTree.getDraggableGroup();
         if (treeGroup) treeGroup.add(pulse);
         if (draggableGroup) draggableGroup.add(pulse);
 

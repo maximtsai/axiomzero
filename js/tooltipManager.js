@@ -70,9 +70,9 @@ const tooltipManager = (() => {
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const font = FONTS[line.style] || FONTS.normal;
-            const t = PhaserScene.add.text(0, currentY, line.text, {
+            const t = PhaserScene.add.rexBBCodeText(0, currentY, line.text, {
                 ...font,
-                wordWrap: { width: useWidth - PADDING * 2 },
+                wrap: { mode: 'word', width: useWidth - PADDING * 2 },
             })
                 .setOrigin(0, 0)
                 .setDepth(DEPTH + 1)

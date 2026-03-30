@@ -8,8 +8,8 @@ const upgradeDispatcher = (() => {
      * If the node's path is inactive (e.g. the wrong Duo shard is chosen), returns 0.
      */
     function getLevel(nodeId) {
-        if (typeof neuralTree !== 'undefined') {
-            const node = neuralTree.getNode(nodeId);
+        if (typeof upgradeTree !== 'undefined') {
+            const node = upgradeTree.getNode(nodeId);
             if (node) {
                 return node.branchActive ? node.level : 0;
             }

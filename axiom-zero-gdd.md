@@ -100,7 +100,7 @@ Example lines:
 
 Upon first launch, the player enters directly into the **Upgrade Phase** — no main menu.
 
-**Split screen:** Right half shows an empty game world with a small sparkle of light at center. Left half shows the Neural Tree — empty except for a single central node labeled **AWAKEN**.
+**Split screen:** Right half shows an empty game world with a small sparkle of light at center. Left half shows the Upgrade Tree — empty except for a single central node labeled **AWAKEN**.
 
 **Clicking AWAKEN:**
 - The sparkle on the right transforms into the basic circular tower
@@ -111,7 +111,7 @@ Upon first launch, the player enters directly into the **Upgrade Phase** — no 
 - **Intensity** — increases tower basic attack damage
 
 **Clicking DEPLOY:**
-- Transition animation (0.8s): Neural Tree slides left off-screen, camera centers on tower
+- Transition animation (0.8s): Upgrade Tree slides left off-screen, camera centers on tower
 - Combat Phase begins — first level, basic enemies only
 - The very first enemy killed is programmed to drop 1 DATA
 - Tutorial prompt appears near the drop: move cursor over DATA to collect it
@@ -128,7 +128,7 @@ The game operates between four primary states: Combat, Iteration Over, Transitio
 
 ### 7.1 Combat Phase
 
-- Neural Tree is off-screen left — hidden and non-interactable
+- Upgrade Tree is off-screen left — hidden and non-interactable
 - Camera centered on Player Tower
 - **HUD (top-left):** Health bar displayed as `HEALTH / MAXHEALTH` with HEALTH shown to 1 decimal place. EXP bar shown as 0–100% directly below health. Currency counters: DATA, INSIGHT, PROCESSORS, SHARDS, NETCOIN.
 - Active Ability buttons in the bottom-left corner of the screen
@@ -173,7 +173,7 @@ Triggered when: tower health reaches 0, END ITERATION is clicked, or a Tier Boss
 
 ### 7.4 Upgrade Phase
 
-- Split-view: Neural Tree on left 50% of screen, combat viewport on right 50%
+- Split-view: Upgrade Tree on left 50% of screen, combat viewport on right 50%
 - Tower visible on right at full health; HUD, currency counters, and Active Ability buttons shift to the right half of the screen during this phase — Active Ability buttons appear in the bottom-left corner of the right half, mirroring their Combat Phase position relative to the viewport
 - **DEPLOY button** at bottom right of the left (tree) half
 - If the Milestones Tab has been unlocked, a **MILESTONES button** appears at the top of the left half
@@ -231,17 +231,17 @@ The cursor is a direct interaction tool — not just a UI pointer.
 **Source:** Generated via the **Crypto Mine** (unlocked mid-late Tier 3). Players deposit DATA into the Mine; it converts to NETCOIN over real time while the game is open.  
 **Ratio:** 10,000 DATA → 1 NETCOIN. Conversion speed is upgradeable via PROCESSORS nodes.  
 **Display:** 4 decimal places at all times (e.g., `0.0047 ₦`).  
-**Usage:** Late-game Neural Tree nodes (see §15 NETCOIN Nodes).
+**Usage:** Late-game Upgrade Tree nodes (see §15 NETCOIN Nodes).
 
 ### Crypto Mine
-- Unlocked via a Neural Tree node, mid-late Tier 3
+- Unlocked via a Upgrade Tree node, mid-late Tier 3
 - Player deposits DATA; Mine converts it to NETCOIN passively while game is open
 - Conversion rate upgradeable via PROCESSORS nodes
 - NETCOIN is displayed in the HUD to 4 decimal places
 
 ---
 
-## 10. THE NEURAL TREE
+## 10. THE UPGRADE TREE
 
 A vertically scrolling radial node map representing the AI's evolving cognition. Bottom-to-top growth — Tier 1 at the bottom, Tier 8 (AXIOM) at the peak.
 
@@ -277,13 +277,13 @@ Each Tier (1–7) contains one **Duo-Box**: a pair of specialized Shard Nodes re
 
 **No respec cost.** Swapping between Duo-Box nodes is always free. INSIGHT is only spent to purchase additional Shards via Synthesis (Tier 7).
 
-**Shard node sub-upgrades:** The child upgrade nodes listed beneath Shard nodes (e.g., "+1 chain target," "+50% lightning damage") are **separate non-Shard nodes** that become visible and purchasable in the Neural Tree after the parent Shard node is bought. They use standard DATA, PROCESSOR, or other non-Shard currencies. They belong to the active branch and enter Ghost state if the Duo-Box is swapped away from their parent.
+**Shard node sub-upgrades:** The child upgrade nodes listed beneath Shard nodes (e.g., "+1 chain target," "+50% lightning damage") are **separate non-Shard nodes** that become visible and purchasable in the Upgrade Tree after the parent Shard node is bought. They use standard DATA, PROCESSOR, or other non-Shard currencies. They belong to the active branch and enter Ghost state if the Duo-Box is swapped away from their parent.
 
 ### 11.1 The Override Node (Tier 7)
 Removes the Choice-Lock on all Duo-Boxes, allowing both nodes in any Duo-Box to be simultaneously active — provided the player has sufficient Shards.
 
 ### 11.2 Synthesis Node (Child of Override, Tier 7)
-Converts INSIGHT into SHARDS. INSIGHT cost per Shard increases with each purchase. Maximum 7 additional Shards purchasable via Synthesis. Combined with the 7 combat Shards, this allows every Shard node in the Neural Tree to eventually be maxed.
+Converts INSIGHT into SHARDS. INSIGHT cost per Shard increases with each purchase. Maximum 7 additional Shards purchasable via Synthesis. Combined with the 7 combat Shards, this allows every Shard node in the Upgrade Tree to eventually be maxed.
 
 ### 11.3 Health Regen — Core Mechanic
 
@@ -352,7 +352,7 @@ Passive yellow diamond-shaped entities. Appear mid-game. Flee when damaged. Do n
 
 ## 14. MILESTONES TAB
 
-Unlocked via a Neural Tree node ("Unlock Milestones Tab"). Once unlocked, a **MILESTONES** button appears at the top of the left half of the screen during the Upgrade Phase.
+Unlocked via a Upgrade Tree node ("Unlock Milestones Tab"). Once unlocked, a **MILESTONES** button appears at the top of the left half of the screen during the Upgrade Phase.
 
 Clicking MILESTONES opens a popup listing cumulative milestone challenges tracked across the entire run. Milestones do not reset between waves, sessions, or Tiers.
 
@@ -361,7 +361,7 @@ Clicking MILESTONES opens a popup listing cumulative milestone challenges tracke
 - Collect 10,000 DATA total
 - Survive 3 minutes in a single wave
 - Defeat a Miniboss
-- Purchase 10 Neural Tree nodes
+- Purchase 10 Upgrade Tree nodes
 
 **Each milestone entry displays:**
 - Name and description
@@ -498,7 +498,7 @@ Optional modifiers:
 - Health bar (HEALTH/MAXHEALTH, 1 decimal) and EXP bar (0–100% → INSIGHT on fill)
 - Iteration Over Phase (ITERATION COMPLETE screen, UPGRADES / RETRY SESSION)
 - Transition Phase (0.8s linear, Combat ↔ Upgrade only)
-- Tier 1 Neural Tree — AWAKEN node + 3 initial children (Basic Pulse, Reinforce, Sharpen)
+- Tier 1 Upgrade Tree — AWAKEN node + 3 initial children (Basic Pulse, Reinforce, Sharpen)
 - First-launch experience (AWAKEN → tower spawn → DEPLOY flow)
 - END ITERATION button
 
@@ -508,7 +508,7 @@ Optional modifiers:
 - Logic Strays (PROCESSOR drops)
 - Tier structure + first Tier Boss + first Miniboss
 - Shard system + first Duo-Box + first-purchase notification blurb
-- Tiers 1–3 of Neural Tree
+- Tiers 1–3 of Upgrade Tree
 - Retry Session logic (bypasses Transition Phase)
 - Options popup
 

@@ -222,6 +222,11 @@ const enemyManager = (() => {
             chosenType = 'basic';
         }
 
+        // Global unlock check for Data Chests (Cache enemies)
+        if (chosenType === 'cache' && !((gameState.upgrades || {}).data_chest_unlock)) {
+            chosenType = 'basic';
+        }
+
         // Apply fast pack overrides and cooldowns
         if (fastPackCooldown > 0 && chosenType === 'fast') {
             chosenType = 'basic';

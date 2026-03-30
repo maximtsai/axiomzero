@@ -16,7 +16,7 @@ AXIOM ZERO - IMPLEMENTATION NEXT STEPS
 [ ] Implement PROCESSORS drops from destroyed Logic Strays
 [ ] Implement SHARDS auto-collection after boss/miniboss waves
 
-## NEURAL TREE - TIER 1 SETUP
+## UPGRADE TREE - TIER 1 SETUP
 [ ] Build AWAKEN node with visual feedback (sparkle → tower transform)
 [ ] Implement 3 initial child nodes (Basic Cursor attack, Reinforce, Sharpen)
 [ ] Set up node state machine (Hidden → Ghost → Unlocked → Maxed)
@@ -72,14 +72,14 @@ AXIOM ZERO - IMPLEMENTATION NEXT STEPS
 [ ] Test time-pressure scaling per Tier
 
 ## MILESTONES TAB (Phase 2-3)
-[ ] Implement Milestones Tab unlock node in Neural Tree
+[ ] Implement Milestones Tab unlock node in Upgrade Tree
 [ ] Create sample milestones (Kill 500 Basic, Collect 10k DATA, etc.)
 [ ] Add milestone progress tracker (shows current / target)
 [ ] Implement CLAIM button → reward distribution
 [ ] Persist milestone state across sessions
 
 ## CRYPTO MINE PREP (Phase 3)
-[ ] Create Crypto Mine unlock node in Neural Tree (mid-late Tier 3)
+[ ] Create Crypto Mine unlock node in Upgrade Tree (mid-late Tier 3)
 [ ] Design DATA → NETCOIN conversion UI
 [ ] Implement passive conversion while game is open
 [ ] Add PROCESSORS upgrade for conversion speed

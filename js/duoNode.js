@@ -26,7 +26,7 @@ class DuoNode extends Node {
 
     _applyVisualDepth() {
         // Adjust depth so maxed duo nodes sit 1 depth lower (behind the active overlapping sibling)
-        const baseDepth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
+        const baseDepth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2;
         if (this.state === NODE_STATE.MAXED) {
             this.btn.setDepth(baseDepth);
             if (this.iconSprite) this.iconSprite.setDepth(baseDepth + 1);

@@ -819,8 +819,9 @@ const customEmitters = (() => {
             spr.setPosition(x, y);
             spr.setDepth(depth + 2);
             spr.setVisible(true);
+            spr.setRotation(Math.random() * 3.14)
             spr.setActive(true);
-            spr.setScale(2);
+            spr.setScale(1.8);
             spr.play('enemy_hit_circle_slow');
         }
     };

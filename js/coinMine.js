@@ -1,5 +1,5 @@
 // coinMine.js — Phase 3 UI for depositing DATA and mining NETCOIN.
-// Accessed via a button in the Neural Tree.
+// Accessed via a button in the Upgrade Tree.
 
 const coinMine = (() => {
     let bgOverlay = null;

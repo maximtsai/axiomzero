@@ -149,7 +149,7 @@ const tutorialManager = (() => {
 
         // 2. Create the black background bar
         const bg = PhaserScene.add.image(x, y, 'white_pixel');
-        bg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
+        bg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
         bg.setDisplaySize(0, finalHeight);
         bg.targetAlpha = 0.4;
 
@@ -159,7 +159,7 @@ const tutorialManager = (() => {
             fontSize: fontSize,
             color: color,
             align: 'left'
-        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_NEURAL_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
+        }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
         txt.setAlpha(1);
         if (!isUpgradeTree) {
             bg.setScrollFactor(0);
@@ -201,8 +201,8 @@ const tutorialManager = (() => {
         });
 
         // If in upgrade tree, add to the draggable group so it moves with the nodes
-        if (isUpgradeTree && typeof neuralTree !== 'undefined') {
-            const group = neuralTree.getDraggableGroup();
+        if (isUpgradeTree && typeof upgradeTree !== 'undefined') {
+            const group = upgradeTree.getDraggableGroup();
             if (group) {
                 group.add(bg);
                 group.add(txt);

@@ -1,6 +1,6 @@
 # AXIOM ZERO — IMPLEMENTED NODES SUMMARY
 
-This document tracks all currently implemented nodes in the Neural Tree, including their IDs, costs, and primary effects.
+This document tracks all currently implemented nodes in the Upgrade Tree, including their IDs, costs, and primary effects.
 
 ---
 

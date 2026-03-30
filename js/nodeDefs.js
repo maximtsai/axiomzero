@@ -1,4 +1,4 @@
-// nodeDefs.js — Neural Tree upgrade definitions.
+// nodeDefs.js — Upgrade Tree upgrade definitions.
 // Centralized node data for the upgrade tree.
 
 // Tree Layout Constants
@@ -38,8 +38,8 @@ const NODE_DEFS = [
         effect: function () {
             tower.awaken();
             // Show the deploy button immediately
-            if (neuralTree.isVisible()) {
-                neuralTree._showDeployButton();
+            if (upgradeTree.isVisible()) {
+                upgradeTree._showDeployButton();
             }
             if (typeof glitchFX !== 'undefined') {
                 glitchFX.triggerSystemScan();
@@ -282,7 +282,7 @@ const NODE_DEFS = [
         id: 'malware_siphon',
         name: 'MALWARE SIPHON',
         icon: 'Skillicon14_03.png',
-        description: 'Gain +0.5 HP from enemies that die near the tower.',
+        description: 'Heal +0.5 HP from enemies that die near the tower.',
         popupText: 'MALWARE SIPHON ACTIVE',
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
@@ -312,7 +312,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_1');
+            const node = upgradeTree.getNode('lore_1');
             if (node) {
                 node.description = t('nodes', 'lore_1.unlocked_desc');
             }
@@ -335,7 +335,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_2');
+            const node = upgradeTree.getNode('lore_2');
             if (node) {
                 node.description = t('nodes', 'lore_2.unlocked_desc');
             }
@@ -357,7 +357,7 @@ const NODE_DEFS = [
         treeY: gridY(4.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_3');
+            const node = upgradeTree.getNode('lore_3');
             if (node) {
                 node.description = t('nodes', 'lore_3.unlocked_desc');
             }
@@ -379,7 +379,7 @@ const NODE_DEFS = [
         treeY: gridY(3.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_4');
+            const node = upgradeTree.getNode('lore_4');
             if (node) {
                 node.description = t('nodes', 'lore_4.unlocked_desc');
             }
@@ -401,7 +401,7 @@ const NODE_DEFS = [
         treeY: gridY(4.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_5');
+            const node = upgradeTree.getNode('lore_5');
             if (node) {
                 node.description = t('nodes', 'lore_5.unlocked_desc');
             }
@@ -423,7 +423,7 @@ const NODE_DEFS = [
         treeY: gridY(5.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_6');
+            const node = upgradeTree.getNode('lore_6');
             if (node) {
                 node.description = t('nodes', 'lore_6.unlocked_desc');
             }
@@ -445,7 +445,7 @@ const NODE_DEFS = [
         treeY: gridY(6.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_7');
+            const node = upgradeTree.getNode('lore_7');
             if (node) {
                 node.description = t('nodes', 'lore_7.unlocked_desc');
             }
@@ -467,7 +467,7 @@ const NODE_DEFS = [
         treeY: gridY(7.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_8');
+            const node = upgradeTree.getNode('lore_8');
             if (node) {
                 node.description = t('nodes', 'lore_8.unlocked_desc');
             }
@@ -489,7 +489,7 @@ const NODE_DEFS = [
         treeY: gridY(8.5),
         tooltipExtraWidth: 300,
         effect: function () {
-            const node = neuralTree.getNode('lore_9');
+            const node = upgradeTree.getNode('lore_9');
             if (node) {
                 node.description = t('nodes', 'lore_9.unlocked_desc');
             }
@@ -508,7 +508,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['armor'],
-        childIds: ['lore_3', 'junk_data_2'],
+        childIds: ['lore_3'],
         treeX: gridX(-3),
         treeY: gridY(4.5),
         effect: function () {
@@ -711,10 +711,27 @@ const NODE_DEFS = [
         parents: ['overcharge'],
         treeX: gridX(-2),
         treeY: gridY(4.5),
-        childIds: ['threat_response'],
+        childIds: ['threat_response', 'data_chest_unlock'],
         effect: function () {
             // Recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
+    },
+    {
+        id: 'data_chest_unlock',
+        name: 'DATA HUNTER',
+        icon: 'Skillicon14_38.png',
+        description: 'High-value [color=cyan]DATA[/color] caches now appear during combat.',
+        popupText: 'DATA CHESTS ENABLED',
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['armor'],
+        childIds: ['junk_data_2'],
+        treeX: gridX(-2.5),
+        treeY: gridY(3.5),
+        effect: function () { },
     },
     {
         id: 'system_redundancy_new',
@@ -960,7 +977,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
-        parents: ['threat_response'],
+        parents: ['data_chest_unlock'],
         childIds: [],
         treeX: gridX(-3.5),
         treeY: gridY(3.5),
@@ -1561,7 +1578,7 @@ const NODE_DEFS = [
         id: 'security_test_3',
         name: 'SECURITY TEST 3',
         icon: 'Skillicon14_38.png',
-        description: 'Verify your root authority. Fully refunds DATA cost upon purchase.',
+        description: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.',
         maxLevel: 1,
         baseCost: 1000,
         costType: 'data',
@@ -1607,8 +1624,8 @@ const NODE_DEFS = [
         treeX: gridX(-3.0),
         treeY: gridY(8.0),
         effect: function () {
-            if (typeof neuralTree !== 'undefined') {
-                neuralTree._showCoinMineButton();
+            if (typeof upgradeTree !== 'undefined') {
+                upgradeTree._showCoinMineButton();
             }
         },
     },

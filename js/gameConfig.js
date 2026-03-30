@@ -32,7 +32,7 @@ GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
 
 // ─── EXP ──────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.EXP_FILL_RATE = 0.82;   // per second during combat
+GAME_CONSTANTS.EXP_FILL_RATE = 0.72;   // per second during combat
 GAME_CONSTANTS.EXP_TO_INSIGHT = 100;  // EXP needed to award 1 INSIGHT
 
 // ─── Enemy — Basic type (Phase 1) ─────────────────────────────────────────────
@@ -62,7 +62,7 @@ GAME_CONSTANTS.PROJECTILE_HIT_RADIUS = 15;
 
 GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS = 0.5651; // wave percentage (0-1)
 
-// ─── Neural Tree ──────────────────────────────────────────────────────────────
+// ─── Upgrade Tree ──────────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.TREE_DRAG_MIN_X = 0;
 GAME_CONSTANTS.TREE_DRAG_MAX_X = 0;
@@ -88,7 +88,7 @@ GAME_CONSTANTS.DEPTH_TOWER = 200;
 GAME_CONSTANTS.DEPTH_PROJECTILES = 300;
 GAME_CONSTANTS.DEPTH_RESOURCES = 400;
 GAME_CONSTANTS.DEPTH_HUD = 1000;
-GAME_CONSTANTS.DEPTH_NEURAL_TREE = 2000;
+GAME_CONSTANTS.DEPTH_UPGRADE_TREE = 2000;
 GAME_CONSTANTS.DEPTH_DEATH_OVERLAY = 3000;  // death flash — covers entire game
 GAME_CONSTANTS.DEPTH_DEATH_TOWER = 3500;  // tower elevated above overlay during shake
 GAME_CONSTANTS.DEPTH_TRANSITION = 5000;

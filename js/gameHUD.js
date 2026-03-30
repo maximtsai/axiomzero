@@ -53,7 +53,7 @@ const gameHUD = (() => {
     }
 
     function _createElements() {
-        const depth = GAME_CONSTANTS.DEPTH_NEURAL_TREE + 2;
+        const depth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
         // ── Health bar ──
@@ -93,8 +93,8 @@ const gameHUD = (() => {
             { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
             { id: 'insight', icon: 'resrc_insight.png', color: '#ffffff' },
             { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
-            { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' },
-            { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' }
+            { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' },
+            { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' }
         ];
 
         resourceTypes.forEach((type, i) => {
@@ -141,8 +141,8 @@ const gameHUD = (() => {
 
         _updateResourceLayout();
 
-        if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
-            const treeGroup = neuralTree.getGroup();
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
+            const treeGroup = upgradeTree.getGroup();
             if (treeGroup) {
                 treeGroup.add(healthBarBg);
                 treeGroup.add(healthBarFill);
@@ -312,7 +312,7 @@ const gameHUD = (() => {
     function _showUpgradeHUD() {
         visible = true;
 
-        // Show all HUD elements grouped with the Neural Tree
+        // Show all HUD elements grouped with the Upgrade Tree
         healthBarBg.setVisible(true);
         healthBarFill.setVisible(true);
         healthBarFlare.setVisible(true);
@@ -324,7 +324,7 @@ const gameHUD = (() => {
         _updateResourceLayout();
 
         // Count up animation for currencies
-        const order = ['data', 'insight', 'shard', 'processor', 'coin'];
+        const order = ['data', 'insight', 'shard', 'coin', 'processor'];
         order.forEach(id => {
             const val = _getResourceValue(id);
             if (val >= 2) {
@@ -461,7 +461,7 @@ const gameHUD = (() => {
         const spacing = helper.isMobileDevice() ? 35 : 31;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
-        const order = ['data', 'insight', 'shard', 'processor', 'coin'];
+        const order = ['data', 'insight', 'shard', 'coin', 'processor'];
         order.forEach(id => {
             const ui = resourceUI[id];
             const val = _getResourceValue(id);
@@ -489,8 +489,8 @@ const gameHUD = (() => {
         });
 
         // Recalculate offsets for items in the tree group (health/text)
-        if (typeof neuralTree !== 'undefined' && neuralTree.getGroup) {
-            const treeGroup = neuralTree.getGroup();
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
+            const treeGroup = upgradeTree.getGroup();
             if (treeGroup && treeGroup.recalculateOffsets) {
                 treeGroup.recalculateOffsets();
             }

@@ -1,8 +1,8 @@
-// neuralTree.js — Upgrade Tree UI (left half of screen during Upgrade Phase).
+// upgradeTree.js — Upgrade Tree UI (left half of screen during Upgrade Phase).
 // Phase 1: AWAKEN root node + 3 children (Basic Pulse, Reinforce, Sharpen).
 // Uses Node class from treeNode.js for individual node logic.
 
-const neuralTree = (() => {
+const upgradeTree = (() => {
     // Panel container position (the left half slides on/off)
     let panelX = 0;
 
@@ -81,7 +81,7 @@ const neuralTree = (() => {
      * Logs warnings for missing references or one-way connections.
      */
     function _checkNodeIntegrity() {
-        console.log("%c [DEBUG] Neural Tree integrity check starting... ", "background: #111; color: #00f5ff; border: 1px solid #00f5ff;");
+        console.log("%c [DEBUG] Upgrade Tree integrity check starting... ", "background: #111; color: #00f5ff; border: 1px solid #00f5ff;");
         let warnings = 0;
 
         for (const def of NODE_DEFS) {
@@ -158,9 +158,9 @@ const neuralTree = (() => {
         }
 
         if (warnings === 0) {
-            console.log("%c [DEBUG] Neural Tree integrity check: PASS ", "color: #00ff66;");
+            console.log("%c [DEBUG] Upgrade Tree integrity check: PASS ", "color: #00ff66;");
         } else {
-            console.warn(`[DEBUG] Neural Tree integrity check: FAIL (${warnings} warnings). Check console above.`);
+            console.warn(`[DEBUG] Upgrade Tree integrity check: FAIL (${warnings} warnings). Check console above.`);
         }
     }
 
@@ -169,7 +169,7 @@ const neuralTree = (() => {
         // Pretty background image - moves with the nodes
         panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_background.png');
         panelBg.setScale(1.2);
-        panelBg.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE);
+        panelBg.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
 
@@ -179,14 +179,14 @@ const neuralTree = (() => {
 
         // Static outline frame for the left half
         panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 15);
+        panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
         panelOutlineGlitch = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
-        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 15);
+        panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
         panelOutlineGlitch.setTint(0x888888); // Grey tint
         panelOutlineGlitch.setVisible(false);
@@ -232,7 +232,7 @@ const neuralTree = (() => {
         dragSurface = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'white_pixel');
         dragSurface.setScale(PANEL_W / 2, GAME_CONSTANTS.HEIGHT / 2);
         dragSurface.setAlpha(0.001);
-        dragSurface.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 0.1);
+        dragSurface.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 0.1);
         dragSurface.setScrollFactor(0);
         dragSurface.setVisible(false);
         dragSurface.setInteractive();
@@ -298,7 +298,7 @@ const neuralTree = (() => {
             fontSize: '28px',
             color: '#00f5ff',
             align: 'center',
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20).setScrollFactor(0).setVisible(false);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20).setScrollFactor(0).setVisible(false);
         titleText.setShadow(0, 0, '#00f5ff', 12, true, true);
 
         treeGroup.add(titleText);
@@ -373,7 +373,7 @@ const neuralTree = (() => {
             fontSize: '25px',
             color: '#ffffff',
         });
-        deployBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
+        deployBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
         deployBtn.setScrollFactor(0);
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
@@ -387,7 +387,7 @@ const neuralTree = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: TREE_CENTER_X + 220, // Beside the 'NEURAL TREE' text
+                x: TREE_CENTER_X + 220, // Beside the 'UPGRADE TREE' text
                 y: 48,
             },
             hover: {
@@ -414,7 +414,7 @@ const neuralTree = (() => {
             fontSize: '21px',
             color: '#ff9500',
         });
-        coinMineBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 25);
+        coinMineBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
         coinMineBtn.setScrollFactor(0);
 
         coinMineBtn.setVisible(false);
@@ -432,7 +432,7 @@ const neuralTree = (() => {
         buyPulsePool = new ObjectPool(() => {
             // 9-slice: x, y, atlas, frame, width, height, left, right, top, bottom
             const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
-            slice.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 3); // behind node button (2.0)
+            slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3); // behind node button (2.0)
             slice.setScrollFactor(0);
             treeGroup.add(slice);
             draggableGroup.add(slice);
@@ -441,7 +441,7 @@ const neuralTree = (() => {
 
         maxPulsePool = new ObjectPool(() => {
             const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'max_pulse.png', 80, 80, 25, 25, 25, 25);
-            slice.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 3);
+            slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
             slice.setScrollFactor(0);
             treeGroup.add(slice);
             draggableGroup.add(slice);
@@ -521,7 +521,7 @@ const neuralTree = (() => {
         const pulseYPos = centerY + draggableGroup.y;
 
         const pulse = PhaserScene.add.image(centerX, pulseYPos, 'buttons', 'duo_node_pulse.png');
-        pulse.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+        pulse.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
         pulse.setScrollFactor(0);
         pulse.setScale(2.1);
         pulse.setAlpha(0);
@@ -614,9 +614,9 @@ const neuralTree = (() => {
                 const awakenX = (awakenNode ? awakenNode.treeX : 400) + TREE_X_OFFSET;
                 const awakenY = (awakenNode ? awakenNode.treeY : 730);
                 const ind = helper.ninesliceIndicator(awakenX, awakenY, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
-                ind.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                ind.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
                 const indShort = helper.ninesliceIndicatorShort(awakenX, awakenY, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
-                indShort.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 10);
+                indShort.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
                 treeGroup.add(ind);
                 treeGroup.add(indShort);
             }
@@ -705,7 +705,7 @@ const neuralTree = (() => {
         line.setScale(1.5, distance / 2);
         line.setOrigin(0.5, 1);
         line.setRotation(angle);
-        line.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 1);
+        line.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 1);
         line.setScrollFactor(0);
         Object.assign(line, metadata);
 
@@ -887,7 +887,7 @@ const neuralTree = (() => {
                 hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
                 press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
                 onMouseUp: () => {
-                    console.log("%c [DEBUG] Neural Tree Node Status: ", "background: #111; color: #ff00ff; border: 1px solid #ff00ff; font-weight: bold;");
+                    console.log("%c [DEBUG] Upgrade Tree Node Status: ", "background: #111; color: #ff00ff; border: 1px solid #ff00ff; font-weight: bold;");
                     for (const id in nodes) {
                         const n = nodes[id];
                         const idStr = (n.id || "unknown").padEnd(25);
@@ -898,7 +898,7 @@ const neuralTree = (() => {
                 }
             });
             debugLogBtn.addText("?", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ff00ff' });
-            debugLogBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+            debugLogBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
             debugLogBtn.setScrollFactor(0);
             debugLogBtn.setVisible(false);
             treeGroup.add(debugLogBtn);
@@ -914,7 +914,7 @@ const neuralTree = (() => {
             onHoverOut: () => { isScrollingUp = false; }
         });
         scrollUpBtn.addText("▲", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
-        scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+        scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         scrollUpBtn.setScrollFactor(0);
         scrollUpBtn.setVisible(false);
         treeGroup.add(scrollUpBtn);
@@ -928,7 +928,7 @@ const neuralTree = (() => {
             onHoverOut: () => { isScrollingDown = false; }
         });
         scrollDownBtn.addText("▼", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
-        scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 20);
+        scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         scrollDownBtn.setScrollFactor(0);
         scrollDownBtn.setVisible(false);
         treeGroup.add(scrollDownBtn);
@@ -1179,7 +1179,7 @@ const neuralTree = (() => {
                 const bh = 120 * 0.6;
 
                 const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                ind2.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
+                ind2.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
                 deployBtn.indicator = ind2;
 
                 deployBtn.hiTimer = PhaserScene.time.delayedCall(5000, () => {
@@ -1187,7 +1187,7 @@ const neuralTree = (() => {
                         deployBtn.indicator.destroy();
                     }
                     const ind3 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                    ind3.setDepth(GAME_CONSTANTS.DEPTH_NEURAL_TREE + 16);
+                    ind3.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
                     deployBtn.indicator = ind3;
                     deployBtn.hiTimer = null;
                 });
