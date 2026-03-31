@@ -199,8 +199,10 @@ class Boss3PieceView extends EnemyView {
     constructor() {
         super(Enemy.TEX_KEY, 'boss_3.png', 'boss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
 
-        this.lineGraphics = PhaserScene.add.graphics();
-        this.lineGraphics.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 3);
+        this.lineSprite = PhaserScene.add.image(0, 0, 'pixels', 'pink_pixel.png');
+        this.lineSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 3);
+        this.lineSprite.setOrigin(0, 0.5);
+        this.lineSprite.setVisible(false);
 
         // Pulse effect (pink themed for Legion)
         this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
@@ -219,7 +221,7 @@ class Boss3PieceView extends EnemyView {
 
     activate(x, y, rotation, cannotRotate) {
         super.activate(x, y, rotation, cannotRotate);
-        this.lineGraphics.setVisible(true);
+        this.lineSprite.setVisible(false);
         this.pulse.setVisible(true);
         this.pulse.setPosition(x, y);
         this._startPulseEffect();
@@ -247,7 +249,7 @@ class Boss3PieceView extends EnemyView {
         };
         playPulse();
         this.pulseTimer = PhaserScene.time.addEvent({
-            delay: 2400,
+            delay: 3000,
             callback: playPulse,
             loop: true
         });
@@ -257,20 +259,25 @@ class Boss3PieceView extends EnemyView {
         super.update(dt, model);
 
         // Draw connection to the FIRST neighbor (to avoid double drawing in a ring)
-        this.lineGraphics.clear();
         if (model && model.alive && model.neighbors[0] && model.neighbors[0].model && model.neighbors[0].model.alive) {
             const n = model.neighbors[0].model;
 
             const p = model.siphonPulse || 0;
-            const alpha = 0.1 + (p * 0.6);
-            const thickness = 1.5 + (p * 2);
+            const alpha = 0.05 + (p * 0.5); // Slightly lowered alpha as per suggestion 2 earlier
+            const thickness = 1.5 + (p * 2.5);
 
-            this.lineGraphics.lineStyle(thickness, 0xff00ff, alpha);
-            this.lineGraphics.moveTo(model.x, model.y);
-            this.lineGraphics.lineTo(n.x, n.y);
-            this.lineGraphics.strokePath();
+            const dx = n.x - model.x;
+            const dy = n.y - model.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx);
 
-            // Optional: add a tiny glow bit at the ends
+            this.lineSprite.setPosition(model.x, model.y)
+                .setRotation(angle)
+                .setDisplaySize(dist, thickness)
+                .setAlpha(alpha)
+                .setVisible(true);
+        } else {
+            this.lineSprite.setVisible(false);
         }
     }
 
@@ -282,7 +289,7 @@ class Boss3PieceView extends EnemyView {
 
     deactivate() {
         super.deactivate();
-        if (this.lineGraphics) this.lineGraphics.clear().setVisible(false);
+        if (this.lineSprite) this.lineSprite.setVisible(false);
         if (this.pulse) {
             this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);

@@ -43,6 +43,7 @@ class BasicEnemy extends Enemy {
     /** Generate the texture once; no-op if it already exists. */
     static _ensureTexture() {
         if (PhaserScene.textures.exists(Enemy.TEX_KEY)) return;
+        console.warn("missing texture basic_enemy");
         const size = 24;
         const gfx = PhaserScene.add.graphics();
         gfx.fillStyle(GAME_CONSTANTS.COLOR_HOSTILE, 1);

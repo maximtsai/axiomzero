@@ -31,7 +31,7 @@ const LEVEL_CONFIG = {
         healthDecay: -0.3 // HP/sec (negative = drain)
     },
     2: {
-        spawnInterval: 750, // ms between regular spawns (base)
+        spawnInterval: 700, // ms between regular spawns (base)
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -57,11 +57,11 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss2',        // Identifier for the main boss
         dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
-        levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
+        levelScalingModifier: 1.65, // Scales up *base* stats of enemies before wave scaling applies
         healthDecay: -0.4
     },
     3: {
-        spawnInterval: 700,
+        spawnInterval: 800,
         initialWeights: {
             basic: 1,
             fast: 0.04,
@@ -74,9 +74,9 @@ const LEVEL_CONFIG = {
         },
         lateWeights: {
             shooter: 0,
-            swarmer: 0.08,
-            heavy: 0.15,
-            fast: 0,
+            swarmer: 0.1,
+            heavy: 0.1,
+            fast: 0.05,
             sniper: 0,
             cache: 0.08,
             protector: 0.0

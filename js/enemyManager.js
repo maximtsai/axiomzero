@@ -1087,28 +1087,42 @@ const enemyManager = (() => {
                         shards.forEach(p => p.model.calculateSiphon());
                         shards.forEach(p => {
                             const healAmount = p.model.applySiphon();
-                            if (healAmount >= 1) {
+                            if (healAmount >= 7) {
                                 PhaserScene.time.delayedCall(600, () => {
                                     if (p && p.model && p.model.alive && p.view) {
                                         // 1. Consolidated Floating Text
                                         if (typeof floatingText !== 'undefined') {
                                             let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
                                             floatingText.show(p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
-                                                fontFamily: 'JetBrainsMono_Bold',
+                                                fontFamily: 'VCR',
                                                 fontSize: healFontSize,
                                                 color: '#00ff66',
-                                                depth: GAME_CONSTANTS.DEPTH_ENEMIES + 10
+                                                stroke: '#330000',
+                                                strokeThickness: 2,
+                                                depth: GAME_CONSTANTS.DEPTH_ENEMIES + 99
                                             });
                                         }
                                         // 2. Consolidated Health Bar 'Pump'
                                         if (p.view.hpImg && p.view.hpImg.scene) {
-                                            const pumpScale = 1.1;
+                                            const pumpScale = 1.12;
                                             PhaserScene.tweens.add({
                                                 targets: p.view.hpImg,
                                                 scaleX: pumpScale,
                                                 scaleY: pumpScale,
                                                 yoyo: true,
-                                                duration: 100,
+                                                duration: 180,
+                                                ease: 'Sine.easeInOut'
+                                            });
+                                        }
+                                        // 3. Base Sprite 'Pump' (Half Intensity)
+                                        if (p.view.img && p.view.img.scene) {
+                                            const basePumpScale = 1.06;
+                                            PhaserScene.tweens.add({
+                                                targets: p.view.img,
+                                                scaleX: basePumpScale,
+                                                scaleY: basePumpScale,
+                                                yoyo: true,
+                                                duration: 180,
                                                 ease: 'Sine.easeInOut'
                                             });
                                         }
