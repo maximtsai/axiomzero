@@ -841,6 +841,7 @@ const NODE_DEFS = [
     {
         id: 'test_defenses',
         name: 'SANDBOX MODE',
+        label: 'GATE',
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'test_defenses.desc'),
         popupText: t('nodes', 'test_defenses.popup'),
@@ -882,6 +883,7 @@ const NODE_DEFS = [
     {
         id: 'security_test_1',
         name: 'SECURITY TEST',
+        label: 'GATE',
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_1.desc'),
         popupText: t('nodes', 'security_test_1.popup'),
@@ -904,6 +906,7 @@ const NODE_DEFS = [
     {
         id: 'two_step_auth',
         name: 'TWO-STEP AUTH',
+        label: '+DATA',
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'two_step_auth.desc'),
         popupText: t('nodes', 'two_step_auth.popup'),
@@ -980,12 +983,14 @@ const NODE_DEFS = [
     {
         id: 'junk_data_2',
         name: 'JUNK DATA',
+        label: '+DATA',
         icon: 'Skillicon14_12.png',
         description: t('nodes', 'junk_data_2.desc'),
         popupText: t('nodes', 'junk_data_2.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 10,
         baseCost: 2,
+        label: '+DATA',
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
@@ -1330,6 +1335,7 @@ const NODE_DEFS = [
         popupColor: COLORS.RESOURCE,
         maxLevel: 10,
         baseCost: 1,
+        label: '+DATA',
         costType: 'data',
         costScaling: 'static',
         parents: ['backdoor_4'],
@@ -1390,6 +1396,7 @@ const NODE_DEFS = [
     {
         id: 'security_test_2',
         name: 'SECURITY TEST 2',
+        label: 'GATE',
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_2.desc'),
         maxLevel: 1,
@@ -1603,6 +1610,7 @@ const NODE_DEFS = [
     {
         id: 'security_test_3',
         name: 'SECURITY TEST 3',
+        label: 'GATE',
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_3.desc'),
         popupText: t('nodes', 'security_test_3.popup'),
