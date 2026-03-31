@@ -98,9 +98,11 @@ class TowerView {
 
         this.sprite = null;
         this.glowSprite = null;
+        this.artilleryCallSprite = null;
         this.rangeSprite = null;  // Range indicator circle below tower
         this.breatheTween = null;
         this.deathShockwave = null;
+        this.artilleryCallTween = null;
     }
 
     spawn(cx, cy) {
@@ -147,6 +149,11 @@ class TowerView {
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sprite.setAlpha(1);
         this.sprite.clearTint();
+
+        this.artilleryCallSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_artillery_call.png');
+        this.artilleryCallSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
+        this.artilleryCallSprite.setAlpha(0);
+        this.artilleryCallSprite.setBlendMode(Phaser.BlendModes.ADD);
 
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
@@ -325,6 +332,7 @@ class TowerView {
         if (this.glowSprite) this.glowSprite.setVisible(vis);
         if (this.rangeSprite) this.rangeSprite.setVisible(vis);
         if (this.sparkleSprite) this.sparkleSprite.setVisible(vis);
+        if (this.artilleryCallSprite) this.artilleryCallSprite.setVisible(vis);
     }
 
     setPosition(x, y) {
@@ -332,6 +340,40 @@ class TowerView {
         if (this.glowSprite) this.glowSprite.setPosition(x, y);
         if (this.rangeSprite) this.rangeSprite.setPosition(x, y);  // 80px below tower
         if (this.sparkleSprite) this.sparkleSprite.setPosition(x, y);
+        if (this.artilleryCallSprite) this.artilleryCallSprite.setPosition(x, y);
+    }
+
+    playArtilleryCallAnimation(fast = false) {
+        if (!this.artilleryCallSprite) return;
+
+        // Cancel previous instance
+        if (this.artilleryCallTween) {
+            this.artilleryCallTween.stop();
+            this.artilleryCallTween = null;
+        }
+
+        const fadeDuration = (fast === true) ? 350 : 750;
+        const endAlpha = (fast === true) ? 0.7 : 1;
+
+        this.artilleryCallSprite.setAlpha(0);
+
+        this.artilleryCallTween = PhaserScene.tweens.add({
+            targets: this.artilleryCallSprite,
+            alpha: endAlpha,
+            duration: 10,
+            ease: 'Linear',
+            onComplete: () => {
+                this.artilleryCallTween = PhaserScene.tweens.add({
+                    targets: this.artilleryCallSprite,
+                    alpha: 0,
+                    duration: fadeDuration,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        this.artilleryCallTween = null;
+                    }
+                });
+            }
+        });
     }
 
     shake(duration, onComplete) {
@@ -584,7 +626,7 @@ const tower = (() => {
                 messageBus.publish('insightGained');
                 audio.play('levelup', 1.0, false);
                 const towerPos = view.getPosition();
-                floatingText.show(towerPos.x, towerPos.y - 15, '+INSIGHT', {
+                floatingText.show(towerPos.x, towerPos.y - 15, t('popup', 'insight_gained'), {
                     fontFamily: 'JetBrainsMono_Bold',
                     fontSize: 22,
                     color: '#ffe600',
@@ -697,5 +739,6 @@ const tower = (() => {
         getMaxHealth: () => model.maxHealth,
         getHealth: () => model.health,
         setVisible, setPosition,
+        playArtilleryCall: (fast) => view.playArtilleryCallAnimation(fast),
     };
 })();

@@ -289,13 +289,13 @@ const artilleryAttack = (() => {
             if (s) s.detune = (Math.random() - 0.5) * 160;
         }
 
-        _createStrikeAt(pos1.x, pos1.y, size, 0);
+        _createStrikeAt(pos1.x, pos1.y, size, 0, model.volleyLevel > 0);
 
         if (model.volleyLevel > 0) {
             // Volley adds 2 extra strikes nearby
             const pos2 = _getNearbyTarget(pos1.x, pos1.y);
             PhaserScene.time.delayedCall(100, () => {
-                _createStrikeAt(pos2.x, pos2.y, size, 100);
+                _createStrikeAt(pos2.x, pos2.y, size, 100, true);
             });
 
             // For the third strike, attempt to find a position not overlapping Strike 2
@@ -314,12 +314,17 @@ const artilleryAttack = (() => {
             } while (true);
 
             PhaserScene.time.delayedCall(200, () => {
-                _createStrikeAt(pos3.x, pos3.y, size, 200);
+                _createStrikeAt(pos3.x, pos3.y, size, 200, false);
             });
         }
     }
 
-    function _createStrikeAt(x, y, size, durationOffset) {
+    function _createStrikeAt(x, y, size, durationOffset, fastAnim = false) {
+        if (typeof tower !== 'undefined' && tower.playArtilleryCall) {
+            // If it's a volley strike (delayed), call the "fast" animation variant
+            tower.playArtilleryCall(fastAnim);
+        }
+
         view.playStrikeSequence(x, y, size, () => {
             // Damage callback
             if (typeof audio !== 'undefined') {

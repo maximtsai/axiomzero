@@ -237,6 +237,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">player/inner_core.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,16,32,32</rect>
+                <key>scale9Paddings</key>
+                <rect>16,16,32,32</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">player/laser_body.png</key>
             <key type="filename">player/laser_core.png</key>
             <key type="filename">player/laser_glow.png</key>
@@ -270,6 +285,21 @@
                 <rect>37,37,75,75</rect>
                 <key>scale9Paddings</key>
                 <rect>37,37,75,75</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/outer_glow.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>31,31,62,62</rect>
+                <key>scale9Paddings</key>
+                <rect>31,31,62,62</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -414,6 +444,36 @@
                 <rect>37,37,75,75</rect>
                 <key>scale9Paddings</key>
                 <rect>37,37,75,75</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/tower_artillery_call.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>42,42,85,85</rect>
+                <key>scale9Paddings</key>
+                <rect>42,42,85,85</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/white_center.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>7,7,13,13</rect>
+                <key>scale9Paddings</key>
+                <rect>7,7,13,13</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

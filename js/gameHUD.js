@@ -81,7 +81,7 @@ const gameHUD = (() => {
         expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
         expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
-        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 3 : 5), 'EXP 0%', {
+        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 3 : 5), t('hud', 'exp_initial'), {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: helper.isMobileDevice() ? '24px' : '20px',
             color: '#aaaaaa',
@@ -233,16 +233,16 @@ const gameHUD = (() => {
                 alpha: 0
             },
             onMouseUp: () => {
-                if (typeof GAME_VARS !== 'undefined') {
-                    GAME_VARS.testingDefenses = true;
-                }
                 if (typeof enemyManager !== 'undefined') {
                     enemyManager.startTestingDefenses();
+                }
+                if (typeof GAME_VARS !== 'undefined') {
+                    GAME_VARS.testingDefenses = true;
                 }
             },
         });
         testDefensesBtn.setScale(0.9);
-        testDefensesBtn.addText("Test Defenses", {
+        testDefensesBtn.addText(t('ui', 'test_weapons'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '19px',
             color: '#ffffff',
@@ -339,7 +339,7 @@ const gameHUD = (() => {
         endIterationBtn.setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
 
-        // Show test defenses button if unlocked
+        // Show test weapons button if unlocked
         if (testDefensesBtn) {
             const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
             testDefensesBtn.setVisible(isUnlocked);
@@ -431,7 +431,7 @@ const gameHUD = (() => {
         // Remove !visible guard to ensure exp bar updates on load
         const ratio = Math.min(1, Math.max(0, current / max));
         expBarFill.setDisplaySize(BAR_W * ratio, EXP_BAR_H);
-        expText.setText('EXP ' + Math.floor(ratio * 100) + '%');
+        expText.setText(t('hud', 'exp') + Math.floor(ratio * 100) + '%');
     }
 
     function _onCurrencyChanged(type, amount) {

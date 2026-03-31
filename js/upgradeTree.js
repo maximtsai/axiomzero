@@ -1008,7 +1008,7 @@ const upgradeTree = (() => {
         levelSelectContainer.add(bg);
 
         // Title
-        const title = PhaserScene.add.text(0, -140, "CHOOSE LEVEL", {
+        const title = PhaserScene.add.text(0, -140, t('ui', 'choose_level'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '34px',
             color: '#00f5ff',
@@ -1017,7 +1017,7 @@ const upgradeTree = (() => {
         levelSelectContainer.add(title);
 
         // Level text
-        const levelDisplay = PhaserScene.add.text(0, -70, "LEVEL: " + selectedLevel, {
+        const levelDisplay = PhaserScene.add.text(0, -70, t('ui', 'level') + selectedLevel, {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '40px',
             color: '#ffffff',
@@ -1026,7 +1026,7 @@ const upgradeTree = (() => {
         levelSelectContainer.add(levelDisplay);
 
         const updateLevelUI = () => {
-            levelDisplay.setText("LEVEL: " + selectedLevel);
+            levelDisplay.setText(t('ui', 'level') + selectedLevel);
             // Update button states
             minusBtn.setState(selectedLevel > 1 ? NORMAL : DISABLE);
             plusBtn.setState(selectedLevel < maxLevel ? NORMAL : DISABLE);
@@ -1079,7 +1079,7 @@ const upgradeTree = (() => {
                 transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
             }
         });
-        startBtn.addText("START", { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff' });
+        startBtn.addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff' });
         startBtn.setDepth(depth + 2);
         startBtn.setScrollFactor(0);
         levelSelectButtons.push(startBtn);
@@ -1091,7 +1091,7 @@ const upgradeTree = (() => {
             press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
             onMouseUp: _closeLevelSelect
         });
-        backBtn.addText("BACK", { fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#aaaaaa' });
+        backBtn.addText(t('ui', 'back'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#aaaaaa' });
         backBtn.setDepth(depth + 2);
         backBtn.setScrollFactor(0);
         levelSelectButtons.push(backBtn);

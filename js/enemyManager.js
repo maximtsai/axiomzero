@@ -1238,6 +1238,8 @@ const enemyManager = (() => {
     function startTestingDefenses() {
         if (testEnemyCount >= 35) return;
 
+        const isInitiating = (typeof GAME_VARS !== 'undefined' && !GAME_VARS.testingDefenses);
+
         const lastBeaten = gameState.levelsDefeated || 0;
         const maxLevelUnlocked = lastBeaten + 1;
         const count = 4 + maxLevelUnlocked;
@@ -1259,7 +1261,10 @@ const enemyManager = (() => {
 
             spawnAt('test', x, y, { scale: scaleFactor });
         }
-        messageBus.publish('testingDefensesStarted');
+
+        if (isInitiating) {
+            messageBus.publish('testingDefensesStarted');
+        }
     }
 
     function stopTestingDefenses() {

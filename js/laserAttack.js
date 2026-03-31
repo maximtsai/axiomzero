@@ -81,7 +81,16 @@ class LaserAttackView {
         this._body2 = null;
         this._core2 = null;
 
-        this._originGraphics = null; // Still use graphics for hotspot
+        // Hotspot 1 sprites
+        this._hGlow1 = null;
+        this._hInner1 = null;
+        this._hWhite1 = null;
+
+        // Hotspot 2 sprites
+        this._hGlow2 = null;
+        this._hInner2 = null;
+        this._hWhite2 = null;
+
         this._initialized = false;
     }
 
@@ -101,6 +110,26 @@ class LaserAttackView {
             return { glow, body, core };
         };
 
+        const createHotspotSet = () => {
+            const glow = PhaserScene.add.image(0, 0, 'player', 'outer_glow.png');
+            const inner = PhaserScene.add.image(0, 0, 'player', 'inner_core.png');
+            const white = PhaserScene.add.image(0, 0, 'player', 'white_center.png');
+
+            [inner, white].forEach(s => {
+                s.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 9)
+                    .setBlendMode(Phaser.BlendModes.ADD)
+                    .setVisible(false)
+                    .setScrollFactor(1);
+            });
+
+            glow.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 11) // Behind inner core
+                .setBlendMode(Phaser.BlendModes.LIGHTEN)
+                .setVisible(false)
+                .setScrollFactor(1);
+
+            return { glow, inner, white };
+        };
+
         const b1 = createBeamSet();
         this._glow1 = b1.glow;
         this._body1 = b1.body;
@@ -111,11 +140,15 @@ class LaserAttackView {
         this._body2 = b2.body;
         this._core2 = b2.core;
 
-        // Still using graphics for orig hotspot for now as requested
-        this._originGraphics = PhaserScene.add.graphics();
-        this._originGraphics.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 9);
-        this._originGraphics.setBlendMode(Phaser.BlendModes.ADD);
-        this._originGraphics.setVisible(false);
+        const h1 = createHotspotSet();
+        this._hGlow1 = h1.glow;
+        this._hInner1 = h1.inner;
+        this._hWhite1 = h1.white;
+
+        const h2 = createHotspotSet();
+        this._hGlow2 = h2.glow;
+        this._hInner2 = h2.inner;
+        this._hWhite2 = h2.white;
 
         this._turret = PhaserScene.add.image(0, 0, 'player', 'laser_turret.png');
         this._turret.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
@@ -146,14 +179,18 @@ class LaserAttackView {
         if (!this._initialized) return;
         this._turret.setVisible(false);
         this._turret2.setVisible(false);
-        this._originGraphics.setVisible(false);
-        this._originGraphics.clear();
 
-        [this._glow1, this._body1, this._core1, this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
+        const allSprites = [
+            this._glow1, this._body1, this._core1,
+            this._glow2, this._body2, this._core2,
+            this._hGlow1, this._hInner1, this._hWhite1,
+            this._hGlow2, this._hInner2, this._hWhite2
+        ];
+        allSprites.forEach(s => s && s.setVisible(false));
     }
 
     update(model, towerX, towerY) {
-        if (!this._initialized) return;
+        if (!this._initialized || !model.unlocked) return;
 
         const tx = model.getTurretX(towerX);
         const ty = model.getTurretY(towerY);
@@ -173,10 +210,13 @@ class LaserAttackView {
         }
 
         if (!model.firing && !model.tapering) {
-            // Hide beam and hotspot, but NOT turrets
-            this._originGraphics.setVisible(false);
-            this._originGraphics.clear();
-            [this._glow1, this._body1, this._core1, this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
+            const allBeamDots = [
+                this._glow1, this._body1, this._core1,
+                this._glow2, this._body2, this._core2,
+                this._hGlow1, this._hInner1, this._hWhite1,
+                this._hGlow2, this._hInner2, this._hWhite2
+            ];
+            allBeamDots.forEach(s => s && s.setVisible(false));
             return;
         }
 
@@ -185,19 +225,16 @@ class LaserAttackView {
         const taperMult = model.tapering ? Math.max(0, 1.0 - model.taperProgress) : 1.0;
         const currentHalfW = model.getVisualHalfWidth() * pulse * taperMult;
 
-        this._originGraphics.setVisible(true);
-        this._originGraphics.clear();
-
         this._updateBeamSet(this._glow1, this._body1, this._core1, tx, ty, model.angle, model.BEAM_LENGTH, currentHalfW, alpha, model);
-        this._drawOriginHotspot(tx, ty, currentHalfW, alpha);
+        this._updateHotspotSet(this._hGlow1, this._hInner1, this._hWhite1, tx, ty, currentHalfW, alpha);
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
             const ty2 = model.getTurretY(towerY, Math.PI);
             this._updateBeamSet(this._glow2, this._body2, this._core2, tx2, ty2, model.angle + Math.PI, model.BEAM_LENGTH, currentHalfW, alpha, model);
-            this._drawOriginHotspot(tx2, ty2, currentHalfW, alpha);
+            this._updateHotspotSet(this._hGlow2, this._hInner2, this._hWhite2, tx2, ty2, currentHalfW, alpha);
         } else {
-            [this._glow2, this._body2, this._core2].forEach(s => s.setVisible(false));
+            [this._glow2, this._body2, this._core2, this._hGlow2, this._hInner2, this._hWhite2].forEach(s => s && s.setVisible(false));
         }
     }
 
@@ -206,30 +243,20 @@ class LaserAttackView {
         body.setPosition(x, y).setRotation(angle).setVisible(true).setAlpha(0.75 * alpha);
         core.setPosition(x, y).setRotation(angle).setVisible(true).setAlpha(0.95 * alpha);
 
-        // Multipliers match the original graphics code style
-        glow.setDisplaySize(length, halfW * 2.5);
+        glow.setDisplaySize(length, halfW * 2.45);
         body.setDisplaySize(length, halfW * 2.3);
 
         const flashT = model ? model.tickFlash : 0;
-        const coreWidthMult = (1.0 + flashT * 0.5) * 1.1; // Spike and default thicc core
+        const coreWidthMult = (1.0 + flashT * 0.5) * 1.1;
         core.setDisplaySize(length, halfW * coreWidthMult);
     }
 
-    /** Origin hotspot — bright pulsing circle at beam source. */
-    _drawOriginHotspot(x, y, halfW, alpha) {
+    _updateHotspotSet(glow, inner, white, x, y, halfW, alpha) {
         const radius = halfW * 0.6 + 3;
 
-        // Outer glow ring
-        this._originGraphics.fillStyle(0x00ffff, 0.4 * alpha);
-        this._originGraphics.fillCircle(x, y, radius * 1.8);
-
-        // Inner bright core
-        this._originGraphics.fillStyle(0xe0ffff, 0.9 * alpha);
-        this._originGraphics.fillCircle(x, y, radius);
-
-        // White-hot center
-        this._originGraphics.fillStyle(0xffffff, alpha);
-        this._originGraphics.fillCircle(x, y, radius * 0.4);
+        glow.setPosition(x, y).setVisible(true).setAlpha(0.4 * alpha).setDisplaySize(radius * 1.91 * 2, radius * 1.91 * 2);
+        inner.setPosition(x, y).setVisible(true).setAlpha(0.9 * alpha).setDisplaySize(radius * 2, radius * 2);
+        white.setPosition(x, y).setVisible(true).setAlpha(alpha).setDisplaySize(radius * 0.4 * 2, radius * 0.4 * 2);
     }
 }
 
@@ -260,6 +287,7 @@ const laserAttack = (() => {
         messageBus.subscribe('testingDefensesEnded', () => {
             model.firing = false;
             model.tapering = false;
+            model.fireTimer = 0;
             model.cooldownTimer = 0;
             if (_beamSound) {
                 audio.fadeAway(_beamSound, 150);
@@ -267,6 +295,10 @@ const laserAttack = (() => {
             }
             view.hide();
             if (model.unlocked) view.show(model);
+
+            // Force one update to clear any remaining beam visuals immediately
+            const towerPos = tower.getPosition();
+            if (towerPos) view.update(model, towerPos.x, towerPos.y);
         });
         updateManager.addFunction(_update);
     }

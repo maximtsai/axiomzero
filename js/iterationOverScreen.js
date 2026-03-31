@@ -193,12 +193,12 @@ const iterationOverScreen = (() => {
         const activeTexts = [];
 
         if (sessionData === 0 && sessionInsight === 0 && sessionShards === 0 && sessionProcessors === 0) {
-            dataText.setText('no resources');
+            dataText.setText(t('results', 'no_resources'));
             dataText.setVisible(true);
             activeTexts.push(dataText);
         } else {
             if (sessionData > 0) {
-                dataText.setText('\u25C8 DATA collected: ' + sessionData);
+                dataText.setText(t('results', 'data_collected') + sessionData);
                 dataText.setVisible(true);
                 activeTexts.push(dataText);
 
@@ -210,17 +210,17 @@ const iterationOverScreen = (() => {
                 }
             }
             if (sessionInsight > 0) {
-                insightText.setText('◐ INSIGHT gained: ' + sessionInsight);
+                insightText.setText(t('results', 'insight_gained') + sessionInsight);
                 insightText.setVisible(true);
                 activeTexts.push(insightText);
             }
             if (sessionShards > 0) {
-                shardText.setText('♦ SHARDS found: ' + sessionShards);
+                shardText.setText(t('results', 'shards_found') + sessionShards);
                 shardText.setVisible(true);
                 activeTexts.push(shardText);
             }
             if (sessionProcessors > 0) {
-                processorText.setText('■ PROCESSORS salvaged: ' + sessionProcessors);
+                processorText.setText(t('results', 'processors_salvaged') + sessionProcessors);
                 processorText.setVisible(true);
                 activeTexts.push(processorText);
             }
@@ -267,7 +267,7 @@ const iterationOverScreen = (() => {
         const totalDmg = Object.values(dmg).reduce((a, b) => a + b, 0);
 
         // "DIAGNOSTIC REPORT" Header
-        const reportTitle = PhaserScene.add.text(cx, cy + 35, '— DIAGNOSTIC REPORT —', {
+        const reportTitle = PhaserScene.add.text(cx, cy + 35, t('results', 'diagnostic_report'), {
             fontFamily: 'Michroma',
             fontSize: '20px',
             color: '#00f5ff',
@@ -275,7 +275,7 @@ const iterationOverScreen = (() => {
         diagElements.push(reportTitle);
 
         if (totalDmg <= 0) {
-            const noDataText = PhaserScene.add.text(cx, cy + 70, 'NO DAMAGE DEALT', {
+            const noDataText = PhaserScene.add.text(cx, cy + 70, t('results', 'no_damage_dealt'), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: '18px',
                 color: '#aaaaaa',
@@ -285,14 +285,14 @@ const iterationOverScreen = (() => {
         }
 
         const sources = [
-            { id: 'cursor', label: 'CURSOR', color: 0x00f5ff },
-            { id: 'tower', label: 'TOWER', color: 0xffe600 },
-            { id: 'lightning', label: 'LIGHTNING', color: 0xffe600 },
-            { id: 'shockwave', label: 'SHOCKWAVE', color: 0x00f5ff },
-            { id: 'laser', label: 'LASER', color: 0xff2d78 },
-            { id: 'artillery', label: 'ARTILLERY', color: 0xff9500 },
-            { id: 'friendlyfire', label: 'COLLATERAL', color: 0xff2d78 },
-            { id: 'other', label: 'SYSTEM', color: 0x777777 },
+            { id: 'cursor', label: t('results', 'cursor'), color: 0x00f5ff },
+            { id: 'tower', label: t('results', 'tower'), color: 0xffe600 },
+            { id: 'lightning', label: t('results', 'lightning'), color: 0xffe600 },
+            { id: 'shockwave', label: t('results', 'shockwave'), color: 0x00f5ff },
+            { id: 'laser', label: t('results', 'laser'), color: 0xff2d78 },
+            { id: 'artillery', label: t('results', 'artillery'), color: 0xff9500 },
+            { id: 'friendlyfire', label: t('results', 'collateral'), color: 0xff2d78 },
+            { id: 'other', label: t('results', 'system'), color: 0x777777 },
         ];
 
         // Combine endgame into collateral if needed, or group

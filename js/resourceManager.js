@@ -317,7 +317,7 @@ const resourceManager = (() => {
         messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
 
         if (amount > 0) {
-            floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, '+1 SHARD ACQUIRED', {
+            floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
                 fontFamily: 'JetBrainsMono_Bold',
                 fontSize: 22,
                 color: '#ff5555',

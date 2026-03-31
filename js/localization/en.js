@@ -17,6 +17,10 @@ window.TRANSLATIONS.en = {
         mine: 'MINE',
         coin_mine: '// COIN MINE',
         done: 'Done',
+        test_weapons: 'Test Weapons',
+        choose_level: 'CHOOSE LEVEL',
+        level: 'LEVEL: ',
+        start: 'START',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
         boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
@@ -51,7 +55,7 @@ window.TRANSLATIONS.en = {
 
         overclock: { name: 'OVERCLOCK', desc: '-5% tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '+20% chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
-        test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Defenses" button for practice.', popup: 'SANDBOX UNLOCKED' },
+        test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
         data_compression: { name: 'DATA COMPRESSION', desc: '50% chance to double collected [color=cyan]DATA[/color]', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with +100 [color=cyan]DATA[/color].' },
         security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Fully refunds [color=cyan]DATA[/color] cost upon purchase.", popup: 'TEST PASSED' },
@@ -166,7 +170,22 @@ window.TRANSLATIONS.en = {
         iteration_complete: 'ITERATION COMPLETE',
         boss_defeated: 'BOSS DEFEATED',
         packet_sniffing_data: 'PASSIVE DATA EARNED: {0}',
-        anomaly_detected: 'SYSTEM ANOMALY DETECTED'
+        anomaly_detected: 'SYSTEM ANOMALY DETECTED',
+        no_resources: 'no resources',
+        data_collected: '◈ DATA collected: ',
+        insight_gained: '◐ INSIGHT gained: ',
+        shards_found: '♦ SHARDS found: ',
+        processors_salvaged: '■ PROCESSORS salvaged: ',
+        diagnostic_report: '— DIAGNOSTIC REPORT —',
+        no_damage_dealt: 'NO DAMAGE DEALT',
+        cursor: 'CURSOR',
+        tower: 'TOWER',
+        lightning: 'LIGHTNING',
+        shockwave: 'SHOCKWAVE',
+        laser: 'LASER',
+        artillery: 'ARTILLERY',
+        collateral: 'COLLATERAL',
+        system: 'SYSTEM'
     },
     loading_screen: {
         status: 'Loading... ({0})',
@@ -190,5 +209,11 @@ window.TRANSLATIONS.en = {
         processor_desc: 'High-tier salvage. Used for advanced system modifications.',
         coin_title: 'COIN',
         coin_desc: 'A token that can influence the physical world. Provides high-tier upgrades.',
+        exp: 'EXP ',
+        exp_initial: 'EXP 0%'
+    },
+    popup: {
+        insight_gained: '+INSIGHT',
+        shard_acquired: '+1 SHARD ACQUIRED'
     }
 };
