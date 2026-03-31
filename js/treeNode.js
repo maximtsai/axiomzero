@@ -65,6 +65,7 @@ class Node {
         this.isPlaceholder = def.isPlaceholder || false;
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
+        this.labelCategory = def.label || "UPGRADE";
         this.prefix = 'node';
 
         this.duoBackingSprite = null;
@@ -903,6 +904,11 @@ class Node {
     _showHover(isPurchaseRefresh = false, purchaseCost = 0) {
         if (this.isPlaceholder || this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
         nodeTooltip.show(this, isPurchaseRefresh, purchaseCost);
+
+        if (typeof upgradeTree !== 'undefined') {
+            const label = this.isDuoBox ? "TWIN NODE" : `${this.labelCategory} NODE`;
+            upgradeTree.setHoverLabel(label);
+        }
     }
 
     _hideHover() {
@@ -910,6 +916,10 @@ class Node {
         this._tapConfirmed = false;
         if (nodeTooltip.getCurrentNode() === this) {
             nodeTooltip.hide();
+        }
+
+        if (typeof upgradeTree !== 'undefined') {
+            upgradeTree.setHoverLabel(null);
         }
     }
 
