@@ -1,0 +1,38 @@
+AXIOMZERO - UPGRADE TREE COLOR PALETTE
+======================================
+
+The following palette is designed for the "Axiomzero" upgrade tree to 
+differentiate between node categories while maintaining a high-contrast 
+cyberpunk aesthetic.
+
+Each category has an "ACTIVE" (Can Buy) hex and a "DIM" (Standby/Missing Resources) hex.
+
+| CATEGORY      | TYPICAL NODES              | ACTIVE HEX | DIM HEX    | COLOR NAME             |
+|---------------|----------------------------|------------|------------|------------------------|
+| OFFENSE       | Pulse Damage, Intensity    | #FF3E3E    | #5C1616    | Neon Red / Deep Oxide  |
+| DEFENSE       | Integrity, Regen, Armor    | #87FF02    | #2D5400    | Electric Lime / Moss   |
+| RESOURCE      | Magnet, Data Chest         | #00F3FF    | #004D50    | Cyber Cyan / Dark Teal |
+| LORE          | Archive I - IX             | #FFD700    | #504400    | Gold / Bronze          |
+| UTILITY       | Overclock, Overcharge      | #BD00FF    | #3B0050    | Proton Purple / Void   |
+| CORE / SYSTEM | Awaken, Milestone Gates    | #FFFFFF    | #666666    | Pure White / Tech Grey |
+
+
+VISUAL IMPLEMENTATION NOTES:
+----------------------------
+1. ACTIVE NODES:
+   - Full HEX value.
+   - Glow/Bloom: 5-8px soft blurred outer stroke.
+   - Glitch: Subtle (1-2px) chromatic aberration (Red/Blue ghosting) on icons.
+
+2. DIM NODES:
+   - Use Dim HEX value.
+   - Opacity: 0.6 to 0.8 for the border.
+   - Glow: Disabled / Off.
+   - Icons: Flat white, no glitch or glow.
+
+3. TRANSITIONS:
+   - When a node transitions from DIM to ACTIVE, triggered by a resource gain,
+     consider a 100ms rapid "flicker" between the two states to simulate a power-on.
+
+Generated on: 2026-03-31
+Project: Axiomzero
