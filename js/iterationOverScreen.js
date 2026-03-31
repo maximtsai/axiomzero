@@ -255,7 +255,7 @@ const iterationOverScreen = (() => {
 
     function _populateDiagnostics(cx, cy) {
         // Clear old elements if any
-        diagElements.forEach(el => el.destroy());
+        diagElements.forEach(el => { if (el && el.destroy) el.destroy(); });
         diagElements = [];
 
         const hasDiagnostics = (gameState.upgrades || {}).diagnostic_analytics > 0;
@@ -375,7 +375,7 @@ const iterationOverScreen = (() => {
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
         if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
-        diagElements.forEach(el => el.destroy());
+        diagElements.forEach(el => { if (el && el.destroy) el.destroy(); });
         diagElements = [];
     }
 
