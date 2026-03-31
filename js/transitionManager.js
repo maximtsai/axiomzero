@@ -40,8 +40,12 @@ const transitionManager = (() => {
             messageBus.publish('AnnounceText', t('ui', 'combat_intro'));
             // First switch phase so game logic activates, then slide camera
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
-            const targetX = -GAME_CONSTANTS.halfWidth - 10;
 
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.preTransitionHide) {
+                upgradeTree.preTransitionHide();
+            }
+
+            const targetX = -GAME_CONSTANTS.halfWidth - 10;
             _tweenTreeGroup(targetX, duration);
             cameraManager.toCombatView(duration, () => {
                 _endTransition();
@@ -64,8 +68,14 @@ const transitionManager = (() => {
 
             const targetX = 0;
             _tweenTreeGroup(targetX, duration);
+            setTimeout(() => {
+                if (typeof upgradeTree !== 'undefined' && upgradeTree.revealCoordText) {
+                    upgradeTree.revealCoordText();
+                }
+            }, duration * 0.6)
             cameraManager.toUpgradeView(duration, () => {
                 _endTransition();
+
             });
         } else {
             // Fallback — instant transition

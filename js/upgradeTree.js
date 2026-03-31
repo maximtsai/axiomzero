@@ -20,6 +20,8 @@ const upgradeTree = (() => {
     let lines = [];  // Phaser Graphics lines connecting parent → child
     let treeGroup = null;
     let draggableGroup = null;
+    let coordText = null;
+    let currentHoverLabel = " ";
 
     let buyPulsePool = null;
     let maxPulsePool = null;
@@ -72,7 +74,7 @@ const upgradeTree = (() => {
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('node_purchase_feedback', _onNodePurchaseFeedback);
 
-        updateManager.addFunction(_updateScroll);
+        updateManager.addFunction(_update);
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
     }
 
@@ -365,6 +367,12 @@ const upgradeTree = (() => {
                 y: GAME_CONSTANTS.HEIGHT - 57,
             },
             onMouseUp: _onDeployClicked,
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
+                setHoverLabel("BEGIN WAVE");
+            },
+            onHoverOut: () => { setHoverLabel(null); }
         });
         deployBtn.setScale(helper.isMobileDevice() ? 0.95 : 0.9, helper.isMobileDevice() ? 1.0 : 0.9);
         deployBtn.addText(t('ui', 'deploy'), {
@@ -379,6 +387,19 @@ const upgradeTree = (() => {
         deployBtn.setState(DISABLE);
         // Virtual group handles tracking positions relative to master
         treeGroup.add(deployBtn.getContainer ? deployBtn.getContainer() : deployBtn); // Note: Button doesn't expose container generally, maybe add multiple
+
+        // Cursor Coordinate display (Requirement §N.2)
+        coordText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 26, GAME_CONSTANTS.HEIGHT - 24, 'TEST', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '20px',
+            color: '#aaaaaa',
+            align: 'left',
+            lineSpacing: 2
+        }).setOrigin(0, 1).setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 4).setScrollFactor(0).setVisible(false);
+        treeGroup.add(coordText);
+
+        // Initial flicker reveal reveal
+        revealCoordText();
     }
 
     function _createCoinMineButton() {
@@ -636,7 +657,6 @@ const upgradeTree = (() => {
             debugLogBtn.setState(NORMAL);
         }
         if (scrollDownBtn) {
-
             scrollDownBtn.setVisible(true);
             scrollDownBtn.setState(NORMAL);
         }
@@ -665,6 +685,7 @@ const upgradeTree = (() => {
         dragSurface.setVisible(false);
         titleText.setVisible(false);
         deployBtn.setVisible(false);
+        if (coordText) coordText.setVisible(false);
 
         deployBtn.setState(DISABLE);
 
@@ -693,6 +714,37 @@ const upgradeTree = (() => {
             nodes[id].setVisible(false);
         }
         _hideLines();
+    }
+
+    function preTransitionHide() {
+        if (coordText) coordText.setVisible(false);
+    }
+
+    /** Shows HUD-fixed elements after transition slide finished */
+    function revealCoordText() {
+        if (coordText) {
+            coordText.setVisible(true);
+
+            const glitchSteps = [
+                { delay: 0, alpha: 1 },
+                { delay: 200, alpha: 0.7 },
+                { delay: 40, alpha: 1 },
+                { delay: 100, alpha: 0.5 },
+                { delay: 40, alpha: 1 },
+                { delay: 300, alpha: 0.5 },
+                { delay: 150, alpha: 0.75 },
+                { delay: 100, alpha: 1.0 }, // Final lock to 1.0
+            ];
+
+            let cumDelay = 0;
+            for (const step of glitchSteps) {
+                cumDelay += step.delay;
+                const { alpha } = step;
+                PhaserScene.time.delayedCall(cumDelay, () => {
+                    if (coordText) coordText.setAlpha(alpha);
+                });
+            }
+        }
     }
 
     function _createLine(px, py, cx, cy, metadata) {
@@ -918,7 +970,12 @@ const upgradeTree = (() => {
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
             onMouseDown: () => { isScrollingUp = true; },
             onMouseUp: () => { isScrollingUp = false; },
-            onHoverOut: () => { isScrollingUp = false; }
+            onHover: () => {
+                let sfxclick = audio.play('click', 0.95);
+                if (sfxclick) sfxclick.detune = Phaser.Math.Between(0, 100);
+                setHoverLabel("SCROLL UP");
+            },
+            onHoverOut: () => { isScrollingUp = false; setHoverLabel(null); }
         });
         scrollUpBtn.addText("▲", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
         scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
@@ -932,7 +989,12 @@ const upgradeTree = (() => {
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY },
             onMouseDown: () => { isScrollingDown = true; },
             onMouseUp: () => { isScrollingDown = false; },
-            onHoverOut: () => { isScrollingDown = false; }
+            onHover: () => {
+                let sfxclick = audio.play('click', 0.95);
+                if (sfxclick) sfxclick.detune = Phaser.Math.Between(-100, 0);
+                setHoverLabel("SCROLL DOWN");
+            },
+            onHoverOut: () => { isScrollingDown = false; setHoverLabel(null); }
         });
         scrollDownBtn.addText("▼", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
         scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
@@ -941,22 +1003,32 @@ const upgradeTree = (() => {
         treeGroup.add(scrollDownBtn);
     }
 
-    function _updateScroll(delta) {
-        if (!visible || (!isScrollingUp && !isScrollingDown)) return;
+    function _update(delta) {
+        if (!visible) return;
 
-        const dt = delta / 1000;
-        const scrollSpeed = 800; // px per second
-        let dy = 0;
-        if (isScrollingUp) dy = scrollSpeed * dt;
-        if (isScrollingDown) dy = -scrollSpeed * dt;
+        // Coordinate Update (Every frame while visible)
+        if (coordText && coordText.visible) {
+            const mx = Math.floor(GAME_VARS.mouseposx);
+            const my = Math.floor(GAME_CONSTANTS.HEIGHT - GAME_VARS.mouseposy);
+            coordText.setText(`${currentHoverLabel}\nX: ${mx}\nY: ${my}`);
+        }
 
-        if (dy !== 0) {
-            const currentY = draggableGroup.y;
-            const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
-            const finalDy = nextY - currentY;
+        // Scroll Logic (Guarded by scrolling input)
+        if (isScrollingUp || isScrollingDown) {
+            const dt = delta / 1000;
+            const scrollSpeed = 800; // px per second
+            let dy = 0;
+            if (isScrollingUp) dy = scrollSpeed * dt;
+            if (isScrollingDown) dy = -scrollSpeed * dt;
 
-            if (finalDy !== 0) {
-                draggableGroup.moveBy(0, finalDy);
+            if (dy !== 0) {
+                const currentY = draggableGroup.y;
+                const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
+                const finalDy = nextY - currentY;
+
+                if (finalDy !== 0) {
+                    draggableGroup.moveBy(0, finalDy);
+                }
             }
         }
     }
@@ -1209,5 +1281,10 @@ const upgradeTree = (() => {
     function getGroup() { return treeGroup; }
     function getDraggableGroup() { return draggableGroup; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup };
+    /** Sets the top-line label for the coordinate display. Pass null to reset to " ". */
+    function setHoverLabel(label) {
+        currentHoverLabel = label || " ";
+    }
+
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, setHoverLabel, preTransitionHide, revealCoordText };
 })();

@@ -127,8 +127,16 @@ const gameHUD = (() => {
                         { text: t('hud', `${type.id}_title`), style: 'title', color: type.color },
                         { text: t('hud', `${type.id}_desc`), style: 'normal' }
                     ]);
+                    if (typeof upgradeTree !== 'undefined') {
+                        upgradeTree.setHoverLabel(type.id.toUpperCase());
+                    }
                 },
-                onHoverOut: () => tooltipManager.hide()
+                onHoverOut: () => {
+                    tooltipManager.hide();
+                    if (typeof upgradeTree !== 'undefined') {
+                        upgradeTree.setHoverLabel(null);
+                    }
+                }
             });
             btn.setOrigin(0.5, 0.5);
             btn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
@@ -240,6 +248,18 @@ const gameHUD = (() => {
                     GAME_VARS.testingDefenses = true;
                 }
             },
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel("CREATE\nTEST ENEMIES");
+                }
+            },
+            onHoverOut: () => {
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel(null);
+                }
+            }
         });
         testDefensesBtn.setScale(0.9);
         testDefensesBtn.addText(t('ui', 'test_weapons'), {
