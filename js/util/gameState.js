@@ -31,7 +31,8 @@ function initGameState() {
             gameState.shard = 5;
             gameState.processor = 5;
             gameState.coin = 5;
-            debugLog('Debug start: Resources granted');
+            gameState.levelsDefeated = 5;
+            debugLog('Debug start: Resources and progression granted');
         }
     }
 }

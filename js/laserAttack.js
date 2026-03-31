@@ -24,6 +24,7 @@ class LaserAttackModel {
         this.fireTimer = 0;      // ms elapsed in current fire phase
         this.cooldownTimer = 0;  // ms elapsed in cooldown
         this.tickTimer = 0;      // ms elapsed since last damage tick
+        this.charging = false;   // true during pre-fire visual state
 
         // Upgrade levels
         this.durationLevel = 0; // laser_duration (+0.5s per level)
@@ -90,7 +91,8 @@ class LaserAttackView {
         this._hGlow2 = null;
         this._hInner2 = null;
         this._hWhite2 = null;
-
+        this._jitterValue = 1.0;
+        this._jitterTimer = 0;
         this._initialized = false;
     }
 
@@ -189,7 +191,7 @@ class LaserAttackView {
         allSprites.forEach(s => s && s.setVisible(false));
     }
 
-    update(model, towerX, towerY) {
+    update(model, towerX, towerY, delta = 0) {
         if (!this._initialized || !model.unlocked) return;
 
         const tx = model.getTurretX(towerX);
@@ -209,7 +211,7 @@ class LaserAttackView {
             this._turret2.setVisible(false);
         }
 
-        if (!model.firing && !model.tapering) {
+        if (!model.firing && !model.tapering && !model.charging) {
             const allBeamDots = [
                 this._glow1, this._body1, this._core1,
                 this._glow2, this._body2, this._core2,
@@ -217,21 +219,45 @@ class LaserAttackView {
                 this._hGlow2, this._hInner2, this._hWhite2
             ];
             allBeamDots.forEach(s => s && s.setVisible(false));
+            this._jitterTimer = 0;
             return;
         }
 
-        const alpha = 0.5 + 0.5 * Math.random();
-        const pulse = 1.0 + 0.15 * Math.pow(1.0 - (model.tickTimer / model.TICK_INTERVAL), 3);
-        const taperMult = model.tapering ? Math.max(0, 1.0 - model.taperProgress) : 1.0;
-        const currentHalfW = model.getVisualHalfWidth() * pulse * taperMult;
+        let alpha = 0.5 + 0.5 * Math.random();
+        let currentHalfW;
+        if (model.charging) {
+            // Sample a new random value only every 16ms (normalize to 60ish fps)
+            this._jitterTimer += delta;
+            if (this._jitterTimer >= 16) {
+                this._jitterTimer -= 16;
+                this._jitterValue = 1.0 + (Math.random() * 0.32 - 0.16);
+            }
+            currentHalfW = model.getVisualHalfWidth() * 0.75 * this._jitterValue;
+        } else {
+            this._jitterTimer = 0;
+            const pulse = 1.0 + 0.15 * Math.pow(1.0 - (model.tickTimer / model.TICK_INTERVAL) || 0, 3);
+            const taperMult = model.tapering ? Math.max(0, 1.0 - model.taperProgress) : 1.0;
+            currentHalfW = model.getVisualHalfWidth() * pulse * taperMult;
+        }
 
-        this._updateBeamSet(this._glow1, this._body1, this._core1, tx, ty, model.angle, model.BEAM_LENGTH, currentHalfW, alpha, model);
+        if (model.charging) {
+            // Hide beam sprites during charge
+            [this._glow1, this._body1, this._core1, this._glow2, this._body2, this._core2].forEach(s => s && s.setVisible(false));
+        }
+
+        if (model.firing || model.tapering) {
+            this._updateBeamSet(this._glow1, this._body1, this._core1, tx, ty, model.angle, model.BEAM_LENGTH, currentHalfW, alpha, model);
+        }
+
         this._updateHotspotSet(this._hGlow1, this._hInner1, this._hWhite1, tx, ty, currentHalfW, alpha);
 
         if (model.twinLevel > 0) {
             const tx2 = model.getTurretX(towerX, Math.PI);
             const ty2 = model.getTurretY(towerY, Math.PI);
-            this._updateBeamSet(this._glow2, this._body2, this._core2, tx2, ty2, model.angle + Math.PI, model.BEAM_LENGTH, currentHalfW, alpha, model);
+
+            if (model.firing || model.tapering) {
+                this._updateBeamSet(this._glow2, this._body2, this._core2, tx2, ty2, model.angle + Math.PI, model.BEAM_LENGTH, currentHalfW, alpha, model);
+            }
             this._updateHotspotSet(this._hGlow2, this._hInner2, this._hWhite2, tx2, ty2, currentHalfW, alpha);
         } else {
             [this._glow2, this._body2, this._core2, this._hGlow2, this._hInner2, this._hWhite2].forEach(s => s && s.setVisible(false));
@@ -247,7 +273,7 @@ class LaserAttackView {
         body.setDisplaySize(length, halfW * 2.3);
 
         const flashT = model ? model.tickFlash : 0;
-        const coreWidthMult = (1.0 + flashT * 0.5) * 1.1;
+        const coreWidthMult = (1.05 + flashT * 0.3) * 1.1;
         core.setDisplaySize(length, halfW * coreWidthMult);
     }
 
@@ -276,6 +302,7 @@ const laserAttack = (() => {
         messageBus.subscribe('testingDefensesStarted', () => {
             model.firing = false;
             model.tapering = false;
+            model.charging = false;
             model.cooldownTimer = 0;
             if (_beamSound) {
                 audio.fadeAway(_beamSound, 150);
@@ -287,6 +314,7 @@ const laserAttack = (() => {
         messageBus.subscribe('testingDefensesEnded', () => {
             model.firing = false;
             model.tapering = false;
+            model.charging = false;
             model.fireTimer = 0;
             model.cooldownTimer = 0;
             if (_beamSound) {
@@ -315,6 +343,7 @@ const laserAttack = (() => {
         model.unlocked = false;
         model.active = false;
         model.firing = false;
+        model.charging = false;
         if (_beamSound) {
             audio.fadeAway(_beamSound, 150);
             _beamSound = null;
@@ -334,6 +363,7 @@ const laserAttack = (() => {
             model.active = true;
             // Begin cooldown at combat start so first shot fires after COOLDOWN_DURATION
             model.firing = false;
+            model.charging = false;
             model.cooldownTimer = 0;
             model.fireTimer = 0;
             model.tickTimer = 0;
@@ -341,6 +371,7 @@ const laserAttack = (() => {
         } else {
             model.active = false;
             model.firing = false;
+            model.charging = false;
             if (_beamSound) {
                 audio.fadeAway(_beamSound, 200);
                 _beamSound = null;
@@ -369,7 +400,7 @@ const laserAttack = (() => {
             model.angle += model.ORBIT_SPEED * speedMult * (delta / 1000);
         }
 
-        view.update(model, towerPos.x, towerPos.y);
+        view.update(model, towerPos.x, towerPos.y, delta);
 
         const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
         if ((!model.active && !isTesting) || model.paused) return;
@@ -413,7 +444,12 @@ const laserAttack = (() => {
         } else {
             // Cooldown
             model.cooldownTimer += delta;
+
+            // Pre-fire visuals (0.35s before firing)
+            model.charging = model.cooldownTimer >= model.COOLDOWN_DURATION - 350;
+
             if (model.cooldownTimer >= model.COOLDOWN_DURATION) {
+                model.charging = false;
                 _startFiring();
             }
         }
@@ -426,6 +462,12 @@ const laserAttack = (() => {
 
         view.show(model);
         messageBus.publish('SoundPlay', 'laser_start');
+
+        // Pitfall Fix: Prevent looping sound stacking
+        if (_beamSound) {
+            audio.fadeAway(_beamSound, 100);
+            _beamSound = null;
+        }
 
         let volume = 1.0;
         if (model.apertureLevel > 0) volume += 0.1;
@@ -457,6 +499,7 @@ const laserAttack = (() => {
         const enemies = enemyManager.getEnemiesInSquareRange(bx, by, searchSize, _hitBuffer);
         for (let i = 0; i < enemies.length; i++) {
             const e = enemies[i];
+            if (!e || !e.model || !e.model.alive) continue;
 
             // Project enemy position onto the beam ray
             const ex = e.model.x - ox;

@@ -6,6 +6,53 @@ const BOSS_3_PIECE_STATES = {
     IDLE: 'idle'
 };
 
+const boss3HealPacketPool = new ObjectPool(
+    () => {
+        const spr = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_3_heal_packet.png');
+        spr.setVisible(false);
+        spr.setActive(false);
+        return spr;
+    },
+    (spr) => {
+        spr.setVisible(false);
+        spr.setActive(false);
+        spr.setAlpha(1);
+        spr.setScale(1);
+    },
+    6
+);
+
+const playBoss3HealPacket = (fx, fy, tx, ty, depth) => {
+    const spr = boss3HealPacketPool.get();
+    if (!spr) return;
+
+    const dx = tx - fx;
+    const dy = ty - fy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const ratio = dist > 0 ? 20 / dist : 0;
+
+    const startX = fx + dx * ratio;
+    const startY = fy + dy * ratio;
+    const endX = tx - dx * ratio;
+    const endY = ty - dy * ratio;
+
+    spr.setPosition(startX, startY).setDepth(depth).setVisible(true).setActive(true).setAlpha(1);
+
+    PhaserScene.tweens.add({
+        targets: spr,
+        x: endX, y: endY,
+        duration: 750,
+        ease: 'Cubic.easeInOut'
+    });
+    PhaserScene.tweens.add({
+        targets: spr,
+        alpha: 0,
+        duration: 750,
+        ease: 'Quad.easeIn',
+        onComplete: () => boss3HealPacketPool.release(spr)
+    });
+};
+
 class Boss3PieceModel extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
@@ -70,7 +117,7 @@ class Boss3PieceModel extends BossModel {
     postUpdate(dt) {
         this.shareTimer -= dt;
         if (this.shareTimer <= 0) {
-            this.shareTimer = 1.0;
+            this.shareTimer = 3.0;
             // The manager will orchestrate the actual calculate/apply calls
             // since it has access to the full enemy list for cross-piece sync.
         }
@@ -98,6 +145,8 @@ class Boss3PieceModel extends BossModel {
                     if (otherHP > 0) {
                         this.pendingHPChange -= giveAmount;
                         neighbor.model.pendingHPChange += giveAmount;
+
+                        playBoss3HealPacket(this.x, this.y, neighbor.model.x, neighbor.model.y, GAME_CONSTANTS.DEPTH_ENEMIES - 3);
                     }
                 }
             }
@@ -128,6 +177,10 @@ let _sharedAttackSfx = null;
 
 // Cleanup static assets on phase change/game reset
 if (typeof messageBus !== 'undefined') {
+    // Wait until assets are loaded and PhaserScene exists before pre-allocating
+    messageBus.subscribeOnce('assetsLoaded', () => {
+        boss3HealPacketPool.preAllocate(6);
+    });
     messageBus.subscribe('phaseChanged', (phase) => {
         if (phase !== GAME_CONSTANTS.PHASE_COMBAT) {
             _sharedAttackActive = false;
@@ -273,7 +326,7 @@ class Boss3 extends Boss {
         this._isMaster = false;     // Reset master status on pool reuse
 
         super.activate(x, y, {
-            maxHealth: 260,
+            maxHealth: 300,
             damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,

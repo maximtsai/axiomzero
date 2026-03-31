@@ -946,7 +946,7 @@ const enemyManager = (() => {
 
         enemy.deactivate();
 
-        // Swap-and-pop removal from active array
+        // Removal from active array
         const idx = activeEnemies.indexOf(enemy);
         if (idx !== -1) {
             activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
@@ -1083,7 +1083,7 @@ const enemyManager = (() => {
                 if (shards.length > 0) {
                     boss3ShareTimer -= dt;
                     if (boss3ShareTimer <= 0) {
-                        boss3ShareTimer = 1.0;
+                        boss3ShareTimer = 2.0;
                         shards.forEach(p => p.model.calculateSiphon());
                         shards.forEach(p => p.model.applySiphon());
                     }
@@ -1236,7 +1236,7 @@ const enemyManager = (() => {
     }
 
     function startTestingDefenses() {
-        if (testEnemyCount >= 35) return;
+        if (testEnemyCount >= 45) return;
 
         const isInitiating = (typeof GAME_VARS !== 'undefined' && !GAME_VARS.testingDefenses);
 

@@ -399,9 +399,7 @@ const artilleryAttack = (() => {
                     if (Math.abs(tx - towerPos.x) + Math.abs(ty - towerPos.y) < model.TOWER_MARGIN) {
                         tx = e.model.x - (e.model.vx * 0.75);
                         ty = e.model.y - (e.model.vy * 0.75);
-                        console.log("used close shift");
                     }
-                    console.log(`[DEBUG] Artillery found target after ${i + 1} attempts.`);
                     return {
                         x: tx + Phaser.Math.Between(-30, 30),
                         y: ty + Phaser.Math.Between(-30, 30)
