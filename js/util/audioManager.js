@@ -27,6 +27,7 @@ let useSecondLongSound = false;
 let isMuted = false;
 let isSFXMuted = false;
 let isMusicMuted = false;
+let filterNode = null;
 
 const audio = {
     /** Re-read mute flags from gameState (call after external settings change). */
@@ -104,6 +105,14 @@ const audio = {
         globalMusicVol = gameState.settings.globalMusicVol;
         isSFXMuted = gameState.settings.sfxMuted;
         isMusicMuted = gameState.settings.musicMuted;
+
+        // Initialize Low-Pass Filter
+        if (PhaserScene.sound.context && !filterNode) {
+            filterNode = PhaserScene.sound.context.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 22000;
+            filterNode.connect(PhaserScene.sound.context.destination);
+        }
     },
     /**
      * Play a sound or music track. Auto-creates the Phaser sound if needed.
@@ -154,6 +163,17 @@ const audio = {
         }
 
         s.pan = pan;
+
+        // Route music through the low-pass filter if active
+        if (s.isMusic && filterNode) {
+            s.on('play', () => {
+                if (s.source) {
+                    s.source.disconnect();
+                    s.source.connect(filterNode);
+                }
+            });
+        }
+
         s.play();
         return s;
     },
@@ -340,5 +360,20 @@ const audio = {
             onComplete: () => { sound.currTween = null; }
         });
         return sound.currTween;
+    },
+
+    /**
+     * Smoothly transitions the music low-pass filter frequency.
+     * @param {number} freq - Cutoff frequency in Hz (e.g. 600 for muffled, 22000 for full).
+     * @param {number} [duration=500] - Transition duration in ms.
+     */
+    setLowPass: function (freq, duration = 500) {
+        if (!filterNode) return;
+        PhaserScene.tweens.add({
+            targets: filterNode.frequency,
+            value: freq,
+            duration: duration,
+            ease: 'Power2'
+        });
     }
 };

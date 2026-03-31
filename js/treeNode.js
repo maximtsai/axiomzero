@@ -421,6 +421,11 @@ class Node {
         if (!gameState.activeShards) gameState.activeShards = {};
         gameState.activeShards[this.duoBoxTier] = this.shardId;
 
+        // Subtle camera shake on purchase
+        if (PhaserScene && PhaserScene.cameras && PhaserScene.cameras.main) {
+            PhaserScene.cameras.main.shake(150, 0.001);
+        }
+
         if (isFirstDuoPurchaseEver) {
             messageBus.publish('trigger_tutorial', 'duo_swap');
         }
@@ -964,7 +969,7 @@ class Node {
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
     }
 
-    _playDuoPulse() {
+    _playDuoPulse(scaleMult = 1.0) {
         if (!this.btn) return;
 
         let x = this.btn.x;
@@ -1004,8 +1009,8 @@ class Node {
 
         PhaserScene.tweens.add({
             targets: pulse,
-            scaleX: 1.6,
-            scaleY: 1.6,
+            scaleX: 1.6 * scaleMult,
+            scaleY: 1.6 * scaleMult,
             duration: 1100,
             ease: 'Quart.easeOut',
             onComplete: () => {

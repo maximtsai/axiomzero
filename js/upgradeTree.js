@@ -596,15 +596,17 @@ const upgradeTree = (() => {
         visible = true;
         panelBg.setVisible(true);
 
+        // Cinematic background fade-in
+        panelBg.setAlpha(0.2);
+        PhaserScene.tweens.add({
+            targets: panelBg,
+            alpha: 0.9,
+            duration: 2500,
+            ease: 'Back.easeOut'
+        });
+
         if (!hasShownThisSession) {
             hasShownThisSession = true;
-            panelBg.setAlpha(0.15);
-            PhaserScene.tweens.add({
-                targets: panelBg,
-                alpha: 1,
-                duration: 1000,
-                ease: 'Linear'
-            });
 
             // Hint for new players: pulse indicate the AWAKEN node
             const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
@@ -619,8 +621,6 @@ const upgradeTree = (() => {
                 treeGroup.add(ind);
                 treeGroup.add(indShort);
             }
-        } else {
-            panelBg.setAlpha(1);
         }
 
         panelOutline.setVisible(true);
@@ -867,11 +867,19 @@ const upgradeTree = (() => {
         }
 
         // 3. Purchase pulses
-        playPurchasePulse(data.x, data.y + 1, data.isMaxed);
-
-        if (data.isDuoBox) {
+        if (!data.isDuoBox) {
+            playPurchasePulse(data.x, data.y + 1, data.isMaxed);
+        } else {
             const node = nodes[data.id];
-            if (node && node._playDuoPulse) node._playDuoPulse();
+            if (node && node._playDuoPulse) {
+                node._playDuoPulse(1.38);
+                // Play a second layered duo pulse
+                PhaserScene.time.delayedCall(130, () => {
+                    if (node && node._playDuoPulse) {
+                        node._playDuoPulse(1.05); // Pass a custom scale multiplier for the second pulse
+                    }
+                });
+            }
         }
     }
 

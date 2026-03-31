@@ -25,6 +25,17 @@ function createOptionsButton(x, y) {
         }
     });
 
+    button.onHover = () => {
+        if (button.state !== DISABLE) {
+            button.setScale(helper.isMobileDevice() ? 0.85 : 0.72);
+        }
+    };
+    button.onHoverOut = () => {
+        if (button.state !== DISABLE) {
+            button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);
+        }
+    };
+
     button.setDepth(7000);
     button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);
     button.setScrollFactor(0);
@@ -34,6 +45,7 @@ function createOptionsButton(x, y) {
 function _showOptionsPopup() {
     messageBus.publish('gamePaused');
     audio.play('retro1', 1.0);
+    audio.setLowPass(600, 300);
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
@@ -342,6 +354,7 @@ function _showOptionsPopup() {
 
     function closePopup() {
         messageBus.publish('gameResumed');
+        audio.setLowPass(22000, 300);
         elements.forEach(el => {
             if (el && el.destroy) el.destroy();
         });
@@ -476,6 +489,7 @@ function createMuteMusicButton(x, y) {
 }
 
 function _showResetConfirmPopup() {
+    audio.setLowPass(400, 300); // Slightly heavier muffle for resets
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 200000;
@@ -561,6 +575,7 @@ function _showResetConfirmPopup() {
             noText.setAlpha(0.75);
         },
         onMouseUp: () => {
+            audio.setLowPass(600, 300);
             elements.forEach(el => { if (el && el.destroy) el.destroy(); });
         }
     });
@@ -573,6 +588,7 @@ function _showResetConfirmPopup() {
         hover: { ref: 'close_button_hover.png', atlas: 'ui' },
         press: { ref: 'close_button_press.png', atlas: 'ui' },
         onMouseUp: () => {
+            audio.setLowPass(600, 300);
             elements.forEach(el => { if (el && el.destroy) el.destroy(); });
         }
     });
