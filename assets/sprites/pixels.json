@@ -4,7 +4,7 @@
 			"image": "pixels-0.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 52,
+				"w": 56,
 				"h": 4
 			},
 			"scale": 1,
@@ -210,7 +210,7 @@
 					}
 				},
 				{
-					"filename": "purple_pixel.png",
+					"filename": "pink_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -235,7 +235,7 @@
 					}
 				},
 				{
-					"filename": "red_pixel.png",
+					"filename": "purple_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -260,7 +260,7 @@
 					}
 				},
 				{
-					"filename": "tan_pixel.png",
+					"filename": "red_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -285,7 +285,7 @@
 					}
 				},
 				{
-					"filename": "white_pixel.png",
+					"filename": "tan_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -310,7 +310,7 @@
 					}
 				},
 				{
-					"filename": "yellow_pixel.png",
+					"filename": "white_pixel.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -333,6 +333,31 @@
 						"x": 0.5,
 						"y": 0.5
 					}
+				},
+				{
+					"filename": "yellow_pixel.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 2,
+						"h": 2
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 2,
+						"h": 2
+					},
+					"frame": {
+						"x": 53,
+						"y": 1,
+						"w": 2,
+						"h": 2
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
 				}
 			]
 		}
@@ -340,6 +365,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:687b8aaa4dbcd2f49d7922bf96a9d5fd:29913868ba41bbe03528936ef78c7677:da1b59a2d25fe408f8d6d6014a79ae23$"
+		"smartupdate": "$TexturePacker:SmartUpdate:e259f707def8b88ddfb5bf03418ef6de:de1e63fdfc69dc53814e7cbe4e6a54fa:da1b59a2d25fe408f8d6d6014a79ae23$"
 	}
 }

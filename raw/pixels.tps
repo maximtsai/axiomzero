@@ -181,6 +181,7 @@
             <key type="filename">pixels/gold_pixel.png</key>
             <key type="filename">pixels/green_pixel.png</key>
             <key type="filename">pixels/grey_pixel.png</key>
+            <key type="filename">pixels/pink_pixel.png</key>
             <key type="filename">pixels/purple_pixel.png</key>
             <key type="filename">pixels/red_pixel.png</key>
             <key type="filename">pixels/tan_pixel.png</key>
