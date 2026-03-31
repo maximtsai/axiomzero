@@ -11,6 +11,7 @@ const boss3HealPacketPool = new ObjectPool(
         const spr = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_3_heal_packet.png');
         spr.setVisible(false);
         spr.setActive(false);
+        spr.setBlendMode(Phaser.BlendModes.ADD);
         return spr;
     },
     (spr) => {
@@ -29,7 +30,7 @@ const playBoss3HealPacket = (fx, fy, tx, ty, depth) => {
     const dx = tx - fx;
     const dy = ty - fy;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const ratio = dist > 0 ? 20 / dist : 0;
+    const ratio = dist > 0 ? 30 / dist : 0;
 
     const startX = fx + dx * ratio;
     const startY = fy + dy * ratio;
@@ -47,9 +48,11 @@ const playBoss3HealPacket = (fx, fy, tx, ty, depth) => {
     PhaserScene.tweens.add({
         targets: spr,
         alpha: 0,
-        duration: 750,
-        ease: 'Quad.easeIn',
-        onComplete: () => boss3HealPacketPool.release(spr)
+        duration: 760,
+        ease: 'Cubic.easeIn',
+        onComplete: () => {
+            boss3HealPacketPool.release(spr);
+        }
     });
 };
 
@@ -62,7 +65,6 @@ class Boss3PieceModel extends BossModel {
         this.state = BOSS_3_PIECE_STATES.TRAVEL;
 
         this.neighbors = []; // Up to 2 adjacent Boss3 instances
-        this.shareTimer = 1.0;
         this.pendingHPChange = 0;
 
         this.initialSpeedMult = 18.0;
@@ -74,7 +76,6 @@ class Boss3PieceModel extends BossModel {
     activate(x, y, config = {}) {
         super.activate(x, y, config);
         this.state = BOSS_3_PIECE_STATES.TRAVEL;
-        this.shareTimer = 1.0;
         this.pendingHPChange = 0;
         this.siphonPulse = 0;
         this.neighbors = config.neighbors || [];
@@ -100,7 +101,7 @@ class Boss3PieceModel extends BossModel {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (this.state === BOSS_3_PIECE_STATES.TRAVEL) {
-            if (dist < 260) {
+            if (dist < 264) {
                 this.state = BOSS_3_PIECE_STATES.IDLE;
                 this.vx = 0;
                 this.vy = 0;
@@ -115,13 +116,6 @@ class Boss3PieceModel extends BossModel {
 
     // Refactor 2: Post-update hook for HP sharing
     postUpdate(dt) {
-        this.shareTimer -= dt;
-        if (this.shareTimer <= 0) {
-            this.shareTimer = 3.0;
-            // The manager will orchestrate the actual calculate/apply calls
-            // since it has access to the full enemy list for cross-piece sync.
-        }
-
         if (this.siphonPulse > 0) {
             this.siphonPulse -= dt * 2.5;
             if (this.siphonPulse < 0) this.siphonPulse = 0;
@@ -165,7 +159,10 @@ class Boss3PieceModel extends BossModel {
         if (this.health > this.maxHealth) this.health = this.maxHealth;
         // Don't die from siphoning alone (though the math shouldn't allow it to go below lower HP)
         if (this.health < 0.1) this.health = 0.1;
+
+        const netChange = this.pendingHPChange;
         this.pendingHPChange = 0;
+        return netChange;
     }
 }
 
@@ -264,10 +261,9 @@ class Boss3PieceView extends EnemyView {
         if (model && model.alive && model.neighbors[0] && model.neighbors[0].model && model.neighbors[0].model.alive) {
             const n = model.neighbors[0].model;
 
-            // Pulse logic: base alpha 0.15, max alpha 0.8. Base thickness 1.5, max 4.
             const p = model.siphonPulse || 0;
-            const alpha = 0.15 + (p * 0.65);
-            const thickness = 1.5 + (p * 2.5);
+            const alpha = 0.1 + (p * 0.6);
+            const thickness = 1.5 + (p * 2);
 
             this.lineGraphics.lineStyle(thickness, 0xff00ff, alpha);
             this.lineGraphics.moveTo(model.x, model.y);
@@ -326,7 +322,7 @@ class Boss3 extends Boss {
         this._isMaster = false;     // Reset master status on pool reuse
 
         super.activate(x, y, {
-            maxHealth: 300,
+            maxHealth: 280,
             damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,
@@ -445,7 +441,7 @@ class Boss3 extends Boss {
                     _sharedAttackSprite.setFrame('boss3_attack.png');
                     _sharedAttackSprite.setVisible(false);
                     if (typeof tower !== 'undefined' && tower.isAlive()) {
-                        tower.takeDamage(10);
+                        tower.takeDamage(8);
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.015);
                         }
