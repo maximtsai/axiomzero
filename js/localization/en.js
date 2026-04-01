@@ -152,7 +152,8 @@ window.TRANSLATIONS.en = {
         label: {
             lore: 'LORE',
             gate: 'GATE',
-            plus_data: '+DATA'
+            plus_data: '+DATA',
+            starting: 'STARTING'
         }
     },
     milestones: {
