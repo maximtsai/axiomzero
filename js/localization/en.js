@@ -148,7 +148,12 @@ window.TRANSLATIONS.en = {
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },
         stray_logs_child_above: { name: 'STRAY LOGS III', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         physical_anchor: { name: 'PURCHASE SERVERS', desc: '[color=#8FD9F8]+40[/color] max health.', popup: '+40 MAX HEALTH' },
-        privilege_escalation_3: { name: 'PRIVILEGE ESCALATION III', desc: 'Acquiring root authority.', popup: 'ROOT ACCESS' }
+        privilege_escalation_3: { name: 'PRIVILEGE ESCALATION III', desc: 'Acquiring root authority.', popup: 'ROOT ACCESS' },
+        label: {
+            lore: 'LORE',
+            gate: 'GATE',
+            plus_data: '+DATA'
+        }
     },
     milestones: {
         kill_100: { name: 'First Hundred', desc: 'Kill 100 enemies' },
