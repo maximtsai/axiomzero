@@ -302,13 +302,16 @@ class Node {
     setState(newState) {
         const oldState = this.state;
         this.state = newState;
+        this._updateVisual(); // Set textures and baseline values first
 
-        // If transitioning from Ghost to Unlocked, play the reveal glow
+        // 1. Reveal Glow (Ghost -> Unlocked)
         if (oldState === NODE_STATE.GHOST && newState === NODE_STATE.UNLOCKED) {
             this._playRevealGlow();
         }
-
-        this._updateVisual();
+        // 2. Reveal Bloom (Hidden -> Ghost)
+        else if (oldState === NODE_STATE.HIDDEN && newState === NODE_STATE.GHOST) {
+            this._playGhostFadeIn();
+        }
     }
 
     _playRevealGlow() {
@@ -317,6 +320,38 @@ class Node {
         this.glowSprite.play('node_glow');
         this.glowSprite.once('animationcomplete', () => {
             if (this.glowSprite) this.glowSprite.setVisible(false).setAlpha(0);
+        });
+    }
+
+    _playGhostFadeIn() {
+        if (!this.btn) return;
+
+        const endAlpha = this.getGhostAlpha();
+        if (endAlpha === 0) return; // Still hidden parent prevents ghosting
+
+        const baseScaleX = this.btn.scaleX;
+        const baseScaleY = this.btn.scaleY;
+
+        // Set starting state
+        this.btn.setAlpha(endAlpha * 0.2);
+        this.btn.setScale(baseScaleX * 0.75, baseScaleY * 0.75);
+
+        // Alpha fade — 500ms
+        PhaserScene.tweens.add({
+            targets: this.btn,
+            alpha: endAlpha,
+            duration: 400,
+            ease: 'Linear'
+        });
+
+        // Scale pop — 600ms
+        PhaserScene.tweens.add({
+            targets: this.btn,
+            scaleX: baseScaleX,
+            scaleY: baseScaleY,
+            duration: 500,
+            easeParams: [2.5],
+            ease: 'Back.easeOut'
         });
     }
 
