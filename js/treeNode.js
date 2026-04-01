@@ -312,6 +312,10 @@ class Node {
         else if (oldState === NODE_STATE.HIDDEN && newState === NODE_STATE.GHOST) {
             this._playGhostFadeIn();
         }
+        // 3. Maxed Out Pop (Unlocked -> Maxed)
+        if (oldState === NODE_STATE.UNLOCKED && newState === NODE_STATE.MAXED) {
+            this._playMaxedAnimation();
+        }
     }
 
     _playRevealGlow() {
@@ -320,6 +324,23 @@ class Node {
         this.glowSprite.play('node_glow');
         this.glowSprite.once('animationcomplete', () => {
             if (this.glowSprite) this.glowSprite.setVisible(false).setAlpha(0);
+        });
+    }
+
+    _playMaxedAnimation() {
+        if (!this.btn) return;
+
+        const baseScaleX = this.btn.scaleX;
+        const baseScaleY = this.btn.scaleY;
+        this.btn.setScale(baseScaleX * 0.9, baseScaleY * 0.9);
+
+        PhaserScene.tweens.add({
+            targets: this.btn,
+            scaleX: baseScaleX,
+            scaleY: baseScaleY,
+            duration: 250,
+            easeParams: [2.5],
+            ease: 'Back.easeOut',
         });
     }
 
