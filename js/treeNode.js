@@ -89,6 +89,7 @@ class Node {
         // Fadeout sprite effect
         this.fadeoutSprite = null;
         this.fadeoutTween = null;
+        this.glowSprite = null;
         this.lastVisualState = NODE_STATE.HIDDEN;
         this.lastSpriteRef = null;
 
@@ -299,8 +300,24 @@ class Node {
     }
 
     setState(newState) {
+        const oldState = this.state;
         this.state = newState;
+
+        // If transitioning from Ghost to Unlocked, play the reveal glow
+        if (oldState === NODE_STATE.GHOST && newState === NODE_STATE.UNLOCKED) {
+            this._playRevealGlow();
+        }
+
         this._updateVisual();
+    }
+
+    _playRevealGlow() {
+        if (!this.glowSprite) return;
+        this.glowSprite.setVisible(true).setAlpha(1);
+        this.glowSprite.play('node_glow');
+        this.glowSprite.once('animationcomplete', () => {
+            if (this.glowSprite) this.glowSprite.setVisible(false).setAlpha(0);
+        });
     }
 
     isInteractable() {
@@ -525,6 +542,17 @@ class Node {
                 draggableGroup.add(this.fadeoutSprite);
             }
         }
+
+        // Reveal Glow sprite
+        this.glowSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_glow1.png')
+            .setOrigin(0.5, 0.5)
+            .setAlpha(0)
+            .setVisible(false)
+            .setDepth(nodeDepth + 5)
+            .setScrollFactor(0);
+
+        if (treeGroup) treeGroup.add(this.glowSprite);
+        if (draggableGroup) draggableGroup.add(this.glowSprite);
 
         // Placeholders shouldn't intercept clicks or be visible, but need the Button obj to exist
         if (this.isPlaceholder) {
@@ -977,6 +1005,7 @@ class Node {
         this._stopDuoOutlineAnimation();
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
+        if (this.glowSprite) { this.glowSprite.destroy(); this.glowSprite = null; }
     }
 
     _playDuoPulse(scaleMult = 1.0) {

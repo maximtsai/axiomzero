@@ -98,4 +98,17 @@ function createAnimations(scene) {
         frameRate: 12,
         repeat: -1
     });
+
+    scene.anims.create({
+        key: 'node_glow',
+        frames: scene.anims.generateFrameNames('buttons', {
+            prefix: 'node_glow',
+            suffix: '.png',
+            start: 0,
+            end: 12,
+            zeroPad: 0,
+        }),
+        frameRate: 20,
+        repeat: 0
+    });
 }

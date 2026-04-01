@@ -481,6 +481,33 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/node_glow0.png</key>
+            <key type="filename">buttons/node_glow1.png</key>
+            <key type="filename">buttons/node_glow10.png</key>
+            <key type="filename">buttons/node_glow11.png</key>
+            <key type="filename">buttons/node_glow12.png</key>
+            <key type="filename">buttons/node_glow2.png</key>
+            <key type="filename">buttons/node_glow3.png</key>
+            <key type="filename">buttons/node_glow4.png</key>
+            <key type="filename">buttons/node_glow5.png</key>
+            <key type="filename">buttons/node_glow6.png</key>
+            <key type="filename">buttons/node_glow7.png</key>
+            <key type="filename">buttons/node_glow8.png</key>
+            <key type="filename">buttons/node_glow9.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.85</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>14,14,27,27</rect>
+                <key>scale9Paddings</key>
+                <rect>14,14,27,27</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/popup.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
