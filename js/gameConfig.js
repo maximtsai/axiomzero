@@ -77,7 +77,7 @@ GAME_CONSTANTS.ENEMY_BULLET_POOL_SIZE = 20;
 
 // ─── Wave ─────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.WAVE_DURATION = 45;  // seconds — progress bar fills over this period
+GAME_CONSTANTS.WAVE_DURATION = 50;  // seconds — progress bar fills over this period
 
 // ─── Depth layers (flat ordering, no Containers) ──────────────────────────────
 
