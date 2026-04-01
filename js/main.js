@@ -44,7 +44,7 @@ const config = {
     type: Phaser.AUTO,
     width: GAME_CONSTANTS.WIDTH,
     height: GAME_CONSTANTS.HEIGHT,
-    backgroundColor: '#000000',
+    backgroundColor: '#05070a',
     scene: MainScene,
     scale: {
         mode: Phaser.Scale.FIT,

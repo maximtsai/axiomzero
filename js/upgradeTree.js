@@ -1099,7 +1099,7 @@ const upgradeTree = (() => {
         const levelDisplay = PhaserScene.add.text(0, -78, t('ui', 'level') + selectedLevel, {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '34px',
-            color: '#ffffff',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center',
         }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
         levelSelectContainer.add(levelDisplay);
@@ -1154,7 +1154,7 @@ const upgradeTree = (() => {
                 }
             }
         });
-        minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
+        minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         minusBtn.setDepth(depth + 2);
         minusBtn.setScrollFactor(0);
         levelSelectButtons.push(minusBtn);
@@ -1172,7 +1172,7 @@ const upgradeTree = (() => {
                 }
             }
         });
-        plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: '#ffffff' });
+        plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         plusBtn.setDepth(depth + 2);
         plusBtn.setScrollFactor(0);
         levelSelectButtons.push(plusBtn);
@@ -1188,7 +1188,7 @@ const upgradeTree = (() => {
                 transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
             }
         });
-        startBtn.addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: '#ffffff' });
+        startBtn.addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         startBtn.setDepth(depth + 2);
         startBtn.setScrollFactor(0);
         levelSelectButtons.push(startBtn);

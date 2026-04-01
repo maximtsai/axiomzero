@@ -100,7 +100,7 @@ const gameHUD = (() => {
         healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 1, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: helper.isMobileDevice() ? '24px' : '20px',
-            color: '#ffffff',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         // ── EXP bar ──
@@ -121,7 +121,7 @@ const gameHUD = (() => {
         const currY = expY + 10 + BAR_GAP + 5;
         const resourceTypes = [
             { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
-            { id: 'insight', icon: 'resrc_insight.png', color: '#ffffff' },
+            { id: 'insight', icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL },
             { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
             { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' },
             { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' }
@@ -225,7 +225,7 @@ const gameHUD = (() => {
         endIterationBtn.addText(t('ui', 'end_iteration'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: helper.isMobileDevice() ? '18px' : '19px',
-            color: '#ffffff',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         endIterationBtn.setDepth(depth + 3);
         endIterationBtn.setScrollFactor(0);
@@ -237,7 +237,7 @@ const gameHUD = (() => {
             width: GAME_CONSTANTS.WIDTH - (helper.isMobileDevice() ? 234 : 220),
             height: 20,
             padding: 7,
-            bgColor: 0x222233,
+            bgColor: 0x1a1e2e,
             fillColor: 0x00f5ff,
             depth: depth
         });
@@ -295,7 +295,7 @@ const gameHUD = (() => {
         testDefensesBtn.addText(t('ui', 'test_weapons'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '19px',
-            color: '#ffffff',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         testDefensesBtn.setDepth(depth + 3);
         const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
