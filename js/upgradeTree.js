@@ -337,9 +337,15 @@ const upgradeTree = (() => {
         const parent = nodes[parentId];
         if (!parent) return;
         for (let i = 0; i < parent.childIds.length; i++) {
-            const child = nodes[parent.childIds[i]];
+            const childId = parent.childIds[i];
+            const child = nodes[childId];
             if (child) {
+                const oldState = child.state;
                 child.refreshState();
+
+                if (oldState === NODE_STATE.GHOST && child.state === NODE_STATE.UNLOCKED) {
+                    _shakeLine(parentId, childId);
+                }
             }
         }
         // Redraw lines to reflect new child states
@@ -764,6 +770,22 @@ const upgradeTree = (() => {
         treeGroup.add(line);
         draggableGroup.add(line);
         return line;
+    }
+
+    function _shakeLine(parentId, childId) {
+        // Find line matching parent -> child (or parent -> siblingChild for Duo boxes)
+        const line = lines.find(l => l.parentId === parentId && (l.childId === childId || l.duoSiblingChildId === childId));
+        if (!line) return;
+
+        const baselineWidth = 1.5;
+        line.setScale(baselineWidth * 4, line.scaleY);
+
+        PhaserScene.tweens.add({
+            targets: line,
+            scaleX: baselineWidth,
+            duration: 600,
+            ease: 'Quart.easeOut'
+        });
     }
 
     function _updateLines() {
