@@ -53,8 +53,17 @@ const waveManager = (() => {
         progressPaused = false;
 
         const currentLevel = gameState.currentLevel || 1;
+        const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
         const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
-        currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
+        
+        if (levelBeaten) {
+            // Endless farming mode — no progress bar, no boss
+            currentWaveDuration = 999999; 
+            messageBus.publish('waveModeFarmingStarted');
+        } else {
+            currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
+            messageBus.publish('waveModeNormalStarted');
+        }
 
         // Reset tower and stats for this combat session
         tower.reset(true);

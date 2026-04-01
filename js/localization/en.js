@@ -28,7 +28,7 @@ window.TRANSLATIONS.en = {
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
     },
     nodes: {
-        awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED' },
+        awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         basic_pulse: { name: 'COGNITION', desc: 'Your cursor pulses damage every [color=#8FD9F8]2[/color] seconds.', popup: 'CURSOR ATTACK UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '[color=#8FD9F8]+40%[/color] resource pickup range', popup: '+40% PICKUP RANGE' },
@@ -55,7 +55,7 @@ window.TRANSLATIONS.en = {
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance per lvl to fire an extra projectile', popup: 'PRISMATIC ARRAY' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
-        data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]50%[/color] chance to double collected [color=cyan]DATA[/color]', popup: 'DATA COMPRESSION' },
+        data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]25%[/color] chance per level to double [color=cyan]DATA[/color] drops', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with +[color=#8FD9F8]100[/color] [color=cyan]DATA[/color].', popup: '+100 DATA' },
         security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Fully refunds [color=cyan]DATA[/color] cost upon purchase.", popup: 'TEST PASSED' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Cursor attack is now manual. Click to fire. Stores up to [color=#8FD9F8]2[/color] charges.', popup: 'MANUAL PULSE' },

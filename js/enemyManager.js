@@ -1250,10 +1250,14 @@ const enemyManager = (() => {
 
     function _onWaveProgress(progress) {
         lastWaveProgress = progress;
-        if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !minibossSpawned && spawning) {
+        const currentLevel = gameState.currentLevel || 1;
+        const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
+        const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
+
+        if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !minibossSpawned && spawning && !minibossBeaten) {
             _spawnMiniboss();
         }
-        if (progress >= 1.0 && !bossSpawned && spawning) {
+        if (progress >= 1.0 && !bossSpawned && spawning && !levelBeaten) {
             _spawnBoss();
         }
     }

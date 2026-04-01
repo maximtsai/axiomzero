@@ -17,6 +17,9 @@ const gameHUD = (() => {
     let endIterationBtn = null;
     let testDefensesBtn = null;
     let waveProgressBar = null;
+    let farmingTimerTxt = null;
+    let farmingStartTime = 0;
+    let isFarming = false;
 
     // Layout
     const HUD_X = 20;
@@ -49,6 +52,33 @@ const gameHUD = (() => {
             if (endIterationBtn) endIterationBtn.setState(DISABLE);
         });
         messageBus.subscribe('AnnounceText', showTransitionMessage);
+
+        messageBus.subscribe('waveModeFarmingStarted', () => {
+            if (waveProgressBar) waveProgressBar.setVisible(false);
+            isFarming = true;
+            farmingStartTime = Date.now();
+            if (farmingTimerTxt) {
+                farmingTimerTxt.setVisible(false); // Ensure hidden initially
+                PhaserScene.time.delayedCall(450, () => {
+                    if (isFarming && farmingTimerTxt) {
+                        farmingTimerTxt.setVisible(true).setAlpha(0.2);
+                        farmingTimerTxt.setText('00:00');
+                        PhaserScene.tweens.add({
+                            targets: farmingTimerTxt,
+                            alpha: 1,
+                            duration: 1000,
+                            ease: 'Power1'
+                        });
+                    }
+                });
+            }
+        });
+        messageBus.subscribe('waveModeNormalStarted', () => {
+            setWaveProgressBarVisible(true);
+            isFarming = false;
+            if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
+        });
+
         updateManager.addFunction(_update);
     }
 
@@ -271,6 +301,14 @@ const gameHUD = (() => {
         const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
         testDefensesBtn.setVisible(isUnlocked);
         if (!isUnlocked) testDefensesBtn.setState(DISABLE);
+
+        // ── Farming timer ──
+        farmingTimerTxt = PhaserScene.add.text(24, GAME_CONSTANTS.HEIGHT - 35, '00:00', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '24px',
+            color: '#00f5ff',
+        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -314,6 +352,8 @@ const gameHUD = (() => {
             testDefensesBtn.setState(DISABLE);
         }
         if (waveProgressBar) waveProgressBar.setVisible(false);
+        if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
+        isFarming = false;
     }
 
     // ── event handlers ───────────────────────────────────────────────────────
@@ -471,6 +511,15 @@ const gameHUD = (() => {
         if (layoutFrameCounter % 5 === 0 && needsLayoutUpdate) {
             _updateResourceLayout();
             needsLayoutUpdate = false;
+        }
+
+        // Update farming timer if active
+        if (isFarming && farmingTimerTxt && farmingTimerTxt.visible) {
+            const elapsedMs = Date.now() - farmingStartTime;
+            const totalSec = Math.floor(elapsedMs / 1000);
+            const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
+            const ss = (totalSec % 60).toString().padStart(2, '0');
+            farmingTimerTxt.setText(`${mm}:${ss}`);
         }
     }
 

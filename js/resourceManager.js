@@ -283,15 +283,6 @@ const resourceManager = (() => {
         // Validation: Ensure amount is a valid number
         if (typeof amount !== 'number' || isNaN(amount)) return;
 
-        // DATA COMPRESSION effect - ONLY apply to gains (positive amount)
-        // SECURITY: Never trigger during Upgrade phase (node refunds, etc.)
-        if (amount > 0 && currentPhase !== GAME_CONSTANTS.PHASE_UPGRADE) {
-            const ups = gameState.upgrades || {};
-            const compressionLv = ups.data_compression || 0;
-            if (compressionLv > 0 && Math.random() < 0.5) {
-                amount *= 2;
-            }
-        }
 
         gameState.data = Math.max(0, (gameState.data || 0) + amount);
 
@@ -563,8 +554,13 @@ const resourceManager = (() => {
     function _onEnemyKilled(x, y, baseResourceDrop) {
         const config = getCurrentLevelConfig();
         const dataDropMult = config.dataDropMultiplier || 1;
+        const compressionLv = (gameState.upgrades || {}).data_compression || 0;
+        let compressionMult = 1;
+        if (compressionLv > 0 && Math.random() < (0.25 * compressionLv)) {
+            compressionMult = 2;
+        }
 
-        const totalDrop = baseResourceDrop * dataDropMult;
+        const totalDrop = baseResourceDrop * dataDropMult * compressionMult;
 
         // Add to the fractional drop accumulator
         dropAccumulator += totalDrop;

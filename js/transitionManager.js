@@ -52,7 +52,6 @@ const transitionManager = (() => {
                 if (typeof upgradeTree !== 'undefined') {
                     upgradeTree.hide();
                 }
-                gameHUD.setWaveProgressBarVisible(true);
 
             });
             // Trigger visual "System Scan" on wave start
@@ -81,9 +80,6 @@ const transitionManager = (() => {
             // Fallback — instant transition
             gameStateMachine.goTo(targetPhase);
             _endTransition();
-            if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
-                gameHUD.setWaveProgressBarVisible(true);
-            }
         }
     }
 

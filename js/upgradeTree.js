@@ -1096,17 +1096,46 @@ const upgradeTree = (() => {
         }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
         levelSelectContainer.add(title);
 
-        // Level text
-        const levelDisplay = PhaserScene.add.text(0, -70, t('ui', 'level') + selectedLevel, {
+        const levelDisplay = PhaserScene.add.text(0, -78, t('ui', 'level') + selectedLevel, {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '40px',
+            fontSize: '34px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
         levelSelectContainer.add(levelDisplay);
 
+        // DATA Bonus text
+        const bonusDisplay = PhaserScene.add.text(0, -36, '', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '22px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5, 0.75).setShadow(1, 1, '#000000', 1, true, true);
+        levelSelectContainer.add(bonusDisplay);
+
         const updateLevelUI = () => {
             levelDisplay.setText(t('ui', 'level') + selectedLevel);
+
+            // Calculate and show DATA bonus
+            const config = LEVEL_CONFIG[selectedLevel] || {};
+            const mult = config.dataDropMultiplier || 1.0;
+            if (mult > 1.0) {
+                const pct = Math.round((mult - 1) * 100);
+                bonusDisplay.setText(`+${pct}% DATA`);
+                bonusDisplay.setVisible(true);
+
+                // Quick bounce animation for feedback
+                PhaserScene.tweens.add({
+                    targets: bonusDisplay,
+                    scale: { from: 1, to: 1.07 },
+                    duration: 100,
+                    yoyo: true,
+                    ease: 'Cubic.easeOut'
+                });
+            } else {
+                bonusDisplay.setVisible(false);
+            }
+
             // Update button states
             minusBtn.setState(selectedLevel > 1 ? NORMAL : DISABLE);
             plusBtn.setState(selectedLevel < maxLevel ? NORMAL : DISABLE);
@@ -1114,10 +1143,10 @@ const upgradeTree = (() => {
 
         // Minus button
         const minusBtn = new Button({
-            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
-            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
-            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
-            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx - 35, y: cy - 10 },
+            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
+            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
+            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
+            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
             onMouseUp: () => {
                 if (selectedLevel > 1) {
                     selectedLevel--;
@@ -1132,10 +1161,10 @@ const upgradeTree = (() => {
 
         // Plus button
         const plusBtn = new Button({
-            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
-            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
-            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
-            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx + 35, y: cy - 10 },
+            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
+            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
+            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
+            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
             onMouseUp: () => {
                 if (selectedLevel < maxLevel) {
                     selectedLevel++;
