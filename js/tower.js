@@ -38,7 +38,7 @@ class TowerModel {
         const anchorHp = (ups.physical_anchor || 0) * 40;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 10 * systemRedundancyLv + anchorHp;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 5 * systemRedundancyLv + anchorHp;
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + shellDamage;
@@ -49,6 +49,9 @@ class TowerModel {
         this.healthRegen = baseDecay + 0.2 * regenLv;
         this.armor = armorLv * 2; // 2 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
+
+        // Root Access damage reduction
+        this.damageReceivedMultiplier = (ups.root_access || 0) >= 1 ? 0.9 : 1.0;
     }
 
     reset() {
@@ -66,6 +69,10 @@ class TowerModel {
         if (!this.alive || this.isInvincible) return false;
 
         let reducedAmount = Math.max(0, amount - this.armor);
+
+        // Apply percentage reduction from Root Access
+        reducedAmount *= this.damageReceivedMultiplier;
+
         this.health -= reducedAmount;
         if (this.health <= 0) {
             this.health = 0;

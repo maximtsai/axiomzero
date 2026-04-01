@@ -13,7 +13,7 @@
 const MB2 = {
     HEALTH: 230,
     DAMAGE: 10,
-    SELF_DAMAGE: 5,
+    SELF_DAMAGE: 15,
     SPEED_MULT: 2.4,
     CHARGE_RANGE: 200,
     RETREAT_PAST_RANGE: 150,

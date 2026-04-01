@@ -129,6 +129,17 @@ const tutorialManager = (() => {
         const y = 550;
 
         _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '30px');
+
+        // Play glow on specific primary nodes
+        const nodesToGlow = ['basic_pulse', 'integrity', 'intensity'];
+        nodesToGlow.forEach(id => {
+            if (typeof upgradeTree !== 'undefined') {
+                const node = upgradeTree.getNode(id);
+                if (node && typeof node._playRevealGlow === 'function') {
+                    node._playRevealGlow();
+                }
+            }
+        });
     }
 
     function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '30px') {

@@ -134,7 +134,8 @@ const projectileManager = (() => {
             // Handle dead/expired projectiles
             if (!p.alive || p.life <= 0) {
                 _deactivate(p);
-                activeProjectiles.splice(i, 1);
+                activeProjectiles[i] = activeProjectiles[activeProjectiles.length - 1];
+                activeProjectiles.pop();
                 continue;
             }
 
@@ -188,7 +189,8 @@ const projectileManager = (() => {
             }
             if (hit) {
                 _deactivate(p);
-                activeProjectiles.splice(i, 1);
+                activeProjectiles[i] = activeProjectiles[activeProjectiles.length - 1];
+                activeProjectiles.pop();
             }
         }
     }
