@@ -18,7 +18,7 @@ const nodeTooltip = (() => {
 
     let currentNode = null;
     let lastShowTime = 0;
-    const bgWidth = 280;
+    const bgWidth = 360;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function init() {
@@ -36,7 +36,7 @@ const nodeTooltip = (() => {
 
         nameT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '22px',
+            fontSize: '30px',
             color: '#ffffff',
             align: 'left',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -45,10 +45,10 @@ const nodeTooltip = (() => {
 
         descT = PhaserScene.add.rexBBCodeText(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '22px',
+            fontSize: '30px',
             color: '#ffffff',
             align: 'center',
-            wrap: { mode: 'word', width: 255 },
+            wrap: { mode: 'word', width: 335 },
             lineSpacing: 4,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -56,26 +56,26 @@ const nodeTooltip = (() => {
 
         lvT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '22px',
+            fontSize: '30px',
             color: '#ffffff',
             align: 'center',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
         container.add(lvT);
 
-        goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 26);
+        goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 34);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'VCR',
-            fontSize: '22px',
+            fontSize: '30px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5);
         container.add([goldBg, maxT]);
 
-        costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 26);
+        costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 34);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '22px',
+            fontSize: '30px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5);
@@ -113,7 +113,7 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
-        const currentBgWidth = 280 + (node.tooltipExtraWidth || 0);
+        const currentBgWidth = 360 + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
 
         // Update wrap width for description
@@ -131,27 +131,27 @@ const nodeTooltip = (() => {
         let currentY = 3;
 
         // Row 1: Icon & Name
-        const iconOffset = node.icon ? 44 : 0;
+        const iconOffset = node.icon ? 56 : 0;
         const nameTextStr = node.name.toUpperCase();
         nameT.setText(nameTextStr);
 
         const titleWidth = nameT.width + iconOffset;
         const titleStartX = -titleWidth / 2;
-        const centerTitleY = currentY + 17;
+        const centerTitleY = currentY + 19;
 
         if (node.icon) {
-            iconHolder.setVisible(true).setPosition(titleStartX + 17, centerTitleY);
-            iconSpr.setVisible(true).setFrame(node.icon).setPosition(titleStartX + 17, centerTitleY);
+            iconHolder.setVisible(true).setPosition(titleStartX + 22, centerTitleY);
+            iconSpr.setVisible(true).setFrame(node.icon).setPosition(titleStartX + 22, centerTitleY);
         } else {
             iconHolder.setVisible(false);
             iconSpr.setVisible(false);
         }
 
         nameT.setPosition(titleStartX + iconOffset, centerTitleY);
-        currentY += 34 + rowSpacing;
+        currentY += 44 + rowSpacing;
 
         // Row 2: Description
-        descT.setText(node.description).setPosition(0, currentY);
+        descT.setText(node.description).setPosition(0, currentY - 3);
         currentY += descT.height + rowSpacing;
 
         // Row 3: Level (skip for duo-box nodes — always 1/1)
@@ -159,7 +159,7 @@ const nodeTooltip = (() => {
             lvT.setVisible(false);
         } else {
             lvT.setVisible(true);
-            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY);
+            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 3);
             currentY += lvT.height + 7;
         }
 
@@ -169,26 +169,26 @@ const nodeTooltip = (() => {
         const isSwappable = isDuoActive && !isThisNodeActive;
 
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
-            goldBg.setVisible(true).setPosition(0, currentY + 13);
-            maxT.setVisible(true).setPosition(0, currentY + 13);
+            goldBg.setVisible(true).setPosition(0, currentY + 18);
+            maxT.setVisible(true).setPosition(0, currentY + 15);
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
-            currentY += 26;
+            currentY += 36;
         } else if (isSwappable) {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 13);
+            costBg.setVisible(true).setPosition(0, currentY + 18);
             costBg.setTexture('pixels', 'dark_green_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 13);
+            costT.setVisible(true).setPosition(0, currentY + 15);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
-            currentY += 26;
+            currentY += 36;
         } else {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 13);
-            costT.setVisible(true).setPosition(0, currentY + 13);
+            costBg.setVisible(true).setPosition(0, currentY + 18);
+            costT.setVisible(true).setPosition(0, currentY + 15);
 
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg.setTexture('pixels', bgPixel);
@@ -238,7 +238,7 @@ const nodeTooltip = (() => {
             else if (node.costType === 'coin') costColor = '#00ff66';
             costT.setColor(costColor);
 
-            currentY += 26;
+            currentY += 36;
         }
 
         const totalHeight = currentY + 3;

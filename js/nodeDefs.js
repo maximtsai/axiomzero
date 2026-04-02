@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['basic_pulse', 'integrity', 'intensity'],
+        childIds: ['emergency_depot', 'basic_pulse', 'integrity', 'intensity'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -47,6 +47,27 @@ const NODE_DEFS = [
             if (typeof glitchFX !== 'undefined') {
                 glitchFX.triggerSystemScan();
             }
+        },
+    },
+    {
+        id: 'emergency_depot',
+        name: 'EMERGENCY DEPOT',
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'emergency_depot.desc'),
+        popupText: t('nodes', 'emergency_depot.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['awaken'],
+        childIds: [],
+        treeX: gridX(0),
+        treeY: gridY(-1),
+        effect: function () {
+            resourceManager.addData(5000);
+            resourceManager.addShard(3);
+            resourceManager.addInsight(3);
         },
     },
     {

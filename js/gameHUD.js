@@ -25,9 +25,9 @@ const gameHUD = (() => {
     const HUD_X = 20;
     const HUD_Y = 20;
     const BAR_W = 200;
-    const BAR_H = helper.isMobileDevice() ? 22 : 18;
-    const BAR_GAP = helper.isMobileDevice() ? 12 : 8;
-    const EXP_BAR_H = helper.isMobileDevice() ? 14 : 10;
+    const BAR_H = helper.isMobileDevice() ? 28 : 24;
+    const BAR_GAP = helper.isMobileDevice() ? 18 : 14;
+    const EXP_BAR_H = helper.isMobileDevice() ? 20 : 16;
     const DATA_ICON_SIZE = 18;
     const DATA_ICON_GAP = 5;
 
@@ -97,9 +97,9 @@ const gameHUD = (() => {
         healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
         healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 2).setScrollFactor(0);
 
-        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 1, '', {
+        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 4, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: helper.isMobileDevice() ? '24px' : '20px',
+            fontSize: helper.isMobileDevice() ? '30px' : '26px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
@@ -111,9 +111,9 @@ const gameHUD = (() => {
         expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
         expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
 
-        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 3 : 5), t('hud', 'exp_initial'), {
+        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 6 : 8), t('hud', 'exp_initial'), {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: helper.isMobileDevice() ? '24px' : '20px',
+            fontSize: helper.isMobileDevice() ? '30px' : '26px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
@@ -139,7 +139,7 @@ const gameHUD = (() => {
 
             const text = PhaserScene.add.text(groupX + 28, currY - 11, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: helper.isMobileDevice() ? '26px' : '21px',
+                fontSize: helper.isMobileDevice() ? '32px' : '27px',
                 color: type.color,
             }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
 
@@ -527,7 +527,7 @@ const gameHUD = (() => {
         if (!visible) return;
 
         let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + EXP_BAR_H + BAR_GAP + 15;
-        const spacing = helper.isMobileDevice() ? 35 : 31;
+        const spacing = helper.isMobileDevice() ? 41 : 37;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
         const order = ['data', 'insight', 'shard', 'coin', 'processor'];
@@ -545,7 +545,7 @@ const gameHUD = (() => {
                 ui.icon.setVisible(isUpgradePhase);
                 ui.text.setVisible(isUpgradePhase);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
-                ui.text.y = currentY - 13;
+                ui.text.y = currentY - 16;
                 currentY += spacing;
             } else {
                 if (ui.btn) {
