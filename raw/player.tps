@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.0.3</string>
+        <string>7.2.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -205,6 +205,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">player/data_collect.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>13,13,25,25</rect>
+                <key>scale9Paddings</key>
+                <rect>13,13,25,25</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">player/deathwave.png</key>
             <key type="filename">player/range.png</key>
             <key type="filename">player/shockwave.png</key>
@@ -381,6 +396,22 @@
                 <rect>25,25,51,51</rect>
                 <key>scale9Paddings</key>
                 <rect>25,25,51,51</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/resrc_data_big.png</key>
+            <key type="filename">player/resrc_shard_big.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>38,38,76,76</rect>
+                <key>scale9Paddings</key>
+                <rect>38,38,76,76</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
