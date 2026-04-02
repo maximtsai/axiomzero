@@ -40,7 +40,7 @@ window.TRANSLATIONS.en = {
         focus: { name: 'COVERAGE', desc: '[color=#8FD9F8]+20%[/color] tower range', popup: '+20% ATTACK RANGE' },
         diagnostic_analytics: { name: 'DIAGNOSTICS', desc: 'Show how much damage each weapon dealt during combat.', popup: 'DIAGNOSTICS UNLOCKED' },
         base_hp_boost: { name: 'AUXILIARY POWER', desc: '[color=#8FD9F8]+4[/color] tower damage', popup: '+4 TOWER DMG' },
-        system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '[color=#87FF02]+5[/color] tower health per level', popup: '+5 MAX HEALTH' },
+        system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '[color=#87FF02]+5[/color] health', popup: '+5 MAX HEALTH' },
         regen: { name: 'AUTO-RESTORE', desc: '[color=#87FF02]+0.2[/color] health regen', popup: '+0.2 REGEN' },
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'RESILIENCE', desc: 'Reduces enemy attack damage by [color=#8FD9F8]2[/color].', popup: '+2 RESILIENCE' },

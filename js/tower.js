@@ -651,12 +651,10 @@ const tower = (() => {
         const dt = delta / 1000; // seconds
 
         if (model.active) {
-            /*
-                        // Negative health regen — skip decay if invincible (victory sequence)
-                        if (!(model.isInvincible && model.healthRegen < 0)) {
-                            model.health += model.healthRegen * dt;
-                        }
-            */
+            // Applied health regeneration (Auto-Restore)
+            if (model.healthRegen !== 0) {
+                model.health += model.healthRegen * dt;
+            }
             if (model.health > model.maxHealth) model.health = model.maxHealth;
             if (model.health <= 0) {
                 model.health = 0;

@@ -168,7 +168,7 @@ const waveManager = (() => {
         // Create the "SIGNAL LOST" text
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
-        const signalText = PhaserScene.add.text(cx, cy - 120, 'SIGNAL LOST', {
+        const signalText = PhaserScene.add.text(cx, cy - 90, 'SIGNAL LOST', {
             fontFamily: 'MunroSmall',
             fontSize: '60px',
             color: '#ffffff',
