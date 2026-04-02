@@ -15,6 +15,7 @@ const glitchFX = (() => {
     let intensity = 1;     // 0–1 global multiplier
     let scanlines = [];
     let bgGrid = null;      // Background grid sprite
+    let bgGridHigh = null;      // Background grid sprite
     let wave = null;        // Pooled central shockwave
     let blueLine = null;    // Pooled horizontal scan-sweep
     let scanFade1 = null;   // Pooled diagonal scan-line
@@ -39,6 +40,9 @@ const glitchFX = (() => {
         // Pre-create permanent background grid (for system scans etc)
         bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
         bgGrid.setDepth(1).setVisible(false);
+
+        bgGridHigh = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
+        bgGridHigh.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1).setVisible(false);
 
         // Pre-allocate system scan assets (Pooling)
         wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
@@ -235,6 +239,7 @@ const glitchFX = (() => {
 
         // Reset and show permanent grid
         bgGrid.setVisible(true).setScale(1);
+        bgGridHigh.setVisible(true).setScale(1).setAlpha(1.2);
 
         // 1. Central Deathwave Pulse
         wave.setPosition(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight)
@@ -281,7 +286,7 @@ const glitchFX = (() => {
         // 0b. Grid scaling (covers entrance + sweep + exit durations)
         const totalDuration = 250 + duration + 500;
         PhaserScene.tweens.add({
-            targets: bgGrid,
+            targets: [bgGrid, bgGridHigh],
             scale: 1.06,
             duration: totalDuration * 0.48,
             yoyo: true,
@@ -298,6 +303,13 @@ const glitchFX = (() => {
                 scanFade2.setAlpha(0.12 * fxState.alpha);
             },
             onComplete: () => {
+                PhaserScene.tweens.add({
+                    delay: 400,
+                    targets: [bgGridHigh],
+                    alpha: 0,
+                    ease: 'Cubic.easeInOut',
+                    duration: totalDuration - 300,
+                });
                 // Sweep all in sync
                 PhaserScene.tweens.add({
                     targets: fxState,
@@ -330,6 +342,7 @@ const glitchFX = (() => {
                                 scanFade1.setVisible(false);
                                 scanFade2.setVisible(false);
                                 bgGrid.setVisible(false); // Hide permanent grid again
+                                bgGridHigh.setVisible(false);
                             }
                         });
                     }

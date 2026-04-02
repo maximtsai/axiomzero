@@ -11,7 +11,9 @@ const resourceManager = (() => {
     let dropPool = [];
     let activeDrops = [];   // resting drops waiting for cursor proximity
     let flyingDrops = [];   // drops currently flying toward cursor
-    let processorPool = []; // Pool for processor resources
+    let collectFXPool = null;
+    let activeCollectFX = [];
+    let collectFXCooldownTimer = 0;
     let paused = false;     // true when options menu is open
     let shardIsFlying = false; // Guard to ensure miniboss shards are always collected
 
@@ -35,7 +37,7 @@ const resourceManager = (() => {
     function init() {
         dropPool = new ObjectPool(
             () => {
-                const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data.png');
+                const img = PhaserScene.add.image(0, 0, 'player', 'resrc_data_big.png');
                 img.setScale(0.75);
                 img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES);
                 img.setVisible(false);
@@ -76,6 +78,20 @@ const resourceManager = (() => {
             _resetDrop,
             100
         ).preAllocate(100);
+
+        collectFXPool = new ObjectPool(
+            () => {
+                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'data_collect.png', 28, 28, 8, 8, 8, 8);
+                slice.setRotation(Phaser.Math.DegToRad(45));
+                slice.setDepth(GAME_CONSTANTS.DEPTH_HUD + 10);
+                slice.setScrollFactor(0);
+                slice.setVisible(false);
+                slice.setActive(false);
+                return slice;
+            },
+            (s) => { s.setVisible(false); s.setActive(false); },
+            8
+        ).preAllocate(8);
 
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -126,7 +142,7 @@ const resourceManager = (() => {
 
     function spawnShardDrop(x, y) {
         shardIsFlying = true;
-        const img = PhaserScene.add.image(x, y, 'player', 'resrc_shard.png');
+        const img = PhaserScene.add.image(x, y, 'player', 'resrc_shard_big.png');
         img.setScale(1.0);
         img.setDepth(GAME_CONSTANTS.DEPTH_RESOURCES + 1);
 
@@ -440,6 +456,17 @@ const resourceManager = (() => {
     function _update(delta) {
         if (paused) return;
 
+        if (collectFXCooldownTimer > 0) {
+            collectFXCooldownTimer -= delta;
+        }
+
+        // Update active collection effects to follow cursor
+        if (activeCollectFX.length > 0) {
+            for (let i = 0; i < activeCollectFX.length; i++) {
+                activeCollectFX[i].setPosition(GAME_VARS.mouseposx, GAME_VARS.mouseposy);
+            }
+        }
+
         // ── Packet Sniffing Logic ──
         if (isPacketSniffingActive && currentPhase === GAME_CONSTANTS.PHASE_COMBAT) {
             sniffTimer += delta;
@@ -498,7 +525,10 @@ const resourceManager = (() => {
                 _deactivate(d);
                 if (d.type === 'processor') addProcessor(1);
                 else if (d.type === 'shard') addShard(1);
-                else addData(1);
+                else {
+                    addData(1);
+                    _playCollectFX(cx, cy);
+                }
 
                 flyingDrops[i] = flyingDrops[flyingDrops.length - 1];
                 flyingDrops.pop();
@@ -640,6 +670,42 @@ const resourceManager = (() => {
         else if (type === 'coin') addCoin(-amount);
         else addData(-amount);
         return true;
+    }
+
+    function _playCollectFX(x, y) {
+        if (collectFXCooldownTimer > 0 || !collectFXPool) return;
+        collectFXCooldownTimer = 100; // 0.1s in ms
+
+        const fx = collectFXPool.get();
+        if (!fx) return;
+
+        fx.setPosition(x, y);
+        fx.width = 28;
+        fx.height = 28;
+        fx.setAlpha(1.3);
+        fx.setVisible(true);
+        fx.setActive(true);
+        activeCollectFX.push(fx);
+
+        PhaserScene.tweens.add({
+            targets: fx,
+            width: 90,
+            height: 90,
+            duration: 420,
+            ease: 'Quart.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            targets: fx,
+            alpha: 0,
+            ease: 'Cubic.easeOut',
+            duration: 420,
+            onComplete: () => {
+                const idx = activeCollectFX.indexOf(fx);
+                if (idx !== -1) activeCollectFX.splice(idx, 1);
+                collectFXPool.release(fx);
+            }
+        });
     }
 
     return {
