@@ -18,7 +18,7 @@ const nodeTooltip = (() => {
 
     let currentNode = null;
     let lastShowTime = 0;
-    const bgWidth = 360;
+    const bgWidth = 510;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function init() {
@@ -48,7 +48,7 @@ const nodeTooltip = (() => {
             fontSize: '30px',
             color: '#ffffff',
             align: 'center',
-            wrap: { mode: 'word', width: 335 },
+            wrap: { mode: 'word', width: 485 },
             lineSpacing: 4,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -63,7 +63,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0);
         container.add(lvT);
 
-        goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 34);
+        goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'VCR',
             fontSize: '30px',
@@ -72,7 +72,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([goldBg, maxT]);
 
-        costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 34);
+        costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
             fontSize: '30px',
@@ -113,7 +113,7 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
-        const currentBgWidth = 360 + (node.tooltipExtraWidth || 0);
+        const currentBgWidth = 510 + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
 
         // Update wrap width for description
@@ -124,8 +124,8 @@ const nodeTooltip = (() => {
         }
 
         // Update background elements display sizes
-        goldBg.setDisplaySize(currentBgWidth - 6, 26);
-        costBg.setDisplaySize(currentBgWidth - 6, 26);
+        goldBg.setDisplaySize(currentBgWidth - 6, 37);
+        costBg.setDisplaySize(currentBgWidth - 6, 37);
 
         const rowSpacing = 10;
         let currentY = 3;
@@ -169,26 +169,26 @@ const nodeTooltip = (() => {
         const isSwappable = isDuoActive && !isThisNodeActive;
 
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
-            goldBg.setVisible(true).setPosition(0, currentY + 18);
-            maxT.setVisible(true).setPosition(0, currentY + 15);
+            goldBg.setVisible(true).setPosition(0, currentY + 19.5);
+            maxT.setVisible(true).setPosition(0, currentY + 16.5); // was 15, moving up with others or keeping relative to background?
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
-            currentY += 36;
+            currentY += 39;
         } else if (isSwappable) {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 18);
+            costBg.setVisible(true).setPosition(0, currentY + 19.5);
             costBg.setTexture('pixels', 'dark_green_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 15);
+            costT.setVisible(true).setPosition(0, currentY + 16.5);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
-            currentY += 36;
+            currentY += 39;
         } else {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 18);
-            costT.setVisible(true).setPosition(0, currentY + 15);
+            costBg.setVisible(true).setPosition(0, currentY + 19.5);
+            costT.setVisible(true).setPosition(0, currentY + 16.5);
 
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg.setTexture('pixels', bgPixel);
@@ -238,7 +238,7 @@ const nodeTooltip = (() => {
             else if (node.costType === 'coin') costColor = '#00ff66';
             costT.setColor(costColor);
 
-            currentY += 36;
+            currentY += 39;
         }
 
         const totalHeight = currentY + 3;

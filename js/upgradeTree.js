@@ -397,7 +397,7 @@ const upgradeTree = (() => {
         // Cursor Coordinate display (Requirement §N.2)
         coordText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 26, GAME_CONSTANTS.HEIGHT - 24, 'TEST', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '20px',
+            fontSize: '24px',
             color: '#aaaaaa',
             align: 'left',
             lineSpacing: 2
