@@ -442,7 +442,7 @@ const gameHUD = (() => {
     function _onHealthChanged(current, max) {
         // Remove !visible guard to ensure health bar updates on load
 
-        // Logarithmic scaling: 200px at 20 health, ~800px at 10,000 health
+        // Logarithmic scaling: 200px at 10 health, ~800px at 10,000 health
         // Formula: L = 222.3 * log10(max) - 89.2
         const dynamicW = Math.max(BAR_W, BAR_W + 222.3 * (Math.log10(max) - Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH)));
 
@@ -611,10 +611,11 @@ const gameHUD = (() => {
      */
     function showTransitionMessage(msg) {
         // Measure final dimensions without delay symbols for proper centering
+        const fSize = (gameState.settings.bigFont ? 56 : 50) + 'px';
         const measureMsg = msg.replaceAll('#', '');
         const tempTxt = PhaserScene.add.text(0, 0, measureMsg, {
             fontFamily: 'MunroSmall',
-            fontSize: '50px',
+            fontSize: fSize,
         });
         const fullWidth = tempTxt.width;
         const fullHeight = tempTxt.height;
@@ -623,11 +624,13 @@ const gameHUD = (() => {
         const baseYPos = GAME_CONSTANTS.halfHeight - 310;
         const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
             fontFamily: 'MunroSmall',
-            fontSize: '50px',
+            fontSize: fSize,
             color: '#ffffff',
             align: 'center',
+            stroke: '#000000',
+            strokeThickness: 5,
             lineSpacing: 2
-        }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 2, '#000000', 2, true, true);
+        }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
 
         const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'ui', 'white_line.png');
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
@@ -690,7 +693,7 @@ const gameHUD = (() => {
             const lineBaseX = line.x;
             const lineBaseY = line.y;
 
-            PhaserScene.time.delayedCall(2650, () => {
+            PhaserScene.time.delayedCall(2850, () => {
                 // Glitch jitter phase — erratic shaking + alpha flicker
                 let jitterCount = 0;
                 const jitterTotal = 8;

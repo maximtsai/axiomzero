@@ -90,12 +90,12 @@ class Button {
         this.currImageRef = null;
         buttonManager.addToButtonList(this);
 
+        this.depth = data.normal.depth || 0;
         this.handlePreload();
         this.setState(NORMAL);
 
         this.isDraggable = data.isDraggable || false;
         this.hoverWhileDisabled = data.hoverWhileDisabled || false;
-        this.depth = 0;
     }
 
     setState(newState) {

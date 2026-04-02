@@ -14,7 +14,7 @@ const MB1 = {
     ATTACK_RANGE: 200,
     RETREAT_RANGE: 235,
     FIRE_INTERVAL: 4000,
-    BULLET_DAMAGE: 5,
+    BULLET_DAMAGE: 4,
     KNOCKBACK_MOD: 0,
     INITIAL_SPEED_MULT: 7,
     RAMP_DURATION: 2,
@@ -147,7 +147,7 @@ class Miniboss1 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
-        
+
         // Intended: Minibosses/Bosses do not scale health or damage with level progression
         m.maxHealth = MB1.HEALTH;
         m.health = m.maxHealth;

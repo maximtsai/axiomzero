@@ -262,21 +262,21 @@
 				{
 					"filename": "checkbox_off_hover.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
 						"x": 199,
 						"y": 213,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -287,21 +287,21 @@
 				{
 					"filename": "checkbox_off_normal.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
 						"x": 199,
 						"y": 263,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -387,21 +387,21 @@
 				{
 					"filename": "checkbox_off_press.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
 						"x": 187,
 						"y": 313,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -412,21 +412,21 @@
 				{
 					"filename": "checkbox_on_hover.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
 						"x": 1,
 						"y": 341,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -437,21 +437,21 @@
 				{
 					"filename": "checkbox_on_normal.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
-						"x": 51,
+						"x": 52,
 						"y": 341,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -462,21 +462,21 @@
 				{
 					"filename": "checkbox_on_press.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 48,
+						"w": 248,
 						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"frame": {
-						"x": 101,
+						"x": 103,
 						"y": 341,
-						"w": 48,
+						"w": 49,
 						"h": 48
 					},
 					"anchor": {
@@ -515,6 +515,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:54e9904d190feaeef333ac4e374783f9:326cbeb74605f197e510bc195313b643:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:13721597371fbb5fd7484a8ff9a46e7c:ac1aed86e831b47110043f31785d4fbe:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

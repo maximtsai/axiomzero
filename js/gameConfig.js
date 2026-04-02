@@ -25,7 +25,7 @@ GAME_CONSTANTS.COLOR_NEUTRAL = '#e2e8f0';
 
 // ─── Tower ────────────────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.TOWER_BASE_HEALTH = 20;
+GAME_CONSTANTS.TOWER_BASE_HEALTH = 10;
 GAME_CONSTANTS.TOWER_BASE_DAMAGE = 5;
 GAME_CONSTANTS.TOWER_ATTACK_RANGE = 230;
 GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN = 1000;  // ms between auto-attacks
@@ -129,7 +129,7 @@ const SAVE_VERSION = 2;
 
 const GAME_STATE_DEFAULTS = {
     // Tower
-    towerMaxHealth: 20,
+    towerMaxHealth: 10,
     towerDamage: 6,
     towerAttackRange: 230,
     towerHealthRegen: 0,   // Now driven by per-level healthDecay property
@@ -187,6 +187,7 @@ const GAME_STATE_DEFAULTS = {
         musicMuted: false,
         chromaticAberration: true,
         showDamageNumbers: true,
-        minimalParticles: false
+        minimalParticles: false,
+        bigFont: false
     }
 };

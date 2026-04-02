@@ -18,7 +18,7 @@ const nodeTooltip = (() => {
 
     let currentNode = null;
     let lastShowTime = 0;
-    const bgWidth = 490;
+    const bgWidth = helper.isMobileDevice() ? 400 : 380;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function init() {
@@ -26,7 +26,7 @@ const nodeTooltip = (() => {
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
 
-        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x111122).setAlpha(0.82);
+        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x151c2d).setAlpha(0.78);
         container.add(bg);
 
         // Icon holder
@@ -36,7 +36,7 @@ const nodeTooltip = (() => {
 
         nameT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '36px',
+            fontSize: '26px', // Initial size doesn't matter much as it is now set in show()
             color: '#ffffff',
             align: 'left',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -45,10 +45,10 @@ const nodeTooltip = (() => {
 
         descT = PhaserScene.add.rexBBCodeText(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '30px',
+            fontSize: '26px',
             color: '#ffffff',
             align: 'center',
-            wrap: { mode: 'word', width: 465 },
+            wrap: { mode: 'word', width: helper.isMobileDevice() ? 375 : 355 },
             lineSpacing: 4,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -56,7 +56,7 @@ const nodeTooltip = (() => {
 
         lvT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '30px',
+            fontSize: '26px',
             color: '#ffffff',
             align: 'center',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -66,7 +66,7 @@ const nodeTooltip = (() => {
         goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'VCR',
-            fontSize: '30px',
+            fontSize: '26px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5);
@@ -75,7 +75,7 @@ const nodeTooltip = (() => {
         costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '30px',
+            fontSize: '26px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5);
@@ -113,8 +113,18 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
-        const currentBgWidth = 490 + (node.tooltipExtraWidth || 0);
+        const isBigValue = gameState.settings.bigFont;
+        const baseW = helper.isMobileDevice() ? 400 : 380;
+        const currentBgWidth = (isBigValue ? baseW + 50 : baseW) + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
+        const baseFontSize = isBigValue ? 30 : 26;
+        const nameFontSize = isBigValue ? 36 : 32;
+
+        nameT.setFontSize(nameFontSize + 'px');
+        descT.setFontSize(baseFontSize + 'px');
+        lvT.setFontSize(baseFontSize + 'px');
+        maxT.setFontSize(baseFontSize + 'px');
+        costT.setFontSize(baseFontSize + 'px');
 
         // Update wrap width for description
         if (descT.setWrapWidth) {
@@ -124,10 +134,14 @@ const nodeTooltip = (() => {
         }
 
         // Update background elements display sizes
-        goldBg.setDisplaySize(currentBgWidth - 6, 37);
-        costBg.setDisplaySize(currentBgWidth - 6, 37);
+        const barHeight = isBigValue ? 37 : 35;
+        goldBg.setDisplaySize(currentBgWidth - 6, barHeight);
+        costBg.setDisplaySize(currentBgWidth - 6, barHeight);
 
-        const rowSpacing = 12;
+        const rowSpacing = isBigValue ? 10 : 7;
+        const lineSpacingValue = isBigValue ? 4 : 1;
+        descT.setLineSpacing(lineSpacingValue);
+
         let currentY = 3;
 
         // Row 1: Icon & Name
@@ -151,7 +165,7 @@ const nodeTooltip = (() => {
         currentY += 44 + rowSpacing;
 
         // Row 2: Description
-        descT.setText(node.description).setPosition(0, currentY - 3);
+        descT.setText(node.description).setPosition(0, currentY - 5);
         currentY += descT.height + rowSpacing;
 
         // Row 3: Level (skip for duo-box nodes — always 1/1)
@@ -159,7 +173,7 @@ const nodeTooltip = (() => {
             lvT.setVisible(false);
         } else {
             lvT.setVisible(true);
-            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 3);
+            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 2);
             currentY += lvT.height + 7;
         }
 
@@ -169,8 +183,8 @@ const nodeTooltip = (() => {
         const isSwappable = isDuoActive && !isThisNodeActive;
 
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
-            goldBg.setVisible(true).setPosition(0, currentY + 19.5);
-            maxT.setVisible(true).setPosition(0, currentY + 16.5); // was 15, moving up with others or keeping relative to background?
+            goldBg.setVisible(true).setPosition(0, currentY + 20);
+            maxT.setVisible(true).setPosition(0, currentY + 18); // was 15, moving up with others or keeping relative to background?
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
@@ -178,17 +192,17 @@ const nodeTooltip = (() => {
         } else if (isSwappable) {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 19.5);
+            costBg.setVisible(true).setPosition(0, currentY + 20);
             costBg.setTexture('pixels', 'dark_green_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 16.5);
+            costT.setVisible(true).setPosition(0, currentY + 18);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
             currentY += 39;
         } else {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 19.5);
-            costT.setVisible(true).setPosition(0, currentY + 16.5);
+            costBg.setVisible(true).setPosition(0, currentY + 20);
+            costT.setVisible(true).setPosition(0, currentY + 18);
 
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg.setTexture('pixels', bgPixel);

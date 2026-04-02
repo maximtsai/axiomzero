@@ -105,6 +105,8 @@ const floatingText = (() => {
         t._baseScaleX = scaleX;
         t._baseScaleY = scaleY;
         t._noScale = !!opts.noScale;
+        t._color1 = color;
+        t._color2 = opts.color2 || null;
 
         _activeTexts.push(t);
     }
@@ -140,6 +142,16 @@ const floatingText = (() => {
                 t.setScale(t._baseScaleX * easedScale, t._baseScaleY * easedScale);
             } else {
                 t.setScale(t._baseScaleX, t._baseScaleY);
+            }
+
+            // Color Flipping logic
+            if (t._color2) {
+                const flip = Math.floor(t._elapsed / 200) % 2;
+                const targetColor = (flip === 0) ? t._color1 : t._color2;
+                if (t._cachedStyles.color !== targetColor) {
+                    t.setFill(targetColor);
+                    t._cachedStyles.color = targetColor;
+                }
             }
 
             // Expiry Check

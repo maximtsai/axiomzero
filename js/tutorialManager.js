@@ -151,6 +151,14 @@ const tutorialManager = (() => {
             if (typeof saveGame === 'function') saveGame();
         }
 
+        // Apply big font scaling if enabled
+        if (gameState.settings.bigFont) {
+            const numPart = parseInt(fontSize);
+            if (!isNaN(numPart)) {
+                fontSize = (numPart + 6) + 'px';
+            }
+        }
+
         // 1. Create temporary text to measure its final width
         const measureText = PhaserScene.add.text(0, 0, msg, {
             fontFamily: 'MunroSmall',

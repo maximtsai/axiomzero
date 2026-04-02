@@ -188,7 +188,7 @@ const NODE_DEFS = [
         baseCost: 5,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 5,
+        costStep: 10,
         costStepScaling: 5,
         parents: ['awaken'],
         childIds: ['focus', 'prismatic_array'],

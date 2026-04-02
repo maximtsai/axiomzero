@@ -186,6 +186,7 @@ window.TRANSLATIONS.en = {
         chroma: 'CHROMATIC ABERRATION ',
         dmg_numbers: 'DAMAGE NUMBERS ',
         particles: 'PARTICLES ',
+        big_font: 'BIG FONT ',
         particles_full: 'FULL',
         particles_minimal: 'MINIMAL',
         gameplay: 'GAMEPLAY ',
@@ -242,7 +243,7 @@ window.TRANSLATIONS.en = {
         exp_initial: 'EXP 0%'
     },
     popup: {
-        insight_gained: '+INSIGHT',
+        insight_gained: '+LEVEL UP!',
         shard_acquired: '+1 SHARD ACQUIRED'
     }
 };

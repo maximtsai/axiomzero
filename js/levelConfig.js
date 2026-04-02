@@ -29,7 +29,6 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss1',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
-        healthDecay: 0 // HP/sec (negative = drain)
     },
     2: {
         spawnInterval: 700, // ms between regular spawns (base)
@@ -59,7 +58,6 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss2',        // Identifier for the main boss
         dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.65, // Scales up *base* stats of enemies before wave scaling applies
-        healthDecay: -0.1
     },
     3: {
         spawnInterval: 800,
@@ -88,7 +86,6 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss3',
         dataDropMultiplier: 1.6,
         levelScalingModifier: 2.2,
-        healthDecay: -0.2
     },
     4: {
         spawnInterval: 700,
@@ -120,7 +117,6 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss5',
         dataDropMultiplier: 2,
         levelScalingModifier: 3.2,
-        healthDecay: -0.3
     },
     5: {
         spawnInterval: 650,
@@ -152,7 +148,6 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss5',
         dataDropMultiplier: 2.5,
         levelScalingModifier: 4.2,
-        healthDecay: -0.4
     }
 };
 

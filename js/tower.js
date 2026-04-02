@@ -45,8 +45,8 @@ class TowerModel {
 
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         const lvlCfg = getCurrentLevelConfig();
-        const baseDecay = lvlCfg.healthDecay || 0;
-        this.healthRegen = baseDecay + 0.2 * regenLv;
+        // const baseDecay = lvlCfg.healthDecay || 0;
+        this.healthRegen = 0.2 * regenLv; // baseDecay commented out per request
         this.armor = armorLv * 2; // 2 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
 
@@ -431,7 +431,7 @@ class TowerView {
             this.deathShockwave.setDepth(0).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
         }
         // Reset and trigger
-        this.deathShockwave.setVisible(true).setAlpha(1).setScale(0.1);
+        this.deathShockwave.setVisible(true).setAlpha(0.75).setScale(0.15);
 
         // Environment grid pulse via glitch system
         if (typeof glitchFX !== 'undefined') {
@@ -604,10 +604,12 @@ const tower = (() => {
         const dt = delta / 1000; // seconds
 
         if (model.active) {
-            // Negative health regen — skip decay if invincible (victory sequence)
-            if (!(model.isInvincible && model.healthRegen < 0)) {
-                model.health += model.healthRegen * dt;
-            }
+            /*
+                        // Negative health regen — skip decay if invincible (victory sequence)
+                        if (!(model.isInvincible && model.healthRegen < 0)) {
+                            model.health += model.healthRegen * dt;
+                        }
+            */
             if (model.health > model.maxHealth) model.health = model.maxHealth;
             if (model.health <= 0) {
                 model.health = 0;
@@ -637,7 +639,9 @@ const tower = (() => {
                     fontFamily: 'JetBrainsMono_Bold',
                     fontSize: 22,
                     color: '#ffe600',
+                    color2: '#ff2d78',
                     depth: GAME_CONSTANTS.DEPTH_TOWER,
+                    duration: 2000,
                 });
             }
             gameState.exp = model.exp;

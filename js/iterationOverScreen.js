@@ -93,23 +93,23 @@ const iterationOverScreen = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: cx - 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 270,
+                depth: depth + 12,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: cx - 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 270,
+                depth: depth + 12,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: cx - 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 270,
+                depth: depth + 12,
             },
             onMouseUp: _onUpgradesClicked,
         });
@@ -120,29 +120,30 @@ const iterationOverScreen = (() => {
             color: '#ffffff',
         });
         upgradesBtn.setScrollFactor(0);
+        upgradesBtn.setDepth(depth + 12);
 
         // RETRY SESSION button
         retryBtn = new Button({
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: cx + 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 345,
+                depth: depth + 12,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: cx + 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 345,
+                depth: depth + 12,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: cx + 113,
-                y: cy + 310,
-                depth: depth + 2,
+                x: cx,
+                y: cy + 345,
+                depth: depth + 12,
             },
             onMouseUp: _onRetryClicked,
         });
@@ -153,6 +154,7 @@ const iterationOverScreen = (() => {
             color: '#ffffff',
         });
         retryBtn.setScrollFactor(0);
+        retryBtn.setDepth(depth + 12);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────

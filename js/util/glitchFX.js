@@ -257,7 +257,7 @@ const glitchFX = (() => {
         PhaserScene.tweens.add({
             delay: 200,
             targets: wave,
-            alpha: 0.15,
+            alpha: 0.12,
             duration: 250,
             ease: 'Quad.easeOut',
             onComplete: () => {
@@ -299,8 +299,8 @@ const glitchFX = (() => {
             duration: 250,
             ease: 'Cubic.easeOut',
             onUpdate: () => {
-                scanFade1.setAlpha(0.7 * fxState.alpha);
-                scanFade2.setAlpha(0.12 * fxState.alpha);
+                scanFade1.setAlpha(0.5 * fxState.alpha);
+                scanFade2.setAlpha(0.1 * fxState.alpha);
             },
             onComplete: () => {
                 PhaserScene.tweens.add({
@@ -335,8 +335,8 @@ const glitchFX = (() => {
                             alpha: 0,
                             duration: 500,
                             onUpdate: () => {
-                                scanFade1.setAlpha(0.7 * fxState.alpha);
-                                scanFade2.setAlpha(0.12 * fxState.alpha);
+                                scanFade1.setAlpha(0.5 * fxState.alpha);
+                                scanFade2.setAlpha(0.1 * fxState.alpha);
                             },
                             onComplete: () => {
                                 scanFade1.setVisible(false);
@@ -367,10 +367,11 @@ const glitchFX = (() => {
 
         blueLine.setPosition(x, y)
             .setVisible(true)
-            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1)
-            .setAlpha(0.05)
+            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 11)
+            .setAlpha(0.04)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, startHeight)
-            .setTint(0x00f5ff);
+            .setTint(0x00f5ff)
+            .setBlendMode(Phaser.BlendModes.ADD);
 
         // expansion + fade in tween
         PhaserScene.tweens.add({
@@ -400,7 +401,7 @@ const glitchFX = (() => {
                 blueLine.x = x + (Math.random() - 0.5) * 20 * intensity;
                 blueLine.y = y + (Math.random() - 0.5) * 8 * intensity;
                 blueLine.displayHeight = state.h * jitter;
-                blueLine.setAlpha((0.12 + 0.18 * Math.random()) * state.alphaMult);
+                blueLine.setAlpha((0.10 + 0.15 * Math.random()) * state.alphaMult);
             }
         });
 
