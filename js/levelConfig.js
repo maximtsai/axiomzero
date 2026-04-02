@@ -178,8 +178,8 @@ function getCurrentLevelConfig(progress = 0) {
     // Swap probabilities based on miniboss progress or past victory
     config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
 
-    // Tempo logic: Use lateSpawnInterval at 40% wave progress OR in Farming Mode
-    const isLateTempo = progress > 0.4 || levelBeaten;
+    // Tempo logic: Use lateSpawnInterval if we are in Farming Mode OR if lateWeights are active (useLateState)
+    const isLateTempo = useLateState || progress > 0.4;
     if (isLateTempo && config.lateSpawnInterval !== undefined) {
         config.spawnInterval = config.lateSpawnInterval;
     } else {

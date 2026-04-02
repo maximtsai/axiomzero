@@ -349,7 +349,9 @@ class Boss5 extends Boss {
         });
 
         if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
-            enemyManager.killAllNonBossEnemies();
+            PhaserScene.time.delayedCall(150, () => {
+                enemyManager.killAllNonBossEnemies();
+            });
         }
 
         messageBus.publish('bossDefeated', ex, ey);

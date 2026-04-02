@@ -55,10 +55,10 @@ const waveManager = (() => {
         const currentLevel = gameState.currentLevel || 1;
         const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
         const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
-        
+
         if (levelBeaten) {
             // Endless farming mode — no progress bar, no boss
-            currentWaveDuration = 999999; 
+            currentWaveDuration = 999999;
             messageBus.publish('waveModeFarmingStarted');
         } else {
             currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
@@ -112,6 +112,7 @@ const waveManager = (() => {
 
         // 1. Freeze all enemies — stop movement and spawning
         messageBus.publish('freezeEnemies');
+        PhaserScene.time.timeScale = 1.0;
 
         // 2. Block all cursor input
         helper.createGlobalClickBlocker(false);
@@ -140,6 +141,10 @@ const waveManager = (() => {
         });
 
         customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+        PhaserScene.cameras.main.shake(500, 0.012);
+
+        // 5.5 High-intensity failure visuals
+        _triggerDeathGlitchBurst();
 
 
         // 6. Request tower shake — _onTowerShakeComplete fires when done
@@ -151,8 +156,76 @@ const waveManager = (() => {
         if (deathOverlay) { deathOverlay.destroy(); deathOverlay = null; }
         helper.hideGlobalClickBlocker();
         messageBus.publish('unfreezeEnemies');
-        gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
-        debugLog('Death sequence complete — entering WAVE_COMPLETE');
+
+        // Added 300ms of extra air-time for the glitch and "SIGNAL LOST" visual to breathe
+        PhaserScene.time.delayedCall(300, () => {
+            gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
+            debugLog('Death sequence complete — entering WAVE_COMPLETE');
+        });
+    }
+
+    function _triggerDeathGlitchBurst() {
+        // Create the "SIGNAL LOST" text
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const signalText = PhaserScene.add.text(cx, cy - 120, 'SIGNAL LOST', {
+            fontFamily: 'MunroSmall',
+            fontSize: '60px',
+            color: '#ffffff',
+            stroke: '#ff2d78',
+            strokeThickness: 2,
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 10).setAlpha(0);
+
+        // Register for cleanup just in case
+        registerCombatObject(signalText);
+
+        // Entrance flicker
+        PhaserScene.tweens.add({
+            targets: signalText,
+            alpha: 1,
+            duration: 100,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+                signalText.setAlpha(1);
+                // Apply glitch effects to the text
+                if (typeof glitchFX !== 'undefined') {
+                    glitchFX.triggerChromaticAberration(signalText, 600, 1.5);
+                    glitchFX.triggerFlicker([signalText], 600);
+                }
+            }
+        });
+
+        // Trigger multiple full-screen scanline tears
+        if (typeof glitchFX !== 'undefined') {
+            for (let i = 0; i < 12; i++) {
+                PhaserScene.time.delayedCall(i * 40, () => {
+                    glitchFX.triggerScanline(4, 65);
+                });
+            }
+        }
+
+        // White "flash" overlay for a split second
+        const flash = PhaserScene.add.image(cx, cy, 'white_pixel');
+        flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        flash.setTint(0xffffff).setAlpha(0.6).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 5);
+
+        PhaserScene.tweens.add({
+            targets: flash,
+            alpha: 0,
+            duration: 250,
+            onComplete: () => flash.destroy()
+        });
+
+        // Final exit fade
+        PhaserScene.time.delayedCall(650, () => {
+            PhaserScene.tweens.add({
+                targets: signalText,
+                alpha: 0,
+                duration: 150,
+                onComplete: () => signalText.destroy()
+            });
+        });
     }
 
     function _onBossDefeated(x, y) {
@@ -198,7 +271,7 @@ const waveManager = (() => {
                     shockwave.destroy();
                 }
             });
-            PhaserScene.time.delayedCall(300, () => {
+            PhaserScene.time.delayedCall(2300, () => {
                 // 3. Inform enemyManager to instantly kill all non-boss enemies
                 if (typeof enemyManager !== 'undefined') {
                     enemyManager.killAllNonBossEnemies();
@@ -211,7 +284,7 @@ const waveManager = (() => {
 
 
             // 5. Delay then transition — extended for Boss5
-            const transitionDelay = isBoss5 ? 4000 : 2400;
+            const transitionDelay = isBoss5 ? 6000 : 4400;
             PhaserScene.time.delayedCall(transitionDelay, () => {
                 gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE, { bossKill: true });
             });

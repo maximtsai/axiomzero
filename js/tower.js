@@ -22,6 +22,7 @@ class TowerModel {
         this.isInvincible = false;       // true briefly after a boss is defeated
         this.awakened = false; // true after awaken() is called
         this.paused = false;
+        this.hasWarnedThisWave = false;
     }
 
     recalcStats() {
@@ -61,6 +62,7 @@ class TowerModel {
         this.attackTimer = 0;
         // EXP no longer resets between waves
         this.isInvincible = false;
+        this.hasWarnedThisWave = false;
         messageBus.publish('healthChanged', this.health, this.maxHealth);
         messageBus.publish('expChanged', this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
@@ -109,6 +111,7 @@ class TowerView {
         this.rangeSprite = null;  // Range indicator circle below tower
         this.breatheTween = null;
         this.deathShockwave = null;
+        this.warnShockwave = null;
         this.artilleryCallTween = null;
     }
 
@@ -150,6 +153,9 @@ class TowerView {
         // Pre-create death shockwave (temp depth 0 for visibility)
         this.deathShockwave = PhaserScene.add.image(cx, cy, 'player', 'deathwave.png');
         this.deathShockwave.setDepth(0).setAlpha(0);
+
+        this.warnShockwave = PhaserScene.add.image(cx, cy, 'player', 'warnwave.png');
+        this.warnShockwave.setDepth(0).setAlpha(0);
 
         // Main tower sprite
         this.sprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
@@ -452,6 +458,29 @@ class TowerView {
             ease: 'Cubic.easeOut',
         });
     }
+
+    playWarnShockwave(duration = 750) {
+        if (!this.warnShockwave) {
+            this.warnShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'warnwave.png');
+            this.warnShockwave.setDepth(10).setAlpha(1).setBlendMode(Phaser.BlendModes.ADD);
+        }
+        // Reset and trigger
+        this.warnShockwave.setVisible(true).setAlpha(1).setScale(0.25);
+
+        PhaserScene.tweens.add({
+            targets: this.warnShockwave,
+            scale: 3,
+            duration: duration,
+            ease: 'Cubic.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            targets: this.warnShockwave,
+            alpha: 0,
+            duration: duration,
+            ease: 'Cubic.easeOut',
+        });
+    }
 }
 
 // Controller IIFE
@@ -558,6 +587,23 @@ const tower = (() => {
         if (survived) {
             view.playHitFlash();
             zoomShake(1.007);
+
+            // Critical Health Warning Check
+            if (!model.hasWarnedThisWave && ((model.health - 2.1) / model.maxHealth) < 0.20) {
+                model.hasWarnedThisWave = true;
+                view.playWarnShockwave();
+                // Optional: slow down zoom shake slightly to emphasize core hit
+                zoomShake(1.015);
+
+                // Hitstop effect — slow down world logic for 300ms real-time
+                setTimeout(() => {
+                    PhaserScene.time.timeScale = 0.25;
+                    PhaserScene.time.delayedCall(300, () => {
+                        PhaserScene.time.timeScale = 1.0;
+                    });
+                }, 40);
+            }
+
             if (x !== undefined && y !== undefined) {
                 // Offset 10px closer to tower center
                 const cx = GAME_CONSTANTS.halfWidth;
@@ -573,6 +619,7 @@ const tower = (() => {
             // fatality path
             die();
         }
+        return survived;
     }
 
     function heal(amount) {
@@ -637,7 +684,7 @@ const tower = (() => {
                 const towerPos = view.getPosition();
                 floatingText.show(towerPos.x, towerPos.y - 15, t('popup', 'insight_gained'), {
                     fontFamily: 'JetBrainsMono_Bold',
-                    fontSize: 22,
+                    fontSize: 26,
                     color: '#ffe600',
                     color2: '#ff2d78',
                     depth: GAME_CONSTANTS.DEPTH_TOWER,

@@ -69,7 +69,7 @@ class Miniboss2View extends EnemyView {
             rotate: { start: 0, end: 180 }, // slow spin
             frequency: 80,
             emitting: false,
-            depth: GAME_CONSTANTS.DEPTH_ENEMIES - 2
+            depth: 10
         });
     }
 

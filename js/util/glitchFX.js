@@ -71,7 +71,7 @@ const glitchFX = (() => {
      * @param {number} [count=2] - Number of scanline strips.
      * @param {number} [duration=80] - Duration in ms.
      */
-    function triggerScanline(count = 2, duration = 80) {
+    function triggerScanline(count = 2, duration = 50) {
         if (intensity <= 0) return;
         const usedCount = Math.min(count, scanlines.length);
 
@@ -79,13 +79,23 @@ const glitchFX = (() => {
             const line = scanlines[i];
             const y = Math.random() * GAME_CONSTANTS.HEIGHT;
             const h = 2 + Math.random() * 4;
+            let extraH = 0;
+            if (Math.random() < 0.25) {
+                extraH = 4 + Math.random() * 15;
+            }
             const offsetX = (Math.random() - 0.5) * 20 * intensity;
 
             line.setPosition(offsetX, y);
-            line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h);
+            line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h + extraH);
             line.setAlpha(0.3 * intensity);
             line.setTint(Math.random() > 0.5 ? _color1 : _color2);
             line.setVisible(true);
+
+            if (extraH > 0) {
+                PhaserScene.time.delayedCall(25, () => {
+                    line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h);
+                });
+            }
 
             PhaserScene.time.delayedCall(duration, () => {
                 line.setVisible(false);
@@ -202,7 +212,7 @@ const glitchFX = (() => {
         cyanCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult).setTint(0x00ffff).setBlendMode(Phaser.BlendModes.ADD);
 
         const shakeTimer = PhaserScene.time.addEvent({
-            delay: 40,
+            delay: 30,
             repeat: Math.floor(duration / 40) - 1,
             callback: () => {
                 if (!target.active) return;

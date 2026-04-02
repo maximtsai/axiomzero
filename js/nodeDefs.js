@@ -875,7 +875,7 @@ const NODE_DEFS = [
         description: t('nodes', 'data_compression.desc'),
         popupText: t('nodes', 'data_compression.popup'),
         popupColor: COLORS.RESOURCE,
-        maxLevel: 1,
+        maxLevel: 2,
         baseCost: 1,
         label: 'UTILITY',
         costType: 'insight',

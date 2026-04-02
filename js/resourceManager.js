@@ -687,11 +687,13 @@ const resourceManager = (() => {
         fx.setActive(true);
         activeCollectFX.push(fx);
 
+        const finalSize = 90 + (activeCollectFX.length - 1) * 12;
+        const finalDuration = 420 + (activeCollectFX.length - 1) * 25;
         PhaserScene.tweens.add({
             targets: fx,
-            width: 90,
-            height: 90,
-            duration: 420,
+            width: finalSize,
+            height: finalSize,
+            duration: finalDuration,
             ease: 'Quart.easeOut'
         });
 
@@ -699,7 +701,7 @@ const resourceManager = (() => {
             targets: fx,
             alpha: 0,
             ease: 'Cubic.easeOut',
-            duration: 420,
+            duration: finalDuration,
             onComplete: () => {
                 const idx = activeCollectFX.indexOf(fx);
                 if (idx !== -1) activeCollectFX.splice(idx, 1);

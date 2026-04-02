@@ -59,7 +59,9 @@ class Boss extends Enemy {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
             }
             if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
-                enemyManager.killAllNonBossEnemies();
+                PhaserScene.time.delayedCall(150, () => {
+                    enemyManager.killAllNonBossEnemies();
+                });
             }
         }
     }

@@ -1204,11 +1204,11 @@ const enemyManager = (() => {
                     e.model.isAttacking = true;
 
                     if (e.model.attackTimer <= 0 && e.model.damage > 0) {
-                        tower.takeDamage(e.model.damage, e.model.x, e.model.y);
+                        const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
                         e.model.attackTimer = e.model.attackCooldown;
 
                         // Apply self-damage only when it hits
-                        if (e.takeDamage(e.model.selfDamage).died) {
+                        if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
                             // Only kill if the self-damage was lethal
                             _killEnemy(e);
                         }
