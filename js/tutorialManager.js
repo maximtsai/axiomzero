@@ -127,9 +127,9 @@ const tutorialManager = (() => {
 
     function _showUpgradeTutorial() {
         const msg = t('tutorial', 'upgrade_use');
-        // 200px above Awaken node (treeX: 400, treeY: 750)
+        // 200px above Awaken node (treeX: 400, treeY: 750) -> moved up another 140px (down 60 from 350)
         const x = 0;
-        const y = 550;
+        const y = 410;
 
         _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '38px');
 

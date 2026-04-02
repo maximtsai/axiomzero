@@ -26,7 +26,7 @@ const nodeTooltip = (() => {
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
 
-        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x151c2d).setAlpha(0.78);
+        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x1c253b).setAlpha(0.78);
         container.add(bg);
 
         // Icon holder
