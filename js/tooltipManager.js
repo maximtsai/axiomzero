@@ -23,8 +23,8 @@ const tooltipManager = (() => {
     let visible = false;
 
     // Font presets
-    const bodySize = helper.isMobileDevice() ? '24px' : '20px';
-    const titleSize = helper.isMobileDevice() ? '26px' : '22px';
+    const bodySize = helper.isMobileDevice() ? '30px' : '26px';
+    const titleSize = helper.isMobileDevice() ? '32px' : '28px';
 
     const FONTS = {
         normal: { fontFamily: 'VCR', fontSize: bodySize, color: '#cccccc' },

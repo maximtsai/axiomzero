@@ -25,3 +25,7 @@
 - **Goal:** Clutch player agency in high-stress combat phases.
 
 ## 7. Build Specializations - Implemented
+
+Increase size of data drops, mom can't see them.
+Play a collecting data drops animation upon round complete.
+Make cursor attack default, make tower attack an upgrade.

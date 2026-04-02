@@ -1,7 +1,6 @@
 ## Fonts (`assets/fonts/`)
 | Family | File | Weights |
 |--------|------|---------|
-| Michroma | Michroma_Regular.ttf | Regular |
 | JetBrainsMono_Regular | JetBrainsMono_Regular.ttf | Regular |
 | JetBrainsMono_Bold | JetBrainsMono_Bold.ttf | Bold |
 | JetBrainsMono_Italic | JetBrainsMono_Italic.ttf | Italic |

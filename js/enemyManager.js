@@ -887,8 +887,8 @@ const enemyManager = (() => {
             }
 
             floatingText.show(enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', {
-                fontFamily: 'VCR',
-                fontSize: isExecuted ? 24 : 28,
+                fontFamily: 'MunroSmall',
+                fontSize: isExecuted ? 36 : 40,
                 color: textColor,
                 stroke: isExecuted ? '#1a0033' : '#330000',
                 strokeThickness: isExecuted ? 3 : 2,
@@ -1094,8 +1094,8 @@ const enemyManager = (() => {
                                         if (typeof floatingText !== 'undefined') {
                                             let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
                                             floatingText.show(p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
-                                                fontFamily: 'VCR',
-                                                fontSize: healFontSize,
+                                                fontFamily: 'MunroSmall',
+                                                fontSize: healFontSize + 8,
                                                 color: '#00ff66',
                                                 stroke: '#330000',
                                                 strokeThickness: 2,

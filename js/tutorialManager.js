@@ -37,8 +37,8 @@ const tutorialManager = (() => {
         if (noUpgrades) {
             const msg = t('tutorial', 'controls_mouse');
             const x = 0;
-            const y = 480;
-            _createTutorialPopup(msg, x, y, true, '#ffffff', '#ffffff', null, '30px');
+            const y = 510;
+            _createTutorialPopup(msg, x, y, true, '#ffffff', '#ffffff', null, '38px');
         }
     }
 
@@ -70,7 +70,7 @@ const tutorialManager = (() => {
                     const msg = t('tutorial', 'cognition_damage');
                     const x = GAME_CONSTANTS.halfWidth;
                     const y = GAME_CONSTANTS.halfHeight - 270;
-                    _createTutorialPopup(msg, x, y, false, undefined, undefined, 'cognition_damage', '30px');
+                    _createTutorialPopup(msg, x, y, false, undefined, undefined, 'cognition_damage', '42px');
                 }
             });
         }
@@ -101,7 +101,7 @@ const tutorialManager = (() => {
             const msg = t('tutorial', 'unlock_shards');
             const x = 0;
             const y = 600;
-            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '30px');
+            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px');
         }
     }
 
@@ -110,13 +110,16 @@ const tutorialManager = (() => {
         const x = GAME_CONSTANTS.halfWidth;
         const y = GAME_CONSTANTS.halfHeight - 300;
 
-        _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '30px');
+        _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '42px', 8500);
 
         PhaserScene.time.delayedCall(2500, () => {
             if (typeof messageBus !== 'undefined') {
                 messageBus.publish('pulseData');
-                PhaserScene.time.delayedCall(2000, () => {
+                PhaserScene.time.delayedCall(2200, () => {
                     messageBus.publish('pulseData');
+                    PhaserScene.time.delayedCall(2200, () => {
+                        messageBus.publish('pulseData');
+                    });
                 });
             }
         });
@@ -128,7 +131,7 @@ const tutorialManager = (() => {
         const x = 0;
         const y = 550;
 
-        _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '30px');
+        _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '38px');
 
         // Play glow on specific primary nodes
         const nodesToGlow = ['basic_pulse', 'integrity', 'intensity'];
@@ -142,7 +145,7 @@ const tutorialManager = (() => {
         });
     }
 
-    function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '30px') {
+    function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '48px', stayDuration = 6600) {
         if (tutorialId) {
             gameState.tutorialsSeen[tutorialId] = true;
             if (typeof saveGame === 'function') saveGame();
@@ -150,7 +153,7 @@ const tutorialManager = (() => {
 
         // 1. Create temporary text to measure its final width
         const measureText = PhaserScene.add.text(0, 0, msg, {
-            fontFamily: 'VCR',
+            fontFamily: 'MunroSmall',
             fontSize: fontSize
         }).setVisible(false);
         const textWidth = measureText.width;
@@ -166,7 +169,7 @@ const tutorialManager = (() => {
 
         // 3. Create the typewriter text - Positioned so (0, 0.5) origin results in centered text when full
         const txt = PhaserScene.add.text(x - textWidth / 2, y, '', {
-            fontFamily: 'VCR',
+            fontFamily: 'MunroSmall',
             fontSize: fontSize,
             color: color,
             align: 'left'
@@ -226,7 +229,7 @@ const tutorialManager = (() => {
             alpha: 0,
             targetAlpha: 0,
             duration: 2000,
-            delay: 6600,
+            delay: stayDuration,
             onComplete: () => {
                 const idx = activePopups.indexOf(popupObj);
                 if (idx !== -1) activePopups.splice(idx, 1);
@@ -243,7 +246,7 @@ const tutorialManager = (() => {
             const msg = t('tutorial', 'duo_swap_free');
             const x = 0;
             const y = 600;
-            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '30px');
+            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '38px');
         }
     }
 

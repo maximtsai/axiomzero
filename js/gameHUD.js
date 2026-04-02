@@ -156,7 +156,7 @@ const gameHUD = (() => {
                     tooltipManager.show(btn.x + 50, btn.y + 17, [
                         { text: t('hud', `${type.id}_title`), style: 'title', color: type.color },
                         { text: t('hud', `${type.id}_desc`), style: 'normal' }
-                    ]);
+                    ], 410);
                     if (typeof upgradeTree !== 'undefined') {
                         upgradeTree.setHoverLabel(type.id.toUpperCase());
                     }
@@ -613,8 +613,8 @@ const gameHUD = (() => {
         // Measure final dimensions without delay symbols for proper centering
         const measureMsg = msg.replaceAll('#', '');
         const tempTxt = PhaserScene.add.text(0, 0, measureMsg, {
-            fontFamily: 'VCR',
-            fontSize: '44px',
+            fontFamily: 'MunroSmall',
+            fontSize: '50px',
         });
         const fullWidth = tempTxt.width;
         const fullHeight = tempTxt.height;
@@ -622,8 +622,8 @@ const gameHUD = (() => {
 
         const baseYPos = GAME_CONSTANTS.halfHeight - 310;
         const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
-            fontFamily: 'VCR',
-            fontSize: '44px',
+            fontFamily: 'MunroSmall',
+            fontSize: '50px',
             color: '#ffffff',
             align: 'center',
             lineSpacing: 2
@@ -768,7 +768,7 @@ const gameHUD = (() => {
                         line.setAlpha(0.65);
                         line.setScale(4.2, 0.4); // Adjusted proportional stretch
 
-                        PhaserScene.time.delayedCall(50, () => {
+                        PhaserScene.time.delayedCall(30, () => {
                             txt.x = GAME_CONSTANTS.halfWidth - 50;
                             txt.setAlpha(0.45);
                             txt.setScale(3.2, 0.2);
@@ -777,7 +777,7 @@ const gameHUD = (() => {
                             line.setAlpha(0.45);
                             line.setScale(10, 0.1);
 
-                            PhaserScene.time.delayedCall(25, () => {
+                            PhaserScene.time.delayedCall(35, () => {
                                 txt.destroy();
                                 line.destroy();
                             });

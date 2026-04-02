@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['emergency_depot', 'basic_pulse', 'integrity', 'intensity'],
+        childIds: ['basic_pulse', 'integrity', 'intensity'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -47,27 +47,6 @@ const NODE_DEFS = [
             if (typeof glitchFX !== 'undefined') {
                 glitchFX.triggerSystemScan();
             }
-        },
-    },
-    {
-        id: 'emergency_depot',
-        name: 'EMERGENCY DEPOT',
-        icon: 'Skillicon14_08.png',
-        description: t('nodes', 'emergency_depot.desc'),
-        popupText: t('nodes', 'emergency_depot.popup'),
-        popupColor: COLORS.RESOURCE,
-        maxLevel: 1,
-        baseCost: 1,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['awaken'],
-        childIds: [],
-        treeX: gridX(0),
-        treeY: gridY(-1),
-        effect: function () {
-            resourceManager.addData(5000);
-            resourceManager.addShard(3);
-            resourceManager.addInsight(3);
         },
     },
     {
@@ -337,7 +316,7 @@ const NODE_DEFS = [
         treeX: gridX(-3),
         treeY: gridY(0),
         requiresMaxParent: true,
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_1');
             if (node) {
@@ -361,7 +340,7 @@ const NODE_DEFS = [
         treeX: gridX(4),
         treeY: gridY(1.5),
         requiresMaxParent: true,
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_2');
             if (node) {
@@ -384,7 +363,7 @@ const NODE_DEFS = [
         childIds: ['lore_4'],
         treeX: gridX(-4),
         treeY: gridY(4.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_3');
             if (node) {
@@ -407,7 +386,7 @@ const NODE_DEFS = [
         childIds: ['lore_5'],
         treeX: gridX(-4.5),
         treeY: gridY(3.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_4');
             if (node) {
@@ -430,7 +409,7 @@ const NODE_DEFS = [
         childIds: ['lore_6'],
         treeX: gridX(-4.5),
         treeY: gridY(4.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_5');
             if (node) {
@@ -453,7 +432,7 @@ const NODE_DEFS = [
         childIds: ['lore_7'],
         treeX: gridX(-4.5),
         treeY: gridY(5.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_6');
             if (node) {
@@ -476,7 +455,7 @@ const NODE_DEFS = [
         childIds: ['lore_8'],
         treeX: gridX(-4.5),
         treeY: gridY(6.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_7');
             if (node) {
@@ -499,7 +478,7 @@ const NODE_DEFS = [
         childIds: ['lore_9'],
         treeX: gridX(-4.5),
         treeY: gridY(7.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_8');
             if (node) {
@@ -522,7 +501,7 @@ const NODE_DEFS = [
         childIds: [],
         treeX: gridX(-4.5),
         treeY: gridY(8.5),
-        tooltipExtraWidth: 300,
+        tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_9');
             if (node) {
@@ -1445,7 +1424,7 @@ const NODE_DEFS = [
         childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
         treeX: gridX(-1),
         treeY: gridY(7.5),
-        tooltipExtraWidth: 60,
+        tooltipExtraWidth: 25,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(500);

@@ -18,7 +18,7 @@ const nodeTooltip = (() => {
 
     let currentNode = null;
     let lastShowTime = 0;
-    const bgWidth = 510;
+    const bgWidth = 490;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function init() {
@@ -36,7 +36,7 @@ const nodeTooltip = (() => {
 
         nameT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
-            fontSize: '30px',
+            fontSize: '36px',
             color: '#ffffff',
             align: 'left',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -48,7 +48,7 @@ const nodeTooltip = (() => {
             fontSize: '30px',
             color: '#ffffff',
             align: 'center',
-            wrap: { mode: 'word', width: 485 },
+            wrap: { mode: 'word', width: 465 },
             lineSpacing: 4,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -113,7 +113,7 @@ const nodeTooltip = (() => {
         currentNode = node;
         container.setVisible(true);
 
-        const currentBgWidth = 510 + (node.tooltipExtraWidth || 0);
+        const currentBgWidth = 490 + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
 
         // Update wrap width for description
@@ -127,7 +127,7 @@ const nodeTooltip = (() => {
         goldBg.setDisplaySize(currentBgWidth - 6, 37);
         costBg.setDisplaySize(currentBgWidth - 6, 37);
 
-        const rowSpacing = 10;
+        const rowSpacing = 12;
         let currentY = 3;
 
         // Row 1: Icon & Name

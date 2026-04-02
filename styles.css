@@ -1,8 +1,43 @@
 /* --- ANIMATIONS (Kept from your file) --- */
-@keyframes changeShadow { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeAway { from { opacity: 1; } to { opacity: 0; } }
-@keyframes changeFull { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fastChange { from { opacity: 0.5; } to { opacity: 1; } }
+@keyframes changeShadow {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeAway {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes changeFull {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fastChange {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 /* --- FONTS --- */
 /* Defined here so they can be referenced immediately */
@@ -10,33 +45,45 @@
     font-family: 'Michroma';
     src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
 }
+
 @font-face {
     font-family: 'JetBrainsMono_Regular';
     src: url('assets/fonts/JetBrainsMono_Regular.ttf') format('truetype');
 }
+
 @font-face {
     font-family: 'JetBrainsMono_Italic';
     src: url('assets/fonts/JetBrainsMono_Italic.ttf') format('truetype');
 }
+
 @font-face {
     font-family: 'JetBrainsMono_Bold';
     src: url('assets/fonts/JetBrainsMono_Bold.ttf') format('truetype');
     font-weight: bold;
 }
+
 @font-face {
     font-family: 'VCR';
     src: url('assets/fonts/VCR.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'MunroSmall';
+    src: url('assets/fonts/MunroSmall.ttf') format('truetype');
+    size-adjust: 120%;
+}
+
 /* --- LAYOUT --- */
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Prevents scrollbars */
+    overflow: hidden;
+    /* Prevents scrollbars */
     background-color: #111010;
-    
+
     /* Prevents highlighting text on the page */
     user-select: none;
     -webkit-user-select: none;
@@ -44,8 +91,10 @@ html, body {
 
 canvas {
     display: block;
-    touch-action: none; /* Disables mobile zoom/pan gestures on the game */
-    outline: none; /* Removes the blue border when clicked */
+    touch-action: none;
+    /* Disables mobile zoom/pan gestures on the game */
+    outline: none;
+    /* Removes the blue border when clicked */
 }
 
 /* --- PRELOADER --- */
@@ -62,21 +111,23 @@ canvas {
 
 #preload span {
     /* Helper to apply font families inside the hidden div */
-    font-size: 1px; 
+    font-size: 1px;
 }
 
 /* --- UI ELEMENTS --- */
 #preload-notice {
     color: #888;
-    font-family: 'Michroma', sans-serif; /* Use your game font here */
+    font-family: 'Michroma', sans-serif;
+    /* Use your game font here */
     font-size: 14px;
     text-align: center;
-    
+
     position: absolute;
     top: 50%;
     width: 100%;
     transform: translateY(-50%);
-    
+
     z-index: 10000;
-    pointer-events: none; /* Lets clicks pass through to the game */
+    pointer-events: none;
+    /* Lets clicks pass through to the game */
 }
