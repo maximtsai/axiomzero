@@ -33,7 +33,7 @@ class BasicEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 18
+            size: 22
         });
         this.setEnemyGlow('basic_enemy_glow.png');
     }

@@ -91,6 +91,7 @@ class PulseAttackView {
         this.reloadSizeTween = null;
         this.reloadAlphaTween = null;
         this.aftershockLevel = 0;
+        this.wavePool = null;
     }
 
     init(initialSize) {
@@ -195,6 +196,23 @@ class PulseAttackView {
         this.playerReloadSprite.setScrollFactor(0);
         this.playerReloadSprite.setAlpha(0);
         this.playerReloadSprite.setVisible(false);
+
+        // Wave effect pool
+        this.wavePool = new ObjectPool(
+            () => {
+                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
+                slice.setOrigin(0.5, 0.5);
+                slice.setDepth(0);
+                slice.setScrollFactor(0);
+                slice.setVisible(false);
+                slice.setActive(false);
+                return slice;
+            },
+            (fx) => {
+                fx.setVisible(false);
+                fx.setActive(false);
+            }
+        ).preAllocate(5);
     }
 
     setSize(newSize) {
@@ -217,7 +235,7 @@ class PulseAttackView {
         this.spritePointer.setPosition(targetX, targetY);
         this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
 
-        const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.25;
+        const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.23;
         this.sprite.rotVel += rotAccel;
 
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
@@ -263,12 +281,12 @@ class PulseAttackView {
 
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale(1.3);
+        this.spriteBright.setScale(1.35);
         this.spriteBright.setRotation(goalRot);
         this.sprite.setRotation(this.spriteBright.rotation);
 
         this.spriteRed.setAlpha(0.35);
-        this.spriteRed.setScale(1.4);
+        this.spriteRed.setScale(1.45);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
@@ -303,7 +321,7 @@ class PulseAttackView {
         //     }
         // });
 
-        this.sprite.setScale(1.35);
+        this.sprite.setScale(1.4);
 
         PhaserScene.tweens.add({
             targets: [this.sprite, this.spriteBright],
@@ -463,8 +481,8 @@ class PulseAttackView {
 
         PhaserScene.tweens.add({
             targets: this.sprite,
-            scaleX: 0.92,
-            scaleY: 0.92,
+            scaleX: 0.9,
+            scaleY: 0.9,
             duration: 40,
             ease: 'Cubic.easeOut',
             onComplete: () => {
@@ -484,6 +502,39 @@ class PulseAttackView {
         if (this.spritePointer) {
             this.spritePointer.setVisible(visible);
         }
+    }
+
+    playWaveEffect(x, y, baseSize) {
+        if (!this.wavePool) return;
+
+        const fx = this.wavePool.get();
+        if (!fx) return;
+
+        const startSize = baseSize * 0.75;
+        fx.setPosition(x, y);
+        fx.width = startSize;
+        fx.height = startSize;
+        fx.setAlpha(1);
+        fx.setVisible(true);
+        fx.setActive(true);
+
+        PhaserScene.tweens.add({
+            targets: fx,
+            width: startSize + 82,
+            height: startSize + 82,
+            duration: 450,
+            ease: 'Cubic.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            targets: fx,
+            alpha: 0,
+            duration: 450,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                this.wavePool.release(fx);
+            }
+        });
     }
 }
 
@@ -588,6 +639,7 @@ const pulseAttack = (() => {
         if (s) s.detune = detune;
 
         view.playFireAnimation();
+        view.playWaveEffect(cx, cy, model.size);
 
         // Micro camera shake
         zoomShake(1.005);

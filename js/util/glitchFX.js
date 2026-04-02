@@ -39,7 +39,7 @@ const glitchFX = (() => {
 
         // Pre-create permanent background grid (for system scans etc)
         bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
-        bgGrid.setDepth(1).setVisible(false);
+        bgGrid.setDepth(1);
 
         bgGridHigh = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
         bgGridHigh.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1).setVisible(false);
@@ -341,7 +341,6 @@ const glitchFX = (() => {
                             onComplete: () => {
                                 scanFade1.setVisible(false);
                                 scanFade2.setVisible(false);
-                                bgGrid.setVisible(false); // Hide permanent grid again
                                 bgGridHigh.setVisible(false);
                             }
                         });

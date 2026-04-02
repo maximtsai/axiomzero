@@ -32,7 +32,7 @@ class SwarmerEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.5,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25,
-            size: 14
+            size: 17
         });
 
         if (this.view.img) {

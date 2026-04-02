@@ -42,7 +42,7 @@ class ShooterEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 19
+            size: 23
         });
 
         this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
