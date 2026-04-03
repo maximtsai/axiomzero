@@ -108,7 +108,6 @@ class PulseAttackView {
         this.sprite.setAlpha(this.IDLE_ALPHA);
         this.sprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
         this.sprite.setBlendMode(Phaser.BlendModes.ADD);
-        this.sprite.setScrollFactor(0);
         this.sprite.setVisible(false);
 
         // Red background pulse
@@ -122,7 +121,6 @@ class PulseAttackView {
         this.spriteRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.spriteRed.setAlpha(0);
         this.spriteRed.setBlendMode(Phaser.BlendModes.ADD);
-        this.spriteRed.setScrollFactor(0);
         this.spriteRed.setVisible(false);
 
         // Flash overlay sprite
@@ -136,7 +134,6 @@ class PulseAttackView {
         this.spriteBright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
         this.spriteBright.setAlpha(0);
         this.spriteBright.setBlendMode(Phaser.BlendModes.ADD);
-        this.spriteBright.setScrollFactor(0);
         this.spriteBright.setVisible(false);
 
         // Aftershock sprites (100 units larger than base)
@@ -150,7 +147,6 @@ class PulseAttackView {
         this.aftershockRed.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.aftershockRed.setAlpha(0);
         this.aftershockRed.setBlendMode(Phaser.BlendModes.ADD);
-        this.aftershockRed.setScrollFactor(0);
         this.aftershockRed.setVisible(false);
 
         this.aftershockBright = PhaserScene.add.nineslice(
@@ -164,14 +160,12 @@ class PulseAttackView {
         this.aftershockBright.setAlpha(0);
         this.aftershockBright.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
         this.aftershockBright.setBlendMode(Phaser.BlendModes.ADD);
-        this.aftershockBright.setScrollFactor(0);
         this.aftershockBright.setVisible(false);
 
         // Pointer sprite
         this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
         this.spritePointer.setBlendMode(Phaser.BlendModes.ADD);
-        this.spritePointer.setScrollFactor(0);
         this.spritePointer.setVisible(false);
 
         // Charge indicators (Right-to-left at top-right of the square)
@@ -179,7 +173,6 @@ class PulseAttackView {
             const s = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
             s.setScale(1.25);
             s.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 5);
-            s.setScrollFactor(0);
             s.setVisible(false);
             this.chargeSprites.push(s);
         }
@@ -193,7 +186,6 @@ class PulseAttackView {
         );
         this.playerReloadSprite.setOrigin(0.5, 0.5);
         this.playerReloadSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 6);
-        this.playerReloadSprite.setScrollFactor(0);
         this.playerReloadSprite.setAlpha(0);
         this.playerReloadSprite.setVisible(false);
 
@@ -203,7 +195,6 @@ class PulseAttackView {
                 const slice = PhaserScene.add.nineslice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
                 slice.setOrigin(0.5, 0.5);
                 slice.setDepth(-2);
-                slice.setScrollFactor(0);
                 slice.setVisible(false);
                 slice.setActive(false);
                 return slice;
@@ -556,12 +547,17 @@ const pulseAttack = (() => {
             model.charges = model.maxCharges;
             model.fireTimer = 0;
             model.clickQueued = false;
+            model.active = true;
+            view.setVisibility(true, true, model.manualMode, model.charges);
+            view.setPointerVisibility(true);
         });
         messageBus.subscribe('testingDefensesEnded', () => {
             model.charges = model.maxCharges;
             model.fireTimer = 0;
             model.clickQueued = false;
+            model.active = false;
             view.setVisibility(false);
+            view.setPointerVisibility(false);
         });
         updateManager.addFunction(_update);
 
@@ -599,7 +595,11 @@ const pulseAttack = (() => {
         // The pointer is always tracked and updated if combat is active or testing
         const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
         if (isCombat) {
-            view.updatePosition(delta, GAME_VARS.mouseposx, GAME_VARS.mouseposy, model);
+            let cx = GAME_VARS.mouseposx;
+            if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+                cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
+            }
+            view.updatePosition(delta, cx, GAME_VARS.mouseposy, model);
             view.updateCharges(model.charges, model.maxCharges, model.manualMode);
 
             // Handle reload animation trigger
@@ -625,7 +625,10 @@ const pulseAttack = (() => {
     }
 
     function _fire() {
-        const cx = GAME_VARS.mouseposx;
+        let cx = GAME_VARS.mouseposx;
+        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
+        }
         const cy = GAME_VARS.mouseposy;
         const damageSize = (model.size / 2) + 5;
 
