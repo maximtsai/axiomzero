@@ -71,10 +71,8 @@ class ArtilleryAttackView {
 
             obj.center.setRotation(base.rotation);
             obj.bright.setRotation(base.rotation);
+            obj.black.setRotation(base.rotation);
             // Red stays with its own random initial rotation or follows? 
-            // In cursor, only base and bright are synced. Red is set once.
-            // But let's sync red too if it looks better, or leave it.
-            // I'll sync red too for artillery since it's a static area.
             obj.red.setRotation(base.rotation * 0.5);
         }
     }
@@ -88,6 +86,7 @@ class ArtilleryAttackView {
             base: PhaserScene.add.nineslice(0, 0, 'player', 'artillery.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
             center: PhaserScene.add.image(0, 0, 'player', 'artillery_center.png'),
             bright: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_bright.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
+            black: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_black.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
             red: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_red.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
             rotVel: 0
         };
@@ -95,6 +94,7 @@ class ArtilleryAttackView {
         obj.base.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
         obj.center.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
         obj.bright.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 3).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
+        obj.black.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4).setVisible(false);
         obj.red.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
 
         return obj;
@@ -113,14 +113,17 @@ class ArtilleryAttackView {
         obj.base.setSize(size, size);
         // center is a plain image, no setSize needed
         obj.bright.setSize(size, size);
+        obj.black.setSize(size, size);
         obj.red.setSize(size + 2, size + 2);
         obj.base.setRotation(0);
         obj.center.setRotation(0);
         obj.bright.setRotation(0);
+        obj.black.setRotation(0);
         obj.red.setRotation(0);
         obj.base.setScale(1);
         obj.center.setScale(1);
         obj.bright.setScale(1);
+        obj.black.setScale(1).setAlpha(1);
         obj.red.setScale(1);
         obj.rotVel = 0;
         return obj;
@@ -131,8 +134,9 @@ class ArtilleryAttackView {
         obj.base.setVisible(false);
         obj.center.setVisible(false);
         obj.bright.setVisible(false);
+        obj.black.setVisible(false);
         obj.red.setVisible(false);
-        PhaserScene.tweens.killTweensOf([obj.base, obj.center, obj.bright, obj.red]);
+        PhaserScene.tweens.killTweensOf([obj.base, obj.center, obj.bright, obj.black, obj.red]);
     }
 
     playStrikeSequence(x, y, size, onDamage, durationOffset = 0) {
@@ -177,23 +181,33 @@ class ArtilleryAttackView {
     }
 
     _playBurstAnimation(obj, x, y, size) {
-        const { base, center, bright, red } = obj;
+        const { base, center, bright, black, red } = obj;
 
         const flippedLeft = Math.random() < 0.5;
         const goalRot = flippedLeft ? -0.3 : 0.3;
 
-        // Flash everything (similar to cursor's playFireAnimation)
-        bright.setPosition(x, y).setVisible(true).setAlpha(0.9).setScale(1.25).setRotation(goalRot);
+        // Stage 1: Reveal main explosion components immediately
+        bright.setPosition(x, y).setVisible(true).setAlpha(1).setScale(1.25).setRotation(goalRot);
         base.setAlpha(1).setScale(1.2).setRotation(goalRot);
         center.setAlpha(1).setScale(1.2).setRotation(goalRot);
         red.setPosition(x, y).setVisible(true).setAlpha(0.45).setScale(1.1).setRotation((Math.random() - 0.5) * 0.09);
+
+        // Stage 2: Black sprite follows "bright" 100%, but is only visible during the [60ms, 100ms] window
+        black.setPosition(x, y).setVisible(false).setAlpha(1.0).setScale(1.25).setRotation(goalRot);
+
+        PhaserScene.time.delayedCall(60, () => {
+            if (obj.inUse) black.setVisible(true);
+        });
+        PhaserScene.time.delayedCall(120, () => {
+            if (obj.inUse) black.setVisible(false);
+        });
 
         // White tint flash — instant detonation feel
         bright.setTintFill(0xffffff);
         center.setTintFill(0xffffff);
         PhaserScene.time.delayedCall(50, () => {
             if (obj.inUse) {
-                bright.setAlpha(0.4).clearTint();
+                bright.setAlpha(0.5).clearTint();
                 center.clearTint();
             }
         });
@@ -217,7 +231,7 @@ class ArtilleryAttackView {
             }
         });
 
-        // Tween flash back to 0
+        // Tween flash back to 0 — BLACK stays alpha 1 (but is hidden by visibility timer)
         PhaserScene.tweens.add({
             delay: 75,
             targets: [bright, red, center],
@@ -226,9 +240,9 @@ class ArtilleryAttackView {
             ease: 'Quart.easeOut',
         });
 
-        // Scale back to original size
+        // Scale back to original size — BLACK follows BRIGHT's scale
         PhaserScene.tweens.add({
-            targets: [center, bright],
+            targets: [center, bright, black],
             scaleX: 1,
             scaleY: 1,
             duration: 240,

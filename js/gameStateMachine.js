@@ -15,11 +15,11 @@
 const gameStateMachine = (() => {
     let currentPhase = null;
 
-    function goTo(phase) {
+    function goTo(phase, data = {}) {
         if (currentPhase === phase) return;
         debugLog(`Phase: ${currentPhase} → ${phase}`);
         currentPhase = phase;
-        messageBus.publish('phaseChanged', phase);
+        messageBus.publish('phaseChanged', phase, data);
     }
 
     function getPhase() {

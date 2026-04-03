@@ -40,15 +40,11 @@ const iterationOverScreen = (() => {
             fontSize: '36px',
             color: '#00f5ff',
             align: 'center',
-        }).setDepth(depth + 1);
+        }).setOrigin(0.5, 0.5).setDepth(depth + 1);
 
         // Add slight glow
         titleText.setShadow(0, 0, '#00f5ff', 8, true, true);
 
-        // Calculate centered X for origin (0, 0.5)
-        const fullWidth = titleText.width;
-        titleText.setOrigin(0, 0.5);
-        titleText.setX(cx - fullWidth / 2);
         titleText.fullText = t('results', 'iteration_complete');
         titleText.setText('');
 

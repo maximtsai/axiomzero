@@ -117,6 +117,24 @@ const customEmitters = (() => {
         12
     );
 
+    const bombExplosionBlackPool = new ObjectPool(
+        () => {
+            const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack_black.png', 10, 10, 38, 38, 38, 38);
+            node.setActive(false);
+            node.setVisible(false);
+            return node;
+        },
+        (node) => {
+            node.setActive(false);
+            node.setVisible(false);
+            node.setAlpha(1);
+            node.setScale(1);
+            node.setRotation(0);
+            node.clearTint();
+        },
+        12
+    );
+
     const malwareSiphonPool = new ObjectPool(
         () => {
             const sprite = PhaserScene.add.image(0, 0, 'player', 'heal.png');
@@ -599,57 +617,71 @@ const customEmitters = (() => {
         const size = Math.sqrt(rangeSq) * 1.5;
         const randRot = Math.random() < 0.5 ? -0.1 : 0.1;
         const finalRot = Math.PI / 4 + randRot;
+
         const bright = bombExplosionBrightPool.get();
-        bright.setPosition(x, y);
-        bright.setSize(size, size);
-        bright.setOrigin(0.5, 0.5);
-        bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
-        bright.setBlendMode(Phaser.BlendModes.ADD);
-        bright.setRotation(finalRot);
-        bright.setAlpha(1);
-        bright.setVisible(true);
-        bright.setActive(true);
+        bright.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
+        bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setBlendMode(Phaser.BlendModes.ADD);
+        bright.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
 
         const red = bombExplosionRedPool.get();
-        red.setPosition(x, y);
-        red.setSize(size + 3, size + 3);
-        red.setOrigin(0.5, 0.5);
-        red.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
-        red.setBlendMode(Phaser.BlendModes.ADD);
-        red.setRotation(finalRot);
-        red.setAlpha(0.8);
-        red.setVisible(true);
-        red.setActive(true);
+        red.setPosition(x, y).setSize(size + 3, size + 3).setOrigin(0.5, 0.5);
+        red.setDepth(GAME_CONSTANTS.DEPTH_TOWER).setBlendMode(Phaser.BlendModes.ADD);
+        red.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
 
-        bright.setScale(1.1);
-        red.setScale(1.15);
+        const black = bombExplosionBlackPool.get();
+        black.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
+        black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 3);
+        black.setRotation(finalRot).setAlpha(1).setVisible(false).setActive(true);
+
+        // Visibility window for black sprite: [60ms, 120ms]
+        PhaserScene.time.delayedCall(60, () => {
+            if (black.active) black.setVisible(true);
+        });
+        PhaserScene.time.delayedCall(120, () => {
+            if (black.active) black.setVisible(false);
+        });
+
+        bright.setScale(1.15);
+        red.setScale(1.2);
+        black.setScale(1.15);
 
         PhaserScene.cameras.main.shake(150, 0.005);
         PhaserScene.tweens.add({
-            targets: [bright, red],
+            targets: [bright, red, black],
             duration: 90,
             rotation: Math.PI / 4 + randRot * -0.7,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
-                    targets: [bright, red],
+                    targets: [bright, red, black],
                     duration: 160,
                     rotation: Math.PI / 4,
                     ease: 'Back.easeOut',
                 });
             }
         });
+
+        // Alpha fade — BLACK stays 1 (but hidden by visible=false)
         PhaserScene.tweens.add({
             targets: [bright, red],
+            delay: 50,
+            alpha: 0,
+            duration: 350,
+            ease: 'Quad.easeOut'
+        });
+
+        // Scale fade
+        PhaserScene.tweens.add({
+            targets: [bright, red, black],
             scaleX: 1.0,
             scaleY: 1.0,
             delay: 50,
-            alpha: 0,
             duration: 350,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 bombExplosionBrightPool.release(bright);
                 bombExplosionRedPool.release(red);
+                bombExplosionBlackPool.release(black);
             }
         });
     }
@@ -789,6 +821,7 @@ const customEmitters = (() => {
         explosionPulsePool.preAllocate(3);
         bombExplosionBrightPool.preAllocate(5);
         bombExplosionRedPool.preAllocate(5);
+        bombExplosionBlackPool.preAllocate(5);
         malwareSiphonPool.preAllocate(8);
         shellDeathPool.preAllocate(5);
     }

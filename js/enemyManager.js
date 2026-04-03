@@ -1331,5 +1331,5 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed, startTestingDefenses, stopTestingDefenses };
+    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed, startTestingDefenses, stopTestingDefenses, isBossAlive: () => bossAlive, isBossSpawned: () => bossSpawned, isMinibossAlive: () => minibossAlive };
 })();

@@ -9,7 +9,7 @@ class LaserAttackModel {
         this.BEAM_LENGTH = 1000;         // px
         this.BEAM_VISUAL_HALF_WIDTH = 25;// visual beam half-width (50px total)
         this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
-        this.BASE_DAMAGE_PER_TICK = 8;
+        this.BASE_DAMAGE_PER_TICK = 5;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
         this.FIRE_DURATION = 3000;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
@@ -292,6 +292,7 @@ const laserAttack = (() => {
     const model = new LaserAttackModel();
     const view = new LaserAttackView();
     const _hitBuffer = [];
+    const _tickHitSet = new Set(); // To prevent double-damaging massive targets
     let _beamSound = null;
 
     function init() {
@@ -427,6 +428,14 @@ const laserAttack = (() => {
                 model.tapering = true;
                 model.taperProgress = 0;
 
+                // Reset ramping damage bonus for all enemies when weapon turns off
+                const active = enemyManager.getActiveEnemies();
+                for (let i = 0; i < active.length; i++) {
+                    if (active[i] && active[i].model) {
+                        active[i].model.laserDmgBonus = 0;
+                    }
+                }
+
                 if (_beamSound) {
                     audio.fadeAway(_beamSound, 150);
                     _beamSound = null;
@@ -475,6 +484,7 @@ const laserAttack = (() => {
     }
 
     function _dealDamage(towerPos) {
+        _tickHitSet.clear();
         const halfDmgW = model.getDamageHalfWidth();
         const dmg = model.BASE_DAMAGE_PER_TICK;
         const L = model.BEAM_LENGTH;
@@ -499,7 +509,7 @@ const laserAttack = (() => {
         const enemies = enemyManager.getEnemiesInSquareRange(bx, by, searchSize, _hitBuffer);
         for (let i = 0; i < enemies.length; i++) {
             const e = enemies[i];
-            if (!e || !e.model || !e.model.alive) continue;
+            if (!e || !e.model || !e.model.alive || _tickHitSet.has(e)) continue;
 
             // Project enemy position onto the beam ray
             const ex = e.model.x - ox;
@@ -518,7 +528,10 @@ const laserAttack = (() => {
             const reach = halfDmgW + (e.model.size || 0);
 
             if ((dx * dx + dy * dy) < (reach * reach)) {
-                enemyManager.damageEnemy(e, dmg, 'laser');
+                _tickHitSet.add(e);
+                const currentBonus = e.model.laserDmgBonus || 0;
+                enemyManager.damageEnemy(e, dmg + currentBonus, 'laser');
+                e.model.laserDmgBonus = currentBonus + 1;
 
                 // Thermal Overload (guaranteed ignition)
                 if (model.incendiaryLevel > 0) {

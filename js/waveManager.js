@@ -16,13 +16,13 @@
 
 const waveManager = (() => {
     let towerDiedSub = null;
-    let deathOverlay = null; // module-level so _onTowerShakeComplete can clean it up
     let waveProgress = 0;    // 0→1 over WAVE_DURATION seconds during combat
     let waveActive = false;
     let frozen = false;
     let paused = false; // true during options menu
     let progressPaused = false; // true while a miniboss/boss is alive
     let currentWaveDuration = 45;
+    let sessionTerminalEventStarted = false; // Prevents "double death" (Victory + Defeat same frame)
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
 
     function init() {
@@ -51,6 +51,7 @@ const waveManager = (() => {
         waveActive = true;
         frozen = false;
         progressPaused = false;
+        sessionTerminalEventStarted = false;
 
         const currentLevel = gameState.currentLevel || 1;
         const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
@@ -61,7 +62,7 @@ const waveManager = (() => {
             currentWaveDuration = 999999;
             messageBus.publish('waveModeFarmingStarted');
         } else {
-            currentWaveDuration = minibossBeaten ? 40 : GAME_CONSTANTS.WAVE_DURATION;
+            currentWaveDuration = minibossBeaten ? (GAME_CONSTANTS.WAVE_DURATION - 4) : GAME_CONSTANTS.WAVE_DURATION;
             messageBus.publish('waveModeNormalStarted');
         }
 
@@ -105,6 +106,15 @@ const waveManager = (() => {
     }
 
     function _onTowerDied() {
+        if (sessionTerminalEventStarted) return;
+
+        // Priority check: If the boss is already dead/dying in this frame, prioritize victory
+        if (enemyManager.isBossSpawned() && !enemyManager.isBossAlive()) {
+            debugLog('Simultaneous death detected — prioritizing Boss Victory');
+            return;
+        }
+
+        sessionTerminalEventStarted = true;
         debugLog('Tower died — playing death sequence');
 
         // Unsubscribe immediately to prevent re-entry
@@ -112,7 +122,16 @@ const waveManager = (() => {
 
         // 1. Freeze all enemies — stop movement and spawning
         messageBus.publish('freezeEnemies');
-        PhaserScene.time.timeScale = 1.0;
+        PhaserScene.time.timeScale = 0.05;
+        setTimeout(() => {
+            PhaserScene.time.timeScale = 1.0;
+        }, 150);
+
+        // 1.5. Subliminal Black Flash (50ms)
+        const darkFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel');
+        darkFlash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        darkFlash.setAlpha(0.65).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 10);
+        setTimeout(() => { if (darkFlash) darkFlash.destroy(); }, 50);
 
         // 2. Block all cursor input
         helper.createGlobalClickBlocker(false);
@@ -123,42 +142,23 @@ const waveManager = (() => {
         // 4. Play explosion sound
         audio.play('retro_explosion', 1.0, false);
 
-        // 5. Black pixel overlay scales up from center to full screen at 0.3 alpha.
-        deathOverlay = PhaserScene.add.image(
-            GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel'
-        );
-        deathOverlay.setScale(0, 0);
-        deathOverlay.setAlpha(0);
-        deathOverlay.setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY);
-
-        PhaserScene.tweens.add({
-            targets: deathOverlay,
-            scaleX: GAME_CONSTANTS.halfWidth,
-            scaleY: GAME_CONSTANTS.halfHeight,
-            alpha: 0.3,
-            duration: 350,
-            ease: 'Quad.easeOut',
-        });
-
         customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-        PhaserScene.cameras.main.shake(500, 0.012);
+        PhaserScene.cameras.main.shake(550, 0.012);
 
         // 5.5 High-intensity failure visuals
         _triggerDeathGlitchBurst();
 
-
         // 6. Request tower shake — _onTowerShakeComplete fires when done
         messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
-        messageBus.publish('towerShakeRequested', 500);
+        messageBus.publish('towerShakeRequested', 700);
     }
 
     function _onTowerShakeComplete() {
-        if (deathOverlay) { deathOverlay.destroy(); deathOverlay = null; }
         helper.hideGlobalClickBlocker();
         messageBus.publish('unfreezeEnemies');
 
-        // Added 300ms of extra air-time for the glitch and "SIGNAL LOST" visual to breathe
-        PhaserScene.time.delayedCall(300, () => {
+        // Added 650ms of extra air-time for the glitch and "SIGNAL LOST" visual to breathe
+        PhaserScene.time.delayedCall(650, () => {
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
             debugLog('Death sequence complete — entering WAVE_COMPLETE');
         });
@@ -168,9 +168,9 @@ const waveManager = (() => {
         // Create the "SIGNAL LOST" text
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
-        const signalText = PhaserScene.add.text(cx, cy - 90, 'SIGNAL LOST', {
+        const signalText = PhaserScene.add.text(cx, cy - 90, t('results', 'signal_lost'), {
             fontFamily: 'MunroSmall',
-            fontSize: '60px',
+            fontSize: '68px',
             color: '#ffffff',
             stroke: '#ff2d78',
             strokeThickness: 2,
@@ -190,17 +190,33 @@ const waveManager = (() => {
                 signalText.setAlpha(1);
                 // Apply glitch effects to the text
                 if (typeof glitchFX !== 'undefined') {
-                    glitchFX.triggerChromaticAberration(signalText, 600, 1.5);
+                    glitchFX.triggerChromaticAberration(signalText, 700, 1);
                     glitchFX.triggerFlicker([signalText], 600);
+                    PhaserScene.tweens.add({
+                        delay: 650,
+                        targets: signalText,
+                        alpha: 0,
+                        duration: 100,
+                        yoyo: true,
+                        repeat: 1,
+                        onComplete: () => {
+                            PhaserScene.tweens.add({
+                                targets: signalText,
+                                alpha: 0,
+                                duration: 150,
+                                onComplete: () => signalText.destroy()
+                            });
+                        }
+                    });
                 }
             }
         });
 
         // Trigger multiple full-screen scanline tears
         if (typeof glitchFX !== 'undefined') {
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 18; i++) {
                 PhaserScene.time.delayedCall(i * 40, () => {
-                    glitchFX.triggerScanline(4, 65);
+                    glitchFX.triggerScanline(6, 65);
                 });
             }
         }
@@ -213,22 +229,14 @@ const waveManager = (() => {
         PhaserScene.tweens.add({
             targets: flash,
             alpha: 0,
-            duration: 250,
+            duration: 350,
             onComplete: () => flash.destroy()
-        });
-
-        // Final exit fade
-        PhaserScene.time.delayedCall(650, () => {
-            PhaserScene.tweens.add({
-                targets: signalText,
-                alpha: 0,
-                duration: 150,
-                onComplete: () => signalText.destroy()
-            });
         });
     }
 
     function _onBossDefeated(x, y) {
+        if (sessionTerminalEventStarted) return;
+        sessionTerminalEventStarted = true;
         // Update level defeat state
         const currentLevel = gameState.currentLevel || 1;
         if (currentLevel > (gameState.levelsDefeated || 0)) {

@@ -39,7 +39,7 @@ class TowerModel {
         const anchorHp = (ups.physical_anchor || 0) * 40;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 4 * integrityLv + 5 * systemRedundancyLv + anchorHp;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp;
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + shellDamage;
@@ -47,8 +47,8 @@ class TowerModel {
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
-        this.healthRegen = 0.2 * regenLv; // baseDecay commented out per request
-        this.armor = armorLv * 2; // 2 flat damage reduction per level
+        this.healthRegen = 0.12 * regenLv; // baseDecay commented out per request
+        this.armor = armorLv * 1; // 1 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
 
         // Root Access damage reduction
@@ -437,7 +437,7 @@ class TowerView {
             this.deathShockwave.setDepth(-2).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
         }
         // Reset and trigger
-        this.deathShockwave.setVisible(true).setAlpha(0.75).setScale(0.15);
+        this.deathShockwave.setVisible(true).setAlpha(0.9).setScale(0.15);
 
         // Environment grid pulse via glitch system
         if (typeof glitchFX !== 'undefined') {
@@ -446,7 +446,7 @@ class TowerView {
 
         PhaserScene.tweens.add({
             targets: this.deathShockwave,
-            scale: 2,
+            scale: 8,
             duration: duration,
             ease: 'Cubic.easeOut'
         });
@@ -669,9 +669,9 @@ const tower = (() => {
             // EXP accumulation
             let expBoost = 1.0;
             const lifetimeInsight = (gameState.stats && gameState.stats.totalInsightEarned) || 0;
-            if (lifetimeInsight === 0) expBoost = 1.4;
-            else if (lifetimeInsight === 1) expBoost = 1.2;
-            else if (lifetimeInsight === 2) expBoost = 1.1;
+            if (lifetimeInsight === 0) expBoost = 1.35;
+            else if (lifetimeInsight === 1) expBoost = 1.15;
+            else if (lifetimeInsight === 2) expBoost = 1.05;
 
             model.exp += (GAME_CONSTANTS.EXP_FILL_RATE * expBoost) * dt;
             if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {

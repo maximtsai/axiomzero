@@ -174,6 +174,7 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">player/artillery.png</key>
+            <key type="filename">player/artillery_black.png</key>
             <key type="filename">player/artillery_bright.png</key>
             <key type="filename">player/artillery_red.png</key>
             <struct type="IndividualSpriteSettings">
@@ -348,6 +349,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">player/player_attack_black.png</key>
             <key type="filename">player/player_attack_bright.png</key>
             <key type="filename">player/player_attack_red.png</key>
             <struct type="IndividualSpriteSettings">

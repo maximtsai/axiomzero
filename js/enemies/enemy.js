@@ -60,6 +60,7 @@ class EnemyModel {
         this.invincible = false;
         this.hitByPulse = false;
         this.hitByShockwave = false;
+        this.laserDmgBonus = 0;
     }
 
     activate(x, y, config = {}) {
@@ -107,6 +108,7 @@ class EnemyModel {
         this.forceSlowTimer = 0;
         this.hitByPulse = false;
         this.hitByShockwave = false;
+        this.laserDmgBonus = 0;
     }
 
     deactivate() {
@@ -116,6 +118,7 @@ class EnemyModel {
         this.burnDuration = 0;
         this.burnDamage = 0;
         this.burnTimer = 0;
+        this.laserDmgBonus = 0;
     }
 
     aimAt(tx, ty) {

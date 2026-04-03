@@ -47,7 +47,7 @@ const upgradeDispatcher = (() => {
         const aoeBonus = getLevel('wide_pulse');
         const colossalBonus = getLevel('colossal_cursor');
 
-        pulseAttack.setSize(100 * (1 + 0.2 * expansionLv + 0.3 * aoeBonus + 0.5 * colossalBonus));
+        pulseAttack.setSize(100 * (1 + 0.25 * expansionLv + 0.3 * aoeBonus + 0.5 * colossalBonus));
     }
 
     /** Recalculates pulse manual mode. */

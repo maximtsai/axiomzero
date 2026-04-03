@@ -629,7 +629,7 @@ const gameHUD = (() => {
             align: 'center',
             stroke: '#000000',
             strokeThickness: 5,
-            lineSpacing: 2
+            lineSpacing: -4
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
 
         const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'ui', 'white_line.png');

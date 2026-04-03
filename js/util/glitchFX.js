@@ -80,8 +80,8 @@ const glitchFX = (() => {
             const y = Math.random() * GAME_CONSTANTS.HEIGHT;
             const h = 2 + Math.random() * 4;
             let extraH = 0;
-            if (Math.random() < 0.25) {
-                extraH = 4 + Math.random() * 15;
+            if (Math.random() < 0.4) {
+                extraH = 40 + Math.random() * 140;
             }
             const offsetX = (Math.random() - 0.5) * 20 * intensity;
 
