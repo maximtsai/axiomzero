@@ -224,14 +224,14 @@ class Miniboss2 extends Miniboss {
                 // Collision detection
                 if (distToTower <= m.size && !m.hasHitTowerInCurrentAttack) {
                     // Force the manual attack
-                    tower.takeDamage(MB2.DAMAGE * (m.multiplier || 1), m.x, m.y);
+                    tower.takeDamage(MB2.DAMAGE * (1 + ((m.multiplier || 1) - 1) * 0.75), m.x, m.y);
                     if (typeof cameraManager !== 'undefined') {
                         cameraManager.shake(300, 0.02);
                     }
 
                     // Force manual self damage and text display by proxy
                     // We directly take damage since we disabled our native 'damage' stat
-                    enemyManager.damageEnemy(this, MB2.SELF_DAMAGE * (m.multiplier || 1), 'notrecorded');
+                    enemyManager.damageEnemy(this, MB2.SELF_DAMAGE * (1 + ((m.multiplier || 1) - 1) * 0.75), 'notrecorded');
 
                     m.hasHitTowerInCurrentAttack = true;
 
