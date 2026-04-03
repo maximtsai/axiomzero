@@ -562,7 +562,10 @@ const pulseAttack = (() => {
         updateManager.addFunction(_update);
 
         // Global click listener for manual firing
-        PhaserScene.input.on('pointerdown', () => {
+        PhaserScene.input.on('pointerdown', (pointer, currentlyOver) => {
+            if (currentlyOver && currentlyOver.length > 0) return; 
+            if (typeof buttonManager !== 'undefined' && buttonManager.lastHovered) return;
+
             const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
             if (model.manualMode && (model.active || isTesting) && !model.paused) {
                 if (model.charges > 0) {
