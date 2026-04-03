@@ -39,7 +39,7 @@ class FastEnemy extends Enemy {
     activate(x, y, scaleFactor, extraConfig = {}) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5 * (1 + (scaleFactor - 1) * 0.5),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.501,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.5,
             size: 24,

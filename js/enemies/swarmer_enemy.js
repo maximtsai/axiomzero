@@ -29,7 +29,7 @@ class SwarmerEnemy extends Enemy {
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.5,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * 0.5),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.5,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25,
             size: 17

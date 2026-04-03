@@ -214,7 +214,7 @@ class Miniboss4 extends Miniboss {
             enemyBulletManager.fire(
                 this.model.x, this.model.y,
                 targetX, targetY,
-                MB4.DAMAGE * (1 + ((this.model.multiplier || 1) - 1) * 0.75),
+                MB4.DAMAGE * (1 + ((this.model.multiplier || 1) - 1) * 0.5),
                 'sniper_projectile.png',
                 550, // Ultra fast projectile
                 true, // isCritical/Heavy

@@ -48,7 +48,7 @@ class Miniboss3 extends Miniboss {
         // Intended: Minibosses/Bosses do not scale health or damage with level progression
         m.maxHealth = MB3.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
-        m.damage = MB3.ATTACK_DAMAGE * (1 + ((m.multiplier || 1) - 1) * 0.75); // Intended static damage
+        m.damage = MB3.ATTACK_DAMAGE * (1 + ((m.multiplier || 1) - 1) * 0.5); // Intended static damage
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB3.SPEED_MULT;
         m.knockBackModifier = 0; // Immune to knockback
         m.size = 94;

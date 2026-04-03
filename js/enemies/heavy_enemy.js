@@ -40,7 +40,7 @@ class HeavyEnemy extends Enemy {
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 1.5,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5 * (1 + (scaleFactor - 1) * 0.5),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 5 * 0.201,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.75,
             size: 42

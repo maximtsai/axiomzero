@@ -39,13 +39,13 @@ class ShooterEnemy extends Enemy {
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * 0.5),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 23
         });
 
-        this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor;
+        this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * 0.5);
 
         this.model.fireCooldown = 0;
         this.model.baseAttackInterval = 2500;

@@ -327,8 +327,9 @@ const iterationOverScreen = (() => {
                 .setTint(s.color)
                 .setOrigin(0, 0.5);
 
-            // Percentage
-            const pText = PhaserScene.add.text(cx + (barWidth / 2) + 10, y, Math.round(pct * 100) + '%', {
+            // Percentage and Raw Damage
+            const rawDmg = Math.round(dmg[s.id]);
+            const pText = PhaserScene.add.text(cx + (barWidth / 2) + 10, y, `${Math.round(pct * 100)}% (${rawDmg.toLocaleString()})`, {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: '13px',
                 color: '#ffffff',

@@ -28,7 +28,7 @@ class BombEnemy extends Enemy {
     activate(x, y, scaleFactor, extraConfig = {}) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * 0.5),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor, // Dies on hit
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: 18,
