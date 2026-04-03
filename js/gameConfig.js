@@ -59,6 +59,10 @@ GAME_CONSTANTS.PROJECTILE_SPEED = 600;  // 50% faster (px/sec)
 GAME_CONSTANTS.ENEMY_PROJECTILE_SPEED = 400; // px/sec
 GAME_CONSTANTS.PROJECTILE_HIT_RADIUS = 15;
 
+// ─── Enemy Scaling ────────────────────────────────────────────────────────────
+
+GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY = 0.5;
+
 // ─── Miniboss / Boss ──────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS = 0.5651; // wave percentage (0-1)

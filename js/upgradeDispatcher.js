@@ -152,6 +152,7 @@ const upgradeDispatcher = (() => {
     }
 
     return {
+        getLevel,
         recalcEverything,
         recalcPulseDamage,
         recalcPulseReload,

@@ -271,7 +271,7 @@ class Miniboss1 extends Miniboss {
             enemyBulletManager.fire(
                 m.x + ux * 27, m.y + uy * 27,
                 targetX, targetY,
-                MB1.BULLET_DAMAGE * (1 + ((m.multiplier || 1) - 1) * 0.5),
+                MB1.BULLET_DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
                 'bullet.png',
                 null,
                 true,

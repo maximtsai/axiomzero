@@ -524,6 +524,7 @@ const tower = (() => {
         });
         messageBus.subscribe('testingDefensesEnded', () => { model.attackTimer = 0; });
         updateManager.addFunction(_update);
+        towerStatsUI.init();
     }
 
     function spawn() {

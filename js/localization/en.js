@@ -43,7 +43,7 @@ window.TRANSLATIONS.en = {
         system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '[color=#87FF02]+5[/color] health', popup: '+5 MAX HEALTH' },
         regen: { name: 'AUTO-RESTORE', desc: '[color=#87FF02]+0.1[/color] health regen', popup: '+0.1 REGEN' },
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
-        armor: { name: 'RESILIENCE', desc: 'Reduces enemy attack damage by [color=#8FD9F8]1[/color] per level.', popup: '+1 RESILIENCE' },
+        armor: { name: 'ARMOR', desc: 'Reduces enemy attack damage by [color=#8FD9F8]1[/color] per level.', popup: '+1 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots lightning every [color=#8FD9F8]3s[/color] that chains across enemies.', popup: 'LIGHTNING WEAPON' },
         shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a shockwave every [color=#8FD9F8]3s[/color] damaging nearby enemies.', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+1[/color] lightning chain target', popup: '+1 CHAIN' },
@@ -246,5 +246,14 @@ window.TRANSLATIONS.en = {
     popup: {
         insight_gained: '+LEVEL UP!',
         shard_acquired: '+1 SHARD ACQUIRED'
+    },
+    tower_stats: {
+        title: 'TOWER STATS',
+        damage: 'DAMAGE: {0}',
+        regen: 'REGEN: {0}/s',
+        armor: 'ARMOR: {0}',
+        range: 'RANGE: {0}',
+        equipped: 'EQUIPPED SYSTEMS',
+        none: 'NONE'
     }
 };

@@ -138,14 +138,14 @@ class SniperEnemy extends Enemy {
     activate(x, y, scaleFactor) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 2,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * 0.5),
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.9,
             size: 28
         });
 
         const m = this.model;
-        m.projectileDamage = 4 * (1 + (scaleFactor - 1) * 0.5);
+        m.projectileDamage = 4 * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY);
         m.state = SNIPER_STATE.MOVING;
         m.fireCooldown = 0;
         m.isCharging = false;
