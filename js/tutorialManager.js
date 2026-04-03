@@ -2,6 +2,7 @@
 
 const tutorialManager = (() => {
     let activePopups = [];
+    let _activeDelayedCalls = [];
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -12,6 +13,7 @@ const tutorialManager = (() => {
 
     function _onPhaseChanged(phase) {
         _clearTutorial();
+        _cancelActiveDelayedCalls();
 
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _checkEarlyGameTutorial();
@@ -50,29 +52,37 @@ const tutorialManager = (() => {
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
         if (onlyAwaken) {
-            PhaserScene.time.delayedCall(8500, () => {
+            const dc = PhaserScene.time.delayedCall(17000, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
                     _showCombatTutorial();
                 }
             });
+            _activeDelayedCalls.push(dc);
         }
     }
 
     function _checkCognitionTutorial() {
-        if (gameState.tutorialsSeen['cognition_damage']) return;
-
         const upgrades = gameState.upgrades || {};
-        // Condition: Has purchased basic_pulse (Cognition)
-        if (upgrades.basic_pulse >= 1) {
-            PhaserScene.time.delayedCall(5000, () => {
-                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT) && !gameState.tutorialsSeen['cognition_damage']) {
-                    const msg = t('tutorial', 'cognition_damage');
-                    const x = GAME_CONSTANTS.halfWidth;
-                    const y = GAME_CONSTANTS.halfHeight - 270;
-                    _createTutorialPopup(msg, x, y, false, undefined, undefined, 'cognition_damage', '42px');
+        const upgradeKeys = Object.keys(upgrades);
+
+        // Condition: Player only has purchased 'AWAKEN' (level 1)
+        const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
+
+        if (onlyAwaken) {
+            const dc = PhaserScene.time.delayedCall(4500, () => {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
+                    // Check again inside delayed call to be safe
+                    const currentUpgrades = Object.keys(gameState.upgrades || {});
+                    if (currentUpgrades.length === 1 && gameState.upgrades.awaken === 1) {
+                        const msg = t('tutorial', 'cognition_damage');
+                        const x = GAME_CONSTANTS.halfWidth;
+                        const y = GAME_CONSTANTS.halfHeight - 270;
+                        _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '42px');
+                    }
                 }
             });
+            _activeDelayedCalls.push(dc);
         }
     }
 
@@ -112,17 +122,20 @@ const tutorialManager = (() => {
 
         _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '42px', 8500);
 
-        PhaserScene.time.delayedCall(2500, () => {
+        const dc = PhaserScene.time.delayedCall(2500, () => {
             if (typeof messageBus !== 'undefined') {
                 messageBus.publish('pulseData');
-                PhaserScene.time.delayedCall(2200, () => {
-                    messageBus.publish('pulseData');
-                    PhaserScene.time.delayedCall(2200, () => {
-                        messageBus.publish('pulseData');
+                const innerDc1 = PhaserScene.time.delayedCall(2200, () => {
+                    if (typeof messageBus !== 'undefined') messageBus.publish('pulseData');
+                    const innerDc2 = PhaserScene.time.delayedCall(2200, () => {
+                        if (typeof messageBus !== 'undefined') messageBus.publish('pulseData');
                     });
+                    _activeDelayedCalls.push(innerDc2);
                 });
+                _activeDelayedCalls.push(innerDc1);
             }
         });
+        _activeDelayedCalls.push(dc);
     }
 
     function _showUpgradeTutorial() {
@@ -134,7 +147,7 @@ const tutorialManager = (() => {
         _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '38px');
 
         // Play glow on specific primary nodes
-        const nodesToGlow = ['basic_pulse', 'integrity', 'intensity'];
+        const nodesToGlow = ['automated_defense', 'integrity', 'intensity'];
         nodesToGlow.forEach(id => {
             if (typeof upgradeTree !== 'undefined') {
                 const node = upgradeTree.getNode(id);
@@ -264,6 +277,13 @@ const tutorialManager = (() => {
             if (p.bg && p.bg.active) p.bg.destroy();
         });
         activePopups = [];
+    }
+
+    function _cancelActiveDelayedCalls() {
+        _activeDelayedCalls.forEach(dc => {
+            if (dc && dc.remove) dc.remove();
+        });
+        _activeDelayedCalls = [];
     }
 
     return { init, showDuoSwapTutorial };

@@ -112,7 +112,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // cursor AOE (must be unlocked via Upgrade Tree)
     pulseAttack.init();
-    if ((gameState.upgrades && gameState.upgrades.basic_pulse) >= 1) {
+    if ((gameState.upgrades && gameState.upgrades.awaken) >= 1) {
         pulseAttack.unlock();
     }
 

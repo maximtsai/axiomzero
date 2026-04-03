@@ -30,7 +30,7 @@ window.TRANSLATIONS.en = {
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         emergency_depot: { name: 'EMERGENCY DEPOT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#8FD9F8]+3 SHARDS[/color], and [color=white]+3 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
-        basic_pulse: { name: 'COGNITION', desc: 'Your cursor pulses damage every [color=#8FD9F8]2[/color] seconds.', popup: 'CURSOR ATTACK UNLOCKED' },
+        automated_defense: { name: 'AUTOMATED DEFENSE', desc: 'Tower automatically attacks enemies.', popup: 'TOWER ATTACK UNLOCKED' },
         pulse_damage: { name: 'CONCENTRATION', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '[color=#8FD9F8]+40%[/color] resource pickup range', popup: '+40% PICKUP RANGE' },
         pulse_expansion: { name: 'SIGNAL STRENGTH', desc: '[color=#8FD9F8]+25%[/color] cursor attack size', popup: '+25% SIGNAL STRENGTH' },
@@ -171,7 +171,7 @@ window.TRANSLATIONS.en = {
     },
     tutorial: {
         combat_collect: 'COLLECT DATA ◈ TO EVOLVE',
-        cognition_damage: 'DEAL DAMAGE WITH YOUR CURSOR ⛶',
+        cognition_damage: 'YOUR CURSOR ⛶ DEALS DAMAGE',
         upgrade_use: 'SPEND DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
         duo_swap_free: 'SWAPPING ◆ ABILITIES IS FREE',
@@ -241,7 +241,8 @@ window.TRANSLATIONS.en = {
         coin_title: '[color=#00FF00]COIN[/color]',
         coin_desc: 'A token that can influence the physical world. Provides high-tier upgrades.',
         exp: 'EXP ',
-        exp_initial: 'EXP 0%'
+        exp_initial: 'EXP 0%',
+        data_round: 'DATA'
     },
     popup: {
         insight_gained: '+LEVEL UP!',

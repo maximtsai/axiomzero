@@ -18,6 +18,7 @@ const gameHUD = (() => {
     let testDefensesBtn = null;
     let waveProgressBar = null;
     let farmingTimerTxt = null;
+    let roundDataTxt = null;
     let farmingStartTime = 0;
     let isFarming = false;
 
@@ -309,6 +310,14 @@ const gameHUD = (() => {
             color: '#00f5ff',
         }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
         farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
+
+        // ── Round Data counter ──
+        roundDataTxt = PhaserScene.add.text(24, GAME_CONSTANTS.HEIGHT - 62, 'DATA: 0', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '24px',
+            color: '#00f5ff',
+        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        roundDataTxt.setShadow(2, 2, '#000000', 2, true, true);
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -325,6 +334,7 @@ const gameHUD = (() => {
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
+        if (roundDataTxt) roundDataTxt.setVisible(true).setText('DATA: 0');
         if (testDefensesBtn) {
             testDefensesBtn.setVisible(false);
             testDefensesBtn.setState(DISABLE);
@@ -353,6 +363,7 @@ const gameHUD = (() => {
         }
         if (waveProgressBar) waveProgressBar.setVisible(false);
         if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
+        if (roundDataTxt) roundDataTxt.setVisible(false);
         isFarming = false;
     }
 
@@ -519,6 +530,12 @@ const gameHUD = (() => {
             const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
             const ss = (totalSec % 60).toString().padStart(2, '0');
             farmingTimerTxt.setText(`${mm}:${ss}`);
+        }
+
+        // Update round data counter if active
+        if (roundDataTxt && roundDataTxt.visible) {
+            const currentRoundData = resourceManager.getSessionData();
+            roundDataTxt.setText(t('hud', 'data_round') + ': ' + Math.floor(currentRoundData));
         }
     }
 

@@ -1091,10 +1091,6 @@ const enemyManager = (() => {
 
             // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
             let firstThreshold = 5.05;
-            // Special case: if basic_pulse isn't researched, increase threshold to 5.75
-            if (!(gameState.upgrades && gameState.upgrades.basic_pulse >= 1)) {
-                firstThreshold = 5.15;
-            }
             const secondThreshold = 1.25;
             if (combatTime < firstThreshold) {
                 spawnSpeedMultiplier = 27;

@@ -1,6 +1,6 @@
 // pulseAttack.js — Player cursor AOE cursor attack (Refactored to MVC).
 // A nine-sliced square centered on the mouse that fires every FIRE_INTERVAL ms,
-// dealing DAMAGE to all enemies within its AOE. Activated by "basic_pulse" node.
+// dealing DAMAGE to all enemies within its AOE. Activated by "awaken" node.
 // Visual: 0.3 alpha idle, flashes to 1 on fire with Quart.easeOut tween back.
 
 class PulseAttackModel {
@@ -10,7 +10,7 @@ class PulseAttackModel {
         this.BASE_SIZE = 100;    // px — AOE square side length
 
         this.active = false;  // true when combat phase AND node purchased
-        this.unlocked = false;  // true after basic_pulse purchased
+        this.unlocked = false;  // true after awaken purchased
         this.paused = false;
         this.fireTimer = 0;
         this.size = this.BASE_SIZE;  // current square side length (upgradeable)

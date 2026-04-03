@@ -42,7 +42,12 @@ class TowerModel {
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp;
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
-        this.damage = GAME_CONSTANTS.TOWER_BASE_DAMAGE + 2 * intensityLv + shellDamage;
+        const autoDefLv = ups.automated_defense || 0;
+        if (autoDefLv > 0) {
+            this.damage = 5 + 2 * intensityLv + shellDamage;
+        } else {
+            this.damage = 0;
+        }
 
         this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         const lvlCfg = getCurrentLevelConfig();
@@ -640,6 +645,9 @@ const tower = (() => {
 
     function isAlive() { return model.alive; }
     function getDamage() { return model.damage; }
+    function getArmor() { return model.armor; }
+    function getRegen() { return model.healthRegen; }
+    function getRange() { return model.attackRange; }
 
     function setVisible(vis) { view.setVisible(vis); }
     function setPosition(x, y) { view.setPosition(x, y); }
@@ -695,7 +703,7 @@ const tower = (() => {
         }
 
         // Auto-attack
-        if (model.awakened) {
+        if (model.awakened && (gameState.upgrades && gameState.upgrades.automated_defense >= 1)) {
             model.attackTimer += delta;
             if (model.attackTimer >= model.attackCooldown) {
                 model.attackTimer -= model.attackCooldown;
@@ -792,7 +800,7 @@ const tower = (() => {
     return {
         init, spawn, awaken, reset,
         takeDamage, heal, die, shake,
-        getPosition, isAlive, getDamage,
+        getPosition, isAlive, getDamage, getArmor, getRegen, getRange,
         getMaxHealth: () => model.maxHealth,
         getHealth: () => model.health,
         setVisible, setPosition,

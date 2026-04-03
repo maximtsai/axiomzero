@@ -125,9 +125,12 @@ function t(mainKey, subKey, placeholders = []) {
 
     if (typeof text !== 'string') return text;
 
-    if (placeholders.length) {
-        for (let i = 0; i < placeholders.length; i++) {
-            text = text.replaceAll(`{${i}}`, placeholders[i]);
+    // Support both single value or array for placeholders
+    const finalPlaceholders = Array.isArray(placeholders) ? placeholders : [placeholders];
+
+    if (finalPlaceholders.length) {
+        for (let i = 0; i < finalPlaceholders.length; i++) {
+            text = text.replaceAll(`{${i}}`, finalPlaceholders[i]);
         }
     }
 

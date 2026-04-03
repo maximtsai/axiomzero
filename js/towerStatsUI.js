@@ -93,24 +93,14 @@ const towerStatsUI = (() => {
     function _getStats() {
         const ups = gameState.upgrades || {};
 
-        const hp = tower.getHealth ? tower.getHealth() : 0;
-        const damage = tower.getDamage ? tower.getDamage() : 0;
+        const hp = tower.getHealth();
+        const damage = tower.getDamage();
+        const armor = tower.getArmor();
+        const regen = tower.getRegen();
+        const range = tower.getRange();
 
         // Use upgradeDispatcher.getLevel to ensure we respect branchActive (Duo choice)
         const get = (id) => (typeof upgradeDispatcher !== 'undefined') ? upgradeDispatcher.getLevel(id) : 0;
-
-        const integrityLv = get('integrity');
-        const systemRedundancyLv = get('system_redundancy_new');
-        const anchorHp = get('physical_anchor') * 40;
-        const calcHp = 100 + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp;
-
-        const intensityLv = get('intensity');
-        const shellDamage = get('shell_access') * 4 + get('base_hp_boost') * 4;
-        const calcDamage = 5 + 2 * intensityLv + shellDamage;
-
-        const regen = 0.12 * get('regen');
-        const armor = get('armor') * 1;
-        const range = 200 * (1 + 0.2 * get('focus') + 0.2 * get('focus_range_2') + 0.2 * get('focus_range_3'));
 
         // Equipped choice-weapons — only show if active branch
         const equipped = [];
@@ -122,8 +112,8 @@ const towerStatsUI = (() => {
         if (get('artillery')) equipped.push(t('results', 'artillery'));
 
         return {
-            hp: hp || calcHp,
-            damage: damage || calcDamage,
+            hp: hp,
+            damage: damage,
             regen,
             armor,
             range,

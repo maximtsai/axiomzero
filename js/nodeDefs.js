@@ -35,11 +35,12 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['basic_pulse', 'integrity', 'intensity'],
+        childIds: ['automated_defense', 'integrity', 'intensity'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
             tower.awaken();
+            pulseAttack.unlock();
             // Show the deploy button immediately
             if (upgradeTree.isVisible()) {
                 upgradeTree._showDeployButton();
@@ -50,11 +51,11 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'basic_pulse',
-        name: 'COGNITION',
-        icon: 'Skillicon14_01.png',
-        description: t('nodes', 'basic_pulse.desc'),
-        popupText: t('nodes', 'basic_pulse.popup'),
+        id: 'automated_defense',
+        name: 'AUTOMATED DEFENSE',
+        icon: 'Skillicon14_03.png',
+        description: t('nodes', 'automated_defense.desc'),
+        popupText: t('nodes', 'automated_defense.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
         baseCost: 1,
@@ -66,7 +67,7 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(1),
         effect: function () {
-            pulseAttack.unlock();
+            // Stats recalculated via 'upgradePurchased' -> tower._onUpgradePurchased
         },
     },
     {
@@ -82,7 +83,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 10,
         costStepScaling: 10,
-        parents: ['basic_pulse'],
+        parents: ['automated_defense'],
         childIds: ['pulse_expansion'],
         treeX: gridX(1),
         treeY: gridY(1),
@@ -103,7 +104,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         costStep: 0,
-        parents: ['basic_pulse'],
+        parents: ['automated_defense'],
         childIds: ['data_compression'],
         treeX: gridX(-1),
         treeY: gridY(1),
@@ -531,7 +532,7 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_1',
         isPlaceholder: true,
-        parents: ['basic_pulse'],
+        parents: ['automated_defense'],
         monitorsDuoTier: 1,
         childIds: ['test_defenses'],
 
@@ -552,7 +553,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         costStep: 0,
-        parents: ['basic_pulse'],
+        parents: ['automated_defense'],
         childIds: ['lightning_chain', 'lightning_boost'],
         isDuoBox: true,
         duoBoxTier: 1,
@@ -577,7 +578,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         costStep: 0,
-        parents: ['basic_pulse'],
+        parents: ['automated_defense'],
         childIds: ['shockwave_amplifier', 'shockwave_resonance'],
         isDuoBox: true,
         duoBoxTier: 1,
