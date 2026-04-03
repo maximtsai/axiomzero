@@ -604,7 +604,8 @@ const resourceManager = (() => {
         // The remaining fraction is naturally preserved for future death checks
     }
 
-    function _onMinibossDefeated(x, y) {
+    function _onMinibossDefeated(x, y, isFarmingMiniboss) {
+        if (isFarmingMiniboss) return;
         spawnShardDrop(x, y);
     }
 

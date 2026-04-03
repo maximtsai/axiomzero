@@ -28,6 +28,7 @@ const enemyManager = (() => {
 
     // Miniboss tracking
     let minibossSpawned = false;  // has a miniboss spawned this wave?
+    let farmingMinibossCount = 0; // how many 30s farming minibosses spawned?
     let minibossAlive = false;    // is the current miniboss still alive?
     let lastWaveProgress = 0;     // current progress 0-1
     let recentSpawnAngles = new Float32Array(6); // tracks the last 6 spawn angles (in radians)
@@ -119,6 +120,7 @@ const enemyManager = (() => {
         GAME_VARS.roundTimeElapsed = roundTimeElapsed;
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         minibossSpawned = false;
+        farmingMinibossCount = 0;
         minibossAlive = false;
         bossSpawned = false;
         nextSpawnIsBomb = false;
@@ -422,20 +424,23 @@ const enemyManager = (() => {
         return Phaser.Math.Angle.Wrap(side + offset);
     }
 
-    function _spawnMiniboss() {
-        if (minibossSpawned) return;
+    function _spawnMiniboss(isFarmingSpawn = false, multiplier = 1, forceType = null, farmingOverrides = null) {
+        if (!isFarmingSpawn && minibossSpawned) return;
 
         const config = getCurrentLevelConfig(lastWaveProgress);
 
-        // Check if miniboss for this level has already been defeated
+        // Allow forcing a specific class (like Miniboss1 for farming mode)
+        const mbType = forceType || config.miniboss;
+
+        // Check if miniboss for this level has already been defeated (unless it's an explicit farming spawn)
         const currentLevel = gameState.currentLevel || 1;
-        if ((gameState.minibossLevelsDefeated || 0) >= currentLevel) {
+        if (!isFarmingSpawn && (gameState.minibossLevelsDefeated || 0) >= currentLevel) {
             debugLog(`Miniboss for level ${currentLevel} already defeated. Skipping spawn.`);
             minibossSpawned = true; // prevent re-attempts this wave
             return;
         }
 
-        let mbClass = _resolveEnemyClass(config.miniboss);
+        let mbClass = _resolveEnemyClass(mbType);
         let mb = null;
         if (!mbClass) {
             console.warn(`[EnemyManager] Miniboss class '${config.miniboss}' not found. Defaulting to Miniboss1.`);
@@ -447,7 +452,17 @@ const enemyManager = (() => {
 
         if (!mb) return;
 
-        minibossSpawned = true;
+        if (isFarmingSpawn) {
+            farmingMinibossCount++;
+            if (mb.model) {
+                mb.model.isFarmingMiniboss = true;
+                mb.model.baseResourceDrop = 10;
+                mb.model.multiplier = multiplier;
+            }
+        } else {
+            minibossSpawned = true;
+        }
+
         minibossAlive = true;
 
         const distance = GAME_CONSTANTS.MINIBOSS_SPAWN_DISTANCE;
@@ -480,8 +495,26 @@ const enemyManager = (() => {
 
         mb.activate(sx, sy);
 
+        if (isFarmingSpawn && farmingOverrides) {
+            const m = mb.model;
+            if (farmingOverrides.health) {
+                m.maxHealth = farmingOverrides.health;
+                m.health = m.maxHealth;
+            }
+            if (farmingOverrides.damage) {
+                m.damage = farmingOverrides.damage;
+            }
+            if (farmingOverrides.data) {
+                m.baseResourceDrop = farmingOverrides.data;
+            }
+            // Ensure multiplier is set for ranged/slam stats
+            if (farmingOverrides.multiplier) {
+                m.multiplier = farmingOverrides.multiplier;
+            }
+        }
+
         // Spawn 2 fast enemies for Miniboss 2
-        if (config.miniboss === 'Miniboss2') {
+        if (!isFarmingSpawn && config.miniboss === 'Miniboss2') {
             const offsets = [-0.25, 0.25];
             const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
 
@@ -510,6 +543,8 @@ const enemyManager = (() => {
         activeEnemies.push(mb);
 
         messageBus.publish('minibossSpawned');
+        const variantStr = isFarmingSpawn ? 'Farming' : 'Standard';
+        console.log(`[EnemyManager] Spawning ${variantStr} Miniboss: ${mb.model.type} (HP: ${Math.floor(mb.model.health)})`);
         debugLog('Miniboss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
     }
 
@@ -987,7 +1022,7 @@ const enemyManager = (() => {
                 debugLog('New miniboss record: level ' + currentLevel);
             }
 
-            messageBus.publish('minibossDefeated', ex, ey);
+            messageBus.publish('minibossDefeated', ex, ey, enemy.model.isFarmingMiniboss);
             debugLog('Miniboss defeated');
         } else if (wasBoss && !skipBossEffects) {
             bossAlive = false;
@@ -1137,10 +1172,48 @@ const enemyManager = (() => {
             // Spawn timer
             spawnTimer += delta;
             const config = getCurrentLevelConfig();
-            const trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
+            let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
+
+            // Farming mode speedup (cumulative 0.9x each minute)
+            const isFarming = (gameState.levelsDefeated || 0) >= (gameState.currentLevel || 1);
+            if (isFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+                trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
+            }
+
             if (spawnTimer >= trueSpawnInterval) {
                 spawnTimer -= trueSpawnInterval;
                 _spawnOne();
+            }
+
+            // Farming miniboss spawn: first at 30s, then every 60s after
+            if (isFarming && spawning && roundTimeElapsed >= 30 && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+                const n = Math.floor((roundTimeElapsed - 30) / 60) + 1;
+                if (n > farmingMinibossCount) {
+                    const p = Math.pow(2.2, n - 1);
+                    
+                    const isMB3 = Math.random() < 0.15;
+                    const type = isMB3 ? 'Miniboss3' : 'Miniboss1';
+                    
+                    const config = getCurrentLevelConfig();
+                    const baseH = (GAME_CONSTANTS.ENEMY_BASE_HEALTH * (config.levelScalingModifier || 1)) * 10;
+                    const baseD = (GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (config.levelScalingModifier || 1)) * 5;
+                    
+                    let targetH = baseH * p;
+                    let targetD = baseD * p;
+                    let data = 10;
+                    
+                    if (isMB3) {
+                        targetH *= 3;
+                        data = 30;
+                    }
+                    
+                    _spawnMiniboss(true, p, type, {
+                        health: targetH,
+                        damage: targetD,
+                        data: data,
+                        multiplier: p
+                    });
+                }
             }
         }
 

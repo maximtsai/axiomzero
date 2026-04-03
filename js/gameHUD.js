@@ -515,8 +515,7 @@ const gameHUD = (() => {
 
         // Update farming timer if active
         if (isFarming && farmingTimerTxt && farmingTimerTxt.visible) {
-            const elapsedMs = Date.now() - farmingStartTime;
-            const totalSec = Math.floor(elapsedMs / 1000);
+            const totalSec = Math.floor(enemyManager.getRoundTimeElapsed());
             const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
             const ss = (totalSec % 60).toString().padStart(2, '0');
             farmingTimerTxt.setText(`${mm}:${ss}`);

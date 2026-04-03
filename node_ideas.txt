@@ -26,27 +26,18 @@
 
 ## 7. Build Specializations - Implemented
 
-Increase size of data drops, mom can't see them.
-Play a collecting data drops animation upon round complete.
-Make cursor attack default, make tower attack an upgrade.
-
-
-make it clearer when you've defeated the boss
-add aniamtion to colelcting data post fight
-make big text optional checkbox
+- Make cursor attack default, make tower attack an upgrade.
+- Play collect data drop sound effect.
+- add aniamtion to colelcting data post fight
 second iteration balance, slower resource gathering
 clearer exp gain  visual, slower +insight text (maybe change)
-Make it clearer when YOU die, make it so the enemy that killed you doesn't die, slightly lengthen the wait duration.
 Make the collect resource tutorial announcement throw out bits of resources too.
-add boss icon to level.
-- Make cursor usable during test weapons
+- add boss icon to level.
 - Make mouse wheel do stuff
 - TURBO BUTTONS
 - Add minibosses in infinite runs + *0.9 spawn timer
-- Bomb and artillery anim + juice
 - Cheaper duo node upgrades
 - hovering over tower should show its stats during upgrade phase
-- Slight nerf to lasers
 - Make level select buttons go up down instead
 - Bottom left data collected display
 - Progress bar to red?

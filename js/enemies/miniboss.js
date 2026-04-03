@@ -14,6 +14,7 @@ class MinibossModel extends EnemyModel {
         this.isBoss = true;
         this.isMiniboss = true;
         this.knockBackModifier = 0;
+        this.multiplier = 1;
     }
 }
 
@@ -21,6 +22,7 @@ class Miniboss extends Enemy {
     constructor(levelScalingModifier = 1) {
         super();
         this.levelScalingModifier = levelScalingModifier;
+        this.multiplier = 1;
         // Subclasses MUST set this.model and this.view
     }
 

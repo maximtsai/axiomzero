@@ -8,7 +8,7 @@
 //   • SLAM ATTACK: 10 damage after a wind-up and lunge animation.
 
 const MB3 = {
-    HEALTH: 470,
+    HEALTH: 520,
     SPEED_MULT: 0.85,
     INITIAL_SPEED_MULT: 7,
     RAMP_DURATION: 2.5,
@@ -46,9 +46,9 @@ class Miniboss3 extends Miniboss {
         const m = this.model;
 
         // Intended: Minibosses/Bosses do not scale health or damage with level progression
-        m.maxHealth = MB3.HEALTH;
+        m.maxHealth = MB3.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
-        m.damage = MB3.ATTACK_DAMAGE; // Intended static damage
+        m.damage = MB3.ATTACK_DAMAGE * (m.multiplier || 1); // Intended static damage
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB3.SPEED_MULT;
         m.knockBackModifier = 0; // Immune to knockback
         m.size = 94;

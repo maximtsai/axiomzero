@@ -149,7 +149,7 @@ class Miniboss1 extends Miniboss {
         const m = this.model;
 
         // Intended: Minibosses/Bosses do not scale health or damage with level progression
-        m.maxHealth = MB1.HEALTH;
+        m.maxHealth = MB1.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
         m.damage = 0;
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB1.SPEED_MULT;
@@ -271,7 +271,7 @@ class Miniboss1 extends Miniboss {
             enemyBulletManager.fire(
                 m.x + ux * 27, m.y + uy * 27,
                 targetX, targetY,
-                MB1.BULLET_DAMAGE,
+                MB1.BULLET_DAMAGE * (m.multiplier || 1),
                 'bullet.png',
                 null,
                 true,

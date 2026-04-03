@@ -179,7 +179,7 @@ function getCurrentLevelConfig(progress = 0) {
     config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
 
     // Tempo logic: Use lateSpawnInterval if we are in Farming Mode OR if lateWeights are active (useLateState)
-    const isLateTempo = useLateState || progress > 0.4;
+    const isLateTempo = useLateState || progress > 0.3;
     if (isLateTempo && config.lateSpawnInterval !== undefined) {
         config.spawnInterval = config.lateSpawnInterval;
     } else {

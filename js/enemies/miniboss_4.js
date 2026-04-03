@@ -134,9 +134,9 @@ class Miniboss4 extends Miniboss {
         const v = this.view;
         
         // Intended: Minibosses/Bosses do not scale with level progression
-        m.maxHealth = MB4.HEALTH;
+        m.maxHealth = MB4.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
-        m.damage = 15; // Does not deal contact damage usually
+        m.damage = 15 * (m.multiplier || 1); // Does not deal contact damage usually
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB4.SPEED_MULT;
         m.size = 65;
 
@@ -214,7 +214,7 @@ class Miniboss4 extends Miniboss {
             enemyBulletManager.fire(
                 this.model.x, this.model.y,
                 targetX, targetY,
-                MB4.DAMAGE,
+                MB4.DAMAGE * (this.model.multiplier || 1),
                 'sniper_projectile.png',
                 550, // Ultra fast projectile
                 true, // isCritical/Heavy
