@@ -43,7 +43,7 @@ GAME_CONSTANTS.ENEMY_BASE_HEALTH = 6;
 GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
 GAME_CONSTANTS.ENEMY_BASE_SPEED = 30;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
-GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.085;  // Multiplicative multiplier applied every interval
+GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.08;  // Multiplicative multiplier applied every interval
 GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 6; // seconds between scaling jumps
 GAME_CONSTANTS.PROTECTOR_AURA_RANGE = 195;
 GAME_CONSTANTS.PROTECTOR_AURA_SQUARED = 38025; // 195 * 195
@@ -82,7 +82,7 @@ GAME_CONSTANTS.WAVE_DURATION = 50;  // seconds — progress bar fills over this 
 
 // ─── Depth layers (flat ordering, no Containers) ──────────────────────────────
 
-GAME_CONSTANTS.DEPTH_BG = 0;
+GAME_CONSTANTS.DEPTH_BG = -3;
 GAME_CONSTANTS.DEPTH_GLOW = 50;
 GAME_CONSTANTS.DEPTH_ENEMIES = 100;
 GAME_CONSTANTS.DEPTH_TOWER = 200;

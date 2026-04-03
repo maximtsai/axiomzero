@@ -364,11 +364,11 @@
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 53,
+						"w": 55,
 						"h": 53
 					},
 					"spriteSourceSize": {
-						"x": 2,
+						"x": 4,
 						"y": 10,
 						"w": 51,
 						"h": 33
@@ -537,22 +537,22 @@
 				{
 					"filename": "fast_enemy_hp.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 37,
-						"h": 25
+						"w": 36,
+						"h": 24
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
 						"w": 36,
-						"h": 25
+						"h": 24
 					},
 					"frame": {
 						"x": 1968,
 						"y": 955,
 						"w": 36,
-						"h": 25
+						"h": 24
 					},
 					"anchor": {
 						"x": 0.5,
@@ -1929,7 +1929,7 @@
 						"h": 161
 					},
 					"spriteSourceSize": {
-						"x": 0,
+						"x": 1,
 						"y": 6,
 						"w": 156,
 						"h": 149
@@ -1976,6 +1976,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:292e37503a4d0aeb59be61f98ba46f71:b417fe2aa61dafd306deb73654fd1e53:b46d94f51ab09644cd324819ab72f7d7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:b249202004e18f830e62a8d485f63fa8:d52e71bcea63d7e370ff420e9880b9bc:b46d94f51ab09644cd324819ab72f7d7$"
 	}
 }

@@ -174,7 +174,7 @@ const waveManager = (() => {
             color: '#ffffff',
             stroke: '#ff2d78',
             strokeThickness: 2,
-        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 10).setAlpha(0);
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS + 10).setAlpha(0);
 
         // Register for cleanup just in case
         registerCombatObject(signalText);
@@ -275,7 +275,6 @@ const waveManager = (() => {
                 // 3. Inform enemyManager to instantly kill all non-boss enemies
                 if (typeof enemyManager !== 'undefined') {
                     enemyManager.killAllNonBossEnemies();
-                    PhaserScene.cameras.main.shake(1000, 0.023);
                 }
 
                 // 4. Trigger resource vacuum (implemented in resourceManager)

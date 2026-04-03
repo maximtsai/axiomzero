@@ -177,7 +177,7 @@ class PulseAttackView {
         // Charge indicators (Right-to-left at top-right of the square)
         for (let i = 0; i < 8; i++) { // Increased to support upgrades
             const s = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
-            s.setScale(2);
+            s.setScale(1.25);
             s.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 5);
             s.setScrollFactor(0);
             s.setVisible(false);
@@ -202,7 +202,7 @@ class PulseAttackView {
             () => {
                 const slice = PhaserScene.add.nineslice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
                 slice.setOrigin(0.5, 0.5);
-                slice.setDepth(0);
+                slice.setDepth(-2);
                 slice.setScrollFactor(0);
                 slice.setVisible(false);
                 slice.setActive(false);

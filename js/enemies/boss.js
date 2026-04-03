@@ -61,6 +61,7 @@ class Boss extends Enemy {
             if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
                 PhaserScene.time.delayedCall(150, () => {
                     enemyManager.killAllNonBossEnemies();
+                    PhaserScene.cameras.main.shake(1000, 0.023);
                 });
             }
         }

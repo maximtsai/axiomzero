@@ -39,14 +39,14 @@ const glitchFX = (() => {
 
         // Pre-create permanent background grid (for system scans etc)
         bgGrid = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
-        bgGrid.setDepth(1);
+        bgGrid.setDepth(-1);
 
         bgGridHigh = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'black_grid.png');
         bgGridHigh.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1).setVisible(false);
 
         // Pre-allocate system scan assets (Pooling)
         wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
-        blueLine = PhaserScene.add.image(0, 0, 'white_pixel').setVisible(false).setBlendMode(Phaser.BlendModes.ADD).setOrigin(0.5, 0.5);
+        blueLine = PhaserScene.add.image(0, 0, 'white_pixel').setVisible(false).setDepth(-2).setBlendMode(Phaser.BlendModes.ADD).setOrigin(0.5, 0.5);
         scanFade1 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.MULTIPLY).setAngle(-45);
         scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD).setAngle(45);
     }
@@ -253,7 +253,7 @@ const glitchFX = (() => {
 
         // 1. Central Deathwave Pulse
         wave.setPosition(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight)
-            .setVisible(true).setDepth(0).setAlpha(0).setScale(0.1);
+            .setVisible(true).setDepth(-2).setAlpha(0).setScale(0.1);
 
         // Wave Tweens
         PhaserScene.tweens.add({
@@ -286,10 +286,10 @@ const glitchFX = (() => {
 
         // 3. Scan Line Fades (from backgrounds atlas)
         scanFade1.setPosition(GAME_CONSTANTS.halfWidth, -100)
-            .setVisible(true).setDepth(-1).setAlpha(0).setScale(1000, 1.9);
+            .setVisible(true).setDepth(-2).setAlpha(0).setScale(1000, 1.9);
 
         scanFade2.setPosition(GAME_CONSTANTS.halfWidth, -100)
-            .setVisible(true).setDepth(-1).setAlpha(0).setScale(1000, 1.9);
+            .setVisible(true).setDepth(-2).setAlpha(0).setScale(1000, 1.9);
 
         const fxState = { alpha: 0, y: -100 };
 

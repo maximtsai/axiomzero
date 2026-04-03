@@ -29,13 +29,20 @@ class ShellEnemy extends Enemy {
         this.view = new ShellEnemyView();
     }
 
-    activate(x, y, scaleFactor) {
+    activate(x, y) {
+        // Shells specifically ignore the wave-based scaling factor (scaleFactor includes wave + level)
+        // We only want the level-specific scalar here.
+        let levelScale = 1;
+        if (typeof getCurrentLevelConfig !== 'undefined') {
+            levelScale = getCurrentLevelConfig().levelScalingModifier || 1;
+        }
+
         super.activate(x, y, {
-            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 2,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * scaleFactor * 2,
-            selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 4,
+            maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * levelScale * 2,
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * levelScale * 2,
+            selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * levelScale * 4,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5,
-            size: 30
+            size: 32
         });
 
         this.setEnemyGlow('shell_glow.png');
