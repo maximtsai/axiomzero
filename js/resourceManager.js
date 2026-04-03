@@ -132,12 +132,12 @@ const resourceManager = (() => {
         _setupDrop(d, x, y);
     }
 
-    function spawnDataDrop(x, y) {
+    function spawnDataDrop(x, y, distance, angle) {
         if (!dropPool) return;
         const d = dropPool.get();
         if (!d) return;
 
-        _setupDrop(d, x, y);
+        _setupDrop(d, x, y, distance, angle);
     }
 
     function spawnShardDrop(x, y) {
@@ -231,7 +231,7 @@ const resourceManager = (() => {
         activeDrops.push(d);
     }
 
-    function _setupDrop(d, x, y) {
+    function _setupDrop(d, x, y, distance, angle) {
         totalDropsSpawned++;
 
         d.x = x;
@@ -257,16 +257,20 @@ const resourceManager = (() => {
         d.img.setVisible(visible);
         d.img.setActive(true);
 
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 3 + Math.random() * 38;
+        const dropAngle = (angle !== undefined && angle !== null) ? angle : Math.random() * Math.PI * 2;
+        const dist = (distance !== undefined && distance !== null) ? distance : 3 + Math.random() * 38;
 
         const awayDx = x - GAME_CONSTANTS.halfWidth;
         const awayDy = y - GAME_CONSTANTS.halfHeight;
         const awayLen = Math.sqrt(awayDx * awayDx + awayDy * awayDy) || 1;
 
-        const distAwayX = Math.cos(angle) * dist + (awayDx / awayLen) * 5;
-        const distAwayY = Math.sin(angle) * dist + (awayDy / awayLen) * 5;
-        d.img.setPosition(x + 0.6 * distAwayX, y + 0.6 * distAwayY);
+        const distAwayX = Math.cos(dropAngle) * dist + (awayDx / awayLen) * 5;
+        const distAwayY = Math.sin(dropAngle) * dist + (awayDy / awayLen) * 5;
+
+        // If distance is provided (event-based), spawn exactly at (x, y).
+        // Otherwise (enemy drop), use the default 0.6 offset to burst outward.
+        const spawnOffsetMult = (distance !== undefined && distance !== null) ? 0 : 0.6;
+        d.img.setPosition(x + spawnOffsetMult * distAwayX, y + spawnOffsetMult * distAwayY);
 
         const margin = 40 + Math.random() * 12;
         const cx = Math.max(margin, Math.min(GAME_CONSTANTS.WIDTH - margin, x));
@@ -276,7 +280,7 @@ const resourceManager = (() => {
         let endY = cy + distAwayY;
 
 
-        const spawnDuration = 240 + dist * 12;
+        const spawnDuration = 275 + dist * 6;
         d.collectLockTime = PhaserScene.time.now + 100 + (spawnDuration * 0.1);
 
         d.spawnTween = PhaserScene.tweens.add({

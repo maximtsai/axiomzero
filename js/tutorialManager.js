@@ -77,7 +77,7 @@ const tutorialManager = (() => {
                     if (currentUpgrades.length === 1 && gameState.upgrades.awaken === 1) {
                         const msg = t('tutorial', 'cognition_damage');
                         const x = GAME_CONSTANTS.halfWidth;
-                        const y = GAME_CONSTANTS.halfHeight - 270;
+                        const y = GAME_CONSTANTS.halfHeight - 220;
                         _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '42px');
                     }
                 }
@@ -118,9 +118,38 @@ const tutorialManager = (() => {
     function _showCombatTutorial() {
         const msg = t('tutorial', 'combat_collect');
         const x = GAME_CONSTANTS.halfWidth;
-        const y = GAME_CONSTANTS.halfHeight - 300;
+        const y = GAME_CONSTANTS.halfHeight - 280;
 
         _createTutorialPopup(msg, x, y, false, undefined, undefined, null, '42px', 8500);
+
+        // Measure text width to find edges for spawning data bits
+        const measure = PhaserScene.add.text(0, 0, msg, { fontFamily: 'MunroSmall', fontSize: '42px' }).setVisible(false);
+        const hw = measure.width / 2;
+        measure.destroy();
+
+        // Burst 8 bits of data from the text after 1.5 seconds
+        const burstDC = PhaserScene.time.delayedCall(1500, () => {
+            if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) return;
+
+            const burstSettings = [
+                { x: x - hw, y: y, dist: 80, ang: -2.4 }, // Left Up
+                { x: x - hw, y: y, dist: 130, ang: 2.4 },  // Left Down
+                { x: x, y: y, dist: 150, ang: 3.54 },  // Center Left
+                { x: x, y: y, dist: 100, ang: 1.57 },  // Center Down
+                { x: x, y: y, dist: 150, ang: -0.4 },     // Center Right
+                { x: x + hw, y: y, dist: 80, ang: -0.7 }, // Right Up
+                { x: x + hw, y: y, dist: 130, ang: 0.7 },  // Right Down
+            ];
+
+            burstSettings.forEach((s, idx) => {
+                PhaserScene.time.delayedCall(idx * 50, () => {
+                    if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
+                        resourceManager.spawnDataDrop(s.x, s.y, s.dist + Math.random() * 40, s.ang + (Math.random() * 0.4 - 0.2));
+                    }
+                });
+            });
+        });
+        _activeDelayedCalls.push(burstDC);
 
         const dc = PhaserScene.time.delayedCall(2500, () => {
             if (typeof messageBus !== 'undefined') {
@@ -228,9 +257,6 @@ const tutorialManager = (() => {
                     if (!txt || !txt.active) return;
                     charIdx++;
                     txt.setText(msg.substring(0, charIdx));
-                    if (typeof audio !== 'undefined') {
-                        audio.play('digital_typewriter_short', 0.6);
-                    }
                 }
             });
         });
