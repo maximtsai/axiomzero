@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.0.3</string>
+        <string>7.2.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -363,6 +363,8 @@
             <key type="filename">buttons/increment_disable.png</key>
             <key type="filename">buttons/increment_hover.png</key>
             <key type="filename">buttons/increment_normal.png</key>
+            <key type="filename">buttons/node_green_unlocked.png</key>
+            <key type="filename">buttons/node_red_unlocked.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -458,6 +460,26 @@
                 <rect>5,5,10,10</rect>
                 <key>scale9Paddings</key>
                 <rect>5,5,10,10</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/node__green_unlocked_hover.png</key>
+            <key type="filename">buttons/node_green_unlocked_disabled.png</key>
+            <key type="filename">buttons/node_green_unlocked_press.png</key>
+            <key type="filename">buttons/node_red_unlocked_disabled.png</key>
+            <key type="filename">buttons/node_red_unlocked_hover.png</key>
+            <key type="filename">buttons/node_red_unlocked_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>23,23,45,45</rect>
+                <key>scale9Paddings</key>
+                <rect>23,23,45,45</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

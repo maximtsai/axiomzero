@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['automated_defense', 'integrity', 'intensity'],
+        childIds: ['automated_defense', 'integrity', 'pulse_damage', 'prismatic_array'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -52,7 +52,7 @@ const NODE_DEFS = [
     },
     {
         id: 'automated_defense',
-        name: 'AUTOMATED DEFENSE',
+        name: 'TOWER DEFENSE',
         icon: 'Skillicon14_03.png',
         description: t('nodes', 'automated_defense.desc'),
         popupText: t('nodes', 'automated_defense.popup'),
@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['pulse_damage', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
+        childIds: ['intensity', 'magnet', 'lightning_weapon', 'shockwave_weapon', 'placeholder_duo_1'],
         treeX: gridX(0),
         treeY: gridY(1),
         effect: function () {
@@ -72,7 +72,7 @@ const NODE_DEFS = [
     },
     {
         id: 'pulse_damage',
-        name: 'CONCENTRATION',
+        name: 'IMPACT',
         icon: 'Skillicon14_13.png',
         description: t('nodes', 'pulse_damage.desc'),
         popupText: t('nodes', 'pulse_damage.popup'),
@@ -83,10 +83,10 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 10,
         costStepScaling: 10,
-        parents: ['automated_defense'],
+        parents: ['awaken'],
         childIds: ['pulse_expansion'],
         treeX: gridX(1),
-        treeY: gridY(1),
+        treeY: gridY(0),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -126,9 +126,9 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['pulse_damage'],
         requiresMaxParent: true,
-        childIds: ['packet_sniffing', 'diagnostic_analytics'],
+        childIds: ['diagnostic_analytics'],
         treeX: gridX(2),
-        treeY: gridY(1),
+        treeY: gridY(0),
         effect: function () {
             upgradeDispatcher.recalcPulseSize();
         },
@@ -180,7 +180,7 @@ const NODE_DEFS = [
     },
     {
         id: 'intensity',
-        name: 'INTENSITY',
+        name: 'FIREPOWER',
         icon: 'Skillicon14_26.png',
         description: t('nodes', 'intensity.desc'),
         popupText: t('nodes', 'intensity.popup'),
@@ -191,10 +191,10 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 10,
         costStepScaling: 5,
-        parents: ['awaken'],
-        childIds: ['focus', 'prismatic_array'],
+        parents: ['automated_defense'],
+        childIds: ['focus'],
         treeX: gridX(1),
-        treeY: gridY(0),
+        treeY: gridY(1),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -213,9 +213,9 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['intensity'],
         requiresMaxParent: true,
-        childIds: ['diagnostic_analytics'],
+        childIds: ['packet_sniffing', 'diagnostic_analytics'],
         treeX: gridX(2),
-        treeY: gridY(0),
+        treeY: gridY(1),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
         },
@@ -228,7 +228,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'diagnostic_analytics.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 25,
+        baseCost: 20,
         costType: 'data',
         costScaling: 'static',
         parents: ['pulse_expansion', 'focus'],
@@ -836,7 +836,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 50,
         costStepScaling: 12,
-        parents: ['intensity'],
+        parents: ['awaken'],
         childIds: [],
         treeX: gridX(2.0),
         treeY: gridY(-1.0),
@@ -945,7 +945,7 @@ const NODE_DEFS = [
         label: 'UTILITY',
         costType: 'insight',
         costScaling: 'static',
-        parents: ['pulse_expansion'],
+        parents: ['focus'],
         childIds: ['junk_barrier'],
         treeX: gridX(3),
         treeY: gridY(1.5),

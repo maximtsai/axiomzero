@@ -26,10 +26,8 @@
 
 ## 7. Build Specializations - Implemented
 
-- Make cursor attack default, make tower attack an upgrade.
 - Play collect data drop sound effect.
 - add aniamtion to colelcting data post fight
-second iteration balance, slower resource gathering
 clearer exp gain  visual, slower +insight text (maybe change)
 Make the collect resource tutorial announcement throw out bits of resources too.
 - add boss icon to level.
