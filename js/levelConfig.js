@@ -26,7 +26,7 @@ const LEVEL_CONFIG = {
         swarmerGroupSize: { min: 2, max: 5 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
 
-        mainBoss: 'BossSquare',        // Identifier for the main boss
+        mainBoss: 'BossCircle',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
     },
@@ -179,7 +179,7 @@ function getCurrentLevelConfig(progress = 0) {
     config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
 
     // Tempo logic: Use lateSpawnInterval if we are in Farming Mode OR if lateWeights are active (useLateState)
-    const isLateTempo = useLateState || progress > 0.26;
+    const isLateTempo = useLateState || progress > 0.23;
     if (isLateTempo && config.lateSpawnInterval !== undefined) {
         config.spawnInterval = config.lateSpawnInterval;
     } else {

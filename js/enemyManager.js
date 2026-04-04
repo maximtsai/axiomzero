@@ -404,6 +404,7 @@ const enemyManager = (() => {
             'Miniboss3': typeof Miniboss3 !== 'undefined' ? Miniboss3 : null,
             'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
             'BossSquare': typeof BossSquare !== 'undefined' ? BossSquare : null,
+            'BossCircle': typeof BossCircle !== 'undefined' ? BossCircle : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
@@ -1193,23 +1194,23 @@ const enemyManager = (() => {
                 const n = Math.floor((roundTimeElapsed - 30) / 60) + 1;
                 if (n > farmingMinibossCount) {
                     const p = Math.pow(2.2, n - 1);
-                    
+
                     const isMB3 = Math.random() < 0.15;
                     const type = isMB3 ? 'Miniboss3' : 'Miniboss1';
-                    
+
                     const config = getCurrentLevelConfig();
                     const baseH = (GAME_CONSTANTS.ENEMY_BASE_HEALTH * (config.levelScalingModifier || 1)) * 10;
                     const baseD = (GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (config.levelScalingModifier || 1)) * 5;
-                    
+
                     let targetH = baseH * p;
                     let targetD = baseD * p;
                     let data = 10;
-                    
+
                     if (isMB3) {
                         targetH *= 3;
                         data = 30;
                     }
-                    
+
                     _spawnMiniboss(true, p, type, {
                         health: targetH,
                         damage: targetD,

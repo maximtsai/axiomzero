@@ -23,6 +23,7 @@ window.TRANSLATIONS.en = {
         start: 'START',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         bossSquare_name: 'ENTITY APPROACHING:\n#THE WALL',
+        bossCircle_name: 'ENTITY APPROACHING:\n#THE CORE',
         boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
         boss_3_name: 'ENTITY APPROACHING:\n#LEGI0N',
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
@@ -45,12 +46,12 @@ window.TRANSLATIONS.en = {
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'ARMOR', desc: 'Reduce damage taken from enemy attacks by [color=#8FD9F8]1[/color] per lvl.', popup: '+1 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots chain lightning every [color=#8FD9F8]3s[/color].', popup: 'LIGHTNING WEAPON' },
-        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a damaging shockwave every [color=#8FD9F8]3s[/color]. Slows and knocks back enemies on hit.', popup: 'SHOCKWAVE WEAPON' },
+        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a damaging shockwave every [color=#8FD9F8]3s[/color].', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+1[/color] lightning chain target', popup: '+1 CHAIN' },
         lightning_boost: { name: 'VOLTAGE', desc: '[color=#8FD9F8]+2[/color] lightning damage', popup: '+2 LIGHTNING DMG' },
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+5[/color] damage to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '[color=#8FD9F8]+25%[/color] shockwave range', popup: '+25% RANGE' },
-        shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing health per level.', popup: 'SEISMIC CRUSH' },
+        shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing enemy health.', popup: 'SEISMIC CRUSH' },
 
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },

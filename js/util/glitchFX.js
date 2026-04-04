@@ -72,7 +72,7 @@ const glitchFX = (() => {
      * @param {number} [duration=80] - Duration in ms.
      */
     function triggerScanline(count = 2, duration = 50) {
-        if (intensity <= 0) return;
+        if (intensity <= 0 || (gameState && gameState.settings && !gameState.settings.chromaticAberration)) return;
         const usedCount = Math.min(count, scanlines.length);
 
         for (let i = 0; i < usedCount; i++) {
@@ -178,7 +178,8 @@ const glitchFX = (() => {
      * @param {number} [duration=400] - Total effect duration in ms.
      */
     function triggerChromaticAberration(target, duration = 400, effectIntensity = 1) {
-        if (intensity <= 0 || !target || !target.active) return;
+        if (intensity <= 0 || (gameState && gameState.settings && !gameState.settings.chromaticAberration)) return;
+        if (!target || !target.active) return;
 
         const combinedIntensity = intensity * effectIntensity;
 
@@ -245,10 +246,11 @@ const glitchFX = (() => {
      * @param {number} [duration=1300] - Speed of the sweep.
      */
     function triggerSystemScan(duration = 1300) {
-        if (intensity <= 0 || !bgGrid || !wave) return;
+        if (intensity <= 0 || (gameState && gameState.settings && !gameState.settings.chromaticAberration)) return;
+        if (!bgGrid || !wave) return;
 
-        // Reset and show permanent grid
-        bgGrid.setVisible(true).setScale(1);
+        // Reset and scale permanent grid
+        bgGrid.setScale(1);
         bgGridHigh.setVisible(true).setScale(1).setAlpha(1.2);
 
         // 1. Central Deathwave Pulse
@@ -314,7 +316,7 @@ const glitchFX = (() => {
             },
             onComplete: () => {
                 PhaserScene.tweens.add({
-                    delay: 400,
+                    delay: 350,
                     targets: [bgGridHigh],
                     alpha: 0,
                     ease: 'Cubic.easeInOut',
@@ -427,10 +429,7 @@ const glitchFX = (() => {
      */
     function triggerDeathGrid(duration = 1000) {
         if (!bgGrid) return;
-        bgGrid.setVisible(true).setScale(1);
-        PhaserScene.time.delayedCall(duration, () => {
-            bgGrid.setVisible(false);
-        });
+        bgGrid.setScale(1);
     }
 
     return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid };
