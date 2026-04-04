@@ -26,11 +26,10 @@ const upgradeTree = (() => {
     let buyPulsePool = null;
     let maxPulsePool = null;
 
-    let scrollUpBtn = null;
-    let scrollDownBtn = null;
-    let isScrollingUp = false;
-    let isScrollingDown = false;
+    let zoomInBtn = null;
+    let zoomOutBtn = null;
     let debugLogBtn = null;
+    let zoomGoal = 1.0;
 
 
     let lastDragX = 0;
@@ -61,7 +60,7 @@ const upgradeTree = (() => {
         _createNodes();
         _createDeployButton();
         _createCoinMineButton();
-        _createScrollButtons();
+        _createZoomButtons();
         _initPools();
 
         if (FLAGS.DEBUG) {
@@ -76,6 +75,43 @@ const upgradeTree = (() => {
 
         updateManager.addFunction(_update);
         PhaserScene.events.on('postupdate', _updateBackgroundCrop);
+
+        // Zoom Input Logic (Scroll Wheel)
+        PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
+            if (!visible || !draggableGroup) return;
+
+            // Only zoom if pointer is within the upgrade panel bounds (800px left half)
+            if (pointer.x > PANEL_W) return;
+
+            const zoomStep = 0.08;
+            const minScale = 0.5;
+            const maxScale = 1.0;
+            const currentScale = draggableGroup.getScale();
+
+            let newScale = currentScale;
+            if (pointer.deltaY > 0) {
+                newScale = Math.max(minScale, currentScale - zoomStep);
+            } else {
+                newScale = Math.min(maxScale, currentScale + zoomStep);
+            }
+
+            if (newScale !== currentScale) {
+                const mx = pointer.x;
+                const my = pointer.y;
+
+                // Pivot-based scaling: Keep the point under the mouse constant
+                // groupPos_new = mousePos - ((mousePos - groupPos_old) / scale_old) * scale_new
+                const nextX = mx - ((mx - draggableGroup.x) / currentScale) * newScale;
+                const nextY = my - ((my - draggableGroup.y) / currentScale) * newScale;
+
+                zoomGoal = newScale;
+                draggableGroup.setScale(newScale);
+                draggableGroup.setPosition(nextX, nextY);
+
+                // No bounds clamping on zoom-out to avoid "snapping" or "stuck" feel, 
+                // but let the regular update loop handle positional clamping if needed.
+            }
+        });
     }
 
     /**
@@ -654,17 +690,17 @@ const upgradeTree = (() => {
         dragSurface.setVisible(true);
         titleText.setVisible(true);
 
-        if (scrollUpBtn) {
-            scrollUpBtn.setVisible(true);
-            scrollUpBtn.setState(NORMAL);
+        if (zoomInBtn) {
+            zoomInBtn.setVisible(true);
+            zoomInBtn.setState(NORMAL);
         }
         if (debugLogBtn) {
             debugLogBtn.setVisible(true);
             debugLogBtn.setState(NORMAL);
         }
-        if (scrollDownBtn) {
-            scrollDownBtn.setVisible(true);
-            scrollDownBtn.setState(NORMAL);
+        if (zoomOutBtn) {
+            zoomOutBtn.setVisible(true);
+            zoomOutBtn.setState(NORMAL);
         }
 
         _refreshAllNodes();
@@ -700,21 +736,18 @@ const upgradeTree = (() => {
             coinMineBtn.setState(DISABLE);
         }
 
-        if (scrollUpBtn) {
-            scrollUpBtn.setVisible(false);
-            scrollUpBtn.setState(DISABLE);
+        if (zoomInBtn) {
+            zoomInBtn.setVisible(false);
+            zoomInBtn.setState(DISABLE);
         }
         if (debugLogBtn) {
             debugLogBtn.setVisible(false);
             debugLogBtn.setState(DISABLE);
         }
-        if (scrollDownBtn) {
-
-            scrollDownBtn.setVisible(false);
-            scrollDownBtn.setState(DISABLE);
+        if (zoomOutBtn) {
+            zoomOutBtn.setVisible(false);
+            zoomOutBtn.setState(DISABLE);
         }
-        isScrollingUp = false;
-        isScrollingDown = false;
 
         for (const id in nodes) {
             nodes[id].setVisible(false);
@@ -957,10 +990,20 @@ const upgradeTree = (() => {
         }
     }
 
-    function _createScrollButtons() {
+    function _createZoomButtons() {
         const x = 62;
         const baseY = GAME_CONSTANTS.HEIGHT - 65;
         const spacing = 62;
+
+        const zoomHelper = (delta) => {
+            zoomGoal = Phaser.Math.Clamp(zoomGoal + delta, 0.5, 1.0);
+            draggableGroup.tweenScale(zoomGoal, {
+                duration: 250,
+                ease: 'Cubic.easeOut',
+                pivotX: PANEL_W / 2,
+                pivotY: GAME_CONSTANTS.halfHeight
+            });
+        };
 
         if (FLAGS.DEBUG) {
             debugLogBtn = new Button({
@@ -985,44 +1028,41 @@ const upgradeTree = (() => {
             treeGroup.add(debugLogBtn);
         }
 
-        scrollUpBtn = new Button({
-
+        zoomInBtn = new Button({
             normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing },
             hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing },
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
-            onMouseDown: () => { isScrollingUp = true; },
-            onMouseUp: () => { isScrollingUp = false; },
+            onMouseUp: () => { zoomHelper(0.25); },
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(0, 100);
-                setHoverLabel("SCROLL UP");
+                setHoverLabel("ZOOM IN");
             },
-            onHoverOut: () => { isScrollingUp = false; setHoverLabel(null); }
+            onHoverOut: () => { setHoverLabel(null); }
         });
-        scrollUpBtn.addText("▲", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
-        scrollUpBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
-        scrollUpBtn.setScrollFactor(0);
-        scrollUpBtn.setVisible(false);
-        treeGroup.add(scrollUpBtn);
+        zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '30px', color: '#ffffff' });
+        zoomInBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
+        zoomInBtn.setScrollFactor(0);
+        zoomInBtn.setVisible(false);
+        treeGroup.add(zoomInBtn);
 
-        scrollDownBtn = new Button({
+        zoomOutBtn = new Button({
             normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY },
             hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY },
             press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY },
-            onMouseDown: () => { isScrollingDown = true; },
-            onMouseUp: () => { isScrollingDown = false; },
+            onMouseUp: () => { zoomHelper(-0.25); },
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(-100, 0);
-                setHoverLabel("SCROLL DOWN");
+                setHoverLabel("ZOOM OUT");
             },
-            onHoverOut: () => { isScrollingDown = false; setHoverLabel(null); }
+            onHoverOut: () => { setHoverLabel(null); }
         });
-        scrollDownBtn.addText("▼", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ffffff' });
-        scrollDownBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
-        scrollDownBtn.setScrollFactor(0);
-        scrollDownBtn.setVisible(false);
-        treeGroup.add(scrollDownBtn);
+        zoomOutBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
+        zoomOutBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
+        zoomOutBtn.setScrollFactor(0);
+        zoomOutBtn.setVisible(false);
+        treeGroup.add(zoomOutBtn);
     }
 
     function _update(delta) {
@@ -1033,25 +1073,6 @@ const upgradeTree = (() => {
             const mx = Math.floor(GAME_VARS.mouseposx);
             const my = Math.floor(GAME_CONSTANTS.HEIGHT - GAME_VARS.mouseposy);
             coordText.setText(`${currentHoverLabel}\nX: ${mx}\nY: ${my}`);
-        }
-
-        // Scroll Logic (Guarded by scrolling input)
-        if (isScrollingUp || isScrollingDown) {
-            const dt = delta / 1000;
-            const scrollSpeed = 800; // px per second
-            let dy = 0;
-            if (isScrollingUp) dy = scrollSpeed * dt;
-            if (isScrollingDown) dy = -scrollSpeed * dt;
-
-            if (dy !== 0) {
-                const currentY = draggableGroup.y;
-                const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
-                const finalDy = nextY - currentY;
-
-                if (finalDy !== 0) {
-                    draggableGroup.moveBy(0, finalDy);
-                }
-            }
         }
     }
 
@@ -1261,13 +1282,15 @@ const upgradeTree = (() => {
         const texW = 1143;
         const texH = 1590;
 
-        // Bounds of the sprite (assuming scale 1)
-        const spriteLeft = panelBg.x - texW / 2;
-        const spriteRight = panelBg.x + texW / 2;
-        const spriteTop = panelBg.y - texH / 2;
-        const spriteBottom = panelBg.y + texH / 2;
+        const scale = panelBg.scaleX || 1;
 
-        // Calculate visible portion
+        // Bounds of the sprite (taking scale into account)
+        const spriteLeft = panelBg.x - (texW * scale) / 2;
+        const spriteRight = panelBg.x + (texW * scale) / 2;
+        const spriteTop = panelBg.y - (texH * scale) / 2;
+        const spriteBottom = panelBg.y + (texH * scale) / 2;
+
+        // Calculate visible portion in Screen Space
         const cropLeft = Math.max(spriteLeft, minVisX);
         const cropRight = Math.min(spriteRight, maxVisX);
         const cropTop = spriteTop;
@@ -1279,9 +1302,10 @@ const upgradeTree = (() => {
         if (cropW <= 0 || cropH <= 0) {
             panelBg.setCrop(0, 0, 0.1, 0.1);
         } else {
-            const cropX = cropLeft - spriteLeft;
-            const cropY = cropTop - spriteTop;
-            panelBg.setCrop(cropX, cropY, cropW, cropH);
+            // Convert to Texture Space for Phaser setCrop
+            const cropX = (cropLeft - spriteLeft) / scale;
+            const cropY = (cropTop - spriteTop) / scale;
+            panelBg.setCrop(cropX, cropY, cropW / scale, cropH / scale);
         }
 
     }

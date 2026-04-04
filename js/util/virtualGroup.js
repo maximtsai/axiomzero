@@ -16,7 +16,9 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
     let children = [];
     let _x = x;
     let _y = y;
+    let _scale = 1;
     let _active = true;
+    let _scaleTween = null;
 
     const group = {
         activate: () => { _active = true; return group; },
@@ -29,8 +31,10 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
             children.push({
                 ref: gameObject,
-                offsetX: gameObject.x - _x,
-                offsetY: gameObject.y - _y
+                offsetX: (gameObject.x - _x) / _scale,
+                offsetY: (gameObject.y - _y) / _scale,
+                baseScaleX: gameObject.scaleX / _scale,
+                baseScaleY: gameObject.scaleY / _scale
             });
             return gameObject;
         },
@@ -39,6 +43,68 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         setAlpha: (value) => {
             children.forEach(c => {
                 if (c.ref.scene) c.ref.alpha = value;
+            });
+            return group;
+        },
+
+        // Instant Scale
+        setScale: (value) => {
+            _scale = value;
+            children.forEach(c => {
+                if (c.ref.scene) {
+                    c.ref.setScale(c.baseScaleX * _scale, c.baseScaleY * _scale);
+                    c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
+                }
+            });
+            return group;
+        },
+        getScale: () => _scale,
+
+        /**
+         * tweenScale: Smoothly transition the group's scale over time.
+         * Can optionally pivot around a specific screen coordinate (config.pivotX/Y).
+         */
+        tweenScale: (targetScale, config = {}) => {
+            if (!_active) return;
+            if (_scaleTween) {
+                _scaleTween.stop();
+                _scaleTween = null;
+            }
+
+            const startScale = _scale;
+            const diffScale = targetScale - startScale;
+
+            const startX = _x;
+            const startY = _y;
+            const pivotX = (config.pivotX !== undefined) ? config.pivotX : _x;
+            const pivotY = (config.pivotY !== undefined) ? config.pivotY : _y;
+
+            _scaleTween = scene.tweens.add({
+                targets: { progress: 0 },
+                progress: 1,
+                ...config,
+                onUpdate: (tween, target) => {
+                    const currentScale = startScale + (diffScale * target.progress);
+
+                    // Re-calculate group origin to keep pivot anchored
+                    _scale = currentScale;
+                    _x = pivotX - ((pivotX - startX) / startScale) * _scale;
+                    _y = pivotY - ((pivotY - startY) / startScale) * _scale;
+
+                    children.forEach(c => {
+                        if (c.ref.scene) {
+                            c.ref.setScale(c.baseScaleX * _scale, c.baseScaleY * _scale);
+                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
+                        }
+                    });
+                },
+                onComplete: () => {
+                    _scaleTween = null;
+                    if (config.onComplete) config.onComplete();
+                },
+                onStop: () => {
+                    _scaleTween = null;
+                }
             });
             return group;
         },
@@ -77,7 +143,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
             if (!_active) return;
             _x = val;
             children.forEach(c => {
-                if (c.ref.scene) c.ref.setPosition(_x + c.offsetX, c.ref.y);
+                if (c.ref.scene) c.ref.setPosition(_x + c.offsetX * _scale, c.ref.y);
             });
         },
         get x() { return _x; },
@@ -86,7 +152,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
             if (!_active) return;
             _y = val;
             children.forEach(c => {
-                if (c.ref.scene) c.ref.setPosition(c.ref.x, _y + c.offsetY);
+                if (c.ref.scene) c.ref.setPosition(c.ref.x, _y + c.offsetY * _scale);
             });
         },
         get y() { return _y; },
@@ -96,7 +162,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
             _x = newX;
             _y = newY;
             children.forEach(c => {
-                if (c.ref.scene) c.ref.setPosition(_x + c.offsetX, _y + c.offsetY);
+                if (c.ref.scene) c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
             });
         },
 
@@ -139,7 +205,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                     // Map children to the master position using their stored offsets
                     children.forEach(c => {
                         if (c.ref.scene) {
-                            c.ref.setPosition(_x + c.offsetX, _y + c.offsetY);
+                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
                         }
                     });
                 }
@@ -166,7 +232,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
                     children.forEach(c => {
                         if (c.ref.scene) {
-                            c.ref.setPosition(_x + c.offsetX, _y + c.offsetY);
+                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
                         }
                     });
                 }
@@ -180,8 +246,10 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
         recalculateOffsets: () => {
             children.forEach(c => {
                 if (c.ref.scene) {
-                    c.offsetX = c.ref.x - _x;
-                    c.offsetY = c.ref.y - _y;
+                    c.offsetX = (c.ref.x - _x) / _scale;
+                    c.offsetY = (c.ref.y - _y) / _scale;
+                    c.baseScaleX = c.ref.scaleX / _scale;
+                    c.baseScaleY = c.ref.scaleY / _scale;
                 }
             });
             return group;

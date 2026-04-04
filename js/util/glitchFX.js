@@ -87,7 +87,7 @@ const glitchFX = (() => {
 
             line.setPosition(offsetX, y);
             line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h + extraH);
-            line.setAlpha(0.3 * intensity);
+            line.setAlpha(0.25 * intensity);
             line.setTint(Math.random() > 0.5 ? _color1 : _color2);
             line.setVisible(true);
 
