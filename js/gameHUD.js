@@ -118,8 +118,16 @@ const gameHUD = (() => {
                     { text: t('hud', 'health_title'), style: 'title', color: '#00ff66' },
                     { text: t('hud', 'health_desc'), style: 'normal' }
                 ], 410);
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel('HEALTH');
+                }
             },
-            onHoverOut: () => { tooltipManager.hide(); }
+            onHoverOut: () => {
+                tooltipManager.hide();
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel(null);
+                }
+            }
         });
         healthBtn.setOrigin(0.5, 0.5);
         healthBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
@@ -133,7 +141,7 @@ const gameHUD = (() => {
         expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, EXP_BAR_H).setTint(0x222222).setDepth(depth).setScrollFactor(0);
 
         expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
+        expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xbbbbbb).setDepth(depth + 1).setScrollFactor(0);
 
         expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 6 : 8), t('hud', 'exp_initial'), {
             fontFamily: 'JetBrainsMono_Regular',
@@ -153,8 +161,16 @@ const gameHUD = (() => {
                     { text: t('hud', 'exp_title'), style: 'title', color: '#eeeeee' },
                     { text: t('hud', 'exp_desc'), style: 'normal' }
                 ], 410);
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel('EXP');
+                }
             },
-            onHoverOut: () => { tooltipManager.hide(); }
+            onHoverOut: () => {
+                tooltipManager.hide();
+                if (typeof upgradeTree !== 'undefined') {
+                    upgradeTree.setHoverLabel(null);
+                }
+            }
         });
         expBtn.setOrigin(0.5, 0.5);
         expBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
