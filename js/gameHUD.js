@@ -107,10 +107,10 @@ const gameHUD = (() => {
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         healthBtn = new Button({
-            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
-            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
-            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
-            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
+            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
+            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
+            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
             onHover: () => {
                 let sfxRel = audio.play('click', 0.95);
                 if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
@@ -142,10 +142,10 @@ const gameHUD = (() => {
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
         expBtn = new Button({
-            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
-            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
-            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
-            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
+            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
+            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
+            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
             onHover: () => {
                 let sfxRel = audio.play('click', 0.95);
                 if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
@@ -776,7 +776,8 @@ const gameHUD = (() => {
             const lineBaseX = line.x;
             const lineBaseY = line.y;
 
-            PhaserScene.time.delayedCall(2850, () => {
+            const lingerTime = msg.includes('\n') ? 3400 : 2850;
+            PhaserScene.time.delayedCall(lingerTime, () => {
                 // Glitch jitter phase — erratic shaking + alpha flicker
                 let jitterCount = 0;
                 const jitterTotal = 8;

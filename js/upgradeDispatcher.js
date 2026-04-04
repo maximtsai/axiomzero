@@ -68,7 +68,7 @@ const upgradeDispatcher = (() => {
 
     /** Recalculates lightning damage from upgrade nodes. */
     function recalcLightningDamage() {
-        lightningAttack.setDamage(6 + 2 * getLevel('lightning_boost'));
+        lightningAttack.setDamage(10);
         lightningAttack.setStaticChargeLevel(getLevel('lightning_static_charge'));
     }
 
@@ -81,7 +81,6 @@ const upgradeDispatcher = (() => {
     function recalcShockwaveStats() {
         if (typeof shockwaveAttack === 'undefined') return;
         shockwaveAttack.setAmplifierLevel(getLevel('shockwave_amplifier'));
-        shockwaveAttack.setGravLockEnabled(getLevel('shockwave_resonance') > 0);
         shockwaveAttack.setSeismicCrushLevel(getLevel('shockwave_seismic_crush'));
     }
 

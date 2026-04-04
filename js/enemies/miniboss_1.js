@@ -9,7 +9,7 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB1 = {
-    HEALTH: 80,
+    HEALTH: 90,
     SPEED_MULT: 1.5,
     ATTACK_RANGE: 200,
     RETREAT_RANGE: 235,

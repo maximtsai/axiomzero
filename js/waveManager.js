@@ -221,10 +221,9 @@ const waveManager = (() => {
             }
         }
 
-        // White "flash" overlay for a split second
         const flash = PhaserScene.add.image(cx, cy, 'white_pixel');
         flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        flash.setTint(0xffffff).setAlpha(0.6).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 5);
+        flash.setTint(0xffffff).setAlpha(0.1).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 5);
 
         PhaserScene.tweens.add({
             targets: flash,

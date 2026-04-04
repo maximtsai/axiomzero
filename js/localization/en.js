@@ -30,7 +30,7 @@ window.TRANSLATIONS.en = {
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         emergency_depot: { name: 'EMERGENCY DEPOT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#8FD9F8]+3 SHARDS[/color], and [color=white]+3 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
-        automated_defense: { name: 'AUTOMATED DEFENSE', desc: 'Tower automatically attacks enemies.', popup: 'TOWER ATTACK UNLOCKED' },
+        automated_defense: { name: 'AUTO DEFENSE', desc: 'Tower automatically attacks enemies.', popup: 'TOWER ATTACK UNLOCKED' },
         pulse_damage: { name: 'IMPACT', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         magnet: { name: 'CONVERGENCE', desc: '[color=#8FD9F8]+40%[/color] resource pickup range', popup: '+40% PICKUP RANGE' },
         pulse_expansion: { name: 'SIGNAL STRENGTH', desc: '[color=#8FD9F8]+25%[/color] cursor attack size', popup: '+25% SIGNAL STRENGTH' },
@@ -45,12 +45,11 @@ window.TRANSLATIONS.en = {
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'ARMOR', desc: 'Reduces enemy attack damage by [color=#8FD9F8]1[/color] per level.', popup: '+1 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots chain lightning every [color=#8FD9F8]3s[/color].', popup: 'LIGHTNING WEAPON' },
-        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a damaging shockwave every [color=#8FD9F8]3s[/color].', popup: 'SHOCKWAVE WEAPON' },
+        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a damaging shockwave every [color=#8FD9F8]3s[/color]. Slows and knocks back enemies on hit.', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+1[/color] lightning chain target', popup: '+1 CHAIN' },
         lightning_boost: { name: 'VOLTAGE', desc: '[color=#8FD9F8]+2[/color] lightning damage', popup: '+2 LIGHTNING DMG' },
-        lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+50%[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
+        lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+5[/color] damage to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '[color=#8FD9F8]+25%[/color] shockwave range', popup: '+25% RANGE' },
-        shockwave_resonance: { name: 'GRAV-LOCK', desc: 'Shockwave pulse slows and knocks back enemies on hit.', popup: 'GRAV-LOCK ACTIVE' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing health per level.', popup: 'SEISMIC CRUSH' },
 
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },

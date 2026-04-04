@@ -49,7 +49,12 @@ class TowerModel {
             this.damage = 0;
         }
 
-        this.attackRange = GAME_CONSTANTS.TOWER_ATTACK_RANGE * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
+        if (autoDefLv > 0) {
+            // node grants base 230 range
+            this.attackRange = 230 * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
+        } else {
+            this.attackRange = 0;
+        }
         const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.12 * regenLv; // baseDecay commented out per request
@@ -179,8 +184,13 @@ class TowerView {
         this.rangeSprite = PhaserScene.add.image(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
         this.rangeSprite.setBlendMode(Phaser.BlendModes.ADD);
-        this.rangeSprite.setAlpha(0.40 / 3);
-        this.rangeSprite.setScale(rangeScale * 0.2);
+        if (rangeScale > 0.001) {
+            this.rangeSprite.setAlpha(0.40 / 3);
+            this.rangeSprite.setScale(rangeScale * 0.2);
+        } else {
+            this.rangeSprite.setAlpha(0);
+            this.rangeSprite.setScale(0);
+        }
         this.updateRangeSprite(rangeScale);
 
         // Breathe / pulse tween on glow
@@ -210,6 +220,15 @@ class TowerView {
 
         // Kill existing tweens on rangeSprite to prevent conflicts
         PhaserScene.tweens.killTweensOf(this.rangeSprite);
+
+        if (newScale <= 0) {
+            this.rangeSprite.setScale(0);
+            this.rangeSprite.setAlpha(0);
+            this.rangeSprite.setVisible(false);
+            return;
+        }
+
+        this.rangeSprite.setVisible(true);
 
         // Alpha animation: dim → full → bright → back to dim
         PhaserScene.tweens.add({
@@ -278,26 +297,32 @@ class TowerView {
     }
 
     playUpgradePhaseAnimation(attackRange) {
-        if (this.rangeSprite) {
-            if (this.rangeSprite.currAnim) {
-                this.rangeSprite.currAnim.stop();
-            }
-            this.rangeSprite.setVisible(true);
+        if (!this.rangeSprite) return;
+
+        if (attackRange <= 0) {
+            this.rangeSprite.setVisible(false);
             this.rangeSprite.setAlpha(0);
-            const rangeScale = attackRange / 202;
-            this.rangeSprite.setScale(rangeScale * 1.05);
-            this.rangeSprite.currAnim = PhaserScene.tweens.add({
-                targets: this.rangeSprite,
-                alpha: 0.40,
-                duration: 0.5,
-                ease: 'Cubic.easeOut',
-                scaleX: rangeScale,
-                scaleY: rangeScale,
-                onComplete: () => {
-                    this.rangeSprite.currAnim = null;
-                }
-            });
+            return;
         }
+
+        if (this.rangeSprite.currAnim) {
+            this.rangeSprite.currAnim.stop();
+        }
+        this.rangeSprite.setVisible(true);
+        this.rangeSprite.setAlpha(0);
+        const rangeScale = attackRange / 202;
+        this.rangeSprite.setScale(rangeScale * 1.05);
+        this.rangeSprite.currAnim = PhaserScene.tweens.add({
+            targets: this.rangeSprite,
+            alpha: 0.40,
+            duration: 0.5,
+            ease: 'Cubic.easeOut',
+            scaleX: rangeScale,
+            scaleY: rangeScale,
+            onComplete: () => {
+                this.rangeSprite.currAnim = null;
+            }
+        });
     }
 
     /** Briefly recoil away from the target then spring back. */
@@ -530,12 +555,12 @@ class TowerView {
     playResetVisuals() {
         if (!this.sprite || !this.sprite.scene) return;
 
-        // Sequence: 1.2 @ 400ms → 0.9 @ 150ms → Swap → 1.0 @ 250ms
+        // Sequence: 1.3 @ 500ms → 0.9 @ 150ms → Swap → 1.0 @ 250ms
         PhaserScene.tweens.add({
             targets: this.sprite,
             scaleX: 1.3,
             scaleY: 1.3,
-            duration: 550,
+            duration: 500,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
@@ -629,6 +654,9 @@ const tower = (() => {
         const pos = view.getPosition();
         view.awaken(pos.x, pos.y, model.attackRange);
 
+        const showRange = (gameState.upgrades && gameState.upgrades.automated_defense >= 1);
+        view.updateRangeSprite(showRange ? (model.attackRange / 202) : 0);
+
         messageBus.publish('towerAwakened');
         debugLog('Tower awakened');
     }
@@ -636,7 +664,8 @@ const tower = (() => {
     function reset(isIntense = false) {
         model.reset();
         if (model.awakened) {
-            view.refreshRangeSprite(model.attackRange, view.getPosition(), isIntense);
+            const showRange = (gameState.upgrades && gameState.upgrades.automated_defense >= 1);
+            view.refreshRangeSprite(showRange ? model.attackRange : 0, view.getPosition(), isIntense);
         }
     }
 
@@ -839,7 +868,8 @@ const tower = (() => {
 
     function _onUpgradePurchased() {
         model.recalcStats();
-        view.updateRangeSprite(model.attackRange / 202);
+        const showRange = (gameState.upgrades && gameState.upgrades.automated_defense >= 1);
+        view.updateRangeSprite(showRange ? (model.attackRange / 202) : 0);
 
         if (!model.active) {
             model.health = model.maxHealth;

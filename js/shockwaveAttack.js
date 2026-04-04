@@ -14,7 +14,6 @@ class ShockwaveAttackModel {
         this.fireTimer = 0;
         this.radius = this.BASE_RADIUS;
         this.damage = this.BASE_DAMAGE;
-        this.gravLockEnabled = false;
         this.seismicCrushLevel = 0;
     }
 
@@ -125,9 +124,6 @@ const shockwaveAttack = (() => {
         }
     }
 
-    function setGravLockEnabled(enabled) {
-        model.gravLockEnabled = enabled;
-    }
 
     function setSeismicCrushLevel(level) {
         model.seismicCrushLevel = level;
@@ -194,16 +190,14 @@ const shockwaveAttack = (() => {
 
             enemyManager.damageEnemy(e, actualDamage, 'shockwave');
 
-            // Grav Lock logic: 80% slow on hit + Knockback
-            if (model.gravLockEnabled) {
-                if (typeof e.forceSlow === 'function') {
-                    e.forceSlow(0.2, 0.8);
-                }
-                const dx = e.model.x - pos.x;
-                const dy = e.model.y - pos.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                e.applyKnockback(dx / dist, dy / dist, 5);
+            // Base Shockwave effects: 20% slow on hit + 4px Knockback
+            if (typeof e.forceSlow === 'function') {
+                e.forceSlow(0.2, 0.4);
             }
+            const dx = e.model.x - pos.x;
+            const dy = e.model.y - pos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            e.applyKnockback(dx / dist, dy / dist, 4);
         }
 
         // Subtle camera shake
@@ -222,5 +216,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setAmplifierLevel, setGravLockEnabled, setSeismicCrushLevel, setDamage };
+    return { init, unlock, lock, setAmplifierLevel, setSeismicCrushLevel, setDamage };
 })();

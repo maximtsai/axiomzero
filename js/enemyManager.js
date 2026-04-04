@@ -34,6 +34,7 @@ const enemyManager = (() => {
     let recentSpawnAngles = new Float32Array(6); // tracks the last 6 spawn angles (in radians)
     let recentSpawnIndex = 0;
     let recentSpawnCount = 0;
+    let waveIsFarming = false;
 
     // Boss tracking
     let bossSpawned = false;
@@ -114,6 +115,7 @@ const enemyManager = (() => {
     function _startSpawning() {
         spawning = true;
         frozen = false;
+        waveIsFarming = (gameState.levelsDefeated || 0) >= (gameState.currentLevel || 1);
         spawnTimer = -950;
         combatTime = 4;
         roundTimeElapsed = 0;
@@ -1171,18 +1173,23 @@ const enemyManager = (() => {
             let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
 
             // Farming mode speedup (cumulative 0.9x each minute)
-            const isFarming = (gameState.levelsDefeated || 0) >= (gameState.currentLevel || 1);
+            const isFarming = waveIsFarming;
             if (isFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
                 trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
             }
 
             if (spawnTimer >= trueSpawnInterval) {
                 spawnTimer -= trueSpawnInterval;
-                _spawnOne();
+                // No more spawns after boss victory in normal mode
+                if (!waveIsFarming && bossSpawned && !bossAlive) {
+                    // Do nothing
+                } else {
+                    _spawnOne();
+                }
             }
 
             // Farming miniboss spawn: first at 30s, then every 60s after
-            if (isFarming && spawning && roundTimeElapsed >= 30 && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+            if (waveIsFarming && spawning && roundTimeElapsed >= 30 && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
                 const n = Math.floor((roundTimeElapsed - 30) / 60) + 1;
                 if (n > farmingMinibossCount) {
                     const p = Math.pow(2.2, n - 1);

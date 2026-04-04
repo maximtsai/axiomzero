@@ -25,7 +25,7 @@ const gridY = (units) => TREE_START_Y - TREE_UNIT_Y * units;
 const NODE_DEFS = [
     {
         id: 'awaken',
-        name: 'AWAKEN',
+        name: t('nodes', 'awaken.name'),
         label: t('nodes', 'awaken.label'),
         icon: 'Skillicon14_31.png',
         description: t('nodes', 'awaken.desc'),
@@ -52,7 +52,7 @@ const NODE_DEFS = [
     },
     {
         id: 'automated_defense',
-        name: 'TOWER DEFENSE',
+        name: t('nodes', 'automated_defense.name'),
         icon: 'Skillicon14_03.png',
         description: t('nodes', 'automated_defense.desc'),
         popupText: t('nodes', 'automated_defense.popup'),
@@ -72,7 +72,7 @@ const NODE_DEFS = [
     },
     {
         id: 'pulse_damage',
-        name: 'IMPACT',
+        name: t('nodes', 'pulse_damage.name'),
         icon: 'Skillicon14_13.png',
         description: t('nodes', 'pulse_damage.desc'),
         popupText: t('nodes', 'pulse_damage.popup'),
@@ -93,7 +93,7 @@ const NODE_DEFS = [
     },
     {
         id: 'magnet',
-        name: 'CONVERGENCE',
+        name: t('nodes', 'magnet.name'),
         icon: 'Skillicon14_07.png',
         description: t('nodes', 'magnet.desc'),
         popupText: t('nodes', 'magnet.popup'),
@@ -114,7 +114,7 @@ const NODE_DEFS = [
     },
     {
         id: 'pulse_expansion',
-        name: 'SIGNAL STRENGTH',
+        name: t('nodes', 'pulse_expansion.name'),
         icon: 'Skillicon14_28.png',
         description: t('nodes', 'pulse_expansion.desc'),
         popupText: t('nodes', 'pulse_expansion.popup'),
@@ -135,7 +135,7 @@ const NODE_DEFS = [
     },
     {
         id: 'overcharge',
-        name: 'OVERCHARGE',
+        name: t('nodes', 'overcharge.name'),
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'overcharge.desc'),
         popupText: t('nodes', 'overcharge.popup'),
@@ -159,7 +159,7 @@ const NODE_DEFS = [
     },
     {
         id: 'integrity',
-        name: 'INTEGRITY',
+        name: t('nodes', 'integrity.name'),
         icon: 'Skillicon14_16.png',
         description: t('nodes', 'integrity.desc'),
         popupText: t('nodes', 'integrity.popup'),
@@ -180,7 +180,7 @@ const NODE_DEFS = [
     },
     {
         id: 'intensity',
-        name: 'FIREPOWER',
+        name: t('nodes', 'intensity.name'),
         icon: 'Skillicon14_26.png',
         description: t('nodes', 'intensity.desc'),
         popupText: t('nodes', 'intensity.popup'),
@@ -201,7 +201,7 @@ const NODE_DEFS = [
     },
     {
         id: 'focus',
-        name: 'COVERAGE',
+        name: t('nodes', 'focus.name'),
         icon: 'Skillicon14_23.png',
         description: t('nodes', 'focus.desc'),
         popupText: t('nodes', 'focus.popup'),
@@ -222,7 +222,7 @@ const NODE_DEFS = [
     },
     {
         id: 'diagnostic_analytics',
-        name: 'DIAGNOSTICS',
+        name: t('nodes', 'diagnostic_analytics.name'),
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'diagnostic_analytics.desc'),
         popupText: t('nodes', 'diagnostic_analytics.popup'),
@@ -242,7 +242,7 @@ const NODE_DEFS = [
 
     {
         id: 'regen',
-        name: 'AUTO-RESTORE',
+        name: t('nodes', 'regen.name'),
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'regen.desc'),
         popupText: t('nodes', 'regen.popup'),
@@ -264,7 +264,7 @@ const NODE_DEFS = [
 
     {
         id: 'base_hp_boost',
-        name: 'AUXILIARY POWER',
+        name: t('nodes', 'base_hp_boost.name'),
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'base_hp_boost.desc'),
         popupText: t('nodes', 'base_hp_boost.popup'),
@@ -284,7 +284,7 @@ const NODE_DEFS = [
     },
     {
         id: 'malware_siphon',
-        name: 'MALWARE SIPHON',
+        name: t('nodes', 'malware_siphon.name'),
         label: 'HACKING',
         icon: 'Skillicon14_03.png',
         description: t('nodes', 'malware_siphon.desc'),
@@ -302,7 +302,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_1',
-        name: 'ARCHIVE',
+        name: t('nodes', 'lore_1.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -326,7 +326,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_2',
-        name: 'ARCHIVE II',
+        name: t('nodes', 'lore_2.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -350,7 +350,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_3',
-        name: 'ARCHIVE III',
+        name: t('nodes', 'lore_3.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -373,7 +373,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_4',
-        name: 'ARCHIVE IV',
+        name: t('nodes', 'lore_4.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -396,7 +396,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_5',
-        name: 'ARCHIVE V',
+        name: t('nodes', 'lore_5.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -419,7 +419,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_6',
-        name: 'ARCHIVE VI',
+        name: t('nodes', 'lore_6.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -442,7 +442,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_7',
-        name: 'ARCHIVE VII',
+        name: t('nodes', 'lore_7.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -465,7 +465,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_8',
-        name: 'ARCHIVE VIII',
+        name: t('nodes', 'lore_8.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -488,7 +488,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lore_9',
-        name: 'ARCHIVE IX',
+        name: t('nodes', 'lore_9.name'),
         lore: true,
         label: t('nodes', 'label.lore'),
         icon: 'Skillicon14_08.png',
@@ -512,7 +512,7 @@ const NODE_DEFS = [
 
     {
         id: 'threat_response',
-        name: 'RECOVERY PROTOCOL',
+        name: t('nodes', 'threat_response.name'),
         icon: 'Skillicon14_27.png',
         description: t('nodes', 'threat_response.desc'),
         popupText: t('nodes', 'threat_response.popup'),
@@ -543,7 +543,7 @@ const NODE_DEFS = [
     // ── Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon ──────────────
     {
         id: 'lightning_weapon',
-        name: 'LIGHTNING',
+        name: t('nodes', 'lightning_weapon.name'),
         icon: 'Skillicon14_33.png',
         description: t('nodes', 'lightning_weapon.desc'),
         popupText: t('nodes', 'lightning_weapon.popup'),
@@ -554,7 +554,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['automated_defense'],
-        childIds: ['lightning_chain', 'lightning_boost'],
+        childIds: ['lightning_chain', 'lightning_static_charge'],
         isDuoBox: true,
         duoBoxTier: 1,
         shardId: 'lightning_weapon',
@@ -568,7 +568,7 @@ const NODE_DEFS = [
     },
     {
         id: 'shockwave_weapon',
-        name: 'SHOCKWAVE',
+        name: t('nodes', 'shockwave_weapon.name'),
         icon: 'Skillicon14_37.png',
         description: t('nodes', 'shockwave_weapon.desc'),
         popupText: t('nodes', 'shockwave_weapon.popup'),
@@ -579,7 +579,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['automated_defense'],
-        childIds: ['shockwave_amplifier', 'shockwave_resonance'],
+        childIds: ['shockwave_amplifier', 'shockwave_seismic_crush'],
         isDuoBox: true,
         duoBoxTier: 1,
         shardId: 'shockwave_weapon',
@@ -593,7 +593,7 @@ const NODE_DEFS = [
     },
     {
         id: 'lightning_chain',
-        name: 'FORK',
+        name: t('nodes', 'lightning_chain.name'),
         icon: 'Skillicon14_40.png',
         description: t('nodes', 'lightning_chain.desc'),
         popupText: t('nodes', 'lightning_chain.popup'),
@@ -604,7 +604,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['lightning_weapon'],
-        childIds: ['lightning_static_charge'],
+        childIds: [],
         treeX: gridX(-1.5),
         treeY: gridY(2),
         effect: function () {
@@ -612,11 +612,11 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'lightning_boost',
-        name: 'VOLTAGE',
-        icon: 'Skillicon14_03.png',
-        description: t('nodes', 'lightning_boost.desc'),
-        popupText: t('nodes', 'lightning_boost.popup'),
+        id: 'lightning_static_charge',
+        name: t('nodes', 'lightning_static_charge.name'),
+        icon: 'Skillicon14_10.png',
+        description: t('nodes', 'lightning_static_charge.desc'),
+        popupText: t('nodes', 'lightning_static_charge.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 3,
         baseCost: 50,
@@ -624,7 +624,7 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 0,
         parents: ['lightning_weapon'],
-        childIds: ['lightning_static_charge'],
+        childIds: [],
         treeX: gridX(-1.5),
         treeY: gridY(3),
         effect: function () {
@@ -632,40 +632,19 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'lightning_static_charge',
-        name: 'INITIAL SHOCK',
-        icon: 'Skillicon14_10.png',
-        description: t('nodes', 'lightning_static_charge.desc'),
-        popupText: t('nodes', 'lightning_static_charge.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 2,
-        baseCost: 100,
-        costType: 'data',
-        costScaling: 'linear',
-        costStep: 100,
-        parents: ['lightning_boost', 'lightning_chain'],
-        requiresMaxParent: true,
-        childIds: [],
-        treeX: gridX(-2.5),
-        treeY: gridY(2.5),
-        effect: function () {
-            upgradeDispatcher.recalcLightningDamage();
-        },
-    },
-    {
         id: 'shockwave_amplifier',
-        name: 'AMPLIFIER',
+        name: t('nodes', 'shockwave_amplifier.name'),
         icon: 'Skillicon14_28.png',
         description: t('nodes', 'shockwave_amplifier.desc'),
         popupText: t('nodes', 'shockwave_amplifier.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 75,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
         parents: ['shockwave_weapon'],
-        childIds: ['shockwave_seismic_crush'],
+        childIds: [],
         treeX: gridX(1.5),
         treeY: gridY(2),
         effect: function () {
@@ -673,16 +652,19 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'shockwave_resonance',
-        name: 'GRAV-LOCK',
-        icon: 'Skillicon14_03.png',
-        description: t('nodes', 'shockwave_resonance.desc'),
-        maxLevel: 1,
+        id: 'shockwave_seismic_crush',
+        name: t('nodes', 'shockwave_seismic_crush.name'),
+        icon: 'Skillicon14_19.png',
+        description: t('nodes', 'shockwave_seismic_crush.desc'),
+        popupText: t('nodes', 'shockwave_seismic_crush.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 2,
         baseCost: 75,
         costType: 'data',
-        costScaling: 'static',
+        costScaling: 'linear',
+        costStep: 75,
         parents: ['shockwave_weapon'],
-        childIds: ['shockwave_seismic_crush'],
+        childIds: [],
         treeX: gridX(1.5),
         treeY: gridY(3),
         effect: function () {
@@ -690,29 +672,8 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'shockwave_seismic_crush',
-        name: 'SEISMIC CRUSH',
-        icon: 'Skillicon14_19.png',
-        description: t('nodes', 'shockwave_seismic_crush.desc'),
-        popupText: t('nodes', 'shockwave_seismic_crush.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 2,
-        baseCost: 125,
-        costType: 'data',
-        costScaling: 'linear',
-        costStep: 125,
-        parents: ['shockwave_amplifier', 'shockwave_resonance'],
-        requiresMaxParent: true,
-        childIds: [],
-        treeX: gridX(2.5),
-        treeY: gridY(2.5),
-        effect: function () {
-            upgradeDispatcher.recalcShockwaveStats();
-        },
-    },
-    {
         id: 'armor',
-        name: 'ARMOR',
+        name: t('nodes', 'armor.name'),
         icon: 'Skillicon14_18.png',
         description: t('nodes', 'armor.desc'),
         popupText: t('nodes', 'armor.popup'),
@@ -732,7 +693,7 @@ const NODE_DEFS = [
     },
     {
         id: 'data_chest_unlock',
-        name: 'DATA HUNTER',
+        name: t('nodes', 'data_chest_unlock.name'),
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'data_chest_unlock.desc'),
         popupText: t('nodes', 'data_chest_unlock.popup'),
@@ -750,7 +711,7 @@ const NODE_DEFS = [
     },
     {
         id: 'system_redundancy_new',
-        name: 'SYSTEM REDUNDANCY',
+        name: t('nodes', 'system_redundancy_new.name'),
         icon: 'Skillicon14_18.png',
         description: t('nodes', 'system_redundancy_new.desc'),
         popupText: t('nodes', 'system_redundancy_new.popup'),
@@ -768,7 +729,7 @@ const NODE_DEFS = [
     },
     {
         id: 'overclock',
-        name: 'OVERCLOCK',
+        name: t('nodes', 'overclock.name'),
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'overclock.desc'),
         popupText: t('nodes', 'overclock.popup'),
@@ -789,7 +750,7 @@ const NODE_DEFS = [
     },
     {
         id: 'trojan_access',
-        name: 'TROJAN PAYLOAD',
+        name: t('nodes', 'trojan_access.name'),
         label: 'HACKING',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'trojan_access.desc'),
@@ -806,7 +767,7 @@ const NODE_DEFS = [
     },
     {
         id: 'volatile_payload',
-        name: 'VOLATILE PAYLOAD',
+        name: t('nodes', 'volatile_payload.name'),
         label: 'HACKING',
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'volatile_payload.desc'),
@@ -825,7 +786,7 @@ const NODE_DEFS = [
     },
     {
         id: 'prismatic_array',
-        name: 'PRISMATIC ARRAY',
+        name: t('nodes', 'prismatic_array.name'),
         icon: 'Skillicon14_30.png',
         description: t('nodes', 'prismatic_array.desc'),
         popupText: t('nodes', 'prismatic_array.popup'),
@@ -846,7 +807,7 @@ const NODE_DEFS = [
     },
     {
         id: 'test_defenses',
-        name: 'SANDBOX MODE',
+        name: t('nodes', 'test_defenses.name'),
         label: t('nodes', 'label.gate'),
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'test_defenses.desc'),
@@ -870,7 +831,7 @@ const NODE_DEFS = [
     },
     {
         id: 'data_compression',
-        name: 'DATA COMPRESSION',
+        name: t('nodes', 'data_compression.name'),
         icon: 'Skillicon14_20.png',
         description: t('nodes', 'data_compression.desc'),
         popupText: t('nodes', 'data_compression.popup'),
@@ -889,7 +850,7 @@ const NODE_DEFS = [
     },
     {
         id: 'security_test_1',
-        name: 'SECURITY TEST',
+        name: t('nodes', 'security_test_1.name'),
         label: t('nodes', 'label.gate'),
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_1.desc'),
@@ -912,7 +873,7 @@ const NODE_DEFS = [
     },
     {
         id: 'two_step_auth',
-        name: 'TWO-STEP AUTH',
+        name: t('nodes', 'two_step_auth.name'),
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'two_step_auth.desc'),
         popupText: t('nodes', 'two_step_auth.popup'),
@@ -935,7 +896,7 @@ const NODE_DEFS = [
     },
     {
         id: 'packet_sniffing',
-        name: 'PACKET SNIFFING',
+        name: t('nodes', 'packet_sniffing.name'),
         icon: 'Skillicon14_01.png',
         description: t('nodes', 'packet_sniffing.desc'),
         popupText: t('nodes', 'packet_sniffing.popup'),
@@ -955,7 +916,7 @@ const NODE_DEFS = [
     },
     {
         id: 'junk_barrier',
-        name: 'UNSORTED LOGS',
+        name: t('nodes', 'junk_barrier.name'),
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'junk_barrier.desc'),
         maxLevel: 5,
@@ -974,7 +935,7 @@ const NODE_DEFS = [
     },
     {
         id: 'forgotten_backdoor',
-        name: 'FORGOTTEN BACKDOOR',
+        name: t('nodes', 'forgotten_backdoor.name'),
         label: 'BACKDOOR',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'forgotten_backdoor.desc'),
@@ -992,7 +953,7 @@ const NODE_DEFS = [
 
     {
         id: 'junk_data_2',
-        name: 'JUNK DATA',
+        name: t('nodes', 'junk_data_2.name'),
         label: t('nodes', 'label.plus_data'),
         icon: 'Skillicon14_12.png',
         description: t('nodes', 'junk_data_2.desc'),
@@ -1016,7 +977,7 @@ const NODE_DEFS = [
     },
     {
         id: 'backdoor_2',
-        name: 'BACKDOOR 2',
+        name: t('nodes', 'backdoor_2.name'),
         label: 'BACKDOOR',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'backdoor_2.desc'),
@@ -1032,7 +993,7 @@ const NODE_DEFS = [
     },
     {
         id: 'backdoor_3',
-        name: 'BACKDOOR 3',
+        name: t('nodes', 'backdoor_3.name'),
         label: 'BACKDOOR',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'backdoor_3.desc'),
@@ -1048,7 +1009,7 @@ const NODE_DEFS = [
     },
     {
         id: 'backdoor_4',
-        name: 'BACKDOOR 4',
+        name: t('nodes', 'backdoor_4.name'),
         label: 'BACKDOOR',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'backdoor_4.desc'),
@@ -1064,7 +1025,7 @@ const NODE_DEFS = [
     },
     {
         id: 'repeat_exploit',
-        name: 'REPEAT EXPLOIT',
+        name: t('nodes', 'repeat_exploit.name'),
         label: 'HACKING',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'repeat_exploit.desc'),
@@ -1084,7 +1045,7 @@ const NODE_DEFS = [
     },
     {
         id: 'unsecured_wallet',
-        name: 'UNSECURE WALLET',
+        name: t('nodes', 'unsecured_wallet.name'),
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'unsecured_wallet.desc'),
         popupText: t('nodes', 'unsecured_wallet.popup'),
@@ -1109,7 +1070,7 @@ const NODE_DEFS = [
 
     {
         id: 'root_access',
-        name: 'ROOT ACCESS',
+        name: t('nodes', 'root_access.name'),
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'root_access.desc'),
         maxLevel: 1,
@@ -1134,7 +1095,7 @@ const NODE_DEFS = [
     },
     {
         id: 'laser',
-        name: 'LASER',
+        name: t('nodes', 'laser.name'),
         icon: 'Skillicon14_06.png',
         description: t('nodes', 'laser.desc'),
         popupText: t('nodes', 'laser.popup'),
@@ -1158,7 +1119,7 @@ const NODE_DEFS = [
     },
     {
         id: 'artillery',
-        name: 'ARTILLERY',
+        name: t('nodes', 'artillery.name'),
         icon: 'Skillicon14_11.png',
         description: t('nodes', 'artillery.desc'),
         popupText: t('nodes', 'artillery.popup'),
@@ -1182,7 +1143,7 @@ const NODE_DEFS = [
     },
     {
         id: 'laser_duration',
-        name: 'DURATION',
+        name: t('nodes', 'laser_duration.name'),
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'laser_duration.desc'),
         popupText: t('nodes', 'laser_duration.popup'),
@@ -1200,7 +1161,7 @@ const NODE_DEFS = [
     },
     {
         id: 'laser_aperture',
-        name: 'PHOTON SATURATION',
+        name: t('nodes', 'laser_aperture.name'),
         icon: 'Skillicon14_22.png',
         description: t('nodes', 'laser_aperture.desc'),
         popupText: t('nodes', 'laser_aperture.popup'),
@@ -1218,7 +1179,7 @@ const NODE_DEFS = [
     },
     {
         id: 'laser_incendiary',
-        name: 'INCENDIARY',
+        name: t('nodes', 'laser_incendiary.name'),
         icon: 'Skillicon14_26.png',
         description: t('nodes', 'laser_incendiary.desc'),
         popupText: t('nodes', 'laser_incendiary.popup'),
@@ -1237,7 +1198,7 @@ const NODE_DEFS = [
     },
     {
         id: 'laser_twin_beams',
-        name: 'TWIN BEAMS',
+        name: t('nodes', 'laser_twin_beams.name'),
         icon: 'Skillicon14_30.png',
         description: t('nodes', 'laser_twin_beams.desc'),
         popupText: t('nodes', 'laser_twin_beams.popup'),
@@ -1255,7 +1216,7 @@ const NODE_DEFS = [
     },
     {
         id: 'artillery_volley',
-        name: 'TRIPLE VOLLEY',
+        name: t('nodes', 'artillery_volley.name'),
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'artillery_volley.desc'),
         popupText: t('nodes', 'artillery_volley.popup'),
@@ -1273,7 +1234,7 @@ const NODE_DEFS = [
 
     {
         id: 'artillery_shells',
-        name: 'HIGH EXPLOSIVE',
+        name: t('nodes', 'artillery_shells.name'),
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'artillery_shells.desc'),
         popupText: t('nodes', 'artillery_shells.popup'),
@@ -1290,7 +1251,7 @@ const NODE_DEFS = [
     },
     {
         id: 'artillery_first_strike',
-        name: 'FIRST STRIKE',
+        name: t('nodes', 'artillery_first_strike.name'),
         icon: 'Skillicon14_31.png',
         description: t('nodes', 'artillery_first_strike.desc'),
         popupText: t('nodes', 'artillery_first_strike.popup'),
@@ -1307,7 +1268,7 @@ const NODE_DEFS = [
     },
     {
         id: 'artillery_stun',
-        name: 'SHELLSHOCKED',
+        name: t('nodes', 'artillery_stun.name'),
         icon: 'Skillicon14_10.png',
         description: t('nodes', 'artillery_stun.desc'),
         popupText: t('nodes', 'artillery_stun.popup'),
@@ -1323,7 +1284,7 @@ const NODE_DEFS = [
     },
     {
         id: 'shell_access',
-        name: 'SHELL ACCESS',
+        name: t('nodes', 'shell_access.name'),
         icon: 'Skillicon14_34.png',
         description: t('nodes', 'shell_access.desc'),
         maxLevel: 1,
@@ -1343,7 +1304,7 @@ const NODE_DEFS = [
 
     {
         id: 'unsecured_files',
-        name: 'UNSECURED FILES',
+        name: t('nodes', 'unsecured_files.name'),
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'unsecured_files.desc'),
         popupText: '+15 DATA',
@@ -1365,7 +1326,7 @@ const NODE_DEFS = [
     },
     {
         id: 'injection_attack',
-        name: 'INJECTION ATTACK',
+        name: t('nodes', 'injection_attack.name'),
         label: 'HACKING',
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'injection_attack.desc'),
@@ -1384,7 +1345,7 @@ const NODE_DEFS = [
     },
     {
         id: 'zero_day_exploit',
-        name: 'ZERO-DAY EXPLOIT',
+        name: t('nodes', 'zero_day_exploit.name'),
         icon: 'Skillicon14_09.png',
         description: t('nodes', 'zero_day_exploit.desc'),
         popupText: t('nodes', 'zero_day_exploit.popup'),
@@ -1412,7 +1373,7 @@ const NODE_DEFS = [
     },
     {
         id: 'security_test_2',
-        name: 'SECURITY TEST 2',
+        name: t('nodes', 'security_test_2.name'),
         label: t('nodes', 'label.gate'),
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_2.desc'),
@@ -1433,7 +1394,7 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse',
-        name: 'MANUAL PROTOCOL',
+        name: t('nodes', 'manual_pulse.name'),
         icon: 'Skillicon14_34.png',
         description: t('nodes', 'manual_pulse.desc'),
         popupText: t('nodes', 'manual_pulse.popup'),
@@ -1457,7 +1418,7 @@ const NODE_DEFS = [
     },
     {
         id: 'wide_pulse',
-        name: 'BROADCAST PROTOCOL',
+        name: t('nodes', 'wide_pulse.name'),
         icon: 'Skillicon14_28.png',
         description: t('nodes', 'wide_pulse.desc'),
         popupText: t('nodes', 'wide_pulse.popup'),
@@ -1481,7 +1442,7 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse_child_1',
-        name: 'CHARGE BUFFER',
+        name: t('nodes', 'manual_pulse_child_1.name'),
         icon: 'Skillicon14_33.png',
         description: t('nodes', 'manual_pulse_child_1.desc'),
         popupText: t('nodes', 'manual_pulse_child_1.popup'),
@@ -1500,7 +1461,7 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse_child_1_1',
-        name: 'ISOLATION',
+        name: t('nodes', 'manual_pulse_child_1_1.name'),
         icon: 'Skillicon14_25.png',
         description: t('nodes', 'manual_pulse_child_1_1.desc'),
         popupText: t('nodes', 'manual_pulse_child_1_1.popup'),
@@ -1519,7 +1480,7 @@ const NODE_DEFS = [
     },
     {
         id: 'manual_pulse_child_1_2',
-        name: 'RELOAD EFFICIENCY',
+        name: t('nodes', 'manual_pulse_child_1_2.name'),
         icon: 'Skillicon14_17.png',
         description: t('nodes', 'manual_pulse_child_1_2.desc'),
         popupText: t('nodes', 'manual_pulse_child_1_2.popup'),
@@ -1537,7 +1498,7 @@ const NODE_DEFS = [
     },
     {
         id: 'wide_pulse_child_1',
-        name: 'AREA SATURATION',
+        name: t('nodes', 'wide_pulse_child_1.name'),
         icon: 'Skillicon14_22.png',
         description: t('nodes', 'wide_pulse_child_1.desc'),
         popupText: t('nodes', 'wide_pulse_child_1.popup'),
@@ -1556,7 +1517,7 @@ const NODE_DEFS = [
     },
     {
         id: 'aftershock',
-        name: 'AFTERSHOCK',
+        name: t('nodes', 'aftershock.name'),
         icon: 'Skillicon14_21.png',
         description: t('nodes', 'aftershock.desc'),
         popupText: t('nodes', 'aftershock.popup'),
@@ -1576,7 +1537,7 @@ const NODE_DEFS = [
     },
     {
         id: 'colossal_cursor',
-        name: 'COLOSSAL CURSOR',
+        name: t('nodes', 'colossal_cursor.name'),
         icon: 'Skillicon14_14.png',
         description: t('nodes', 'colossal_cursor.desc'),
         popupText: t('nodes', 'colossal_cursor.popup'),
@@ -1596,7 +1557,7 @@ const NODE_DEFS = [
     },
     {
         id: 'system_redundancy_placeholder',
-        name: 'STRAY LOGS I',
+        name: t('nodes', 'system_redundancy_placeholder.name'),
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'system_redundancy_placeholder.desc'),
         popupText: t('nodes', 'system_redundancy_placeholder.popup'),
@@ -1611,7 +1572,7 @@ const NODE_DEFS = [
     },
     {
         id: 'gateway_discovery',
-        name: 'GATEWAY DISCOVERY',
+        name: t('nodes', 'gateway_discovery.name'),
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'gateway_discovery.desc'),
         popupText: t('nodes', 'gateway_discovery.popup'),
@@ -1626,7 +1587,7 @@ const NODE_DEFS = [
     },
     {
         id: 'security_test_3',
-        name: 'SECURITY TEST 3',
+        name: t('nodes', 'security_test_3.name'),
         label: t('nodes', 'label.gate'),
         icon: 'Skillicon14_38.png',
         description: t('nodes', 'security_test_3.desc'),
@@ -1647,7 +1608,7 @@ const NODE_DEFS = [
     },
     {
         id: 'stray_logs_child_above',
-        name: 'STRAY LOGS III',
+        name: t('nodes', 'stray_logs_child_above.name'),
         icon: 'Skillicon14_08.png',
         description: t('nodes', 'stray_logs_child_above.desc'),
         popupText: t('nodes', 'stray_logs_child_above.popup'),
@@ -1662,7 +1623,7 @@ const NODE_DEFS = [
     },
     {
         id: 'coin_mine_unlock',
-        name: 'COIN MINE',
+        name: t('nodes', 'coin_mine_unlock.name'),
         icon: 'Skillicon14_35.png',
         description: t('nodes', 'coin_mine_unlock.desc'),
         popupText: t('nodes', 'coin_mine_unlock.popup'),
@@ -1684,7 +1645,7 @@ const NODE_DEFS = [
     },
     {
         id: 'physical_anchor',
-        name: 'PURCHASE SERVERS',
+        name: t('nodes', 'physical_anchor.name'),
         icon: 'Skillicon14_16.png',
         description: t('nodes', 'physical_anchor.desc'),
         maxLevel: 1,

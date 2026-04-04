@@ -41,7 +41,7 @@ GAME_CONSTANTS.EXP_TO_INSIGHT = 100;  // EXP needed to award 1 INSIGHT
 GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE = 1000;  // px from center of screen
 GAME_CONSTANTS.ENEMY_BASE_HEALTH = 6;
 GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
-GAME_CONSTANTS.ENEMY_BASE_SPEED = 30;    // px/sec
+GAME_CONSTANTS.ENEMY_BASE_SPEED = 31;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
 GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.08;  // Multiplicative multiplier applied every interval
 GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 6; // seconds between scaling jumps
@@ -135,7 +135,7 @@ const GAME_STATE_DEFAULTS = {
     // Tower
     towerMaxHealth: 10,
     towerDamage: 6,
-    towerAttackRange: 230,
+    towerAttackRange: 0,
     towerHealthRegen: 0,   // Now driven by per-level healthDecay property
 
     // Resources

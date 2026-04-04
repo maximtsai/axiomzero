@@ -5,7 +5,7 @@
 class LightningAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between strikes
-        this.BASE_DAMAGE = 6;
+        this.BASE_DAMAGE = 10;
         this.BASE_CHAIN_COUNT = 2;  // total enemies hit (1 primary + 1 chain)
         this.CHAIN_RANGE = 115;     // px — max distance for chain to jump
 
@@ -14,7 +14,7 @@ class LightningAttackModel {
         this.paused = false;
         this.damage = this.BASE_DAMAGE;
         this.chainCount = this.BASE_CHAIN_COUNT;
-        this.staticChargeMultiplier = 0; // 0.5 per level
+        this.staticChargeBonus = 0; // 5 per level
         this.fireTimer = 0;
     }
 
@@ -208,7 +208,7 @@ const lightningAttack = (() => {
     }
 
     function setStaticChargeLevel(level) {
-        model.staticChargeMultiplier = level * 0.5;
+        model.staticChargeBonus = level * 5;
     }
 
     function _update(delta) {
@@ -232,8 +232,8 @@ const lightningAttack = (() => {
         view.drawBolt(pos.x, pos.y, first.model.x, first.model.y);
 
         let actualDamage = model.damage;
-        if (model.staticChargeMultiplier > 0 && first.model.health >= first.model.maxHealth * 0.8) {
-            actualDamage *= (1 + model.staticChargeMultiplier);
+        if (model.staticChargeBonus > 0 && first.model.health >= first.model.maxHealth * 0.8) {
+            actualDamage += model.staticChargeBonus;
         }
         enemyManager.damageEnemy(first, actualDamage, 'lightning');
 
@@ -279,8 +279,8 @@ const lightningAttack = (() => {
             view.drawBolt(lastHit.model.x, lastHit.model.y, bestEnemy.model.x, bestEnemy.model.y);
 
             let chainDamage = model.damage;
-            if (model.staticChargeMultiplier > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
-                chainDamage *= (1 + model.staticChargeMultiplier);
+            if (model.staticChargeBonus > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
+                chainDamage += model.staticChargeBonus;
             }
             enemyManager.damageEnemy(bestEnemy, chainDamage, 'lightning');
 

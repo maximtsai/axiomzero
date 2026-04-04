@@ -52,7 +52,7 @@ const tutorialManager = (() => {
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
         if (onlyAwaken) {
-            const dc = PhaserScene.time.delayedCall(17000, () => {
+            const dc = PhaserScene.time.delayedCall(16250, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
                     _showCombatTutorial();
@@ -151,7 +151,7 @@ const tutorialManager = (() => {
         });
         _activeDelayedCalls.push(burstDC);
 
-        const dc = PhaserScene.time.delayedCall(2500, () => {
+        const dc = PhaserScene.time.delayedCall(2450, () => {
             if (typeof messageBus !== 'undefined') {
                 messageBus.publish('pulseData');
                 const innerDc1 = PhaserScene.time.delayedCall(2200, () => {

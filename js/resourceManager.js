@@ -281,7 +281,7 @@ const resourceManager = (() => {
 
 
         const spawnDuration = 275 + dist * 6;
-        d.collectLockTime = PhaserScene.time.now + 100 + (spawnDuration * 0.1);
+        d.collectLockTime = PhaserScene.time.now + 160 + (spawnDuration * 0.07);
 
         d.spawnTween = PhaserScene.tweens.add({
             targets: d.img,
@@ -617,9 +617,9 @@ const resourceManager = (() => {
         activeDrops.forEach(d => {
             if (d.type !== 'data' || d.flying) return;
 
-            const delay = Math.random() * 150;
             const px = d.img.x;
             const py = d.img.y;
+            const delay = (px / GAME_CONSTANTS.WIDTH) * 450 + (py / GAME_CONSTANTS.HEIGHT) * 300;
 
             const shock = PhaserScene.add.image(px, py, 'player', 'shockwave.png');
             shock.setDepth(d.img.depth - 1);
