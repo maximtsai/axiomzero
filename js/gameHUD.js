@@ -96,7 +96,7 @@ const gameHUD = (() => {
         healthBarFlare.setAlpha(0);
 
         healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
-        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.COLOR_FRIENDLY).setDepth(depth + 2).setScrollFactor(0);
+        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(0x00ff66).setDepth(depth + 2).setScrollFactor(0);
 
         healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 4, '', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -467,7 +467,7 @@ const gameHUD = (() => {
 
         // Color shift: cyan → red as health drops
         if (ratio > 0.5) {
-            healthBarFill.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
+            healthBarFill.setTint(0x00ff66);
         } else if (ratio > 0.25) {
             healthBarFill.setTint(GAME_CONSTANTS.COLOR_RESOURCE);
         } else {

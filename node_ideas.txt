@@ -36,5 +36,4 @@ Make the collect resource tutorial announcement throw out bits of resources too.
 - Make level select buttons go up down instead
 - Bottom left data collected display
 - Progress bar to red?
-- Try making health bar green
-- 
+- circle boss
