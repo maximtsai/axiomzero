@@ -127,11 +127,11 @@ const waveManager = (() => {
             PhaserScene.time.timeScale = 1.0;
         }, 150);
 
-        // 1.5. Subliminal Black Flash (50ms)
+        // 1.5. Subliminal Black Flash (75ms)
         const darkFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel');
         darkFlash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        darkFlash.setAlpha(0.65).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 10);
-        setTimeout(() => { if (darkFlash) darkFlash.destroy(); }, 50);
+        darkFlash.setAlpha(0.65).setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1);
+        setTimeout(() => { if (darkFlash) darkFlash.destroy(); }, 75);
 
         // 2. Block all cursor input
         helper.createGlobalClickBlocker(false);
