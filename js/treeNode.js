@@ -495,6 +495,11 @@ class Node {
         if (!gameState.activeShards) gameState.activeShards = {};
         gameState.activeShards[this.duoBoxTier] = this.shardId;
 
+        // Force both siblings to level 1 for safety
+        if (this.level === 0) this.level = 1;
+        if (!gameState.upgrades) gameState.upgrades = {};
+        gameState.upgrades[this.id] = this.level;
+
         // Subtle camera shake on purchase
         if (PhaserScene && PhaserScene.cameras && PhaserScene.cameras.main) {
             PhaserScene.cameras.main.shake(150, 0.001);
@@ -507,7 +512,6 @@ class Node {
         const sibling = upgradeTree.getNode(this.duoSiblingId);
         if (sibling) {
             sibling.level = 1;
-            if (!gameState.upgrades) gameState.upgrades = {};
             gameState.upgrades[sibling.id] = sibling.level;
         }
     }
@@ -686,6 +690,13 @@ class Node {
         if ((tierPurchased || isAlreadyBought) && activeShard !== this.shardId) {
             // Free swap — no cost
             gameState.activeShards[this.duoBoxTier] = this.shardId;
+
+            // Safety check: ensure level is synchronized if this is the first time we're activating this side
+            if (this.level < 1) {
+                this.level = 1;
+                if (!gameState.upgrades) gameState.upgrades = {};
+                gameState.upgrades[this.id] = this.level;
+            }
 
             // Refresh both siblings and their entire sub-trees BEFORE calling effect
             this.refreshState();

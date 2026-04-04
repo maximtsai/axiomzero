@@ -29,7 +29,8 @@ const towerStatsUI = (() => {
                 scrollFactorY: 0
             },
             onHover: () => {
-                if (_isActive) {
+                const isSuppressed = (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
+                if (_isActive && !isSuppressed) {
                     _showStatsTooltip();
                     upgradeTree.setHoverLabel(t('tower_stats', 'title'));
                 }
@@ -104,12 +105,12 @@ const towerStatsUI = (() => {
 
         // Equipped choice-weapons — only show if active branch
         const equipped = [];
-        if (get('lightning_weapon')) equipped.push(t('results', 'lightning'));
-        if (get('shockwave_weapon')) equipped.push(t('results', 'shockwave'));
+        if (get('lightning_weapon')) equipped.push(t('nodes', 'lightning_weapon.name'));
+        if (get('shockwave_weapon')) equipped.push(t('nodes', 'shockwave_weapon.name'));
         if (get('manual_pulse')) equipped.push(t('nodes', 'manual_pulse.name'));
         if (get('wide_pulse')) equipped.push(t('nodes', 'wide_pulse.name'));
-        if (get('laser')) equipped.push(t('results', 'laser'));
-        if (get('artillery')) equipped.push(t('results', 'artillery'));
+        if (get('laser')) equipped.push(t('nodes', 'laser.name'));
+        if (get('artillery')) equipped.push(t('nodes', 'artillery.name'));
 
         return {
             hp: hp,
