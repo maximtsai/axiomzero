@@ -21,6 +21,7 @@ const LEVEL_CONFIG = {
             heavy: 0,
             fast: 0,
             sniper: 0,
+            cache: 0.003,
             protector: 0.0
         },
         swarmerGroupSize: { min: 2, max: 5 },
@@ -40,7 +41,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0,
             logic_stray: 0,
-            cache: 0.005,
+            cache: 0.008,
             protector: 0
         },
         lateWeights: {
@@ -77,7 +78,7 @@ const LEVEL_CONFIG = {
             heavy: 0.1,
             fast: 0.05,
             sniper: 0,
-            cache: 0.08,
+            cache: 0.01,
             protector: 0.0
         },
         swarmerGroupSize: { min: 3, max: 6 },
@@ -108,7 +109,7 @@ const LEVEL_CONFIG = {
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,
-            cache: 0.12,
+            cache: 0.02,
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
@@ -139,7 +140,7 @@ const LEVEL_CONFIG = {
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,
-            cache: 0.95,
+            cache: 0.025,
             protector: 0.12
         },
         swarmerGroupSize: { min: 4, max: 8 },
