@@ -27,7 +27,7 @@ const milestoneTracker = (() => {
         { id: 'waves_50', name: t('milestones', 'waves_50.name'), description: t('milestones', 'waves_50.desc'), statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 } },
         { id: 'nodes_5', name: t('milestones', 'nodes_5.name'), description: t('milestones', 'nodes_5.desc'), statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 } },
         { id: 'nodes_15', name: t('milestones', 'nodes_15.name'), description: t('milestones', 'nodes_15.desc'), statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 } },
-        { id: 'boss_1', name: t('milestones', 'boss_1.name'), description: t('milestones', 'boss_1.desc'), statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
+        { id: 'bossSquare', name: t('milestones', 'bossSquare.name'), description: t('milestones', 'bossSquare.desc'), statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
     ];
 
     // ── Wave timing ──────────────────────────────────────────────────────

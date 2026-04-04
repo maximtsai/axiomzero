@@ -22,7 +22,7 @@ window.TRANSLATIONS.en = {
         level: 'LEVEL: ',
         start: 'START',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
-        boss_1_name: 'ENTITY APPROACHING:\n#THE WALL',
+        bossSquare_name: 'ENTITY APPROACHING:\n#THE WALL',
         boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
         boss_3_name: 'ENTITY APPROACHING:\n#LEGI0N',
         boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
@@ -55,7 +55,7 @@ window.TRANSLATIONS.en = {
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
-        data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]25%[/color] chance per lvl to double [color=cyan]DATA[/color] drops', popup: 'DATA COMPRESSION' },
+        data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]+25%[/color] chance to double [color=cyan]DATA[/color] drops', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with [color=cyan]+100 DATA[/color].', popup: '+100 DATA' },
         security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Fully refunds [color=cyan]DATA[/color] cost upon purchase.", popup: 'TEST PASSED' },
         manual_pulse: { name: 'MANUAL PROTOCOL', desc: 'Manual cursor attack. Click to fire. Stores [color=#8FD9F8]2[/color] charges.', popup: 'MANUAL PULSE' },
@@ -166,7 +166,7 @@ window.TRANSLATIONS.en = {
         waves_50: { name: 'Seasoned', desc: 'Complete 50 waves' },
         nodes_5: { name: 'Branching Out', desc: 'Purchase 5 nodes' },
         nodes_15: { name: 'Neural Network', desc: 'Purchase 15 nodes' },
-        boss_1: { name: 'System Override', desc: 'Defeat a boss' }
+        bossSquare: { name: 'System Override', desc: 'Defeat a boss' }
     },
     tutorial: {
         combat_collect: 'COLLECT DATA ◈ TO EVOLVE',

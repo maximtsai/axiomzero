@@ -1,19 +1,19 @@
-// js/enemies/boss_1.js — Phase 1 boss (MVC).
+// js/enemies/bossSquare.js — Phase 1 boss (MVC).
 // Spawns when wave progress reaches 100%.
 // Starts moving very fast (7x speed) and slows down linearly to default (0.75x speed) over 1.25s.
 // High health. On defeat, triggers a special sequence that kills all enemies and vacuums drops.
 
-class Boss1Model extends BossModel {
+class BossSquareModel extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.4;
         this.size = 163; // Increased 25% from 130
-        this.bossId = 'boss1';
+        this.bossId = 'bossSquare';
     }
 }
 
-class Boss1View extends EnemyView {
+class BossSquareView extends EnemyView {
     constructor() {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
         super(Enemy.TEX_KEY, 'boss_1.png', 'boss_hp.png', baseDepth);
@@ -138,11 +138,11 @@ class Boss1View extends EnemyView {
     }
 }
 
-class Boss1 extends Boss {
+class BossSquare extends Boss {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
-        this.model = new Boss1Model(levelScalingModifier);
-        this.view = new Boss1View();
+        this.model = new BossSquareModel(levelScalingModifier);
+        this.view = new BossSquareView();
     }
 
     activate(x, y, scaleFactor = 1.0) {
@@ -160,7 +160,7 @@ class Boss1 extends Boss {
         });
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('AnnounceText', t('ui', 'boss_1_name'));
+            messageBus.publish('AnnounceText', t('ui', 'bossSquare_name'));
         });
     }
 }

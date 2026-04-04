@@ -403,7 +403,7 @@ const enemyManager = (() => {
             'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
             'Miniboss3': typeof Miniboss3 !== 'undefined' ? Miniboss3 : null,
             'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
-            'Boss1': typeof Boss1 !== 'undefined' ? Boss1 : null,
+            'BossSquare': typeof BossSquare !== 'undefined' ? BossSquare : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
@@ -556,8 +556,8 @@ const enemyManager = (() => {
         const config = getCurrentLevelConfig(lastWaveProgress);
         let Class = _resolveEnemyClass(config.mainBoss);
         if (!Class) {
-            console.warn(`[EnemyManager] Boss class '${config.mainBoss}' not found. Defaulting to Boss1.`);
-            Class = Boss1;
+            console.warn(`[EnemyManager] Boss class '${config.mainBoss}' not found. Defaulting to BossSquare.`);
+            Class = BossSquare;
         }
 
         bossSpawned = true;

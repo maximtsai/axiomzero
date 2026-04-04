@@ -26,7 +26,7 @@ const LEVEL_CONFIG = {
         swarmerGroupSize: { min: 2, max: 5 },
         miniboss: 'Miniboss1', // String identifier for the miniboss type
 
-        mainBoss: 'Boss1',        // Identifier for the main boss
+        mainBoss: 'BossSquare',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
     },
