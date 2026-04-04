@@ -544,7 +544,7 @@ class Boss3 extends Boss {
             // Standard boss announcement text with a 1s delay
             PhaserScene.time.delayedCall(1000, () => {
                 if (typeof messageBus !== 'undefined' && typeof t === 'function') {
-                    messageBus.publish('AnnounceText', t('ui', 'boss_3_name'));
+                    messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_3_name') });
                 }
             });
         }

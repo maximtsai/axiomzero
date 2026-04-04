@@ -160,7 +160,7 @@ class BossSquare extends Boss {
         });
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('AnnounceText', t('ui', 'bossSquare_name'));
+            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossSquare_name') });
         });
     }
 }

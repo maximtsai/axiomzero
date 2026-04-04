@@ -924,9 +924,19 @@ const enemyManager = (() => {
                 enemy.model.wasIsolatedHit = false; // Reset after use
             }
 
+            let baseFontSize = 40;
+            if (!isExecuted) {
+                // Square root scaling: damage 10 is the 40px baseline.
+                // Clamp between 25px and 115px to avoid tiny or screen-filling numbers.
+                baseFontSize = 22 + Math.floor(Math.sqrt(finalAmount) * 4);
+                baseFontSize = Math.min(115, baseFontSize);
+            } else {
+                baseFontSize = 36;
+            }
+
             floatingText.show(enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', {
                 fontFamily: 'MunroSmall',
-                fontSize: isExecuted ? 36 : 40,
+                fontSize: baseFontSize,
                 color: textColor,
                 stroke: isExecuted ? '#1a0033' : '#330000',
                 strokeThickness: isExecuted ? 3 : 2,

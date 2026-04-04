@@ -532,6 +532,7 @@ class TowerView {
 
     playDeathVisuals() {
         if (!this.sprite || !this.sprite.scene) return;
+        console.log("playDeathVisuals");
 
         // 0.25 seconds after death sequence begins
         PhaserScene.time.delayedCall(250, () => {

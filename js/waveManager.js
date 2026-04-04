@@ -190,7 +190,7 @@ const waveManager = (() => {
                 signalText.setAlpha(1);
                 // Apply glitch effects to the text
                 if (typeof glitchFX !== 'undefined') {
-                    glitchFX.triggerChromaticAberration(signalText, 700, 1);
+                    glitchFX.triggerChromaticAberration(signalText, 800, 1);
                     glitchFX.triggerFlicker([signalText], 600);
                     PhaserScene.tweens.add({
                         delay: 650,

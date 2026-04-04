@@ -571,7 +571,7 @@ class Boss2 extends Boss {
         });
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('AnnounceText', t('ui', 'boss_2_name'));
+            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_2_name') });
         });
     }
 

@@ -22,11 +22,12 @@ window.TRANSLATIONS.en = {
         level: 'LEVEL: ',
         start: 'START',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
-        bossSquare_name: 'ENTITY APPROACHING:\n#THE WALL',
-        bossCircle_name: 'ENTITY APPROACHING:\n#THE CORE',
-        boss_2_name: 'ENTITY APPROACHING:\n#DREADNOUGHT',
-        boss_3_name: 'ENTITY APPROACHING:\n#LEGI0N',
-        boss_5_name: 'ENTITY APPROACHING:\n#THE VOID'
+        boss_prefix: 'ENTITY APPROACHING:',
+        bossSquare_name: 'THE WALL',
+        bossCircle_name: 'OVERWRITE',
+        boss_2_name: 'DREADNOUGHT',
+        boss_3_name: 'LEGI0N',
+        boss_5_name: 'OVERLORD'
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },

@@ -180,7 +180,7 @@ class Boss5 extends Boss {
         this.model.staggerPhaseComplete = false;
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('AnnounceText', t('ui', 'boss_5_name'));
+            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_5_name') });
         });
     }
 

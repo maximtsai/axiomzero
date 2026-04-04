@@ -37,3 +37,6 @@ Make the collect resource tutorial announcement throw out bits of resources too.
 - Bottom left data collected display
 - Progress bar to red?
 - circle boss
+
+
+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

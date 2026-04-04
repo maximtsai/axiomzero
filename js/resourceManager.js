@@ -330,9 +330,10 @@ const resourceManager = (() => {
         if (amount > 0) {
             floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 22,
+                fontSize: 40,
                 color: '#ff5555',
                 depth: GAME_CONSTANTS.DEPTH_UI + 100,
+                duration: 1700,
             });
         }
     }

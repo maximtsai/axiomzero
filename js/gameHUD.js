@@ -54,7 +54,8 @@ const gameHUD = (() => {
         messageBus.subscribe('bossDefeated', () => {
             if (endIterationBtn) endIterationBtn.setState(DISABLE);
         });
-        messageBus.subscribe('AnnounceText', showTransitionMessage);
+        messageBus.subscribe('AnnounceText', showAnnounceMessage);
+        messageBus.subscribe('BossAnnounceText', ({ msg1, msg2 }) => showBossAnnouncement(msg1, msg2));
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -708,7 +709,125 @@ const gameHUD = (() => {
      * Show a centered transition message using a typewriter effect.
      * @param {string} msg 
      */
-    function showTransitionMessage(msg) {
+    function showBossAnnouncement(msg1, msg2) {
+        const baseSize = (gameState.settings.bigFont ? 56 : 50);
+        const fSize1 = Math.floor(baseSize * 0.8) + 'px';
+        const fSize2 = Math.floor(baseSize * 1.5) + 'px';
+
+        // 1. Measure both pieces for overall centering
+        const tempTxt1 = PhaserScene.add.text(0, 0, msg1, { fontFamily: 'MunroSmall', fontSize: fSize1 });
+        const tempTxt2 = PhaserScene.add.text(0, 0, msg2, { fontFamily: 'MunroSmall', fontSize: fSize2 });
+        const h1 = tempTxt1.height;
+        const h2 = tempTxt2.height;
+        const totalHeight = h1 + h2 + 4; // 4px spacing
+        const maxWidth = Math.max(tempTxt1.width, tempTxt2.width);
+        tempTxt1.destroy();
+        tempTxt2.destroy();
+
+        const baseYPos = GAME_CONSTANTS.halfHeight - 320;
+        const commonX = GAME_CONSTANTS.halfWidth;
+
+        // Message 1 (Status)
+        const txt1 = PhaserScene.add.text(commonX, baseYPos - totalHeight / 2, '', {
+            fontFamily: 'MunroSmall',
+            fontSize: fSize1,
+            color: '#ffffff',
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 3,
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 4, true, true);
+
+        // Message 2 (Boss Name)
+        const txt2 = PhaserScene.add.text(commonX, txt1.y + h1 - 5, '', {
+            fontFamily: 'MunroSmall',
+            fontSize: fSize2,
+            color: '#ffffff',
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 6,
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 3, '#000000', 8, true, true);
+
+        // Decorative Line (centered between them or below)
+        const line = PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'ui', 'white_line.png');
+        line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
+
+        // Line Animation
+        PhaserScene.tweens.add({
+            delay: 400,
+            targets: line,
+            scaleX: (maxWidth / line.width) * 1.2 + 0.5,
+            alpha: 1,
+            duration: 800,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: line,
+                    alpha: 0.7,
+                    duration: 1000,
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
+        });
+
+        // Global Glitch/Glow effects
+        audio.play('data_reveal', 1.0);
+
+        PhaserScene.time.delayedCall(1200, () => {
+            if (txt2.active) {
+                glitchFX.triggerChromaticAberration(txt2, 700, 2.5);
+                glitchFX.triggerAnnounceGlow(commonX, txt1.y + totalHeight / 2, 1600, totalHeight + 100);
+            }
+        });
+
+        // Typewriter Logic Staged
+        let idx1 = 0;
+        let idx2 = 0;
+
+        const type2 = () => {
+            if (!txt2.scene) return;
+            if (idx2 >= msg2.length) {
+                _finalizeAnnouncement();
+                return;
+            }
+            txt2.text += msg2[idx2++];
+            // Slower typewriter for boss name
+            PhaserScene.time.delayedCall(65, type2);
+        };
+
+        const type1 = () => {
+            if (!txt1.scene) return;
+            if (idx1 >= msg1.length) {
+                // Done with message 1, start message 2 after a small dramatic pause
+                PhaserScene.time.delayedCall(150, type2);
+                return;
+            }
+            txt1.text += msg1[idx1++];
+            // Faster typewriter for prefix
+            PhaserScene.time.delayedCall(20, type1);
+        };
+
+        const _finalizeAnnouncement = () => {
+            const linger = 4100;
+            PhaserScene.time.delayedCall(linger, () => {
+                if (!txt1.scene) return;
+                // Final jitter/fade
+                [txt1, txt2, line].forEach(obj => {
+                    PhaserScene.tweens.add({
+                        targets: obj,
+                        alpha: 0,
+                        duration: 800,
+                        onComplete: () => obj.destroy()
+                    });
+                });
+            });
+        };
+
+        // Kick off
+        type1();
+    }
+
+    function showAnnounceMessage(msg) {
         // Measure final dimensions without delay symbols for proper centering
         const fSize = (gameState.settings.bigFont ? 56 : 50) + 'px';
         const measureMsg = msg.replaceAll('#', '');
@@ -727,7 +846,7 @@ const gameHUD = (() => {
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
-            strokeThickness: 5,
+            strokeThickness: 4,
             lineSpacing: -4
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
 
@@ -756,7 +875,7 @@ const gameHUD = (() => {
         // Apply chromatic glitch 0.75s after it pops up
         PhaserScene.time.delayedCall(750, () => {
             if (txt.active) {
-                glitchFX.triggerChromaticAberration(txt, 500, 1.75);
+                glitchFX.triggerChromaticAberration(txt, 600, 1.75);
             }
         });
         PhaserScene.time.delayedCall(250, () => {
@@ -950,5 +1069,5 @@ const gameHUD = (() => {
         }
     }
 
-    return { init, showTransitionMessage, setWaveProgressBarVisible, refreshTestDefensesButton };
+    return { init, showAnnounceMessage, showBossAnnouncement, setWaveProgressBarVisible, refreshTestDefensesButton };
 })();

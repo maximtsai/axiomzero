@@ -175,9 +175,9 @@ const glitchFX = (() => {
     /**
      * Briefly duplicate target with red/cyan tints and a jittering offset.
      * @param {Phaser.GameObjects.GameObject} target - Sprite or Text object.
-     * @param {number} [duration=400] - Total effect duration in ms.
+     * @param {number} [duration=500] - Total effect duration in ms.
      */
-    function triggerChromaticAberration(target, duration = 400, effectIntensity = 1) {
+    function triggerChromaticAberration(target, duration = 500, effectIntensity = 1) {
         if (intensity <= 0 || (gameState && gameState.settings && !gameState.settings.chromaticAberration)) return;
         if (!target || !target.active) return;
 
@@ -216,7 +216,11 @@ const glitchFX = (() => {
             delay: 30,
             repeat: Math.floor(duration / 40) - 1,
             callback: () => {
-                if (!target.active) return;
+                const isValid = (target && target.active && redCopy && redCopy.active && cyanCopy && cyanCopy.active);
+                if (!isValid) {
+                    if (shakeTimer) shakeTimer.remove();
+                    return;
+                }
                 const rx = (Math.random() - 0.5) * 9 * combinedIntensity;
                 const ry = (Math.random() - 0.5) * 6 * combinedIntensity;
                 redCopy.setPosition(target.x - 2 + rx, target.y + 1 + ry);
@@ -224,9 +228,19 @@ const glitchFX = (() => {
             }
         });
 
-        PhaserScene.time.delayedCall(duration, () => {
-            if (redCopy.active) redCopy.destroy();
-            if (cyanCopy.active) cyanCopy.destroy();
+        // Smooth fade-out 200ms before total duration ends
+        const fadeDuration = Math.min(200, duration * 0.5);
+        PhaserScene.tweens.add({
+            targets: [redCopy, cyanCopy],
+            alpha: 0,
+            delay: Math.max(0, duration - fadeDuration),
+            duration: fadeDuration,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                if (shakeTimer) shakeTimer.remove();
+                if (redCopy.active) redCopy.destroy();
+                if (cyanCopy.active) cyanCopy.destroy();
+            }
         });
     }
 
