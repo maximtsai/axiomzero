@@ -11,6 +11,9 @@ const projectileManager = (() => {
 
     let hitAnimPool = null;
     const _queryResults = [];
+    let hitRadiusRatio = 1;
+    let searchRadius = 0;
+    let invProjectileSpeed = 1;
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -65,6 +68,11 @@ const projectileManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
+
+        // Cache constants for collision and movement math
+        hitRadiusRatio = GAME_CONSTANTS.PROJECTILE_HIT_RADIUS / 12;
+        searchRadius = 60 * Math.max(0, hitRadiusRatio - 1);
+        invProjectileSpeed = 1 / (GAME_CONSTANTS.PROJECTILE_SPEED || 1);
     }
 
     // ── public API ───────────────────────────────────────────────────────────
@@ -122,11 +130,6 @@ const projectileManager = (() => {
         if (activeProjectiles.length === 0 || paused) return;
 
         const dt = delta / 1000;
-        const hitRadiusRatio = GAME_CONSTANTS.PROJECTILE_HIT_RADIUS / 12;
-        // The spatial grid natively pads by 60px (max standard enemy size).
-        // If bullet hits are physically scaled up by hitRadiusRatio, we must expand our search area 
-        // to guarantee we catch large enemies that are mathematically "touching" the bullet from far away.
-        const searchRadius = 60 * Math.max(0, hitRadiusRatio - 1);
 
         for (let i = activeProjectiles.length - 1; i >= 0; i--) {
             const p = activeProjectiles[i];
@@ -168,9 +171,8 @@ const projectileManager = (() => {
                     customEmitters.basicStrikeManual(p.x, p.y, hitAngle);
 
                     // Apply knockback in projectile direction
-                    const projDirDist = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 1;
-                    const projDirX = p.vx / projDirDist;
-                    const projDirY = p.vy / projDirDist;
+                    const projDirX = p.vx * invProjectileSpeed;
+                    const projDirY = p.vy * invProjectileSpeed;
                     e.applyKnockback(projDirX, projDirY, 4);
 
                     if (hitAnimPool) {

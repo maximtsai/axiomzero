@@ -8,9 +8,11 @@ const gameHUD = (() => {
     let healthBarFill = null;
     let healthBarFlare = null;
     let healthText = null;
+    let healthBtn = null;
     let expBarBg = null;
     let expBarFill = null;
     let expText = null;
+    let expBtn = null;
     let resourceUI = {}; // { data: { icon, text }, ... }
     let lastHealth = -1;
 
@@ -104,6 +106,27 @@ const gameHUD = (() => {
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
 
+        healthBtn = new Button({
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
+            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
+            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
+            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H/2) },
+            onHover: () => {
+                let sfxRel = audio.play('click', 0.95);
+                if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
+                tooltipManager.show(healthBtn.x, healthBtn.y + 17, [
+                    { text: t('hud', 'health_title'), style: 'title', color: '#00ff66' },
+                    { text: t('hud', 'health_desc'), style: 'normal' }
+                ], 410);
+            },
+            onHoverOut: () => { tooltipManager.hide(); }
+        });
+        healthBtn.setOrigin(0.5, 0.5);
+        healthBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
+        healthBtn.setDepth(depth + 1);
+        healthBtn.setScrollFactor(0);
+        healthBtn.setVisible(false);
+
         // ── EXP bar ──
         const expY = HUD_Y + BAR_H + BAR_GAP + 3;
         expBarBg = PhaserScene.add.image(groupX, expY, 'white_pixel');
@@ -117,6 +140,27 @@ const gameHUD = (() => {
             fontSize: helper.isMobileDevice() ? '30px' : '26px',
             color: '#aaaaaa',
         }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
+
+        expBtn = new Button({
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
+            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
+            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
+            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H/2) },
+            onHover: () => {
+                let sfxRel = audio.play('click', 0.95);
+                if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
+                tooltipManager.show(expBtn.x, expBtn.y + 17, [
+                    { text: t('hud', 'exp_title'), style: 'title', color: '#eeeeee' },
+                    { text: t('hud', 'exp_desc'), style: 'normal' }
+                ], 410);
+            },
+            onHoverOut: () => { tooltipManager.hide(); }
+        });
+        expBtn.setOrigin(0.5, 0.5);
+        expBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
+        expBtn.setDepth(depth + 1);
+        expBtn.setScrollFactor(0);
+        expBtn.setVisible(false);
 
         // ── Currency counters ──
         const currY = expY + 10 + BAR_GAP + 5;
@@ -190,9 +234,12 @@ const gameHUD = (() => {
                 treeGroup.add(expBarBg);
                 treeGroup.add(expBarFill);
                 treeGroup.add(expText);
+                if (healthBtn.getContainer) treeGroup.add(healthBtn.getContainer());
+                if (expBtn.getContainer) treeGroup.add(expBtn.getContainer());
                 Object.values(resourceUI).forEach(res => {
                     treeGroup.add(res.icon);
                     treeGroup.add(res.text);
+                    if (res.btn && res.btn.getContainer) treeGroup.add(res.btn.getContainer());
                 });
             }
         }
@@ -328,9 +375,13 @@ const gameHUD = (() => {
         healthBarFill.setVisible(true);
         healthBarFlare.setVisible(true);
         healthText.setVisible(true);
+        healthBtn.setVisible(false);
+        healthBtn.setState(DISABLE);
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
+        expBtn.setVisible(false);
+        expBtn.setState(DISABLE);
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
@@ -347,9 +398,13 @@ const gameHUD = (() => {
         healthBarFill.setVisible(false);
         healthBarFlare.setVisible(false);
         healthText.setVisible(false);
+        healthBtn.setVisible(false);
+        healthBtn.setState(DISABLE);
         expBarBg.setVisible(false);
         expBarFill.setVisible(false);
         expText.setVisible(false);
+        expBtn.setVisible(false);
+        expBtn.setState(DISABLE);
         Object.values(resourceUI).forEach(res => {
             if (res.btn) res.btn.setVisible(false);
             res.icon.setVisible(false);
@@ -388,9 +443,13 @@ const gameHUD = (() => {
         healthBarFill.setVisible(true);
         healthBarFlare.setVisible(true);
         healthText.setVisible(true);
+        healthBtn.setVisible(true);
+        healthBtn.setState(NORMAL);
         expBarBg.setVisible(true);
         expBarFill.setVisible(true);
         expText.setVisible(true);
+        expBtn.setVisible(true);
+        expBtn.setState(NORMAL);
 
         _updateResourceLayout();
 
@@ -455,7 +514,8 @@ const gameHUD = (() => {
 
         // Logarithmic scaling: 200px at 10 health, ~800px at 10,000 health
         // Formula: L = 222.3 * log10(max) - 89.2
-        const dynamicW = Math.max(BAR_W, BAR_W + 222.3 * (Math.log10(max) - Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH)));
+        const logBase = Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH);
+        const dynamicW = Math.max(BAR_W, BAR_W + 222.3 * (Math.log10(max) - logBase));
 
         const ratio = Math.max(0, current / max);
 
@@ -527,15 +587,22 @@ const gameHUD = (() => {
         // Update farming timer if active
         if (isFarming && farmingTimerTxt && farmingTimerTxt.visible) {
             const totalSec = Math.floor(enemyManager.getRoundTimeElapsed());
-            const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
-            const ss = (totalSec % 60).toString().padStart(2, '0');
-            farmingTimerTxt.setText(`${mm}:${ss}`);
+            // Only update text object if the second has actually changed
+            if (farmingTimerTxt.lastSec !== totalSec) {
+                farmingTimerTxt.lastSec = totalSec;
+                const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
+                const ss = (totalSec % 60).toString().padStart(2, '0');
+                farmingTimerTxt.setText(`${mm}:${ss}`);
+            }
         }
 
         // Update round data counter if active
         if (roundDataTxt && roundDataTxt.visible) {
-            const currentRoundData = resourceManager.getSessionData();
-            roundDataTxt.setText(t('hud', 'data_round') + ': ' + Math.floor(currentRoundData));
+            const currentRoundData = Math.floor(resourceManager.getSessionData());
+            if (roundDataTxt.lastVal !== currentRoundData) {
+                roundDataTxt.lastVal = currentRoundData;
+                roundDataTxt.setText(t('hud', 'data_round') + ': ' + currentRoundData);
+            }
         }
     }
 
@@ -545,6 +612,7 @@ const gameHUD = (() => {
         let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + EXP_BAR_H + BAR_GAP + 15;
         const spacing = helper.isMobileDevice() ? 41 : 37;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
+        const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
 
         const order = ['data', 'insight', 'shard', 'coin', 'processor'];
         order.forEach(id => {
@@ -552,7 +620,6 @@ const gameHUD = (() => {
             const val = _getResourceValue(id);
 
             if (val > 0) {
-                const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
                 if (ui.btn) {
                     ui.btn.setVisible(isUpgradePhase);
                     ui.btn.setPos(groupX + 45, currentY);
