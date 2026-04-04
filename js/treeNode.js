@@ -619,15 +619,6 @@ class Node {
             if (this.fadeoutSprite) this.fadeoutSprite.setVisible(false);
         }
 
-        // Flip X scale for the right-side duo node
-        if (this.isDuoBox && this.duoSiblingId) {
-            const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
-            if (siblingDef && this.treeX > siblingDef.treeX) {
-                this.btn.setScale(-1, 1);
-                this.fadeoutSprite.setScale(-1, 1);
-            }
-        }
-
         // Duo-box backing sprite — only one sibling creates it
         if (this._isDuoBackingOwner) {
             const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);

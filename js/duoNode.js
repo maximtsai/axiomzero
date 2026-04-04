@@ -8,20 +8,49 @@ class DuoNode extends Node {
         this.prefix = 'duo_node_button';
     }
 
+    _applyGhostVisuals() {
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        const sprite = `${this.prefix}_ghost${suffix}.png`;
+        this.btn.setDisableRef(sprite);
+        this.btn.setVisible(true);
+        this.btn.setState(DISABLE);
+        this.btn.setAlpha(this.getGhostAlpha());
+        if (this.iconSprite) this.iconSprite.setVisible(false);
+        return sprite;
+    }
+
+    _applyMaxedVisuals() {
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        const sprite = `${this.prefix}_maxed${suffix}.png`;
+        this.btn.setDisableRef(sprite);
+        this.btn.setVisible(true);
+        this.btn.setState(DISABLE);
+        this.btn.setAlpha(1);
+        if (this.iconSprite) {
+            this.iconSprite.setVisible(true);
+            this.iconSprite.setAlpha(0.85);
+        }
+        return sprite;
+    }
+
     _getUnlockedSprite() {
-        return `${this.prefix}_normal.png`;
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        return `${this.prefix}_normal${suffix}.png`;
     }
 
     _getUnlockedDisabledSprite() {
-        return `${this.prefix}_normal.png`;
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        return `${this.prefix}_normal${suffix}.png`;
     }
 
     _getHoverSprite() {
-        return `${this.prefix}_hover.png`;
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        return `${this.prefix}_hover${suffix}.png`;
     }
 
     _getPressSprite() {
-        return `${this.prefix}_press.png`;
+        const suffix = this._getDuoSide() === 'right' ? '2' : '';
+        return `${this.prefix}_press${suffix}.png`;
     }
 
     _applyVisualDepth() {

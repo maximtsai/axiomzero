@@ -20,14 +20,28 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
     let _active = true;
     let _scaleTween = null;
 
+    /** Internal helper to sync children to current group state */
+    const _syncChildren = () => {
+        for (let i = 0, len = children.length; i < len; i++) {
+            const c = children[i];
+            const ref = c.ref;
+            if (ref.scene) {
+                ref.setScale(c.baseScaleX * _scale, c.baseScaleY * _scale);
+                ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
+            }
+        }
+    };
+
     const group = {
         activate: () => { _active = true; return group; },
         deactivate: () => { _active = false; return group; },
         isActive: () => _active,
 
         add: (gameObject) => {
-            // Auto-clean any dead references to prevent memory leaks from destroyed objects
-            children = children.filter(c => c.ref && c.ref.scene);
+            // Periodic cleanup: only filter if we reach a threshold to avoid excessive GC
+            if (children.length > 50) {
+                children = children.filter(c => c.ref && c.ref.scene);
+            }
 
             children.push({
                 ref: gameObject,
@@ -41,21 +55,18 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
         // Instant Alpha
         setAlpha: (value) => {
-            children.forEach(c => {
-                if (c.ref.scene) c.ref.alpha = value;
-            });
+            for (let i = 0, len = children.length; i < len; i++) {
+                const ref = children[i].ref;
+                if (ref.scene) ref.alpha = value;
+            }
             return group;
         },
 
         // Instant Scale
         setScale: (value) => {
+            if (_scale === value) return group;
             _scale = value;
-            children.forEach(c => {
-                if (c.ref.scene) {
-                    c.ref.setScale(c.baseScaleX * _scale, c.baseScaleY * _scale);
-                    c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
-                }
-            });
+            _syncChildren();
             return group;
         },
         getScale: () => _scale,
@@ -73,6 +84,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
             const startScale = _scale;
             const diffScale = targetScale - startScale;
+            if (diffScale === 0) return group;
 
             const startX = _x;
             const startY = _y;
@@ -84,19 +96,10 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 progress: 1,
                 ...config,
                 onUpdate: (tween, target) => {
-                    const currentScale = startScale + (diffScale * target.progress);
-
-                    // Re-calculate group origin to keep pivot anchored
-                    _scale = currentScale;
+                    _scale = startScale + (diffScale * target.progress);
                     _x = pivotX - ((pivotX - startX) / startScale) * _scale;
                     _y = pivotY - ((pivotY - startY) / startScale) * _scale;
-
-                    children.forEach(c => {
-                        if (c.ref.scene) {
-                            c.ref.setScale(c.baseScaleX * _scale, c.baseScaleY * _scale);
-                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
-                        }
-                    });
+                    _syncChildren();
                 },
                 onComplete: () => {
                     _scaleTween = null;
@@ -111,7 +114,12 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
         // Bulk Tween Alpha
         tweenAlpha: (targetAlpha, config = {}) => {
-            const activeChildren = children.filter(c => c.ref.scene).map(c => c.ref);
+            const activeChildren = [];
+            for (let i = 0, len = children.length; i < len; i++) {
+                const ref = children[i].ref;
+                if (ref.scene) activeChildren.push(ref);
+            }
+            
             if (activeChildren.length > 0) {
                 scene.tweens.add({
                     targets: activeChildren,
@@ -123,65 +131,72 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
 
         // Standard Management
         removeChild: (gameObject) => {
-            children = children.filter(c => c.ref !== gameObject);
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].ref === gameObject) {
+                    children.splice(i, 1);
+                    return;
+                }
+            }
         },
 
         removeAllChildren: () => {
-            children = [];
+            children.length = 0;
         },
 
         destroy: () => {
-            children.forEach(c => {
-                if (c.ref && c.ref.destroy) c.ref.destroy();
-            });
-            children = [];
+            for (let i = 0, len = children.length; i < len; i++) {
+                const ref = children[i].ref;
+                if (ref && ref.destroy) ref.destroy();
+            }
+            children.length = 0;
         },
 
         // --- POSITIONING ENGINE (Absolute Offset Logic) ---
 
         set x(val) {
-            if (!_active) return;
+            if (!_active || _x === val) return;
             _x = val;
-            children.forEach(c => {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
                 if (c.ref.scene) c.ref.setPosition(_x + c.offsetX * _scale, c.ref.y);
-            });
+            }
         },
         get x() { return _x; },
 
         set y(val) {
-            if (!_active) return;
+            if (!_active || _y === val) return;
             _y = val;
-            children.forEach(c => {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
                 if (c.ref.scene) c.ref.setPosition(c.ref.x, _y + c.offsetY * _scale);
-            });
+            }
         },
         get y() { return _y; },
 
         setPosition: (newX, newY) => {
-            if (!_active) return;
+            if (!_active || (_x === newX && _y === newY)) return;
             _x = newX;
             _y = newY;
-            children.forEach(c => {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
                 if (c.ref.scene) c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
-            });
+            }
         },
 
         /**
          * moveBy: Purely relative movement. 
-         * Shits the group center AND all children by a delta.
-         * If an object is in multiple groups, calling moveBy on any of them 
-         * will stack the movement additively on the child.
          */
         moveBy: (dx, dy) => {
-            if (!_active) return;
+            if (!_active || (dx === 0 && dy === 0)) return;
             _x += dx;
             _y += dy;
-            children.forEach(c => {
-                if (c.ref.scene) {
-                    c.ref.x += dx;
-                    c.ref.y += dy;
+            for (let i = 0, len = children.length; i < len; i++) {
+                const ref = children[i].ref;
+                if (ref.scene) {
+                    ref.x += dx;
+                    ref.y += dy;
                 }
-            });
+            }
             return group;
         },
 
@@ -189,7 +204,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
          * tweenBy: Relative movement using Absolute Offset updates
          */
         tweenBy: (deltaX, deltaY, config = {}) => {
-            if (!_active) return;
+            if (!_active || (deltaX === 0 && deltaY === 0)) return;
             const startX = _x;
             const startY = _y;
 
@@ -198,16 +213,9 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 progress: 1,
                 ...config,
                 onUpdate: (tween, target) => {
-                    // Calculate the current master position based on tween progress
                     _x = startX + (deltaX * target.progress);
                     _y = startY + (deltaY * target.progress);
-
-                    // Map children to the master position using their stored offsets
-                    children.forEach(c => {
-                        if (c.ref.scene) {
-                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
-                        }
-                    });
+                    _syncChildren();
                 }
             });
         },
@@ -221,6 +229,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
             const startY = _y;
             const distanceX = targetX - startX;
             const distanceY = targetY - startY;
+            if (distanceX === 0 && distanceY === 0) return;
 
             scene.tweens.add({
                 targets: { progress: 0 },
@@ -229,29 +238,24 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 onUpdate: (tween, target) => {
                     _x = startX + (distanceX * target.progress);
                     _y = startY + (distanceY * target.progress);
-
-                    children.forEach(c => {
-                        if (c.ref.scene) {
-                            c.ref.setPosition(_x + c.offsetX * _scale, _y + c.offsetY * _scale);
-                        }
-                    });
+                    _syncChildren();
                 }
             });
         },
 
         /**
          * recalculateOffsets: Update stored absolute offsets based on children's current positions.
-         * Use this if you manually move a child object and want the group to respect its new position.
          */
         recalculateOffsets: () => {
-            children.forEach(c => {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
                 if (c.ref.scene) {
                     c.offsetX = (c.ref.x - _x) / _scale;
                     c.offsetY = (c.ref.y - _y) / _scale;
                     c.baseScaleX = c.ref.scaleX / _scale;
                     c.baseScaleY = c.ref.scaleY / _scale;
                 }
-            });
+            }
             return group;
         }
     };
