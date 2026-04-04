@@ -313,25 +313,43 @@ class TowerView {
 
         const rx = cx - (dx / dist) * recoilDist;
         const ry = cy - (dy / dist) * recoilDist;
-        const rx2 = cx - (dx / dist) * recoilDist * -0.6;
-        const ry2 = cy - (dy / dist) * recoilDist * -0.6;
         // Kill existing recoil tweens
-        PhaserScene.tweens.killTweensOf([this.sprite, this.glowSprite], ['x', 'y']);
+        PhaserScene.tweens.killTweensOf([this.sprite, this.glowSprite], ['x', 'y', 'scaleX', 'scaleY']);
 
+        // 1. Positional recoil (faster)
         PhaserScene.tweens.add({
             targets: [this.sprite, this.glowSprite],
             x: rx,
             y: ry,
-            duration: 150,
+            duration: 155,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: [this.sprite, this.glowSprite],
                     x: cx,
                     y: cy,
-                    duration: 250,
+                    duration: 270,
                     ease: 'Back.easeOut',
-                    easeParams: [2.5]
+                    easeParams: [3]
+                });
+            }
+        });
+
+        // 2. Scale recoil (slightly longer total duration)
+        PhaserScene.tweens.add({
+            targets: [this.sprite, this.glowSprite],
+            scaleX: 0.9,
+            scaleY: 0.9,
+            duration: 170,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: [this.sprite, this.glowSprite],
+                    scaleX: 1.0,
+                    scaleY: 1.0,
+                    duration: 300,
+                    ease: 'Back.easeOut',
+                    easeParams: [1.75]
                 });
             }
         });
@@ -486,6 +504,65 @@ class TowerView {
             ease: 'Cubic.easeOut',
         });
     }
+
+    playDeathVisuals() {
+        if (!this.sprite || !this.sprite.scene) return;
+
+        // 0.25 seconds after death sequence begins
+        PhaserScene.time.delayedCall(250, () => {
+            if (!this.sprite || !this.sprite.scene) return;
+
+            // Set to broken sprite
+            this.sprite.setFrame('tower1_broke.png');
+            this.sprite.setScale(0.85);
+
+            // Impact tween to normal scale
+            PhaserScene.tweens.add({
+                targets: this.sprite,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 100,
+                ease: 'Cubic.easeOut'
+            });
+        });
+    }
+
+    playResetVisuals() {
+        if (!this.sprite || !this.sprite.scene) return;
+
+        // Sequence: 1.2 @ 400ms → 0.9 @ 150ms → Swap → 1.0 @ 250ms
+        PhaserScene.tweens.add({
+            targets: this.sprite,
+            scaleX: 1.3,
+            scaleY: 1.3,
+            duration: 550,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: this.sprite,
+                    scaleX: 0.9,
+                    scaleY: 0.9,
+                    duration: 165,
+                    ease: 'Cubic.easeIn',
+                    onComplete: () => {
+                        // Set back to original sprite
+                        if (this.sprite && this.sprite.scene) {
+                            this.sprite.setFrame('tower1.png');
+
+                            PhaserScene.tweens.add({
+                                targets: this.sprite,
+                                scaleX: 1.0,
+                                scaleY: 1.0,
+                                duration: 250,
+                                ease: 'Back.easeOut',
+                                easeParams: [2.5]
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
 }
 
 // Controller IIFE
@@ -636,6 +713,7 @@ const tower = (() => {
         model.die();
         view.cleanupRangeSprite();
         view.playDeathShockwave();
+        view.playDeathVisuals();
         debugLog('Tower destroyed');
     }
 
@@ -751,6 +829,9 @@ const tower = (() => {
                 view.sprite.setAlpha(1);
                 view.sprite.clearTint();
             }
+        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
+            model.active = false;
+            if (view.sprite) view.playResetVisuals();
         } else {
             model.active = false;
         }
