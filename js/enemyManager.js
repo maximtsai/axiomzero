@@ -59,9 +59,9 @@ const enemyManager = (() => {
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
         basic: {},
-        fast: { minCombatTime: 9 },
+        fast: { minCombatTime: 8 },
         logic_stray: { minCombatTime: 9 },
-        swarmer: { minCombatTime: 6, avoidRecentAngles: 0.45, maxAttempts: 6 },
+        swarmer: { minCombatTime: 5, avoidRecentAngles: 0.45, maxAttempts: 6 },
         sniper: { minCombatTime: 6 },
         shooter: {},
         bomb: {},
@@ -1183,9 +1183,14 @@ const enemyManager = (() => {
             const config = getCurrentLevelConfig();
             let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
 
+            // Early game slowdown: if only 1 node (AWAKEN) or fewer researched
+            const researchedCount = Object.keys(gameState.upgrades || {}).length;
+            if (researchedCount <= 1) {
+                trueSpawnInterval *= 1.75;
+            }
+
             // Farming mode speedup (cumulative 0.9x each minute)
-            const isFarming = waveIsFarming;
-            if (isFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+            if (waveIsFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
                 trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
             }
 

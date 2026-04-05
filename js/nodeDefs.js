@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['automated_defense', 'integrity', 'pulse_damage', 'prismatic_array'],
+        childIds: ['automated_defense', 'integrity', 'pulse_damage', 'prismatic_array', 'cheat'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -48,6 +48,28 @@ const NODE_DEFS = [
             if (typeof glitchFX !== 'undefined') {
                 glitchFX.triggerSystemScan();
             }
+        },
+    },
+    {
+        id: 'cheat',
+        name: t('nodes', 'cheat.name'),
+        icon: 'Skillicon14_07.png',
+        description: t('nodes', 'cheat.desc'),
+        popupText: t('nodes', 'cheat.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parents: ['awaken'],
+        childIds: [],
+        treeX: gridX(0),
+        treeY: gridY(-1),
+        effect: function () {
+            resourceManager.addData(5000);
+            resourceManager.addInsight(2);
+            resourceManager.addShard(2);
         },
     },
     {

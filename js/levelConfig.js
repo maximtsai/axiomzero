@@ -3,7 +3,7 @@
 
 const LEVEL_CONFIG = {
     1: {
-        spawnInterval: 2300, // ms between regular spawns (base)
+        spawnInterval: 1400, // ms between regular spawns (base)
         lateSpawnInterval: 900,
         initialWeights: {
             basic: 1,
