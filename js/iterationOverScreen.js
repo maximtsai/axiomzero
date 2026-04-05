@@ -610,8 +610,8 @@ const iterationOverScreen = (() => {
 
         // Position: Bottom Left
         const margin = 25;
-        const panelW = 280;
-        const panelH = 220;
+        const panelW = 440;
+        const panelH = 300;
         const startX = margin;
         const startY = GAME_CONSTANTS.HEIGHT - panelH - margin;
 
@@ -624,17 +624,17 @@ const iterationOverScreen = (() => {
             .setDepth(depth);
         diagElements.push(panel);
 
-        const reportTitle = PhaserScene.add.text(startX + 10, startY + 10, t('results', 'diagnostic_report'), {
+        const reportTitle = PhaserScene.add.text(startX + 15, startY + 15, t('results', 'diagnostic_report'), {
             fontFamily: 'Michroma',
-            fontSize: '16px',
+            fontSize: '22px', // Was 16
             color: '#00f5ff',
         }).setOrigin(0).setDepth(depth + 1).setAlpha(0.8);
         diagElements.push(reportTitle);
 
         if (totalDmg <= 0) {
-            const noDataText = PhaserScene.add.text(startX + 10, startY + 40, t('results', 'no_damage_dealt'), {
+            const noDataText = PhaserScene.add.text(startX + 15, startY + 55, t('results', 'no_damage_dealt'), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '14px',
+                fontSize: '20px', // Was 14
                 color: '#aaaaaa',
             }).setOrigin(0).setDepth(depth + 1).setAlpha(0.9);
             diagElements.push(noDataText);
@@ -655,41 +655,42 @@ const iterationOverScreen = (() => {
         dmg.friendlyfire += (dmg.endgame || 0);
 
         const activeSources = sources.filter(s => dmg[s.id] > 0);
-        const listStartY = startY + 40;
-        const barMaxWidth = 120;
-        const entryHeight = 18;
+        const listStartY = startY + 55;
+        const barMaxWidth = 200; // Was 120
+        const entryHeight = 26; // Was 18
 
         activeSources.forEach((s, i) => {
             const y = listStartY + (i * entryHeight);
             const pct = dmg[s.id] / totalDmg;
 
             // Label
-            const lbl = PhaserScene.add.text(startX + 10, y, s.label, {
+            const lbl = PhaserScene.add.text(startX + 15, y, s.label, {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '11px',
+                fontSize: '17px', // Was 11
                 color: '#ffffff',
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
 
             // Bar BG
+            const barOffset = 135; // Was 85
             const bgW = barMaxWidth;
-            const bg = PhaserScene.add.image(startX + 85, y, 'white_pixel')
+            const bg = PhaserScene.add.image(startX + barOffset, y, 'white_pixel')
                 .setDepth(depth + 1)
-                .setDisplaySize(bgW, 6)
+                .setDisplaySize(bgW, 10) // Was 6
                 .setTint(0x222222)
                 .setAlpha(0.4)
                 .setOrigin(0, 0.5);
 
             // Bar Fill
-            const fill = PhaserScene.add.image(startX + 85, y, 'white_pixel')
+            const fill = PhaserScene.add.image(startX + barOffset, y, 'white_pixel')
                 .setDepth(depth + 2)
-                .setDisplaySize(bgW * pct, 6)
+                .setDisplaySize(bgW * pct, 10) // Was 6
                 .setTint(s.color)
                 .setOrigin(0, 0.5);
 
             // Percentage
-            const pText = PhaserScene.add.text(startX + 85 + bgW + 8, y, `${Math.round(pct * 100)}%`, {
+            const pText = PhaserScene.add.text(startX + barOffset + bgW + 12, y, `${Math.round(pct * 100)}%`, {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '10px',
+                fontSize: '16px', // Was 10
                 color: '#ffffff',
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
 
@@ -697,16 +698,16 @@ const iterationOverScreen = (() => {
         });
 
         if (stats.executions > 0) {
-            const execY = listStartY + (activeSources.length * entryHeight) + 5;
-            const lbl = PhaserScene.add.text(startX + 10, execY, 'EXECUTION COUNT:', {
+            const execY = listStartY + (activeSources.length * entryHeight) + 12;
+            const lbl = PhaserScene.add.text(startX + 15, execY, 'EXECUTION COUNT:', {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '11px',
+                fontSize: '17px', // Was 11
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);
 
-            const valText = PhaserScene.add.text(startX + 115, execY, stats.executions.toString(), {
+            const valText = PhaserScene.add.text(startX + 195, execY, stats.executions.toString(), {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '11px',
+                fontSize: '17px', // Was 11
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);
 
