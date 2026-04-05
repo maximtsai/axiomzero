@@ -56,7 +56,7 @@ class BossCircleView extends EnemyView {
             const triggerOne = (p, finalScale) => {
                 if (!p || !p.scene) return;
                 // Reset state
-                p.setScale(1);
+                p.setScale(1.03);
                 p.setAlpha(1);
 
                 // Tween scale
@@ -81,7 +81,7 @@ class BossCircleView extends EnemyView {
 
             // Second pulse 0.1s later
             PhaserScene.time.delayedCall(100, () => {
-                triggerOne(this.pulse2, 1.66);
+                triggerOne(this.pulse2, 1.58);
             });
 
             if (typeof cameraManager !== 'undefined') {

@@ -4,7 +4,9 @@
 const iterationOverScreen = (() => {
     let overlay = null;
     let titleText = null;
-    let dataText = null;
+    let dataText = null;           // "DATA COLLECTED" label (small)
+    let dataNumberText = null;     // "◈ 2,847" big number line
+    let dataDeltaText = null;      // "+203 vs last run" comparison
     let sniffedDataText = null;
     let insightText = null;
     let shardText = null;
@@ -21,6 +23,11 @@ const iterationOverScreen = (() => {
     let expAnimElements = []; // Transient insight pop icons
     let _expFillTween = null;  // Active bar fill tween (so we can kill on exit)
     let _expDelayEvent = null; // Active post-levelup delay event
+    let _activeBurstTweens = []; // Track data burst tweens for cleanup
+
+    // Session state
+    let _lastRunData = null; // null until at least one run completes
+    let _dataCountTween = null;
 
     let visible = false;
     let isBossKill = false;
@@ -44,7 +51,7 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 200, t('results', 'iteration_complete'), {
+        titleText = PhaserScene.add.text(cx, cy - 204, t('results', 'iteration_complete'), {
             fontFamily: 'Michroma',
             fontSize: '36px',
             color: '#00f5ff',
@@ -57,11 +64,29 @@ const iterationOverScreen = (() => {
         titleText.fullText = t('results', 'iteration_complete');
         titleText.setText('');
 
-        // Acquired resources
+        // ── Data display (two-line) ───────────────────────────────────
+        // Line 1 (large): "◈ 2,847"
+        dataNumberText = PhaserScene.add.text(cx, 0, '', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '42px',
+            color: '#00f5ff',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1);
+        dataNumberText.setShadow(0, 0, '#00f5ff', 6, true, true);
+
+        // Line 2 (small label): "DATA COLLECTED"
         dataText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '23px',
+            color: '#66aacc',
+            align: 'center',
+        }).setOrigin(0.5).setDepth(depth + 1);
+
+        // Line 3 (tiny delta): "+203 vs last run"
+        dataDeltaText = PhaserScene.add.text(cx, 0, '', {
+            fontFamily: 'JetBrainsMono_Regular',
             fontSize: '24px',
-            color: '#00f5ff',
+            color: '#aaaaaa',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
@@ -100,19 +125,19 @@ const iterationOverScreen = (() => {
         const barY = cy + 95; // positioned below resource summary
 
         expBarBg = PhaserScene.add.image(barX, barY, 'white_pixel');
-        expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x222233).setDepth(depth + 2).setVisible(false);
+        expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x444455).setDepth(depth + 2).setVisible(false);
 
         expBarFill = PhaserScene.add.image(barX, barY, 'white_pixel');
         expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffd700).setDepth(depth + 3).setVisible(false);
 
-        expBarLabel = PhaserScene.add.text(cx, barY - 18, 'INSIGHT PROGRESS', {
+        expBarLabel = PhaserScene.add.text(cx, barY - 23, 'INSIGHT PROGRESS', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '13px',
+            fontSize: '23px',
             color: '#aaaaaa',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(depth + 2).setVisible(false);
 
-        expBarIcon = PhaserScene.add.image(barX + barW + 14, barY, 'player', 'resrc_insight.png');
+        expBarIcon = PhaserScene.add.image(barX + barW + 18, barY, 'player', 'resrc_insight.png');
         expBarIcon.setOrigin(0.5, 0.5).setDepth(depth + 3).setAlpha(0.3).setVisible(false);
 
         // UPGRADES button — shifted down to accommodate EXP bar
@@ -213,23 +238,50 @@ const iterationOverScreen = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         // Hide all initially
+        dataNumberText.setVisible(false);
         dataText.setVisible(false);
+        dataDeltaText.setVisible(false);
         sniffedDataText.setVisible(false);
         insightText.setVisible(false);
         shardText.setVisible(false);
         processorText.setVisible(false);
 
+        // Stop any previous count-up tween
+        if (_dataCountTween) { _dataCountTween.stop(); _dataCountTween = null; }
+
         const activeTexts = [];
 
         if (sessionData === 0 && sessionInsight === 0 && sessionShards === 0 && sessionProcessors === 0) {
             dataText.setText(t('results', 'no_resources'));
+            dataText.setFontSize(25); // Match Insight Progress/Data Collected
+            dataText.setColor('#aaaaaa');
             dataText.setVisible(true);
             activeTexts.push(dataText);
         } else {
             if (sessionData > 0) {
-                dataText.setText(t('results', 'data_collected') + sessionData);
+                // Ensure default label style
+                dataText.setFontSize(23); // Was 13
+                dataText.setColor('#66aacc');
+                // ── Number line (large, with ◈ prefix) ──
+                dataNumberText.setText('◈ 0');
+                dataNumberText.setVisible(true);
+                activeTexts.push(dataNumberText);
+
+                // ── Label line (small, dimmed) ──
+                dataText.setText(t('results', 'data_collected'));
                 dataText.setVisible(true);
                 activeTexts.push(dataText);
+
+                // ── Delta line vs last run ──
+                if (_lastRunData !== null) {
+                    const delta = sessionData - _lastRunData;
+                    const sign = delta >= 0 ? '+' : '';
+                    const color = delta >= 0 ? '#00ff88' : '#ff4444';
+                    dataDeltaText.setText(`${sign}${delta} vs last run`);
+                    dataDeltaText.setColor(color);
+                    dataDeltaText.setVisible(true);
+                    activeTexts.push(dataDeltaText);
+                }
 
                 const sniffedData = resourceManager.getSessionSniffedData();
                 if (sniffedData > 0) {
@@ -255,14 +307,55 @@ const iterationOverScreen = (() => {
             }
         }
 
-        // Center block dynamically — kept compact, above EXP bar
-        const lineSpacing = 30;
-        const totalHeight = (activeTexts.length - 1) * lineSpacing;
-        let startY = cy - 95 - (totalHeight / 2);
+        // ── Dynamic vertical centering ────────────────────────────────
+        // dataNumberText is taller than other lines, so give it extra spacing
+        const baseSpacing = 30;
+        let currentY = cy - 95;
+
+        // Calculate total block height first for proper centering
+        const lineHeights = activeTexts.map(txt => {
+            if (txt === dataNumberText) return 56; // was 52
+            if (txt === dataText) return 30;       // was 20
+            if (txt === dataDeltaText) return 34;  // was baseSpacing
+            return baseSpacing;
+        });
+        const totalH = lineHeights.reduce((a, b) => a + b, 0);
+        currentY = cy - 95 - totalH / 2;
 
         for (let i = 0; i < activeTexts.length; i++) {
-            activeTexts[i].setY(startY + (i * lineSpacing));
+            let yOffset = (activeTexts[i] === dataNumberText) ? 4 : 0;
+            activeTexts[i].setY(currentY + yOffset);
+            currentY += lineHeights[i];
         }
+
+        // ── Count-up animation for DATA number ───────────────────────
+        if (sessionData > 0) {
+            const counter = { val: 0 };
+            const duration = Math.max(200, Math.floor(Math.sqrt(sessionData) * 20));
+            _dataCountTween = PhaserScene.tweens.add({
+                targets: counter,
+                val: sessionData,
+                duration: duration,
+                ease: 'Quad.easeOut',
+                onUpdate: () => {
+                    if (dataNumberText && dataNumberText.active) {
+                        dataNumberText.setText(`◈ ${Math.floor(counter.val).toLocaleString()}`);
+                    }
+                },
+                onComplete: () => {
+                    if (dataNumberText && dataNumberText.active) {
+                        dataNumberText.setText(`◈ ${sessionData.toLocaleString()}`);
+                    }
+                    _dataCountTween = null;
+                    // Fire burst effect at the number's position
+                    if (visible) _playDataBurst(dataNumberText.x, dataNumberText.y, sessionData);
+                }
+            });
+        }
+
+        // Save this run's data for next run's delta comparison
+        // (we save at the END so the comparison logic above uses the PREVIOUS value)
+        _lastRunData = sessionData;
 
         // Start typewriter effect
         if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
@@ -290,6 +383,60 @@ const iterationOverScreen = (() => {
     }
 
     /**
+     * Fires a burst of nineslice data_collect squares from the data number,
+     * rotated 45°, scattering outward like the cursor collect FX but larger.
+     */
+    function _playDataBurst(cx, cy, amount) {
+        const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4;
+
+        let count = 8; // Default for 1000+
+        if (amount <= 9) count = 1;
+        else if (amount <= 99) count = 3;
+        else if (amount <= 999) count = 5;
+
+        for (let i = 0; i < count; i++) {
+            const angle = (i / count) * Math.PI * 2 + (Math.random() * 0.4);
+            const dist = (count === 1) ? 0 : (60 + (count * 10) + Math.random() * 80);
+            const startX = cx + Math.cos(angle) * dist;
+            const startY = cy + Math.cos(angle * 0.5) * (dist * 0.4);
+
+            // Stagger each piece slightly
+            const delay = i * 25;
+            const startSize = 18 + Math.random() * 10;
+            const endSize = (count === 1) ? (startSize * 3) : (80 + Math.random() * 60);
+
+            PhaserScene.time.delayedCall(delay, () => {
+                if (!visible) return;
+
+                const slice = PhaserScene.add.nineslice(startX, startY, 'player', 'data_collect.png', startSize, startSize, 8, 8, 8, 8);
+                slice.setRotation(Phaser.Math.DegToRad(45));
+                slice.setDepth(depth);
+                slice.setScrollFactor(0);
+                slice.setAlpha(1);
+                slice.setTint(0x00f5ff);
+                expAnimElements.push(slice);
+
+                // Expand and fade only (no position tween)
+                const t = PhaserScene.tweens.add({
+                    targets: slice,
+                    width: endSize,
+                    height: endSize,
+                    alpha: { from: 1.4, to: 0 },
+                    duration: 1400 + Math.random() * 200,
+                    ease: count === 1 ? 'Back.easeOut' : 'Cubic.easeOut',
+                    onComplete: () => {
+                        if (slice.active) slice.destroy();
+                        const idx = expAnimElements.indexOf(slice);
+                        if (idx !== -1) expAnimElements.splice(idx, 1);
+                        _activeBurstTweens = _activeBurstTweens.filter(tween => tween !== t);
+                    }
+                });
+                _activeBurstTweens.push(t);
+            });
+        }
+    }
+
+    /**
      * Plays the animated EXP progress bar on the iteration complete screen.
      * Handles partial bars, multiple level-ups within one session, and
      * edge cases (zero EXP gained, exactly 0 start state).
@@ -299,7 +446,6 @@ const iterationOverScreen = (() => {
         const { expAtStart, expNow, sessionInsightCount, threshold } = expState;
 
         // Total EXP gained this session = full levels + partial progress
-        // If expNow < expAtStart, exp wrapped around at least once more
         const totalExpGained = sessionInsightCount * threshold + (expNow - expAtStart);
 
         // If literally no EXP was gained, show bar at current fill but no animation
@@ -325,22 +471,17 @@ const iterationOverScreen = (() => {
             ease: 'Cubic.easeOut',
         });
 
-        // Start the fill animation sequence
-        // Each "segment" = one trip from startFill → 1.0 (level up) or → endFill (partial)
+        // Build animation segments
         const startRatio = expAtStart / threshold;
 
         let segments = [];
         if (sessionInsightCount === 0) {
-            // Pure partial — no level-ups this session
             segments.push({ from: startRatio, to: expNow / threshold, levelUp: false });
         } else {
-            // First: fill from startRatio to 1.0 (first level-up)
             segments.push({ from: startRatio, to: 1.0, levelUp: true });
-            // Middle: full bars for any additional level-ups
             for (let i = 1; i < sessionInsightCount; i++) {
                 segments.push({ from: 0, to: 1.0, levelUp: true });
             }
-            // Last: partial fill with remaining EXP
             if (expNow > 0) {
                 segments.push({ from: 0, to: expNow / threshold, levelUp: false });
             }
@@ -364,7 +505,6 @@ const iterationOverScreen = (() => {
         const toW = barW * Math.min(1, seg.to);
         const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
 
-        // Reset fill width for this segment
         expBarFill.setDisplaySize(fromW, 14);
 
         _expFillTween = PhaserScene.tweens.add({
@@ -378,7 +518,6 @@ const iterationOverScreen = (() => {
                 if (seg.levelUp) {
                     _playLevelUpEffect(depth, barW, segments, idx, fillDuration);
                 } else {
-                    // Final partial fill — done
                     _finishExpAnimation();
                 }
             }
@@ -437,10 +576,8 @@ const iterationOverScreen = (() => {
             }
         });
 
-        // Play levelup sound
         audio.play('levelup', 0.85, false);
 
-        // Brief pause, then reset bar and play next segment
         _expDelayEvent = PhaserScene.time.delayedCall(450, () => {
             if (!visible) return;
             expBarFill.setDisplaySize(0, 14);
@@ -449,7 +586,6 @@ const iterationOverScreen = (() => {
     }
 
     function _finishExpAnimation() {
-        // Subtle pulse on bar label to signal completion
         PhaserScene.tweens.add({
             targets: expBarLabel,
             alpha: { from: 1, to: 0.4 },
@@ -461,7 +597,6 @@ const iterationOverScreen = (() => {
     }
 
     function _populateDiagnostics(cx, cy) {
-        // Clear old elements if any
         diagElements.forEach(el => { if (el && el.destroy) el.destroy(); });
         diagElements = [];
 
@@ -473,20 +608,35 @@ const iterationOverScreen = (() => {
         const dmg = stats.damage;
         const totalDmg = Object.values(dmg).reduce((a, b) => a + b, 0);
 
-        // "DIAGNOSTIC REPORT" Header — shifted up slightly to coexist with EXP bar
-        const reportTitle = PhaserScene.add.text(cx, cy - 45, t('results', 'diagnostic_report'), {
+        // Position: Bottom Left
+        const margin = 25;
+        const panelW = 280;
+        const panelH = 220;
+        const startX = margin;
+        const startY = GAME_CONSTANTS.HEIGHT - panelH - margin;
+
+        // Background Panel
+        const panel = PhaserScene.add.image(startX, startY, 'white_pixel')
+            .setOrigin(0)
+            .setDisplaySize(panelW, panelH)
+            .setTint(0x000000)
+            .setAlpha(0.4)
+            .setDepth(depth);
+        diagElements.push(panel);
+
+        const reportTitle = PhaserScene.add.text(startX + 10, startY + 10, t('results', 'diagnostic_report'), {
             fontFamily: 'Michroma',
-            fontSize: '20px',
+            fontSize: '16px',
             color: '#00f5ff',
-        }).setOrigin(0.5).setDepth(depth).setAlpha(0.8);
+        }).setOrigin(0).setDepth(depth + 1).setAlpha(0.8);
         diagElements.push(reportTitle);
 
         if (totalDmg <= 0) {
-            const noDataText = PhaserScene.add.text(cx, cy - 10, t('results', 'no_damage_dealt'), {
+            const noDataText = PhaserScene.add.text(startX + 10, startY + 40, t('results', 'no_damage_dealt'), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '18px',
+                fontSize: '14px',
                 color: '#aaaaaa',
-            }).setOrigin(0.5).setDepth(depth).setAlpha(0.9);
+            }).setOrigin(0).setDepth(depth + 1).setAlpha(0.9);
             diagElements.push(noDataText);
             return;
         }
@@ -502,68 +652,63 @@ const iterationOverScreen = (() => {
             { id: 'other', label: t('results', 'system'), color: 0x777777 },
         ];
 
-        // Combine endgame into collateral if needed, or group
         dmg.friendlyfire += (dmg.endgame || 0);
 
         const activeSources = sources.filter(s => dmg[s.id] > 0);
-        const startY = cy - 10;
-        const barWidth = 240;
-        const entryHeight = 22;
+        const listStartY = startY + 40;
+        const barMaxWidth = 120;
+        const entryHeight = 18;
 
         activeSources.forEach((s, i) => {
-            const y = startY + (i * entryHeight);
+            const y = listStartY + (i * entryHeight);
             const pct = dmg[s.id] / totalDmg;
 
             // Label
-            const lbl = PhaserScene.add.text(cx - (barWidth / 2) - 10, y, s.label, {
+            const lbl = PhaserScene.add.text(startX + 10, y, s.label, {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '13px',
+                fontSize: '11px',
                 color: '#ffffff',
-            }).setOrigin(1, 0.5).setDepth(depth).setAlpha(0.9);
+            }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
 
             // Bar BG
-            const bg = PhaserScene.add.image(cx, y, 'white_pixel')
-                .setDepth(depth)
-                .setDisplaySize(barWidth, 10)
+            const bgW = barMaxWidth;
+            const bg = PhaserScene.add.image(startX + 85, y, 'white_pixel')
+                .setDepth(depth + 1)
+                .setDisplaySize(bgW, 6)
                 .setTint(0x222222)
-                .setAlpha(0.6)
-                .setOrigin(0.5);
+                .setAlpha(0.4)
+                .setOrigin(0, 0.5);
 
             // Bar Fill
-            const fill = PhaserScene.add.image(cx - (barWidth / 2), y, 'white_pixel')
-                .setDepth(depth + 1)
-                .setDisplaySize(barWidth * pct, 10)
+            const fill = PhaserScene.add.image(startX + 85, y, 'white_pixel')
+                .setDepth(depth + 2)
+                .setDisplaySize(bgW * pct, 6)
                 .setTint(s.color)
                 .setOrigin(0, 0.5);
 
-            // Percentage and Raw Damage
-            const rawDmg = Math.round(dmg[s.id]);
-            const pText = PhaserScene.add.text(cx + (barWidth / 2) + 10, y, `${Math.round(pct * 100)}% (${rawDmg.toLocaleString()})`, {
+            // Percentage
+            const pText = PhaserScene.add.text(startX + 85 + bgW + 8, y, `${Math.round(pct * 100)}%`, {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '13px',
+                fontSize: '10px',
                 color: '#ffffff',
-            }).setOrigin(0, 0.5).setDepth(depth).setAlpha(0.9);
+            }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
 
             diagElements.push(lbl, bg, fill, pText);
         });
 
-        // Executions
         if (stats.executions > 0) {
-            const execY = startY + (activeSources.length * entryHeight);
-
-            // Label - Aligned with weapon labels
-            const lbl = PhaserScene.add.text(cx - (barWidth / 2) - 10, execY, 'EXECUTIONS', {
+            const execY = listStartY + (activeSources.length * entryHeight) + 5;
+            const lbl = PhaserScene.add.text(startX + 10, execY, 'EXECUTION COUNT:', {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '13px',
+                fontSize: '11px',
                 color: '#ff2d78',
-            }).setOrigin(1, 0.5).setDepth(depth).setAlpha(0.9);
+            }).setOrigin(0, 0.5).setDepth(depth + 1);
 
-            // Count - Aligned with bar start
-            const valText = PhaserScene.add.text(cx - (barWidth / 2), execY, stats.executions.toString(), {
+            const valText = PhaserScene.add.text(startX + 115, execY, stats.executions.toString(), {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '13px',
+                fontSize: '11px',
                 color: '#ff2d78',
-            }).setOrigin(0, 0.5).setDepth(depth).setAlpha(0.9);
+            }).setOrigin(0, 0.5).setDepth(depth + 1);
 
             diagElements.push(lbl, valText);
         }
@@ -573,7 +718,9 @@ const iterationOverScreen = (() => {
         visible = false;
         overlay.setVisible(false);
         titleText.setVisible(false);
+        dataNumberText.setVisible(false);
         dataText.setVisible(false);
+        dataDeltaText.setVisible(false);
         sniffedDataText.setVisible(false);
         insightText.setVisible(false);
         shardText.setVisible(false);
@@ -583,16 +730,21 @@ const iterationOverScreen = (() => {
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
 
+        // Stop count-up tween
+        if (_dataCountTween) { _dataCountTween.stop(); _dataCountTween = null; }
+
         // EXP bar
         if (_expFillTween) { _expFillTween.stop(); _expFillTween = null; }
         if (_expDelayEvent) { _expDelayEvent.remove(); _expDelayEvent = null; }
+        _activeBurstTweens.forEach(t => { if (t) t.stop(); });
+        _activeBurstTweens = [];
         if (expBarBg) expBarBg.setVisible(false);
         if (expBarFill) expBarFill.setVisible(false);
         if (expBarLabel) expBarLabel.setVisible(false);
         if (expBarIcon) expBarIcon.setVisible(false);
 
-        // Clean up transient insight pop icons
-        expAnimElements.forEach(el => { if (el && el.destroy) el.destroy(); });
+        // Clean up transient anim elements (insight pop icons + data burst pieces)
+        expAnimElements.forEach(el => { if (el && el.active) el.destroy(); });
         expAnimElements = [];
 
         if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
@@ -604,22 +756,18 @@ const iterationOverScreen = (() => {
 
     function _onUpgradesClicked() {
         _hideAll();
-        // Clean up combat state
         enemyManager.clearAllEnemies();
         projectileManager.clearAll();
         resourceManager.clearDrops();
         tower.reset();
-        // Transition to upgrade phase
         transitionManager.transitionTo(GAME_CONSTANTS.PHASE_UPGRADE);
     }
 
     function _onRetryClicked() {
         _hideAll();
-        // Stop boss track & bring back main BGM if applicable
         if (typeof audio !== 'undefined' && audio.stopComplexTransition) {
             audio.stopComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);
         }
-        // Reset combat state directly — no transition animation
         enemyManager.clearAllEnemies();
         projectileManager.clearAll();
         resourceManager.clearDrops();

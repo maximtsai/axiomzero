@@ -34,8 +34,10 @@ Make the collect resource tutorial announcement throw out bits of resources too.
 - Make mouse wheel do stuff
 - TURBO BUTTONS
 - Make level select buttons go up down instead
-- Bottom left data collected display
+- Change data collected display to total data at top left
 - Progress bar to red?
-- circle boss
-
-
+- Add turbo button
+- Add hover over text explaining what exp bar does.
+- Make duo node a little brighter
+- add 1 unit of spacing to the description text in hover popup
+- When a duo node can be bought (when the duo_node_pulse.png animation is hovering over it), make the duo node sprite duo_node_backing_bright.png. Change it back to duo_node_backing_active.png once it's actually bought.

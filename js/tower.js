@@ -789,9 +789,8 @@ const tower = (() => {
             // EXP accumulation
             let expBoost = 1.0;
             const lifetimeInsight = (gameState.stats && gameState.stats.totalInsightEarned) || 0;
-            if (lifetimeInsight === 0) expBoost = 1.35;
+            if (lifetimeInsight === 0) expBoost = 1.3;
             else if (lifetimeInsight === 1) expBoost = 1.15;
-            else if (lifetimeInsight === 2) expBoost = 1.05;
 
             model.exp += (GAME_CONSTANTS.EXP_FILL_RATE * expBoost) * dt;
             if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {
