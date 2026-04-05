@@ -13,10 +13,19 @@ const iterationOverScreen = (() => {
     let retryBtn = null;
     let diagElements = []; // Track diagnostic sprites/text for cleanup
 
+    // EXP bar elements
+    let expBarBg = null;
+    let expBarFill = null;
+    let expBarLabel = null;
+    let expBarIcon = null;
+    let expAnimElements = []; // Transient insight pop icons
+    let _expFillTween = null;  // Active bar fill tween (so we can kill on exit)
+    let _expDelayEvent = null; // Active post-levelup delay event
+
     let visible = false;
     let isBossKill = false;
 
-    // ── init ─────────────────────────────────────────────────────────────
+    // ── init ─────────────────────────────────────────────────────────
 
     function init() {
         _createElements();
@@ -35,7 +44,7 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 175, t('results', 'iteration_complete'), {
+        titleText = PhaserScene.add.text(cx, cy - 200, t('results', 'iteration_complete'), {
             fontFamily: 'Michroma',
             fontSize: '36px',
             color: '#00f5ff',
@@ -84,27 +93,49 @@ const iterationOverScreen = (() => {
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
-        // UPGRADES button
+        // ── EXP Progress Bar ──────────────────────────────────────────
+        const barW = 320;
+        const barH = 14;
+        const barX = cx - barW / 2;
+        const barY = cy + 95; // positioned below resource summary
+
+        expBarBg = PhaserScene.add.image(barX, barY, 'white_pixel');
+        expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x222233).setDepth(depth + 2).setVisible(false);
+
+        expBarFill = PhaserScene.add.image(barX, barY, 'white_pixel');
+        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffd700).setDepth(depth + 3).setVisible(false);
+
+        expBarLabel = PhaserScene.add.text(cx, barY - 18, 'INSIGHT PROGRESS', {
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '13px',
+            color: '#aaaaaa',
+            align: 'center',
+        }).setOrigin(0.5, 0.5).setDepth(depth + 2).setVisible(false);
+
+        expBarIcon = PhaserScene.add.image(barX + barW + 14, barY, 'player', 'resrc_insight.png');
+        expBarIcon.setOrigin(0.5, 0.5).setDepth(depth + 3).setAlpha(0.3).setVisible(false);
+
+        // UPGRADES button — shifted down to accommodate EXP bar
         upgradesBtn = new Button({
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 270,
+                y: cy + 190,
                 depth: depth + 12,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 270,
+                y: cy + 190,
                 depth: depth + 12,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 270,
+                y: cy + 190,
                 depth: depth + 12,
             },
             onMouseUp: _onUpgradesClicked,
@@ -124,21 +155,21 @@ const iterationOverScreen = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 345,
+                y: cy + 265,
                 depth: depth + 12,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 345,
+                y: cy + 265,
                 depth: depth + 12,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 345,
+                y: cy + 265,
                 depth: depth + 12,
             },
             onMouseUp: _onRetryClicked,
@@ -153,7 +184,7 @@ const iterationOverScreen = (() => {
         retryBtn.setDepth(depth + 12);
     }
 
-    // ── show / hide ──────────────────────────────────────────────────────
+    // ── show / hide ──────────────────────────────────────────────────
 
     function show() {
         visible = true;
@@ -224,10 +255,10 @@ const iterationOverScreen = (() => {
             }
         }
 
-        // Center block dynamically
+        // Center block dynamically — kept compact, above EXP bar
         const lineSpacing = 30;
         const totalHeight = (activeTexts.length - 1) * lineSpacing;
-        let startY = cy - 70 - (totalHeight / 2);
+        let startY = cy - 95 - (totalHeight / 2);
 
         for (let i = 0; i < activeTexts.length; i++) {
             activeTexts[i].setY(startY + (i * lineSpacing));
@@ -247,8 +278,186 @@ const iterationOverScreen = (() => {
             }
         });
 
-        // ── Diagnostics ──────────────────────────────────────────────────
+        // ── EXP Bar Animation ─────────────────────────────────────────
+        // Delay so it plays after the typewriter finishes
+        const typewriterDuration = titleText.fullText.length * 30 + 400;
+        PhaserScene.time.delayedCall(typewriterDuration, () => {
+            if (visible) _playExpAnimation();
+        });
+
+        // ── Diagnostics ──────────────────────────────────────────────
         _populateDiagnostics(cx, cy);
+    }
+
+    /**
+     * Plays the animated EXP progress bar on the iteration complete screen.
+     * Handles partial bars, multiple level-ups within one session, and
+     * edge cases (zero EXP gained, exactly 0 start state).
+     */
+    function _playExpAnimation() {
+        const expState = tower.getExpState();
+        const { expAtStart, expNow, sessionInsightCount, threshold } = expState;
+
+        // Total EXP gained this session = full levels + partial progress
+        // If expNow < expAtStart, exp wrapped around at least once more
+        const totalExpGained = sessionInsightCount * threshold + (expNow - expAtStart);
+
+        // If literally no EXP was gained, show bar at current fill but no animation
+        if (totalExpGained <= 0) {
+            _showStaticExpBar(expAtStart / threshold);
+            return;
+        }
+
+        const barW = 320;
+        const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER;
+
+        // Show bar elements
+        expBarBg.setVisible(true);
+        expBarFill.setVisible(true).setDisplaySize(0, 14);
+        expBarLabel.setVisible(true);
+        expBarIcon.setVisible(true).setAlpha(0.3);
+
+        // Fade label in
+        PhaserScene.tweens.add({
+            targets: [expBarBg, expBarLabel],
+            alpha: { from: 0, to: 1 },
+            duration: 350,
+            ease: 'Cubic.easeOut',
+        });
+
+        // Start the fill animation sequence
+        // Each "segment" = one trip from startFill → 1.0 (level up) or → endFill (partial)
+        const startRatio = expAtStart / threshold;
+
+        let segments = [];
+        if (sessionInsightCount === 0) {
+            // Pure partial — no level-ups this session
+            segments.push({ from: startRatio, to: expNow / threshold, levelUp: false });
+        } else {
+            // First: fill from startRatio to 1.0 (first level-up)
+            segments.push({ from: startRatio, to: 1.0, levelUp: true });
+            // Middle: full bars for any additional level-ups
+            for (let i = 1; i < sessionInsightCount; i++) {
+                segments.push({ from: 0, to: 1.0, levelUp: true });
+            }
+            // Last: partial fill with remaining EXP
+            if (expNow > 0) {
+                segments.push({ from: 0, to: expNow / threshold, levelUp: false });
+            }
+        }
+
+        _runExpSegment(segments, 0, barW, depth);
+    }
+
+    function _showStaticExpBar(ratio) {
+        const barW = 320;
+        expBarBg.setVisible(true).setAlpha(1);
+        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), 14);
+        expBarLabel.setVisible(true).setAlpha(1);
+        expBarIcon.setVisible(true).setAlpha(0.3);
+    }
+
+    function _runExpSegment(segments, idx, barW, depth) {
+        if (idx >= segments.length) return;
+        const seg = segments[idx];
+        const fromW = barW * Math.max(0, seg.from);
+        const toW = barW * Math.min(1, seg.to);
+        const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
+
+        // Reset fill width for this segment
+        expBarFill.setDisplaySize(fromW, 14);
+
+        _expFillTween = PhaserScene.tweens.add({
+            targets: expBarFill,
+            displayWidth: toW,
+            duration: fillDuration,
+            ease: 'Sine.easeInOut',
+            onComplete: () => {
+                if (!visible) return;
+
+                if (seg.levelUp) {
+                    _playLevelUpEffect(depth, barW, segments, idx, fillDuration);
+                } else {
+                    // Final partial fill — done
+                    _finishExpAnimation();
+                }
+            }
+        });
+    }
+
+    function _playLevelUpEffect(depth, barW, segments, idx, fillDuration) {
+        // Flash the bar white
+        PhaserScene.tweens.add({
+            targets: expBarFill,
+            tint: { from: 0xffffff, to: 0xffd700 },
+            duration: 300,
+            ease: 'Cubic.easeOut',
+        });
+
+        // Glow the icon
+        PhaserScene.tweens.add({
+            targets: expBarIcon,
+            alpha: 1,
+            scaleX: 1.4,
+            scaleY: 1.4,
+            duration: 180,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: expBarIcon,
+                    alpha: 0.3,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 400,
+                    ease: 'Quad.easeIn',
+                });
+            }
+        });
+
+        // Pop a floating insight icon at the bar's right end
+        const popIcon = PhaserScene.add.image(
+            expBarBg.x + barW, expBarBg.y,
+            'player', 'resrc_insight.png'
+        );
+        popIcon.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4).setScale(1.2).setAlpha(1);
+        expAnimElements.push(popIcon);
+
+        PhaserScene.tweens.add({
+            targets: popIcon,
+            y: popIcon.y - 45,
+            scaleX: 2.0,
+            scaleY: 2.0,
+            alpha: 0,
+            duration: 900,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                if (popIcon.active) popIcon.destroy();
+                const i = expAnimElements.indexOf(popIcon);
+                if (i !== -1) expAnimElements.splice(i, 1);
+            }
+        });
+
+        // Play levelup sound
+        audio.play('levelup', 0.85, false);
+
+        // Brief pause, then reset bar and play next segment
+        _expDelayEvent = PhaserScene.time.delayedCall(450, () => {
+            if (!visible) return;
+            expBarFill.setDisplaySize(0, 14);
+            _runExpSegment(segments, idx + 1, barW, depth);
+        });
+    }
+
+    function _finishExpAnimation() {
+        // Subtle pulse on bar label to signal completion
+        PhaserScene.tweens.add({
+            targets: expBarLabel,
+            alpha: { from: 1, to: 0.4 },
+            duration: 800,
+            yoyo: true,
+            repeat: 0,
+            ease: 'Sine.easeInOut',
+        });
     }
 
     function _populateDiagnostics(cx, cy) {
@@ -264,8 +473,8 @@ const iterationOverScreen = (() => {
         const dmg = stats.damage;
         const totalDmg = Object.values(dmg).reduce((a, b) => a + b, 0);
 
-        // "DIAGNOSTIC REPORT" Header
-        const reportTitle = PhaserScene.add.text(cx, cy + 35, t('results', 'diagnostic_report'), {
+        // "DIAGNOSTIC REPORT" Header — shifted up slightly to coexist with EXP bar
+        const reportTitle = PhaserScene.add.text(cx, cy - 45, t('results', 'diagnostic_report'), {
             fontFamily: 'Michroma',
             fontSize: '20px',
             color: '#00f5ff',
@@ -273,7 +482,7 @@ const iterationOverScreen = (() => {
         diagElements.push(reportTitle);
 
         if (totalDmg <= 0) {
-            const noDataText = PhaserScene.add.text(cx, cy + 70, t('results', 'no_damage_dealt'), {
+            const noDataText = PhaserScene.add.text(cx, cy - 10, t('results', 'no_damage_dealt'), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: '18px',
                 color: '#aaaaaa',
@@ -297,7 +506,7 @@ const iterationOverScreen = (() => {
         dmg.friendlyfire += (dmg.endgame || 0);
 
         const activeSources = sources.filter(s => dmg[s.id] > 0);
-        const startY = cy + 70;
+        const startY = cy - 10;
         const barWidth = 240;
         const entryHeight = 22;
 
@@ -341,7 +550,7 @@ const iterationOverScreen = (() => {
         // Executions
         if (stats.executions > 0) {
             const execY = startY + (activeSources.length * entryHeight);
-            
+
             // Label - Aligned with weapon labels
             const lbl = PhaserScene.add.text(cx - (barWidth / 2) - 10, execY, 'EXECUTIONS', {
                 fontFamily: 'JetBrainsMono_Bold',
@@ -373,12 +582,25 @@ const iterationOverScreen = (() => {
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
+
+        // EXP bar
+        if (_expFillTween) { _expFillTween.stop(); _expFillTween = null; }
+        if (_expDelayEvent) { _expDelayEvent.remove(); _expDelayEvent = null; }
+        if (expBarBg) expBarBg.setVisible(false);
+        if (expBarFill) expBarFill.setVisible(false);
+        if (expBarLabel) expBarLabel.setVisible(false);
+        if (expBarIcon) expBarIcon.setVisible(false);
+
+        // Clean up transient insight pop icons
+        expAnimElements.forEach(el => { if (el && el.destroy) el.destroy(); });
+        expAnimElements = [];
+
         if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
         diagElements.forEach(el => { if (el && el.destroy) el.destroy(); });
         diagElements = [];
     }
 
-    // ── button handlers ──────────────────────────────────────────────────
+    // ── button handlers ──────────────────────────────────────────────
 
     function _onUpgradesClicked() {
         _hideAll();
@@ -405,7 +627,7 @@ const iterationOverScreen = (() => {
         gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
     }
 
-    // ── events ───────────────────────────────────────────────────────────
+    // ── events ───────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase, data = {}) {
         if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {

@@ -9,10 +9,6 @@ const gameHUD = (() => {
     let healthBarFlare = null;
     let healthText = null;
     let healthBtn = null;
-    let expBarBg = null;
-    let expBarFill = null;
-    let expText = null;
-    let expBtn = null;
     let resourceUI = {}; // { data: { icon, text }, ... }
     let lastHealth = -1;
 
@@ -30,7 +26,6 @@ const gameHUD = (() => {
     const BAR_W = 200;
     const BAR_H = helper.isMobileDevice() ? 28 : 24;
     const BAR_GAP = helper.isMobileDevice() ? 18 : 14;
-    const EXP_BAR_H = helper.isMobileDevice() ? 20 : 16;
     const DATA_ICON_SIZE = 18;
     const DATA_ICON_GAP = 5;
 
@@ -45,7 +40,6 @@ const gameHUD = (() => {
         _hideAll();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('healthChanged', _onHealthChanged);
-        messageBus.subscribe('expChanged', _onExpChanged);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
@@ -136,51 +130,8 @@ const gameHUD = (() => {
         healthBtn.setScrollFactor(0);
         healthBtn.setVisible(false);
 
-        // ── EXP bar ──
-        const expY = HUD_Y + BAR_H + BAR_GAP + 3;
-        expBarBg = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, EXP_BAR_H).setTint(0x222222).setDepth(depth).setScrollFactor(0);
-
-        expBarFill = PhaserScene.add.image(groupX, expY, 'white_pixel');
-        expBarFill.setOrigin(0, 0).setDisplaySize(0, EXP_BAR_H).setTint(0xbbbbbb).setDepth(depth + 1).setScrollFactor(0);
-
-        expText = PhaserScene.add.text(groupX + BAR_W + 8, expY - (helper.isMobileDevice() ? 6 : 8), t('hud', 'exp_initial'), {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: helper.isMobileDevice() ? '30px' : '26px',
-            color: '#aaaaaa',
-        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
-
-        expBtn = new Button({
-            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
-            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
-            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
-            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: expY + (EXP_BAR_H / 2) },
-            onHover: () => {
-                let sfxRel = audio.play('click', 0.95);
-                if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
-                tooltipManager.show(expBtn.x, expBtn.y + 17, [
-                    { text: t('hud', 'exp_title'), style: 'title', color: '#eeeeee' },
-                    { text: t('hud', 'exp_desc'), style: 'normal' }
-                ], 410);
-                if (typeof upgradeTree !== 'undefined') {
-                    upgradeTree.setHoverLabel('EXP');
-                }
-            },
-            onHoverOut: () => {
-                tooltipManager.hide();
-                if (typeof upgradeTree !== 'undefined') {
-                    upgradeTree.setHoverLabel(null);
-                }
-            }
-        });
-        expBtn.setOrigin(0.5, 0.5);
-        expBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
-        expBtn.setDepth(depth + 1);
-        expBtn.setScrollFactor(0);
-        expBtn.setVisible(false);
-
         // ── Currency counters ──
-        const currY = expY + 10 + BAR_GAP + 5;
+        const currY = HUD_Y + BAR_H + BAR_GAP + 13;
         const resourceTypes = [
             { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
             { id: 'insight', icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL },
@@ -248,11 +199,7 @@ const gameHUD = (() => {
                 treeGroup.add(healthBarFill);
                 treeGroup.add(healthBarFlare);
                 treeGroup.add(healthText);
-                treeGroup.add(expBarBg);
-                treeGroup.add(expBarFill);
-                treeGroup.add(expText);
                 if (healthBtn.getContainer) treeGroup.add(healthBtn.getContainer());
-                if (expBtn.getContainer) treeGroup.add(expBtn.getContainer());
                 Object.values(resourceUI).forEach(res => {
                     treeGroup.add(res.icon);
                     treeGroup.add(res.text);
@@ -394,11 +341,6 @@ const gameHUD = (() => {
         healthText.setVisible(true);
         healthBtn.setVisible(false);
         healthBtn.setState(DISABLE);
-        expBarBg.setVisible(true);
-        expBarFill.setVisible(true);
-        expText.setVisible(true);
-        expBtn.setVisible(false);
-        expBtn.setState(DISABLE);
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
@@ -417,11 +359,6 @@ const gameHUD = (() => {
         healthText.setVisible(false);
         healthBtn.setVisible(false);
         healthBtn.setState(DISABLE);
-        expBarBg.setVisible(false);
-        expBarFill.setVisible(false);
-        expText.setVisible(false);
-        expBtn.setVisible(false);
-        expBtn.setState(DISABLE);
         Object.values(resourceUI).forEach(res => {
             if (res.btn) res.btn.setVisible(false);
             res.icon.setVisible(false);
@@ -462,11 +399,6 @@ const gameHUD = (() => {
         healthText.setVisible(true);
         healthBtn.setVisible(true);
         healthBtn.setState(NORMAL);
-        expBarBg.setVisible(true);
-        expBarFill.setVisible(true);
-        expText.setVisible(true);
-        expBtn.setVisible(true);
-        expBtn.setState(NORMAL);
 
         _updateResourceLayout();
 
@@ -575,13 +507,6 @@ const gameHUD = (() => {
         healthText.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
     }
 
-    function _onExpChanged(current, max) {
-        // Remove !visible guard to ensure exp bar updates on load
-        const ratio = Math.min(1, Math.max(0, current / max));
-        expBarFill.setDisplaySize(BAR_W * ratio, EXP_BAR_H);
-        expText.setText(t('hud', 'exp') + Math.floor(ratio * 100) + '%');
-    }
-
     function _onCurrencyChanged(type, amount) {
         if (resourceUI[type]) {
             // Stop active count-up tween if balance changes while it's running
@@ -626,7 +551,7 @@ const gameHUD = (() => {
     function _updateResourceLayout() {
         if (!visible) return;
 
-        let currentY = HUD_Y + BAR_H + BAR_GAP + 3 + EXP_BAR_H + BAR_GAP + 15;
+        let currentY = HUD_Y + BAR_H + BAR_GAP + 13;
         const spacing = helper.isMobileDevice() ? 41 : 37;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
         const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;

@@ -596,6 +596,7 @@ const tower = (() => {
     const model = new TowerModel();
     const view = new TowerView();
     let _hurtSoundIndex = 0;
+    let _expAtCombatStart = 0;
 
     function init() {
         view._hitAnimPool = new ObjectPool(
@@ -640,6 +641,8 @@ const tower = (() => {
         model.health = model.maxHealth;
         model.alive = true;
         model.exp = gameState.exp || 0;
+
+        _expAtCombatStart = model.exp;
 
         view.spawn(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
 
@@ -795,16 +798,6 @@ const tower = (() => {
                 model.exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
                 resourceManager.addInsight(1);
                 messageBus.publish('insightGained');
-                audio.play('levelup', 1.0, false);
-                const towerPos = view.getPosition();
-                floatingText.show(towerPos.x, towerPos.y - 15, t('popup', 'insight_gained'), {
-                    fontFamily: 'JetBrainsMono_Bold',
-                    fontSize: 30,
-                    color: '#ffe600',
-                    color2: '#ff2d78',
-                    depth: GAME_CONSTANTS.DEPTH_TOWER,
-                    duration: 2000,
-                });
             }
             gameState.exp = model.exp;
             messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
@@ -915,6 +908,12 @@ const tower = (() => {
         getPosition, isAlive, getDamage, getArmor, getRegen, getRange,
         getMaxHealth: () => model.maxHealth,
         getHealth: () => model.health,
+        getExpState: () => ({
+            expAtStart: _expAtCombatStart,
+            expNow: model.exp,
+            sessionInsightCount: resourceManager.getSessionInsight(),
+            threshold: GAME_CONSTANTS.EXP_TO_INSIGHT,
+        }),
         setVisible, setPosition,
         playArtilleryCall: (fast) => view.playArtilleryCallAnimation(fast),
     };
