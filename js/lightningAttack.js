@@ -5,7 +5,7 @@
 class LightningAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between strikes
-        this.BASE_DAMAGE = 10;
+        this.BASE_DAMAGE = 12;
         this.BASE_CHAIN_COUNT = 2;  // total enemies hit (1 primary + 1 chain)
         this.CHAIN_RANGE = 115;     // px — max distance for chain to jump
 
@@ -14,7 +14,7 @@ class LightningAttackModel {
         this.paused = false;
         this.damage = this.BASE_DAMAGE;
         this.chainCount = this.BASE_CHAIN_COUNT;
-        this.staticChargeBonus = 0; // 5 per level
+        this.staticChargeBonus = 0; // 4 per level
         this.fireTimer = 0;
     }
 
@@ -208,7 +208,7 @@ const lightningAttack = (() => {
     }
 
     function setStaticChargeLevel(level) {
-        model.staticChargeBonus = level * 5;
+        model.staticChargeBonus = level * 4;
     }
 
     function _update(delta) {

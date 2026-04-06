@@ -95,6 +95,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // UI systems — depend on resource / tower for data display
     upgradeTree.init();
+    announcementManager.init();
     gameHUD.init();
     iterationOverScreen.init();
     coinMine.init();
