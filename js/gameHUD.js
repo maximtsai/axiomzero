@@ -17,6 +17,7 @@ const gameHUD = (() => {
     let waveProgressBar = null;
     let farmingTimerTxt = null;
     let roundDataTxt = null;
+    let bombBtn = null;
     let farmingStartTime = 0;
     let isFarming = false;
 
@@ -214,20 +215,20 @@ const gameHUD = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
+                x: 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
+                x: 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: helper.isMobileDevice() ? 105 : GAME_CONSTANTS.WIDTH - 100,
-                y: GAME_CONSTANTS.HEIGHT - (helper.isMobileDevice() ? 38 : 35),
+                x: 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
@@ -242,13 +243,47 @@ const gameHUD = (() => {
         endIterationBtn.setDepth(depth + 3);
         endIterationBtn.setScrollFactor(0);
 
+        bombBtn = new Button({
+            normal: {
+                ref: 'button_normal.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
+            },
+            hover: {
+                ref: 'button_hover.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
+            },
+            press: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
+            },
+            onMouseUp: () => {
+                console.log("bomb");
+            },
+        });
+        bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
+        const bText = bombBtn.addText("BOMB\n<SPACEBAR>", {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: helper.isMobileDevice() ? '16px' : '17px',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
+            align: 'center'
+        });
+        bText.setLineSpacing(-2);
+        bombBtn.setDepth(depth + 3);
+        bombBtn.setScrollFactor(0);
+
         // ── Progress bar ──
         waveProgressBar = new ProgressBar(PhaserScene, {
-            x: helper.isMobileDevice() ? 898 : 705,
-            y: GAME_CONSTANTS.HEIGHT - 22,
-            width: GAME_CONSTANTS.WIDTH - (helper.isMobileDevice() ? 234 : 220),
-            height: 20,
-            padding: 7,
+            x: GAME_CONSTANTS.halfWidth,
+            y: GAME_CONSTANTS.HEIGHT - 28,
+            width: 1570,
+            height: 18,
+            padding: 6,
             bgColor: 0x1a1e2e,
             fillColor: 0x00f5ff,
             depth: depth
@@ -322,13 +357,7 @@ const gameHUD = (() => {
         }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
         farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
 
-        // ── Round Data counter ──
-        roundDataTxt = PhaserScene.add.text(24, GAME_CONSTANTS.HEIGHT - 62, 'DATA: 0', {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '24px',
-            color: '#00f5ff',
-        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
-        roundDataTxt.setShadow(2, 2, '#000000', 2, true, true);
+        // ── (Round Data counter removed by request) ──
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
@@ -344,7 +373,10 @@ const gameHUD = (() => {
         _updateResourceLayout();
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
-        if (roundDataTxt) roundDataTxt.setVisible(true).setText('DATA: 0');
+        if (bombBtn) {
+            bombBtn.setVisible(true);
+            bombBtn.setState(NORMAL);
+        }
         if (testDefensesBtn) {
             testDefensesBtn.setVisible(false);
             testDefensesBtn.setState(DISABLE);
@@ -366,13 +398,16 @@ const gameHUD = (() => {
         });
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
+        if (bombBtn) {
+            bombBtn.setVisible(false);
+            bombBtn.setState(DISABLE);
+        }
         if (testDefensesBtn) {
             testDefensesBtn.setVisible(false);
             testDefensesBtn.setState(DISABLE);
         }
         if (waveProgressBar) waveProgressBar.setVisible(false);
         if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
-        if (roundDataTxt) roundDataTxt.setVisible(false);
         isFarming = false;
     }
 
@@ -416,6 +451,10 @@ const gameHUD = (() => {
         // Hide combat-only elements
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
+        if (bombBtn) {
+            bombBtn.setVisible(false);
+            bombBtn.setState(DISABLE);
+        }
         if (waveProgressBar) waveProgressBar.setVisible(false);
 
         // Show test weapons button if unlocked
@@ -537,15 +576,6 @@ const gameHUD = (() => {
                 farmingTimerTxt.setText(`${mm}:${ss}`);
             }
         }
-
-        // Update round data counter if active
-        if (roundDataTxt && roundDataTxt.visible) {
-            const currentRoundData = Math.floor(resourceManager.getSessionData());
-            if (roundDataTxt.lastVal !== currentRoundData) {
-                roundDataTxt.lastVal = currentRoundData;
-                roundDataTxt.setText(t('hud', 'data_round') + ': ' + currentRoundData);
-            }
-        }
     }
 
     function _updateResourceLayout() {
@@ -555,20 +585,26 @@ const gameHUD = (() => {
         const spacing = helper.isMobileDevice() ? 41 : 37;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
         const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
-
         const order = ['data', 'insight', 'shard', 'coin', 'processor'];
+
         order.forEach(id => {
             const ui = resourceUI[id];
             const val = _getResourceValue(id);
+            const isData = (id === 'data');
 
-            if (val > 0) {
+            // Data is ALWAYS visible; other currencies only if quantity > 0 and in upgrade phase
+            const shouldShow = isData || (val > 0 && isUpgradePhase);
+
+            if (shouldShow) {
+                const showComponent = isUpgradePhase || (isData); // Hide button in combat
+
                 if (ui.btn) {
-                    ui.btn.setVisible(isUpgradePhase);
+                    ui.btn.setVisible(isUpgradePhase); // Button only in upgrades
                     ui.btn.setPos(groupX + 45, currentY);
                     ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
                 }
-                ui.icon.setVisible(isUpgradePhase);
-                ui.text.setVisible(isUpgradePhase);
+                ui.icon.setVisible(showComponent);
+                ui.text.setVisible(showComponent);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
                 ui.text.y = currentY - 16;
                 currentY += spacing;

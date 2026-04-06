@@ -41,3 +41,4 @@ Make the collect resource tutorial announcement throw out bits of resources too.
 - Make duo node a little brighter
 - add 1 unit of spacing to the description text in hover popup
 - When a duo node can be bought (when the duo_node_pulse.png animation is hovering over it), make the duo node sprite duo_node_backing_bright.png. Change it back to duo_node_backing_active.png once it's actually bought.
+- Map node that when clicked, unlocks the ability to extend the node map to full screen. First plays a little animation that then reveals location of several duo nodes.
