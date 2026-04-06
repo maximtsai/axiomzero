@@ -98,7 +98,7 @@ class EnemyModel {
         // Apply new config
         if (config.initialSpeedMult !== undefined) this.initialSpeedMult = config.initialSpeedMult;
         if (config.rampDuration !== undefined) this.rampDuration = config.rampDuration;
-        
+
         this.speedMult = this.initialSpeedMult;
 
         if (!this.cannotRotate) {
@@ -221,7 +221,7 @@ class EnemyModel {
             for (let i = 0; i < protectors.length; i++) {
                 const p = protectors[i];
                 if (!p.model || !p.model.alive || !p.model.auraActive) continue;
-                
+
                 const dx = this.x - p.model.x;
                 const dy = this.y - p.model.y;
                 if ((dx * dx + dy * dy) <= GAME_CONSTANTS.PROTECTOR_AURA_SQUARED) {
