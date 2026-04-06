@@ -17,7 +17,7 @@ const upgradeTree = (() => {
     let titleText = null;
     let deployBtn = null;
     let coinMineBtn = null;
-    let lines = [];  // Phaser Graphics lines connecting parent → child
+
     let treeGroup = null;
     let draggableGroup = null;
     let coordText = null;
@@ -62,6 +62,7 @@ const upgradeTree = (() => {
         _createCoinMineButton();
         _createZoomButtons();
         _initPools();
+        treeLineManager.init({ treeGroup, draggableGroup, nodes });
 
         if (FLAGS.DEBUG) {
             _checkNodeIntegrity();
@@ -380,12 +381,12 @@ const upgradeTree = (() => {
                 child.refreshState();
 
                 if (oldState === NODE_STATE.GHOST && child.state === NODE_STATE.UNLOCKED) {
-                    _shakeLine(parentId, childId);
+                    treeLineManager.shakeLine(parentId, childId);
                 }
             }
         }
         // Redraw lines to reflect new child states
-        _updateLines();
+        treeLineManager.updateLines();
     }
 
     function _createDeployButton() {
@@ -717,7 +718,7 @@ const upgradeTree = (() => {
             coinMineBtn.setState(NORMAL);
         }
 
-        _updateLines();
+        treeLineManager.updateLines();
     }
 
     function hide() {
@@ -752,7 +753,7 @@ const upgradeTree = (() => {
         for (const id in nodes) {
             nodes[id].setVisible(false);
         }
-        _hideLines();
+        treeLineManager.hideLines();
     }
 
     function preTransitionHide() {
@@ -786,124 +787,7 @@ const upgradeTree = (() => {
         }
     }
 
-    function _createLine(px, py, cx, cy, metadata) {
-        const dx = cx - px, dy = cy - py;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx) + 1.57;
 
-        const line = PhaserScene.add.image(px + TREE_X_OFFSET, py, 'pixels', 'white_pixel.png');
-        line.setScale(1.5, distance / 2);
-        line.setOrigin(0.5, 1);
-        line.setRotation(angle);
-        line.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 1);
-        line.setScrollFactor(0);
-        Object.assign(line, metadata);
-
-        lines.push(line);
-        treeGroup.add(line);
-        draggableGroup.add(line);
-        return line;
-    }
-
-    function _shakeLine(parentId, childId) {
-        // Find line matching parent -> child (or parent -> siblingChild for Duo boxes)
-        const line = lines.find(l => l.parentId === parentId && (l.childId === childId || l.duoSiblingChildId === childId));
-        if (!line) return;
-
-        const baselineWidth = 1.5;
-        line.setScale(baselineWidth * 4, line.scaleY);
-
-        PhaserScene.tweens.add({
-            targets: line,
-            scaleX: baselineWidth,
-            duration: 600,
-            ease: 'Quart.easeOut'
-        });
-    }
-
-    function _updateLines() {
-        // Create lines if they don't exist yet
-        if (lines.length === 0) {
-            const isDuoLineDrawn = {};
-
-            for (const id in nodes) {
-                const n = nodes[id];
-                if (n.parents && n.parents.length > 0) {
-                    for (let pid of n.parents) {
-                        const p = nodes[pid];
-                        if (!p) continue;
-
-                        if (n.isDuoBox && n.duoBoxTier > 0) {
-                            const duoKey = n.duoBoxTier + '_' + pid;
-                            if (isDuoLineDrawn[duoKey]) continue;
-                            isDuoLineDrawn[duoKey] = true;
-
-                            const sibling = n.duoSiblingId ? nodes[n.duoSiblingId] : null;
-                            const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
-                            const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
-
-                            _createLine(p.treeX, p.treeY, targetX, targetY, {
-                                childId: id,
-                                duoSiblingChildId: n.duoSiblingId,
-                                parentId: pid,
-                                isDuoLine: true,
-                            });
-                        } else {
-                            _createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
-                                childId: id,
-                                parentId: pid,
-                            });
-                        }
-                    }
-                }
-            }
-
-            // Adjust line thickness now that they are created
-            for (const line of lines) {
-                line.setScale(1.5, line.scaleY);
-            }
-        }
-
-        // Update visual states based on current node states
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            const p = nodes[line.parentId];
-            const n = nodes[line.childId];
-
-            if (!p || !n) continue;
-            // Determine visibility: Hide if either p or n is HIDDEN.
-            // SPECIAL CASE: Duo node children/lines show if Duo parent is purchased (level > 0)
-            let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
-
-            // Hide lines for normal nodes if alpha is 0 (placeholders are always alpha 0)
-            if (!p.isPlaceholder && p.getAlpha() === 0) shouldHide = true;
-            if (!n.isPlaceholder && n.getAlpha() === 0) shouldHide = true;
-
-
-            if (shouldHide && n.isDuoDescendant && n.isDuoDescendant()) {
-                if (n.isDuoPathPurchased()) {
-                    shouldHide = false;
-                }
-            }
-
-            if (shouldHide) {
-                line.setVisible(false);
-            } else {
-                line.setVisible(true);
-                const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
-                const isDuoBranch = (n.isDuoDescendant && n.isDuoDescendant());
-                const revealedLine = (p.revealed || n.revealed);
-                const ghostToActive = (p.state === NODE_STATE.GHOST && (n.state === NODE_STATE.UNLOCKED || n.state === NODE_STATE.MAXED));
-                line.setAlpha((parentActive || isDuoBranch || revealedLine || ghostToActive) ? 0.6 : 0); // Slightly more opaque (0.6)
-            }
-        }
-    }
-
-    function _hideLines() {
-        for (let i = 0; i < lines.length; i++) {
-            lines[i].setVisible(false);
-        }
-    }
 
     // ── events ───────────────────────────────────────────────────────────
 
@@ -931,12 +815,12 @@ const upgradeTree = (() => {
     function _onCurrencyChanged() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
         _refreshAllNodes();
-        _updateLines();
+        treeLineManager.updateLines();
     }
 
     function _onUpgradePurchased() {
         _refreshAllNodes();
-        _updateLines();
+        treeLineManager.updateLines();
     }
 
     function _onNodePurchaseFeedback(data) {

@@ -954,7 +954,7 @@ class Node {
         } else if (parentPurchased) {
             // Unpurchased and unlocked but not affordable: active (lit blue)
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
-            this.duoBackingSprite.setAlpha(0.65); // Slightly dimmed if unaffordable
+            this.duoBackingSprite.setAlpha(1.0); // Always opaque to hide connecting lines
 
             if (this.duoBackingOutline) {
                 this._stopDuoOutlineAnimation();
