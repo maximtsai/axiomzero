@@ -560,9 +560,9 @@ const upgradeTree = (() => {
             }
         };
 
-        // Check every 4 seconds
+        // Check every 3 seconds to match the 3-second hint pulse animation cycle
         hintPulseTimer = PhaserScene.time.addEvent({
-            delay: 4000,
+            delay: 3000,
             callback: check,
             loop: true
         });
@@ -930,13 +930,8 @@ const upgradeTree = (() => {
 
     function _onCurrencyChanged() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
-        // Refresh UNLOCKED node visuals so disabled/normal state tracks affordability
-        for (const id in nodes) {
-            const n = nodes[id];
-            if (n.state === NODE_STATE.UNLOCKED) {
-                n._updateVisual();
-            }
-        }
+        _refreshAllNodes();
+        _updateLines();
     }
 
     function _onUpgradePurchased() {

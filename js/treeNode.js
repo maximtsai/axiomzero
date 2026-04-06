@@ -907,6 +907,10 @@ class Node {
 
         this.duoBackingSprite.setVisible(true);
 
+        const sibling = upgradeTree.getNode(this.duoSiblingId);
+        const shardCount = (typeof resourceManager !== 'undefined') ? resourceManager.getShards() : 0;
+        const canAfford = !tierPurchased && shardCount > 0 && (this.isRequirementsMet() || (sibling && sibling.isRequirementsMet()));
+
         let parentPurchased = false;
         if (this.parents && this.parents.length > 0) {
             for (let pid of this.parents) {
@@ -918,7 +922,8 @@ class Node {
             }
         }
 
-        if (tierPurchased || parentPurchased) {
+        if (tierPurchased) {
+            // Already purchased state: active (lit blue)
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
             this.duoBackingSprite.setAlpha(1);
 
@@ -936,10 +941,29 @@ class Node {
                     });
                 }
             }
+        } else if (canAfford) {
+            // Unpurchased but affordable state: bright (highlighted)
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_bright.png');
+            this.duoBackingSprite.setAlpha(1.0);
+
+            if (this.duoBackingOutline) {
+                this._stopDuoOutlineAnimation();
+                this.duoBackingOutline.setAlpha(0);
+                this.duoBackingOutline.setVisible(false);
+            }
+        } else if (parentPurchased) {
+            // Unpurchased and unlocked but not affordable: active (lit blue)
+            this.duoBackingSprite.setTexture('buttons', 'duo_node_backing_active.png');
+            this.duoBackingSprite.setAlpha(0.65); // Slightly dimmed if unaffordable
+
+            if (this.duoBackingOutline) {
+                this._stopDuoOutlineAnimation();
+                this.duoBackingOutline.setAlpha(0);
+                this.duoBackingOutline.setVisible(false);
+            }
         } else {
-            // Unpurchased state: default texture
+            // Unpurchased and locked state: default texture
             this.duoBackingSprite.setTexture('buttons', 'duo_node_backing.png');
-            // Show as solid foreshadowing
             this.duoBackingSprite.setAlpha(1.0);
 
             if (this.duoBackingOutline) {

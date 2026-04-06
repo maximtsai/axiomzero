@@ -49,7 +49,7 @@ const nodeTooltip = (() => {
             color: '#ffffff',
             align: 'center',
             wrap: { mode: 'word', width: helper.isMobileDevice() ? 375 : 355 },
-            lineSpacing: 4,
+            lineSpacing: 5,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
         container.add(descT);
@@ -139,7 +139,7 @@ const nodeTooltip = (() => {
         costBg.setDisplaySize(currentBgWidth - 6, barHeight);
 
         const rowSpacing = isBigValue ? 10 : 7;
-        const lineSpacingValue = isBigValue ? 4 : 1;
+        const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);
 
         let currentY = 3;
