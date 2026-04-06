@@ -92,7 +92,7 @@ const LEVEL_CONFIG = {
         spawnInterval: 700,
         initialWeights: {
             basic: 1,
-            bomb: 0,
+            exploder: 0,
             fast: 0,
             shooter: 0,
             swarmer: 0.06,
@@ -105,7 +105,7 @@ const LEVEL_CONFIG = {
         lateWeights: {
             shooter: 0.1,
             swarmer: 0.12,
-            bomb: 0,
+            exploder: 0,
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,
@@ -123,7 +123,7 @@ const LEVEL_CONFIG = {
         spawnInterval: 650,
         initialWeights: {
             basic: 1,
-            bomb: 0,
+            exploder: 0,
             fast: 0,
             shooter: 0,
             swarmer: 0.06,
@@ -136,7 +136,7 @@ const LEVEL_CONFIG = {
         lateWeights: {
             shooter: 0.1,
             swarmer: 0.12,
-            bomb: 0,
+            exploder: 0,
             heavy: 0.25,
             fast: 0,
             sniper: 0.1,

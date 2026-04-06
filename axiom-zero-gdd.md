@@ -341,7 +341,7 @@ Enemy max health and damage scale upward the longer a wave continues. Infinite g
 | **Fast** | Sharp thin triangle | 2× | 1× | Slightly smaller. Pure speed threat. |
 | **Heavy** | Hexagon | 0.5× | 4× | Larger than Basic. Absorbs significant punishment. |
 | **Shooter** | Square with rectangle barrel | 1× | 1× | Medium range attack. Does not need to reach melee range to attack. |
-| **Bomb** | Pulsing circle | 1× | 1× | Explodes on death — heavy AoE damage to all nearby entities including other enemies. |
+| **Exploder** | Pulsing circle | 1× | 1× | Explodes on death — heavy AoE damage to all nearby entities including other enemies. |
 | **Sniper** | Diamond with eye at center | 0.5× | 1.5× | Attack range nearly equal to the tower's. Slow fire rate, 2.5× base damage — bypasses flat armor. |
 | **Protector** | Unique | 0.5× | 2× | Projects a medium protection field. Non-boss enemies inside the field take half damage. Does not attack. Positions itself so the edge of its field just reaches the tower. The field does not protect the player. |
 

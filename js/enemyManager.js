@@ -48,8 +48,8 @@ const enemyManager = (() => {
     let fastPackCooldown = 0;
 
     // Trojan Access tracking
-    let nextSpawnIsBomb = false;
-    let spawnCountSinceLastBomb = 0;
+    let nextSpawnIsExploder = false;
+    let spawnCountSinceLastExploder = 0;
 
     // Boss 3 specifically
     let boss3ShareTimer = 1.0;
@@ -64,7 +64,7 @@ const enemyManager = (() => {
         swarmer: { minCombatTime: 5, avoidRecentAngles: 0.45, maxAttempts: 6 },
         sniper: { minCombatTime: 6 },
         shooter: {},
-        bomb: {},
+        exploder: {},
         heavy: {},
         cache: { minCombatTime: 8, maxActive: 1 },
         protector: {
@@ -101,7 +101,7 @@ const enemyManager = (() => {
         pools.sniper = new ObjectPool(() => new SniperEnemy(), resetFn, POOL_SIZE).preAllocate(20);
         pools.logic_stray = new ObjectPool(() => new LogicStrayEnemy(), resetFn, POOL_SIZE).preAllocate(20);
         pools.protector = new ObjectPool(() => new ProtectorEnemy(), resetFn, POOL_SIZE).preAllocate(5);
-        pools.bomb = new ObjectPool(() => new BombEnemy(), resetFn, POOL_SIZE).preAllocate(5);
+        pools.exploder = new ObjectPool(() => new ExploderEnemy(), resetFn, POOL_SIZE).preAllocate(5);
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
         pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
@@ -125,8 +125,8 @@ const enemyManager = (() => {
         farmingMinibossCount = 0;
         minibossAlive = false;
         bossSpawned = false;
-        nextSpawnIsBomb = false;
-        spawnCountSinceLastBomb = 0;
+        nextSpawnIsExploder = false;
+        spawnCountSinceLastExploder = 0;
         bossAlive = false;
         lastWaveProgress = 0;
         recentSpawnIndex = 0;
@@ -201,21 +201,21 @@ const enemyManager = (() => {
         // Trojan Access conversion logic
         const trojanLevel = (gameState.upgrades && gameState.upgrades.trojan_access) || 0;
         if (trojanLevel > 0) {
-            // Roll for next spawn to be a bomb if cooldown is over
-            if (!nextSpawnIsBomb && spawnCountSinceLastBomb >= 3) {
+            // Roll for next spawn to be an exploder if cooldown is over
+            if (!nextSpawnIsExploder && spawnCountSinceLastExploder >= 3) {
                 if (Math.random() < 0.1) {
-                    nextSpawnIsBomb = true;
+                    nextSpawnIsExploder = true;
                 }
             }
 
-            // If we have a pending bomb conversion, check if this is a basic enemy
-            if (nextSpawnIsBomb && (chosenType === 'basic')) {
-                chosenType = 'bomb';
-                nextSpawnIsBomb = false;
-                spawnCountSinceLastBomb = 0;
+            // If we have a pending exploder conversion, check if this is a basic enemy
+            if (nextSpawnIsExploder && (chosenType === 'basic')) {
+                chosenType = 'exploder';
+                nextSpawnIsExploder = false;
+                spawnCountSinceLastExploder = 0;
             } else {
                 // Only increment cooldown/count if it wasn't converted or wasn't a basic enemy
-                spawnCountSinceLastBomb++;
+                spawnCountSinceLastExploder++;
             }
         }
 
@@ -329,8 +329,8 @@ const enemyManager = (() => {
                 e = pools.sniper.get();
             } else if (chosenType === 'logic_stray') {
                 e = pools.logic_stray.get();
-            } else if (chosenType === 'bomb') {
-                e = pools.bomb.get();
+            } else if (chosenType === 'exploder') {
+                e = pools.exploder.get();
             } else if (chosenType === 'shell') {
                 e = pools.shell.get();
             } else if (chosenType === 'protector') {
@@ -916,7 +916,7 @@ const enemyManager = (() => {
         if (isExecuted) textColor = '#bf24ff';
 
         if (gameState.settings.showDamageNumbers) {
-            let displayText = isExecuted ? ' EXE ' : finalAmount.toString();
+            let displayText = isExecuted ? ' EXECUTE ' : finalAmount.toString();
 
             // ISOLATION visual wrap
             if (enemy.model.wasIsolatedHit) {
@@ -1057,7 +1057,7 @@ const enemyManager = (() => {
         } else {
             if (enemy.model.type === 'logic_stray') {
                 resourceManager.spawnProcessorDrop(ex, ey);
-            } else if (enemy.model.type === 'bomb') {
+            } else if (enemy.model.type === 'exploder') {
                 const ups = gameState.upgrades || {};
                 const payloadLv = ups.volatile_payload || 0;
                 // Intentionally slightly fudged numbers compared to description
@@ -1067,8 +1067,8 @@ const enemyManager = (() => {
                 const by = ey;
 
                 PhaserScene.time.delayedCall(270, () => {
-                    if (typeof customEmitters !== 'undefined' && customEmitters.createBombExplosion) {
-                        customEmitters.createBombExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
+                    if (typeof customEmitters !== 'undefined' && customEmitters.createExploderExplosion) {
+                        customEmitters.createExploderExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
                     }
 
                     const targets = getEnemiesInDiamondRange(bx, by, explosionRange);

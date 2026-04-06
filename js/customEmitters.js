@@ -81,7 +81,7 @@ const customEmitters = (() => {
         5
     );
 
-    const bombExplosionBrightPool = new ObjectPool(
+    const exploderExplosionBrightPool = new ObjectPool(
         () => {
             const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack.png', 10, 10, 38, 38, 38, 38);
             node.setActive(false);
@@ -99,7 +99,7 @@ const customEmitters = (() => {
         12
     );
 
-    const bombExplosionRedPool = new ObjectPool(
+    const exploderExplosionRedPool = new ObjectPool(
         () => {
             const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack_red.png', 10, 10, 38, 38, 38, 38);
             node.setActive(false);
@@ -117,7 +117,7 @@ const customEmitters = (() => {
         12
     );
 
-    const bombExplosionBlackPool = new ObjectPool(
+    const exploderExplosionBlackPool = new ObjectPool(
         () => {
             const node = PhaserScene.add.nineslice(0, 0, 'player', 'player_attack_black.png', 10, 10, 38, 38, 38, 38);
             node.setActive(false);
@@ -376,7 +376,7 @@ const customEmitters = (() => {
 
         let duration = isSlow ? 420 : 90;
         if (enemy && enemy.model.isBoss) duration = 800;
-        else if (enemy && enemy.model.type === 'bomb') duration = 250;
+        else if (enemy && enemy.model.type === 'exploder') duration = 250;
         if (durationOverride > 0) duration = durationOverride;
 
         PhaserScene.tweens.add({
@@ -612,23 +612,23 @@ const customEmitters = (() => {
         }
     }
 
-    // ── Bomb Explosion ──────────────────────────────────────────────────────────
-    function createBombExplosion(x, y, rangeSq, damage) {
+    // ── Exploder Explosion ──────────────────────────────────────────────────────────
+    function createExploderExplosion(x, y, rangeSq, damage) {
         const size = Math.sqrt(rangeSq) * 1.5;
         const randRot = Math.random() < 0.5 ? -0.1 : 0.1;
         const finalRot = Math.PI / 4 + randRot;
 
-        const bright = bombExplosionBrightPool.get();
+        const bright = exploderExplosionBrightPool.get();
         bright.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
         bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setBlendMode(Phaser.BlendModes.ADD);
         bright.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
 
-        const red = bombExplosionRedPool.get();
+        const red = exploderExplosionRedPool.get();
         red.setPosition(x, y).setSize(size + 3, size + 3).setOrigin(0.5, 0.5);
         red.setDepth(GAME_CONSTANTS.DEPTH_TOWER).setBlendMode(Phaser.BlendModes.ADD);
         red.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
 
-        const black = bombExplosionBlackPool.get();
+        const black = exploderExplosionBlackPool.get();
         black.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
         black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 3);
         black.setRotation(finalRot).setAlpha(1).setVisible(false).setActive(true);
@@ -679,9 +679,9 @@ const customEmitters = (() => {
             duration: 350,
             ease: 'Cubic.easeOut',
             onComplete: () => {
-                bombExplosionBrightPool.release(bright);
-                bombExplosionRedPool.release(red);
-                bombExplosionBlackPool.release(black);
+                exploderExplosionBrightPool.release(bright);
+                exploderExplosionRedPool.release(red);
+                exploderExplosionBlackPool.release(black);
             }
         });
     }
@@ -819,9 +819,9 @@ const customEmitters = (() => {
     function init() {
         explosionRayPool.preAllocate(16);
         explosionPulsePool.preAllocate(3);
-        bombExplosionBrightPool.preAllocate(5);
-        bombExplosionRedPool.preAllocate(5);
-        bombExplosionBlackPool.preAllocate(5);
+        exploderExplosionBrightPool.preAllocate(5);
+        exploderExplosionRedPool.preAllocate(5);
+        exploderExplosionBlackPool.preAllocate(5);
         malwareSiphonPool.preAllocate(8);
         shellDeathPool.preAllocate(5);
     }
@@ -843,7 +843,7 @@ const customEmitters = (() => {
         minibossExplosion,
         createBossExplosionRays,
         playExplosionPulse,
-        createBombExplosion,
+        createExploderExplosion,
         malwareSiphonFX,
         cacheTrail,
         playShellDeath: (x, y, depth) => {

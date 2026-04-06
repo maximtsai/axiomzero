@@ -17,7 +17,7 @@ const gameHUD = (() => {
     let waveProgressBar = null;
     let farmingTimerTxt = null;
     let roundDataTxt = null;
-    let bombBtn = null;
+    let exploderBtn = null;
     let farmingStartTime = 0;
     let isFarming = false;
 
@@ -263,7 +263,7 @@ const gameHUD = (() => {
                 y: GAME_CONSTANTS.HEIGHT - 75,
             },
             onMouseUp: () => {
-                console.log("bomb");
+                console.log("explode");
             },
         });
         bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);

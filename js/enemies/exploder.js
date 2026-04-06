@@ -1,28 +1,28 @@
-// js/enemies/bomb_enemy.js — Exploding enemy type (MVC).
+// js/enemies/exploder.js — Exploding enemy type (MVC).
 //
 // Behaviour:
 //   • Stats identical to basic enemy.
 //   • Explodes on death dealing damage to other enemies in a diamond shape.
 
-class BombEnemyModel extends EnemyModel {
+class ExploderEnemyModel extends EnemyModel {
     constructor() {
         super();
-        this.type = 'bomb';
+        this.type = 'exploder';
         this.baseResourceDrop = 1; // Same as basic for now
     }
 }
 
-class BombEnemyView extends EnemyView {
+class ExploderEnemyView extends EnemyView {
     constructor() {
         super(Enemy.TEX_KEY, 'bomb.png', 'bomb_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
     }
 }
 
-class BombEnemy extends Enemy {
+class ExploderEnemy extends Enemy {
     constructor() {
         super();
-        this.model = new BombEnemyModel();
-        this.view = new BombEnemyView();
+        this.model = new ExploderEnemyModel();
+        this.view = new ExploderEnemyView();
     }
 
     activate(x, y, scaleFactor, extraConfig = {}) {
