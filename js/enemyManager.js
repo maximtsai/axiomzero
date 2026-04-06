@@ -12,8 +12,9 @@ const enemyManager = (() => {
 
     let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
-    let spatialGrid = {};   // Fast spatial hash grid (Map of cellKey -> { enemies: [], active: boolean })
-    let activeCellKeys = new Set(); // Tracks which cells were used this frame for efficient clearing
+    let spatialGrid = {};   // Fast spatial hash grid (Map of cellKey -> array)
+    let activeCellKeys = []; // Reusable array for zero-garbage cell tracking
+    let spatialGridFrame = 0; // Current frame ID for grid synchronization
     let specialEnemies = []; // Bosses and Minibosses not in grid
     const CELL_SIZE = 150;  // Spatial grid bin size 
     const GRID_PADDING = 60; // Max enemy radius for safe neighbor checks
@@ -156,10 +157,11 @@ const enemyManager = (() => {
         bossManager.reset();
         testEnemyCount = 0;
         // Zero-garbage clear of the spatial grid using only active keys
-        activeCellKeys.forEach(key => {
+        for (let i = 0; i < activeCellKeys.length; i++) {
+            const key = activeCellKeys[i];
             if (spatialGrid[key]) spatialGrid[key].length = 0;
-        });
-        activeCellKeys.clear();
+        }
+        activeCellKeys.length = 0;
         for (let key in typeCounts) typeCounts[key] = 0;
     }
 
@@ -921,10 +923,12 @@ const enemyManager = (() => {
         // Move enemies & populate spatial grid
 
         // Zero-garbage clear of only active grid cells from last frame
-        activeCellKeys.forEach(key => {
+        spatialGridFrame++;
+        for (let i = 0; i < activeCellKeys.length; i++) {
+            const key = activeCellKeys[i];
             if (spatialGrid[key]) spatialGrid[key].length = 0;
-        });
-        activeCellKeys.clear();
+        }
+        activeCellKeys.length = 0;
         specialEnemies.length = 0;
 
         const tPos = tower.getPosition();
@@ -955,10 +959,17 @@ const enemyManager = (() => {
                 let cell = spatialGrid[key];
                 if (!cell) {
                     cell = [];
+                    cell.lastUpdateFrame = -1;
                     spatialGrid[key] = cell;
                 }
+
+                // First time touching this cell this frame? Track it for clearing
+                if (cell.lastUpdateFrame !== spatialGridFrame) {
+                    cell.lastUpdateFrame = spatialGridFrame;
+                    activeCellKeys.push(key);
+                }
+
                 cell.push(e);
-                activeCellKeys.add(key);
             }
 
             // Tower contact check — minibosses do NOT die on contact currently
@@ -1107,29 +1118,29 @@ const enemyManager = (() => {
 
     updateManager.addFunction(_update);
 
-    return { 
-        init, 
-        freeze, 
-        unfreeze, 
-        clearAllEnemies, 
-        killAllNonBossEnemies, 
-        spawnAt, 
+    return {
+        init,
+        freeze,
+        unfreeze,
+        clearAllEnemies,
+        killAllNonBossEnemies,
+        spawnAt,
         registerEnemy,
-        getNearestEnemy, 
-        getEnemyCount, 
-        getActiveEnemies, 
-        getActiveProtectors, 
-        getEnemiesInSquareRange, 
-        getEnemiesByType, 
-        damageEnemy, 
-        getCombatTime: () => combatTime, 
-        getRoundTimeElapsed: () => roundTimeElapsed, 
+        getNearestEnemy,
+        getEnemyCount,
+        getActiveEnemies,
+        getActiveProtectors,
+        getEnemiesInSquareRange,
+        getEnemiesByType,
+        damageEnemy,
+        getCombatTime: () => combatTime,
+        getRoundTimeElapsed: () => roundTimeElapsed,
         getScaleFactor: () => GAME_VARS.scaleFactor || 1,
         getCurrentLevelConfig,
-        startTestingDefenses, 
-        stopTestingDefenses, 
-        isBossAlive: () => bossManager.isBossAlive(), 
-        isBossSpawned: () => bossManager.isBossSpawned(), 
-        isMinibossAlive: () => bossManager.isMinibossAlive() 
+        startTestingDefenses,
+        stopTestingDefenses,
+        isBossAlive: () => bossManager.isBossAlive(),
+        isBossSpawned: () => bossManager.isBossSpawned(),
+        isMinibossAlive: () => bossManager.isMinibossAlive()
     };
 })();
