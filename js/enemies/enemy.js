@@ -15,6 +15,7 @@ class EnemyModel {
         this.maxHealth = 0;
         this.damage = 0;
         this.size = 0;
+        this.contactR2 = 0; // Pre-calculated square of the tower contact radius
         this.speed = 0;
         this.isBoss = false;
         this.isMiniboss = false;
@@ -84,6 +85,10 @@ class EnemyModel {
         if (config.damage !== undefined) this.damage = config.damage;
         if (config.size !== undefined) this.size = config.size;
         if (config.selfDamage !== undefined) this.selfDamage = config.selfDamage;
+
+        // Optimization: Pre-calculate square of tower contact radius
+        const contactR = 15 + (this.size || 15) * 1.1;
+        this.contactR2 = contactR * contactR;
 
         // Reset state for pooling (prevents bleeding from previous use)
         this.initialSpeedMult = 1.0;

@@ -17,7 +17,7 @@ const gameHUD = (() => {
     let waveProgressBar = null;
     let farmingTimerTxt = null;
     let roundDataTxt = null;
-    let exploderBtn = null;
+    let bombBtn = null;
     let farmingStartTime = 0;
     let isFarming = false;
 
@@ -51,6 +51,12 @@ const gameHUD = (() => {
         });
         messageBus.subscribe('AnnounceText', showAnnounceMessage);
         messageBus.subscribe('BossAnnounceText', ({ msg1, msg2 }) => showBossAnnouncement(msg1, msg2));
+
+        PhaserScene.input.keyboard.on('keydown-SPACE', () => {
+             if (bombBtn && bombBtn.visible && bombBtn.state !== DISABLE) {
+                 armBomb();
+             }
+        });
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -263,7 +269,7 @@ const gameHUD = (() => {
                 y: GAME_CONSTANTS.HEIGHT - 75,
             },
             onMouseUp: () => {
-                console.log("explode");
+                armBomb();
             },
         });
         bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
@@ -361,6 +367,9 @@ const gameHUD = (() => {
     }
 
     // ── show / hide ──────────────────────────────────────────────────────────
+    function armBomb() {
+        console.log("bomb armed");
+    }
 
     function _showCombatHUD() {
         visible = true;

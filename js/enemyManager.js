@@ -13,6 +13,7 @@ const enemyManager = (() => {
     let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
     let spatialGrid = {};   // Fast spatial hash grid (Map of cellKey -> { enemies: [], active: boolean })
+    let activeCellKeys = new Set(); // Tracks which cells were used this frame for efficient clearing
     let specialEnemies = []; // Bosses and Minibosses not in grid
     const CELL_SIZE = 150;  // Spatial grid bin size 
     const GRID_PADDING = 60; // Max enemy radius for safe neighbor checks
@@ -26,19 +27,14 @@ const enemyManager = (() => {
     let roundTimeElapsed = 0; // Total time in wave, including boss/miniboss fights
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
 
-    // Miniboss tracking
-    let minibossSpawned = false;  // has a miniboss spawned this wave?
-    let farmingMinibossCount = 0; // how many 30s farming minibosses spawned?
-    let minibossAlive = false;    // is the current miniboss still alive?
+    // Miniboss state now managed by bossManager
     let lastWaveProgress = 0;     // current progress 0-1
     let recentSpawnAngles = new Float32Array(6); // tracks the last 6 spawn angles (in radians)
     let recentSpawnIndex = 0;
     let recentSpawnCount = 0;
     let waveIsFarming = false;
 
-    // Boss tracking
-    let bossSpawned = false;
-    let bossAlive = false;
+    // Boss state now managed by bossManager
 
     // Fast enemy pack tracking
     let fastPackActive = false;
@@ -52,7 +48,7 @@ const enemyManager = (() => {
     let spawnCountSinceLastExploder = 0;
 
     // Boss 3 specifically
-    let boss3ShareTimer = 1.0;
+    // boss3ShareTimer now managed by bossManager
 
     let testEnemyCount = 0;
 
@@ -80,6 +76,7 @@ const enemyManager = (() => {
     // ── init ─────────────────────────────────────────────────────────────────
 
     function init() {
+        bossManager.init(this);
         _buildPools();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('freezeEnemies', freeze);
@@ -121,13 +118,7 @@ const enemyManager = (() => {
         roundTimeElapsed = 0;
         GAME_VARS.roundTimeElapsed = roundTimeElapsed;
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
-        minibossSpawned = false;
-        farmingMinibossCount = 0;
-        minibossAlive = false;
-        bossSpawned = false;
-        nextSpawnIsExploder = false;
-        spawnCountSinceLastExploder = 0;
-        bossAlive = false;
+        bossManager.reset();
         lastWaveProgress = 0;
         recentSpawnIndex = 0;
         recentSpawnCount = 0;
@@ -162,11 +153,13 @@ const enemyManager = (() => {
         activeEnemies.length = 0;
         activeProtectors.length = 0;
         specialEnemies.length = 0;
+        bossManager.reset();
         testEnemyCount = 0;
-        // Zero-garbage clear of the spatial grid
-        for (let key in spatialGrid) {
-            spatialGrid[key].length = 0;
-        }
+        // Zero-garbage clear of the spatial grid using only active keys
+        activeCellKeys.forEach(key => {
+            if (spatialGrid[key]) spatialGrid[key].length = 0;
+        });
+        activeCellKeys.clear();
         for (let key in typeCounts) typeCounts[key] = 0;
     }
 
@@ -394,264 +387,7 @@ const enemyManager = (() => {
         }
     }
 
-    function _resolveEnemyClass(className) {
-        // Explicit mapping of string identifiers to class constructors.
-        // This is safer than window[className] as it avoids global namespace pollution
-        // and provides a clear list of supported boss types.
-        const registry = {
-            'Miniboss1': typeof Miniboss1 !== 'undefined' ? Miniboss1 : null,
-            'Miniboss2': typeof Miniboss2 !== 'undefined' ? Miniboss2 : null,
-            'Miniboss3': typeof Miniboss3 !== 'undefined' ? Miniboss3 : null,
-            'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
-            'BossSquare': typeof BossSquare !== 'undefined' ? BossSquare : null,
-            'BossCircle': typeof BossCircle !== 'undefined' ? BossCircle : null,
-            'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
-            'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
-            'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
-        };
-        return registry[className];
-    }
-
-    function _getValidBossSpawnAngle(bossInstance) {
-        // If the boss specifies its own logic (like Boss 5 or custom classes), use it
-        if (bossInstance && bossInstance.model && (bossInstance.model.getSpawnAngle || bossInstance.model.__proto__.getSpawnAngle)) {
-            return bossInstance.model.getSpawnAngle();
-        }
-
-        // Default: Spawn from the sides (West or East) with a 60-degree leeway (30 degrees each way)
-        // West = PI, East = 0
-        const side = Math.random() < 0.5 ? 0 : Math.PI;
-        const leeway = 30 * (Math.PI / 180); // 30 degrees in radians
-        const offset = (Math.random() * 2 - 1) * leeway;
-
-        return Phaser.Math.Angle.Wrap(side + offset);
-    }
-
-    function _spawnMiniboss(isFarmingSpawn = false, multiplier = 1, forceType = null, farmingOverrides = null) {
-        if (!isFarmingSpawn && minibossSpawned) return;
-
-        const config = getCurrentLevelConfig(lastWaveProgress);
-
-        // Allow forcing a specific class (like Miniboss1 for farming mode)
-        const mbType = forceType || config.miniboss;
-
-        // Check if miniboss for this level has already been defeated (unless it's an explicit farming spawn)
-        const currentLevel = gameState.currentLevel || 1;
-        if (!isFarmingSpawn && (gameState.minibossLevelsDefeated || 0) >= currentLevel) {
-            debugLog(`Miniboss for level ${currentLevel} already defeated. Skipping spawn.`);
-            minibossSpawned = true; // prevent re-attempts this wave
-            return;
-        }
-
-        let mbClass = _resolveEnemyClass(mbType);
-        let mb = null;
-        if (!mbClass) {
-            console.warn(`[EnemyManager] Miniboss class '${config.miniboss}' not found. Defaulting to Miniboss1.`);
-            mbClass = Miniboss1;
-            mb = new mbClass(config.levelScalingModifier || 1);
-        } else {
-            mb = new mbClass(1);
-        }
-
-        if (!mb) return;
-
-        if (isFarmingSpawn) {
-            farmingMinibossCount++;
-            if (mb.model) {
-                mb.model.isFarmingMiniboss = true;
-                mb.model.baseResourceDrop = 10;
-                mb.model.multiplier = multiplier;
-            }
-        } else {
-            minibossSpawned = true;
-        }
-
-        minibossAlive = true;
-
-        const distance = GAME_CONSTANTS.MINIBOSS_SPAWN_DISTANCE;
-        const angle = _getValidBossSpawnAngle();
-        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
-        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
-
-        // Visual warning before spawning
-        const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
-        setTimeout(() => {
-            audio.play('miniboss_warning');
-        }, 350);
-        warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
-        warningImg.setOrigin(0, 0.5);
-        warningImg.setScale(1.2, 1);
-        warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
-        warningImg.setAlpha(0);
-
-        PhaserScene.tweens.add({
-            targets: warningImg,
-            alpha: 1,
-            duration: 750,
-            ease: 'Sine.easeInOut',
-            yoyo: true,
-            repeat: 1,
-            onComplete: () => {
-                warningImg.destroy();
-            }
-        });
-
-        mb.activate(sx, sy);
-
-        if (isFarmingSpawn && farmingOverrides) {
-            const m = mb.model;
-            if (farmingOverrides.health) {
-                m.maxHealth = farmingOverrides.health;
-                m.health = m.maxHealth;
-            }
-            if (farmingOverrides.damage) {
-                m.damage = farmingOverrides.damage;
-            }
-            if (farmingOverrides.data) {
-                m.baseResourceDrop = farmingOverrides.data;
-            }
-            // Ensure multiplier is set for ranged/slam stats
-            if (farmingOverrides.multiplier) {
-                m.multiplier = farmingOverrides.multiplier;
-            }
-        }
-
-        // Spawn 2 fast enemies for Miniboss 2
-        if (!isFarmingSpawn && config.miniboss === 'Miniboss2') {
-            const offsets = [-0.25, 0.25];
-            const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
-
-            offsets.forEach(offset => {
-                const fe = pools.fast.get() || pools.basic.get();
-                if (fe) {
-                    const fa = angle + offset;
-                    // Middle enemies (offsets +/- 0.25) start 20px closer
-                    const extraDist = (Math.abs(offset) < 0.3) ? -20 : 0;
-                    const finalDist = distance + extraDist;
-
-                    const fsx = GAME_CONSTANTS.halfWidth + Math.cos(fa) * finalDist;
-                    const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
-
-                    fe.activate(fsx, fsy, currentScale, { initialSpeedMult: 6, rampDuration: 1.5 });
-                    typeCounts[fe.model.type] = (typeCounts[fe.model.type] || 0) + 1;
-                    fe.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-                    activeEnemies.push(fe);
-                }
-            });
-        }
-
-        typeCounts[mb.model.type] = (typeCounts[mb.model.type] || 0) + 1;
-
-        mb.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-        activeEnemies.push(mb);
-
-        messageBus.publish('minibossSpawned');
-        const variantStr = isFarmingSpawn ? 'Farming' : 'Standard';
-        console.log(`[EnemyManager] Spawning ${variantStr} Miniboss: ${mb.model.type} (HP: ${Math.floor(mb.model.health)})`);
-        debugLog('Miniboss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
-    }
-
-    function _spawnBoss() {
-        if (bossSpawned) return;
-
-        const config = getCurrentLevelConfig(lastWaveProgress);
-        let Class = _resolveEnemyClass(config.mainBoss);
-        if (!Class) {
-            console.warn(`[EnemyManager] Boss class '${config.mainBoss}' not found. Defaulting to BossSquare.`);
-            Class = BossSquare;
-        }
-
-        bossSpawned = true;
-        bossAlive = true;
-
-        // Temporary instance to check for class-specific distance offsets/angles
-        const tempB = new Class(1);
-        const distanceOffset = (tempB.model && tempB.model.getSpawnDistanceOffset) ? tempB.model.getSpawnDistanceOffset() : 0;
-        const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE + distanceOffset;
-        const angle = _getValidBossSpawnAngle(tempB);
-        const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
-        const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
-
-
-        if (config.mainBoss === 'Boss3') {
-            const layout = Class.getSpawnLayout(sx, sy, angle, distance);
-            layout.forEach(item => {
-                let wx = item.x;
-                let wy = item.y;
-
-                // Move the Top 2 and Bottom 2 indicators (the diagonals) 250px closer
-                // We identify them by checking that they aren't the purely horizontal shards (West=180, East=0)
-                if (Math.abs(Math.cos(item.angle)) < 0.9) {
-                    const dx = item.x - GAME_CONSTANTS.halfWidth;
-                    const dy = item.y - GAME_CONSTANTS.halfHeight;
-                    const d = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const newD = Math.max(0, d - 250);
-                    wx = GAME_CONSTANTS.halfWidth + (dx / d) * newD;
-                    wy = GAME_CONSTANTS.halfHeight + (dy / d) * newD;
-                }
-
-                const w = PhaserScene.add.image(wx, wy, 'enemies', 'warning.png');
-                w.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
-                w.setOrigin(0, 0.5);
-                w.setScale(1.2);
-                w.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - wy, GAME_CONSTANTS.halfWidth - wx));
-                w.setAlpha(0);
-                PhaserScene.tweens.add({
-                    targets: w,
-                    alpha: 1,
-                    duration: 750,
-                    ease: 'Sine.easeInOut',
-                    yoyo: true,
-                    repeat: 1,
-                    onComplete: () => { w.destroy(); }
-                });
-            });
-        } else {
-            // Visual warning before spawning (single unit)
-            const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning_big.png');
-            warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
-            warningImg.setOrigin(0, 0.5);
-
-            const isBoss5 = config.mainBoss === 'Boss5';
-            const isBoss3 = config.mainBoss === 'Boss3';
-            let wScale = isBoss5 ? 1.4 : 1.0;
-            wScale = isBoss3 ? 0.75 : 1.0;
-            warningImg.setScale(1.5 * wScale, 1.4 * wScale);
-            warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
-            warningImg.setAlpha(0);
-
-            PhaserScene.tweens.add({
-                targets: warningImg,
-                alpha: 1,
-                duration: 750,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: 1,
-                onComplete: () => {
-                    warningImg.destroy();
-                }
-            });
-        }
-
-        const layout = Class.getSpawnLayout(sx, sy, angle, distance);
-        const spawnedUnits = [];
-
-        layout.forEach(item => {
-            const b = new Class(config.levelScalingModifier || 1);
-            const finalConfig = { ...config, ...item.config };
-            b.activate(item.x, item.y, GAME_VARS.scaleFactor || 1, finalConfig);
-            b.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-
-            activeEnemies.push(b);
-            spawnedUnits.push(b);
-            typeCounts[b.model.type] = (typeCounts[b.model.type] || 0) + 1;
-        });
-
-        if (Class.postSpawn) Class.postSpawn(spawnedUnits);
-
-        messageBus.publish('bossSpawned');
-        debugLog('Boss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
-    }
+    // Boss and Miniboss spawning logic moved to bossManager.js
 
 
 
@@ -734,12 +470,7 @@ const enemyManager = (() => {
     }
 
     function _onTowerDied() {
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const e = activeEnemies[i];
-            if (e.model.isBoss || e.model.isMiniboss) {
-                e.model.invincible = true;
-            }
-        }
+        bossManager.onTowerDied(activeEnemies);
     }
 
     // ── public queries ───────────────────────────────────────────────────────
@@ -1023,7 +754,7 @@ const enemyManager = (() => {
         }
 
         if (wasMiniboss) {
-            minibossAlive = false;
+            bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
             if (enemy.view.img) {
                 customEmitters.minibossExplosion(enemy.view.img);
             }
@@ -1038,7 +769,7 @@ const enemyManager = (() => {
             messageBus.publish('minibossDefeated', ex, ey, enemy.model.isFarmingMiniboss);
             debugLog('Miniboss defeated');
         } else if (wasBoss && !skipBossEffects) {
-            bossAlive = false;
+            bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
@@ -1091,10 +822,10 @@ const enemyManager = (() => {
 
         if (spawning) {
             // Update timers
-            if (!minibossAlive && !bossAlive) {
+            if (!bossManager.isMinibossAlive() && !bossManager.isBossAlive()) {
                 combatTime += dt;
             }
-            if (!minibossAlive) {
+            if (!bossManager.isMinibossAlive()) {
                 roundTimeElapsed += dt;
             }
             GAME_VARS.roundTimeElapsed = roundTimeElapsed;
@@ -1121,62 +852,8 @@ const enemyManager = (() => {
                 if (fastPackCooldown < 0) fastPackCooldown = 0;
             }
 
-            // Boss 3 (Phalanx) HP sharing synchronization (orchestrated at manager level)
-            if (bossAlive && !frozen) {
-                const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
-                if (shards.length > 0) {
-                    boss3ShareTimer -= dt;
-                    if (boss3ShareTimer <= 0) {
-                        boss3ShareTimer = 3.0;
-                        shards.forEach(p => p.model.calculateSiphon());
-                        shards.forEach(p => {
-                            const healAmount = p.model.applySiphon();
-                            if (healAmount >= 7) {
-                                PhaserScene.time.delayedCall(600, () => {
-                                    if (p && p.model && p.model.alive && p.view) {
-                                        // 1. Consolidated Floating Text
-                                        if (typeof floatingText !== 'undefined') {
-                                            let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
-                                            floatingText.show(p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
-                                                fontFamily: 'MunroSmall',
-                                                fontSize: healFontSize + 8,
-                                                color: '#00ff66',
-                                                stroke: '#330000',
-                                                strokeThickness: 2,
-                                                depth: GAME_CONSTANTS.DEPTH_ENEMIES + 99
-                                            });
-                                        }
-                                        // 2. Consolidated Health Bar 'Pump'
-                                        if (p.view.hpImg && p.view.hpImg.scene) {
-                                            const pumpScale = 1.12;
-                                            PhaserScene.tweens.add({
-                                                targets: p.view.hpImg,
-                                                scaleX: pumpScale,
-                                                scaleY: pumpScale,
-                                                yoyo: true,
-                                                duration: 180,
-                                                ease: 'Sine.easeInOut'
-                                            });
-                                        }
-                                        // 3. Base Sprite 'Pump' (Half Intensity)
-                                        if (p.view.img && p.view.img.scene) {
-                                            const basePumpScale = 1.06;
-                                            PhaserScene.tweens.add({
-                                                targets: p.view.img,
-                                                scaleX: basePumpScale,
-                                                scaleY: basePumpScale,
-                                                yoyo: true,
-                                                duration: 180,
-                                                ease: 'Sine.easeInOut'
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            }
+            // specialized boss behavior logic moved to bossManager.update()
+            bossManager.update(dt, activeEnemies);
 
             // Spawn timer
             spawnTimer += delta;
@@ -1197,7 +874,7 @@ const enemyManager = (() => {
             if (spawnTimer >= trueSpawnInterval) {
                 spawnTimer -= trueSpawnInterval;
                 // No more spawns after boss victory in normal mode
-                if (!waveIsFarming && bossSpawned && !bossAlive) {
+                if (!waveIsFarming && bossManager.isBossSpawned() && !bossManager.isBossAlive()) {
                     // Do nothing
                 } else {
                     _spawnOne();
@@ -1207,7 +884,7 @@ const enemyManager = (() => {
             // Farming miniboss spawn: first at 30s, then every 60s after
             if (waveIsFarming && spawning && roundTimeElapsed >= 30 && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
                 const n = Math.floor((roundTimeElapsed - 30) / 60) + 1;
-                if (n > farmingMinibossCount) {
+                if (n > bossManager.getFarmingMinibossCount()) {
                     const p = Math.pow(2.2, n - 1);
 
                     const isMB3 = Math.random() < 0.15;
@@ -1226,7 +903,7 @@ const enemyManager = (() => {
                         data = 30;
                     }
 
-                    _spawnMiniboss(true, p, type, {
+                    bossManager.spawnMiniboss(lastWaveProgress, true, p, type, {
                         health: targetH,
                         damage: targetD,
                         data: data,
@@ -1243,10 +920,11 @@ const enemyManager = (() => {
 
         // Move enemies & populate spatial grid
 
-        // Zero-garbage clear: just set length=0 on existing arrays
-        for (let key in spatialGrid) {
-            spatialGrid[key].length = 0;
-        }
+        // Zero-garbage clear of only active grid cells from last frame
+        activeCellKeys.forEach(key => {
+            if (spatialGrid[key]) spatialGrid[key].length = 0;
+        });
+        activeCellKeys.clear();
         specialEnemies.length = 0;
 
         const tPos = tower.getPosition();
@@ -1280,6 +958,7 @@ const enemyManager = (() => {
                     spatialGrid[key] = cell;
                 }
                 cell.push(e);
+                activeCellKeys.add(key);
             }
 
             // Tower contact check — minibosses do NOT die on contact currently
@@ -1288,9 +967,8 @@ const enemyManager = (() => {
                 const dy = e.model.y - tPos.y;
                 const distSq = dx * dx + dy * dy;
 
-                // Attack range based exactly on size for melee units
-                const contactR = 15 + (e.model.size || 15) * 1.1;
-                const contactR2 = contactR * contactR;
+                // Attack range based exactly on size for melee units (pre-calculated on model for speed)
+                const contactR2 = e.model.contactR2 || 2025; // 2025 is fallback for 15+15*1.1
 
                 if (distSq < contactR2) {
                     e.model.isAttacking = true;
@@ -1346,11 +1024,11 @@ const enemyManager = (() => {
         const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
         const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= currentLevel;
 
-        if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !minibossSpawned && spawning && !minibossBeaten) {
-            _spawnMiniboss();
+        if (progress >= GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS && !bossManager.isMinibossSpawned() && spawning && !minibossBeaten) {
+            bossManager.spawnMiniboss(lastWaveProgress);
         }
-        if (progress >= 1.0 && !bossSpawned && spawning && !levelBeaten) {
-            _spawnBoss();
+        if (progress >= 1.0 && !bossManager.isBossSpawned() && spawning && !levelBeaten) {
+            bossManager.spawnBoss(lastWaveProgress);
         }
     }
 
@@ -1421,7 +1099,37 @@ const enemyManager = (() => {
         messageBus.publish('testingDefensesEnded');
     }
 
+    function registerEnemy(e) {
+        activeEnemies.push(e);
+        typeCounts[e.model.type] = (typeCounts[e.model.type] || 0) + 1;
+        if (e.model.type === 'protector') activeProtectors.push(e);
+    }
+
     updateManager.addFunction(_update);
 
-    return { init, freeze, unfreeze, clearAllEnemies, killAllNonBossEnemies, spawnAt, getNearestEnemy, getEnemyCount, getActiveEnemies, getActiveProtectors, getEnemiesInSquareRange, getEnemiesByType, damageEnemy, getCombatTime: () => combatTime, getRoundTimeElapsed: () => roundTimeElapsed, startTestingDefenses, stopTestingDefenses, isBossAlive: () => bossAlive, isBossSpawned: () => bossSpawned, isMinibossAlive: () => minibossAlive };
+    return { 
+        init, 
+        freeze, 
+        unfreeze, 
+        clearAllEnemies, 
+        killAllNonBossEnemies, 
+        spawnAt, 
+        registerEnemy,
+        getNearestEnemy, 
+        getEnemyCount, 
+        getActiveEnemies, 
+        getActiveProtectors, 
+        getEnemiesInSquareRange, 
+        getEnemiesByType, 
+        damageEnemy, 
+        getCombatTime: () => combatTime, 
+        getRoundTimeElapsed: () => roundTimeElapsed, 
+        getScaleFactor: () => GAME_VARS.scaleFactor || 1,
+        getCurrentLevelConfig,
+        startTestingDefenses, 
+        stopTestingDefenses, 
+        isBossAlive: () => bossManager.isBossAlive(), 
+        isBossSpawned: () => bossManager.isBossSpawned(), 
+        isMinibossAlive: () => bossManager.isMinibossAlive() 
+    };
 })();
