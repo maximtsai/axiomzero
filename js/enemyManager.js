@@ -561,7 +561,6 @@ const enemyManager = (() => {
 
             // Standard death
             enemy.onDeath(true); // Final/Core death
-            if (enemy.model.isBoss) bossAlive = false;
 
             if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
@@ -604,7 +603,7 @@ const enemyManager = (() => {
             _releaseToPool(enemy);
 
             if (enemy.model.type === 'test') {
-                testEnemyCount--;
+                testEnemyCount = Math.max(0, testEnemyCount - 1);
                 if (testEnemyCount <= 0 && typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
                     GAME_VARS.testingDefenses = false;
                     messageBus.publish('testingDefensesEnded');
@@ -626,7 +625,7 @@ const enemyManager = (() => {
 
         if (wasMiniboss) {
             bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
-            if (enemy.view.img) {
+            if (enemy.view && enemy.view.img) {
                 customEmitters.minibossExplosion(enemy.view.img);
             }
         } else if (wasBoss && !skipBossEffects) {
@@ -779,59 +778,61 @@ const enemyManager = (() => {
         spatialGridUtils.resetForFrame();
 
         const tPos = tower.getPosition();
+        if (!tPos) return;
+
         const contactR = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
         const contactR2 = contactR * contactR;
 
-        // Note: we iterate forward or backward, it doesn't matter for grid build
-        for (let i = activeEnemies.length - 1; i >= 0; i--) {
+        // Note: we iterate forward to handle mid-loop deaths/swaps correctly
+        let i = 0;
+        while (i < activeEnemies.length) {
             const e = activeEnemies[i];
-            if (!e || !e.model.alive) continue;
+            if (!e || !e.model.alive) {
+                i++;
+                continue;
+            }
 
+            const prevLen = activeEnemies.length;
             e.update(dt * spawnSpeedMultiplier);
 
-            // Refactor 2: Generalized post-update hook for custom boss behaviors
             if (e.model.hasPostUpdate) {
                 e.model.postUpdate(dt);
             }
 
-            // Populate grid
             spatialGridUtils.insert(e);
 
-            // Tower contact check — minibosses do NOT die on contact currently
+            // Tower contact check
             if (!e.model.isMiniboss) {
                 const dx = e.model.x - tPos.x;
                 const dy = e.model.y - tPos.y;
                 const distSq = dx * dx + dy * dy;
 
-                // Attack range based exactly on size for melee units (pre-calculated on model for speed)
-                const contactR2 = e.model.contactR2 || 2025; // 2025 is fallback for 15+15*1.1
+                const attackDistR2 = e.model.contactR2 || 2025;
 
-                if (distSq < contactR2) {
+                if (distSq < attackDistR2) {
                     e.model.isAttacking = true;
 
                     if (e.model.attackTimer <= 0 && e.model.damage > 0) {
                         const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
                         e.model.attackTimer = e.model.attackCooldown;
 
-                        // Apply self-damage only when it hits
                         if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
-                            // Only kill if the self-damage was lethal
                             _killEnemy(e);
-                        }
-
-                        // Shell specific shake effect
-                        if (e.model.type === 'shell' && typeof cameraManager !== 'undefined') {
-                            cameraManager.shake(120, 0.006);
                         }
                     }
 
-                    // tower.takeDamage may trigger die→WAVE_COMPLETE→clearAllEnemies
-                    // which empties activeEnemies mid-loop, so bail out
                     if (activeEnemies.length === 0) break;
                 } else {
                     e.model.isAttacking = false;
                 }
             }
+
+            // If an enemy was removed from the current position i, do not increment i,
+            // as index i now contains a new element from the swap-and-pop.
+            if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
+                continue;
+            }
+            i++;
         }
     }
 

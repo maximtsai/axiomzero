@@ -132,12 +132,6 @@ const SAVE_VERSION = 2;
 // Consumed by js/util/gameState.js and gameInit.js.
 
 const GAME_STATE_DEFAULTS = {
-    // Tower
-    towerMaxHealth: 10,
-    towerDamage: 6,
-    towerAttackRange: 0,
-    towerHealthRegen: 0,   // Now driven by per-level healthDecay property
-
     // Resources
     data: 0,
     insight: 0,

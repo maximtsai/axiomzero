@@ -16,7 +16,6 @@ const gameHUD = (() => {
     let testDefensesBtn = null;
     let waveProgressBar = null;
     let farmingTimerTxt = null;
-    let roundDataTxt = null;
     let bombBtn = null;
     let farmingStartTime = 0;
     let isFarming = false;
@@ -33,10 +32,6 @@ const gameHUD = (() => {
     let visible = false;
     let needsLayoutUpdate = false;
     let layoutFrameCounter = 0;
-
-    function armBomb() {
-        console.log("bomb armed");
-    }
 
     // ── init ─────────────────────────────────────────────────────────────────
 
@@ -57,9 +52,9 @@ const gameHUD = (() => {
 
 
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
-             if (bombBtn && bombBtn.visible && bombBtn.state !== DISABLE) {
-                 armBomb();
-             }
+            if (bombBtn && bombBtn.visible && bombBtn.state !== DISABLE) {
+                armBomb();
+            }
         });
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
@@ -650,7 +645,7 @@ const gameHUD = (() => {
     }
 
     function _onEnemyKilled() {
-        // Could add kill counter later
+        // Handled by resourceManager drops system
     }
 
     function _onWaveProgressChanged(progress) {

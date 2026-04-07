@@ -63,12 +63,12 @@ const upgradeDispatcher = (() => {
 
     /** Recalculates lightning chain count from upgrade nodes. */
     function recalcLightningChains() {
-        lightningAttack.setChainCount(2 + getLevel('lightning_chain'));
+        lightningAttack.setChainCount(lightningAttack.getBaseChainCount() + getLevel('lightning_chain'));
     }
 
     /** Recalculates lightning damage from upgrade nodes. */
     function recalcLightningDamage() {
-        lightningAttack.setDamage(10);
+        lightningAttack.setDamage(lightningAttack.getBaseDamage());
         lightningAttack.setStaticChargeLevel(getLevel('lightning_static_charge'));
     }
 

@@ -50,7 +50,6 @@ window.TRANSLATIONS.en = {
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots chain lightning every [color=#8FD9F8]3s[/color].', popup: 'LIGHTNING WEAPON' },
         shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Tower releases a damaging shockwave every [color=#8FD9F8]3s[/color].', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+1[/color] lightning chain target', popup: '+1 CHAIN' },
-        lightning_boost: { name: 'VOLTAGE', desc: '[color=#8FD9F8]+2[/color] lightning damage', popup: '+2 LIGHTNING DMG' },
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+4[/color] damage to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '[color=#8FD9F8]+25%[/color] shockwave range', popup: '+25% RANGE' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing enemy health.', popup: 'SEISMIC CRUSH' },

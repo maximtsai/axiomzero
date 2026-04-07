@@ -308,5 +308,8 @@ const lightningAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setChainCount, setDamage, setStaticChargeLevel };
+    function getBaseDamage() { return model.BASE_DAMAGE; }
+    function getBaseChainCount() { return model.BASE_CHAIN_COUNT; }
+
+    return { init, unlock, lock, setChainCount, setDamage, setStaticChargeLevel, getBaseDamage, getBaseChainCount };
 })();

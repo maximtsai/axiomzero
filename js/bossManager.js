@@ -75,9 +75,9 @@ const bossManager = (() => {
 
         // Visual warning before spawning
         const warningImg = PhaserScene.add.image(sx, sy, 'enemies', 'warning.png');
-        setTimeout(() => {
-            audio.play('miniboss_warning');
-        }, 350);
+        PhaserScene.time.delayedCall(350, () => {
+            if (minibossAlive || isFarmingSpawn) audio.play('miniboss_warning');
+        });
         warningImg.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         warningImg.setOrigin(0, 0.5);
         warningImg.setScale(1.2, 1);
@@ -92,7 +92,7 @@ const bossManager = (() => {
             yoyo: true,
             repeat: 1,
             onComplete: () => {
-                warningImg.destroy();
+                if (warningImg.active) warningImg.destroy();
             }
         });
 

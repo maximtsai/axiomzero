@@ -35,7 +35,7 @@ const enemyBulletManager = (() => {
                 b.img.setActive(false);
             },
             GAME_CONSTANTS.ENEMY_BULLET_POOL_SIZE
-        ).preAllocate(20);
+        ).preAllocate(GAME_CONSTANTS.ENEMY_BULLET_POOL_SIZE);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });

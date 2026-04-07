@@ -310,23 +310,28 @@ const iterationOverScreen = (() => {
         // ── Dynamic vertical centering ────────────────────────────────
         // dataNumberText is taller than other lines, so give it extra spacing
         const baseSpacing = 30;
-        let currentY = cy - 95;
 
         // Calculate total block height first for proper centering
         const lineHeights = activeTexts.map(txt => {
-            if (txt === dataNumberText) return 56; // was 52
-            if (txt === dataText) return 30;       // was 20
-            if (txt === dataDeltaText) return 34;  // was baseSpacing
+            if (txt === dataNumberText) return 56;
+            if (txt === dataText) return 30;
+            if (txt === dataDeltaText) return 34;
             return baseSpacing;
         });
         const totalH = lineHeights.reduce((a, b) => a + b, 0);
-        currentY = cy - 95 - totalH / 2;
+        
+        // Resource block starts around the center, slightly offset up
+        const blockTopY = cy - 85 - totalH / 2;
+        let currentY = blockTopY;
 
         for (let i = 0; i < activeTexts.length; i++) {
             let yOffset = (activeTexts[i] === dataNumberText) ? 4 : 0;
             activeTexts[i].setY(currentY + yOffset);
             currentY += lineHeights[i];
         }
+
+        // Position title based on the block top - ensure at least 70px gap
+        titleText.setY(Math.min(cy - 210, blockTopY - 75));
 
         // ── Count-up animation for DATA number ───────────────────────
         if (sessionData > 0) {
