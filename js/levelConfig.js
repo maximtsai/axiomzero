@@ -3,8 +3,8 @@
 
 const LEVEL_CONFIG = {
     1: {
-        spawnInterval: 1400, // ms between regular spawns (base)
-        lateSpawnInterval: 900,
+        spawnInterval: 1100, // ms between regular spawns (base)
+        lateSpawnInterval: 800,
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -32,7 +32,9 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
     },
     2: {
-        spawnInterval: 700, // ms between regular spawns (base)
+        spawnInterval: 600, // ms between regular spawns (base)
+        lateSpawnInterval: 525,
+        spawnPauseDuration: 1500,
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -58,10 +60,12 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss2',        // Identifier for the main boss
         dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
-        levelScalingModifier: 1.65, // Scales up *base* stats of enemies before wave scaling applies
+        levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
     },
     3: {
-        spawnInterval: 800,
+        spawnInterval: 550, // ms between regular spawns (base)
+        lateSpawnInterval: 150,
+        spawnPauseDuration: 4000,
         initialWeights: {
             basic: 1,
             fast: 0.04,
@@ -89,7 +93,8 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 2.2,
     },
     4: {
-        spawnInterval: 700,
+        spawnInterval: 550, // ms between regular spawns (base)
+        lateSpawnInterval: 600,
         initialWeights: {
             basic: 1,
             exploder: 0,
@@ -120,7 +125,7 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 3.2,
     },
     5: {
-        spawnInterval: 650,
+        spawnInterval: 550,
         initialWeights: {
             basic: 1,
             exploder: 0,
@@ -171,7 +176,7 @@ function getCurrentLevelConfig(progress = 0) {
 
     const minibossBeaten = (gameState.minibossLevelsDefeated || 0) >= level;
     const levelBeaten = (gameState.levelsDefeated || 0) >= level;
-    const isLatePhase = progress > (GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS || 0.56) + 0.01;
+    const isLatePhase = progress > (GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS || 0.5) + 0.005;
 
     // Force late state if we are in endless farming mode (level already beaten in past iteration)
     const useLateState = isLatePhase || minibossBeaten || levelBeaten;
@@ -180,7 +185,7 @@ function getCurrentLevelConfig(progress = 0) {
     config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
 
     // Tempo logic: Use lateSpawnInterval if we are in Farming Mode OR if lateWeights are active (useLateState)
-    const isLateTempo = useLateState || progress > 0.23;
+    const isLateTempo = useLateState || progress > 0.095;
     if (isLateTempo && config.lateSpawnInterval !== undefined) {
         config.spawnInterval = config.lateSpawnInterval;
     } else {

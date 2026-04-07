@@ -15,12 +15,14 @@ const enemyManager = (() => {
     let activeProtectors = []; // persistent list of protectors for aura checks
     let typeCounts = {};    // tracks number of active enemies per type (for spawn limits)
     let spawnTimer = 0;
+    let manualDelay = 0;
     let spawning = false;
     let frozen = false;     // true during death sequence — movement paused, spawning stopped
     let paused = false;     // true when options menu opens
     let combatTime = 4;    // seconds since wave start — drives scaling
     let roundTimeElapsed = 0; // Total time in wave, including boss/miniboss fights
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
+    let lastScaleLevel = 0;        // tracks current difficulty tier for spawn pauses
 
     // Miniboss state now managed by bossManager
     let lastWaveProgress = 0;     // current progress 0-1
@@ -52,14 +54,14 @@ const enemyManager = (() => {
         basic: {},
         fast: { minCombatTime: 8 },
         logic_stray: { minCombatTime: 9 },
-        swarmer: { minCombatTime: 5, avoidRecentAngles: 0.45, maxAttempts: 6 },
+        swarmer: { minCombatTime: 6, avoidRecentAngles: 0.45, maxAttempts: 6 },
         sniper: { minCombatTime: 6 },
         shooter: {},
         exploder: {},
         heavy: {},
         cache: { minCombatTime: 8, maxActive: 1 },
         protector: {
-            minCombatTime: 6,
+            minCombatTime: 7,
             maxActive: 2,
             avoidActiveTypes: ['protector'],
             minSeparation: 0.4,
@@ -81,6 +83,9 @@ const enemyManager = (() => {
         messageBus.subscribe('gameResumed', () => { paused = false; });
         messageBus.subscribe('waveProgressChanged', _onWaveProgress);
         messageBus.subscribe('towerDied', _onTowerDied);
+        messageBus.subscribe('addEnemySpawnDelay', (amount) => {
+            if (amount > 0) manualDelay += amount;
+        });
     }
 
     function _buildPools() {
@@ -110,8 +115,10 @@ const enemyManager = (() => {
         frozen = false;
         waveIsFarming = (gameState.levelsDefeated || 0) >= (gameState.currentLevel || 1);
         spawnTimer = -950;
+        manualDelay = 0;
         combatTime = 4;
         roundTimeElapsed = 0;
+        lastScaleLevel = 0;
         GAME_VARS.roundTimeElapsed = roundTimeElapsed;
         GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
         bossManager.reset();
@@ -688,7 +695,14 @@ const enemyManager = (() => {
             GAME_VARS.roundTimeElapsed = roundTimeElapsed;
 
             // Update wave scale factor
-            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL));
+            const currentScaleLevel = Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL);
+            if (currentScaleLevel > lastScaleLevel) {
+                lastScaleLevel = currentScaleLevel;
+                const config = getCurrentLevelConfig();
+                const pauseDur = (config.spawnPauseDuration !== undefined) ? config.spawnPauseDuration : 2000;
+                messageBus.publish('addEnemySpawnDelay', pauseDur);
+            }
+            GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, currentScaleLevel);
 
             // Update spawn speed multiplier: 27x for 5s, then linearly decay to 1x over 1.25s
             let firstThreshold = 5.05;
@@ -713,28 +727,32 @@ const enemyManager = (() => {
             bossManager.update(dt, activeEnemies);
 
             // Spawn timer
-            spawnTimer += delta;
-            const config = getCurrentLevelConfig();
-            let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
+            if (manualDelay > 0) {
+                manualDelay -= delta;
+            } else {
+                spawnTimer += delta;
+                const config = getCurrentLevelConfig();
+                let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
 
-            // Early game slowdown: if only 1 node (AWAKEN) or fewer researched
-            const researchedCount = Object.keys(gameState.upgrades || {}).length;
-            if (researchedCount <= 1) {
-                trueSpawnInterval *= 1.75;
-            }
+                // Early game slowdown: if only 1 node (AWAKEN) or fewer researched
+                const researchedCount = Object.keys(gameState.upgrades || {}).length;
+                if (researchedCount <= 1) {
+                    trueSpawnInterval *= 1.75;
+                }
 
-            // Farming mode speedup (cumulative 0.9x each minute)
-            if (waveIsFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
-                trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
-            }
+                // Farming mode speedup (cumulative 0.9x each minute)
+                if (waveIsFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+                    trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
+                }
 
-            if (spawnTimer >= trueSpawnInterval) {
-                spawnTimer -= trueSpawnInterval;
-                // No more spawns after boss victory in normal mode
-                if (!waveIsFarming && bossManager.isBossSpawned() && !bossManager.isBossAlive()) {
-                    // Do nothing
-                } else {
-                    _spawnOne();
+                if (spawnTimer >= trueSpawnInterval) {
+                    spawnTimer -= trueSpawnInterval;
+                    // No more spawns after boss victory in normal mode
+                    if (!waveIsFarming && bossManager.isBossSpawned() && !bossManager.isBossAlive()) {
+                        // Do nothing
+                    } else {
+                        _spawnOne();
+                    }
                 }
             }
 

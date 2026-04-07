@@ -51,7 +51,7 @@ const iterationOverScreen = (() => {
         overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
 
         // Title — Michroma
-        titleText = PhaserScene.add.text(cx, cy - 210, t('results', 'iteration_complete'), {
+        titleText = PhaserScene.add.text(cx, cy - 190, t('results', 'iteration_complete'), {
             fontFamily: 'Michroma',
             fontSize: '36px',
             color: '#00f5ff',
@@ -319,7 +319,7 @@ const iterationOverScreen = (() => {
             return baseSpacing;
         });
         const totalH = lineHeights.reduce((a, b) => a + b, 0);
-        
+
         // Resource block starts around the center, slightly offset up
         const blockTopY = cy - 85 - totalH / 2;
         let currentY = blockTopY;
@@ -330,8 +330,8 @@ const iterationOverScreen = (() => {
             currentY += lineHeights[i];
         }
 
-        // Position title based on the block top - ensure at least 70px gap
-        titleText.setY(Math.min(cy - 210, blockTopY - 75));
+        // Position title based on the block top - ensure at least 65px gap
+        titleText.setY(Math.min(cy - 200, blockTopY - 55));
 
         // ── Count-up animation for DATA number ───────────────────────
         if (sessionData > 0) {

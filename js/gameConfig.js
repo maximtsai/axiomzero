@@ -65,7 +65,7 @@ GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY = 0.5;
 
 // ─── Miniboss / Boss ──────────────────────────────────────────────────────────
 
-GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS = 0.5651; // wave percentage (0-1)
+GAME_CONSTANTS.MINIBOSS_SPAWN_PROGRESS = 0.5; // wave percentage (0-1)
 
 // ─── Upgrade Tree ──────────────────────────────────────────────────────────────
 

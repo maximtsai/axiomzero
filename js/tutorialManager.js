@@ -52,7 +52,17 @@ const tutorialManager = (() => {
         const onlyAwaken = upgradeKeys.length === 1 && upgrades.awaken === 1;
 
         if (onlyAwaken) {
-            const dc = PhaserScene.time.delayedCall(16250, () => {
+            const DelayAmt = 2500;
+            // 1. Pause spawner 4 seconds before tutorial starts
+            const dcDelay = PhaserScene.time.delayedCall(DelayAmt, () => {
+                if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
+                    messageBus.publish('addEnemySpawnDelay', 7500);
+                }
+            });
+            _activeDelayedCalls.push(dcDelay);
+
+            // 2. Show tutorial text
+            const dc = PhaserScene.time.delayedCall(DelayAmt + 14000, () => {
                 // Ensure we are still in combat phase and haven't bought anything else mid-iteration
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
                     _showCombatTutorial();

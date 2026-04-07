@@ -609,7 +609,7 @@ const pulseAttack = (() => {
         if (isCombat) {
             let cx = GAME_VARS.mouseposx;
             if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-                cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
+                cx = Math.max(GAME_CONSTANTS.halfWidth - 0.0, cx - 0.0);
             }
             view.updatePosition(delta, cx, GAME_VARS.mouseposy, model);
             view.updateCharges(model.charges, model.maxCharges, model.manualMode);
@@ -638,10 +638,12 @@ const pulseAttack = (() => {
 
     function _fire() {
         let cx = GAME_VARS.mouseposx;
+        let waveCx = cx;
         if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
             cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
         }
         const cy = GAME_VARS.mouseposy;
+
         const damageSize = (model.size / 2) + 5;
 
         // Play cursor pulse sound with unique detune
@@ -654,7 +656,7 @@ const pulseAttack = (() => {
         if (s) s.detune = detune;
 
         view.playFireAnimation();
-        view.playWaveEffect(cx, cy, model.size);
+        view.playWaveEffect(waveCx, cy, model.size);
 
         // Micro camera shake
         zoomShake(1.005);
@@ -669,7 +671,7 @@ const pulseAttack = (() => {
         }
         // AREA SATURATION logic
         else if (hits.length > 1 && model.saturationLevel > 0) {
-            actualDamage *= (1 + 0.05 * model.saturationLevel * (hits.length - 1));
+            actualDamage += (model.saturationLevel * (hits.length - 1));
         }
 
         for (let i = 0; i < hits.length; i++) {
@@ -693,9 +695,10 @@ const pulseAttack = (() => {
         // AFTERSHOCK logic
         if (model.aftershockLevel > 0) {
             PhaserScene.time.delayedCall(100, () => {
-                if (!model.active || model.paused || !tower.isAlive() || gameStateMachine.getPhase() !== GAME_CONSTANTS.PHASE_COMBAT) return;
+                const isInCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
+                if (!model.active || model.paused || !tower.isAlive() || !isInCombat) return;
 
-                view.playAftershockAnimation(cx, cy, model.size);
+                view.playAftershockAnimation(waveCx, cy, model.size);
                 view.playRecoil();
 
                 const aftershockDamage = 4 + 2 * model.aftershockLevel;

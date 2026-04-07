@@ -65,7 +65,7 @@ window.TRANSLATIONS.en = {
         manual_pulse_child_1: { name: 'CHARGE BUFFER', desc: '[color=#8FD9F8]+1[/color] max pulse charges', popup: 'CAPACITY INCREASED' },
         manual_pulse_child_1_1: { name: 'ISOLATION PROTOCOL', desc: '[color=#8FD9F8]+25%[/color] cursor damage per lvl vs single targets.', popup: 'ISOLATION PROTOCOL' },
         manual_pulse_child_1_2: { name: 'RELOAD EFFICIENCY', desc: 'Charges refill [color=#8FD9F8]25%[/color] faster', popup: 'RELOAD OPTIMIZED' },
-        wide_pulse_child_1: { name: 'AREA SATURATION', desc: '[color=#8FD9F8]+5%[/color] cursor damage per lvl per additional enemy hit.', popup: 'AREA SATURATION' },
+        wide_pulse_child_1: { name: 'AREA SATURATION', desc: '[color=#8FD9F8]+1[/color] cursor damage per additional enemy hit.', popup: 'AREA SATURATION' },
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]6/8/10[/color] damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size.', popup: 'COLOSSAL CURSOR' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#8FD9F8]2s[/color] during combat.', popup: 'SNIFFER ACTIVE' },
