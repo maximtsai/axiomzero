@@ -575,7 +575,6 @@ const resourceManager = (() => {
             const oldImgXPos = d.img.x;
             const oldImgYPos = d.img.y;
             if (d.backing) {
-                console.log("backing update");
                 d.backing.setPosition(oldImgXPos * 0.5 + d.x * 0.5, oldImgYPos * 0.5 + d.y * 0.5);
             }
             d.img.setPosition(d.x, d.y);
