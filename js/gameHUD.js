@@ -367,7 +367,9 @@ const gameHUD = (() => {
 
     // ── show / hide ──────────────────────────────────────────────────────────
     function armBomb() {
-        console.log("bomb armed");
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.armBomb) {
+            pulseAttack.armBomb();
+        }
     }
 
     function _showCombatHUD() {

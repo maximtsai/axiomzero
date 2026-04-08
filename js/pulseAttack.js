@@ -25,6 +25,11 @@ class PulseAttackModel {
         this.saturationLevel = 0;
         this.aftershockLevel = 0;
         this.persistentExploitLevel = 0;
+        this.bombArmed = false;
+        this.bombAnimating = false;
+        this.bombReadyToFire = false;
+        this.bombQueued = false;
+        this.bombFired = false;
     }
 
     resetTimer() {
@@ -36,6 +41,8 @@ class PulseAttackModel {
     }
 
     updateTimer(delta) {
+        if (this.bombArmed) return false; // No auto-attack while bomb is armed
+
         this.fireTimer += delta;
 
         // Check if within 225ms window for a new charge
@@ -81,6 +88,11 @@ class PulseAttackView {
         this.spriteRed = null;
         this.aftershockBright = null;
         this.aftershockRed = null;
+
+        this.artillerySprite = null;
+        this.artilleryBright = null;
+        this.artilleryBlack = null;
+        this.artilleryRed = null;
 
         this.shakeVelX = 0;
         this.shakeVelY = 0;
@@ -213,6 +225,41 @@ class PulseAttackView {
                 fx.setActive(false);
             }
         ).preAllocate(5);
+
+        // Artillery Bomb sprites (40px corners)
+        const artInitSize = initialSize + 20;
+
+        this.artillerySprite = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'artillery.png',
+            artInitSize, artInitSize,
+            40, 40, 40, 40
+        );
+        this.artillerySprite.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10).setScrollFactor(0).setVisible(false);
+
+        this.artilleryBright = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'artillery_bright.png',
+            artInitSize, artInitSize,
+            40, 40, 40, 40
+        );
+        this.artilleryBright.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+
+        this.artilleryBlack = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'artillery_black.png',
+            artInitSize, artInitSize,
+            40, 40, 40, 40
+        );
+        this.artilleryBlack.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9).setScrollFactor(0).setVisible(false);
+
+        this.artilleryRed = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'artillery_red.png',
+            artInitSize, artInitSize,
+            40, 40, 40, 40
+        );
+        this.artilleryRed.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
     }
 
     setSize(newSize) {
@@ -234,6 +281,13 @@ class PulseAttackView {
         this.spriteBright.setPosition(targetX, targetY);
         this.spritePointer.setPosition(targetX, targetY);
         this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
+
+        if (this.artillerySprite && model.bombArmed && !model.bombFired) {
+            this.artillerySprite.setPosition(targetX, targetY);
+            this.artilleryBright.setPosition(targetX, targetY);
+            this.artilleryBlack.setPosition(targetX, targetY);
+            this.artilleryRed.setPosition(targetX, targetY);
+        }
 
         const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.23;
         this.sprite.rotVel += rotAccel;
@@ -277,10 +331,10 @@ class PulseAttackView {
         if (!this.sprite) return;
 
         const flippedLeft = Math.random() < 0.5;
-        const goalRot = flippedLeft ? -0.3 : 0.3;
+        const goalRot = flippedLeft ? -0.29 : 0.29;
 
         // todo: replace xxx with 200 - pulse size
-        let extraScale = Math.max(0, (150 - this.sprite.width) * 0.006);
+        let extraScale = Math.max(0, (150 - this.sprite.width) * 0.005);
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
         this.spriteBright.setScale(1.35 + extraScale);
@@ -366,23 +420,29 @@ class PulseAttackView {
         }
     }
 
-    setVisibility(visible, isIdle = true, manualMode = false, charges = 0) {
+    setVisibility(visible, isIdle = true, manualMode = false, charges = 0, bombArmed = false) {
         if (!this.sprite) return;
-        this.sprite.setVisible(visible);
-        this.spriteBright.setVisible(visible);
-        this.spriteRed.setVisible(visible);
+        this.sprite.setVisible(visible && !bombArmed);
+        this.spriteBright.setVisible(visible && !bombArmed);
+        this.spriteRed.setVisible(visible && !bombArmed);
 
         const showAftershock = visible && this.aftershockLevel > 0;
         this.aftershockBright.setVisible(showAftershock);
         this.aftershockRed.setVisible(showAftershock);
-
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
             this.spriteBright.setAlpha(0);
             this.spriteRed.setAlpha(0);
         }
 
-        this.updateCharges(charges, 0, manualMode);
+        if (this.artillerySprite && !bombArmed) {
+            this.artillerySprite.setVisible(false);
+            this.artilleryBright.setVisible(false);
+            this.artilleryBlack.setVisible(false);
+            this.artilleryRed.setVisible(false);
+        }
+
+        this.updateCharges(charges, 0, manualMode && !bombArmed);
     }
 
     playReloadAnimation() {
@@ -538,6 +598,135 @@ class PulseAttackView {
             }
         });
     }
+
+    playBombArmAnimation(baseSize, onPhase1Complete, onPhase2Complete) {
+        if (!this.artillerySprite) return;
+
+        this.artillerySprite.setVisible(true);
+        this.artilleryBright.setVisible(true);
+        this.artilleryBright.setAlpha(0.6);
+
+        this.artillerySprite.setRotation(0);
+        this.artilleryBright.setRotation(0);
+
+        const initSize = baseSize + 20;
+        this.artillerySprite.setSize(initSize, initSize);
+        this.artilleryBright.setSize(initSize, initSize);
+
+        // Phase 1: +300 units, 0.25s, Back.easeOut
+        PhaserScene.tweens.add({
+            targets: [this.artillerySprite, this.artilleryBright],
+            width: initSize + 380,
+            height: initSize + 380,
+            duration: 100,
+            ease: 'Quart.easeOut',
+            easeParams: [4],
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: [this.artillerySprite, this.artilleryBright],
+                    width: initSize + 300,
+                    height: initSize + 300,
+                    duration: 140,
+                    ease: 'Back.easeOut',
+                    easeParams: [3],
+                    onComplete: () => {
+                        if (onPhase1Complete) onPhase1Complete();
+
+                        // Phase 2: +150 units, 0.2s, Back.easeOut
+                        PhaserScene.tweens.add({
+                            targets: [this.artillerySprite, this.artilleryBright],
+                            width: initSize + 540,
+                            height: initSize + 540,
+                            duration: 100,
+                            ease: 'Quart.easeOut',
+                            easeParams: [4],
+                            onComplete: () => {
+                                // Phase 2: +150 units, 0.2s, Back.easeOut
+                                PhaserScene.tweens.add({
+                                    targets: [this.artillerySprite, this.artilleryBright],
+                                    width: initSize + 450,
+                                    height: initSize + 450,
+                                    duration: 150,
+                                    ease: 'Back.easeOut',
+                                    easeParams: [3]
+                                });
+                                PhaserScene.time.delayedCall(100, onPhase2Complete);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    playBombFireAnimation(baseSize, x, y, onDetonate) {
+        if (!this.artillerySprite) return;
+
+        // Lock position for all artillery layers
+        this.artillerySprite.setPosition(x, y);
+        this.artilleryBright.setPosition(x, y);
+        this.artilleryBlack.setPosition(x, y);
+        this.artilleryRed.setPosition(x, y);
+
+        // Anticipation (0.2s)
+        this.artilleryBright.setAlpha(1);
+        PhaserScene.tweens.add({
+            targets: [this.artillerySprite, this.artilleryBright],
+            scaleX: 1.1,
+            scaleY: 1.1,
+            duration: 200,
+            ease: 'Quad.easeIn',
+            onComplete: () => {
+                // DETONATE
+                if (onDetonate) onDetonate();
+
+                const finalSize = baseSize + 450;
+
+                // Main explosion visuals
+                this.artilleryBlack.setVisible(true);
+                this.artilleryRed.setVisible(true);
+                this.artilleryBright.setAlpha(1);
+
+                this.artilleryBlack.setSize(finalSize + 20, finalSize + 20);
+                this.artilleryRed.setSize(finalSize + 60, finalSize + 60);
+
+                this.artillerySprite.setScale(1.4);
+                this.artilleryBright.setScale(1.5);
+                this.artilleryBlack.setScale(1.6);
+                this.artilleryRed.setScale(1.8);
+
+                this.artillerySprite.setRotation(Phaser.Math.FloatBetween(-0.1, 0.1));
+                this.artilleryBright.setRotation(this.artillerySprite.rotation);
+                this.artilleryBlack.setRotation(this.artillerySprite.rotation * 0.5);
+                this.artilleryRed.setRotation(this.artillerySprite.rotation * 1.5);
+
+                // Tween them back (slower, more weight)
+                PhaserScene.tweens.add({
+                    targets: [this.artillerySprite, this.artilleryBright, this.artilleryBlack, this.artilleryRed],
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 600, // Slower
+                    ease: 'Cubic.easeOut'
+                });
+
+                PhaserScene.tweens.add({
+                    targets: [this.artilleryBright, this.artilleryBlack, this.artilleryRed],
+                    alpha: 0,
+                    duration: 800,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => {
+                        this.artillerySprite.setVisible(false);
+                        this.artilleryBright.setVisible(false);
+                        this.artilleryBlack.setVisible(false);
+                        this.artilleryRed.setVisible(false);
+                    }
+                });
+
+                // Shake for impact
+                zoomShake(1.02);
+            }
+        });
+    }
 }
 
 // The Controller IIFE
@@ -578,6 +767,22 @@ const pulseAttack = (() => {
             if (typeof buttonManager !== 'undefined' && buttonManager.lastHovered) return;
 
             const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+
+            if (model.bombArmed) {
+                if (model.bombReadyToFire) {
+                    _fireBomb();
+                } else if (model.bombAnimating) {
+                    // Instruction: if first animation finished (0.25s), click queues.
+                    // model.bombAnimating is true for the FULL 0.45s.
+                    // Phase 1 completion sets a different flag?
+                    // I'll implement a 'canQueueBomb' check.
+                    if (model.canQueueBomb) {
+                        model.bombQueued = true;
+                    }
+                }
+                return;
+            }
+
             if (model.manualMode && (model.active || isTesting) && !model.paused) {
                 if (model.charges > 0) {
                     model.charges--;
@@ -587,6 +792,11 @@ const pulseAttack = (() => {
                     model.clickQueued = true;
                 }
             }
+        });
+
+        // Spacebar listener for armBomb
+        PhaserScene.input.keyboard.on('keydown-SPACE', () => {
+            armBomb();
         });
     }
 
@@ -614,22 +824,22 @@ const pulseAttack = (() => {
                 cx = Math.max(GAME_CONSTANTS.halfWidth - 0.0, cx - 0.0);
             }
             view.updatePosition(delta, cx, GAME_VARS.mouseposy, model);
-            view.updateCharges(model.charges, model.maxCharges, model.manualMode);
+            view.updateCharges(model.charges, model.maxCharges, model.manualMode && !model.bombArmed);
 
             // Handle reload animation trigger
-            if (model.active && model.manualMode && model.canQueueClick && !model.wasCanQueueClick) {
+            if (model.active && model.manualMode && model.canQueueClick && !model.wasCanQueueClick && !model.bombArmed) {
                 view.playReloadAnimation();
             }
-            if ((!model.canQueueClick && model.wasCanQueueClick) || !model.active) {
+            if ((!model.canQueueClick && model.wasCanQueueClick) || !model.active || model.bombArmed) {
                 view.stopReloadAnimation();
             }
             model.wasCanQueueClick = model.canQueueClick;
         }
 
-        if (!model.active || !tower.isAlive()) {
-            if (isCombat && !tower.isAlive()) {
-                view.setVisibility(false);
-            }
+        const isVisible = isCombat && tower.isAlive();
+        view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed);
+
+        if (!model.active || !tower.isAlive() || model.bombArmed) {
             return;
         }
 
@@ -758,5 +968,60 @@ const pulseAttack = (() => {
         model.persistentExploitLevel = level;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel };
+    function armBomb() {
+        if (!model.active || model.bombArmed) return;
+
+        model.bombArmed = true;
+        model.bombAnimating = true;
+        model.bombReadyToFire = false;
+        model.bombQueued = false;
+        model.canQueueBomb = false;
+
+        view.playBombArmAnimation(
+            model.size,
+            () => {
+                // Phase 1 (0.25s) Complete
+                model.canQueueBomb = true;
+            },
+            () => {
+                // Phase 2 (0.45s total) Complete
+                model.bombAnimating = false;
+                model.bombReadyToFire = true;
+                if (model.bombQueued) {
+                    _fireBomb();
+                }
+            }
+        );
+    }
+
+    function _fireBomb() {
+        model.bombReadyToFire = false;
+        model.bombAnimating = false;
+        model.bombQueued = false;
+        model.bombFired = true;
+
+        let cx = GAME_VARS.mouseposx;
+        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
+        }
+        const cy = GAME_VARS.mouseposy;
+
+        view.playBombFireAnimation(model.size, cx, cy, () => {
+            // This callback runs after the 0.2s anticipation
+            model.bombArmed = false;
+            model.bombFired = false;
+
+            const damageSize = (model.size + 450) / 2 + 5;
+            const damage = model.damage + 40;
+
+            const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
+            for (let i = 0; i < hits.length; i++) {
+                enemyManager.damageEnemy(hits[i], damage, 'cursor');
+            }
+
+            model.resetTimer();
+        });
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb };
 })();
