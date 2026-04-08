@@ -594,7 +594,7 @@ const upgradeTree = (() => {
 
     function _playDuoHintPulse(nodeA, nodeB) {
         // Pulse at the center of the duo box
-        const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET;
+        const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET + draggableGroup.x;
         const centerY = (nodeA.treeY + nodeB.treeY) / 2;
 
         const pulseYPos = centerY + draggableGroup.y;
