@@ -278,10 +278,10 @@ const waveManager = (() => {
                     shockwave.destroy();
                 }
             });
-            PhaserScene.time.delayedCall(2300, () => {
+            PhaserScene.time.delayedCall(1900, () => {
                 // 3. Inform enemyManager to instantly kill all non-boss enemies
                 if (typeof enemyManager !== 'undefined') {
-                    enemyManager.killAllNonBossEnemies();
+                    // enemyManager.killAllNonBossEnemies();
                 }
 
                 // 4. Trigger resource vacuum (implemented in resourceManager)

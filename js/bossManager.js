@@ -11,6 +11,7 @@ const bossManager = (() => {
     let bossSpawned = false;
     let bossAlive = false;
     let boss3ShareTimer = 1.0;    // countdown for Phalanx HP sharing
+    let boss3Shards = [];         // Track shards to avoid daily activeEnemies.filter call
 
     function init(manager) {
         _enemyManager = manager;
@@ -23,6 +24,7 @@ const bossManager = (() => {
         bossSpawned = false;
         bossAlive = false;
         boss3ShareTimer = 1.0;
+        boss3Shards = [];
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -241,6 +243,7 @@ const bossManager = (() => {
 
             _enemyManager.registerEnemy(b);
             spawnedUnits.push(b);
+            if (config.mainBoss === 'Boss3') boss3Shards.push(b);
         });
 
         if (Class.postSpawn) Class.postSpawn(spawnedUnits);
@@ -270,9 +273,17 @@ const bossManager = (() => {
             }
         } else if (wasBoss && !skipBossEffects) {
             // Support for multi-sharded bosses like Boss 3
+            if (enemy.model.type === 'boss3') {
+                const bIdx = boss3Shards.indexOf(enemy);
+                if (bIdx !== -1) {
+                    boss3Shards.splice(bIdx, 1);
+                }
+            }
+
             const remaining = _enemyManager.getActiveEnemies().filter(e => e.model.isBoss && e !== enemy && e.model.alive);
             if (remaining.length === 0) {
                 bossAlive = false;
+                boss3Shards = [];
                 messageBus.publish('bossDefeated', ex, ey);
                 debugLog('Boss defeated');
             }
@@ -292,20 +303,17 @@ const bossManager = (() => {
 
     function update(dt, activeEnemies) {
         // Boss 3 (Phalanx) HP sharing logic
-        if (bossAlive) {
-            const shards = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
-            if (shards.length > 0) {
-                boss3ShareTimer -= dt;
-                if (boss3ShareTimer <= 0) {
-                    boss3ShareTimer = 3.0;
-                    shards.forEach(p => p.model.calculateSiphon());
-                    shards.forEach(p => {
-                        const healAmount = p.model.applySiphon();
-                        if (healAmount >= 7) {
-                            _triggerHealVisuals(p, healAmount);
-                        }
-                    });
-                }
+        if (bossAlive && boss3Shards.length > 0) {
+            boss3ShareTimer -= dt;
+            if (boss3ShareTimer <= 0) {
+                boss3ShareTimer = 3.0;
+                boss3Shards.forEach(p => p.model.calculateSiphon());
+                boss3Shards.forEach(p => {
+                    const healAmount = p.model.applySiphon();
+                    if (healAmount >= 7) {
+                        _triggerHealVisuals(p, healAmount);
+                    }
+                });
             }
         }
     }

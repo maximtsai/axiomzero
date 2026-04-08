@@ -5,10 +5,14 @@
 class BossCircleModel extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
-        this.initialSpeedMult = 7.0;
-        this.rampDuration = 1.5;
+        this.initialSpeedMult = 5.5;
+        this.rampDuration = 2.2;
         this.size = 163;
         this.bossId = 'bossCircle';
+    }
+
+    getSpawnDistanceOffset() {
+        return 40;
     }
 }
 
@@ -38,12 +42,12 @@ class BossCircleView extends EnemyView {
             this.pulse.setPosition(x, y);
             this.pulse.setVisible(true);
             this.pulse.setAlpha(0);
-            this.pulse.setScale(1);
+            this.pulse.setScale(0.5);
 
             this.pulse2.setPosition(x, y);
             this.pulse2.setVisible(true);
             this.pulse2.setAlpha(0);
-            this.pulse2.setScale(1);
+            this.pulse2.setScale(0.5);
 
             this._startPulseEffect();
         }
@@ -56,7 +60,7 @@ class BossCircleView extends EnemyView {
             const triggerOne = (p, finalScale) => {
                 if (!p || !p.scene) return;
                 // Reset state
-                p.setScale(1.03);
+                p.setScale(0.5);
                 p.setAlpha(1);
 
                 // Tween scale
@@ -64,31 +68,31 @@ class BossCircleView extends EnemyView {
                     targets: p,
                     scaleX: finalScale,
                     scaleY: finalScale,
-                    duration: 1100,
+                    duration: 1500,
                     ease: 'Quart.easeOut'
                 });
 
                 PhaserScene.tweens.add({
                     targets: p,
                     alpha: 0,
-                    duration: 1100,
+                    duration: 1500,
                     ease: 'Quad.easeOut'
                 });
             };
 
             // First pulse
-            triggerOne(this.pulse, 1.85);
+            triggerOne(this.pulse, 1.65);
 
             // Second pulse 0.1s later
             PhaserScene.time.delayedCall(100, () => {
-                triggerOne(this.pulse2, 1.58);
+                triggerOne(this.pulse2, 1.4);
             });
 
             if (typeof cameraManager !== 'undefined') {
                 cameraManager.shake(120, 0.004);
             }
             if (typeof audio !== 'undefined') {
-                audio.play('drum_beat', 0.85);
+                audio.play('drum_beat', 0.95);
             }
         };
 

@@ -279,14 +279,16 @@ class PulseAttackView {
         const flippedLeft = Math.random() < 0.5;
         const goalRot = flippedLeft ? -0.3 : 0.3;
 
+        // todo: replace xxx with 200 - pulse size
+        let extraScale = Math.max(0, (150 - this.sprite.width) * 0.006);
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale(1.35);
+        this.spriteBright.setScale(1.35 + extraScale);
         this.spriteBright.setRotation(goalRot);
         this.sprite.setRotation(this.spriteBright.rotation);
 
         this.spriteRed.setAlpha(0.35);
-        this.spriteRed.setScale(1.45);
+        this.spriteRed.setScale(1.45 + extraScale);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
@@ -321,13 +323,13 @@ class PulseAttackView {
         //     }
         // });
 
-        this.sprite.setScale(1.4);
+        this.sprite.setScale(1.4 + extraScale);
 
         PhaserScene.tweens.add({
             targets: [this.sprite, this.spriteBright],
             scaleX: 1,
             scaleY: 1,
-            duration: 240,
+            duration: 250,
             ease: 'Cubic.easeOut',
         });
 
@@ -336,7 +338,7 @@ class PulseAttackView {
             scaleX: 1,
             scaleY: 1,
             rotation: 0,
-            duration: 240,
+            duration: 250,
             ease: 'Cubic.easeOut',
         });
 

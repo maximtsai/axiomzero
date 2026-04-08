@@ -110,17 +110,12 @@ const announcementManager = (() => {
 
         const _finalizeAnnouncement = () => {
             const linger = 4100;
-            PhaserScene.time.delayedCall(linger, () => {
-                if (!txt1.scene) return;
-                [txt1, txt2, line].forEach(obj => {
-                    PhaserScene.tweens.add({
-                        targets: obj,
-                        alpha: 0,
-                        duration: 800,
-                        onComplete: () => obj.destroy()
-                    });
-                });
-            });
+            const targets = [
+                { ref: txt1, x: txt1.x, y: txt1.y },
+                { ref: txt2, x: txt2.x, y: txt2.y },
+                { ref: line, x: line.x, y: line.y }
+            ];
+            _runGlitchOut(targets, linger);
         };
 
         type1();
@@ -202,105 +197,108 @@ const announcementManager = (() => {
         };
 
         const _transitionMessageDone = () => {
-            const baseX = txt.x;
-            const baseY = txt.y;
-            const lineBaseX = line.x;
-            const lineBaseY = line.y;
+            _runGlitchOut([
+                { ref: txt, x: txt.x, y: txt.y },
+                { ref: line, x: line.x, y: line.y }
+            ], msg.includes('\n') ? 3400 : 2850);
+        };
 
-            const lingerTime = msg.includes('\n') ? 3400 : 2850;
-            PhaserScene.time.delayedCall(lingerTime, () => {
-                let jitterCount = 0;
-                const jitterTotal = 8;
-                const jitterEvent = PhaserScene.time.addEvent({
-                    delay: 35,
-                    repeat: jitterTotal - 1,
-                    callback: () => {
-                        jitterCount++;
-                        const ox = (Math.random() - 0.5) * 12;
-                        const oy = (Math.random() - 0.5) * 6;
-                        txt.x = baseX + ox;
-                        txt.y = baseY + oy;
-                        line.x = lineBaseX + ox;
-                        line.y = lineBaseY + oy;
+        typeChar();
+    }
 
-                        const flickAlpha = 0.5 + Math.random() * 0.5;
-                        txt.setAlpha(flickAlpha);
-                        line.setAlpha(flickAlpha);
+    /**
+     * Internal helper to perform high-impact glitch disappearance for HUD text.
+     */
+    function _runGlitchOut(targets, lingerTime) {
+        PhaserScene.time.delayedCall(lingerTime, () => {
+            if (!targets[0].ref.scene) return;
+
+            // 1. Initial Jitter & Flicker
+            let jitterCount = 0;
+            const jitterTotal = 8;
+            const jitterEvent = PhaserScene.time.addEvent({
+                delay: 35,
+                repeat: jitterTotal - 1,
+                callback: () => {
+                    jitterCount++;
+                    const ox = (Math.random() - 0.5) * 12;
+                    const oy = (Math.random() - 0.5) * 6;
+                    const flickAlpha = 0.5 + Math.random() * 0.5;
+
+                    targets.forEach(t => {
+                        if (t.ref.scene) {
+                            t.ref.x = t.x + ox;
+                            t.ref.y = t.y + oy;
+                            t.ref.setAlpha(flickAlpha);
+                        }
+                    });
+                }
+            });
+
+            // 2. Mid Glitch horizontal stabs
+            [180, 350].forEach(delay => {
+                PhaserScene.time.delayedCall(delay, () => {
+                    const ox = (Math.random() - 0.5) * 18;
+                    targets.forEach(t => {
+                        if (t.ref.scene) {
+                            t.ref.setAlpha(0.3);
+                            t.ref.x = t.x + ox;
+                        }
+                    });
+                    PhaserScene.time.delayedCall(30, () => {
+                        targets.forEach(t => {
+                            if (t.ref.scene) {
+                                t.ref.setAlpha(0.85);
+                                t.ref.x = t.x;
+                            }
+                        });
+                    });
+                });
+            });
+
+            // 3. Final smear and destroy
+            PhaserScene.time.delayedCall(jitterTotal * 35 + 10, () => {
+                targets.forEach(t => {
+                    if (t.ref.scene) {
+                        t.ref.x = t.x;
+                        t.ref.y = t.y;
+                        t.ref.setAlpha(1);
                     }
                 });
 
-                PhaserScene.time.delayedCall(180, () => {
-                    txt.setAlpha(0.3);
-                    line.setAlpha(0.3);
-                    const ox = (Math.random() - 0.5) * 18;
-                    txt.x = baseX + ox;
-                    line.x = lineBaseX + ox;
-                    PhaserScene.time.delayedCall(30, () => {
-                        txt.setAlpha(0.85);
-                        line.setAlpha(0.85);
-                        txt.x = baseX;
-                        txt.y = baseY;
-                        line.x = lineBaseX;
-                        line.y = lineBaseY;
+                PhaserScene.time.delayedCall(400, () => {
+                    targets.forEach(t => {
+                        if (t.ref.scene) {
+                            // Smear 1
+                            if (t.ref.setOrigin) t.ref.setOrigin(0.5, 0.5);
+                            t.ref.x = t.x + 60;
+                            t.ref.setAlpha(0.65);
+                            t.ref.setScale(t.ref.scaleX * 1.4, t.ref.scaleY * 0.8);
+                        }
                     });
-                });
 
-                PhaserScene.time.delayedCall(350, () => {
-                    txt.setAlpha(0.3);
-                    line.setAlpha(0.3);
-                    const ox = (Math.random() - 0.5) * 18;
-                    txt.x = baseX + ox;
-                    line.x = lineBaseX + ox;
                     PhaserScene.time.delayedCall(30, () => {
-                        txt.setAlpha(0.85);
-                        line.setAlpha(0.85);
-                        txt.x = baseX;
-                        txt.y = baseY;
-                        line.x = lineBaseX;
-                        line.y = lineBaseY;
-                    });
-                });
+                        targets.forEach(t => {
+                            if (t.ref.scene) {
+                                // Smear 2
+                                t.ref.x = t.x - 50;
+                                t.ref.setAlpha(0.45);
+                                t.ref.setScale(t.ref.scaleX * 2.5, t.ref.scaleY * 0.3);
+                            }
+                        });
 
-                PhaserScene.time.delayedCall(jitterTotal * 35 + 10, () => {
-                    txt.x = baseX;
-                    txt.y = baseY;
-                    txt.setAlpha(1);
-                    line.x = lineBaseX;
-                    line.y = lineBaseY;
-                    line.setAlpha(1);
-
-                    PhaserScene.time.delayedCall(400, () => {
-                        txt.setOrigin(0.5, 0.5);
-                        txt.x = GAME_CONSTANTS.halfWidth + 60;
-                        txt.y = baseYPos;
-                        txt.setAlpha(0.65);
-                        txt.setScale(1.4, 0.8);
-
-                        line.x = GAME_CONSTANTS.halfWidth + 60;
-                        line.setAlpha(0.65);
-                        line.setScale(4.2, 0.4);
-
-                        PhaserScene.time.delayedCall(30, () => {
-                            txt.x = GAME_CONSTANTS.halfWidth - 50;
-                            txt.setAlpha(0.45);
-                            txt.setScale(3.2, 0.2);
-
-                            line.x = GAME_CONSTANTS.halfWidth - 50;
-                            line.setAlpha(0.45);
-                            line.setScale(10, 0.1);
-
-                            PhaserScene.time.delayedCall(35, () => {
-                                txt.destroy();
-                                line.destroy();
+                        PhaserScene.time.delayedCall(35, () => {
+                            targets.forEach(t => {
+                                if (t.ref.scene) t.ref.destroy();
                             });
                         });
                     });
                 });
             });
-        };
-
-        typeChar();
+        });
     }
+
+
 
     return { init, showAnnounceMessage, showBossAnnouncement };
 })();

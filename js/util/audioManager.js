@@ -106,13 +106,15 @@ const audio = {
         isSFXMuted = gameState.settings.sfxMuted;
         isMusicMuted = gameState.settings.musicMuted;
 
-        // Initialize Low-Pass Filter
+        // Initialize Low-Pass Filter (Disabled for testing)
+        /*
         if (PhaserScene.sound.context && !filterNode) {
             filterNode = PhaserScene.sound.context.createBiquadFilter();
             filterNode.type = 'lowpass';
             filterNode.frequency.value = 22000;
             filterNode.connect(PhaserScene.sound.context.destination);
         }
+        */
     },
     /**
      * Play a sound or music track. Auto-creates the Phaser sound if needed.
@@ -164,7 +166,8 @@ const audio = {
 
         s.pan = pan;
 
-        // Route music through the low-pass filter if active
+        // Route music through the low-pass filter if active (Disabled for testing)
+        /*
         if (s.isMusic && filterNode) {
             s.on('play', () => {
                 if (s.source) {
@@ -173,6 +176,7 @@ const audio = {
                 }
             });
         }
+        */
 
         s.play();
         return s;
@@ -368,12 +372,6 @@ const audio = {
      * @param {number} [duration=500] - Transition duration in ms.
      */
     setLowPass: function (freq, duration = 500) {
-        if (!filterNode) return;
-        PhaserScene.tweens.add({
-            targets: filterNode.frequency,
-            value: freq,
-            duration: duration,
-            ease: 'Power2'
-        });
+        // Disabled for testing
     }
 };
