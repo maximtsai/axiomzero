@@ -120,8 +120,8 @@ const tutorialManager = (() => {
         if (condition) {
             const msg = t('tutorial', 'unlock_shards');
             const x = 0;
-            const y = 600;
-            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px');
+            const y = 625;
+            _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px', 7000);
         }
     }
 
@@ -268,6 +268,7 @@ const tutorialManager = (() => {
                     if (!txt || !txt.active) return;
                     charIdx++;
                     txt.setText(msg.substring(0, charIdx));
+                    audio.play('digital_typewriter_short', 0.35); // Added sound effect
                 }
             });
         });
@@ -303,7 +304,7 @@ const tutorialManager = (() => {
             _clearTutorial();
             const msg = t('tutorial', 'duo_swap_free');
             const x = 0;
-            const y = 600;
+            const y = 625;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '38px');
         }
     }
