@@ -218,10 +218,19 @@ class Button {
     }
 
     checkCoordOver(valX, valY) {
-        if (this.isDestroyed || !this.bgSprite) return false;
+        if (this.isDestroyed || !this.bgSprite || !this.bgSprite.visible || this.bgSprite.alpha <= 0) return false;
         if (this.state === DISABLE && !this.hoverWhileDisabled) {
             return false;
         }
+
+        // Optional Hit Area Constraint (Screen Space)
+        if (this.hitArea) {
+            if (valX < this.hitArea.x || valX > this.hitArea.x + this.hitArea.w ||
+                valY < this.hitArea.y || valY > this.hitArea.y + this.hitArea.h) {
+                return false;
+            }
+        }
+
         let currImage = this.bgSprite;
         if (!currImage) return false;
 
@@ -669,6 +678,25 @@ class Button {
         this._mask = mask;
         this.bgSprite.setMask(mask);
         if (this.text) this.text.setMask(mask);
+    }
+
+    /**
+     * Set a screen-space rectangle that restricts where this button can be clicked.
+     * Useful for allowing interactions only within a specific panel/viewport.
+     * @param {number} x 
+     * @param {number} y 
+     * @param {number} w 
+     * @param {number} h 
+     */
+    setHitArea(x, y, w, h) {
+        this.hitArea = { x, y, w, h };
+        return this;
+    }
+
+    /** Remove the hit area constraint. */
+    clearHitArea() {
+        this.hitArea = null;
+        return this;
     }
 
     clearMask() {

@@ -200,7 +200,8 @@ const tutorialManager = (() => {
     function _createTutorialPopup(msg, x, y, isUpgradeTree, color = '#00f5ff', shadowColor = '#00f5ff', tutorialId = null, fontSize = '48px', stayDuration = 6600) {
         if (tutorialId) {
             gameState.tutorialsSeen[tutorialId] = true;
-            if (typeof saveGame === 'function') saveGame();
+            // Note: We no longer save immediately here to avoid redundant I/O. 
+            // Saving is handled by phase transitions in milestoneTracker.js.
         }
 
         // Apply big font scaling if enabled
@@ -271,9 +272,9 @@ const tutorialManager = (() => {
             });
         });
 
-        // If in upgrade tree, add to the draggable group so it moves with the nodes
+        // If in upgrade tree, add to the tree group (slides with panel, but doesn't pan/zoom with nodes)
         if (isUpgradeTree && typeof upgradeTree !== 'undefined') {
-            const group = upgradeTree.getDraggableGroup();
+            const group = upgradeTree.getGroup();
             if (group) {
                 group.add(bg);
                 group.add(txt);

@@ -1,7 +1,7 @@
 // node.js — Modular Node logic for the Upgrade Tree.
 // Each Node instance represents a single upgrade in the tree.
 // Handles: state (HIDDEN/GHOST/UNLOCKED/MAXED), rendering, hover info, click-to-purchase.
-
+// treeNode.js
 const NODE_STATE = {
     HIDDEN: 'HIDDEN',
     GHOST: 'GHOST',
@@ -319,61 +319,15 @@ class Node {
     }
 
     _playRevealGlow() {
-        if (!this.glowSprite) return;
-        this.glowSprite.setVisible(true).setAlpha(1);
-        this.glowSprite.play('node_glow');
-        this.glowSprite.once('animationcomplete', () => {
-            if (this.glowSprite) this.glowSprite.setVisible(false).setAlpha(0);
-        });
+        nodeAnims.playRevealGlow(this);
     }
 
     _playMaxedAnimation() {
-        if (!this.btn) return;
-
-        const baseScaleX = this.btn.scaleX;
-        const baseScaleY = this.btn.scaleY;
-        this.btn.setScale(baseScaleX * 0.9, baseScaleY * 0.9);
-
-        PhaserScene.tweens.add({
-            targets: this.btn,
-            scaleX: baseScaleX,
-            scaleY: baseScaleY,
-            duration: 250,
-            easeParams: [2.5],
-            ease: 'Back.easeOut',
-        });
+        nodeAnims.playMaxedAnimation(this);
     }
 
     _playGhostFadeIn() {
-        if (!this.btn) return;
-
-        const endAlpha = this.getGhostAlpha();
-        if (endAlpha === 0) return; // Still hidden parent prevents ghosting
-
-        const baseScaleX = this.btn.scaleX;
-        const baseScaleY = this.btn.scaleY;
-
-        // Set starting state
-        this.btn.setAlpha(endAlpha * 0.2);
-        this.btn.setScale(baseScaleX * 0.75, baseScaleY * 0.75);
-
-        // Alpha fade — 500ms
-        PhaserScene.tweens.add({
-            targets: this.btn,
-            alpha: endAlpha,
-            duration: 400,
-            ease: 'Linear'
-        });
-
-        // Scale pop — 600ms
-        PhaserScene.tweens.add({
-            targets: this.btn,
-            scaleX: baseScaleX,
-            scaleY: baseScaleY,
-            duration: 500,
-            easeParams: [2.5],
-            ease: 'Back.easeOut'
-        });
+        nodeAnims.playGhostFadeIn(this);
     }
 
     isInteractable() {
@@ -461,29 +415,7 @@ class Node {
     }
 
     _playLocalPurchaseAnimations() {
-        if (!this.btn || this.isDuoBox) return;
-
-        const currentScaleX = this.btn.scaleX;
-        const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
-        this.btn.rotation = 0.2;
-        this.btn.setScale((currentScaleX >= 0 ? 0.95 : -0.95), 0.95);
-
-        PhaserScene.tweens.add({
-            targets: this.btn,
-            rotation: -0.1,
-            scaleX: targetScaleX,
-            scaleY: 1,
-            duration: 130,
-            ease: 'Cubic.easeOut',
-            onComplete: () => {
-                PhaserScene.tweens.add({
-                    targets: this.btn,
-                    rotation: 0,
-                    duration: 120,
-                    ease: 'Back.easeOut'
-                });
-            }
-        });
+        nodeAnims.playLocalPurchaseAnimations(this);
     }
 
     _handleDuoBoxPurchase() {
@@ -569,6 +501,9 @@ class Node {
         });
         this.btn.setDepth(nodeDepth);
         this.btn.setScrollFactor(0);
+
+        // Apply hit area constraint to match the upgrade panel viewport
+        this.btn.setHitArea(0, 0, GAME_CONSTANTS.halfWidth - 10, GAME_CONSTANTS.HEIGHT);
 
 
         // Node icon
@@ -986,28 +921,7 @@ class Node {
     // ── fadeout animation ───────────────────────────────────────────────
 
     _playFadeoutAnimation(spriteRef) {
-        // Stop any existing tween
-        if (this.fadeoutTween) {
-            this.fadeoutTween.stop();
-            this.fadeoutTween = null;
-        }
-
-        if (!this.fadeoutSprite || !spriteRef) return;
-
-        // Set fadeout sprite to the old sprite and make it visible
-        this.fadeoutSprite.setTexture('buttons', spriteRef);
-        this.fadeoutSprite.setAlpha(1);
-
-        // Tween to alpha 0 over 0.5 seconds
-        this.fadeoutTween = PhaserScene.tweens.add({
-            targets: this.fadeoutSprite,
-            alpha: 0,
-            duration: 400,
-            ease: 'Linear',
-            onComplete: () => {
-                this.fadeoutTween = null;
-            }
-        });
+        nodeAnims.playFadeoutAnimation(this, spriteRef);
     }
 
 
@@ -1093,55 +1007,7 @@ class Node {
     }
 
     _playDuoPulse(scaleMult = 1.0) {
-        if (!this.btn) return;
-
-        let x = this.btn.x;
-        let y = this.btn.y;
-
-        // Find the center of the duo box
-        if (this._isDuoBackingOwner && this.duoBackingSprite) {
-            x = this.duoBackingSprite.x;
-            y = this.duoBackingSprite.y;
-        } else {
-            const sibling = upgradeTree.getNode(this.duoSiblingId);
-            if (sibling && sibling.duoBackingSprite) {
-                x = sibling.duoBackingSprite.x;
-                y = sibling.duoBackingSprite.y;
-            }
-        }
-
-        const pulseDepth = this.btn.depth + 1;
-
-        const pulse = PhaserScene.add.sprite(x, y, 'buttons', 'duo_node_pulse.png')
-            .setOrigin(0.5, 0.5)
-            .setDepth(pulseDepth)
-            .setScrollFactor(0)
-            .setAlpha(1.1)
-            .setScale(0.95);
-
-        const treeGroup = upgradeTree.getGroup();
-        const draggableGroup = upgradeTree.getDraggableGroup();
-        if (treeGroup) treeGroup.add(pulse);
-        if (draggableGroup) draggableGroup.add(pulse);
-
-        PhaserScene.tweens.add({
-            targets: pulse,
-            alpha: 0,
-            duration: 1100,
-        });
-
-        PhaserScene.tweens.add({
-            targets: pulse,
-            scaleX: 1.6 * scaleMult,
-            scaleY: 1.6 * scaleMult,
-            duration: 1100,
-            ease: 'Quart.easeOut',
-            onComplete: () => {
-                if (treeGroup) treeGroup.removeChild(pulse);
-                if (draggableGroup) draggableGroup.removeChild(pulse);
-                pulse.destroy();
-            }
-        });
+        nodeAnims.playDuoPulse(this, scaleMult);
     }
 
     /**
