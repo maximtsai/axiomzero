@@ -82,16 +82,18 @@ const nodeAnims = {
     playLocalPurchaseAnimations: (node) => {
         if (!node.btn || node.isDuoBox) return;
 
+        const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
         const currentScaleX = node.btn.scaleX;
         const targetScaleX = (currentScaleX >= 0 ? 1 : -1);
+
         node.btn.rotation = 0.2;
-        node.btn.setScale((currentScaleX >= 0 ? 0.95 : -0.95), 0.95);
+        node.btn.setScale((currentScaleX >= 0 ? 0.95 * treeScale : -0.95 * treeScale), 0.95 * treeScale);
 
         PhaserScene.tweens.add({
             targets: node.btn,
             rotation: -0.1,
-            scaleX: targetScaleX,
-            scaleY: 1,
+            scaleX: targetScaleX * treeScale,
+            scaleY: treeScale,
             duration: 130,
             ease: 'Cubic.easeOut',
             onComplete: () => {
@@ -160,12 +162,13 @@ const nodeAnims = {
 
         const pulseDepth = node.btn.depth + 1;
 
+        const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
         const pulse = PhaserScene.add.sprite(x, y, 'buttons', 'duo_node_pulse.png')
             .setOrigin(0.5, 0.5)
             .setDepth(pulseDepth)
             .setScrollFactor(0)
             .setAlpha(1.1)
-            .setScale(0.95);
+            .setScale(0.95 * treeScale);
 
         const treeGroup = upgradeTree.getGroup();
         const draggableGroup = upgradeTree.getDraggableGroup();
@@ -180,8 +183,8 @@ const nodeAnims = {
 
         PhaserScene.tweens.add({
             targets: pulse,
-            scaleX: 1.6 * scaleMult,
-            scaleY: 1.6 * scaleMult,
+            scaleX: 1.6 * scaleMult * treeScale,
+            scaleY: 1.6 * scaleMult * treeScale,
             duration: 1100,
             ease: 'Quart.easeOut',
             onComplete: () => {
