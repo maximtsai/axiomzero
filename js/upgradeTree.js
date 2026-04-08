@@ -1097,11 +1097,20 @@ const upgradeTree = (() => {
             levelDisplay.setText(t('ui', 'level') + selectedLevel);
 
             // Calculate and show DATA bonus
+            const isEndless = selectedLevel < maxLevel;
             const config = LEVEL_CONFIG[selectedLevel] || {};
             const mult = config.dataDropMultiplier || 1.0;
+
+            let bonusText = "";
+            if (isEndless) bonusText += "(ENDLESS)";
             if (mult > 1.0) {
                 const pct = Math.round((mult - 1) * 100);
-                bonusDisplay.setText(`+${pct}% DATA`);
+                if (bonusText !== "") bonusText += " ";
+                bonusText += `+${pct}% DATA`;
+            }
+
+            if (bonusText !== "") {
+                bonusDisplay.setText(bonusText);
                 bonusDisplay.setVisible(true);
 
                 // Quick bounce animation for feedback

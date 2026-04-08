@@ -68,14 +68,14 @@ class BossCircleView extends EnemyView {
                     targets: p,
                     scaleX: finalScale,
                     scaleY: finalScale,
-                    duration: 1500,
+                    duration: 1300,
                     ease: 'Quart.easeOut'
                 });
 
                 PhaserScene.tweens.add({
                     targets: p,
                     alpha: 0,
-                    duration: 1500,
+                    duration: 1300,
                     ease: 'Quad.easeOut'
                 });
             };
