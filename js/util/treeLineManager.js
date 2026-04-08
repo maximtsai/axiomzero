@@ -44,6 +44,9 @@ const treeLineManager = (() => {
         Object.assign(line, metadata);
 
         lines.push(line);
+        //if (FLAGS.DEBUG) {
+        console.log(`[TREE] Line Created: ${metadata.parentId} -> ${metadata.childId}${metadata.isDuoLine ? ' (DUO)' : ''}`);
+        //}
         if (treeGroupRef) treeGroupRef.add(line);
         if (draggableGroupRef) draggableGroupRef.add(line);
         return line;

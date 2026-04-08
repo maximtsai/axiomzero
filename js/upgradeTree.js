@@ -21,6 +21,7 @@ const upgradeTree = (() => {
     let treeGroup = null;
     let draggableGroup = null;
     let treeMask = null;
+    let treeMaskContainer = null;
     let coordText = null;
     let currentHoverLabel = " ";
 
@@ -57,15 +58,22 @@ const upgradeTree = (() => {
         treeGroup = createVirtualGroup(PhaserScene, 0, 0);
         draggableGroup = createVirtualGroup(PhaserScene, 0, 0);
 
+        // Create a dedicated container for masked elements.
+        // It stays at (0,0) so that VirtualGroup world-coordinate logic still works relative to its parent.
+        treeMaskContainer = PhaserScene.add.container(0, 0);
+        treeMaskContainer.setScrollFactor(0);
+        treeMaskContainer.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2);
+
         // Create a shared GeometryMask that clips at halfWidth
         const maskShape = PhaserScene.add.graphics();
         maskShape.fillStyle(0xffffff);
         maskShape.fillRect(0, 0, GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.HEIGHT);
         maskShape.setScrollFactor(0);
-        maskShape.setVisible(false); // The shape itself should not render
+        maskShape.setVisible(false);
         treeMask = new Phaser.Display.Masks.GeometryMask(PhaserScene, maskShape);
+        treeMaskContainer.setMask(treeMask);
 
-        // Wrap draggableGroup.add to auto-apply the mask
+        // Wrap draggableGroup.add to auto-collect masked elements
         const _originalAdd = draggableGroup.add;
         draggableGroup.add = (gameObject) => {
             _applyTreeMask(gameObject);
@@ -79,6 +87,15 @@ const upgradeTree = (() => {
         _createZoomButtons();
         _initPools();
         treeLineManager.init({ treeGroup, draggableGroup, nodes });
+
+        // Optimization: Sort by depth after initialization to ensure lines (depth+1) are behind nodes (depth+2).
+        // We delay by 0ms so that show() has a chance to run and create the lazy-loaded lines first.
+        PhaserScene.time.delayedCall(0, () => {
+            if (treeMaskContainer) {
+                treeMaskContainer.sort('depth');
+                console.log("depth sorted tree lines all (delayed) ======");
+            }
+        });
 
         if (FLAGS.DEBUG) {
             _checkNodeIntegrity();
@@ -1271,11 +1288,12 @@ const upgradeTree = (() => {
      * Handles both Button instances and standard Phaser GameObjects.
      */
     function _applyTreeMask(gameObject) {
-        if (!treeMask) return;
+        if (!treeMaskContainer) return;
+
         if (gameObject instanceof Button) {
-            gameObject.setMask(treeMask);
+            gameObject.addToContainer(treeMaskContainer);
         } else if (gameObject && typeof gameObject.setMask === 'function') {
-            gameObject.setMask(treeMask);
+            treeMaskContainer.add(gameObject);
         }
     }
 
