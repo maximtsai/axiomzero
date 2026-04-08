@@ -171,6 +171,7 @@ let _sharedAttackActive = false;
 let _sharedAttackCooldown = 0;
 let _sharedAttackBuildUp = 0;
 let _sharedAttackSfx = null;
+let _sharedAttackDamage = 7;
 
 // Cleanup static assets on phase change/game reset
 if (typeof messageBus !== 'undefined') {
@@ -183,6 +184,7 @@ if (typeof messageBus !== 'undefined') {
             _sharedAttackActive = false;
             _sharedAttackCooldown = 0;
             _sharedAttackBuildUp = 0;
+            _sharedAttackDamage = 7;
             if (_sharedAttackSfx) {
                 _sharedAttackSfx.stop();
                 _sharedAttackSfx = null;
@@ -448,7 +450,8 @@ class Boss3 extends Boss {
                     _sharedAttackSprite.setFrame('boss3_attack.png');
                     _sharedAttackSprite.setVisible(false);
                     if (typeof tower !== 'undefined' && tower.isAlive()) {
-                        tower.takeDamage(8);
+                        tower.takeDamage(_sharedAttackDamage);
+                        _sharedAttackDamage += 1;
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.015);
                         }

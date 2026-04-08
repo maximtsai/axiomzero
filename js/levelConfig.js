@@ -161,8 +161,9 @@ const LEVEL_CONFIG = {
 /**
  * Helper to get the config for the current level.
  * @param {number} progress - Current wave progress (0 to 1). If > MINIBOSS_SPAWN_PROGRESS + 0.01, lateWeights are used.
+ * @param {number} subWaveIndex - Optional index to pick a specific sub-wave composition.
  */
-function getCurrentLevelConfig(progress = 0) {
+function getCurrentLevelConfig(progress = 0, subWaveIndex = -1) {
     let level = gameState.currentLevel || 1;
     if (!LEVEL_CONFIG[level]) {
         level = getMaxConfiguredLevel();
@@ -181,8 +182,13 @@ function getCurrentLevelConfig(progress = 0) {
     // Force late state if we are in endless farming mode (level already beaten in past iteration)
     const useLateState = isLatePhase || minibossBeaten || levelBeaten;
 
-    // Swap probabilities based on miniboss progress or past victory
-    config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
+    // Swap probabilities based on sub-wave index, miniboss progress, or past victory
+    if (subWaveIndex >= 0 && config._subProbs && config._subProbs.length > 0) {
+        const sIdx = subWaveIndex % config._subProbs.length;
+        config.enemyProbabilities = config._subProbs[sIdx];
+    } else {
+        config.enemyProbabilities = (useLateState && config._probs2) ? config._probs2 : config._probs1;
+    }
 
     // Tempo logic: Use lateSpawnInterval if we are in Farming Mode OR if lateWeights are active (useLateState)
     const isLateTempo = useLateState || progress > 0.095;
@@ -214,6 +220,20 @@ function getCurrentLevelConfig(progress = 0) {
             config._probs2 = _normalize(w2);
         } else {
             config._probs2 = config._probs1;
+        }
+
+        // 3. Sub-waves (Normalize each defined sub-wave)
+        if (config.subWaves && config.subWaves.length > 0) {
+            config._subProbs = config.subWaves.map(sw => {
+                // Merge sub-wave weights over initial weights, but ONLY if initial weight > 0
+                const combined = { ...w1 };
+                for (const key in sw) {
+                    if (w1[key] > 0) {
+                        combined[key] = sw[key];
+                    }
+                }
+                return _normalize(combined);
+            });
         }
     }
 

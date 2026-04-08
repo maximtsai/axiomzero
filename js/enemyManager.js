@@ -23,6 +23,7 @@ const enemyManager = (() => {
     let roundTimeElapsed = 0; // Total time in wave, including boss/miniboss fights
     let spawnSpeedMultiplier = 1;  // 5x for first 3 seconds of wave, then 1x
     let lastScaleLevel = 0;        // tracks current difficulty tier for spawn pauses
+    let subWaveIndex = 0;          // rotates through sub-waves if defined in config
 
     // Miniboss state now managed by bossManager
     let lastWaveProgress = 0;     // current progress 0-1
@@ -175,7 +176,7 @@ const enemyManager = (() => {
     }
 
     function _spawnOne() {
-        const config = getCurrentLevelConfig(lastWaveProgress);
+        const config = getCurrentLevelConfig(lastWaveProgress, subWaveIndex);
 
         let chosenType = 'basic';
         if (config.enemyProbabilities) {
@@ -698,9 +699,14 @@ const enemyManager = (() => {
             const currentScaleLevel = Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL);
             if (currentScaleLevel > lastScaleLevel) {
                 lastScaleLevel = currentScaleLevel;
-                const config = getCurrentLevelConfig();
-                const pauseDur = (config.spawnPauseDuration !== undefined) ? config.spawnPauseDuration : 2000;
-                messageBus.publish('addEnemySpawnDelay', pauseDur);
+                subWaveIndex++;
+
+                // Only pause every other scale interval (~12s)
+                if (currentScaleLevel % 1 === 0) {
+                    const config = getCurrentLevelConfig();
+                    const pauseDur = (config.spawnPauseDuration !== undefined) ? config.spawnPauseDuration : 3000;
+                    messageBus.publish('addEnemySpawnDelay', pauseDur);
+                }
             }
             GAME_VARS.scaleFactor = Math.pow(GAME_CONSTANTS.ENEMY_SCALE_RATE, currentScaleLevel);
 
@@ -860,6 +866,7 @@ const enemyManager = (() => {
 
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
+            subWaveIndex = 0;
             _startSpawning();
         } else {
             _stopSpawning();
