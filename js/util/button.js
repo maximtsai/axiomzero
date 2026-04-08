@@ -85,21 +85,31 @@ class Button {
         this.onDropFunc = data.onDrop || null;
         this.cursorInteractive = data.cursorInteractive;
         this.destructibles = [];
-        this.imageRefs = {};
-        this.oldImageRef = null;
-        this.currImageRef = null;
+        this.bgSprite = null;
+        this.forceInvis = false;
         buttonManager.addToButtonList(this);
 
         this.depth = data.normal.depth || 0;
         this.handlePreload();
-        this.setState(NORMAL);
+
+        // Create the single backing sprite
+        let initialRef = this.normal.ref;
+        if (this.normal.atlas) {
+            this.bgSprite = this.scene.add.sprite(0, 0, this.normal.atlas, initialRef);
+        } else {
+            this.bgSprite = this.scene.add.sprite(0, 0, initialRef);
+        }
+        this.bgSprite.setDepth(this.depth);
 
         this.isDraggable = data.isDraggable || false;
         this.hoverWhileDisabled = data.hoverWhileDisabled || false;
         this._container = null;
+
+        this.setState(NORMAL);
     }
 
     setState(newState) {
+        if (this.isDestroyed || !this.bgSprite || !this.bgSprite.scene) return;
         // If transitioning to NORMAL but mouse is currently over, go to HOVER instead
         // ONLY if this button is explicitly the front-most hovered button managed by buttonManager
         if (newState === NORMAL && this.checkCoordOver(GAME_VARS.mouseposx, GAME_VARS.mouseposy)) {
@@ -129,83 +139,53 @@ class Button {
                 return;
         }
         this.state = newState;
-        if (stateData.ref) {
-            this.oldImageRef = this.currImageRef;
-            this.currImageRef = stateData.ref;
-            // hide old
-            if (this.imageRefs[this.oldImageRef]) {
-                this.imageRefs[this.oldImageRef].visible = false;
-            }
-            let newImage = this.imageRefs[stateData.ref];
-            if (!newImage) {
-                if (stateData.atlas) {
-                    newImage = this.scene.add.sprite(0, 0, stateData.atlas, stateData.ref);
-                } else {
-                    newImage = this.scene.add.sprite(0, 0, stateData.ref);
-                }
-                let oldImage = this.imageRefs[this.oldImageRef];
-                if (oldImage) {
-                    newImage.setOrigin(oldImage.originX, oldImage.originY);
-                    newImage.scrollFactorX = oldImage.scrollFactorX;
-                    newImage.scrollFactorY = oldImage.scrollFactorY;
-                    newImage.scaleX = oldImage.scaleX;
-                    newImage.scaleY = oldImage.scaleY;
-                }
-                newImage.setDepth(this.depth);
-                if (this._mask) newImage.setMask(this._mask);
-                if (this._container) this._container.add(newImage);
-                this.imageRefs[stateData.ref] = newImage;
-            }
-            if (!this.forceInvis) {
-                newImage.visible = true;
+
+        // Fallback to normal ref if state data lacks one
+        let targetRef = stateData.ref || this.normal.ref;
+        let targetAtlas = stateData.atlas || this.normal.atlas;
+
+        // Apply Texture swap with safety check
+        if (targetAtlas) {
+            if (this.scene.textures.exists(targetAtlas)) {
+                this.bgSprite.setTexture(targetAtlas, targetRef);
+            } else {
+                console.warn(`Button: Atlas not found: ${targetAtlas}`);
+                this.bgSprite.setTexture(targetRef); // try fallback to loose image
             }
         } else {
-            stateData.ref = this.normal.ref;
+            if (this.scene.textures.exists(targetRef)) {
+                this.bgSprite.setTexture(targetRef);
+            } else {
+                console.warn(`Button: Texture not found: ${targetRef}`);
+            }
         }
-        let oldImage = this.imageRefs[this.oldImageRef];
-        if (!oldImage) {
-            // handle edge case when starting out
-            oldImage = this.imageRefs[this.currImageRef];
-        }
-        if (stateData.x === undefined) {
-            this.imageRefs[stateData.ref].x = oldImage.x || 0;
-        } else {
-            this.imageRefs[stateData.ref].x = stateData.x;
+
+        // Apply Position
+        if (stateData.x !== undefined) {
+            this.bgSprite.x = stateData.x;
             if (this.text) {
-                this.text.x = this.imageRefs[stateData.ref].x;
-                if (this.text.offsetX) {
-                    this.text.x += this.text.offsetX;
-                }
+                this.text.x = this.bgSprite.x;
+                if (this.text.offsetX) this.text.x += this.text.offsetX;
             }
         }
-        if (stateData.y === undefined) {
-            this.imageRefs[stateData.ref].y = oldImage.y || 0;
-        } else {
-            this.imageRefs[stateData.ref].y = stateData.y;
+        if (stateData.y !== undefined) {
+            this.bgSprite.y = stateData.y;
             if (this.text) {
-                this.text.y = this.imageRefs[stateData.ref].y;
-                if (this.text.offsetY) {
-                    this.text.y += this.text.offsetY;
-                }
+                this.text.y = this.bgSprite.y;
+                if (this.text.offsetY) this.text.y += this.text.offsetY;
             }
         }
-        if (stateData.alpha === undefined) {
-            this.imageRefs[stateData.ref].alpha = oldImage.alpha || 1;
-        } else {
-            this.imageRefs[stateData.ref].alpha = stateData.alpha;
-            if (this.text) {
-                this.text.alpha = this.imageRefs[stateData.ref].alpha;
-            }
+
+        // Apply Visual properties dynamically only if explicitly authored in this state config
+        if (stateData.alpha !== undefined) {
+            this.bgSprite.alpha = stateData.alpha;
+            if (this.text) this.text.alpha = stateData.alpha;
         }
-        if (stateData.scaleX === undefined) {
-            this.imageRefs[stateData.ref].scaleX = oldImage.scaleX || 1;
-        } else {
-            this.imageRefs[stateData.ref].scaleX = stateData.scaleX;
+        if (stateData.scaleX !== undefined) {
+            this.bgSprite.scaleX = stateData.scaleX;
         }
-        if (stateData.scaleY === undefined) {
-            this.imageRefs[stateData.ref].scaleY = oldImage.scaleY || 1;
-        } else {
-            this.imageRefs[stateData.ref].scaleY = stateData.scaleY;
+        if (stateData.scaleY !== undefined) {
+            this.bgSprite.scaleY = stateData.scaleY;
         }
         if (stateData.origin !== undefined) {
             this.setOrigin(stateData.origin.x, stateData.origin.y);
@@ -213,37 +193,36 @@ class Button {
         if (stateData.rotation !== undefined) {
             this.setRotation(stateData.rotation);
         }
-
-        if (stateData.tint === undefined) {
-            this.imageRefs[stateData.ref].setTint(oldImage.tint) || 0xFFFFFF;
-        } else {
-            this.imageRefs[stateData.ref].setTint(stateData.tint);
+        if (stateData.tint !== undefined) {
+            this.bgSprite.setTint(stateData.tint);
         }
     }
 
     setVisible(vis = true) {
+        if (this.isDestroyed || !this.bgSprite) return;
         if (vis) {
-            // Only the current state sprite should be visible; hide all others
             this.forceInvis = false;
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].setVisible(key === this.currImageRef);
-            }
+            this.bgSprite.setVisible(true);
         } else {
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].setVisible(false);
-            }
+            this.bgSprite.setVisible(false);
             this.forceInvis = true;
         }
         if (this.text) {
             this.text.setVisible(vis);
         }
+        return this;
+    }
+
+    getDepth() {
+        return this.bgSprite ? this.bgSprite.depth : (this.normal.depth || 0);
     }
 
     checkCoordOver(valX, valY) {
+        if (this.isDestroyed || !this.bgSprite) return false;
         if (this.state === DISABLE && !this.hoverWhileDisabled) {
             return false;
         }
-        let currImage = this.imageRefs[this.currImageRef];
+        let currImage = this.bgSprite;
         if (!currImage) return false;
 
         let scrollFactorX = this.normal.scrollFactorX !== undefined ? this.normal.scrollFactorX : 1;
@@ -269,6 +248,7 @@ class Button {
     }
 
     onHover() {
+        if (this.isDestroyed) return;
         if (this.state === NORMAL) {
             this.setState(HOVER);
         }
@@ -278,6 +258,7 @@ class Button {
     }
 
     onHoverOut() {
+        if (this.isDestroyed) return;
         if (this.onHoverOutFunc) {
             this.onHoverOutFunc();
         }
@@ -287,6 +268,7 @@ class Button {
     }
 
     onMouseDown(x, y) {
+        if (this.isDestroyed) return;
         if (this.state !== DISABLE) {
             this.setState(PRESS);
             if (this.onMouseDownFunc) {
@@ -326,6 +308,7 @@ class Button {
     }
 
     onMouseUp(x, y) {
+        if (this.isDestroyed) return;
         if (this.state === PRESS) {
             this.setState(HOVER);
             if (this.onMouseUpFunc) {
@@ -335,6 +318,7 @@ class Button {
     }
 
     onDrop(x, y) {
+        if (this.isDestroyed) return;
         this.isDragged = false;
         buttonManager.setDraggedObj();
         if (this.onDropFunc) {
@@ -343,23 +327,25 @@ class Button {
     }
 
     setDepth(depth = 0) {
-        this.depth = depth;
+        if (this.isDestroyed || !this.bgSprite) return;
+        this.normal.depth = depth;
+        this.hover.depth = depth;
+        this.press.depth = depth;
+        this.disable.depth = depth;
         if (this.text) {
             this.text.setDepth(depth + 1);
         }
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].setDepth(depth);
-        }
+        this.bgSprite.setDepth(depth);
+        return this;
     }
 
     setRotation(rot) {
+        if (this.isDestroyed || !this.bgSprite) return;
         this.normal.rotation = rot;
         this.hover.rotation = rot;
         this.press.rotation = rot;
         this.disable.rotation = rot;
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].setRotation(rot);
-        }
+        this.bgSprite.setRotation(rot);
         if (this.text) {
             this.text.setRotation(rot);
         }
@@ -374,19 +360,19 @@ class Button {
     }
 
     getScaleX() {
-        return this.imageRefs[this.currImageRef].scaleX;
+        return this.bgSprite.scaleX;
     }
 
     getScaleY() {
-        return this.imageRefs[this.currImageRef].scaleY;
+        return this.bgSprite.scaleY;
     }
 
     getXPos() {
-        return this.normal.x;
+        return this.bgSprite ? this.bgSprite.x : (this.normal.x || 0);
     }
 
     getYPos() {
-        return this.normal.y;
+        return this.bgSprite ? this.bgSprite.y : (this.normal.y || 0);
     }
 
     get x() {
@@ -413,6 +399,22 @@ class Button {
         this.setRotation(value);
     }
 
+    get alpha() {
+        return this.getAlpha();
+    }
+
+    set alpha(value) {
+        this.setAlpha(value);
+    }
+
+    get depth() {
+        return this.getDepth();
+    }
+
+    set depth(value) {
+        this.setDepth(value);
+    }
+
     get scaleX() {
         return this.getScaleX();
     }
@@ -434,12 +436,18 @@ class Button {
         return this;
     }
 
+    getSprite() {
+        return this.bgSprite;
+    }
+
     getWidth() {
-        return this.imageRefs[this.currImageRef].width * this.imageRefs[this.currImageRef].scaleX;
+        if (!this.bgSprite) return 0;
+        return this.bgSprite.width * this.bgSprite.scaleX;
     }
 
     getHeight() {
-        return this.imageRefs[this.currImageRef].height * this.imageRefs[this.currImageRef].scaleY;
+        if (!this.bgSprite) return 0;
+        return this.bgSprite.height * this.bgSprite.scaleY;
     }
 
     getState() {
@@ -515,14 +523,13 @@ class Button {
     }
 
     setPos(x, y) {
+        if (this.isDestroyed || !this.bgSprite) return;
         if (x !== undefined) {
             this.normal.x = x;
             this.hover.x = x;
             this.press.x = x;
             this.disable.x = x;
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].x = x;
-            }
+            this.bgSprite.x = x;
             if (this.text) {
                 this.text.x = x;
                 if (this.text.offsetX) {
@@ -535,9 +542,7 @@ class Button {
             this.hover.y = y;
             this.press.y = y;
             this.disable.y = y;
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].y = y;
-            }
+            this.bgSprite.y = y;
             if (this.text) {
                 this.text.y = y;
                 if (this.text.offsetY) {
@@ -554,9 +559,7 @@ class Button {
             this.hover.scrollFactorX = x;
             this.press.scrollFactorX = x;
             this.disable.scrollFactorX = x;
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].scrollFactorX = x;
-            }
+            this.bgSprite.scrollFactorX = x;
             if (this.text) {
                 this.text.scrollFactorX = x;
             }
@@ -566,9 +569,7 @@ class Button {
             this.hover.scrollFactorY = y;
             this.press.scrollFactorY = y;
             this.disable.scrollFactorY = y;
-            for (let key in this.imageRefs) {
-                this.imageRefs[key].scrollFactorY = y;
-            }
+            this.bgSprite.scrollFactorY = y;
             if (this.text) {
                 this.text.scrollFactorY = y;
             }
@@ -576,15 +577,20 @@ class Button {
     }
 
     setAlpha(alpha = 1) {
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].alpha = alpha;
-        }
+        if (this.isDestroyed || !this.bgSprite) return;
+        this.bgSprite.alpha = alpha;
         if (this.text) {
             this.text.setAlpha(alpha);
         }
+        return this;
+    }
+
+    getAlpha() {
+        return this.bgSprite ? this.bgSprite.alpha : 1;
     }
 
     setScale(scaleX, scaleY) {
+        if (this.isDestroyed || !this.bgSprite) return;
         if (scaleY === undefined) {
             scaleY = scaleX;
         }
@@ -597,16 +603,21 @@ class Button {
         this.disable.scaleX = scaleX;
         this.disable.scaleY = scaleY;
 
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].scaleX = scaleX;
-            this.imageRefs[key].scaleY = scaleY;
-        }
+        this.bgSprite.setScale(scaleX, scaleY);
+        return this;
+    }
+
+    getScaleX() {
+        return this.bgSprite ? this.bgSprite.scaleX : 1;
+    }
+
+    getScaleY() {
+        return this.bgSprite ? this.bgSprite.scaleY : 1;
     }
 
     setOrigin(origX, origY) {
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].setOrigin(origX, origY);
-        }
+        if (this.isDestroyed || !this.bgSprite) return this;
+        this.bgSprite.setOrigin(origX, origY);
         return this;
     }
 
@@ -630,21 +641,25 @@ class Button {
     addToContainer(container) {
         if (!container) return;
         this._container = container;
-        for (let key in this.imageRefs) {
-            this._container.add(this.imageRefs[key]);
-        }
+        this._container.add(this.bgSprite);
         if (this.text) {
             this._container.add(this.text);
+        }
+        // Native Container support for sorting; VirtualGroups do not have .sort()
+        if (this._container.sort) {
+            this._container.sort();
         }
     }
 
     removeFromContainer() {
         if (this._container) {
-            for (let key in this.imageRefs) {
-                this._container.remove(this.imageRefs[key]);
-            }
-            if (this.text) {
-                this._container.remove(this.text);
+            // Polymorphic support for native Containers (.remove) and VirtualGroups (.removeChild)
+            if (this._container.remove) {
+                this._container.remove(this.bgSprite);
+                if (this.text) this._container.remove(this.text);
+            } else if (this._container.removeChild) {
+                this._container.removeChild(this.bgSprite);
+                if (this.text) this._container.removeChild(this.text);
             }
         }
         this._container = null;
@@ -652,17 +667,13 @@ class Button {
 
     setMask(mask) {
         this._mask = mask;
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].setMask(mask);
-        }
+        this.bgSprite.setMask(mask);
         if (this.text) this.text.setMask(mask);
     }
 
     clearMask() {
         this._mask = null;
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].clearMask();
-        }
+        this.bgSprite.clearMask();
         if (this.text) this.text.clearMask();
     }
 
@@ -675,8 +686,8 @@ class Button {
     setTextOffset(x, y) {
         this.text.offsetX = x;
         this.text.offsetY = y;
-        this.text.x = this.imageRefs[this.currImageRef].x + this.text.offsetX;
-        this.text.y = this.imageRefs[this.currImageRef].y + this.text.offsetY;
+        this.text.x = this.bgSprite.x + this.text.offsetX;
+        this.text.y = this.bgSprite.y + this.text.offsetY;
     }
 
     setStroke(color, width) {
@@ -690,8 +701,11 @@ class Button {
     }
 
     setText(text) {
+        if (this.isDestroyed) return null;
         if (this.text) {
             this.text.setText(text);
+        } else {
+            return null;
         }
         if (gameOptions.language === 'ru') {
             this.text.setScale(0.77, 0.84);
@@ -702,8 +716,9 @@ class Button {
     }
 
     tweenToPos(x, y, duration, ease, onUpdate) {
+        if (this.isDestroyed || !this.bgSprite || !this.scene || !this.scene.tweens) return;
         let tweenObj = {
-            targets: this.imageRefs[this.currImageRef],
+            targets: this.bgSprite,
             ease: ease,
             duration: duration,
             onUpdate: onUpdate,
@@ -721,8 +736,9 @@ class Button {
     }
 
     tweenToScale(x, y, duration, ease, onUpdate, onComplete) {
+        if (this.isDestroyed || !this.bgSprite || !this.scene || !this.scene.tweens) return;
         let tweenObj = {
-            targets: this.imageRefs[this.currImageRef],
+            targets: this.bgSprite,
             ease: ease,
             easeParams: [2.5],
             duration: duration,
@@ -744,8 +760,9 @@ class Button {
     }
 
     tweenToAlpha(alpha, duration, ease, onComplete) {
+        if (this.isDestroyed || !this.bgSprite || !this.scene) return;
         let tweenObj = {
-            targets: this.imageRefs[this.currImageRef],
+            targets: this.bgSprite,
             ease: ease,
             duration: duration,
             alpha: alpha,
@@ -804,8 +821,8 @@ class Button {
             this.text.destroy();
         }
 
-        for (let key in this.imageRefs) {
-            this.imageRefs[key].destroy();
+        if (this.bgSprite) {
+            this.bgSprite.destroy();
         }
     }
 }

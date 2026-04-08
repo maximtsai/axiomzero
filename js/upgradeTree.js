@@ -445,7 +445,7 @@ const upgradeTree = (() => {
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
         // Virtual group handles tracking positions relative to master
-        treeGroup.add(deployBtn.getContainer ? deployBtn.getContainer() : deployBtn); // Note: Button doesn't expose container generally, maybe add multiple
+        treeGroup.add(deployBtn);
 
         // Cursor Coordinate display (Requirement §N.2)
         coordText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 26, GAME_CONSTANTS.HEIGHT - 24, 'TEST', {
@@ -499,7 +499,7 @@ const upgradeTree = (() => {
         coinMineBtn.setVisible(false);
         coinMineBtn.setState(DISABLE);
 
-        treeGroup.add(coinMineBtn.getContainer ? coinMineBtn.getContainer() : coinMineBtn);
+        treeGroup.add(coinMineBtn);
     }
 
     function _initPools() {

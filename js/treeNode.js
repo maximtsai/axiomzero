@@ -385,9 +385,7 @@ class Node {
     }
 
     getAlpha() {
-        if (!this.btn || !this.btn.currImageRef) return 0;
-        const img = this.btn.imageRefs[this.btn.currImageRef];
-        return img ? img.alpha : 0;
+        return this.btn ? this.btn.alpha : 0;
     }
 
     // ── purchase ─────────────────────────────────────────────────────────
@@ -591,7 +589,7 @@ class Node {
         const treeGroup = upgradeTree.getGroup();
         const draggableGroup = upgradeTree.getDraggableGroup();
         if (treeGroup) {
-            const btnObj = this.btn.getContainer ? this.btn.getContainer() : this.btn;
+            const btnObj = this.btn;
             treeGroup.add(btnObj);
             if (this.iconSprite) treeGroup.add(this.iconSprite);
             treeGroup.add(this.fadeoutSprite);
@@ -660,6 +658,10 @@ class Node {
 
     _onClick() {
         if (this.state !== NODE_STATE.UNLOCKED) return;
+
+        if (FLAGS.DEBUG) {
+            console.log(`[NODE] Clicked: ${this.id} (${this.name})`);
+        }
 
         // 1. Duo-box swap logic
         if (this._handleDuoSwap()) return;
@@ -1140,6 +1142,27 @@ class Node {
                 pulse.destroy();
             }
         });
+    }
+
+    /**
+     * Culls the node if it's far outside the current viewport to save draw calls.
+     */
+    updateVisibility() {
+        if (!this.btn || this.state === NODE_STATE.HIDDEN) return;
+
+        const group = upgradeTree.getDraggableGroup();
+        const screenX = this.btn.x;
+        const screenY = this.btn.y;
+
+        // Viewport margin (relaxed to prevent popping)
+        const margin = 150;
+        const isVisible = (screenX > -margin && screenX < GAME_CONSTANTS.halfWidth + margin &&
+            screenY > -margin && screenY < GAME_CONSTANTS.HEIGHT + margin);
+
+        this.btn.setVisible(isVisible);
+        if (this.iconSprite) {
+            this.iconSprite.setVisible(isVisible && this.state !== NODE_STATE.GHOST);
+        }
     }
 }
 
