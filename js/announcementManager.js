@@ -2,7 +2,7 @@
 // Handles centered transition messages (Boss/Regular) with typewriter and glitch effects.
 
 const announcementManager = (() => {
-    
+
     function init() {
         messageBus.subscribe('AnnounceText', showAnnounceMessage);
         messageBus.subscribe('BossAnnounceText', ({ msg1, msg2 }) => showBossAnnouncement(msg1, msg2));
@@ -95,13 +95,13 @@ const announcementManager = (() => {
                 return;
             }
             txt2.text += msg2[idx2++];
-            PhaserScene.time.delayedCall(65, type2);
+            PhaserScene.time.delayedCall(25, type2);
         };
 
         const type1 = () => {
             if (!txt1.scene) return;
             if (idx1 >= msg1.length) {
-                PhaserScene.time.delayedCall(150, type2);
+                PhaserScene.time.delayedCall(475, type2);
                 return;
             }
             txt1.text += msg1[idx1++];

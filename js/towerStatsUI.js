@@ -42,7 +42,7 @@ const towerStatsUI = (() => {
         });
 
         // Set dimensions and depth
-        const spr = _statsBtn.imageRefs['white_pixel'];
+        const spr = _statsBtn.bgSprite;
         if (spr) spr.setDisplaySize(size, size);
 
         _statsBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 5);

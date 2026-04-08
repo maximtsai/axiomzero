@@ -332,6 +332,7 @@ const resourceManager = (() => {
                 fontFamily: 'JetBrainsMono_Bold',
                 fontSize: 40,
                 color: '#ff5555',
+                color2: '#ffaa00',
                 depth: GAME_CONSTANTS.DEPTH_UI + 100,
                 duration: 1700,
             });

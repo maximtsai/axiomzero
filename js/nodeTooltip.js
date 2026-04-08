@@ -81,11 +81,8 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([costBg, costT]);
 
-        // Add to tree groups if available
-        const treeGroup = upgradeTree.getGroup();
-        const draggableGroup = upgradeTree.getDraggableGroup();
-        if (treeGroup) treeGroup.add(container);
-        if (draggableGroup) draggableGroup.add(container);
+        // Tooltip is a global UI element; it should NOT be added to tree groups
+        // to avoid being clipped by the tree mask.
     }
 
     function _clearTweens() {
