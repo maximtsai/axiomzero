@@ -397,11 +397,14 @@ const upgradeTree = (() => {
     }
 
     function _refreshAllNodes() {
+        // Optimization: refreshState() is recursive. We only need to trigger it
+        // from the root nodes to refresh the entire tree logic correctly.
         for (const id in nodes) {
             const n = nodes[id];
-            n.refreshState();
-            // Always set logical node visible; internal _updateVisual handles hiding button/label if HIDDEN.
-            // This prevents HIDDEN inner Duo nodes from hiding the shared backing sprite.
+            if (n.parents.length === 0) {
+                n.refreshState();
+            }
+            // Ensure logical node is enabled; internal _updateVisual handles hiding button/label if HIDDEN.
             n.setVisible(true);
         }
     }
