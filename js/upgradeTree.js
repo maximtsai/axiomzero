@@ -617,15 +617,17 @@ const upgradeTree = (() => {
 
     function _playDuoHintPulse(nodeA, nodeB) {
         // Pulse at the center of the duo box
-        const centerX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET + draggableGroup.x;
-        const centerY = (nodeA.treeY + nodeB.treeY) / 2;
+        const scale = draggableGroup.getScale() || 1;
+        const localX = (nodeA.treeX + nodeB.treeX) / 2 + TREE_X_OFFSET;
+        const localY = (nodeA.treeY + nodeB.treeY) / 2;
 
-        const pulseYPos = centerY + draggableGroup.y;
+        const centerX = draggableGroup.x + localX * scale;
+        const centerY = draggableGroup.y + localY * scale;
 
-        const pulse = PhaserScene.add.image(centerX, pulseYPos, 'buttons', 'duo_node_pulse.png');
+        const pulse = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_pulse.png');
         pulse.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
         pulse.setScrollFactor(0);
-        pulse.setScale(2.1);
+        pulse.setScale(2.1 * scale);
         pulse.setAlpha(0);
 
         treeGroup.add(pulse);
@@ -633,16 +635,16 @@ const upgradeTree = (() => {
 
         PhaserScene.tweens.add({
             targets: pulse,
-            scaleX: 1.01,
-            scaleY: 1,
+            scaleX: 1.01 * scale,
+            scaleY: 1 * scale,
             alpha: 1,
             duration: 2000,
             ease: 'Cubic.easeIn',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: pulse,
-                    scaleX: 1.8,
-                    scaleY: 1.8,
+                    scaleX: 1.8 * scale,
+                    scaleY: 1.8 * scale,
                     duration: 1000,
                     ease: 'Cubic.easeOut',
                     onComplete: () => {
