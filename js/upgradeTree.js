@@ -20,6 +20,7 @@ const upgradeTree = (() => {
 
     let treeGroup = null;
     let draggableGroup = null;
+    let treeMask = null;
     let coordText = null;
     let currentHoverLabel = " ";
 
@@ -55,6 +56,21 @@ const upgradeTree = (() => {
     function init() {
         treeGroup = createVirtualGroup(PhaserScene, 0, 0);
         draggableGroup = createVirtualGroup(PhaserScene, 0, 0);
+
+        // Create a shared GeometryMask that clips at halfWidth
+        const maskShape = PhaserScene.add.graphics();
+        maskShape.fillStyle(0xffffff);
+        maskShape.fillRect(0, 0, GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.HEIGHT);
+        maskShape.setScrollFactor(0);
+        maskShape.setVisible(false); // The shape itself should not render
+        treeMask = new Phaser.Display.Masks.GeometryMask(PhaserScene, maskShape);
+
+        // Wrap draggableGroup.add to auto-apply the mask
+        const _originalAdd = draggableGroup.add;
+        draggableGroup.add = (gameObject) => {
+            _applyTreeMask(gameObject);
+            return _originalAdd(gameObject);
+        };
 
         _createPanel();
         _createNodes();
@@ -1240,5 +1256,20 @@ const upgradeTree = (() => {
         currentHoverLabel = label || " ";
     }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, setHoverLabel, preTransitionHide, revealCoordText };
+    /**
+     * Apply the tree clipping mask to a game object.
+     * Handles both Button instances and standard Phaser GameObjects.
+     */
+    function _applyTreeMask(gameObject) {
+        if (!treeMask) return;
+        if (gameObject instanceof Button) {
+            gameObject.setMask(treeMask);
+        } else if (gameObject && typeof gameObject.setMask === 'function') {
+            gameObject.setMask(treeMask);
+        }
+    }
+
+    function getTreeMask() { return treeMask; }
+
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, setHoverLabel, preTransitionHide, revealCoordText };
 })();

@@ -96,6 +96,7 @@ class Button {
 
         this.isDraggable = data.isDraggable || false;
         this.hoverWhileDisabled = data.hoverWhileDisabled || false;
+        this._container = null;
     }
 
     setState(newState) {
@@ -151,6 +152,8 @@ class Button {
                     newImage.scaleY = oldImage.scaleY;
                 }
                 newImage.setDepth(this.depth);
+                if (this._mask) newImage.setMask(this._mask);
+                if (this._container) this._container.add(newImage);
                 this.imageRefs[stateData.ref] = newImage;
             }
             if (!this.forceInvis) {
@@ -618,8 +621,49 @@ class Button {
     addText(text, font) {
         let depth = this.normal.depth ? this.normal.depth + 1 : 1;
         this.text = this.scene.add.text(this.normal.x, this.normal.y, text, font).setAlpha(this.normal.alpha).setOrigin(0.5, 0.5).setDepth(depth);
+        if (this._mask) this.text.setMask(this._mask);
+        if (this._container) this._container.add(this.text);
         this._applyRussianTextScale();
         return this.text;
+    }
+
+    addToContainer(container) {
+        if (!container) return;
+        this._container = container;
+        for (let key in this.imageRefs) {
+            this._container.add(this.imageRefs[key]);
+        }
+        if (this.text) {
+            this._container.add(this.text);
+        }
+    }
+
+    removeFromContainer() {
+        if (this._container) {
+            for (let key in this.imageRefs) {
+                this._container.remove(this.imageRefs[key]);
+            }
+            if (this.text) {
+                this._container.remove(this.text);
+            }
+        }
+        this._container = null;
+    }
+
+    setMask(mask) {
+        this._mask = mask;
+        for (let key in this.imageRefs) {
+            this.imageRefs[key].setMask(mask);
+        }
+        if (this.text) this.text.setMask(mask);
+    }
+
+    clearMask() {
+        this._mask = null;
+        for (let key in this.imageRefs) {
+            this.imageRefs[key].clearMask();
+        }
+        if (this.text) this.text.clearMask();
     }
 
     setTextColor(color) {
