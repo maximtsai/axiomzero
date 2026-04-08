@@ -1013,10 +1013,20 @@ const upgradeTree = (() => {
         const maxLevel = Math.min((gameState.levelsDefeated || 0) + 1, getMaxConfiguredLevel());
         selectedLevel = maxLevel;
 
-        // Black back screen
-        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'black_pixel');
-        levelSelectOverlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        levelSelectOverlay.setAlpha(0.45).setDepth(depth).setScrollFactor(0).setInteractive();
+        // Black back screen — Click blocker
+        levelSelectOverlay = new Button({
+            normal: {
+                ref: 'black_pixel',
+                x: cx,
+                y: cy,
+                alpha: 0.55,
+            },
+            onMouseUp: () => { /* No-op click blocker */ }
+        });
+        levelSelectOverlay.setScale(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        levelSelectOverlay.setScrollFactor(0);
+        levelSelectOverlay.setDepth(depth);
+
 
         levelSelectContainer = PhaserScene.add.container(cx, cy).setDepth(depth + 1);
         levelSelectContainer.setScrollFactor(0);
