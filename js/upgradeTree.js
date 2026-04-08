@@ -40,6 +40,9 @@ const upgradeTree = (() => {
     let visible = false;
     let hasShownThisSession = false;
     let hintPulseTimer = null;
+    let lastCoordX = -1;
+    let lastCoordY = -1;
+    let lastHoverLabel = "";
 
     // Level Selection Popup
     let levelSelectOverlay = null;
@@ -980,11 +983,18 @@ const upgradeTree = (() => {
     function _update(delta) {
         if (!visible) return;
 
-        // Coordinate Update (Every frame while visible)
+        // Coordinate Update (Requirement §N.2)
+        // Optimization: Only update text if mouse moved or label changed to save texture re-generation
         if (coordText && coordText.visible) {
             const mx = Math.floor(GAME_VARS.mouseposx);
             const my = Math.floor(GAME_CONSTANTS.HEIGHT - GAME_VARS.mouseposy);
-            coordText.setText(`${currentHoverLabel}\nX: ${mx}\nY: ${my}`);
+
+            if (mx !== lastCoordX || my !== lastCoordY || currentHoverLabel !== lastHoverLabel) {
+                coordText.setText(`${currentHoverLabel || " "}\nX: ${mx}\nY: ${my}`);
+                lastCoordX = mx;
+                lastCoordY = my;
+                lastHoverLabel = currentHoverLabel;
+            }
         }
     }
 
