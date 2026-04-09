@@ -111,7 +111,7 @@ const upgradeTree = (() => {
         messageBus.subscribe('node_purchase_feedback', _onNodePurchaseFeedback);
 
         updateManager.addFunction(_update);
-        PhaserScene.events.on('postupdate', _updateBackgroundCrop);
+
 
         // Zoom Input Logic (Scroll Wheel)
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
@@ -705,7 +705,7 @@ const upgradeTree = (() => {
         panelBg.setAlpha(0.2);
         PhaserScene.tweens.add({
             targets: panelBg,
-            alpha: 0.9,
+            alpha: 1.0,
             duration: 2500,
             ease: 'Back.easeOut'
         });
@@ -1216,45 +1216,7 @@ const upgradeTree = (() => {
 
     function isVisible() { return visible; }
 
-    function _updateBackgroundCrop() {
-        if (!panelBg || !visible) return;
 
-        const groupX = treeGroup ? treeGroup.x : 0;
-        const groupY = treeGroup ? treeGroup.y : 0;
-
-        const minVisX = groupX;
-        const maxVisX = groupX + GAME_CONSTANTS.halfWidth;
-
-        const texW = 1143;
-        const texH = 1590;
-
-        const scale = panelBg.scaleX || 1;
-
-        // Bounds of the sprite (taking scale into account)
-        const spriteLeft = panelBg.x - (texW * scale) / 2;
-        const spriteRight = panelBg.x + (texW * scale) / 2;
-        const spriteTop = panelBg.y - (texH * scale) / 2;
-        const spriteBottom = panelBg.y + (texH * scale) / 2;
-
-        // Calculate visible portion in Screen Space
-        const cropLeft = Math.max(spriteLeft, minVisX);
-        const cropRight = Math.min(spriteRight, maxVisX);
-        const cropTop = spriteTop;
-        const cropBottom = spriteBottom;
-
-        const cropW = cropRight - cropLeft;
-        const cropH = cropBottom - cropTop;
-
-        if (cropW <= 0 || cropH <= 0) {
-            panelBg.setCrop(0, 0, 0.1, 0.1);
-        } else {
-            // Convert to Texture Space for Phaser setCrop
-            const cropX = (cropLeft - spriteLeft) / scale;
-            const cropY = (cropTop - spriteTop) / scale;
-            panelBg.setCrop(cropX, cropY, cropW / scale, cropH / scale);
-        }
-
-    }
 
     function _showDeployButton() {
         if (deployBtn) {

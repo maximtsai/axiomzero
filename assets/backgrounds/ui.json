@@ -4,7 +4,7 @@
 			"image": "ui-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1964,
+				"w": 1414,
 				"h": 1592
 			},
 			"scale": 1,
@@ -14,70 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 1143,
+						"w": 1412,
 						"h": 1590
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 1143,
+						"w": 1412,
 						"h": 1590
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 1143,
+						"w": 1412,
 						"h": 1590
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "upgrade_outline.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 830,
-						"h": 902
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 817,
-						"h": 902
-					},
-					"frame": {
-						"x": 1146,
-						"y": 1,
-						"w": 817,
-						"h": 902
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "scan_line_fade.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 2,
-						"h": 350
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 2,
-						"w": 2,
-						"h": 281
-					},
-					"frame": {
-						"x": 1146,
-						"y": 905,
-						"w": 2,
-						"h": 281
 					},
 					"anchor": {
 						"x": 0.5,
@@ -91,7 +41,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 1681,
-				"h": 962
+				"h": 1866
 			},
 			"scale": 1,
 			"frames": [
@@ -119,6 +69,56 @@
 						"x": 0.5,
 						"y": 0.5
 					}
+				},
+				{
+					"filename": "upgrade_outline.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 830,
+						"h": 902
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 817,
+						"h": 902
+					},
+					"frame": {
+						"x": 1,
+						"y": 963,
+						"w": 817,
+						"h": 902
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "scan_line_fade.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 2,
+						"h": 350
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 2,
+						"h": 281
+					},
+					"frame": {
+						"x": 820,
+						"y": 963,
+						"w": 2,
+						"h": 281
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
 				}
 			]
 		}
@@ -126,6 +126,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:aca2f74b60fd6dc21ad11a93d3e5ebf0:cae396af578c149067eb7fbda912358c:440d22268fb50c3f20563a1a226c8fda$"
+		"smartupdate": "$TexturePacker:SmartUpdate:4559ed35258d6c4600b929c94c7c9001:cf72137007373cb71467c4434a6567c3:440d22268fb50c3f20563a1a226c8fda$"
 	}
 }
