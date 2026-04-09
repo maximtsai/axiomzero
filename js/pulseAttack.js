@@ -842,10 +842,7 @@ const pulseAttack = (() => {
                         model.bombQueued = true;
                     }
                 }
-                return;
-            }
-
-            if (model.manualMode && (model.active || isTesting) && !model.paused) {
+            } else if (model.manualMode && (model.active || isTesting) && !model.paused && !model.bombFired) {
                 if (model.charges > 0) {
                     model.charges--;
                     model.clickQueued = false; // Cancel any queue if we clicked naturally
