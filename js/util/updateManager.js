@@ -15,9 +15,12 @@ class UpdateManager {
         if (GAME_VARS.timeScale < 0.01) {
             return;
         }
+
+        const scaledDelta = delta * GAME_VARS.timeScale;
+
         for (let i = 0; i < this.listOfFunctions.length; i++) {
             try {
-                this.listOfFunctions[i](delta);
+                this.listOfFunctions[i](scaledDelta);
             } catch (e) {
                 console.error('Error in UpdateManager function:', e);
             }
