@@ -90,7 +90,7 @@ const upgradeDispatcher = (() => {
         laserAttack.setLevels({
             duration: getLevel('laser_duration'),
             aperture: getLevel('laser_aperture'),
-            incendiary: getLevel('laser_incendiary'),
+            disintegration: getLevel('laser_disintegration'),
             twin: getLevel('laser_twin_beams')
         });
     }

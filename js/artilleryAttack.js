@@ -6,7 +6,7 @@ class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
         this.BASE_DAMAGE = 30;
-        this.BASE_SIZE = 315; // px — damage area side length (square)
+        this.BASE_SIZE = 340; // px — damage area side length (square)
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false; // true after artillery node purchased
@@ -54,7 +54,7 @@ class ArtilleryAttackView {
     init() {
         // Pre-allocate 6 strikes (sufficient for Triple Volley + overlaps)
         for (let i = 0; i < 6; i++) {
-            const obj = this._createStrikeObject(315);
+            const obj = this._createStrikeObject(340);
             this._strikePool.push(obj);
         }
     }

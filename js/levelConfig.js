@@ -43,7 +43,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0,
             logic_stray: 0,
-            cache: 0.008,
+            cache: 0,
             protector: 0
         },
         lateWeights: {
@@ -73,7 +73,7 @@ const LEVEL_CONFIG = {
             swarmer: 0.13,
             sniper: 0,
             logic_stray: 0,
-            cache: 0.08,
+            cache: 0.008,
             protector: 0
         },
         lateWeights: {
@@ -104,7 +104,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0.1,
             logic_stray: 0,
-            cache: 0.12,
+            cache: 0.02,
             protector: 0.05
         },
         lateWeights: {
@@ -135,7 +135,7 @@ const LEVEL_CONFIG = {
             sniper: 0,
             heavy: 0.1,
             logic_stray: 0,
-            cache: 0.95,
+            cache: 0.05,
             protector: 0.05
         },
         lateWeights: {

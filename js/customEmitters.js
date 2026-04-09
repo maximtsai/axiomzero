@@ -81,9 +81,27 @@ const customEmitters = (() => {
         5
     );
 
+    const exploderExplosionMainPool = new ObjectPool(
+        () => {
+            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery.png', 10, 10, 40, 40, 40, 40);
+            node.setActive(false);
+            node.setVisible(false);
+            return node;
+        },
+        (node) => {
+            node.setActive(false);
+            node.setVisible(false);
+            node.setAlpha(1);
+            node.setScale(1);
+            node.setRotation(0);
+            node.clearTint();
+        },
+        12
+    );
+
     const exploderExplosionBrightPool = new ObjectPool(
         () => {
-            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery.png', 10, 10, 30, 30, 30, 30);
+            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery_bright.png', 10, 10, 40, 40, 40, 40);
             node.setActive(false);
             node.setVisible(false);
             return node;
@@ -615,74 +633,78 @@ const customEmitters = (() => {
     // ── Exploder Explosion ──────────────────────────────────────────────────────────
     function createExploderExplosion(x, y, rangeSq, damage) {
         const size = Math.sqrt(rangeSq) * 1.5;
-        const randRot = Math.random() < 0.5 ? -0.1 : 0.1;
-        const finalRot = Math.PI / 4 + randRot;
+        const randRot = Math.random() * 0.2 - 0.1;
+        const baseRot = Math.PI / 4;
+        const startRot = baseRot + randRot;
+        const startRotSmall = baseRot + randRot * 0.4;
+
+        const main = exploderExplosionMainPool.get();
+        main.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
+        main.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9);
+        main.setRotation(baseRot).setAlpha(0).setVisible(true).setActive(true);
 
         const bright = exploderExplosionBrightPool.get();
         bright.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
-        bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setBlendMode(Phaser.BlendModes.ADD);
-        bright.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
+        bright.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10).setBlendMode(Phaser.BlendModes.ADD);
+        bright.setRotation(baseRot).setAlpha(0).setVisible(true).setActive(true);
 
         const red = exploderExplosionRedPool.get();
-        red.setPosition(x, y).setSize(size + 3, size + 3).setOrigin(0.5, 0.5);
-        red.setDepth(GAME_CONSTANTS.DEPTH_TOWER).setBlendMode(Phaser.BlendModes.ADD);
-        red.setRotation(finalRot).setAlpha(1).setVisible(true).setActive(true);
+        red.setPosition(x, y).setSize(size + 6, size + 6).setOrigin(0.5, 0.5);
+        red.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setBlendMode(Phaser.BlendModes.ADD);
+        red.setRotation(baseRot).setAlpha(0).setVisible(true).setActive(true);
 
         const black = exploderExplosionBlackPool.get();
         black.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
-        black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 3);
-        black.setRotation(finalRot).setAlpha(1).setVisible(false).setActive(true);
+        black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11);
+        black.setRotation(baseRot).setAlpha(1).setVisible(false).setActive(true);
 
-        // Visibility window for black sprite: [60ms, 120ms]
-        PhaserScene.time.delayedCall(60, () => {
+        PhaserScene.cameras.main.shake(150, 0.006);
+
+        // Sequence: 30ms Gap -> 50ms Black -> Bright Pop
+        PhaserScene.time.delayedCall(30, () => {
             if (black.active) black.setVisible(true);
-        });
-        PhaserScene.time.delayedCall(120, () => {
-            if (black.active) black.setVisible(false);
-        });
+            bright.setVisible(false);
+            main.setVisible(false);
 
-        bright.setScale(1.15);
-        red.setScale(1.2);
-        black.setScale(1.15);
+            PhaserScene.time.delayedCall(50, () => {
+                if (black.active) black.setVisible(false);
+                if (!bright.active) return;
 
-        PhaserScene.cameras.main.shake(150, 0.005);
-        PhaserScene.tweens.add({
-            targets: [bright, red, black],
-            duration: 90,
-            rotation: Math.PI / 4 + randRot * -0.7,
-            ease: 'Cubic.easeOut',
-            onComplete: () => {
+                main.setVisible(true).setAlpha(1).setRotation(startRot);
+                bright.setVisible(true).setAlpha(1).setRotation(startRot);
+                red.setAlpha(0.7).setRotation(startRotSmall);
+
+                // Immediate scale pop like the bomb
+                main.setScale(1.2);
+                bright.setScale(1.22);
+                red.setScale(1.25);
+
                 PhaserScene.tweens.add({
-                    targets: [bright, red, black],
-                    duration: 160,
-                    rotation: Math.PI / 4,
-                    ease: 'Back.easeOut',
+                    targets: [main, bright, red],
+                    scaleX: 1,
+                    scaleY: 1,
+                    rotation: baseRot,
+                    duration: 400,
+                    ease: 'Quart.easeOut'
                 });
-            }
-        });
 
-        // Alpha fade — BLACK stays 1 (but hidden by visible=false)
-        PhaserScene.tweens.add({
-            targets: [bright, red],
-            delay: 50,
-            alpha: 0,
-            duration: 350,
-            ease: 'Quad.easeOut'
-        });
+                PhaserScene.tweens.add({
+                    targets: [main, bright, red],
+                    delay: 70,
+                    alpha: 0,
+                    duration: 350,
+                    ease: 'Quad.easeOut',
+                    onComplete: () => {
+                        exploderExplosionMainPool.release(main);
+                        exploderExplosionBrightPool.release(bright);
+                        exploderExplosionRedPool.release(red);
+                        exploderExplosionBlackPool.release(black);
+                    }
+                });
 
-        // Scale fade
-        PhaserScene.tweens.add({
-            targets: [bright, red, black],
-            scaleX: 1.0,
-            scaleY: 1.0,
-            delay: 50,
-            duration: 350,
-            ease: 'Cubic.easeOut',
-            onComplete: () => {
-                exploderExplosionBrightPool.release(bright);
-                exploderExplosionRedPool.release(red);
-                exploderExplosionBlackPool.release(black);
-            }
+                // Extra shake on the bright flash
+                zoomShake(1.012);
+            });
         });
     }
 

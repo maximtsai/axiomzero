@@ -331,7 +331,7 @@ class Boss3 extends Boss {
         this._isMaster = false;     // Reset master status on pool reuse
 
         super.activate(x, y, {
-            maxHealth: 280,
+            maxHealth: 310,
             damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,

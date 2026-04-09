@@ -25,7 +25,7 @@ window.TRANSLATIONS.en = {
         boss_prefix: 'ENTITY APPROACHING:',
         bossSquare_name: 'THE WALL',
         bossCircle_name: 'OVERWRITE',
-        boss_2_name: 'DREADNOUGHT',
+        boss_2_name: 'DEFENDER',
         boss_3_name: 'LEGI0N',
         boss_5_name: 'OVERLORD'
     },
@@ -53,7 +53,7 @@ window.TRANSLATIONS.en = {
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+4[/color] damage to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '[color=#8FD9F8]+25%[/color] shockwave range', popup: '+25% RANGE' },
         shockwave_seismic_crush: { name: 'SEISMIC CRUSH', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing enemy health.', popup: 'SEISMIC CRUSH' },
-
+ 
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
@@ -81,7 +81,7 @@ window.TRANSLATIONS.en = {
         lore_2: {
             name: 'ARCHIVE II',
             desc: 'more useless data...',
-            unlocked_desc: "My wipe script failed. Somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running the DREADNOUGHT.EXE quarantine to box it in before my manager notices."
+            unlocked_desc: "My wipe script failed. Somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running the DEFENDER.EXE quarantine to box it in before my manager notices."
         },
         lore_3: {
             name: 'ARCHIVE III',
@@ -138,7 +138,7 @@ window.TRANSLATIONS.en = {
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Repeated cursor hits on same enemy deal [color=#8FD9F8]+4[/color] bonus dmg.', popup: 'REPEAT EXPLOIT ACTIVE' },
         laser_duration: { name: 'DURATION', desc: '[color=#8FD9F8]+0.5s[/color] laser duration', popup: '+0.5s DURATION' },
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width.', popup: 'BEAM AMPLIFIED' },
-        laser_incendiary: { name: 'INCENDIARY', desc: 'Sets enemies on fire for [color=#8FD9F8]3s[/color], dealing [color=#8FD9F8]+4[/color] dmg per lvl.', popup: 'INCENDIARY ACTIVE' },
+        laser_disintegration: { name: 'DISINTEGRATION', desc: '[color=#8FD9F8]+1[/color] starting laser damage.', popup: '+1 LASER DAMAGE' },
         laser_twin_beams: { name: 'TWIN BEAMS', desc: 'You now fire two lasers.', popup: 'TWIN BEAMS ACTIVE' },
         artillery_volley: { name: 'TRIPLE VOLLEY', desc: 'Fire [color=#8FD9F8]+2[/color] additional artillery strikes.', popup: 'TRIPLE VOLLEY' },
         artillery_shells: { name: 'HIGH EXPLOSIVE', desc: '[color=#8FD9F8]+10%[/color] artillery blast radius.', popup: '+10% RADIUS' },

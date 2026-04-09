@@ -140,7 +140,9 @@ class CacheEnemy extends Enemy {
 
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3.5,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.5, 
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.5,
+            initialSpeedMult: 6.0,
+            rampDuration: 1,
             damage: 0,
             selfDamage: 0,
             size: 28,

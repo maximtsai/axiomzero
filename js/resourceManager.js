@@ -586,9 +586,17 @@ const resourceManager = (() => {
 
     let dropAccumulator = 0;
 
-    function _onEnemyKilled(x, y, baseResourceDrop) {
+    function _onEnemyKilled(x, y, baseResourceDrop, enemyType) {
         const config = getCurrentLevelConfig();
-        const dataDropMult = config.dataDropMultiplier || 1;
+        let dataDropMult = config.dataDropMultiplier || 1;
+
+        // Cache enemies (Loot Goblins) are x1.5 as sensitive to the level's drop multiplier bonus
+        // i.e. a +50% level bonus becomes a +75% bonus for the cache enemy.
+        if (enemyType === 'cache' && dataDropMult > 1) {
+            const bonus = dataDropMult - 1;
+            dataDropMult = 1 + (bonus * 1.5);
+        }
+
         const compressionLv = (gameState.upgrades || {}).data_compression || 0;
         let compressionMult = 1;
         if (compressionLv > 0 && Math.random() < (0.25 * compressionLv)) {
@@ -602,7 +610,12 @@ const resourceManager = (() => {
 
         // Spawn drops for any whole numbers gained
         while (dropAccumulator >= 1) {
-            spawnDataDrop(x, y);
+            let dist = null;
+            if (enemyType === 'cache') {
+                // Quadruple the default distance (3+38=41 -> 12+152=164)
+                dist = 10 + Math.random() * 155;
+            }
+            spawnDataDrop(x, y, dist);
             dropAccumulator -= 1;
         }
 

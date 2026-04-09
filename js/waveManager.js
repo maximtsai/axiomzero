@@ -21,6 +21,7 @@ const waveManager = (() => {
     let frozen = false;
     let paused = false; // true during options menu
     let progressPaused = false; // true while a miniboss/boss is alive
+    let isFarmingMode = false;
     let currentWaveDuration = 45;
     let sessionTerminalEventStarted = false; // Prevents "double death" (Victory + Defeat same frame)
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
@@ -30,8 +31,12 @@ const waveManager = (() => {
         messageBus.subscribe('endIterationRequested', endIteration);
         messageBus.subscribe('freezeEnemies', () => { frozen = true; });
         messageBus.subscribe('unfreezeEnemies', () => { frozen = false; });
-        messageBus.subscribe('minibossSpawned', () => { progressPaused = true; });
-        messageBus.subscribe('minibossDefeated', () => { progressPaused = false; });
+        messageBus.subscribe('minibossSpawned', () => {
+            if (!isFarmingMode) progressPaused = true;
+        });
+        messageBus.subscribe('minibossDefeated', () => {
+            progressPaused = false;
+        });
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
@@ -59,9 +64,11 @@ const waveManager = (() => {
 
         if (levelBeaten) {
             // Endless farming mode — no progress bar, no boss
+            isFarmingMode = true;
             currentWaveDuration = 999999;
             messageBus.publish('waveModeFarmingStarted');
         } else {
+            isFarmingMode = false;
             currentWaveDuration = minibossBeaten ? (GAME_CONSTANTS.WAVE_DURATION - 4) : GAME_CONSTANTS.WAVE_DURATION;
             messageBus.publish('waveModeNormalStarted');
         }
