@@ -62,7 +62,14 @@ const gameHUD = (() => {
         });
 
         messageBus.subscribe('cursorBombReady', () => {
-            if (bombBtn) bombBtn.setState(NORMAL);
+            if (bombBtn) {
+                const model = pulseAttack.getModel();
+                if (model.bombUses > 0) {
+                    bombBtn.setState(NORMAL);
+                } else {
+                    bombBtn.setState(DISABLE);
+                }
+            }
         });
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
@@ -262,18 +269,28 @@ const gameHUD = (() => {
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 105,
                 y: GAME_CONSTANTS.HEIGHT - 75,
+                alpha: 1
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 105,
                 y: GAME_CONSTANTS.HEIGHT - 75,
+                alpha: 1
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 105,
                 y: GAME_CONSTANTS.HEIGHT - 75,
+                alpha: 1
+            },
+            disable: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.WIDTH - 105,
+                y: GAME_CONSTANTS.HEIGHT - 75,
+                alpha: 0.5
             },
             onMouseUp: () => {
                 armBomb();
@@ -392,8 +409,12 @@ const gameHUD = (() => {
         endIterationBtn.setVisible(true);
         endIterationBtn.setState(NORMAL);
         if (bombBtn) {
-            bombBtn.setVisible(true);
-            bombBtn.setState(NORMAL);
+            const model = pulseAttack.getModel();
+            const hasBombs = model.maxBombUses > 0;
+            bombBtn.setVisible(hasBombs);
+            if (hasBombs) {
+                bombBtn.setState(model.bombUses > 0 ? NORMAL : DISABLE);
+            }
         }
         if (testDefensesBtn) {
             testDefensesBtn.setVisible(false);

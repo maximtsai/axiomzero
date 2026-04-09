@@ -30,6 +30,8 @@ class PulseAttackModel {
         this.bombReadyToFire = false;
         this.bombQueued = false;
         this.bombFired = false;
+        this.maxBombUses = 0;
+        this.bombUses = 0;
     }
 
     resetTimer() {
@@ -808,9 +810,7 @@ const pulseAttack = (() => {
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
         messageBus.subscribe('testingDefensesStarted', () => {
-            model.charges = model.maxCharges;
-            model.fireTimer = 0;
-            model.clickQueued = false;
+            _resetState();
             model.active = true;
             view.setVisibility(true, true, model.manualMode, model.charges);
             view.setPointerVisibility(true);
@@ -1018,6 +1018,7 @@ const pulseAttack = (() => {
         model.clickQueued = false;
         model.charges = model.maxCharges;
         model.fireTimer = 0;
+        model.bombUses = model.maxBombUses;
     }
 
     function setManualMode(enabled) {
@@ -1057,8 +1058,10 @@ const pulseAttack = (() => {
     }
 
     function armBomb() {
-        if (!model.active || model.bombArmed || model.bombFired) return;
+        if (!model.active || model.bombArmed || model.bombFired || model.bombUses <= 0) return;
 
+        model.bombUses--;
+        messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
         model.bombArmed = true;
         model.bombAnimating = true;
         model.bombReadyToFire = false;
@@ -1127,5 +1130,10 @@ const pulseAttack = (() => {
         );
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb };
+    function addMaxBombUses(amount) {
+        model.maxBombUses += amount;
+        model.bombUses = model.maxBombUses;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, addMaxBombUses, getModel: () => model };
 })();

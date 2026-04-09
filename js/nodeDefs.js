@@ -274,11 +274,30 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 10,
         parents: ['integrity'],
-        childIds: [],
+        childIds: ['bomb'],
         treeX: gridX(-2),
         treeY: gridY(0),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' → tower._onUpgradePurchased
+        },
+    },
+    {
+        id: 'bomb',
+        name: t('nodes', 'bomb.name'),
+        icon: 'Skillicon14_02.png',
+        description: t('nodes', 'bomb.desc'),
+        popupText: t('nodes', 'bomb.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 25,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['regen'],
+        childIds: [],
+        treeX: gridX(-3),
+        treeY: gridY(0),
+        effect: function () {
+            pulseAttack.addMaxBombUses(1);
         },
     },
 
