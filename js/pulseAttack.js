@@ -364,13 +364,13 @@ class PulseAttackView {
         const flippedLeft = Math.random() < 0.5;
         const goalRot = flippedLeft ? -0.29 : 0.29;
 
-        // todo: replace xxx with 200 - pulse size
-        let extraScale = Math.max(0, (150 - this.sprite.width) * 0.005);
+        const extraScale = Math.max(0, (200 - this.sprite.width) * 0.005);
+
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
         this.spriteBright.setScale(1.35 + extraScale);
         this.spriteBright.setRotation(goalRot);
-        this.sprite.setRotation(this.spriteBright.rotation);
+        this.sprite.setRotation(goalRot);
 
         this.spriteRed.setAlpha(0.35);
         this.spriteRed.setScale(1.45 + extraScale);
@@ -384,29 +384,6 @@ class PulseAttackView {
             duration: this.FLASH_DURATION,
             ease: 'Quart.easeOut',
         });
-
-        // PhaserScene.tweens.add({
-        //     rotation: goalRot * -0.3,
-        //     targets: [this.spriteBright, this.sprite],
-        //     duration: 100,
-        //     ease: 'Quart.easeInOut',
-        //     onComplete: () => {
-        //         PhaserScene.tweens.add({
-        //             rotation: goalRot * 0.1,
-        //             targets: [this.spriteBright, this.sprite],
-        //             duration: 120,
-        //             ease: 'Cubic.easeInOut',
-        //             onComplete: () => {
-        //                 PhaserScene.tweens.add({
-        //                     rotation: 0,
-        //                     targets: [this.spriteBright, this.sprite],
-        //                     duration: 200,
-        //                     ease: 'Back.easeOut',
-        //                 });
-        //             }
-        //         });
-        //     }
-        // });
 
         this.sprite.setScale(1.4 + extraScale);
 
@@ -813,6 +790,14 @@ const pulseAttack = (() => {
     // Reusable array for enemy queries — avoids GC
     const _hitBuffer = [];
 
+    /** Helper to apply testing offset to damage calculations during upgrade phase */
+    function _getDamageCoordX(x) {
+        if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+            return x - 400;
+        }
+        return x;
+    }
+
     function init() {
         view.init(model.size);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -949,10 +934,7 @@ const pulseAttack = (() => {
         // Micro camera shake
         zoomShake(1.005);
 
-        let damageX = cx;
-        if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
-            damageX -= 400;
-        }
+        const damageX = _getDamageCoordX(cx);
 
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
@@ -996,10 +978,7 @@ const pulseAttack = (() => {
 
                 const aftershockDamage = 4 + 2 * model.aftershockLevel;
                 const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
-                let damageX = cx;
-                if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
-                    damageX -= 400;
-                }
+                const damageX = _getDamageCoordX(cx);
 
                 const aftershockHits = enemyManager.getEnemiesInSquareRange(damageX, cy, aftershockSizeRadius, _hitBuffer);
                 for (let i = 0; i < aftershockHits.length; i++) {
@@ -1136,11 +1115,7 @@ const pulseAttack = (() => {
                 const damageSize = finalSize / 2 + 5;
                 const damage = model.damage + 50;
 
-                let damageX = cx;
-                if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
-                    damageX -= 400;
-                }
-
+                const damageX = _getDamageCoordX(cx);
                 const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
                 for (let i = 0; i < hits.length; i++) {
                     enemyManager.damageEnemy(hits[i], damage, 'cursor');
