@@ -39,3 +39,5 @@ Make the collect resource tutorial announcement throw out bits of resources too.
 - Add hover over text explaining what exp bar does.
 - add 1 unit of spacing to the description text in hover popup
 - Map node that when clicked, unlocks the ability to extend the node map to full screen. First plays a little animation that then reveals location of several duo nodes.
+- Chatgpt logo for boss but 5 wings instead
+Make cursor attack 45 degrees angled.

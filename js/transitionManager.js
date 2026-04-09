@@ -98,6 +98,7 @@ const transitionManager = (() => {
             blocker.destroy();
             blocker = null;
         }
+        messageBus.publish('transitionComplete');
     }
 
     function isTransitioning() {

@@ -58,6 +58,7 @@ window.TRANSLATIONS.en = {
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
         bomb: { name: 'BOMB', desc: 'Acquire a [color=#ff5555]BOMB[/color]. Makes your cursor deal massive damage for one attack.', popup: '+1 BOMB' },
+        bomb_2: { name: 'EXTRA BOMB', desc: 'Acquire another [color=#ff5555]BOMB[/color]. Total max uses increased.', popup: '+1 BOMB' },
         data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]+25%[/color] chance to double [color=cyan]DATA[/color] drops', popup: 'DATA COMPRESSION' },
         two_step_auth: { name: 'TWO-STEP AUTH', desc: 'Security through mild annoyance. Rewards your patience with [color=cyan]+100 DATA[/color].', popup: '+100 DATA' },
         security_test_1: { name: 'SECURITY TEST', desc: "Confirm you aren't a hostile AI. Fully refunds [color=cyan]DATA[/color] cost upon purchase.", popup: 'TEST PASSED' },

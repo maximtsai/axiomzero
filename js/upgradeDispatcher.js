@@ -118,6 +118,13 @@ const upgradeDispatcher = (() => {
         }
     }
 
+    /** Recalculates total bomb uses. */
+    function recalcBombUses() {
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.setMaxBombUses) {
+            pulseAttack.setMaxBombUses(getLevel('bomb') + getLevel('bomb_2'));
+        }
+    }
+
     /** Recalculates all systems based on current upgrades. */
     function recalcEverything() {
         if (typeof pulseAttack !== 'undefined') {
@@ -127,6 +134,7 @@ const upgradeDispatcher = (() => {
             recalcPulseMode();
             recalcAftershock();
             recalcRepeatExploit();
+            recalcBombUses();
         }
         if (typeof lightningAttack !== 'undefined') {
             recalcLightningChains();
@@ -166,6 +174,7 @@ const upgradeDispatcher = (() => {
         recalcAftershock,
         recalcRepeatExploit,
         recalcLaser,
-        recalcArtillery
+        recalcArtillery,
+        recalcBombUses
     };
 })();

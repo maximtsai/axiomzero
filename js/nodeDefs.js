@@ -293,11 +293,30 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['regen'],
-        childIds: [],
+        childIds: ['bomb_2'],
         treeX: gridX(-3),
         treeY: gridY(0),
         effect: function () {
-            pulseAttack.addMaxBombUses(1);
+            upgradeDispatcher.recalcBombUses();
+        },
+    },
+    {
+        id: 'bomb_2',
+        name: t('nodes', 'bomb_2.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'bomb_2.desc'),
+        popupText: t('nodes', 'bomb_2.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['bomb'],
+        childIds: [],
+        treeX: gridX(-4),
+        treeY: gridY(0),
+        effect: function () {
+            upgradeDispatcher.recalcBombUses();
         },
     },
 

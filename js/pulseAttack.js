@@ -42,6 +42,12 @@ class PulseAttackModel {
         this.FIRE_INTERVAL = ms;
     }
 
+    setMaxBombUses(count) {
+        this.maxBombUses = count;
+        this.bombUses = count;
+        messageBus.publish('bombUsesChanged', { uses: this.bombUses, max: this.maxBombUses });
+    }
+
     updateTimer(delta) {
         if (this.bombArmed) return false; // No auto-attack while bomb is armed
 
@@ -641,9 +647,9 @@ class PulseAttackView {
         // Phase 1: +300 units, 0.25s, Back.easeOut
         PhaserScene.tweens.add({
             targets: [this.artillerySprite],
-            width: initSize + 380,
-            height: initSize + 380,
-            duration: 100,
+            width: initSize + 420,
+            height: initSize + 420,
+            duration: 80,
             ease: 'Quart.easeOut',
             easeParams: [4],
             onComplete: () => {
@@ -651,9 +657,9 @@ class PulseAttackView {
                     targets: [this.artillerySprite],
                     width: initSize + 300,
                     height: initSize + 300,
-                    duration: 140,
+                    duration: 160,
                     ease: 'Back.easeOut',
-                    easeParams: [3],
+                    easeParams: [3.5],
                     onComplete: () => {
                         if (onPhase1Complete) onPhase1Complete();
                         const overshootSize = finalBombSize + 90;
@@ -662,9 +668,8 @@ class PulseAttackView {
                             targets: [this.artillerySprite],
                             width: overshootSize,
                             height: overshootSize,
-                            duration: 100,
+                            duration: 90,
                             ease: 'Quart.easeOut',
-                            easeParams: [4],
                             onComplete: () => {
                                 // Phase 2: +150 units, 0.2s, Back.easeOut
                                 this.artilleryBright.setSize(finalBombSize, finalBombSize);
@@ -704,6 +709,8 @@ class PulseAttackView {
             alpha: 1,
             duration: 150,
             onComplete: () => {
+                PhaserScene.cameras.main.setZoom(1.03);
+                // Zoom in slightly here
                 // DETONATE
                 // Slow down the game (80% slower = 0.2x speed)
                 this.artillerySprite.setVisible(false);
@@ -712,6 +719,7 @@ class PulseAttackView {
                 GAME_VARS.timeScale = 0.2;
                 PhaserScene.time.delayedCall(20, () => {
                     if (onDetonate) onDetonate();
+                    cameraManager.shake(200, 0.012);
 
                     // 1. Show artilleryBlack for 0.075s
                     this.artilleryBlack.setVisible(true).setAlpha(1);
@@ -726,11 +734,12 @@ class PulseAttackView {
                     this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
 
 
-                    PhaserScene.time.delayedCall(5, () => {
+                    PhaserScene.time.delayedCall(6, () => {
+                        PhaserScene.cameras.main.setZoom(1.0);
                         this.artilleryBlack.setVisible(false);
                         this.artillerySprite.setVisible(true);
                         this.artilleryBright.setVisible(true);
-                        PhaserScene.time.delayedCall(15, () => {
+                        PhaserScene.time.delayedCall(20, () => {
                             PhaserScene.time.delayedCall(10, () => {
                                 // Always restore game speed to 1.0 to prevent capture bugs
                                 PhaserScene.time.timeScale = 1.0;
@@ -1130,10 +1139,10 @@ const pulseAttack = (() => {
         );
     }
 
-    function addMaxBombUses(amount) {
-        model.maxBombUses += amount;
-        model.bombUses = model.maxBombUses;
+    function setMaxBombUses(count) {
+        model.maxBombUses = count;
+        model.bombUses = count;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, addMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, setMaxBombUses, getModel: () => model };
 })();

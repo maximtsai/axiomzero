@@ -17,6 +17,7 @@ const gameHUD = (() => {
     let waveProgressBar = null;
     let farmingTimerTxt = null;
     let bombBtn = null;
+    let bombBtnTxt = null;
     let farmingStartTime = 0;
     let isFarming = false;
 
@@ -51,26 +52,20 @@ const gameHUD = (() => {
 
 
 
-        PhaserScene.input.keyboard.on('keydown-SPACE', () => {
-            if (bombBtn && bombBtn.visible && bombBtn.state !== DISABLE) {
-                armBomb();
+
+
+        messageBus.subscribe('transitionComplete', () => {
+            if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT && endIterationBtn) {
+                endIterationBtn.setVisible(true);
+                endIterationBtn.setState(NORMAL);
             }
         });
 
         messageBus.subscribe('cursorBombArmed', () => {
             if (bombBtn) bombBtn.setState(DISABLE);
         });
-
-        messageBus.subscribe('cursorBombReady', () => {
-            if (bombBtn) {
-                const model = pulseAttack.getModel();
-                if (model.bombUses > 0) {
-                    bombBtn.setState(NORMAL);
-                } else {
-                    bombBtn.setState(DISABLE);
-                }
-            }
-        });
+        messageBus.subscribe('bombUsesChanged', _updateBombUI);
+        messageBus.subscribe('cursorBombReady', _updateBombUI);
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -297,15 +292,16 @@ const gameHUD = (() => {
             },
         });
         bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        const bText = bombBtn.addText("BOMB\n<SPACEBAR>", {
+        bombBtnTxt = bombBtn.addText("BOMB\n<SPACEBAR>", {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: helper.isMobileDevice() ? '16px' : '17px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center'
         });
-        bText.setLineSpacing(-2);
+        bombBtnTxt.setLineSpacing(-2);
         bombBtn.setDepth(depth + 3);
         bombBtn.setScrollFactor(0);
+        _updateBombUI();
 
         // ── Progress bar ──
         waveProgressBar = new ProgressBar(PhaserScene, {
@@ -397,6 +393,28 @@ const gameHUD = (() => {
         }
     }
 
+    function _updateBombUI() {
+        if (!bombBtn) return;
+        const model = pulseAttack.getModel();
+        const hasBombs = model.maxBombUses > 0;
+        bombBtn.setVisible(hasBombs);
+        if (hasBombs) {
+            // Priority: if already armed/firing, let those states drive logic?
+            // Actually armBomb logic sets state(DISABLE) in init listener.
+            // But here we enforce NORMAL only if bombUses > 0 and NOT armed.
+            const model = pulseAttack.getModel();
+            if (model.bombUses > 0 && !model.bombArmed && !model.bombFired) {
+                bombBtn.setState(NORMAL);
+            } else {
+                bombBtn.setState(DISABLE);
+            }
+
+            if (bombBtnTxt) {
+                bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n<SPACEBAR>`);
+            }
+        }
+    }
+
     function _showCombatHUD() {
         visible = true;
         healthBarBg.setVisible(true);
@@ -406,15 +424,13 @@ const gameHUD = (() => {
         healthBtn.setVisible(false);
         healthBtn.setState(DISABLE);
         _updateResourceLayout();
-        endIterationBtn.setVisible(true);
-        endIterationBtn.setState(NORMAL);
+
+        const isTransitioning = typeof transitionManager !== 'undefined' && transitionManager.isTransitioning();
+        endIterationBtn.setVisible(!isTransitioning);
+        endIterationBtn.setState(isTransitioning ? DISABLE : NORMAL);
+
         if (bombBtn) {
-            const model = pulseAttack.getModel();
-            const hasBombs = model.maxBombUses > 0;
-            bombBtn.setVisible(hasBombs);
-            if (hasBombs) {
-                bombBtn.setState(model.bombUses > 0 ? NORMAL : DISABLE);
-            }
+            _updateBombUI();
         }
         if (testDefensesBtn) {
             testDefensesBtn.setVisible(false);
