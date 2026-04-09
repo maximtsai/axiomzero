@@ -25,7 +25,7 @@ class FastEnemyModel extends EnemyModel {
 
 class FastEnemyView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'fast.png', 'fast_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(Enemy.TEX_KEY, 'fast.png', 'fast_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
     }
 }
 
@@ -42,7 +42,7 @@ class FastEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5 * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.501,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.5,
-            size: 24,
+            size: 27,
             ...extraConfig
         });
 

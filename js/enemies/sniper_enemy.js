@@ -32,7 +32,7 @@ class SniperEnemyModel extends EnemyModel {
 
 class SniperEnemyView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'sniper.png', 'sniper_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(Enemy.TEX_KEY, 'sniper.png', 'sniper_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
         // HP bar rotated 90 deg CCW
         this.hpImg.setRotation(-Math.PI / 2);
 
@@ -141,7 +141,7 @@ class SniperEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.9,
-            size: 28
+            size: 31
         });
 
         const m = this.model;

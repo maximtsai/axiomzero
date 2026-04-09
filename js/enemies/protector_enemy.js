@@ -43,7 +43,7 @@ class ProtectorEnemyView extends EnemyView {
         // Aura sprite — created before main sprites so it renders below
         const texKey = Enemy.TEX_KEY;
         // We need a temporary reference since super() must be called first
-        super(texKey, 'protector.png', 'protector_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(texKey, 'protector.png', 'protector_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
 
         // Aura sprite — depth +1 above enemies
         this.auraImg = PhaserScene.add.image(0, 0, texKey, 'protector_aoe.png');

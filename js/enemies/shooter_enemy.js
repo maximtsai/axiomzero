@@ -25,7 +25,7 @@ class ShooterEnemyModel extends EnemyModel {
 
 class ShooterEnemyView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'shooter.png', 'shooter_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(Enemy.TEX_KEY, 'shooter.png', 'shooter_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
     }
 }
 

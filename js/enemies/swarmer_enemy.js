@@ -15,7 +15,7 @@ class SwarmerEnemyModel extends EnemyModel {
 
 class SwarmerEnemyView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'swarmer.png', 'swarmer_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES);
+        super(Enemy.TEX_KEY, 'swarmer.png', 'swarmer_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
     }
 }
 
