@@ -4,7 +4,7 @@ const floatingText = (() => {
     let _activeTexts = [];
     let _frameCounter = 0;
     const MAX_ACTIVE = 200; // Hard cap on simultaneous damage numbers
-    const MAX_PER_FRAME = 15; // Limit to prevent spikes from DoT or AoE events
+    const MAX_PER_FRAME = 50; // Limit to prevent spikes from DoT or AoE events
 
     function init(scene) {
         _scene = scene;

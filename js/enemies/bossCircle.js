@@ -7,7 +7,7 @@ class BossCircleModel extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 5.5;
         this.rampDuration = 2.2;
-        this.size = 163;
+        this.size = 168;
         this.bossId = 'bossCircle';
     }
 
@@ -138,13 +138,13 @@ class BossCircle extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 200;
+        const bossHealth = 230;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3,
             selfDamage: 0,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.8,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.95,
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size

@@ -115,6 +115,18 @@ class InternalButtonManager {
     setDraggedObj(newObj = null) {
         this.draggedObj = newObj;
     }
+
+    /**
+     * Immediate check if a coordinate is over any registered button.
+     * Useful for bailing out of world-space input listeners.
+     */
+    isAnyButtonHovered(x, y) {
+        for (let i = this.buttonList.length - 1; i >= 0; i--) {
+            const btn = this.buttonList[i];
+            if (btn && btn.checkCoordOver(x, y)) return true;
+        }
+        return false;
+    }
 }
 
 const buttonManager = new InternalButtonManager();

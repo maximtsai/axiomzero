@@ -237,6 +237,7 @@ class PulseAttackView {
         );
         this.artillerySprite.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10).setScrollFactor(0).setVisible(false);
         this.artillerySprite.rotVel = 0;
+        this.reentryExtraSize = 0;
 
         this.artilleryBright = PhaserScene.add.nineslice(
             0, 0,
@@ -252,7 +253,7 @@ class PulseAttackView {
             artInitSize, artInitSize,
             40, 40, 40, 40
         );
-        this.artilleryBlack.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9).setScrollFactor(0).setVisible(false);
+        this.artilleryBlack.setOrigin(0.5, 0.5).setDepth(2).setScrollFactor(0).setVisible(false);
 
         this.artilleryRed = PhaserScene.add.nineslice(
             0, 0,
@@ -295,7 +296,6 @@ class PulseAttackView {
         this.sprite.rotVel += rotAccel;
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
 
-        // Apply final rotations to all active visual layers
         this.spriteBright.setRotation(this.sprite.rotation);
 
         if (this.artillerySprite && (!model.bombArmed && model.bombFired)) {
@@ -335,6 +335,19 @@ class PulseAttackView {
             const s = this.chargeSprites[i];
             s.setVisible(manualMode && i < count && this.sprite.visible);
         }
+    }
+
+    playCursorReentryEffect(baseSize) {
+        this.reentryExtraSize = 280;
+        PhaserScene.tweens.add({
+            targets: this,
+            reentryExtraSize: 0,
+            duration: 250,
+            ease: 'Quart.easeOut',
+            onUpdate: () => {
+                this.setSize(baseSize + this.reentryExtraSize);
+            }
+        });
     }
 
     playFireAnimation() {
@@ -582,7 +595,8 @@ class PulseAttackView {
         const fx = this.wavePool.get();
         if (!fx) return;
 
-        const startSize = baseSize * 0.75;
+        const startSize = 50 + baseSize * 0.15;
+        const endSize = 50 + baseSize * 1.08;
         fx.setPosition(x, y);
         fx.width = startSize;
         fx.height = startSize;
@@ -590,18 +604,20 @@ class PulseAttackView {
         fx.setVisible(true);
         fx.setActive(true);
 
+        const tweenDuration = 400 + Math.floor(baseSize * 0.5);
+
         PhaserScene.tweens.add({
             targets: fx,
-            width: startSize + 82,
-            height: startSize + 82,
-            duration: 450,
+            width: endSize,
+            height: endSize,
+            duration: tweenDuration,
             ease: 'Cubic.easeOut'
         });
 
         PhaserScene.tweens.add({
             targets: fx,
             alpha: 0,
-            duration: 450,
+            duration: tweenDuration,
             ease: 'Quad.easeOut',
             onComplete: () => {
                 this.wavePool.release(fx);
@@ -693,17 +709,21 @@ class PulseAttackView {
                 PhaserScene.time.timeScale = 0.2;
                 PhaserScene.anims.globalTimeScale = 0.2;
                 GAME_VARS.timeScale = 0.2;
-                PhaserScene.time.delayedCall(10, () => {
-                    // 1. Show ONLY artilleryBlack for 0.075s
-                    this.artilleryBlack.setVisible(true);
-                    this.artilleryBlack.setAlpha(1);
+                PhaserScene.time.delayedCall(20, () => {
+                    if (onDetonate) onDetonate();
+
+                    // 1. Show artilleryBlack for 0.075s
+                    this.artilleryBlack.setVisible(true).setAlpha(1);
                     this.artilleryBlack.setSize(finalSize, finalSize);
                     this.artilleryBlack.setScale(1.04);
                     this.artilleryBlack.setRotation(this.artillerySprite.rotation);
 
                     this.artillerySprite.setVisible(false);
                     this.artilleryBright.setVisible(false);
-                    this.artilleryRed.setVisible(false);
+
+                    this.artilleryRed.setVisible(true).setAlpha(0.75);
+                    this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
+
 
                     PhaserScene.time.delayedCall(5, () => {
                         this.artilleryBlack.setVisible(false);
@@ -721,9 +741,6 @@ class PulseAttackView {
 
                             // 3. Show others and start animation
                             this.artillerySprite.setVisible(true).setAlpha(1);
-                            this.artilleryRed.setVisible(true).setAlpha(0.75);
-
-                            this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
 
                             this.artillerySprite.setScale(1.15);
                             this.artilleryBright.setScale(1.17).setAlpha(1);
@@ -772,7 +789,6 @@ class PulseAttackView {
                         });
                     });
                 });
-                if (onDetonate) onDetonate();
             }
         });
     }
@@ -813,7 +829,7 @@ const pulseAttack = (() => {
         // Global click listener for manual firing
         PhaserScene.input.on('pointerdown', (pointer, currentlyOver) => {
             if (currentlyOver && currentlyOver.length > 0) return;
-            if (typeof buttonManager !== 'undefined' && buttonManager.lastHovered) return;
+            if (typeof buttonManager !== 'undefined' && (buttonManager.lastHovered || buttonManager.isAnyButtonHovered(pointer.x, pointer.y))) return;
 
             const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
 
@@ -1070,19 +1086,25 @@ const pulseAttack = (() => {
                 // This callback runs after the 0.2s anticipation
                 model.bombArmed = false;
 
+                // Slow down hit enemies too
                 const damageSize = finalSize / 2 + 5;
                 const damage = model.damage + 40;
 
                 const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
                 for (let i = 0; i < hits.length; i++) {
                     enemyManager.damageEnemy(hits[i], damage, 'cursor');
+                    if (typeof hits[i].forceSlow === 'function') {
+                        hits[i].forceSlow(0.25, 0.1);
+                    }
                 }
 
                 model.resetTimer();
+                view.playWaveEffect(cx, cy, finalSize);
             },
             () => {
                 // This callback runs after the entire explosion animation finishes
                 model.bombFired = false;
+                view.playCursorReentryEffect(model.size);
                 messageBus.publish('cursorBombReady');
             }
         );
