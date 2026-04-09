@@ -859,9 +859,19 @@ const pulseAttack = (() => {
             }
         });
 
-        // Spacebar listener for armBomb
+        // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
-            armBomb();
+            if (!model.active || model.paused || !tower.isAlive()) return;
+
+            if (model.bombArmed) {
+                if (model.bombReadyToFire) {
+                    _fireBomb();
+                } else if (model.bombAnimating && model.canQueueBomb) {
+                    model.bombQueued = true;
+                }
+            } else {
+                armBomb();
+            }
         });
     }
 
@@ -1088,7 +1098,7 @@ const pulseAttack = (() => {
 
                 // Slow down hit enemies too
                 const damageSize = finalSize / 2 + 5;
-                const damage = model.damage + 40;
+                const damage = model.damage + 50;
 
                 const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
                 for (let i = 0; i < hits.length; i++) {
