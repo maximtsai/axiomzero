@@ -212,6 +212,8 @@ window.TRANSLATIONS.en = {
         processors_salvaged: '■ PROCESSORS salvaged: ',
         diagnostic_report: '— DIAGNOSTIC REPORT —',
         no_damage_dealt: 'NO DAMAGE DEALT',
+        insight_progress_title: 'INSIGHT',
+        insight_progress_desc: 'Experience turned quantifiable. [b]INSIGHT[/b] unlocks upgrades that improve [color=cyan]DATA[/color] gathering.',
         cursor: 'CURSOR',
         tower: 'TOWER',
         lightning: 'LIGHTNING',

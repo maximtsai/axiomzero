@@ -231,19 +231,19 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
             },
             onMouseUp: () => {
                 messageBus.publish('endIterationRequested');
@@ -263,28 +263,22 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.WIDTH - 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
                 alpha: 1
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
                 alpha: 1
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
                 alpha: 1
             },
             disable: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 105,
-                y: GAME_CONSTANTS.HEIGHT - 75,
                 alpha: 0.5
             },
             onMouseUp: () => {
@@ -321,7 +315,7 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 75,
+                y: GAME_CONSTANTS.HEIGHT - 72,
                 alpha: 1
             },
             hover: {

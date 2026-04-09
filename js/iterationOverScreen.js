@@ -13,6 +13,7 @@ const iterationOverScreen = (() => {
     let processorText = null;
     let upgradesBtn = null;
     let retryBtn = null;
+    let expHoverBtn = null;
     let diagElements = []; // Track diagnostic sprites/text for cleanup
 
     // EXP bar elements
@@ -207,6 +208,32 @@ const iterationOverScreen = (() => {
         });
         retryBtn.setScrollFactor(0);
         retryBtn.setDepth(depth + 12);
+
+        // ── EXP bar hover area ──
+        expHoverBtn = new Button({
+            normal: {
+                ref: 'white_pixel',
+                x: cx,
+                y: barY - 11,
+                alpha: 0.001,
+                scaleX: (barW + 20) * 0.5,
+                scaleY: 30
+            },
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-150, -50);
+                tooltipManager.show(expHoverBtn.x + 400, expHoverBtn.y - 90, [
+                    { text: t('results', 'insight_progress_title'), style: 'title', color: '#ffd700' },
+                    { text: t('results', 'insight_progress_desc'), style: 'normal' }
+                ], 410);
+            },
+            onHoverOut: () => {
+                tooltipManager.hide();
+            }
+        });
+        expHoverBtn.setDepth(depth + 20);
+        expHoverBtn.setScrollFactor(0);
+        expHoverBtn.setVisible(false);
     }
 
     // ── show / hide ──────────────────────────────────────────────────
@@ -226,6 +253,8 @@ const iterationOverScreen = (() => {
         upgradesBtn.setState(NORMAL);
         retryBtn.setVisible(true);
         retryBtn.setState(NORMAL);
+        expHoverBtn.setVisible(true);
+        expHoverBtn.setState(NORMAL);
 
         if (isBossKill) {
             titleText.fullText = t('results', 'boss_defeated');
@@ -735,6 +764,8 @@ const iterationOverScreen = (() => {
         upgradesBtn.setState(DISABLE);
         retryBtn.setVisible(false);
         retryBtn.setState(DISABLE);
+        expHoverBtn.setVisible(false);
+        expHoverBtn.setState(DISABLE);
 
         // Stop count-up tween
         if (_dataCountTween) { _dataCountTween.stop(); _dataCountTween = null; }
@@ -756,6 +787,7 @@ const iterationOverScreen = (() => {
         if (titleText.typewriterEvent) titleText.typewriterEvent.remove();
         diagElements.forEach(el => { if (el && el.destroy) el.destroy(); });
         diagElements = [];
+        tooltipManager.hide();
     }
 
     // ── button handlers ──────────────────────────────────────────────

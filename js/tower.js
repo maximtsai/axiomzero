@@ -792,6 +792,11 @@ const tower = (() => {
             if (lifetimeInsight === 0) expBoost = 1.3;
             else if (lifetimeInsight === 1) expBoost = 1.15;
 
+            // Reduce EXP gain by 50% during endless farming runs
+            const currentLevel = gameState.currentLevel || 1;
+            const isFarming = (gameState.levelsDefeated || 0) >= currentLevel;
+            if (isFarming) expBoost *= 0.5;
+
             model.exp += (GAME_CONSTANTS.EXP_FILL_RATE * expBoost) * dt;
             if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {
                 model.exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
