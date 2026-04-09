@@ -57,6 +57,14 @@ const gameHUD = (() => {
             }
         });
 
+        messageBus.subscribe('cursorBombArmed', () => {
+            if (bombBtn) bombBtn.setState(DISABLE);
+        });
+
+        messageBus.subscribe('cursorBombReady', () => {
+            if (bombBtn) bombBtn.setState(NORMAL);
+        });
+
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
             isFarming = true;

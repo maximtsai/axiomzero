@@ -236,6 +236,7 @@ class PulseAttackView {
             40, 40, 40, 40
         );
         this.artillerySprite.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10).setScrollFactor(0).setVisible(false);
+        this.artillerySprite.rotVel = 0;
 
         this.artilleryBright = PhaserScene.add.nineslice(
             0, 0,
@@ -289,11 +290,20 @@ class PulseAttackView {
             this.artilleryRed.setPosition(targetX, targetY);
         }
 
+        // Physics: calculate rotational spring wobble
         const rotAccel = this.sprite.rotation * -0.1 - this.sprite.rotVel * 0.23;
         this.sprite.rotVel += rotAccel;
-
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
+
+        // Apply final rotations to all active visual layers
         this.spriteBright.setRotation(this.sprite.rotation);
+
+        if (this.artillerySprite && model.bombArmed && !model.bombFired) {
+            const rotAccelArt = this.artillerySprite.rotation * -0.1 - this.artillerySprite.rotVel * 0.23;
+            this.artillerySprite.rotVel += rotAccelArt;
+            this.artillerySprite.rotation += this.artillerySprite.rotVel * delta * 0.14;
+            this.artilleryBright.setRotation(this.artillerySprite.rotation);
+        }
 
         const size = model.size;
         const topY = targetY - size / 2 - 4; // 4px above edge (matching user's recent change)
@@ -420,11 +430,11 @@ class PulseAttackView {
         }
     }
 
-    setVisibility(visible, isIdle = true, manualMode = false, charges = 0, bombArmed = false) {
+    setVisibility(visible, isIdle = true, manualMode = false, charges = 0, bombArmed = false, bombFired = false) {
         if (!this.sprite) return;
-        this.sprite.setVisible(visible && !bombArmed);
-        this.spriteBright.setVisible(visible && !bombArmed);
-        this.spriteRed.setVisible(visible && !bombArmed);
+        this.sprite.setVisible(visible && !bombArmed && !bombFired);
+        this.spriteBright.setVisible(visible && !bombArmed && !bombFired);
+        this.spriteRed.setVisible(visible && !bombArmed && !bombFired);
 
         const showAftershock = visible && this.aftershockLevel > 0;
         this.aftershockBright.setVisible(showAftershock);
@@ -435,14 +445,14 @@ class PulseAttackView {
             this.spriteRed.setAlpha(0);
         }
 
-        if (this.artillerySprite && !bombArmed) {
+        if (this.artillerySprite && !bombArmed && !bombFired) {
             this.artillerySprite.setVisible(false);
             this.artilleryBright.setVisible(false);
             this.artilleryBlack.setVisible(false);
             this.artilleryRed.setVisible(false);
         }
 
-        this.updateCharges(charges, 0, manualMode && !bombArmed);
+        this.updateCharges(charges, 0, manualMode && !bombArmed && !bombFired);
     }
 
     playReloadAnimation() {
@@ -599,23 +609,20 @@ class PulseAttackView {
         });
     }
 
-    playBombArmAnimation(baseSize, onPhase1Complete, onPhase2Complete) {
+    playBombArmAnimation(baseSize, finalBombSize, onPhase1Complete, onPhase2Complete) {
         if (!this.artillerySprite) return;
 
-        this.artillerySprite.setVisible(true);
-        this.artilleryBright.setVisible(true);
-        this.artilleryBright.setAlpha(0.6);
+        this.artillerySprite.setVisible(true).setAlpha(1);
+        this.artilleryBright.setVisible(false).setAlpha(1);
 
         this.artillerySprite.setRotation(0);
-        this.artilleryBright.setRotation(0);
 
         const initSize = baseSize + 20;
         this.artillerySprite.setSize(initSize, initSize);
-        this.artilleryBright.setSize(initSize, initSize);
 
         // Phase 1: +300 units, 0.25s, Back.easeOut
         PhaserScene.tweens.add({
-            targets: [this.artillerySprite, this.artilleryBright],
+            targets: [this.artillerySprite],
             width: initSize + 380,
             height: initSize + 380,
             duration: 100,
@@ -623,7 +630,7 @@ class PulseAttackView {
             easeParams: [4],
             onComplete: () => {
                 PhaserScene.tweens.add({
-                    targets: [this.artillerySprite, this.artilleryBright],
+                    targets: [this.artillerySprite],
                     width: initSize + 300,
                     height: initSize + 300,
                     duration: 140,
@@ -631,24 +638,26 @@ class PulseAttackView {
                     easeParams: [3],
                     onComplete: () => {
                         if (onPhase1Complete) onPhase1Complete();
+                        const overshootSize = finalBombSize + 90;
 
-                        // Phase 2: +150 units, 0.2s, Back.easeOut
                         PhaserScene.tweens.add({
-                            targets: [this.artillerySprite, this.artilleryBright],
-                            width: initSize + 540,
-                            height: initSize + 540,
+                            targets: [this.artillerySprite],
+                            width: overshootSize,
+                            height: overshootSize,
                             duration: 100,
                             ease: 'Quart.easeOut',
                             easeParams: [4],
                             onComplete: () => {
                                 // Phase 2: +150 units, 0.2s, Back.easeOut
+                                this.artilleryBright.setSize(finalBombSize, finalBombSize);
+                                this.artilleryBright.setRotation(0);
                                 PhaserScene.tweens.add({
-                                    targets: [this.artillerySprite, this.artilleryBright],
-                                    width: initSize + 450,
-                                    height: initSize + 450,
-                                    duration: 150,
+                                    targets: [this.artillerySprite],
+                                    width: finalBombSize,
+                                    height: finalBombSize,
+                                    duration: 200,
                                     ease: 'Back.easeOut',
-                                    easeParams: [3]
+                                    easeParams: [3.5]
                                 });
                                 PhaserScene.time.delayedCall(100, onPhase2Complete);
                             }
@@ -659,7 +668,7 @@ class PulseAttackView {
         });
     }
 
-    playBombFireAnimation(baseSize, x, y, onDetonate) {
+    playBombFireAnimation(finalSize, x, y, onDetonate, onComplete) {
         if (!this.artillerySprite) return;
 
         // Lock position for all artillery layers
@@ -669,61 +678,98 @@ class PulseAttackView {
         this.artilleryRed.setPosition(x, y);
 
         // Anticipation (0.2s)
-        this.artilleryBright.setAlpha(1);
+        this.artilleryBright.setAlpha(0.15);
         PhaserScene.tweens.add({
             targets: [this.artillerySprite, this.artilleryBright],
-            scaleX: 1.1,
-            scaleY: 1.1,
+            scaleX: 1.04,
+            scaleY: 1.04,
+            alpha: 1,
             duration: 200,
             ease: 'Quad.easeIn',
             onComplete: () => {
                 // DETONATE
                 if (onDetonate) onDetonate();
 
-                const finalSize = baseSize + 450;
-
-                // Main explosion visuals
+                // 1. Show ONLY artilleryBlack for 0.075s
                 this.artilleryBlack.setVisible(true);
-                this.artilleryRed.setVisible(true);
-                this.artilleryBright.setAlpha(1);
+                this.artilleryBlack.setAlpha(1);
+                this.artilleryBlack.setSize(finalSize, finalSize);
+                this.artilleryBlack.setScale(1.05);
+                this.artilleryBlack.setRotation(this.artillerySprite.rotation);
 
-                this.artilleryBlack.setSize(finalSize + 20, finalSize + 20);
-                this.artilleryRed.setSize(finalSize + 60, finalSize + 60);
+                this.artillerySprite.setVisible(false);
+                this.artilleryBright.setVisible(false);
+                this.artilleryRed.setVisible(false);
 
-                this.artillerySprite.setScale(1.4);
-                this.artilleryBright.setScale(1.5);
-                this.artilleryBlack.setScale(1.6);
-                this.artilleryRed.setScale(1.8);
+                // Slow down the game (80% slower = 0.2x speed)
+                const prevTimeScale = GAME_VARS.timeScale || 1;
+                PhaserScene.time.timeScale = 0.2;
+                PhaserScene.anims.globalTimeScale = 0.2;
+                GAME_VARS.timeScale = 0.2;
 
-                this.artillerySprite.setRotation(Phaser.Math.FloatBetween(-0.1, 0.1));
-                this.artilleryBright.setRotation(this.artillerySprite.rotation);
-                this.artilleryBlack.setRotation(this.artillerySprite.rotation * 0.5);
-                this.artilleryRed.setRotation(this.artillerySprite.rotation * 1.5);
+                PhaserScene.time.delayedCall(30, () => {
+                    this.artilleryBlack.setVisible(false);
+                    this.artilleryBright.setVisible(true);
+                    PhaserScene.time.delayedCall(10, () => {
 
-                // Tween them back (slower, more weight)
-                PhaserScene.tweens.add({
-                    targets: [this.artillerySprite, this.artilleryBright, this.artilleryBlack, this.artilleryRed],
-                    scaleX: 1,
-                    scaleY: 1,
-                    duration: 600, // Slower
-                    ease: 'Cubic.easeOut'
+                        // Restore game speed (restoring to 1.0 or previous if any)
+                        PhaserScene.time.timeScale = prevTimeScale;
+                        PhaserScene.tweens.timeScale = prevTimeScale;
+                        PhaserScene.anims.globalTimeScale = prevTimeScale;
+                        GAME_VARS.timeScale = prevTimeScale;
+
+                        // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
+
+                        // 3. Show others and start animation
+                        this.artillerySprite.setVisible(true);
+                        this.artilleryRed.setVisible(true).setAlpha(0.75);
+
+                        this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
+
+                        this.artillerySprite.setScale(1.15);
+                        this.artilleryBright.setScale(1.17);
+                        this.artilleryRed.setScale(1.25);
+
+                        this.artillerySprite.setRotation(this.artilleryBlack.rotation);
+                        this.artilleryBright.setRotation(this.artilleryBlack.rotation);
+                        this.artilleryRed.setRotation(this.artilleryBlack.rotation * 1.05);
+
+                        // Tween them back
+                        PhaserScene.tweens.add({
+                            targets: [this.artillerySprite, this.artilleryBright, this.artilleryRed],
+                            scaleX: 1,
+                            scaleY: 1,
+                            duration: 450,
+                            ease: 'Cubic.easeOut'
+                        });
+
+                        this.artilleryBright.setAlpha(1);
+
+                        PhaserScene.tweens.add({
+                            targets: [this.artilleryBright, this.artilleryRed],
+                            alpha: 0,
+                            duration: 200,
+                            ease: 'Quad.easeOut',
+                        });
+
+                        PhaserScene.tweens.add({
+                            targets: [this.artilleryBright],
+                            alpha: 0,
+                            duration: 450,
+                            ease: 'Quad.easeIn',
+                            onComplete: () => {
+                                this.artillerySprite.setVisible(false);
+                                this.artilleryBright.setVisible(false);
+                                this.artilleryBlack.setVisible(false);
+                                this.artilleryRed.setVisible(false);
+                                if (onComplete) onComplete();
+                            }
+                        });
+
+                        // Shake for impact
+                        zoomShake(1.02);
+                    });
                 });
-
-                PhaserScene.tweens.add({
-                    targets: [this.artilleryBright, this.artilleryBlack, this.artilleryRed],
-                    alpha: 0,
-                    duration: 800,
-                    ease: 'Quad.easeOut',
-                    onComplete: () => {
-                        this.artillerySprite.setVisible(false);
-                        this.artilleryBright.setVisible(false);
-                        this.artilleryBlack.setVisible(false);
-                        this.artilleryRed.setVisible(false);
-                    }
-                });
-
-                // Shake for impact
-                zoomShake(1.02);
             }
         });
     }
@@ -837,9 +883,9 @@ const pulseAttack = (() => {
         }
 
         const isVisible = isCombat && tower.isAlive();
-        view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed);
+        view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed, model.bombFired);
 
-        if (!model.active || !tower.isAlive() || model.bombArmed) {
+        if (!model.active || !tower.isAlive() || model.bombArmed || model.bombFired) {
             return;
         }
 
@@ -968,8 +1014,14 @@ const pulseAttack = (() => {
         model.persistentExploitLevel = level;
     }
 
+    function getBombFinalSize() {
+        // Base bomb visual scale bonus is 500 units larger than base pulse.
+        // This can be extended to include node-specific multipliers later.
+        return model.size + 500;
+    }
+
     function armBomb() {
-        if (!model.active || model.bombArmed) return;
+        if (!model.active || model.bombArmed || model.bombFired) return;
 
         model.bombArmed = true;
         model.bombAnimating = true;
@@ -977,14 +1029,17 @@ const pulseAttack = (() => {
         model.bombQueued = false;
         model.canQueueBomb = false;
 
+        messageBus.publish('cursorBombArmed');
+
         view.playBombArmAnimation(
             model.size,
+            getBombFinalSize(),
             () => {
-                // Phase 1 (0.25s) Complete
+                // Phase 1 (0.28s) Complete
                 model.canQueueBomb = true;
             },
             () => {
-                // Phase 2 (0.45s total) Complete
+                // Phase 2 (0.5s total) Complete
                 model.bombAnimating = false;
                 model.bombReadyToFire = true;
                 if (model.bombQueued) {
@@ -1005,22 +1060,29 @@ const pulseAttack = (() => {
             cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
         }
         const cy = GAME_VARS.mouseposy;
+        const finalSize = getBombFinalSize();
 
-        view.playBombFireAnimation(model.size, cx, cy, () => {
-            // This callback runs after the 0.2s anticipation
-            model.bombArmed = false;
-            model.bombFired = false;
+        view.playBombFireAnimation(finalSize, cx, cy,
+            () => {
+                // This callback runs after the 0.2s anticipation
+                model.bombArmed = false;
 
-            const damageSize = (model.size + 450) / 2 + 5;
-            const damage = model.damage + 40;
+                const damageSize = finalSize / 2 + 5;
+                const damage = model.damage + 40;
 
-            const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
-            for (let i = 0; i < hits.length; i++) {
-                enemyManager.damageEnemy(hits[i], damage, 'cursor');
+                const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
+                for (let i = 0; i < hits.length; i++) {
+                    enemyManager.damageEnemy(hits[i], damage, 'cursor');
+                }
+
+                model.resetTimer();
+            },
+            () => {
+                // This callback runs after the entire explosion animation finishes
+                model.bombFired = false;
+                messageBus.publish('cursorBombReady');
             }
-
-            model.resetTimer();
-        });
+        );
     }
 
     return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb };
