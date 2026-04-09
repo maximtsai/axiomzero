@@ -705,7 +705,6 @@ class PulseAttackView {
                 // DETONATE
                 // Slow down the game (80% slower = 0.2x speed)
                 this.artillerySprite.setVisible(false);
-                const prevTimeScale = GAME_VARS.timeScale || 1;
                 PhaserScene.time.timeScale = 0.2;
                 PhaserScene.anims.globalTimeScale = 0.2;
                 GAME_VARS.timeScale = 0.2;
@@ -731,11 +730,11 @@ class PulseAttackView {
                         this.artilleryBright.setVisible(true);
                         PhaserScene.time.delayedCall(15, () => {
                             PhaserScene.time.delayedCall(10, () => {
-                                // Restore game speed (restoring to 1.0 or previous if any)
-                                PhaserScene.time.timeScale = prevTimeScale;
-                                PhaserScene.tweens.timeScale = prevTimeScale;
-                                PhaserScene.anims.globalTimeScale = prevTimeScale;
-                                GAME_VARS.timeScale = prevTimeScale;
+                                // Always restore game speed to 1.0 to prevent capture bugs
+                                PhaserScene.time.timeScale = 1.0;
+                                PhaserScene.tweens.timeScale = 1.0;
+                                PhaserScene.anims.globalTimeScale = 1.0;
+                                GAME_VARS.timeScale = 1.0;
                             });
                             // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
 
@@ -817,9 +816,7 @@ const pulseAttack = (() => {
             view.setPointerVisibility(true);
         });
         messageBus.subscribe('testingDefensesEnded', () => {
-            model.charges = model.maxCharges;
-            model.fireTimer = 0;
-            model.clickQueued = false;
+            _resetState();
             model.active = false;
             view.setVisibility(false);
             view.setPointerVisibility(false);
@@ -1008,9 +1005,22 @@ const pulseAttack = (() => {
             model.resetTimer();
             view.setVisibility(true, true, model.manualMode, model.charges);
         } else {
+            _resetState();
             model.active = false;
             view.setVisibility(false);
         }
+    }
+
+    function _resetState() {
+        model.bombArmed = false;
+        model.bombAnimating = false;
+        model.bombReadyToFire = false;
+        model.bombQueued = false;
+        model.bombFired = false;
+        model.canQueueBomb = false;
+        model.clickQueued = false;
+        model.charges = model.maxCharges;
+        model.fireTimer = 0;
     }
 
     function setManualMode(enabled) {
