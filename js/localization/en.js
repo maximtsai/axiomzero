@@ -138,7 +138,7 @@ window.TRANSLATIONS.en = {
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Repeated cursor hits on same enemy deal [color=#8FD9F8]+4[/color] bonus dmg.', popup: 'REPEAT EXPLOIT ACTIVE' },
         laser_duration: { name: 'DURATION', desc: '[color=#8FD9F8]+0.5s[/color] laser duration', popup: '+0.5s DURATION' },
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width.', popup: 'BEAM AMPLIFIED' },
-        laser_incendiary: { name: 'INCENDIARY', desc: 'Sets enemies on fire for [color=#8FD9F8]4s[/color], dealing [color=#8FD9F8]+4[/color] dmg per lvl.', popup: 'INCENDIARY ACTIVE' },
+        laser_incendiary: { name: 'INCENDIARY', desc: 'Sets enemies on fire for [color=#8FD9F8]3s[/color], dealing [color=#8FD9F8]+4[/color] dmg per lvl.', popup: 'INCENDIARY ACTIVE' },
         laser_twin_beams: { name: 'TWIN BEAMS', desc: 'You now fire two lasers.', popup: 'TWIN BEAMS ACTIVE' },
         artillery_volley: { name: 'TRIPLE VOLLEY', desc: 'Fire [color=#8FD9F8]+2[/color] additional artillery strikes.', popup: 'TRIPLE VOLLEY' },
         artillery_shells: { name: 'HIGH EXPLOSIVE', desc: '[color=#8FD9F8]+10%[/color] artillery blast radius.', popup: '+10% RADIUS' },

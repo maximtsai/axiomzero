@@ -29,9 +29,7 @@
 - Play collect data drop sound effect.
 - add boss icon to level.
 - Make level select buttons go up down instead
-- Change data collected display to total data at top left
 - Progress bar to red?
 - Add turbo button
-- Add hover over text explaining what exp bar does.
 - Map node that when clicked, unlocks the ability to extend the node map to full screen. First plays a little animation that then reveals location of several duo nodes.
 - Chatgpt logo for boss but 5 wings instead

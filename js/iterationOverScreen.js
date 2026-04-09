@@ -129,7 +129,7 @@ const iterationOverScreen = (() => {
         expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x444455).setDepth(depth + 2).setVisible(false);
 
         expBarFill = PhaserScene.add.image(barX, barY, 'white_pixel');
-        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffd700).setDepth(depth + 3).setVisible(false);
+        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffffff).setDepth(depth + 3).setVisible(false);
 
         expBarLabel = PhaserScene.add.text(cx, barY - 23, 'INSIGHT PROGRESS', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -223,7 +223,7 @@ const iterationOverScreen = (() => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-150, -50);
                 tooltipManager.show(expHoverBtn.x + 400, expHoverBtn.y - 90, [
-                    { text: t('results', 'insight_progress_title'), style: 'title', color: '#ffd700' },
+                    { text: t('results', 'insight_progress_title'), style: 'title', color: '#ffffff' },
                     { text: t('results', 'insight_progress_desc'), style: 'normal' }
                 ], 410);
             },

@@ -536,7 +536,7 @@ const laserAttack = (() => {
                 // Thermal Overload (guaranteed ignition)
                 if (model.incendiaryLevel > 0) {
                     const burnDmg = model.incendiaryLevel * 4;
-                    e.applyBurn(4.0, burnDmg);
+                    e.applyBurn(3.0, burnDmg);
                 }
             }
         }
