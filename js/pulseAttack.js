@@ -864,7 +864,8 @@ const pulseAttack = (() => {
 
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
-            if (!model.active || model.paused || !tower.isAlive()) return;
+            const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
+            if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive()) return;
 
             if (model.bombArmed) {
                 if (model.bombReadyToFire) {
@@ -899,12 +900,9 @@ const pulseAttack = (() => {
         const inActivePhase = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting || phase === GAME_CONSTANTS.PHASE_UPGRADE);
 
         if (inActivePhase) {
-            let cx = GAME_VARS.mouseposx;
-            if (isTesting) {
-                // Testing offset adjustment
-                cx = Math.max(GAME_CONSTANTS.halfWidth - 0.0, cx - 0.0);
-            }
-            view.updatePosition(delta, cx, GAME_VARS.mouseposy, model);
+            const cx = GAME_VARS.mouseposx;
+            const cy = GAME_VARS.mouseposy;
+            view.updatePosition(delta, cx, cy, model);
             view.updateCharges(model.charges, model.maxCharges, model.manualMode && !model.bombArmed);
 
             // Handle reload animation trigger
@@ -932,13 +930,8 @@ const pulseAttack = (() => {
     }
 
     function _fire() {
-        let cx = GAME_VARS.mouseposx;
-        let waveCx = cx;
-        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-            cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
-        }
+        const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
-
         const damageSize = (model.size / 2) + 5;
 
         // Play cursor pulse sound with unique detune
@@ -951,13 +944,18 @@ const pulseAttack = (() => {
         if (s) s.detune = detune;
 
         view.playFireAnimation();
-        view.playWaveEffect(waveCx, cy, model.size);
+        view.playWaveEffect(cx, cy, model.size);
 
         // Micro camera shake
         zoomShake(1.005);
 
+        let damageX = cx;
+        if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+            damageX -= 400;
+        }
+
         // Damage all enemies in range
-        const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
+        const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
 
         // ISOLATION PROTOCOL logic
         let actualDamage = model.damage;
@@ -993,12 +991,17 @@ const pulseAttack = (() => {
                 const isInCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
                 if (!model.active || model.paused || !tower.isAlive() || !isInCombat) return;
 
-                view.playAftershockAnimation(waveCx, cy, model.size);
+                view.playAftershockAnimation(cx, cy, model.size);
                 view.playRecoil();
 
                 const aftershockDamage = 4 + 2 * model.aftershockLevel;
                 const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
-                const aftershockHits = enemyManager.getEnemiesInSquareRange(cx, cy, aftershockSizeRadius, _hitBuffer);
+                let damageX = cx;
+                if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+                    damageX -= 400;
+                }
+
+                const aftershockHits = enemyManager.getEnemiesInSquareRange(damageX, cy, aftershockSizeRadius, _hitBuffer);
                 for (let i = 0; i < aftershockHits.length; i++) {
                     enemyManager.damageEnemy(aftershockHits[i], aftershockDamage, 'cursor');
                 }
@@ -1072,14 +1075,17 @@ const pulseAttack = (() => {
     }
 
     function armBomb() {
-        if (!model.active || model.bombArmed || model.bombFired || model.bombUses <= 0) return;
+        const isUpgrade = (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE);
+        const canArm = model.active || isUpgrade;
+        if (!canArm || model.bombArmed || model.bombFired || model.bombUses <= 0) return;
 
         if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE) {
-            if (typeof enemyManager !== 'undefined') {
-                enemyManager.startTestingDefenses();
-            }
             if (typeof GAME_VARS !== 'undefined') {
+                const wasTesting = GAME_VARS.testingDefenses;
                 GAME_VARS.testingDefenses = true;
+                if (!wasTesting) {
+                    messageBus.publish('testingDefensesStarted');
+                }
             }
         }
 
@@ -1117,10 +1123,7 @@ const pulseAttack = (() => {
         model.bombQueued = false;
         model.bombFired = true;
 
-        let cx = GAME_VARS.mouseposx;
-        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-            cx = Math.max(GAME_CONSTANTS.halfWidth - 400, cx - 400);
-        }
+        const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
         const finalSize = getBombFinalSize();
 
@@ -1133,7 +1136,12 @@ const pulseAttack = (() => {
                 const damageSize = finalSize / 2 + 5;
                 const damage = model.damage + 50;
 
-                const hits = enemyManager.getEnemiesInSquareRange(cx, cy, damageSize, _hitBuffer);
+                let damageX = cx;
+                if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE && (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
+                    damageX -= 400;
+                }
+
+                const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
                 for (let i = 0; i < hits.length; i++) {
                     enemyManager.damageEnemy(hits[i], damage, 'cursor');
                     if (typeof hits[i].forceSlow === 'function') {
@@ -1152,6 +1160,15 @@ const pulseAttack = (() => {
                 if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE) {
                     model.bombUses = model.maxBombUses;
                     messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
+
+                    // Auto-stop testing if all enemies cleared
+                    if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+                        const enemyCount = enemyManager.getActiveEnemies().length;
+                        if (enemyCount === 0) {
+                            GAME_VARS.testingDefenses = false;
+                            messageBus.publish('testingDefensesEnded');
+                        }
+                    }
                 }
 
                 view.playCursorReentryEffect(model.size);
