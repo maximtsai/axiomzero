@@ -894,11 +894,14 @@ const pulseAttack = (() => {
     function _update(delta) {
         if (model.paused) return;
 
-        // The pointer is always tracked and updated if combat is active or testing
-        const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
-        if (isCombat) {
+        const phase = gameStateMachine.getPhase();
+        const isTesting = (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
+        const inActivePhase = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting || phase === GAME_CONSTANTS.PHASE_UPGRADE);
+
+        if (inActivePhase) {
             let cx = GAME_VARS.mouseposx;
-            if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            if (isTesting) {
+                // Testing offset adjustment
                 cx = Math.max(GAME_CONSTANTS.halfWidth - 0.0, cx - 0.0);
             }
             view.updatePosition(delta, cx, GAME_VARS.mouseposy, model);
@@ -914,14 +917,16 @@ const pulseAttack = (() => {
             model.wasCanQueueClick = model.canQueueClick;
         }
 
-        const isVisible = isCombat && tower.isAlive();
+        const isVisible = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting) && tower.isAlive();
         view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed, model.bombFired);
 
         if (!model.active || !tower.isAlive() || model.bombArmed || model.bombFired) {
             return;
         }
 
-        if (model.updateTimer(delta)) {
+        // Auto-attack if in combat OR testing (Sandbox Mode)
+        const canAutoFire = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting);
+        if (canAutoFire && model.updateTimer(delta)) {
             _fire();
         }
     }
@@ -1004,9 +1009,9 @@ const pulseAttack = (() => {
     function _onPhaseChanged(phase) {
         const isCombat = phase === GAME_CONSTANTS.PHASE_COMBAT;
 
-        view.setPointerVisibility(isCombat);
+        view.setPointerVisibility(isCombat || GAME_VARS.testingDefenses);
 
-        if (isCombat && model.unlocked) {
+        if ((isCombat || GAME_VARS.testingDefenses) && model.unlocked) {
             model.active = true;
             model.resetTimer();
             view.setVisibility(true, true, model.manualMode, model.charges);
@@ -1068,6 +1073,15 @@ const pulseAttack = (() => {
 
     function armBomb() {
         if (!model.active || model.bombArmed || model.bombFired || model.bombUses <= 0) return;
+
+        if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE) {
+            if (typeof enemyManager !== 'undefined') {
+                enemyManager.startTestingDefenses();
+            }
+            if (typeof GAME_VARS !== 'undefined') {
+                GAME_VARS.testingDefenses = true;
+            }
+        }
 
         model.bombUses--;
         messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
@@ -1133,6 +1147,13 @@ const pulseAttack = (() => {
             () => {
                 // This callback runs after the entire explosion animation finishes
                 model.bombFired = false;
+
+                // Infinite recharge in upgrade phase
+                if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE) {
+                    model.bombUses = model.maxBombUses;
+                    messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
+                }
+
                 view.playCursorReentryEffect(model.size);
                 messageBus.publish('cursorBombReady');
             }

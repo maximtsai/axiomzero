@@ -321,26 +321,20 @@ const gameHUD = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 57,
+                y: GAME_CONSTANTS.HEIGHT - 75,
                 alpha: 1
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             disable: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 57,
                 alpha: 0
             },
             onMouseUp: () => {
@@ -507,8 +501,7 @@ const gameHUD = (() => {
         endIterationBtn.setVisible(false);
         endIterationBtn.setState(DISABLE);
         if (bombBtn) {
-            bombBtn.setVisible(false);
-            bombBtn.setState(DISABLE);
+            _updateBombUI();
         }
         if (waveProgressBar) waveProgressBar.setVisible(false);
 
@@ -718,6 +711,8 @@ const gameHUD = (() => {
             ui.text.setText(Math.floor(val));
         });
         _updateResourceLayout();
+        _updateBombUI();
+        refreshTestDefensesButton();
     }
 
 
