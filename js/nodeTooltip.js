@@ -255,8 +255,17 @@ const nodeTooltip = (() => {
         const totalHeight = currentY + 3;
         bg.setDisplaySize(currentBgWidth, totalHeight);
 
-        // Position above the node (Duo nodes appear 20px higher)
+        // Position above the node (Duo nodes appear 56px higher)
+        // Check for top-of-screen intersection to flip position if needed
+        const nodeHeight = node.size || 80;
         const verticalOffset = node.isDuoBox ? 56 : 21;
+        const topSafeMargin = 15;
+
+        let showAbove = true;
+        if (node.btn.y - verticalOffset - totalHeight < topSafeMargin) {
+            showAbove = false;
+        }
+
         let horizontalOffset = 0;
         if (node.isDuoBox) {
             const side = node._getDuoSide();
@@ -264,33 +273,33 @@ const nodeTooltip = (() => {
             else if (side === 'right') horizontalOffset = -16;
         }
 
-        // Clamp X position to stay within the 800px Upgrade Tree panel bounds
+        // Clamp X position to stay within the leftpanel bounds
         let targetX = node.btn.x + horizontalOffset;
         const halfW = currentBgWidth / 2;
         const margin = 10;
         targetX = Math.max(targetX, halfW + margin);
-        // targetX = Math.min(targetX, 800 - halfW - margin); // Right clamp removed per user request
 
-        // TODO: if hover popup gets cut off from the top (.ie we are hovering over a node near the top of the screen), instead render it below the node.
-        container.setPosition(targetX, node.btn.y - verticalOffset);
-
-        // RESET AND SHIFT: First reset Y and children to 0, then shift so (0,0) is bottom-center
-        // This is necessary because of the singleton pattern (reuse)
-        bg.y = -totalHeight;
-        container.iterate(child => {
-            if (child === bg) return;
-            // Since elements were positioned starting at Y=3, we don't need to reset
-            // their specific currentY, we just need to subtract totalHeight FROM their
-            // calculated positions.
-            child.y -= totalHeight;
-        });
+        // Final container position and child alignment
+        if (showAbove) {
+            container.setPosition(targetX, node.btn.y - verticalOffset);
+            bg.y = -totalHeight;
+            container.iterate(child => {
+                if (child === bg) return;
+                child.y -= totalHeight;
+            });
+        } else {
+            // Position below the node
+            container.setPosition(targetX, node.btn.y + verticalOffset + 2);
+            bg.y = 0;
+            // Children are already relative to container top (Y=3), so no further shift needed
+        }
 
         // Animations
         if (!isPurchaseRefresh) {
             container.setScale(0.75, 1.1).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1.11, scaleY: 0.95, angle: -2, y: node.btn.y - verticalOffset,
+                scaleX: 1.11, scaleY: 0.95, angle: -2, y: container.y,
                 duration: 95, ease: 'Quart.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({

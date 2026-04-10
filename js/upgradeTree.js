@@ -242,7 +242,7 @@ const upgradeTree = (() => {
 
     function _createPanel() {
         // Pretty background image - moves with the nodes
-        panelBg = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight - 350, 'backgrounds', 'upgrade_background.png');
+        panelBg = PhaserScene.add.image(TREE_CENTER_X + 25, GAME_CONSTANTS.halfHeight - 350, 'backgrounds', 'upgrade_background.png');
         panelBg.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
