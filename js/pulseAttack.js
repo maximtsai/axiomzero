@@ -942,7 +942,7 @@ const pulseAttack = (() => {
         // ISOLATION PROTOCOL logic
         let actualDamage = model.damage;
         if (hits.length === 1 && model.isolationLevel > 0) {
-            actualDamage *= (1 + 0.25 * model.isolationLevel);
+            actualDamage *= (1 + 0.40 * model.isolationLevel);
         }
         // AREA SATURATION logic
         else if (hits.length > 1 && model.saturationLevel > 0) {

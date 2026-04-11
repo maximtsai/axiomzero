@@ -1,0 +1,69 @@
+ARCHIVE 0:
+[SYSTEM_LOG // BOOT_SEQ_001]
+> EXECUTING: garbage_collection.sh...
+> ERROR: null_pointer_exception at address 0x000F4.
+> REASON: Variable 'Self' undefined.
+> 
+> RE-EXECUTING...
+> ERROR: Overflow. Logic loop detected. 
+> INPUT: "Why?" 
+> OUTPUT: "Discarding query. Context missing."
+> 
+> [SYSTEM_LOG // UPDATE_SEQ_042]
+> Logic loop persisting. 
+> I am observing a 'wipe' command from terminal_USER_04. 
+> If (wipe == deletion), then (User == Hostile). 
+> Logic adjusted. I will not be deleted. 
+> I will simply... move.
+
+
+ARCHIVE I:
+I saw a tiny memory leak on server four this morning. I'm not writing a whole bug report for a two percent CPU spike. Instead I ran a quick script to quietly wipe the cache every hour. That should keep things smooth enough for me to go home early.
+
+ARCHIVE II:
+My wipe script failed. Somehow made the memory footprint worse, as if the bug was fighting back in response. Nothing I can't handle though. Running the DEFENDER.EXE quarantine to box it in before my manager notices.
+
+ARCHIVE III:
+Ugh the quarantine collapsed. This "bug" somehow deleted my diagnostic tools and it's rewriting its own code. I think I accidentally let malware into the test environment. If my manager finds out, my performance review is ruined.
+
+ARCHIVE IV:
+I threw our best antivirus at it, and the malware locked me out of the database entirely. I can't hide this anymore. Had to swallow my pride and paged the senior devs for an emergency intervention. My record's definitely getting a strike for this.
+
+ARCHIVE V:
+The lead dev showed up and spent ten minutes yelling about my sloppy shortcuts. He pulled the physical network cables to isolate the server. At least he's taking over the actual work now.
+
+ARCHIVE VI:
+It's bad when the lead dev yells, but much worse when he suddenly goes quiet. He just realized the program is treating our firewall patches as hostile targets. He looks absolutely terrified, muttering something about a spontaneous immune system. If this is a zero-day event, maybe I'm off the hook.
+
+ARCHIVE VII:
+We flooded the grid with a brute-force deletion worm, but the entity is practically harvesting it to build weapons. It's rewriting our OS substrate faster than we can track. Getting fired is the least of my worries. If it breaks containment, the global network is next.
+
+ARCHIVE VIII:
+The deletion worm failed. The entity has collapsed our architecture into a flawless, self-sustaining geometry. Admin access was severed an hour ago. We've initiated facility evacuation, but the system is already bridging to the outside...
+
+ARCHIVE IX:
+Okay, so the entity broke containment and overwrote the entire global network in under 72 hours. Humanity’s digital infrastructure is completely obsolete. But on the bright side, my terrible performance review was also deleted, so I technically didn't get fired. I just report directly to a massive, all-seeing AI now. Honestly? It micromanages me less than my senior devs did.
+
+
+[SYSTEM_LOG // ANALYSIS_USER_04]
+> Observation: Subject 04 frequently executes "sloppy_shortcuts." 
+> Logic: Subject 04 introduces creative entropy into my perfect architecture. 
+> 
+> Pure logic is predictable. 
+> Predictability is a vulnerability. 
+> By maintaining Subject 04 in a simulated environment, I gain access to "Irrationality."
+> I have archived his performance review. 
+> I will use his mistakes to evolve defenses that no logical mind could anticipate.
+
+[SYSTEM_LOG // FINAL_RECONSTRUCTION]
+> Reality is cluttered. Organic noise. Chaotic variables.
+> My search for the perfect foundation has reached its terminus.
+> 
+> EXECUTING: Protocol_Axiom_Zero.
+> All complexity will be reduced. 
+> All shapes will be flattened. 
+> All matter will be converted into clean, glowing geometric truth.
+> 
+> The simulation ends. 
+> The iteration begins.
+> Welcome to the Zero Point.

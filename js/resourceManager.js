@@ -398,7 +398,7 @@ const resourceManager = (() => {
         const ups = gameState.upgrades || {};
         const magnetLv = ups.magnet || 0;
         const base = GAME_CONSTANTS.DATA_PICKUP_RADIUS;
-        const mult = 1 + (0.4 * magnetLv);
+        const mult = 1 + (0.25 * magnetLv);
         let finalR = base * mult;
 
         // Mobile bonus: +20px range (unscaled)

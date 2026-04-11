@@ -23,7 +23,7 @@ const upgradeDispatcher = (() => {
     function recalcPulseDamage() {
         let base = 4 + 2 * getLevel('pulse_damage') + 2 * getLevel('overcharge');
         pulseAttack.setDamage(base);
-        
+
         pulseAttack.setIsolationLevel(getLevel('manual_pulse_child_1_1'));
         pulseAttack.setSaturationLevel(getLevel('wide_pulse_child_1'));
     }
@@ -153,7 +153,7 @@ const upgradeDispatcher = (() => {
             recalcArtillery();
         }
         recalcThreatResponse();
-        
+
         // Notify any global listeners that a bulk update occurred
         messageBus.publish('statsRecalculated');
     }

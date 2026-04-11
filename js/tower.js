@@ -239,8 +239,9 @@ class TowerView {
             completeDelay: 100,
         });
 
+        const hasRangeShifted = Math.abs(newScale - this.rangeSprite.scaleX) > 0.001;
         const overshoot = isIntense ? 1.14 : 1.1;
-        const shakeMag = isIntense ? 0.003 : 0.002;
+        const shakeMag = (isIntense) ? 0.003 : (hasRangeShifted ? 0.002 : 0);
 
         // Scale animation
         this.rangeSprite.currAnim = PhaserScene.tweens.add({
@@ -258,7 +259,7 @@ class TowerView {
                     ease: 'Cubic.easeIn',
                     onComplete: () => {
                         // add a tiny brief zoom in here
-                        PhaserScene.cameras.main.shake(80, shakeMag);
+                        if (shakeMag > 0) PhaserScene.cameras.main.shake(80, shakeMag);
                         this.rangeSprite.setAlpha(1);
                         this.rangeSprite.currAnim = PhaserScene.tweens.add({
                             targets: this.rangeSprite,

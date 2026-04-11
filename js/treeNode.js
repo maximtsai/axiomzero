@@ -459,10 +459,10 @@ class Node {
             const siblingDef = NODE_DEFS.find(d => d.id === this.duoSiblingId);
             if (siblingDef) {
                 if (this.treeX < siblingDef.treeX) {
-                    x -= 13;
+                    x -= 22;
                     iconX = x + 16;
                 } else {
-                    x += 13;
+                    x += 22;
                     iconX = x - 16;
                 }
             }
@@ -542,7 +542,8 @@ class Node {
             .setAlpha(0)
             .setVisible(false)
             .setDepth(nodeDepth + 5)
-            .setScrollFactor(0);
+            .setScrollFactor(0)
+            .setScale(1.01);
 
         if (treeGroup) treeGroup.add(this.glowSprite);
         if (draggableGroup) draggableGroup.add(this.glowSprite);
@@ -572,7 +573,7 @@ class Node {
 
             this.duoBackingOutline = PhaserScene.add.image(centerX, centerY, 'buttons', 'duo_node_backing_outline.png')
                 .setOrigin(0.5, 0.5)
-                .setScale(1.0)
+                .setScale(1.03)
                 .setDepth(backingDepth - 1)
                 .setScrollFactor(0)
                 .setVisible(false)

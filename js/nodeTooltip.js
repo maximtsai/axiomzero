@@ -258,7 +258,7 @@ const nodeTooltip = (() => {
         // Position above the node (Duo nodes appear 56px higher)
         // Check for top-of-screen intersection to flip position if needed
         const nodeHeight = node.size || 80;
-        const verticalOffset = node.isDuoBox ? 56 : 21;
+        const verticalOffset = node.isDuoBox ? 52 : 26;
         const topSafeMargin = 15;
 
         let showAbove = true;
@@ -289,7 +289,7 @@ const nodeTooltip = (() => {
             });
         } else {
             // Position below the node
-            container.setPosition(targetX, node.btn.y + verticalOffset + 2);
+            container.setPosition(targetX, node.btn.y + verticalOffset + 1);
             bg.y = 0;
             // Children are already relative to container top (Y=3), so no further shift needed
         }

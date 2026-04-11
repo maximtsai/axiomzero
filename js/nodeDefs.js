@@ -4,8 +4,8 @@
 // Tree Layout Constants
 const TREE_CENTER_X = 400; // Half of 800px panel width
 const TREE_START_Y = 740;
-const TREE_UNIT_X = 80;
-const TREE_UNIT_Y = 80;
+const TREE_UNIT_X = 100;
+const TREE_UNIT_Y = 100;
 const DUO_OFFSET = 30; // Standard offset for choice nodes
 
 // Theme Colors for Popups/Effects
@@ -120,7 +120,7 @@ const NODE_DEFS = [
         description: t('nodes', 'magnet.desc'),
         popupText: t('nodes', 'magnet.popup'),
         popupColor: COLORS.RESOURCE,
-        maxLevel: 1,
+        maxLevel: 2,
         baseCost: 1,
         label: 'UTILITY',
         costType: 'insight',
@@ -1315,11 +1315,11 @@ const NODE_DEFS = [
         icon: 'Skillicon14_25.png',
         description: t('nodes', 'manual_pulse_child_1_1.desc'),
         popupText: t('nodes', 'manual_pulse_child_1_1.popup'),
-        maxLevel: 4,
-        baseCost: 40,
+        maxLevel: 3,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 20,
+        costStep: 25,
         parents: ['manual_pulse_child_1'],
         childIds: [],
         treeX: gridX(-3.5),
