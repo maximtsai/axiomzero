@@ -198,7 +198,7 @@ const gameHUD = (() => {
                 }
             });
             btn.setOrigin(0.5, 0.5);
-            btn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
+            btn.setScale(1, helper.isMobileDevice() ? 1.14 : 1.09);
             btn.setDepth(depth + 1);
             btn.setScrollFactor(0);
             btn.setVisible(false);
@@ -624,7 +624,7 @@ const gameHUD = (() => {
         if (!visible) return;
 
         let currentY = HUD_Y + BAR_H + BAR_GAP + 13;
-        const spacing = helper.isMobileDevice() ? 41 : 37;
+        const spacing = helper.isMobileDevice() ? 42 : 38;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
         const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
         const order = ['data', 'insight', 'shard', 'coin', 'processor'];

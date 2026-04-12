@@ -179,8 +179,8 @@ const GAME_STATE_DEFAULTS = {
 
     // Settings
     settings: {
-        globalVolume: 1.0,
-        globalMusicVol: 1.0,
+        globalVolume: 0.85,
+        globalMusicVol: 0.85,
         sfxMuted: false,
         musicMuted: false,
         chromaticAberration: true,

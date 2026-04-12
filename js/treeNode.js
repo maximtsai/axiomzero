@@ -460,10 +460,10 @@ class Node {
             if (siblingDef) {
                 if (this.treeX < siblingDef.treeX) {
                     x -= 22;
-                    iconX = x + 16;
+                    iconX = x + 21;
                 } else {
                     x += 22;
-                    iconX = x - 16;
+                    iconX = x - 21;
                 }
             }
         }
