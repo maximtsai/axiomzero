@@ -217,7 +217,7 @@ const audio = {
         gameState.settings.globalVolume = newVol;
         saveGame();
         for (let i in soundList) {
-            if (soundList[i].isPlaying && soundList[i] !== globalMusic) {
+            if (soundList[i].isPlaying && !soundList[i].isMusic) {
                 soundList[i].volume = soundList[i].fullVolume * globalVolume;
             }
         }

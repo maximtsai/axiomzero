@@ -194,7 +194,7 @@ class BossCircle extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 260;
+        const bossHealth = 250;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
@@ -250,7 +250,7 @@ class BossCircle extends Boss {
                     PhaserScene.tweens.add({
                         targets: this.model,
                         rotationOffset: Math.PI,
-                        duration: 7000,
+                        duration: 7500,
                         ease: 'Quad.easeInOut',
                         onComplete: () => {
                             this.model.rotationFinished = true;
@@ -258,15 +258,27 @@ class BossCircle extends Boss {
                     });
                 }
 
-                // Slow down from 340 to 220
-                if (dist <= 225) {
+                // If rotation is finished, we don't care about distance anymore - proceed to attack sequence
+                if (this.model.rotationFinished) {
                     this.model.baseSpeedFactor = 0;
-                    this.model.vx = 0; // Hard kill velocity
+                    this.model.vx = 0;
                     this.model.vy = 0;
-                    this.model.isAttacking = true; // Stop base movement in Enemy.update
+                    this.model.isAttacking = true;
+                    this.model.behaviorState = BOSS_CIRCLE_STATE.WAITING;
+                    this.model.stateTimer = 0.4;
+                    if (typeof audio !== 'undefined') {
+                        audio.play('three_taps', 0.85);
+                    }
+                }
+                // If we reach the stopping point but are still turning, stop moving and wait
+                else if (dist <= 225) {
+                    this.model.baseSpeedFactor = 0;
+                    this.model.vx = 0;
+                    this.model.vy = 0;
+                    this.model.isAttacking = true;
                     this.model.behaviorState = BOSS_CIRCLE_STATE.ROTATING;
                 } else {
-                    const progress = Phaser.Math.Clamp((340 - dist) / (340 - 225), 0, 1);
+                    const progress = Phaser.Math.Clamp((340 - dist) / (340 - 200), 0, 1);
                     this.model.baseSpeedFactor = 1.0 - (progress * 0.9);
                 }
                 break;
@@ -331,17 +343,13 @@ class BossCircle extends Boss {
     _startAttack() {
         this.model.behaviorState = BOSS_CIRCLE_STATE.ANTICIPATING;
 
-        if (typeof audio !== 'undefined') {
-            audio.play('warship_aim', 0.8);
-        }
-
         // Step 1: Back off 25 units (visual only) over 600ms
         PhaserScene.tweens.add({
             targets: this.model,
-            visualOffset: -25,
-            duration: 700,
+            visualOffset: -20,
+            duration: 900,
             ease: 'Quart.easeInOut',
-            completeDelay: 150,
+            completeDelay: 300,
             onComplete: () => {
                 this.model.behaviorState = BOSS_CIRCLE_STATE.ATTACKING;
 
@@ -356,12 +364,12 @@ class BossCircle extends Boss {
                 PhaserScene.tweens.add({
                     targets: this.model,
                     visualOffset: targetOffset,
-                    duration: 450,
+                    duration: 500,
                     ease: 'Quart.easeIn',
                     onComplete: () => {
                         // Deal 50 damage
                         if (typeof tower !== 'undefined') {
-                            tower.takeDamage(50);
+                            tower.takeDamage(35);
                             cameraManager.shake(400, 0.02);
                             // if (typeof audio !== 'undefined') audio.play('explosion_large', 0.8);
                         }

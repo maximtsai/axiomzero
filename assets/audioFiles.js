@@ -38,4 +38,5 @@ const audioFiles = [
     { name: 'small_destruction', src: 'audio/small_destruction.mp3' },
     { name: 'creak_turn_bosscircle', src: 'audio/creak_turn_bosscircle.mp3' },
     { name: 'warship_aim', src: 'audio/warship_aim.mp3' },
+    { name: 'three_taps', src: 'audio/three_taps.mp3' },
 ];
