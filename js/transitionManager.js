@@ -5,6 +5,8 @@
 const transitionManager = (() => {
     let transitioning = false;
     let blocker = null;
+    let _failsafeTimer = null;
+    let _revealTimer = null;
 
     function init() {
         // No subscriptions needed — called directly by upgradeTree / iterationOverScreen
@@ -47,12 +49,14 @@ const transitionManager = (() => {
 
             const targetX = -GAME_CONSTANTS.halfWidth - 10;
             _tweenTreeGroup(targetX, duration);
+            _tweenTreeMaskContainer(targetX, duration);
+            _startFailsafe(duration);
             cameraManager.toCombatView(duration, () => {
-                _endTransition();
+                // Hide tree before publishing transitionComplete so subscribers see correct state
                 if (typeof upgradeTree !== 'undefined') {
                     upgradeTree.hide();
                 }
-
+                _endTransition();
             });
             // Trigger visual "System Scan" on wave start
             if (typeof glitchFX !== 'undefined') {
@@ -67,14 +71,17 @@ const transitionManager = (() => {
 
             const targetX = 0;
             _tweenTreeGroup(targetX, duration);
-            setTimeout(() => {
+            _tweenTreeMaskContainer(targetX, duration);
+            _startFailsafe(duration);
+            // Bug 2 fix: use Phaser time so this respects time scaling, not wall-clock
+            _revealTimer = PhaserScene.time.delayedCall(duration * 0.6, () => {
+                _revealTimer = null;
                 if (typeof upgradeTree !== 'undefined' && upgradeTree.revealCoordText) {
                     upgradeTree.revealCoordText();
                 }
-            }, duration * 0.6)
+            });
             cameraManager.toUpgradeView(duration, () => {
                 _endTransition();
-
             });
         } else {
             // Fallback — instant transition
@@ -92,13 +99,51 @@ const transitionManager = (() => {
         }
     }
 
+    function _tweenTreeMaskContainer(targetX, duration) {
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getTreeMaskContainer) {
+            const container = upgradeTree.getTreeMaskContainer();
+            if (container) {
+                PhaserScene.tweens.add({
+                    targets: container,
+                    x: targetX,
+                    duration: duration,
+                    ease: 'Cubic.easeOut'
+                });
+            }
+        }
+    }
+
     function _endTransition() {
+        // Idempotency guard — prevents double-fire if failsafe AND camera callback both complete
+        if (!transitioning) return;
+
+        // Clear failsafe if normal completion fires first
+        if (_failsafeTimer) {
+            _failsafeTimer.remove();
+            _failsafeTimer = null;
+        }
+        // Cancel revealCoordText if failsafe fires early
+        if (_revealTimer) {
+            _revealTimer.remove();
+            _revealTimer = null;
+        }
         transitioning = false;
         if (blocker) {
             blocker.destroy();
             blocker = null;
         }
         messageBus.publish('transitionComplete');
+    }
+
+    function _startFailsafe(duration) {
+        // Guard: if the camera callback never fires, force-end the transition
+        // after duration + a generous 1s buffer so we never permanently lock up.
+        // Note: _endTransition() has its own idempotency guard, so no need to check transitioning here.
+        if (_failsafeTimer) _failsafeTimer.remove();
+        _failsafeTimer = PhaserScene.time.delayedCall(duration + 1000, () => {
+            console.warn('[transitionManager] Failsafe triggered — camera callback never fired.');
+            _endTransition();
+        });
     }
 
     function isTransitioning() {

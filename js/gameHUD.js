@@ -20,6 +20,7 @@ const gameHUD = (() => {
     let bombBtnTxt = null;
     let farmingStartTime = 0;
     let isFarming = false;
+    let bombCanCancel = false;
 
     // Layout
     const HUD_X = 20;
@@ -65,7 +66,22 @@ const gameHUD = (() => {
             if (bombBtn) bombBtn.setState(DISABLE);
         });
         messageBus.subscribe('bombUsesChanged', _updateBombUI);
-        messageBus.subscribe('cursorBombReady', _updateBombUI);
+        messageBus.subscribe('cursorBombReady', () => {
+            bombCanCancel = false;
+            _updateBombUI();
+        });
+        messageBus.subscribe('cursorBombCanCancel', () => {
+            bombCanCancel = true;
+            _updateBombUI();
+        });
+        messageBus.subscribe('cursorBombCancelled', () => {
+            bombCanCancel = false;
+            _updateBombUI();
+        });
+        messageBus.subscribe('cursorBombFired', () => {
+            bombCanCancel = false;
+            _updateBombUI();
+        });
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
@@ -282,7 +298,13 @@ const gameHUD = (() => {
                 alpha: 0.5
             },
             onMouseUp: () => {
-                armBomb();
+                if (bombCanCancel) {
+                    if (typeof pulseAttack !== 'undefined' && pulseAttack.cancelBomb) {
+                        pulseAttack.cancelBomb();
+                    }
+                } else {
+                    armBomb();
+                }
             },
         });
         bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
@@ -387,18 +409,21 @@ const gameHUD = (() => {
         const hasBombs = model.maxBombUses > 0;
         bombBtn.setVisible(hasBombs);
         if (hasBombs) {
-            // Priority: if already armed/firing, let those states drive logic?
-            // Actually armBomb logic sets state(DISABLE) in init listener.
-            // But here we enforce NORMAL only if bombUses > 0 and NOT armed.
-            const model = pulseAttack.getModel();
-            if (model.bombUses > 0 && !model.bombArmed && !model.bombFired) {
+            if (bombCanCancel) {
                 bombBtn.setState(NORMAL);
+                if (bombBtnTxt) {
+                    bombBtnTxt.setText(`CANCEL\n(CLICK)`);
+                }
             } else {
-                bombBtn.setState(DISABLE);
-            }
+                if (model.bombUses > 0 && !model.bombArmed && !model.bombFired) {
+                    bombBtn.setState(NORMAL);
+                } else {
+                    bombBtn.setState(DISABLE);
+                }
 
-            if (bombBtnTxt) {
-                bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n<SPACEBAR>`);
+                if (bombBtnTxt) {
+                    bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n<SPACEBAR>`);
+                }
             }
         }
     }
@@ -457,6 +482,7 @@ const gameHUD = (() => {
     // ── event handlers ───────────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {
+        bombCanCancel = false;
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _showCombatHUD();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {

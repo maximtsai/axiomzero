@@ -621,8 +621,11 @@ class PulseAttackView {
         const initSize = baseSize + 20;
         this.artillerySprite.setSize(initSize, initSize);
 
+        // Store tweens so they can be cancelled
+        this.armTweens = [];
+
         // Phase 1: +300 units, 0.25s, Back.easeOut
-        PhaserScene.tweens.add({
+        const tw1 = PhaserScene.tweens.add({
             targets: [this.artillerySprite],
             width: initSize + 420,
             height: initSize + 420,
@@ -630,7 +633,7 @@ class PulseAttackView {
             ease: 'Quart.easeOut',
             easeParams: [4],
             onComplete: () => {
-                PhaserScene.tweens.add({
+                const tw2 = PhaserScene.tweens.add({
                     targets: [this.artillerySprite],
                     width: initSize + 300,
                     height: initSize + 300,
@@ -641,7 +644,7 @@ class PulseAttackView {
                         if (onPhase1Complete) onPhase1Complete();
                         const overshootSize = finalBombSize + 90;
 
-                        PhaserScene.tweens.add({
+                        const tw3 = PhaserScene.tweens.add({
                             targets: [this.artillerySprite],
                             width: overshootSize,
                             height: overshootSize,
@@ -651,7 +654,7 @@ class PulseAttackView {
                                 // Phase 2: +150 units, 0.2s, Back.easeOut
                                 this.artilleryBright.setSize(finalBombSize, finalBombSize);
                                 this.artilleryBright.setRotation(0);
-                                PhaserScene.tweens.add({
+                                const tw4 = PhaserScene.tweens.add({
                                     targets: [this.artillerySprite],
                                     width: finalBombSize,
                                     height: finalBombSize,
@@ -659,11 +662,46 @@ class PulseAttackView {
                                     ease: 'Back.easeOut',
                                     easeParams: [3.5]
                                 });
-                                PhaserScene.time.delayedCall(100, onPhase2Complete);
+                                this.armTweens.push(tw4);
+                                // Bug 3 fix: store so cancelBomb can cancel it
+                                this.phase2Timer = PhaserScene.time.delayedCall(100, () => {
+                                    this.phase2Timer = null;
+                                    onPhase2Complete();
+                                });
                             }
                         });
+                        this.armTweens.push(tw3);
                     }
                 });
+                this.armTweens.push(tw2);
+            }
+        });
+        this.armTweens.push(tw1);
+    }
+
+    playBombCancelAnimation(baseSize) {
+        // Stop any expansion tweens
+        if (this.armTweens) {
+            this.armTweens.forEach(t => t.stop());
+            this.armTweens = [];
+        }
+        // Bug 3 fix: cancel the phase2 delayedCall if it's still pending
+        if (this.phase2Timer) {
+            this.phase2Timer.remove();
+            this.phase2Timer = null;
+        }
+
+        const targetSize = baseSize + 20;
+
+        PhaserScene.tweens.add({
+            targets: [this.artillerySprite],
+            width: targetSize,
+            height: targetSize,
+            duration: 300,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                this.artillerySprite.setVisible(false);
+                this.artilleryBright.setVisible(false);
             }
         });
     }
@@ -1053,6 +1091,23 @@ const pulseAttack = (() => {
         return model.size + 500;
     }
 
+    function cancelBomb() {
+        if (!model.bombArmed || model.bombFired) return;
+
+        model.bombArmed = false;
+        model.bombAnimating = false;
+        model.bombReadyToFire = false;
+        model.bombQueued = false;
+        model.canQueueBomb = false;
+
+        // Refund the charge — clamped defensively in case of state inconsistency
+        model.bombUses = Math.min(model.bombUses + 1, model.maxBombUses);
+        messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
+
+        view.playBombCancelAnimation(model.size);
+        messageBus.publish('cursorBombCancelled');
+    }
+
     function armBomb() {
         const isUpgrade = (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE);
         const canArm = model.active || isUpgrade;
@@ -1069,7 +1124,7 @@ const pulseAttack = (() => {
         }
 
         model.bombUses--;
-        messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
+        messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
         model.bombArmed = true;
         model.bombAnimating = true;
         model.bombReadyToFire = false;
@@ -1084,6 +1139,7 @@ const pulseAttack = (() => {
             () => {
                 // Phase 1 (0.28s) Complete
                 model.canQueueBomb = true;
+                messageBus.publish('cursorBombCanCancel');
             },
             () => {
                 // Phase 2 (0.5s total) Complete
@@ -1101,6 +1157,7 @@ const pulseAttack = (() => {
         model.bombAnimating = false;
         model.bombQueued = false;
         model.bombFired = true;
+        messageBus.publish('cursorBombFired');
 
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
@@ -1134,7 +1191,8 @@ const pulseAttack = (() => {
                 // Infinite recharge in upgrade phase
                 if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE) {
                     model.bombUses = model.maxBombUses;
-                    messageBus.publish('bombUsesChanged', model.bombUses, model.maxBombUses);
+                    // Bug 1 fix: consistent object payload format
+                    messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
 
                     // Auto-stop testing if all enemies cleared
                     if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
@@ -1157,5 +1215,5 @@ const pulseAttack = (() => {
         model.bombUses = count;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, setMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
 })();

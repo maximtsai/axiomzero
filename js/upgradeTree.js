@@ -1284,6 +1284,7 @@ const upgradeTree = (() => {
     }
 
     function getTreeMask() { return treeMask; }
+    function getTreeMaskContainer() { return treeMaskContainer; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, setHoverLabel, preTransitionHide, revealCoordText };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText };
 })();
