@@ -204,7 +204,8 @@ const audio = {
             s.currTween = null;
         }
 
-        if (isMuted || (s.isMusic && isMusicMuted)) s.volume = 0;
+        // Force silence if muted OR music volume is effectively 0
+        if (isMuted || (s.isMusic && isMusicMuted) || globalMusicVol <= 0.0001) s.volume = 0;
 
         s.stop();
         s.play();
@@ -350,6 +351,19 @@ const audio = {
     /** Fade a sound in from current volume to target volume. */
     fadeIn: function (sound, volume = 1, duration = AUDIO_CONSTANTS.FADE_IN_DURATION) {
         const globalToUse = sound.isMusic ? globalMusicVol : globalVolume;
+        const targetVolume = volume * globalToUse;
+
+        // Hard Zero Safeguard: If we are fading to zero, just snap there immediately
+        // and don't start any delayed tweens which might flicker the volume.
+        if (targetVolume <= 0.0001) {
+            sound.volume = 0;
+            if (sound.currTween) {
+                sound.currTween.stop();
+                sound.currTween = null;
+            }
+            return null;
+        }
+
         // Stop any in-flight tween so this one becomes the authoritative fade.
         if (sound.currTween) {
             sound.currTween.stop();
@@ -358,7 +372,7 @@ const audio = {
         sound.currTween = PhaserScene.tweens.add({
             delay: AUDIO_CONSTANTS.FADE_IN_DELAY,
             targets: sound,
-            volume: volume * globalToUse,
+            volume: targetVolume,
             duration,
             ease: 'Quad.easeIn',
             onComplete: () => { sound.currTween = null; }
