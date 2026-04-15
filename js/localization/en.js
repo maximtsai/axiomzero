@@ -20,6 +20,7 @@ window.TRANSLATIONS.en = {
         test_weapons: 'Test Weapons',
         choose_level: 'CHOOSE LEVEL',
         level: 'LEVEL: ',
+        best_time: 'LONGEST SURVIVED: ',
         start: 'START',
         combat_intro: 'SYSTEM ANOMALY DETECTED',
         boss_prefix: 'ENTITY APPROACHING:',
@@ -173,7 +174,7 @@ window.TRANSLATIONS.en = {
         bossSquare: { name: 'System Override', desc: 'Defeat a boss' }
     },
     tutorial: {
-        combat_collect: 'COLLECT DATA ◈ TO EVOLVE',
+        combat_collect: 'COLLECT ◈ DATA',
         cognition_damage: 'YOUR CURSOR ⛶ DEALS DAMAGE',
         upgrade_use: 'SPEND DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
@@ -200,7 +201,7 @@ window.TRANSLATIONS.en = {
         reset_confirm_text: 'ARE YOU SURE YOU WANT TO\nPERMANENTLY RESET ALL PROGRESS?'
     },
     results: {
-        iteration_complete: 'ITERATION COMPLETE',
+        iteration_complete: 'ITERATION ENDED',
         boss_defeated: 'BOSS DEFEATED',
         signal_lost: 'SIGNAL LOST',
         packet_sniffing_data: 'PASSIVE DATA EARNED: {0}',

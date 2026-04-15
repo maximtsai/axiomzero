@@ -18,7 +18,6 @@ const gameHUD = (() => {
     let farmingTimerTxt = null;
     let bombBtn = null;
     let bombBtnTxt = null;
-    let farmingStartTime = 0;
     let isFarming = false;
     let bombCanCancel = false;
 
@@ -43,7 +42,6 @@ const gameHUD = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('healthChanged', _onHealthChanged);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
-        messageBus.subscribe('enemyKilled', _onEnemyKilled);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
         messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
@@ -86,9 +84,9 @@ const gameHUD = (() => {
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
             isFarming = true;
-            farmingStartTime = Date.now();
             if (farmingTimerTxt) {
-                farmingTimerTxt.setVisible(false); // Ensure hidden initially
+                farmingTimerTxt.lastSec = -1; // Reset so timer updates immediately on next frame
+                farmingTimerTxt.setVisible(false);
                 PhaserScene.time.delayedCall(450, () => {
                     if (isFarming && farmingTimerTxt) {
                         farmingTimerTxt.setVisible(true).setAlpha(0.2);
@@ -629,8 +627,7 @@ const gameHUD = (() => {
     function _update(delta) {
         layoutFrameCounter++;
         if (layoutFrameCounter % 5 === 0 && needsLayoutUpdate) {
-            _updateResourceLayout();
-            needsLayoutUpdate = false;
+            _updateResourceLayout(); // clears needsLayoutUpdate internally on success
         }
 
         // Update farming timer if active
@@ -648,7 +645,7 @@ const gameHUD = (() => {
 
     function _updateResourceLayout() {
         if (!visible) return;
-
+        needsLayoutUpdate = false;
         let currentY = HUD_Y + BAR_H + BAR_GAP + 13;
         const spacing = helper.isMobileDevice() ? 42 : 38;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
@@ -702,10 +699,6 @@ const gameHUD = (() => {
         if (id === 'processor') return resourceManager.getProcessors();
         if (id === 'coin') return resourceManager.getCoins();
         return 0;
-    }
-
-    function _onEnemyKilled() {
-        // Handled by resourceManager drops system
     }
 
     function _onWaveProgressChanged(progress) {

@@ -622,6 +622,9 @@ class Boss2 extends Boss {
                     this.model.setupDelay = 1.5;
                     this.model.setupTarget = null;
                     this.model.state = BOSS_2_STATES.SETUP;
+                    if (typeof audio !== 'undefined') {
+                        audio.play('warship_aim', 0.82);
+                    }
                 }
             }
         }

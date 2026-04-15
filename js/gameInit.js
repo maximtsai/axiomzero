@@ -107,6 +107,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
     // Tooltip, milestone tracking, and glitch effects
     tooltipManager.init();
+    scoreManager.init();
     milestoneTracker.init();
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);

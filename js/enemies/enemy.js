@@ -392,7 +392,8 @@ class EnemyView {
 
         let cropPct = 1.0;
         if (healthPct < 1.0) {
-            cropPct = healthPct * 0.975;
+            // Remap [0, 1] to [0.03, 1] for visual 'clinging to life' effect
+            cropPct = 0.03 + (healthPct * 0.97);
         }
 
         const fullWidth = this.hpImg.width;

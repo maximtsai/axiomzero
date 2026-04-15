@@ -44,6 +44,7 @@ const enemyManager = (() => {
     // Trojan Access tracking
     let nextSpawnIsExploder = false;
     let spawnCountSinceLastExploder = 0;
+    let sessionKills = 0; // Kills in the current iteration/wave
 
     // Boss 3 specifically
     // boss3ShareTimer now managed by bossManager
@@ -126,6 +127,7 @@ const enemyManager = (() => {
         lastWaveProgress = 0;
         recentSpawnIndex = 0;
         recentSpawnCount = 0;
+        sessionKills = 0;
         fastPackActive = false;
         fastPackCount = 0;
         fastPackCooldown = 0;
@@ -675,6 +677,7 @@ const enemyManager = (() => {
             }
 
             messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type);
+            if (enemy.model.type !== 'test') sessionKills++;
         }
     }
 
@@ -990,6 +993,7 @@ const enemyManager = (() => {
         getCurrentLevelConfig,
         startTestingDefenses,
         stopTestingDefenses,
+        getSessionKills: () => sessionKills,
         isBossAlive: () => bossManager.isBossAlive(),
         isBossSpawned: () => bossManager.isBossSpawned(),
         isMinibossAlive: () => bossManager.isMinibossAlive()

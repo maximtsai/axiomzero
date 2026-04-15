@@ -39,7 +39,7 @@ class TowerModel {
         const anchorHp = (ups.physical_anchor || 0) * 40;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp + (ups.cheat ? 10 : 0);
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         const autoDefLv = ups.automated_defense || 0;
@@ -910,6 +910,7 @@ const tower = (() => {
     return {
         init, spawn, awaken, reset,
         takeDamage, heal, die, shake,
+        recalcStats: () => model.recalcStats(),
         getPosition, isAlive, getDamage, getArmor, getRegen, getRange,
         getMaxHealth: () => model.maxHealth,
         getHealth: () => model.health,

@@ -36,4 +36,6 @@ const audioFiles = [
     { name: 'pew', src: 'audio/pew.mp3' },
     { name: 'power_surge', src: 'audio/power_surge.mp3' },
     { name: 'small_destruction', src: 'audio/small_destruction.mp3' },
+    { name: 'creak_turn_bosscircle', src: 'audio/creak_turn_bosscircle.mp3' },
+    { name: 'warship_aim', src: 'audio/warship_aim.mp3' },
 ];

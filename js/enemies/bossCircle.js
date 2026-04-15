@@ -1,6 +1,17 @@
 // js/enemies/bossCircle.js — Phase 1 alternative boss (MVC).
 // Spawns when wave progress reaches 100%.
-// Identical stats to BossSquare but different visuals.
+
+const BOSS_CIRCLE_STATE = {
+    MOVING: 'moving',
+    SLOWING: 'slowing',
+    ROTATING: 'rotating',
+    WAITING: 'waiting',
+    ATTACKING: 'attacking',
+    STAYING: 'staying',
+    RETRACTING: 'retracting',
+    COOLDOWN: 'cooldown',
+    ANTICIPATING: 'anticipating'
+};
 
 class BossCircleModel extends BossModel {
     constructor(levelScalingModifier = 1) {
@@ -9,10 +20,31 @@ class BossCircleModel extends BossModel {
         this.rampDuration = 2.2;
         this.size = 168;
         this.bossId = 'bossCircle';
+
+        // Custom behavior state
+        this.behaviorState = BOSS_CIRCLE_STATE.MOVING;
+        this.rotationOffset = 0;
+        this.visualOffset = 0; // offset along the rotation axis
+        this.stateTimer = 0;
+        this.baseSpeedFactor = 1.0;
+        this.rotationStarted = false;
+        this.rotationFinished = false;
     }
 
     getSpawnDistanceOffset() {
         return 40;
+    }
+
+    activate(x, y, config = {}) {
+        super.activate(x, y, config);
+        this.behaviorState = BOSS_CIRCLE_STATE.MOVING;
+        this.rotationOffset = 0;
+        this.visualOffset = 0;
+        this.stateTimer = 0;
+        this.baseSpeedFactor = 1.0;
+        this.rotationStarted = false;
+        this.rotationFinished = false;
+        this.isAttacking = false; // Bug 2: ensure never left stuck from prior use
     }
 }
 
@@ -107,14 +139,32 @@ class BossCircleView extends EnemyView {
         });
     }
 
-    syncPosition(x, y) {
-        super.syncPosition(x, y);
+    syncPosition(x, y, rotation, visualOffset) {
+        // We override syncPosition to handle visual offset
+        const dx = Math.cos(rotation) * visualOffset;
+        const dy = Math.sin(rotation) * visualOffset;
+
+        if (this.img) this.img.setPosition(x + dx, y + dy);
+        if (this.hpImg) this.hpImg.setPosition(x + dx, y + dy);
+        if (this.enemyGlow) this.enemyGlow.setPosition(x + dx, y + dy);
+
+        // Pulses stay at base position
         if (this.pulse) this.pulse.setPosition(x, y);
         if (this.pulse2) this.pulse2.setPosition(x, y);
     }
 
+    setRotation(rot) {
+        super.setRotation(rot);
+        // Sync pulses rotation too
+        if (this.pulse) this.pulse.setRotation(rot);
+        if (this.pulse2) this.pulse2.setRotation(rot);
+    }
+
     deactivate() {
         super.deactivate();
+        // Bug 5: kill any in-progress model tweens (rotation / visualOffset)
+        PhaserScene.tweens.killTweensOf(this.pulse);
+        PhaserScene.tweens.killTweensOf(this.pulse2);
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
@@ -137,8 +187,14 @@ class BossCircle extends Boss {
         this.view = new BossCircleView();
     }
 
+    deactivate() {
+        // Bug 5: kill any in-flight tweens targeting the model (rotation, visualOffset)
+        PhaserScene.tweens.killTweensOf(this.model);
+        super.deactivate();
+    }
+
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 230;
+        const bossHealth = 260;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
@@ -150,8 +206,186 @@ class BossCircle extends Boss {
             size: this.model.size
         });
 
+        // Ensure we re-initialize move state
+        this.model.behaviorState = BOSS_CIRCLE_STATE.MOVING;
+        this.model.rotationOffset = 0;
+        this.model.visualOffset = 0;
+        this.model.rotationStarted = false;
+        this.model.rotationFinished = false;
+
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossCircle_name') });
+        });
+    }
+
+    update(dt) {
+        if (!this.model.alive) return;
+
+        const tx = GAME_CONSTANTS.halfWidth;
+        const ty = GAME_CONSTANTS.halfHeight;
+        const dx = tx - this.model.x;
+        const dy = ty - this.model.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Keep rotation aimed at target even as we move
+        if (!this.model.isAttacking) {
+            this.model.baseRotation = Math.atan2(dy, dx);
+        }
+
+        // State Machine
+        switch (this.model.behaviorState) {
+            case BOSS_CIRCLE_STATE.MOVING:
+                if (dist < 340) {
+                    this.model.behaviorState = BOSS_CIRCLE_STATE.SLOWING;
+                }
+                break;
+
+            case BOSS_CIRCLE_STATE.SLOWING:
+                // When we enter slowing at 340, start rotating immediately
+                if (!this.model.rotationStarted) {
+                    this.model.rotationStarted = true;
+                    if (typeof audio !== 'undefined') {
+                        audio.play('creak_turn_bosscircle', 0.8);
+                    }
+                    PhaserScene.tweens.add({
+                        targets: this.model,
+                        rotationOffset: Math.PI,
+                        duration: 7000,
+                        ease: 'Quad.easeInOut',
+                        onComplete: () => {
+                            this.model.rotationFinished = true;
+                        }
+                    });
+                }
+
+                // Slow down from 340 to 220
+                if (dist <= 225) {
+                    this.model.baseSpeedFactor = 0;
+                    this.model.vx = 0; // Hard kill velocity
+                    this.model.vy = 0;
+                    this.model.isAttacking = true; // Stop base movement in Enemy.update
+                    this.model.behaviorState = BOSS_CIRCLE_STATE.ROTATING;
+                } else {
+                    const progress = Phaser.Math.Clamp((340 - dist) / (340 - 225), 0, 1);
+                    this.model.baseSpeedFactor = 1.0 - (progress * 0.9);
+                }
+                break;
+
+            case BOSS_CIRCLE_STATE.ROTATING:
+                // Just wait for rotation to finish
+                if (this.model.rotationFinished) {
+                    this.model.behaviorState = BOSS_CIRCLE_STATE.WAITING;
+                    this.model.stateTimer = 0.1;
+                }
+                break;
+        }
+
+        // Handle standard burn/timers but block base movement if stopped
+        const tickAmt = this.model.update(dt);
+        if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
+            enemyManager.damageEnemy(this, tickAmt, 'burn');
+        }
+
+        // Apply our custom movement factor if we are slowing down but not yet stopped at 220
+        if (this.model.behaviorState === BOSS_CIRCLE_STATE.SLOWING && this.model.baseSpeedFactor < 1.0) {
+            const moveMultBase = this.model.forceSlowMult * (this.model.hitStopTimer > 0 ? 0.14 : 1.0);
+            // model.update already moved by full speed. We subtract the surplus.
+            const surplusRatio = 1.0 - this.model.baseSpeedFactor;
+            this.model.x -= this.model.vx * dt * moveMultBase * surplusRatio;
+            this.model.y -= this.model.vy * dt * moveMultBase * surplusRatio;
+        }
+
+        // Handle Timers
+        if (this.model.stateTimer > 0) {
+            this.model.stateTimer -= dt;
+            if (this.model.stateTimer <= 0) {
+                this._onTimerExpired();
+            }
+        }
+
+        // Update View
+        // Lunge always moves toward the center (tower), so use baseRotation for the offset,
+        // even though the sprite itself is rotated 180 degrees (totalRot).
+        const totalRot = this.model.baseRotation + this.model.rotationOffset;
+        this.view.syncPosition(this.model.x, this.model.y, this.model.baseRotation, this.model.visualOffset);
+        this.view.updateHPCrop(this.model.getHealthPct());
+        this.view.setRotation(totalRot);
+        this.view.update(dt, this.model);
+    }
+
+    _onTimerExpired() {
+        switch (this.model.behaviorState) {
+            case BOSS_CIRCLE_STATE.WAITING:
+                this._startAttack();
+                break;
+            case BOSS_CIRCLE_STATE.STAYING:
+                this._retract();
+                break;
+            case BOSS_CIRCLE_STATE.COOLDOWN:
+                this.model.behaviorState = BOSS_CIRCLE_STATE.WAITING;
+                this.model.stateTimer = 0.01; // trigger immediately
+                break;
+        }
+    }
+
+    _startAttack() {
+        this.model.behaviorState = BOSS_CIRCLE_STATE.ANTICIPATING;
+
+        if (typeof audio !== 'undefined') {
+            audio.play('warship_aim', 0.8);
+        }
+
+        // Step 1: Back off 25 units (visual only) over 600ms
+        PhaserScene.tweens.add({
+            targets: this.model,
+            visualOffset: -25,
+            duration: 700,
+            ease: 'Quart.easeInOut',
+            completeDelay: 150,
+            onComplete: () => {
+                this.model.behaviorState = BOSS_CIRCLE_STATE.ATTACKING;
+
+                // Step 2: Charge in reaching 150 units from player
+                const tx = GAME_CONSTANTS.halfWidth;
+                const ty = GAME_CONSTANTS.halfHeight;
+                const dx = tx - this.model.x;
+                const dy = ty - this.model.y;
+                const currentDist = Math.sqrt(dx * dx + dy * dy);
+                const targetOffset = Math.max(0, currentDist - 150);
+
+                PhaserScene.tweens.add({
+                    targets: this.model,
+                    visualOffset: targetOffset,
+                    duration: 450,
+                    ease: 'Quart.easeIn',
+                    onComplete: () => {
+                        // Deal 50 damage
+                        if (typeof tower !== 'undefined') {
+                            tower.takeDamage(50);
+                            cameraManager.shake(400, 0.02);
+                            // if (typeof audio !== 'undefined') audio.play('explosion_large', 0.8);
+                        }
+
+                        this.model.behaviorState = BOSS_CIRCLE_STATE.STAYING;
+                        this.model.stateTimer = 0.5;
+                    }
+                });
+            }
+        });
+    }
+
+    _retract() {
+        this.model.behaviorState = BOSS_CIRCLE_STATE.RETRACTING;
+
+        PhaserScene.tweens.add({
+            targets: this.model,
+            visualOffset: 0,
+            duration: 750,
+            ease: 'Cubic.easeInOut',
+            onComplete: () => {
+                this.model.behaviorState = BOSS_CIRCLE_STATE.COOLDOWN;
+                this.model.stateTimer = 1.5;
+            }
         });
     }
 }

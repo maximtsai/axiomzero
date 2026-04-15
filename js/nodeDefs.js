@@ -70,6 +70,10 @@ const NODE_DEFS = [
             resourceManager.addData(5000);
             resourceManager.addInsight(2);
             resourceManager.addShard(2);
+            if (typeof tower !== 'undefined') {
+                tower.recalcStats();
+                tower.heal(10);
+            }
         },
     },
     {

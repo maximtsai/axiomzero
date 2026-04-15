@@ -1093,6 +1093,15 @@ const upgradeTree = (() => {
         }).setOrigin(0.5, 0.75).setShadow(1, 1, '#000000', 1, true, true);
         levelSelectContainer.add(bonusDisplay);
 
+        // Best score text
+        const bestScoreDisplay = PhaserScene.add.text(0, -10, '', {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: '18px',
+            color: '#00ff66',
+            align: 'center',
+        }).setOrigin(0.5).setShadow(1, 1, '#000000', 1, true, true);
+        levelSelectContainer.add(bestScoreDisplay);
+
         const updateLevelUI = () => {
             levelDisplay.setText(t('ui', 'level') + selectedLevel);
 
@@ -1123,6 +1132,15 @@ const upgradeTree = (() => {
                 });
             } else {
                 bonusDisplay.setVisible(false);
+            }
+
+            // High score display
+            const best = scoreManager.getBestScore(selectedLevel);
+            if (best) {
+                bestScoreDisplay.setText(`${t('ui', 'best_time')}: ${scoreManager.formatTime(best.bestTime)}  [${best.kills} KILLS]`);
+                bestScoreDisplay.setVisible(true);
+            } else {
+                bestScoreDisplay.setVisible(false);
             }
 
             // Update button states

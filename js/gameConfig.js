@@ -177,6 +177,9 @@ const GAME_STATE_DEFAULTS = {
     claimed: {},
     tutorialsSeen: {},
 
+    // Local best scores per farming level { levelId: { bestTime, kills, date } }
+    localBestScores: {},
+
     // Settings
     settings: {
         globalVolume: 0.85,
