@@ -788,5 +788,25 @@ const gameHUD = (() => {
         }
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton };
+    function setAlpha(alpha) {
+        if (healthBarBg) healthBarBg.setAlpha(alpha);
+        if (healthBarFill) healthBarFill.setAlpha(alpha);
+        if (healthBarFlare) healthBarFlare.setAlpha(alpha);
+        if (healthText) healthText.setAlpha(alpha);
+        if (healthBtn) healthBtn.setAlpha(alpha);
+        
+        Object.values(resourceUI).forEach(res => {
+            if (res.btn) res.btn.setAlpha(alpha);
+            res.icon.setAlpha(alpha);
+            res.text.setAlpha(alpha);
+        });
+        
+        if (endIterationBtn) endIterationBtn.setAlpha(alpha);
+        if (testDefensesBtn) testDefensesBtn.setAlpha(alpha);
+        if (waveProgressBar) waveProgressBar.setAlpha(alpha); // Note: ProgressBar needs setAlpha support
+        if (farmingTimerTxt) farmingTimerTxt.setAlpha(alpha);
+        if (bombBtn) bombBtn.setAlpha(alpha);
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setAlpha };
 })();

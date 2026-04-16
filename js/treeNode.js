@@ -92,6 +92,7 @@ class Node {
         this.glowSprite = null;
         this.lastVisualState = NODE_STATE.HIDDEN;
         this.lastSpriteRef = null;
+        this.lastAffordStatus = null;
 
         // Mobile two-tap purchase guard
         this._tapConfirmed = false;
@@ -292,6 +293,14 @@ class Node {
         // 3. Update duo-box backing sprite if we own it
         this._updateDuoBacking();
 
+        // 3a. Optimization: Only update visuals if affordability changed while state stayed same.
+        // (State changes already trigger _updateVisual in setState)
+        const currentAfford = this.canAfford();
+        if (currentAfford !== this.lastAffordStatus) {
+            this.lastAffordStatus = currentAfford;
+            this._updateVisual();
+        }
+
         // 4. Recursively refresh children so ghost/active state cascades down the tree
         for (let i = 0; i < this.childIds.length; i++) {
             const child = upgradeTree.getNode(this.childIds[i]);
@@ -300,6 +309,8 @@ class Node {
     }
 
     setState(newState) {
+        if (this.state === newState) return;
+
         const oldState = this.state;
         this.state = newState;
         this._updateVisual(); // Set textures and baseline values first

@@ -96,6 +96,7 @@ class ProgressBar {
     setAlpha(alpha) {
         this.bg.setAlpha(alpha);
         this.fill.setAlpha(alpha);
+        if (this.border) this.border.setAlpha(alpha);
     }
 
     /**

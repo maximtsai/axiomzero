@@ -14,16 +14,25 @@ class InternalButtonManager {
         this.lastHovered = null;
         this.lastClickedButton = null;
         this.draggedObj = null;
-
         this.updateInterval = 25;
         this.updateCounter = 0;
+        this.isBlocked = false;
 
         messageBus.subscribe("pointerUp", this.onPointerUp.bind(this));
         messageBus.subscribe("pointerMove", this.onPointerMove.bind(this));
         messageBus.subscribe("pointerDown", this.onPointerDown.bind(this));
     }
 
+    setBlocked(val) {
+        this.isBlocked = val;
+        if (val && this.lastHovered) {
+            this.lastHovered.onHoverOut();
+            this.lastHovered = null;
+        }
+    }
+
     update(delta) {
+        if (this.isBlocked) return;
         let handX = GAME_VARS.mouseposx;
         let handY = GAME_VARS.mouseposy;
         // check hovering
@@ -54,6 +63,7 @@ class InternalButtonManager {
     }
 
     onPointerUp(mouseX, mouseY) {
+        if (this.isBlocked) return;
         let buttonObj = this.getLastClickedButton();
         if (buttonObj && buttonObj.checkCoordOver(mouseX, mouseY)) {
             buttonObj.onMouseUp(mouseX, mouseY);
@@ -78,6 +88,7 @@ class InternalButtonManager {
     }
 
     onPointerDown(mouseX, mouseY) {
+        if (this.isBlocked) return;
         for (let i = this.buttonList.length - 1; i >= 0; i--) {
             let buttonObj = this.buttonList[i];
             if (buttonObj.checkCoordOver(mouseX, mouseY)) {

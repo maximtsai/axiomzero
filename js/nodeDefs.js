@@ -677,21 +677,29 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(4),
         effect: function () {
-            const dragGroup = upgradeTree.getDraggableGroup();
-            const node = upgradeTree.getNode('reveal_map');
-            if (dragGroup && node && node.btn) {
-                // Calculate distance from custom reference: X=400 (half of panel width), Y=halfHeight
-                const refX = GAME_CONSTANTS.halfWidth * 0.5;
-                const refY = GAME_CONSTANTS.halfHeight;
+            if (typeof cinematicManager !== 'undefined') {
+                cinematicManager.playCutscene((endCutscene) => {
+                    console.log("cutscene");
 
-                const distX = node.btn.x - refX;
-                const distY = node.btn.y - refY;
+                    const dragGroup = upgradeTree.getDraggableGroup();
+                    const node = upgradeTree.getNode('reveal_map');
+                    if (dragGroup && node && node.btn) {
+                        const refX = GAME_CONSTANTS.halfWidth * 0.5;
+                        const refY = GAME_CONSTANTS.halfHeight;
+                        const distX = node.btn.x - refX;
+                        const distY = node.btn.y - refY;
 
-                // Pan the tree slightly towards the new area
-                dragGroup.tweenBy(-distX * 0.95, -distY * 0.95, {
-                    ease: 'Cubic.easeInOut',
-                    delay: 200,
-                    duration: 1400
+                        dragGroup.tweenBy(-distX * 0.95, -distY * 0.95, {
+                            ease: 'Cubic.easeInOut',
+                            duration: 1400,
+                            onComplete: () => {
+                                // Wait 1.6s more to fulfill the 3s cutscene requirement (1.4 + 1.6 = 3.0)
+                                PhaserScene.time.delayedCall(1600, endCutscene);
+                            }
+                        });
+                    } else {
+                        PhaserScene.time.delayedCall(3000, endCutscene);
+                    }
                 });
             }
         },

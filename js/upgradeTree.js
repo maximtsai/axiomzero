@@ -1348,5 +1348,14 @@ const upgradeTree = (() => {
     function getTreeMask() { return treeMask; }
     function getTreeMaskContainer() { return treeMaskContainer; }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText };
+    function setUIAlpha(alpha) {
+        if (coordText) coordText.setAlpha(alpha);
+        if (zoomInBtn) zoomInBtn.setAlpha(alpha);
+        if (zoomOutBtn) zoomOutBtn.setAlpha(alpha);
+        if (debugLogBtn) debugLogBtn.setAlpha(alpha);
+        if (deployBtn) deployBtn.setAlpha(alpha);
+        if (coinMineBtn) coinMineBtn.setAlpha(alpha);
+    }
+
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();
