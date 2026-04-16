@@ -13,6 +13,7 @@ const cinematicManager = (() => {
     const FADE_OUT_DUR = 600;
     const BLOCKER_DEPTH = 10001;
     const BAR_DEPTH = 10002;
+    const RESOLVE_PCT = 0.65; // Actions start at 65% of intro completion
 
     // --- State ---
     let active = false;
@@ -27,11 +28,11 @@ const cinematicManager = (() => {
 
     /**
      * Plays a cinematic cutscene.
-     * @param {Function} [actionCallback] - Called once bars are fully in.
-     *   Receives a single argument: the `endCutscene` callback to call when done.
+     * @returns {Promise<Function>} A promise that resolves with the `endCutscene` function 
+     * once intro animations are complete.
      */
-    function playCutscene(actionCallback) {
-        if (active) return;
+    function playCutscene() {
+        if (active) return Promise.resolve(() => { });
         active = true;
         isEnding = false;
 
@@ -43,12 +44,13 @@ const cinematicManager = (() => {
         _createBlocker();
         _createBars();
         _fadeUI(0, FADE_IN_DUR);
-        _slideBarsIn(() => {
-            if (actionCallback) {
-                actionCallback(endCutscene);
-            } else {
-                PhaserScene.time.delayedCall(3000, endCutscene);
-            }
+        _slideBarsIn();
+
+        return new Promise(resolve => {
+            // Resolve early at 75% to allow actions to overlap with finishing bars
+            PhaserScene.time.delayedCall(IN_DURATION * RESOLVE_PCT, () => {
+                resolve(endCutscene);
+            });
         });
     }
 
@@ -95,9 +97,9 @@ const cinematicManager = (() => {
         bottomBar.setDepth(BAR_DEPTH).setDisplaySize(GAME_CONSTANTS.WIDTH, BAR_HEIGHT).setScrollFactor(0);
     }
 
-    function _slideBarsIn(onComplete) {
+    function _slideBarsIn() {
         PhaserScene.tweens.add({ targets: topBar, y: BAR_HEIGHT / 2, duration: IN_DURATION, ease: 'Cubic.easeInOut' });
-        PhaserScene.tweens.add({ targets: bottomBar, y: GAME_CONSTANTS.HEIGHT - BAR_HEIGHT / 2, duration: IN_DURATION, ease: 'Cubic.easeInOut', onComplete });
+        PhaserScene.tweens.add({ targets: bottomBar, y: GAME_CONSTANTS.HEIGHT - BAR_HEIGHT / 2, duration: IN_DURATION, ease: 'Cubic.easeInOut' });
     }
 
     function _slideBarsOut(onComplete) {

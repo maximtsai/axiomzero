@@ -676,31 +676,47 @@ const NODE_DEFS = [
         childIds: ['test_defenses'],
         treeX: gridX(0),
         treeY: gridY(4),
-        effect: function () {
+        effect: async function () {
             if (typeof cinematicManager !== 'undefined') {
-                cinematicManager.playCutscene((endCutscene) => {
-                    console.log("cutscene");
+                const endCutscene = await cinematicManager.playCutscene();
+                console.log("cutscene");
 
-                    const dragGroup = upgradeTree.getDraggableGroup();
-                    const node = upgradeTree.getNode('reveal_map');
-                    if (dragGroup && node && node.btn) {
-                        const refX = GAME_CONSTANTS.halfWidth * 0.5;
-                        const refY = GAME_CONSTANTS.halfHeight;
-                        const distX = node.btn.x - refX;
-                        const distY = node.btn.y - refY;
+                const dragGroup = upgradeTree.getDraggableGroup();
+                const node = upgradeTree.getNode('reveal_map');
+                if (dragGroup && node && node.btn) {
+                    const refX = GAME_CONSTANTS.halfWidth * 0.5;
+                    const refY = GAME_CONSTANTS.halfHeight;
 
-                        dragGroup.tweenBy(-distX * 0.95, -distY * 0.95, {
-                            ease: 'Cubic.easeInOut',
-                            duration: 1400,
-                            onComplete: () => {
-                                // Wait 1.6s more to fulfill the 3s cutscene requirement (1.4 + 1.6 = 3.0)
-                                PhaserScene.time.delayedCall(1600, endCutscene);
-                            }
-                        });
-                    } else {
-                        PhaserScene.time.delayedCall(3000, endCutscene);
-                    }
-                });
+                    const s0 = dragGroup.getScale();
+                    const groupX = dragGroup.x;
+                    const groupY = dragGroup.y;
+
+                    // tweenScale with no pivot keeps the group anchor fixed.
+                    // After zoom-to-1, a child's world pos = groupAnchor + (currentWorldPos - groupAnchor) / s0
+                    const nodeXAfterZoom = groupX + (node.btn.x - groupX) / s0;
+                    const nodeYAfterZoom = groupY + (node.btn.y - groupY) / s0;
+
+                    // Pan delta needed to bring that predicted position to the reference point
+                    const panX = refX - nodeXAfterZoom;
+                    const panY = refY - nodeYAfterZoom;
+
+                    // Zoom out to 1.0 slightly slower than the pan
+                    dragGroup.tweenScale(1, {
+                        ease: 'Cubic.easeInOut',
+                        duration: 1400
+                    });
+
+                    dragGroup.tweenBy(panX, panY, {
+                        ease: 'Cubic.easeInOut',
+                        duration: 1400,
+                        onComplete: () => {
+                            // Wait 1.6s more to fulfill the 3s cutscene requirement (1.4 + 1.6 = 3.0)
+                            PhaserScene.time.delayedCall(1600, endCutscene);
+                        }
+                    });
+                } else {
+                    PhaserScene.time.delayedCall(3000, endCutscene);
+                }
             }
         },
     },
