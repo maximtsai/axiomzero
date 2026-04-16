@@ -676,7 +676,25 @@ const NODE_DEFS = [
         childIds: ['test_defenses'],
         treeX: gridX(0),
         treeY: gridY(4),
-        effect: function () { },
+        effect: function () {
+            const dragGroup = upgradeTree.getDraggableGroup();
+            const node = upgradeTree.getNode('reveal_map');
+            if (dragGroup && node && node.btn) {
+                // Calculate distance from custom reference: X=400 (half of panel width), Y=halfHeight
+                const refX = GAME_CONSTANTS.halfWidth * 0.5;
+                const refY = GAME_CONSTANTS.halfHeight;
+
+                const distX = node.btn.x - refX;
+                const distY = node.btn.y - refY;
+
+                // Pan the tree slightly towards the new area
+                dragGroup.tweenBy(-distX * 0.95, -distY * 0.95, {
+                    ease: 'Cubic.easeInOut',
+                    delay: 200,
+                    duration: 1400
+                });
+            }
+        },
     },
     {
         id: 'test_defenses',

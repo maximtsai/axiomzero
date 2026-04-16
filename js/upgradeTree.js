@@ -316,6 +316,12 @@ const upgradeTree = (() => {
         let dragDistanceTotal = 0;
 
         dragSurface.on('pointerdown', (pointer) => {
+            const hoveredBtn = buttonManager.getHoveredButton(pointer.x, pointer.y);
+            // Only block dragging if we are clicking a button belonging to a popup (very high depth)
+            if (hoveredBtn && hoveredBtn.getDepth() > 10000) return;
+
+            if (levelSelectOverlay && levelSelectOverlay.visible) return;
+
             isDraggingTree = true;
             dragDistanceTotal = 0;
             lastDragX = pointer.x;

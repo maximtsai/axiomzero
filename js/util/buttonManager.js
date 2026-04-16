@@ -127,6 +127,17 @@ class InternalButtonManager {
         }
         return false;
     }
+
+    /**
+     * Returns the top-most button at the given coordinates, or null.
+     */
+    getHoveredButton(x, y) {
+        for (let i = this.buttonList.length - 1; i >= 0; i--) {
+            const btn = this.buttonList[i];
+            if (btn && btn.checkCoordOver(x, y)) return btn;
+        }
+        return null;
+    }
 }
 
 const buttonManager = new InternalButtonManager();
