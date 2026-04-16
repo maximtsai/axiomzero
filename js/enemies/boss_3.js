@@ -242,11 +242,11 @@ class Boss3PieceView extends EnemyView {
             this.pulse.setAlpha(0.6);
             PhaserScene.tweens.add({
                 targets: this.pulse,
-                width: 220,
-                height: 220,
+                width: 340,
+                height: 340,
                 alpha: 0,
-                duration: 1800,
-                ease: 'Sine.easeOut'
+                duration: 1600,
+                ease: 'Cubic.easeOut'
             });
         };
         playPulse();

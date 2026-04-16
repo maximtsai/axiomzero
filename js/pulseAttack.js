@@ -317,7 +317,7 @@ class PulseAttackView {
         this.spriteBright.setRotation(this.sprite.rotation);
 
         if (this.artillerySprite && (!model.bombArmed && model.bombFired)) {
-            const rotAccelArt = this.artillerySprite.rotation * -0.1 - this.artillerySprite.rotVel * 0.23;
+            const rotAccelArt = this.artillerySprite.rotation * -0.1 - this.artillerySprite.rotVel * 0.32;
             this.artillerySprite.rotVel += rotAccelArt;
             this.artillerySprite.rotation += this.artillerySprite.rotVel * delta * 0.14;
             this.artilleryBright.setRotation(this.artillerySprite.rotation);
@@ -384,17 +384,25 @@ class PulseAttackView {
         this.sprite.setRotation(goalRot);
 
         this.spriteRed.setAlpha(0.40);
-        this.spriteRed.setScale(1.45 + extraScale);
+        this.spriteRed.setScale(1.35 + extraScale);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
         PhaserScene.tweens.add({
-            delay: 75,
+            delay: 60,
             targets: [this.spriteBright, this.spriteRed],
             alpha: 0,
             duration: this.FLASH_DURATION,
             ease: 'Quart.easeOut',
         });
+        PhaserScene.tweens.add({
+            delay: 90,
+            targets: [this.spriteBright, this.spriteRed],
+            alpha: 0,
+            duration: this.FLASH_DURATION + 100,
+            ease: 'Cubic.easeOut',
+        });
+
 
         this.sprite.setScale(1.4 + extraScale);
 
@@ -411,7 +419,7 @@ class PulseAttackView {
             scaleX: 1,
             scaleY: 1,
             rotation: 0,
-            duration: 250,
+            duration: 400,
             ease: 'Cubic.easeOut',
         });
 
@@ -450,8 +458,6 @@ class PulseAttackView {
         this.aftershockRed.setVisible(showAftershock);
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
-            this.spriteBright.setAlpha(0);
-            this.spriteRed.setAlpha(0);
         }
 
         if (this.artillerySprite && !bombArmed && !bombFired) {
@@ -794,7 +800,7 @@ class PulseAttackView {
                             this.artilleryBright.setScale(1.17).setAlpha(1);
                             this.artilleryRed.setScale(1.2);
 
-                            const randRot = Math.random() < 0.5 ? -0.2 : 0.2;
+                            const randRot = Math.random() < 0.5 ? -0.12 : 0.12;
                             this.artillerySprite.setRotation(randRot);
                             this.artilleryBright.setRotation(randRot);
                             this.artilleryRed.setRotation(randRot * 0.25);
