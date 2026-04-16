@@ -99,6 +99,7 @@ class PulseAttackView {
 
         this.artillerySprite = null;
         this.artilleryBright = null;
+        this.artilleryBrightGlow = null;
         this.artilleryBlack = null;
         this.artilleryRed = null;
 
@@ -255,6 +256,14 @@ class PulseAttackView {
         );
         this.artilleryBright.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
 
+        this.artilleryBrightGlow = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'artillery_bright_glow.png',
+            artInitSize, artInitSize,
+            70, 70, 70, 70
+        );
+        this.artilleryBrightGlow.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+
         this.artilleryBlack = PhaserScene.add.nineslice(
             0, 0,
             'player', 'artillery_black.png',
@@ -293,10 +302,11 @@ class PulseAttackView {
         this.spriteRed.setPosition(targetX + this.shakeX * 0.5, targetY + this.shakeY * 0.5);
 
         if (this.artillerySprite && model.bombArmed && !model.bombFired) {
-            this.artillerySprite.setPosition(targetX, targetY);
-            this.artilleryBright.setPosition(targetX, targetY);
-            this.artilleryBlack.setPosition(targetX, targetY);
-            this.artilleryRed.setPosition(targetX, targetY);
+            this.artillerySprite?.setPosition(targetX, targetY);
+            this.artilleryBright?.setPosition(targetX, targetY);
+            this.artilleryBrightGlow?.setPosition(targetX, targetY);
+            this.artilleryBlack?.setPosition(targetX, targetY);
+            this.artilleryRed?.setPosition(targetX, targetY);
         }
 
         // Physics: calculate rotational spring wobble
@@ -311,6 +321,7 @@ class PulseAttackView {
             this.artillerySprite.rotVel += rotAccelArt;
             this.artillerySprite.rotation += this.artillerySprite.rotVel * delta * 0.14;
             this.artilleryBright.setRotation(this.artillerySprite.rotation);
+            this.artilleryBrightGlow?.setRotation(this.artillerySprite.rotation);
         }
 
         const size = model.size;
@@ -372,7 +383,7 @@ class PulseAttackView {
         this.spriteBright.setRotation(goalRot);
         this.sprite.setRotation(goalRot);
 
-        this.spriteRed.setAlpha(0.35);
+        this.spriteRed.setAlpha(0.40);
         this.spriteRed.setScale(1.45 + extraScale);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
@@ -446,6 +457,7 @@ class PulseAttackView {
         if (this.artillerySprite && !bombArmed && !bombFired) {
             this.artillerySprite.setVisible(false);
             this.artilleryBright.setVisible(false);
+            this.artilleryBrightGlow?.setVisible(false);
             this.artilleryBlack.setVisible(false);
             this.artilleryRed.setVisible(false);
         }
@@ -512,11 +524,11 @@ class PulseAttackView {
 
         // White tint flash — instant detonation feel
         this.aftershockBright.setTintFill(0xffffff).setAlpha(0.5);
-        this.aftershockRed.setTintFill(0xffffff).setAlpha(0.3);
+        this.aftershockRed.setTintFill(0xffffff).setAlpha(0.35);
         PhaserScene.time.delayedCall(50, () => {
             if (this.aftershockBright) {
                 this.aftershockBright.setAlpha(0.45).clearTint();
-                this.aftershockRed.setAlpha(0.35).clearTint();
+                this.aftershockRed.setAlpha(0.40).clearTint();
             }
         });
 
@@ -710,32 +722,43 @@ class PulseAttackView {
         if (!this.artillerySprite) return;
 
         // Lock position for all artillery layers
-        this.artillerySprite.setPosition(x, y);
-        this.artilleryBright.setPosition(x, y);
-        this.artilleryBlack.setPosition(x, y);
-        this.artilleryRed.setPosition(x, y);
-
+        this.artillerySprite?.setPosition(x, y);
+        this.artilleryBright?.setPosition(x, y);
+        this.artilleryBrightGlow?.setPosition(x, y);
+        this.artilleryBlack?.setPosition(x, y);
+        this.artilleryRed?.setPosition(x, y);
+        this.artilleryBrightGlow.setAlpha(0.1).setVisible(true);
+        this.artilleryBrightGlow.setSize(this.artillerySprite.width + 50, this.artillerySprite.height + 50);
         // Anticipation (0.2s)
-        this.artilleryBright.setAlpha(0.15);
         PhaserScene.tweens.add({
-            targets: [this.artillerySprite, this.artilleryBright],
-            scaleX: 1.03,
-            scaleY: 1.03,
+            targets: [this.artillerySprite, this.artilleryBrightGlow],
+            scaleX: 1.035,
+            scaleY: 1.035,
             alpha: 1,
-            duration: 150,
+            duration: 210,
             onComplete: () => {
                 PhaserScene.cameras.main.setZoom(1.03);
                 // Zoom in slightly here
                 // DETONATE
                 // Slow down the game (80% slower = 0.2x speed)
                 this.artillerySprite.setVisible(false);
-                PhaserScene.time.timeScale = 0.2;
-                PhaserScene.anims.globalTimeScale = 0.2;
-                GAME_VARS.timeScale = 0.2;
+                this.artilleryBrightGlow.setVisible(false);
+                PhaserScene.time.timeScale = 0.15;
+                PhaserScene.anims.globalTimeScale = 0.15;
+                GAME_VARS.timeScale = 0.15;
+
+                PhaserScene.time.delayedCall(10, () => {
+                    this.artilleryBrightGlow.setVisible(false);
+                    PhaserScene.time.delayedCall(5, () => {
+                        this.artilleryBrightGlow.setVisible(true);
+                        PhaserScene.time.delayedCall(3, () => {
+                            this.artilleryBrightGlow.setVisible(false);
+                        });
+                    });
+                });
                 PhaserScene.time.delayedCall(20, () => {
                     if (onDetonate) onDetonate();
-                    cameraManager.shake(200, 0.012);
-
+                    cameraManager.shake(200, 0.02);
                     // 1. Show artilleryBlack for 0.075s
                     this.artilleryBlack.setVisible(true).setAlpha(1);
                     this.artilleryBlack.setSize(finalSize, finalSize);
@@ -743,19 +766,19 @@ class PulseAttackView {
                     this.artilleryBlack.setRotation(this.artillerySprite.rotation);
 
                     this.artillerySprite.setVisible(false);
-                    this.artilleryBright.setVisible(false);
 
-                    this.artilleryRed.setVisible(true).setAlpha(0.75);
+
+                    this.artilleryRed.setVisible(true).setAlpha(0.80);
                     this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
 
 
-                    PhaserScene.time.delayedCall(6, () => {
+                    PhaserScene.time.delayedCall(9, () => {
                         PhaserScene.cameras.main.setZoom(1.0);
                         this.artilleryBlack.setVisible(false);
                         this.artillerySprite.setVisible(true);
-                        this.artilleryBright.setVisible(true);
+                        this.artilleryBright.setVisible(true).setAlpha(1);
                         PhaserScene.time.delayedCall(20, () => {
-                            PhaserScene.time.delayedCall(10, () => {
+                            PhaserScene.time.delayedCall(13, () => {
                                 // Always restore game speed to 1.0 to prevent capture bugs
                                 PhaserScene.time.timeScale = 1.0;
                                 PhaserScene.tweens.timeScale = 1.0;
@@ -803,6 +826,7 @@ class PulseAttackView {
                                 onComplete: () => {
                                     this.artillerySprite.setVisible(false);
                                     this.artilleryBright.setVisible(false);
+                                    this.artilleryBrightGlow.setVisible(false);
                                     this.artilleryBlack.setVisible(false);
                                     this.artilleryRed.setVisible(false);
                                     if (onComplete) onComplete();

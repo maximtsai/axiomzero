@@ -45,7 +45,7 @@ window.TRANSLATIONS.en = {
         diagnostic_analytics: { name: 'DIAGNOSTICS', desc: 'Shows detailed weapon damage stats.', popup: 'DIAGNOSTICS UNLOCKED' },
         base_hp_boost: { name: 'AUXILIARY POWER', desc: '[color=#8FD9F8]+4[/color] tower damage', popup: '+4 TOWER DMG' },
         system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '[color=#87FF02]+5[/color] health', popup: '+5 MAX HEALTH' },
-        regen: { name: 'AUTO-RESTORE', desc: '[color=#87FF02]+0.1[/color] health regen', popup: '+0.1 REGEN' },
+        regen: { name: 'AUTO-RESTORE', desc: '[color=#87FF02]+0.2[/color] health regen', popup: '+0.2 REGEN' },
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
         armor: { name: 'ARMOR', desc: 'Reduce damage taken from enemy attacks by [color=#8FD9F8]1[/color] per lvl.', popup: '+1 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Tower shoots chain lightning every [color=#8FD9F8]3s[/color].', popup: 'LIGHTNING WEAPON' },

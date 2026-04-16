@@ -39,4 +39,5 @@ const audioFiles = [
     { name: 'creak_turn_bosscircle', src: 'audio/creak_turn_bosscircle.mp3' },
     { name: 'warship_aim', src: 'audio/warship_aim.mp3' },
     { name: 'three_taps', src: 'audio/three_taps.mp3' },
+    { name: 'legion_warcry', src: 'audio/legion_warcry.mp3' },
 ];

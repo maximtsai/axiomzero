@@ -17,7 +17,7 @@ class BossCircleModel extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
         this.initialSpeedMult = 5.5;
-        this.rampDuration = 2.2;
+        this.rampDuration = 2.1;
         this.size = 168;
         this.bossId = 'bossCircle';
 
@@ -245,7 +245,7 @@ class BossCircle extends Boss {
                 if (!this.model.rotationStarted) {
                     this.model.rotationStarted = true;
                     if (typeof audio !== 'undefined') {
-                        audio.play('creak_turn_bosscircle', 0.8);
+                        audio.play('creak_turn_bosscircle', 0.95);
                     }
                     PhaserScene.tweens.add({
                         targets: this.model,
@@ -267,7 +267,7 @@ class BossCircle extends Boss {
                     this.model.behaviorState = BOSS_CIRCLE_STATE.WAITING;
                     this.model.stateTimer = 0.4;
                     if (typeof audio !== 'undefined') {
-                        audio.play('three_taps', 0.85);
+                        audio.play('three_taps', 0.9);
                     }
                 }
                 // If we reach the stopping point but are still turning, stop moving and wait
@@ -346,8 +346,8 @@ class BossCircle extends Boss {
         // Step 1: Back off 25 units (visual only) over 600ms
         PhaserScene.tweens.add({
             targets: this.model,
-            visualOffset: -20,
-            duration: 900,
+            visualOffset: -18,
+            duration: 950,
             ease: 'Quart.easeInOut',
             completeDelay: 300,
             onComplete: () => {
@@ -369,7 +369,7 @@ class BossCircle extends Boss {
                     onComplete: () => {
                         // Deal 50 damage
                         if (typeof tower !== 'undefined') {
-                            tower.takeDamage(35);
+                            tower.takeDamage(40);
                             cameraManager.shake(400, 0.02);
                             // if (typeof audio !== 'undefined') audio.play('explosion_large', 0.8);
                         }

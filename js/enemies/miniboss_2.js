@@ -215,22 +215,24 @@ class Miniboss2 extends Miniboss {
                 m.attackSpeed += MB2.ATTACK_ACCELERATION * dt;
                 if (m.attackSpeed > MB2.ATTACK_MAX_SPEED) m.attackSpeed = MB2.ATTACK_MAX_SPEED;
 
+                const stepDist = m.attackSpeed * dt;
                 const ux = dx / (distToTower || 1);
                 const uy = dy / (distToTower || 1);
 
-                m.x += ux * m.attackSpeed * dt;
-                m.y += uy * m.attackSpeed * dt;
+                // PROJECTED COLLISION: If our move step for this frame will put us inside or past 
+                // the tower's collision radius, trigger the hit immediately.
+                if (distToTower - stepDist <= m.size && !m.hasHitTowerInCurrentAttack) {
+                    // Snap to the collision point for better visual feedback
+                    m.x = tPos.x - ux * m.size;
+                    m.y = tPos.y - uy * m.size;
 
-                // Collision detection
-                if (distToTower <= m.size && !m.hasHitTowerInCurrentAttack) {
                     // Force the manual attack
                     tower.takeDamage(MB2.DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY), m.x, m.y);
                     if (typeof cameraManager !== 'undefined') {
                         cameraManager.shake(300, 0.02);
                     }
 
-                    // Force manual self damage and text display by proxy
-                    // We directly take damage since we disabled our native 'damage' stat
+                    // Force manual self damage
                     enemyManager.damageEnemy(this, MB2.SELF_DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY), 'notrecorded');
 
                     m.hasHitTowerInCurrentAttack = true;
@@ -239,15 +241,14 @@ class Miniboss2 extends Miniboss {
                     if (m.health > 0) {
                         this._transitionTo(MINIBOSS2_STATE.POST_ATTACK_PAUSE);
                     }
+                } else {
+                    // Standard move lunge
+                    m.x += ux * stepDist;
+                    m.y += uy * stepDist;
                 }
                 break;
 
             case MINIBOSS2_STATE.POST_ATTACK_PAUSE:
-                // Instantly snap to be flush against the tower 
-                const snapUx = dx / (distToTower || 1);
-                const snapUy = dy / (distToTower || 1);
-                m.x = tPos.x - snapUx * m.size;
-                m.y = tPos.y - snapUy * m.size;
                 m.vx = 0;
                 m.vy = 0;
 
@@ -304,7 +305,7 @@ class Miniboss2 extends Miniboss {
                 m.trailActive = true;
                 m.attackSpeed = 0;
                 m.hasHitTowerInCurrentAttack = false;
-                m.isAttacking = true;
+                m.isAttacking = false; // Let DOTs tick during lunge
                 break;
             case MINIBOSS2_STATE.POST_ATTACK_PAUSE:
                 m.stateTimer = MB2.POST_ATTACK_WAIT_MS;
@@ -313,7 +314,7 @@ class Miniboss2 extends Miniboss {
                 break;
             case MINIBOSS2_STATE.RETREAT:
                 m.trailActive = false;
-                m.isAttacking = true;
+                m.isAttacking = false; // Let DOTs tick during retreat
                 break;
         }
     }
@@ -325,9 +326,6 @@ class Miniboss2 extends Miniboss {
     }
 
     applyKnockback(dirX, dirY, distance) {
-        // Enforce strong 0 knockback.
-        // Even if we have a knockback modifier of 0 natively, super.applyKnockback
-        // might attempt to push us for collision resolution if we used normal movement.
-        // We do absolutely nothing here.
+        // Enforce strong 0 knockback
     }
 }

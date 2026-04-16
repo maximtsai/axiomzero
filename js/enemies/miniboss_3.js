@@ -29,7 +29,7 @@ class Miniboss3Model extends MinibossModel {
 
 class Miniboss3View extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'miniboss_3.png', 'miniboss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+        super(Enemy.TEX_KEY, 'miniboss_3.png', 'miniboss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
     }
 }
 

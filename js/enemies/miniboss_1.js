@@ -42,11 +42,11 @@ class Miniboss1Model extends MinibossModel {
 
 class Miniboss1View extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'miniboss_1.png', 'miniboss_1_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+        super(Enemy.TEX_KEY, 'miniboss_1.png', 'miniboss_1_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
-        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
+        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 6);
         this.chargeSprite.setVisible(false);
     }
 
@@ -116,12 +116,12 @@ class Miniboss1View extends EnemyView {
     }
 
     syncChargePosition(x, y, dirX, dirY, distToTower) {
-        if (!this.chargeSprite || !this.chargeSprite.visible) return;
+        if (!this.chargeSprite || !this.chargeSprite.visible || !this.img) return;
         const dist = Math.max(1, distToTower);
         const ux = dirX / dist;
         const uy = dirY / dist;
-        this.chargeSprite.setPosition(x + ux * 50, y + uy * 50);
-        this.chargeSprite.setRotation(0);
+        this.chargeSprite.setPosition(this.img.x + ux * 50, this.img.y + uy * 50);
+        this.chargeSprite.setRotation(this.img.rotation);
     }
 
     applyChargeWobble(dt, wobbleTime) {

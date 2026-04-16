@@ -133,10 +133,10 @@ const bossManager = (() => {
                 const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
 
                 // Try to get a fast enemy from pool via enemyManager
-                const fe = _enemyManager.spawnAt('fast', fsx, fsy, { 
-                    scale: currentScale, 
-                    initialSpeedMult: 6, 
-                    rampDuration: 1.5 
+                const fe = _enemyManager.spawnAt('fast', fsx, fsy, {
+                    scale: currentScale,
+                    initialSpeedMult: 6,
+                    rampDuration: 1.5
                 });
             });
         }
@@ -260,7 +260,7 @@ const bossManager = (() => {
             const remaining = _enemyManager.getActiveEnemies().filter(e => e.model.isMiniboss && e !== enemy && e.model.alive);
             if (remaining.length === 0) {
                 minibossAlive = false;
-                
+
                 // Update highest miniboss level defeated
                 const currentLevel = gameState.currentLevel || 1;
                 if (currentLevel > (gameState.minibossLevelsDefeated || 0)) {

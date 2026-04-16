@@ -409,7 +409,7 @@ class Boss3 extends Boss {
 
         if (!_sharedAttackSprite) {
             _sharedAttackSprite = PhaserScene.add.image(tx, ty, Enemy.TEX_KEY, 'boss3_attack.png');
-            _sharedAttackSprite.setDepth(205); // Above tower (200)
+            _sharedAttackSprite.setDepth(305); // Above projectiles (300)
         }
 
         _sharedAttackSprite.setPosition(tx, ty);
@@ -548,6 +548,9 @@ class Boss3 extends Boss {
             PhaserScene.time.delayedCall(1000, () => {
                 if (typeof messageBus !== 'undefined' && typeof t === 'function') {
                     messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_3_name') });
+                }
+                if (typeof audio !== 'undefined') {
+                    audio.play('legion_warcry', 0.9);
                 }
             });
         }

@@ -117,8 +117,17 @@ class BossSquareView extends EnemyView {
 
     syncPosition(x, y) {
         super.syncPosition(x, y);
-        if (this.pulse) this.pulse.setPosition(x, y);
-        if (this.pulse2) this.pulse2.setPosition(x, y);
+        if (this.img) {
+            const rot = this.img.rotation;
+            if (this.pulse) {
+                this.pulse.setPosition(this.img.x, this.img.y);
+                this.pulse.setRotation(rot);
+            }
+            if (this.pulse2) {
+                this.pulse2.setPosition(this.img.x, this.img.y);
+                this.pulse2.setRotation(rot);
+            }
+        }
     }
 
     deactivate() {

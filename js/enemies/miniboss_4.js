@@ -36,14 +36,14 @@ class Miniboss4Model extends MinibossModel {
 class Miniboss4View extends EnemyView {
     constructor() {
         // High depth for minibosses
-        super(Enemy.TEX_KEY, 'miniboss_sniper.png', 'miniboss_sniper_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+        super(Enemy.TEX_KEY, 'miniboss_sniper.png', 'miniboss_sniper_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
         
         // HP bar rotated 90 deg CCW like original sniper
         this.hpImg.setRotation(-Math.PI / 2);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
-        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 3);
+        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 6);
         this.chargeSprite.setVisible(false);
     }
 
@@ -98,8 +98,8 @@ class Miniboss4View extends EnemyView {
     }
 
     syncChargePosition(x, y) {
-        if (this.chargeSprite && this.chargeSprite.visible) {
-            this.chargeSprite.setPosition(x, y);
+        if (this.chargeSprite && this.chargeSprite.visible && this.img) {
+            this.chargeSprite.setPosition(this.img.x, this.img.y);
         }
     }
 
@@ -224,7 +224,8 @@ class Miniboss4 extends Miniboss {
             );
             
             if (typeof audio !== 'undefined') {
-                audio.play('gunshot', 1.0, false, false, 0).detune = -400; // Deep boom
+                const pan = (this.model.x < GAME_CONSTANTS.halfWidth) ? -0.2 : 0.2;
+                audio.play('gunshot', 1.0, false, false, pan).detune = -400; // Deep boom
             }
             if (typeof cameraManager !== 'undefined') {
                 cameraManager.shake(200, 0.015);

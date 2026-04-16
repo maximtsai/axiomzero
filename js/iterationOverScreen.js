@@ -181,22 +181,28 @@ const iterationOverScreen = (() => {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 265,
+                y: cy + 285,
                 depth: depth + 12,
+                alpha: 1,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 265,
+                y: cy + 285,
                 depth: depth + 12,
+                alpha: 1,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
                 x: cx,
-                y: cy + 265,
+                y: cy + 285,
                 depth: depth + 12,
+                alpha: 1,
+            },
+            disable: {
+                alpha: 0
             },
             onMouseUp: _onRetryClicked,
         });
@@ -252,9 +258,9 @@ const iterationOverScreen = (() => {
         upgradesBtn.setVisible(true);
         upgradesBtn.setState(NORMAL);
         retryBtn.setVisible(true);
-        retryBtn.setState(NORMAL);
+        retryBtn.setState(isBossKill ? DISABLE : NORMAL);
         expHoverBtn.setVisible(true);
-        expHoverBtn.setState(NORMAL);
+        expHoverBtn.setState(DISABLE);
 
         if (isBossKill) {
             titleText.fullText = t('results', 'boss_defeated');
@@ -496,6 +502,7 @@ const iterationOverScreen = (() => {
         expBarFill.setVisible(true).setDisplaySize(0, 14);
         expBarLabel.setVisible(true);
         expBarIcon.setVisible(true).setAlpha(0.3);
+        expHoverBtn.setState(NORMAL);
 
         // Fade label in
         PhaserScene.tweens.add({
@@ -530,6 +537,7 @@ const iterationOverScreen = (() => {
         expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), 14);
         expBarLabel.setVisible(true).setAlpha(1);
         expBarIcon.setVisible(true).setAlpha(0.3);
+        expHoverBtn.setState(NORMAL);
     }
 
     function _runExpSegment(segments, idx, barW, depth) {

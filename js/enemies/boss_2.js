@@ -69,7 +69,7 @@ class Boss2Model extends BossModel {
 
     update(dt) {
         const burnTick = super.update(dt);
-        if (!this.alive || this.stunned || this.isAttacking) return burnTick;
+        if (!this.alive || this.stunned) return burnTick;
 
         const getDiff = (a, b) => {
             let d = a - b;
@@ -546,6 +546,7 @@ class Boss2 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
+        this._isCharging = false;
         // Intended: Minibosses/Bosses do not scale with level progression
         const bossHealth = 285;
 
@@ -580,7 +581,7 @@ class Boss2 extends Boss {
         // Sync visual rotation with the model's calculated steering rotation
         this.setRotation(this.model.baseRotation);
         this.view.setTurretRotation(this.model.turretRotation);
-        this.view.syncChargePosition(this.model.x, this.model.y, this.model.turretRotation);
+        this.view.syncChargePosition(this.view.img.x, this.view.img.y, this.model.turretRotation);
 
         // Chargeup visual state tracking
         if (this.model.state === BOSS_2_STATES.BOMBARD) {
