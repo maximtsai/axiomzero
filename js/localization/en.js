@@ -57,6 +57,7 @@ window.TRANSLATIONS.en = {
 
         overclock: { name: 'OVERCLOCK', desc: '[color=#8FD9F8]-5%[/color] tower attack cooldown per lvl', popup: '-5% COOLDOWN' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
+        reveal_map: { name: 'REVEAL MAP', desc: 'Time to show you how deep the rabbit hole goes.', popup: ' ' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "Test Weapons" button for practice.', popup: 'SANDBOX UNLOCKED' },
         bomb: { name: 'BOMB', desc: 'Acquire a [color=#ff5555]BOMB[/color]. Makes your cursor deal massive damage for one attack.', popup: '+1 BOMB' },
         bomb_2: { name: 'EXTRA BOMB', desc: 'Acquire another [color=#ff5555]BOMB[/color]. Total max uses increased.', popup: '+1 BOMB' },
@@ -174,7 +175,7 @@ window.TRANSLATIONS.en = {
         bossSquare: { name: 'System Override', desc: 'Defeat a boss' }
     },
     tutorial: {
-        combat_collect: 'COLLECT ◈ DATA',
+        combat_collect: 'COLLECT DATA ◈ FOR UPGRADES',
         cognition_damage: 'YOUR CURSOR ⛶ DEALS DAMAGE',
         upgrade_use: 'SPEND DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',

@@ -40,6 +40,7 @@ const upgradeTree = (() => {
     let visible = false;
     let hasShownThisSession = false;
     let hintPulseTimer = null;
+    let awakenHintTimer = null;
     let lastCoordX = -1;
     let lastCoordY = -1;
     let lastHoverLabel = "";
@@ -615,6 +616,48 @@ const upgradeTree = (() => {
         }
     }
 
+    function _startAwakenHint() {
+        if (awakenHintTimer) return;
+
+        const check = () => {
+            const level = (gameState.upgrades && gameState.upgrades.awaken) || 0;
+            if (level > 0 || !visible) {
+                _stopAwakenHint();
+                return;
+            }
+
+            const awakenNode = nodes['awaken'];
+            if (!awakenNode) return;
+
+            const scale = draggableGroup.getScale() || 1;
+            const ax = (awakenNode.treeX + TREE_X_OFFSET - 1) * scale + draggableGroup.x;
+            const ay = (awakenNode.treeY + 1) * scale + draggableGroup.y;
+
+            // Trigger animations
+            const ind = helper.ninesliceIndicator(ax, ay, 'buttons', 'indicator_pulse_thin.png', 130, 130, 56, 56, 16);
+            ind.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
+            ind.setScale(scale);
+            draggableGroup.add(ind);
+
+            const indShort = helper.ninesliceIndicatorShort(ax, ay, 'buttons', 'indicator_pulse.png', 160, 160, 58, 58, 16);
+            indShort.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
+            indShort.setScale(scale);
+            draggableGroup.add(indShort);
+
+            // Cycle: 3s animation + 2s delay = 5000ms
+            awakenHintTimer = PhaserScene.time.delayedCall(5500, check);
+        };
+
+        check();
+    }
+
+    function _stopAwakenHint() {
+        if (awakenHintTimer) {
+            awakenHintTimer.remove();
+            awakenHintTimer = null;
+        }
+    }
+
     function _playDuoHintPulse(nodeA, nodeB) {
         // Pulse at the center of the duo box
         const scale = draggableGroup.getScale() || 1;
@@ -712,21 +755,10 @@ const upgradeTree = (() => {
 
         if (!hasShownThisSession) {
             hasShownThisSession = true;
-
-            // Hint for new players: pulse indicate the AWAKEN node
-            const awakenLevel = (gameState.upgrades && gameState.upgrades.awaken) || 0;
-            if (awakenLevel === 0) {
-                const awakenNode = nodes['awaken'];
-                const awakenX = (awakenNode ? awakenNode.treeX : 400) + TREE_X_OFFSET;
-                const awakenY = (awakenNode ? awakenNode.treeY : 730);
-                const ind = helper.ninesliceIndicator(awakenX, awakenY, 'buttons', 'indicator_pulse_thin.png', 120, 120, 46, 46, 16);
-                ind.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
-                const indShort = helper.ninesliceIndicatorShort(awakenX, awakenY, 'buttons', 'indicator_pulse.png', 150, 150, 48, 48, 16);
-                indShort.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
-                treeGroup.add(ind);
-                treeGroup.add(indShort);
-            }
         }
+
+        // Start looping hint if not yet awakened
+        _startAwakenHint();
 
         panelOutline.setVisible(true);
         dragSurface.setVisible(true);
@@ -770,6 +802,8 @@ const upgradeTree = (() => {
         titleText.setVisible(false);
         deployBtn.setVisible(false);
         if (coordText) coordText.setVisible(false);
+
+        _stopAwakenHint();
 
         deployBtn.setState(DISABLE);
 
@@ -859,9 +893,13 @@ const upgradeTree = (() => {
         treeLineManager.updateLines();
     }
 
-    function _onUpgradePurchased() {
+    function _onUpgradePurchased(data) {
         _refreshAllNodes();
         treeLineManager.updateLines();
+
+        if (data) {
+            _stopAwakenHint();
+        }
     }
 
     function _onNodePurchaseFeedback(data) {

@@ -388,7 +388,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['automated_defense'],
         monitorsDuoTier: 1,
-        childIds: ['test_defenses'],
+        childIds: ['reveal_map'],
 
         treeX: gridX(0),
         treeY: gridY(2.125), // Mid-point adjustment (non-clean)
@@ -660,6 +660,25 @@ const NODE_DEFS = [
         },
     },
     {
+        id: 'reveal_map',
+        name: t('nodes', 'reveal_map.name'),
+        label: t('nodes', 'label.gate'),
+        icon: 'Skillicon14_14.png',
+        description: t('nodes', 'reveal_map.desc'),
+        popupText: t('nodes', 'reveal_map.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 35,
+        costType: 'data',
+        costScaling: 'static',
+        costStep: 0,
+        parents: ['placeholder_duo_1'],
+        childIds: ['test_defenses'],
+        treeX: gridX(0),
+        treeY: gridY(4),
+        effect: function () { },
+    },
+    {
         id: 'test_defenses',
         name: t('nodes', 'test_defenses.name'),
         label: t('nodes', 'label.gate'),
@@ -672,10 +691,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['placeholder_duo_1'],
+        parents: ['reveal_map'],
         childIds: ['overcharge', 'security_test_1'],
         treeX: gridX(0),
-        treeY: gridY(4),
+        treeY: gridY(5),
         effect: function () {
             gameState.upgrades.test_defenses_unlocked = true;
             if (typeof gameHUD !== 'undefined' && gameHUD.refreshTestDefensesButton) {
