@@ -171,7 +171,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 100,
-        parents: ['test_defenses'],
+        parents: ['reveal_map'],
         childIds: ['placeholder_duo_2', 'armor'],
 
         treeX: gridX(-1),
@@ -293,7 +293,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'bomb.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 25,
+        baseCost: 20,
         costType: 'data',
         costScaling: 'static',
         parents: ['regen'],
@@ -388,7 +388,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['automated_defense'],
         monitorsDuoTier: 1,
-        childIds: ['reveal_map'],
+        childIds: ['test_defenses'],
 
         treeX: gridX(0),
         treeY: gridY(2.125), // Mid-point adjustment (non-clean)
@@ -687,14 +687,14 @@ const NODE_DEFS = [
         popupText: t('nodes', 'reveal_map.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 35,
+        baseCost: 75,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['placeholder_duo_1'],
-        childIds: ['test_defenses'],
+        parents: ['test_defenses'],
+        childIds: ['overcharge', 'security_test_1'],
         treeX: gridX(0),
-        treeY: gridY(4),
+        treeY: gridY(5),
         effect: async function () {
             if (typeof cinematicManager !== 'undefined') {
                 const endCutscene = await cinematicManager.playCutscene();
@@ -752,10 +752,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['reveal_map'],
-        childIds: ['overcharge', 'security_test_1'],
+        parents: ['placeholder_duo_1'],
+        childIds: ['reveal_map'],
         treeX: gridX(0),
-        treeY: gridY(5),
+        treeY: gridY(4),
         effect: function () {
             gameState.upgrades.test_defenses_unlocked = true;
             if (typeof gameHUD !== 'undefined' && gameHUD.refreshTestDefensesButton) {
@@ -794,7 +794,7 @@ const NODE_DEFS = [
         baseCost: 300,
         costType: 'data',
         costScaling: 'static',
-        parents: ['test_defenses'],
+        parents: ['reveal_map'],
         childIds: ['two_step_auth'],
         treeX: gridX(1),
         treeY: gridY(4.5),

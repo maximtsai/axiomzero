@@ -218,7 +218,7 @@ window.TRANSLATIONS.en = {
         diagnostic_report: '— DIAGNOSTIC REPORT —',
         no_damage_dealt: 'NO DAMAGE DEALT',
         insight_progress_title: 'INSIGHT',
-        insight_progress_desc: 'Experience turned quantifiable. [b]INSIGHT[/b] unlocks upgrades that improve [color=cyan]DATA[/color] gathering.',
+        insight_progress_desc: 'Quantified experience. [b]INSIGHT[/b] unlocks upgrades that improve [color=cyan]DATA[/color] gathering.',
         cursor: 'CURSOR',
         tower: 'TOWER',
         lightning: 'LIGHTNING',
