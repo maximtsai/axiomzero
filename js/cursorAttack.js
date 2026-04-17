@@ -91,6 +91,7 @@ class PulseAttackView {
         this.FLASH_ALPHA = 1.0;
         this.FLASH_DURATION = 500;  // ms — tween from flash back to idle
         this.CORNER_SIZE = 30;    // nine-slice corner size
+        this.GLOW_PADDING = 60;
 
         this.sprite = null;
         this.spriteBright = null;
@@ -98,6 +99,8 @@ class PulseAttackView {
         this.spriteRed = null;
         this.aftershockBright = null;
         this.aftershockRed = null;
+        this.spriteGlow = null;
+        this.glowIsFiring = false;
 
         this.artillerySprite = null;
         this.artilleryBright = null;
@@ -208,6 +211,20 @@ class PulseAttackView {
             this.chargeSprites.push(s);
         }
 
+        // Resonance Glow sprite (3 depth units below main sprite)
+        this.spriteGlow = PhaserScene.add.nineslice(
+            0, 0,
+            'player', 'player_attack_glow.png',
+            initialSize + this.GLOW_PADDING, initialSize + this.GLOW_PADDING,
+            50, 50, 50, 50
+        );
+        this.spriteGlow.setOrigin(0.5, 0.5);
+        this.spriteGlow.setDepth(this.sprite.depth - 3);
+        this.spriteGlow.setAlpha(0);
+        this.spriteGlow.setBlendMode(Phaser.BlendModes.ADD);
+        this.spriteGlow.setScrollFactor(0);
+        this.spriteGlow.setVisible(false);
+
         // Reload animation sprite (nineslice with 2px corners)
         this.playerReloadSprite = PhaserScene.add.nineslice(
             0, 0,
@@ -306,6 +323,9 @@ class PulseAttackView {
         if (this.spriteRed) {
             this.spriteRed.setSize(newSize + 4, newSize + 4);
         }
+        if (this.spriteGlow) {
+            this.spriteGlow.setSize(newSize + this.GLOW_PADDING, newSize + this.GLOW_PADDING);
+        }
     }
 
     setDetonateReminderVisibility(visible) {
@@ -343,6 +363,31 @@ class PulseAttackView {
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
 
         this.spriteBright.setRotation(this.sprite.rotation);
+
+        // Resonance Glow Jitter Logic
+        if (this.spriteGlow && model.resonanceLevel > 0) {
+            const nextIsResonance = model.currentAttackCount === 3;
+            const isBombing = model.bombArmed || model.bombAnimating || model.bombFired;
+            
+            if (nextIsResonance && !this.glowIsFiring && !isBombing) {
+                const jitterDist = 3;
+                const jX = (Math.random() - 0.5) * jitterDist;
+                const jY = (Math.random() - 0.5) * jitterDist;
+
+                this.spriteGlow.setVisible(true);
+                this.spriteGlow.setPosition(targetX + jX, targetY + jY);
+                this.spriteGlow.setAlpha(0.05 + Math.random() * 0.45);
+                this.spriteGlow.setRotation(this.sprite.rotation + (Math.random() - 0.5) * 0.05);
+            } else if (!this.glowIsFiring) {
+                this.spriteGlow.setVisible(false);
+            } else {
+                // Firing state: follow accurately without jitter
+                this.spriteGlow.setPosition(targetX, targetY);
+                this.spriteGlow.setRotation(this.sprite.rotation);
+            }
+        } else if (this.spriteGlow) {
+            this.spriteGlow.setVisible(false);
+        }
 
         if (this.artillerySprite && (!model.bombArmed && model.bombFired)) {
             const rotAccelArt = this.artillerySprite.rotation * -0.1 - this.artillerySprite.rotVel * 0.32;
@@ -472,6 +517,33 @@ class PulseAttackView {
                     this.shakeX = 0;
                     this.shakeY = 0;
                 }
+            });
+        }
+        // Sync Glow Animation
+        if (isResonanceHit && this.spriteGlow) {
+            this.glowIsFiring = true;
+            this.spriteGlow.setAlpha(1.0);
+            this.spriteGlow.setVisible(true);
+            this.spriteGlow.setScale(this.sprite.scaleX, this.sprite.scaleY);
+            this.spriteGlow.setRotation(this.sprite.rotation);
+
+            PhaserScene.tweens.add({
+                targets: this.spriteGlow,
+                alpha: 0,
+                duration: 450,
+                ease: 'Quart.easeOut',
+                onComplete: () => {
+                    this.glowIsFiring = false;
+                    this.spriteGlow.setVisible(false);
+                }
+            });
+
+            PhaserScene.tweens.add({
+                targets: this.spriteGlow,
+                scaleX: 1,
+                scaleY: 1,
+                duration: 250,
+                ease: 'Cubic.easeOut'
             });
         }
     }
@@ -621,14 +693,18 @@ class PulseAttackView {
         }
     }
 
-    playWaveEffect(x, y, baseSize) {
+    playWaveEffect(x, y, baseSize, isResonance = false) {
         if (!this.wavePool) return;
 
         const fx = this.wavePool.get();
         if (!fx) return;
 
         const startSize = 50 + baseSize * 0.15;
-        const endSize = 50 + baseSize * 1.08;
+        let endSize = 50 + baseSize * 1.08;
+        if (isResonance) {
+            endSize *= 2.0;
+        }
+
         fx.setPosition(x, y);
         fx.width = startSize;
         fx.height = startSize;
@@ -636,7 +712,10 @@ class PulseAttackView {
         fx.setVisible(true);
         fx.setActive(true);
 
-        const tweenDuration = 400 + Math.floor(baseSize * 0.5);
+        let tweenDuration = 400 + Math.floor(baseSize * 0.5);
+        if (isResonance) {
+            tweenDuration *= 1.6;
+        }
 
         PhaserScene.tweens.add({
             targets: fx,
@@ -1045,7 +1124,7 @@ const pulseAttack = (() => {
 
         const isResonanceHit = _determineResonance(model);
         view.playFireAnimation(isResonanceHit);
-        view.playWaveEffect(cx, cy, model.size);
+        view.playWaveEffect(cx, cy, model.size, isResonanceHit);
 
         // Micro camera shake
         zoomShake(1.005);

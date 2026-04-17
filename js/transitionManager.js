@@ -47,6 +47,11 @@ const transitionManager = (() => {
                 upgradeTree.preTransitionHide();
             }
 
+            if (_revealTimer) {
+                _revealTimer.remove();
+                _revealTimer = null;
+            }
+
             const targetX = -GAME_CONSTANTS.halfWidth - 10;
             _tweenTreeGroup(targetX, duration);
             _tweenTreeMaskContainer(targetX, duration);
@@ -132,7 +137,7 @@ const transitionManager = (() => {
             _failsafeTimer.remove();
             _failsafeTimer = null;
         }
-        // Cancel revealCoordText if failsafe fires early
+
         if (_revealTimer) {
             _revealTimer.remove();
             _revealTimer = null;
