@@ -673,21 +673,24 @@ class PulseAttackView {
         this.armTweens = [];
 
         // Phase 1: +300 units, 0.25s, Back.easeOut
+        const randStartRot = Math.random() < 0.5 ? -0.08 : 0.08;
         const tw1 = PhaserScene.tweens.add({
             targets: [this.artillerySprite],
             width: initSize + 420,
             height: initSize + 420,
-            duration: 80,
+            rotation: randStartRot,
+            duration: 100,
             ease: 'Quart.easeOut',
             easeParams: [4],
             onComplete: () => {
                 const tw2 = PhaserScene.tweens.add({
                     targets: [this.artillerySprite],
-                    width: initSize + 300,
-                    height: initSize + 300,
-                    duration: 160,
+                    width: initSize + 320,
+                    height: initSize + 320,
+                    rotation: 0,
+                    duration: 140,
                     ease: 'Back.easeOut',
-                    easeParams: [3.5],
+                    easeParams: [2.5],
                     onComplete: () => {
                         if (onPhase1Complete) onPhase1Complete();
                         const overshootSize = finalBombSize + 90;
@@ -696,6 +699,7 @@ class PulseAttackView {
                             targets: [this.artillerySprite],
                             width: overshootSize,
                             height: overshootSize,
+                            rotation: -randStartRot,
                             duration: 90,
                             ease: 'Quart.easeOut',
                             onComplete: () => {
@@ -706,6 +710,7 @@ class PulseAttackView {
                                     targets: [this.artillerySprite],
                                     width: finalBombSize,
                                     height: finalBombSize,
+                                    rotation: 0,
                                     duration: 200,
                                     ease: 'Back.easeOut',
                                     easeParams: [3.5]
