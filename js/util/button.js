@@ -400,6 +400,16 @@ class Button {
         this.setPos(undefined, value);
     }
 
+    setX(x) {
+        this.setPos(x, undefined);
+        return this;
+    }
+
+    setY(y) {
+        this.setPos(undefined, y);
+        return this;
+    }
+
     get rotation() {
         return this.normal.rotation || 0;
     }
@@ -559,6 +569,7 @@ class Button {
                 }
             }
         }
+        return this;
     }
 
     // Agnostic to window's position
@@ -583,6 +594,7 @@ class Button {
                 this.text.scrollFactorY = y;
             }
         }
+        return this;
     }
 
     setAlpha(alpha = 1) {

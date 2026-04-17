@@ -44,7 +44,6 @@ const treeLineManager = (() => {
         Object.assign(line, metadata);
 
         lines.push(line);
-        if (treeGroupRef) treeGroupRef.add(line);
         if (draggableGroupRef) draggableGroupRef.add(line);
         return line;
     }

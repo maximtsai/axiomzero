@@ -284,8 +284,7 @@ class PulseAttackView {
         this.artilleryRed.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
 
         // Subtle detonation reminder text
-        const isMobile = helper.isMobileDevice();
-        const reminderMsg = isMobile ? "CLICK TO DETONATE" : "SPACEBAR TO DETONATE";
+        const reminderMsg = "CLICK TO DETONATE";
         this.detonateReminderText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight + 375, reminderMsg, {
             fontFamily: 'MunroSmall',
             fontSize: '26px',

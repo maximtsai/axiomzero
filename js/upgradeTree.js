@@ -1347,6 +1347,7 @@ const upgradeTree = (() => {
 
     function getTreeMask() { return treeMask; }
     function getTreeMaskContainer() { return treeMaskContainer; }
+    function getMaskShape() { return maskShape; }
 
     function setUIAlpha(alpha) {
         if (coordText) coordText.setAlpha(alpha);

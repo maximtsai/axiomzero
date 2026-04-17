@@ -100,12 +100,22 @@ const transitionManager = (() => {
     }
 
     function _tweenTreeMaskContainer(targetX, duration) {
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.getTreeMaskContainer) {
+        if (typeof upgradeTree !== 'undefined') {
             const container = upgradeTree.getTreeMaskContainer();
+            const shape = upgradeTree.getMaskShape ? upgradeTree.getMaskShape() : null;
+
             if (container) {
                 PhaserScene.tweens.add({
                     targets: container,
                     x: targetX,
+                    duration: duration,
+                    ease: 'Cubic.easeOut'
+                });
+            }
+            if (shape) {
+                PhaserScene.tweens.add({
+                    targets: shape,
+                    x: targetX - 500,
                     duration: duration,
                     ease: 'Cubic.easeOut'
                 });

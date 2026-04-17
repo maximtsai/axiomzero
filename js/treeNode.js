@@ -532,19 +532,12 @@ class Node {
             .setDepth(nodeDepth + 1)
             .setScrollFactor(0);
 
-        const treeGroup = upgradeTree.getGroup();
         const draggableGroup = upgradeTree.getDraggableGroup();
-        if (treeGroup) {
+        if (draggableGroup) {
             const btnObj = this.btn;
-            treeGroup.add(btnObj);
-            if (this.iconSprite) treeGroup.add(this.iconSprite);
-            treeGroup.add(this.fadeoutSprite);
-
-            if (draggableGroup) {
-                draggableGroup.add(btnObj);
-                if (this.iconSprite) draggableGroup.add(this.iconSprite);
-                draggableGroup.add(this.fadeoutSprite);
-            }
+            draggableGroup.add(btnObj);
+            if (this.iconSprite) draggableGroup.add(this.iconSprite);
+            draggableGroup.add(this.fadeoutSprite);
         }
 
         // Reveal Glow sprite
@@ -556,7 +549,6 @@ class Node {
             .setScrollFactor(0)
             .setScale(1.01);
 
-        if (treeGroup) treeGroup.add(this.glowSprite);
         if (draggableGroup) draggableGroup.add(this.glowSprite);
 
         // Placeholders shouldn't intercept clicks or be visible, but need the Button obj to exist
@@ -590,10 +582,6 @@ class Node {
                 .setVisible(false)
                 .setAlpha(0);
 
-            if (treeGroup) {
-                treeGroup.add(this.duoBackingSprite);
-                treeGroup.add(this.duoBackingOutline);
-            }
             if (draggableGroup) {
                 draggableGroup.add(this.duoBackingSprite);
                 draggableGroup.add(this.duoBackingOutline);

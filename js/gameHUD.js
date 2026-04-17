@@ -3,15 +3,12 @@
 // All elements use JetBrainsMono. Show/hide based on phaseChanged.
 
 const gameHUD = (() => {
-    // ── HUD elements ─────────────────────────────────────────────────────────
-    let healthBarBg = null;
-    let healthBarFill = null;
-    let healthBarFlare = null;
-    let healthText = null;
-    let healthBtn = null;
-    let resourceUI = {}; // { data: { icon, text }, ... }
-    let lastHealth = -1;
+    // ── HUD sub-components ───────────────────────────────────────────────────
+    let healthBar = null;
+    let currencyCluster = null;
 
+    // ── HUD buttons/elements ─────────────────────────────────────────────────
+    let healthBtn = null;
     let endIterationBtn = null;
     let testDefensesBtn = null;
     let waveProgressBar = null;
@@ -29,8 +26,6 @@ const gameHUD = (() => {
     const BAR_W = 200;
     const BAR_H = helper.isMobileDevice() ? 28 : 24;
     const BAR_GAP = helper.isMobileDevice() ? 18 : 14;
-    const DATA_ICON_SIZE = 18;
-    const DATA_ICON_GAP = 5;
 
     let visible = false;
     let needsLayoutUpdate = false;
@@ -50,10 +45,6 @@ const gameHUD = (() => {
         messageBus.subscribe('bossDefeated', () => {
             if (endIterationBtn) endIterationBtn.setState(DISABLE);
         });
-
-
-
-
 
         messageBus.subscribe('transitionComplete', () => {
             if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT && endIterationBtn) {
@@ -94,7 +85,7 @@ const gameHUD = (() => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
             isFarming = true;
             if (farmingTimerTxt) {
-                farmingTimerTxt.lastSec = -1; // Reset so timer updates immediately on next frame
+                farmingTimerTxt.lastSec = -1;
                 farmingTimerTxt.setVisible(false);
                 PhaserScene.time.delayedCall(450, () => {
                     if (isFarming && farmingTimerTxt) {
@@ -123,23 +114,16 @@ const gameHUD = (() => {
         const depth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2;
         const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
 
-        // ── Health bar ──
-        healthBarBg = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
-        healthBarBg.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(depth).setScrollFactor(0);
+        // 1. Health Bar Component
+        healthBar = new HealthBar({
+            x: groupX,
+            y: HUD_Y,
+            width: BAR_W,
+            height: BAR_H,
+            depth: depth
+        });
 
-        healthBarFlare = PhaserScene.add.image(groupX, HUD_Y + BAR_H / 2, 'ui', 'white_vertical_line.png');
-        healthBarFlare.setOrigin(0.5, 0.5).setScale(1, 0.75).setTint(0xffffff).setDepth(depth + 1).setScrollFactor(0);
-        healthBarFlare.setAlpha(0);
-
-        healthBarFill = PhaserScene.add.image(groupX, HUD_Y, 'white_pixel');
-        healthBarFill.setOrigin(0, 0).setDisplaySize(BAR_W, BAR_H).setTint(0x00ff66).setDepth(depth + 2).setScrollFactor(0);
-
-        healthText = PhaserScene.add.text(groupX + BAR_W + 8, HUD_Y - 4, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: helper.isMobileDevice() ? '30px' : '26px',
-            color: GAME_CONSTANTS.COLOR_NEUTRAL,
-        }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0);
-
+        // Invisible button overlay for health bar info
         healthBtn = new Button({
             normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
             hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
@@ -163,154 +147,52 @@ const gameHUD = (() => {
                 }
             }
         });
-        healthBtn.setOrigin(0.5, 0.5);
-        healthBtn.setScale(1, helper.isMobileDevice() ? 1.05 : 1);
-        healthBtn.setDepth(depth + 1);
-        healthBtn.setScrollFactor(0);
-        healthBtn.setVisible(false);
+        healthBtn.setOrigin(0.5, 0.5).setScale(1, helper.isMobileDevice() ? 1.05 : 1).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
 
-        // ── Currency counters ──
+        // 2. Currency Cluster Component
         const currY = HUD_Y + BAR_H + BAR_GAP + 13;
-        const resourceTypes = [
-            { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
-            { id: 'insight', icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL },
-            { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
-            { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' },
-            { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' }
-        ];
-
-        resourceTypes.forEach((type, i) => {
-            const icon = PhaserScene.add.image(groupX + 11, currY, 'player', type.icon);
-            icon.setOrigin(0.5, 0.5).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
-
-            const scale = (type.id === 'data') ? 1 : 1.06;
-            icon.setScale(scale);
-
-            // Fetch initial value from resourceManager
-            const initialVal = _getResourceValue(type.id);
-
-            const text = PhaserScene.add.text(groupX + 28, currY - 11, Math.floor(initialVal).toString(), {
-                fontFamily: 'JetBrainsMono_Regular',
-                fontSize: helper.isMobileDevice() ? '32px' : '27px',
-                color: type.color,
-            }).setOrigin(0, 0).setDepth(depth + 2).setScrollFactor(0).setVisible(false);
-
-            // Button background for upgrade phase
-            let btn;
-            btn = new Button({
-                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
-                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
-                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: groupX + 45, y: currY },
-                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: groupX + 45, y: currY },
-                onHover: () => {
-                    let sfxclick = audio.play('click', 0.95);
-                    if (sfxclick) sfxclick.detune = Phaser.Math.Between(-150, -50);
-                    tooltipManager.show(btn.x + 50, btn.y + 17, [
-                        { text: t('hud', `${type.id}_title`), style: 'title', color: type.color },
-                        { text: t('hud', `${type.id}_desc`), style: 'normal' }
-                    ], 410);
-                    if (typeof upgradeTree !== 'undefined') {
-                        upgradeTree.setHoverLabel(type.id.toUpperCase());
-                    }
-                },
-                onHoverOut: () => {
-                    tooltipManager.hide();
-                    if (typeof upgradeTree !== 'undefined') {
-                        upgradeTree.setHoverLabel(null);
-                    }
-                }
-            });
-            btn.setOrigin(0.5, 0.5);
-            btn.setScale(1, helper.isMobileDevice() ? 1.14 : 1.09);
-            btn.setDepth(depth + 1);
-            btn.setScrollFactor(0);
-            btn.setVisible(false);
-
-            resourceUI[type.id] = { icon, text, btn, baseY: currY };
+        const spacing = helper.isMobileDevice() ? 42 : 38;
+        currencyCluster = new CurrencyCluster({
+            x: groupX,
+            y: currY,
+            depth: depth,
+            spacing: spacing
         });
 
-        _updateResourceLayout();
-
+        // Add to upgrade tree group if needed
         if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
             const treeGroup = upgradeTree.getGroup();
             if (treeGroup) {
-                treeGroup.add(healthBarBg);
-                treeGroup.add(healthBarFill);
-                treeGroup.add(healthBarFlare);
-                treeGroup.add(healthText);
+                healthBar.addToGroup(treeGroup);
                 if (healthBtn.getContainer) treeGroup.add(healthBtn.getContainer());
-                Object.values(resourceUI).forEach(res => {
-                    treeGroup.add(res.icon);
-                    treeGroup.add(res.text);
-                    if (res.btn && res.btn.getContainer) treeGroup.add(res.btn.getContainer());
-                });
+                currencyCluster.addToGroup(treeGroup);
             }
         }
 
-
-
+        // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: {
-                ref: 'button_normal.png',
-                atlas: 'buttons',
-                x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 72,
-            },
-            hover: {
-                ref: 'button_hover.png',
-                atlas: 'buttons',
-                x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 72,
-            },
-            press: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-                x: 105,
-                y: GAME_CONSTANTS.HEIGHT - 72,
-            },
-            onMouseUp: () => {
-                messageBus.publish('endIterationRequested');
-            },
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
+            onMouseUp: () => messageBus.publish('endIterationRequested'),
         });
-        endIterationBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        endIterationBtn.addText(t('ui', 'end_iteration'), {
+        endIterationBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9).addText(t('ui', 'end_iteration'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: helper.isMobileDevice() ? '18px' : '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
-        endIterationBtn.setDepth(depth + 3);
-        endIterationBtn.setScrollFactor(0);
+        endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: {
-                ref: 'button_normal.png',
-                atlas: 'buttons',
-                x: GAME_CONSTANTS.WIDTH - 105,
-                y: GAME_CONSTANTS.HEIGHT - 72,
-                alpha: 1
-            },
-            hover: {
-                ref: 'button_hover.png',
-                atlas: 'buttons',
-                alpha: 1
-            },
-            press: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-                alpha: 1
-            },
-            disable: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-                alpha: 0.5
-            },
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', alpha: 1 },
+            press: { ref: 'button_press.png', atlas: 'buttons', alpha: 1 },
+            disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0.5 },
             onMouseUp: () => {
                 if (bombCanCancel) {
-                    if (typeof pulseAttack !== 'undefined' && pulseAttack.cancelBomb) {
-                        pulseAttack.cancelBomb();
-                    }
+                    if (typeof pulseAttack !== 'undefined' && pulseAttack.cancelBomb) pulseAttack.cancelBomb();
                 } else {
-                    armBomb();
+                    _armBomb();
                 }
             },
         });
@@ -318,16 +200,45 @@ const gameHUD = (() => {
         const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
         bombBtnTxt = bombBtn.addText(`BOMB\n${bombKeyHint}`, {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: helper.isMobileDevice() ? '16px' : '17px',
+            fontSize: helper.isMobileDevice() ? '18px' : '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center'
         });
-        bombBtnTxt.setLineSpacing(-2);
-        bombBtn.setDepth(depth + 3);
-        bombBtn.setScrollFactor(0);
-        _updateBombUI();
+        bombBtn.setDepth(depth + 3).setScrollFactor(0);
 
-        // ── Progress bar ──
+        testDefensesBtn = new Button({
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH / 2, y: GAME_CONSTANTS.HEIGHT - 72 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons' },
+            press: { ref: 'button_press.png', atlas: 'buttons' },
+            disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
+            onMouseUp: () => {
+                if (typeof enemyManager !== 'undefined') enemyManager.startTestingDefenses();
+                if (typeof GAME_VARS !== 'undefined') GAME_VARS.testingDefenses = true;
+            },
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
+                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel("CREATE\nTEST ENEMIES");
+            },
+            onHoverOut: () => {
+                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(null);
+            }
+        });
+        testDefensesBtn.addText("TEST WEAPONS", {
+            fontFamily: 'JetBrainsMono_Bold',
+            fontSize: helper.isMobileDevice() ? '18px' : '19px',
+            color: GAME_CONSTANTS.COLOR_NEUTRAL,
+        });
+        testDefensesBtn.setDepth(depth + 3).setScrollFactor(0).setVisible(false);
+
+        farmingTimerTxt = PhaserScene.add.text(groupX, HUD_Y + BAR_H + 4, '00:00', {
+            fontFamily: 'JetBrainsMono_Regular',
+            fontSize: '22px',
+            color: '#aaaaaa',
+        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
+
+        // 4. Wave Progress Bar (Restore missing initialization)
         waveProgressBar = new ProgressBar(PhaserScene, {
             x: GAME_CONSTANTS.halfWidth,
             y: GAME_CONSTANTS.HEIGHT - 28,
@@ -339,150 +250,83 @@ const gameHUD = (() => {
             depth: depth
         });
         waveProgressBar.setVisible(false);
-
-        testDefensesBtn = new Button({
-            normal: {
-                ref: 'button_normal.png',
-                atlas: 'buttons',
-                x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.HEIGHT - 72,
-                alpha: 1
-            },
-            hover: {
-                ref: 'button_hover.png',
-                atlas: 'buttons',
-            },
-            press: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-            },
-            disable: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-                alpha: 0
-            },
-            onMouseUp: () => {
-                if (typeof enemyManager !== 'undefined') {
-                    enemyManager.startTestingDefenses();
-                }
-                if (typeof GAME_VARS !== 'undefined') {
-                    GAME_VARS.testingDefenses = true;
-                }
-            },
-            onHover: () => {
-                let sfx = audio.play('click', 0.95);
-                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
-                if (typeof upgradeTree !== 'undefined') {
-                    upgradeTree.setHoverLabel("CREATE\nTEST ENEMIES");
-                }
-            },
-            onHoverOut: () => {
-                if (typeof upgradeTree !== 'undefined') {
-                    upgradeTree.setHoverLabel(null);
-                }
-            }
-        });
-        testDefensesBtn.setScale(0.9);
-        testDefensesBtn.addText(t('ui', 'test_weapons'), {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '19px',
-            color: GAME_CONSTANTS.COLOR_NEUTRAL,
-        });
-        testDefensesBtn.setDepth(depth + 3);
-        const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
-        testDefensesBtn.setVisible(isUnlocked);
-        if (!isUnlocked) testDefensesBtn.setState(DISABLE);
-
-        // ── Farming timer ──
-        farmingTimerTxt = PhaserScene.add.text(24, GAME_CONSTANTS.HEIGHT - 35, '00:00', {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '24px',
-            color: '#00f5ff',
-        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
-        farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
-
-        // ── (Round Data counter removed by request) ──
     }
 
-    // ── show / hide ──────────────────────────────────────────────────────────
-    function armBomb() {
+    function _armBomb() {
         if (typeof pulseAttack !== 'undefined' && pulseAttack.armBomb) {
             pulseAttack.armBomb();
         }
     }
 
     function _updateBombUI() {
-        if (!bombBtn) return;
+        if (!bombBtn || typeof pulseAttack === 'undefined') return;
         const model = pulseAttack.getModel();
         const hasBombs = model.maxBombUses > 0;
         bombBtn.setVisible(hasBombs);
         if (hasBombs) {
             if (bombCanCancel) {
                 bombBtn.setState(NORMAL);
-                if (bombBtnTxt) {
-                    bombBtnTxt.setText(`CANCEL\n(CLICK)`);
-                }
+                if (bombBtnTxt) bombBtnTxt.setText(`CANCEL\n(CLICK)`);
             } else {
                 if (model.bombUses > 0 && !model.bombArmed && !model.bombFired) {
                     bombBtn.setState(NORMAL);
                 } else {
                     bombBtn.setState(DISABLE);
                 }
-
-                if (bombBtnTxt) {
-                    const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
-                    bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n${bombKeyHint}`);
-                }
+                const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
+                if (bombBtnTxt) bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n${bombKeyHint}`);
             }
         }
     }
 
     function _showCombatHUD() {
         visible = true;
-        healthBarBg.setVisible(true);
-        healthBarFill.setVisible(true);
-        healthBarFlare.setVisible(true);
-        healthText.setVisible(true);
-        healthBtn.setVisible(false);
-        healthBtn.setState(DISABLE);
-        _updateResourceLayout();
+        healthBar.setVisible(true);
+        healthBtn.setVisible(false).setState(DISABLE);
 
-        const isTransitioning = typeof transitionManager !== 'undefined' && transitionManager.isTransitioning();
-        endIterationBtn.setVisible(!isTransitioning);
-        endIterationBtn.setState(isTransitioning ? DISABLE : NORMAL);
+        currencyCluster.updateLayout(true, false);
 
-        if (bombBtn) {
-            _updateBombUI();
+        if (!isFarming) {
+            setWaveProgressBarVisible(true);
         }
-        if (testDefensesBtn) {
-            testDefensesBtn.setVisible(false);
-            testDefensesBtn.setState(DISABLE);
-        }
+
+        const isTrans = typeof transitionManager !== 'undefined' && transitionManager.isTransitioning();
+        endIterationBtn.setVisible(!isTrans).setState(isTrans ? DISABLE : NORMAL);
+
+        if (bombBtn) _updateBombUI();
+        if (testDefensesBtn) testDefensesBtn.setVisible(false).setState(DISABLE);
+    }
+
+    function _showUpgradeHUD() {
+        visible = true;
+        healthBar.setVisible(true);
+        healthBtn.setVisible(true).setState(NORMAL);
+
+        currencyCluster.updateLayout(true, true);
+
+        // Count up animation for currencies when entering upgrade phase
+        ['data', 'insight', 'shard', 'coin', 'processor'].forEach(id => {
+            const val = _getResourceVal(id);
+            if (val >= 2) currencyCluster.animateToValue(id, val);
+            else currencyCluster.setStaticValue(id, val);
+        });
+
+        endIterationBtn.setVisible(false).setState(DISABLE);
+        if (bombBtn) _updateBombUI();
+        if (waveProgressBar) waveProgressBar.setVisible(false);
+
+        refreshTestDefensesButton();
     }
 
     function _hideAll() {
         visible = false;
-        healthBarBg.setVisible(false);
-        healthBarFill.setVisible(false);
-        healthBarFlare.setVisible(false);
-        healthText.setVisible(false);
-        healthBtn.setVisible(false);
-        healthBtn.setState(DISABLE);
-        Object.values(resourceUI).forEach(res => {
-            if (res.btn) res.btn.setVisible(false);
-            res.icon.setVisible(false);
-            res.text.setVisible(false);
-        });
-        endIterationBtn.setVisible(false);
-        endIterationBtn.setState(DISABLE);
-        if (bombBtn) {
-            bombBtn.setVisible(false);
-            bombBtn.setState(DISABLE);
-        }
-        if (testDefensesBtn) {
-            testDefensesBtn.setVisible(false);
-            testDefensesBtn.setState(DISABLE);
-        }
+        if (healthBar) healthBar.setVisible(false);
+        if (healthBtn) healthBtn.setVisible(false).setState(DISABLE);
+        if (currencyCluster) currencyCluster.setVisible(false);
+
+        endIterationBtn.setVisible(false).setState(DISABLE);
+        if (bombBtn) bombBtn.setVisible(false).setState(DISABLE);
+        if (testDefensesBtn) testDefensesBtn.setVisible(false).setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
         if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
         isFarming = false;
@@ -493,159 +337,42 @@ const gameHUD = (() => {
     function _onPhaseChanged(phase) {
         bombCanCancel = false;
         clearBombPulse();
-        if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
-            _showCombatHUD();
-        } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
-            // During upgrade, show currencies but hide combat-only elements
-            _showUpgradeHUD();
-        } else {
-            _hideAll();
-        }
-    }
-
-    function _showUpgradeHUD() {
-        visible = true;
-
-        // Show all HUD elements grouped with the Upgrade Tree
-        healthBarBg.setVisible(true);
-        healthBarFill.setVisible(true);
-        healthBarFlare.setVisible(true);
-        healthText.setVisible(true);
-        healthBtn.setVisible(true);
-        healthBtn.setState(NORMAL);
-
-        _updateResourceLayout();
-
-        // Count up animation for currencies
-        const order = ['data', 'insight', 'shard', 'coin', 'processor'];
-        order.forEach(id => {
-            const val = _getResourceValue(id);
-            if (val >= 2) {
-                _animateCurrencyCount(id, val);
-            } else {
-                if (resourceUI[id]) resourceUI[id].text.setText(Math.floor(val));
-            }
-        });
-
-        // Hide combat-only elements
-        endIterationBtn.setVisible(false);
-        endIterationBtn.setState(DISABLE);
-        if (bombBtn) {
-            _updateBombUI();
-        }
-        if (waveProgressBar) waveProgressBar.setVisible(false);
-
-        // Show test weapons button if unlocked
-        if (testDefensesBtn) {
-            const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
-            testDefensesBtn.setVisible(isUnlocked);
-            if (isUnlocked) {
-                testDefensesBtn.setState(NORMAL);
-            } else {
-                testDefensesBtn.setState(DISABLE);
-            }
-        }
-    }
-
-    /**
-     * Tween a currency counter from 0 to targetVal.
-     * @param {string} id - resource id
-     * @param {number} targetVal 
-     */
-    function _animateCurrencyCount(id, targetVal) {
-        const ui = resourceUI[id];
-        if (!ui || !ui.text) return;
-
-        const duration = (id === 'data') ? 1000 : (250 + Math.floor(Math.random() * 250));
-        const counter = { val: 0 };
-        ui.text.setText('0');
-
-        ui.countTween = PhaserScene.tweens.add({
-            targets: counter,
-            val: targetVal,
-            duration: duration,
-            ease: 'Quad.easeOut',
-            onUpdate: () => {
-                ui.text.setText(Math.floor(counter.val).toString());
-            },
-            onComplete: () => {
-                ui.text.setText(Math.floor(targetVal).toString());
-                ui.countTween = null;
-            }
-        });
+        if (phase === GAME_CONSTANTS.PHASE_COMBAT) _showCombatHUD();
+        else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) _showUpgradeHUD();
+        else _hideAll();
     }
 
     function _onHealthChanged(current, max) {
-        // Remove !visible guard to ensure health bar updates on load
-
-        // Logarithmic scaling: 200px at 10 health, ~800px at 10,000 health
-        // Formula: L = 222.3 * log10(max) - 89.2
-        const logBase = Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH);
-        const dynamicW = Math.max(BAR_W, BAR_W + 222.3 * (Math.log10(max) - logBase));
-
-        const ratio = Math.max(0, current / max);
-
-        healthBarBg.setDisplaySize(dynamicW, BAR_H);
-        healthBarFill.setDisplaySize(dynamicW * ratio, BAR_H);
-
-        // Reposition text to the right of the dynamic bar
-        healthText.x = healthBarBg.x + dynamicW + 8;
-
-        // Color shift: cyan → red as health drops
-        if (ratio > 0.5) {
-            healthBarFill.setTint(0x00ff66);
-        } else if (ratio > 0.25) {
-            healthBarFill.setTint(GAME_CONSTANTS.COLOR_RESOURCE);
-        } else {
-            healthBarFill.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
-        }
-
-        // Damage flare
-        healthBarFlare.x = healthBarBg.x + dynamicW * ratio;
-
-        if (lastHealth !== -1 && (lastHealth - current) >= 0.5) {
-            healthBarFlare.setAlpha(1);
-            healthBarFlare.scaleY = 2;
-            PhaserScene.tweens.killTweensOf(healthBarFlare);
-            PhaserScene.tweens.add({
-                targets: healthBarFlare,
-                scaleY: 0.85,
-                ease: 'Quad.easeOut',
-                duration: 500,
-            });
-            PhaserScene.tweens.add({
-                targets: healthBarFlare,
-                alpha: 0,
-                duration: 500,
-            });
-        }
-        lastHealth = current;
-
-        healthText.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
+        if (healthBar) healthBar.update(current, max);
     }
 
     function _onCurrencyChanged(type, amount) {
-        if (resourceUI[type]) {
-            // Stop active count-up tween if balance changes while it's running
-            if (resourceUI[type].countTween) {
-                resourceUI[type].countTween.stop();
-                resourceUI[type].countTween = null;
-            }
-            resourceUI[type].text.setText(Math.floor(amount));
+        if (currencyCluster) {
+            currencyCluster.setStaticValue(type, amount);
             needsLayoutUpdate = true;
         }
+    }
+
+    function _onUpgradePurchased() {
+        if (currencyCluster) {
+            currencyCluster.refreshAll();
+            needsLayoutUpdate = true;
+        }
+        _updateBombUI();
+        refreshTestDefensesButton();
     }
 
     function _update(delta) {
         layoutFrameCounter++;
         if (layoutFrameCounter % 5 === 0 && needsLayoutUpdate) {
-            _updateResourceLayout(); // clears needsLayoutUpdate internally on success
+            if (visible && currencyCluster) {
+                currencyCluster.updateLayout(true, gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE);
+                needsLayoutUpdate = false;
+            }
         }
 
-        // Update farming timer if active
         if (isFarming && farmingTimerTxt && farmingTimerTxt.visible) {
             const totalSec = Math.floor(enemyManager.getRoundTimeElapsed());
-            // Only update text object if the second has actually changed
             if (farmingTimerTxt.lastSec !== totalSec) {
                 farmingTimerTxt.lastSec = totalSec;
                 const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
@@ -655,56 +382,7 @@ const gameHUD = (() => {
         }
     }
 
-    function _updateResourceLayout() {
-        if (!visible) return;
-        needsLayoutUpdate = false;
-        let currentY = HUD_Y + BAR_H + BAR_GAP + 13;
-        const spacing = helper.isMobileDevice() ? 42 : 38;
-        const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
-        const isUpgradePhase = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
-        const order = ['data', 'insight', 'shard', 'coin', 'processor'];
-
-        order.forEach(id => {
-            const ui = resourceUI[id];
-            const val = _getResourceValue(id);
-            const isData = (id === 'data');
-
-            // Data is ALWAYS visible; other currencies only if quantity > 0 and in upgrade phase
-            const shouldShow = isData || (val > 0 && isUpgradePhase);
-
-            if (shouldShow) {
-                const showComponent = isUpgradePhase || (isData); // Hide button in combat
-
-                if (ui.btn) {
-                    ui.btn.setVisible(isUpgradePhase); // Button only in upgrades
-                    ui.btn.setPos(groupX + 45, currentY);
-                    ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
-                }
-                ui.icon.setVisible(showComponent);
-                ui.text.setVisible(showComponent);
-                ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
-                ui.text.y = currentY - 16;
-                currentY += spacing;
-            } else {
-                if (ui.btn) {
-                    ui.btn.setVisible(false);
-                    ui.btn.setState(DISABLE);
-                }
-                ui.icon.setVisible(false);
-                ui.text.setVisible(false);
-            }
-        });
-
-        // Recalculate offsets for items in the tree group (health/text)
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
-            const treeGroup = upgradeTree.getGroup();
-            if (treeGroup && treeGroup.recalculateOffsets) {
-                treeGroup.recalculateOffsets();
-            }
-        }
-    }
-
-    function _getResourceValue(id) {
+    function _getResourceVal(id) {
         if (id === 'data') return resourceManager.getData();
         if (id === 'insight') return resourceManager.getInsight();
         if (id === 'shard') return resourceManager.getShards();
@@ -714,35 +392,12 @@ const gameHUD = (() => {
     }
 
     function _onWaveProgressChanged(progress) {
-        // Remove !visible guard to ensure wave progress updates on load
         if (waveProgressBar) waveProgressBar.setProgress(progress);
     }
 
     function _onTowerDeathStarted() {
-        endIterationBtn.setVisible(false);
-        endIterationBtn.setState(DISABLE);
+        endIterationBtn.setVisible(false).setState(DISABLE);
     }
-
-    function _onUpgradePurchased() {
-        // Refresh currency display labels
-        Object.keys(resourceUI).forEach(id => {
-            const ui = resourceUI[id];
-            // Stop active count-up tween if user buys something
-            if (ui.countTween) {
-                ui.countTween.stop();
-                ui.countTween = null;
-            }
-            const val = _getResourceValue(id);
-            ui.text.setText(Math.floor(val));
-        });
-        _updateResourceLayout();
-        _updateBombUI();
-        refreshTestDefensesButton();
-    }
-
-
-
-
 
     function setWaveProgressBarVisible(vis) {
         if (!waveProgressBar) return;
@@ -789,61 +444,39 @@ const gameHUD = (() => {
     }
 
     function refreshTestDefensesButton() {
-        if (testDefensesBtn) {
-            const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
-            testDefensesBtn.setVisible(isUnlocked);
-            if (isUnlocked) {
-                testDefensesBtn.setState(NORMAL);
-            } else {
-                testDefensesBtn.setState(DISABLE);
-            }
-        }
+        if (!testDefensesBtn) return;
+        const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
+        testDefensesBtn.setVisible(isUnlocked).setState(isUnlocked ? NORMAL : DISABLE);
     }
 
     function setAlpha(alpha) {
-        if (healthBarBg) healthBarBg.setAlpha(alpha);
-        if (healthBarFill) healthBarFill.setAlpha(alpha);
-        if (healthBarFlare) healthBarFlare.setAlpha(alpha);
-        if (healthText) healthText.setAlpha(alpha);
+        if (healthBar) healthBar.setAlpha(alpha);
         if (healthBtn) healthBtn.setAlpha(alpha);
-        
-        Object.values(resourceUI).forEach(res => {
-            if (res.btn) res.btn.setAlpha(alpha);
-            res.icon.setAlpha(alpha);
-            res.text.setAlpha(alpha);
-        });
-        
+        if (currencyCluster) currencyCluster.setAlpha(alpha);
         if (endIterationBtn) endIterationBtn.setAlpha(alpha);
         if (testDefensesBtn) testDefensesBtn.setAlpha(alpha);
-        if (waveProgressBar) waveProgressBar.setAlpha(alpha); // Note: ProgressBar needs setAlpha support
+        if (waveProgressBar) waveProgressBar.setAlpha(alpha);
         if (farmingTimerTxt) farmingTimerTxt.setAlpha(alpha);
         if (bombBtn) bombBtn.setAlpha(alpha);
     }
 
     function setBombPulse() {
         if (!bombBtn || bombPulseIndicator || bombPulseTimer) return;
-        
         function playPulse() {
             if (!bombBtn || !bombBtn.visible) return;
-            
             const bx = bombBtn.x;
             const by = bombBtn.y;
             const bw = bombBtn.displayWidth;
             const bh = bombBtn.displayHeight;
-
             bombPulseIndicator = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 60, bh + 60, bw, bh, 24);
             bombPulseIndicator.setDepth(bombBtn.depth - 1);
-            
             bombPulseTimer = PhaserScene.time.delayedCall(5000, () => {
-                if (bombPulseIndicator) {
-                    bombPulseIndicator.destroy();
-                }
+                if (bombPulseIndicator) bombPulseIndicator.destroy();
                 bombPulseIndicator = null;
                 bombPulseTimer = null;
                 playPulse();
             });
         }
-        
         playPulse();
     }
 
