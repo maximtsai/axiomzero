@@ -41,6 +41,7 @@ const GAME_CONSTANTS = {
 // Derived dimension shortcuts (computed after declaration to allow self-reference)
 GAME_CONSTANTS.halfWidth = GAME_CONSTANTS.WIDTH / 2;
 GAME_CONSTANTS.halfHeight = GAME_CONSTANTS.HEIGHT / 2;
+GAME_CONSTANTS.quarterWidth = GAME_CONSTANTS.WIDTH / 4;
 
 // ─── Runtime state ────────────────────────────────────────────────────────────
 

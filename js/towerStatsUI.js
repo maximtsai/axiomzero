@@ -10,9 +10,30 @@ const towerStatsUI = (() => {
     function init() {
         _createButton();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('testingDefensesStarted', _onTestingStarted);
+        messageBus.subscribe('testingDefensesEnded', _onTestingEnded);
 
         // Hide initially until first upgrade phase
         if (_statsBtn) _statsBtn.setVisible(false);
+    }
+
+    function _onTestingStarted() {
+        if (_statsBtn) {
+            _statsBtn.setState(DISABLE);
+            // Move far off-screen to ensure it doesn't block bomb interaction/clicks
+            _statsBtn.setPos(_statsBtn.x, -999);
+        }
+    }
+
+    function _onTestingEnded() {
+        if (_statsBtn) {
+            const towerPos = tower.getPosition();
+            _statsBtn.setPos(towerPos.x + GAME_CONSTANTS.quarterWidth, towerPos.y);
+            
+            if (_isActive) {
+                _statsBtn.setState(NORMAL);
+            }
+        }
     }
 
     function _createButton() {
@@ -22,7 +43,7 @@ const towerStatsUI = (() => {
         _statsBtn = new Button({
             normal: {
                 ref: 'white_pixel', // Invisible base
-                x: towerPos.x + 400,
+                x: towerPos.x + GAME_CONSTANTS.quarterWidth,
                 y: towerPos.y,
                 alpha: 0.001,
                 scrollFactorX: 0,
@@ -31,6 +52,10 @@ const towerStatsUI = (() => {
             onHover: () => {
                 const isSuppressed = (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
                 if (_isActive && !isSuppressed) {
+                    // Play the subtle hover sound (matching health bar button)
+                    let sfxRel = audio.play('click', 0.95);
+                    if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
+
                     _showStatsTooltip();
                     upgradeTree.setHoverLabel(t('tower_stats', 'title'));
                 }
@@ -99,7 +124,7 @@ const towerStatsUI = (() => {
         }
 
         // Offset tooltip to the side of the new interaction area
-        tooltipManager.show(pos.x + 400, pos.y + 25, content, 400);
+        tooltipManager.show(pos.x + GAME_CONSTANTS.quarterWidth, pos.y + 30, content, 400);
     }
 
     function _getStats() {

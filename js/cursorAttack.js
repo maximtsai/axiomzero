@@ -311,11 +311,13 @@ class PulseAttackView {
 
     setDetonateReminderVisibility(visible) {
         if (!this.detonateReminderText) return;
-        
+
         const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
         const targetX = GAME_CONSTANTS.halfWidth + (isUpgrade ? 400 : 0);
-        this.detonateReminderText.setX(targetX);
-        
+        const targetY = GAME_CONSTANTS.halfHeight + (isUpgrade ? 325 : 375);
+
+        this.detonateReminderText.setPosition(targetX, targetY);
+
         this.detonateReminderText.setVisible(visible);
         this.detonateReminderText.setAlpha(visible ? 0.6 : 0);
     }

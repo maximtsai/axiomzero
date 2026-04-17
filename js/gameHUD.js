@@ -389,7 +389,7 @@ const gameHUD = (() => {
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         testDefensesBtn.setDepth(depth + 3);
-        const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+        const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
         testDefensesBtn.setVisible(isUnlocked);
         if (!isUnlocked) testDefensesBtn.setState(DISABLE);
 
@@ -537,7 +537,7 @@ const gameHUD = (() => {
 
         // Show test weapons button if unlocked
         if (testDefensesBtn) {
-            const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+            const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
             testDefensesBtn.setVisible(isUnlocked);
             if (isUnlocked) {
                 testDefensesBtn.setState(NORMAL);
@@ -790,7 +790,7 @@ const gameHUD = (() => {
 
     function refreshTestDefensesButton() {
         if (testDefensesBtn) {
-            const isUnlocked = typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked;
+            const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
             testDefensesBtn.setVisible(isUnlocked);
             if (isUnlocked) {
                 testDefensesBtn.setState(NORMAL);
