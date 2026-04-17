@@ -527,13 +527,21 @@ const enemyManager = (() => {
         let textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
         if (isExecuted) textColor = '#bf24ff';
 
+        // Unconditionally capture and reset visual override flags so they don't bleed
+        const wasIsolated = enemy.model.wasIsolatedHit;
+        const wasResonance = enemy.model.wasResonanceHit;
+        enemy.model.wasIsolatedHit = false;
+        enemy.model.wasResonanceHit = false;
+
         if (gameState.settings.showDamageNumbers) {
             let displayText = isExecuted ? ' EXECUTE ' : finalAmount.toString();
 
             // ISOLATION visual wrap
-            if (enemy.model.wasIsolatedHit) {
-                displayText = `»${displayText}«`;
-                enemy.model.wasIsolatedHit = false; // Reset after use
+            if (wasIsolated) {
+                displayText = `›${displayText}‹`;
+            }
+            if (wasResonance) {
+                displayText = `★${displayText}★`;
             }
 
             let baseFontSize = 40;
@@ -541,6 +549,7 @@ const enemyManager = (() => {
                 // Square root scaling: damage 10 is the 40px baseline.
                 // Clamp between 25px and 115px to avoid tiny or screen-filling numbers.
                 baseFontSize = 22 + Math.floor(Math.sqrt(finalAmount) * 4);
+                if (wasResonance) baseFontSize += 8;
                 baseFontSize = Math.min(115, baseFontSize);
             } else {
                 baseFontSize = 36;

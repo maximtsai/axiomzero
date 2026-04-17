@@ -26,6 +26,14 @@ const upgradeDispatcher = (() => {
 
         pulseAttack.setIsolationLevel(getLevel('manual_pulse_child_1_1'));
         pulseAttack.setSaturationLevel(getLevel('wide_pulse_child_1'));
+        recalcResonance();
+    }
+
+    /** Recalculates resonance level. */
+    function recalcResonance() {
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.setResonanceLevel) {
+            pulseAttack.setResonanceLevel(getLevel('resonance'));
+        }
     }
 
     /** Recalculates aftershock level. */
@@ -134,6 +142,7 @@ const upgradeDispatcher = (() => {
             recalcPulseMode();
             recalcAftershock();
             recalcRepeatExploit();
+            recalcResonance();
             recalcBombUses();
         }
         if (typeof lightningAttack !== 'undefined') {
@@ -173,6 +182,7 @@ const upgradeDispatcher = (() => {
         recalcThreatResponse,
         recalcAftershock,
         recalcRepeatExploit,
+        recalcResonance,
         recalcLaser,
         recalcArtillery,
         recalcBombUses

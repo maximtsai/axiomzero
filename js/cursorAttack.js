@@ -1,4 +1,4 @@
-// pulseAttack.js — Player cursor AOE cursor attack (Refactored to MVC).
+// cursorAttack.js — Player cursor AOE cursor attack (Refactored to MVC).
 // A nine-sliced square centered on the mouse that fires every FIRE_INTERVAL ms,
 // dealing DAMAGE to all enemies within its AOE. Activated by "awaken" node.
 // Visual: 0.3 alpha idle, flashes to 1 on fire with Quart.easeOut tween back.
@@ -32,6 +32,8 @@ class PulseAttackModel {
         this.bombFired = false;
         this.maxBombUses = 0;
         this.bombUses = 0;
+        this.resonanceLevel = 0;
+        this.currentAttackCount = 0;
     }
 
     resetTimer() {
@@ -113,6 +115,7 @@ class PulseAttackView {
         this.reloadAlphaTween = null;
         this.aftershockLevel = 0;
         this.wavePool = null;
+        this.detonateReminderText = null;
     }
 
     init(initialSize) {
@@ -279,6 +282,19 @@ class PulseAttackView {
             40, 40, 40, 40
         );
         this.artilleryRed.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+
+        // Subtle detonation reminder text
+        const isMobile = helper.isMobileDevice();
+        const reminderMsg = isMobile ? "CLICK TO DETONATE" : "SPACEBAR TO DETONATE";
+        this.detonateReminderText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight + 375, reminderMsg, {
+            fontFamily: 'MunroSmall',
+            fontSize: '26px',
+            color: '#FFFFFF',
+            align: 'center'
+        });
+        this.detonateReminderText.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD).setScrollFactor(0).setVisible(false).setAlpha(0);
+        this.detonateReminderText.setStroke('#000000', 8);
+        this.detonateReminderText.setBlendMode(Phaser.BlendModes.ADD);
     }
 
     setSize(newSize) {
@@ -291,6 +307,17 @@ class PulseAttackView {
         if (this.spriteRed) {
             this.spriteRed.setSize(newSize + 4, newSize + 4);
         }
+    }
+
+    setDetonateReminderVisibility(visible) {
+        if (!this.detonateReminderText) return;
+        
+        const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
+        const targetX = GAME_CONSTANTS.halfWidth + (isUpgrade ? 400 : 0);
+        this.detonateReminderText.setX(targetX);
+        
+        this.detonateReminderText.setVisible(visible);
+        this.detonateReminderText.setAlpha(visible ? 0.6 : 0);
     }
 
     updatePosition(delta, targetX, targetY, model) {
@@ -369,22 +396,23 @@ class PulseAttackView {
         });
     }
 
-    playFireAnimation() {
+    playFireAnimation(isResonanceHit = false) {
         if (!this.sprite) return;
 
         const flippedLeft = Math.random() < 0.5;
         const goalRot = flippedLeft ? -0.29 : 0.29;
 
         const extraScale = Math.max(0, (200 - this.sprite.width) * 0.005);
+        const resMultiplier = isResonanceHit ? 1.3 : 1.0;
 
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale(1.35 + extraScale);
+        this.spriteBright.setScale((1.35 + extraScale) * resMultiplier);
         this.spriteBright.setRotation(goalRot);
         this.sprite.setRotation(goalRot);
 
         this.spriteRed.setAlpha(0.40);
-        this.spriteRed.setScale(1.35 + extraScale);
+        this.spriteRed.setScale((1.35 + extraScale) * resMultiplier);
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
@@ -404,7 +432,7 @@ class PulseAttackView {
         });
 
 
-        this.sprite.setScale(1.4 + extraScale);
+        this.sprite.setScale((1.4 + extraScale) * resMultiplier);
 
         PhaserScene.tweens.add({
             targets: [this.sprite, this.spriteBright],
@@ -971,6 +999,9 @@ const pulseAttack = (() => {
         const isVisible = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting) && tower.isAlive();
         view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed, model.bombFired);
 
+        // Manage detonation reminder text
+        view.setDetonateReminderVisibility(model.bombReadyToFire);
+
         if (!model.active || !tower.isAlive() || model.bombArmed || model.bombFired) {
             return;
         }
@@ -980,6 +1011,16 @@ const pulseAttack = (() => {
         if (canAutoFire && model.updateTimer(delta)) {
             _fire();
         }
+    }
+
+    function _determineResonance(model) {
+        if (model.resonanceLevel <= 0) return false;
+        model.currentAttackCount++;
+        if (model.currentAttackCount >= 4) {
+            model.currentAttackCount = 0;
+            return true;
+        }
+        return false;
     }
 
     function _fire() {
@@ -996,7 +1037,8 @@ const pulseAttack = (() => {
         const s = audio.play('cursor_pulse', 0.3);
         if (s) s.detune = detune;
 
-        view.playFireAnimation();
+        const isResonanceHit = _determineResonance(model);
+        view.playFireAnimation(isResonanceHit);
         view.playWaveEffect(cx, cy, model.size);
 
         // Micro camera shake
@@ -1007,14 +1049,27 @@ const pulseAttack = (() => {
         // Damage all enemies in range
         const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
 
-        // ISOLATION PROTOCOL logic
+        // Calculate base actual damage
         let actualDamage = model.damage;
+
+        // ISOLATION PROTOCOL logic
         if (hits.length === 1 && model.isolationLevel > 0) {
             actualDamage *= (1 + 0.40 * model.isolationLevel);
         }
         // AREA SATURATION logic
         else if (hits.length > 1 && model.saturationLevel > 0) {
             actualDamage += (model.saturationLevel * (hits.length - 1));
+        }
+
+        // Apply double damage from RESONANCE last so it doubles additive bonuses too
+        if (isResonanceHit) {
+            actualDamage *= 2;
+        }
+
+        if (isResonanceHit) {
+            // Audio punch for resonance hit
+            const r = audio.play('retro1', 0.5);
+            if (r) r.detune = 200;
         }
 
         for (let i = 0; i < hits.length; i++) {
@@ -1024,6 +1079,11 @@ const pulseAttack = (() => {
             // ISOLATION bonus visual flag
             if (hits.length === 1 && model.isolationLevel > 0) {
                 enemy.model.wasIsolatedHit = true;
+            }
+
+            // RESONANCE bonus visual flag
+            if (isResonanceHit) {
+                enemy.model.wasResonanceHit = true;
             }
 
             // REPEAT EXPLOIT logic
@@ -1083,6 +1143,7 @@ const pulseAttack = (() => {
         model.charges = model.maxCharges;
         model.fireTimer = 0;
         model.bombUses = model.maxBombUses;
+        model.currentAttackCount = 0;
     }
 
     function setManualMode(enabled) {
@@ -1113,6 +1174,11 @@ const pulseAttack = (() => {
 
     function setPersistentExploitLevel(level) {
         model.persistentExploitLevel = level;
+    }
+
+    function setResonanceLevel(level) {
+        model.resonanceLevel = level;
+        if (level === 0) model.currentAttackCount = 0;
     }
 
     function getBombFinalSize() {
@@ -1200,7 +1266,7 @@ const pulseAttack = (() => {
 
                 // Slow down hit enemies too
                 const damageSize = finalSize / 2 + 5;
-                const damage = model.damage + 50;
+                const damage = model.damage + 40;
 
                 const damageX = _getDamageCoordX(cx);
                 const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
@@ -1243,7 +1309,8 @@ const pulseAttack = (() => {
     function setMaxBombUses(count) {
         model.maxBombUses = count;
         model.bombUses = count;
+        messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
 })();

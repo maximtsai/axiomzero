@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['automated_defense', 'integrity', 'pulse_damage', 'prismatic_array', 'cheat'],
+        childIds: ['automated_defense', 'integrity', 'pulse_damage', 'cheat'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: [],
+        childIds: ['prismatic_array', 'resonance'],
         treeX: gridX(0),
         treeY: gridY(-1),
         effect: function () {
@@ -651,12 +651,31 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 50,
         costStepScaling: 12,
-        parents: ['awaken'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(2.0),
-        treeY: gridY(-1.0),
+        treeX: gridX(-0.5),
+        treeY: gridY(-2.0),
         effect: function () {
             // Recalculated via normal gameplay checks
+        },
+    },
+    {
+        id: 'resonance',
+        name: t('nodes', 'resonance.name'),
+        icon: 'Skillicon14_06.png', // Using focus icon for resonance feel or similar
+        description: t('nodes', 'resonance.desc'),
+        popupText: t('nodes', 'resonance.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 25,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(0.5),
+        treeY: gridY(-2.0),
+        effect: function () {
+            upgradeDispatcher.recalcResonance();
         },
     },
     {

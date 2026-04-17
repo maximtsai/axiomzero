@@ -114,6 +114,8 @@ class EnemyModel {
         this.hitByPulse = false;
         this.hitByShockwave = false;
         this.laserDmgBonus = 0;
+        this.wasIsolatedHit = false;
+        this.wasResonanceHit = false;
     }
 
     deactivate() {

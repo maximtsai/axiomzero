@@ -20,6 +20,8 @@ const gameHUD = (() => {
     let bombBtnTxt = null;
     let isFarming = false;
     let bombCanCancel = false;
+    let bombPulseIndicator = null;
+    let bombPulseTimer = null;
 
     // Layout
     const HUD_X = 20;
@@ -75,10 +77,17 @@ const gameHUD = (() => {
         messageBus.subscribe('cursorBombCancelled', () => {
             bombCanCancel = false;
             _updateBombUI();
+            clearBombPulse();
         });
         messageBus.subscribe('cursorBombFired', () => {
             bombCanCancel = false;
             _updateBombUI();
+            clearBombPulse();
+        });
+
+        messageBus.subscribe('bombShowHint', (enabled) => {
+            if (enabled) setBombPulse();
+            else clearBombPulse();
         });
 
         messageBus.subscribe('waveModeFarmingStarted', () => {
@@ -306,7 +315,8 @@ const gameHUD = (() => {
             },
         });
         bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        bombBtnTxt = bombBtn.addText("BOMB\n<SPACEBAR>", {
+        const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
+        bombBtnTxt = bombBtn.addText(`BOMB\n${bombKeyHint}`, {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: helper.isMobileDevice() ? '16px' : '17px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
@@ -420,7 +430,8 @@ const gameHUD = (() => {
                 }
 
                 if (bombBtnTxt) {
-                    bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n<SPACEBAR>`);
+                    const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
+                    bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n${bombKeyHint}`);
                 }
             }
         }
@@ -481,6 +492,7 @@ const gameHUD = (() => {
 
     function _onPhaseChanged(phase) {
         bombCanCancel = false;
+        clearBombPulse();
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _showCombatHUD();
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
@@ -808,5 +820,43 @@ const gameHUD = (() => {
         if (bombBtn) bombBtn.setAlpha(alpha);
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setAlpha };
+    function setBombPulse() {
+        if (!bombBtn || bombPulseIndicator || bombPulseTimer) return;
+        
+        function playPulse() {
+            if (!bombBtn || !bombBtn.visible) return;
+            
+            const bx = bombBtn.x;
+            const by = bombBtn.y;
+            const bw = bombBtn.displayWidth;
+            const bh = bombBtn.displayHeight;
+
+            bombPulseIndicator = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 60, bh + 60, bw, bh, 24);
+            bombPulseIndicator.setDepth(bombBtn.depth - 1);
+            
+            bombPulseTimer = PhaserScene.time.delayedCall(5000, () => {
+                if (bombPulseIndicator) {
+                    bombPulseIndicator.destroy();
+                }
+                bombPulseIndicator = null;
+                bombPulseTimer = null;
+                playPulse();
+            });
+        }
+        
+        playPulse();
+    }
+
+    function clearBombPulse() {
+        if (bombPulseIndicator) {
+            bombPulseIndicator.destroy();
+            bombPulseIndicator = null;
+        }
+        if (bombPulseTimer) {
+            bombPulseTimer.destroy();
+            bombPulseTimer = null;
+        }
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setAlpha, setBombPulse, clearBombPulse };
 })();

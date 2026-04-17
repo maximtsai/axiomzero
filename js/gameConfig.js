@@ -175,7 +175,9 @@ const GAME_STATE_DEFAULTS = {
 
     // Claimed Milestones
     claimed: {},
-    tutorialsSeen: {},
+    tutorialsSeen: {
+        bomb: false
+    },
 
     // Local best scores per farming level { levelId: { bestTime, kills, date } }
     localBestScores: {},

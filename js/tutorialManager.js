@@ -3,17 +3,27 @@
 const tutorialManager = (() => {
     let activePopups = [];
     let _activeDelayedCalls = [];
+    let _bombTutorialActiveThisPhase = false;
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('trigger_tutorial', (id) => {
             if (id === 'duo_swap') showDuoSwapTutorial();
         });
+        messageBus.subscribe('bombUsesChanged', (data) => {
+            if (data.max === 1 && !gameState.tutorialsSeen.bomb) {
+                _checkBombTutorial();
+            }
+        });
+        messageBus.subscribe('cursorBombFired', () => {
+            gameState.tutorialsSeen.bomb = true;
+        });
     }
 
     function _onPhaseChanged(phase) {
         _clearTutorial();
         _cancelActiveDelayedCalls();
+        _bombTutorialActiveThisPhase = false;
 
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             _checkEarlyGameTutorial();
@@ -24,6 +34,7 @@ const tutorialManager = (() => {
                     _checkControlsTutorial();
                     _checkUpgradeTutorial();
                     _checkDuoTutorial();
+                    _checkBombTutorial();
                 }
             });
         }
@@ -122,6 +133,25 @@ const tutorialManager = (() => {
             const x = 0;
             const y = 625;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px', 7000);
+        }
+    }
+
+    function _checkBombTutorial() {
+        if (gameState.tutorialsSeen.bomb || _bombTutorialActiveThisPhase) return;
+
+        const pulseModel = pulseAttack.getModel();
+        if (pulseModel.maxBombUses >= 1) {
+            _bombTutorialActiveThisPhase = true;
+            const isMobile = helper.isMobileDevice();
+            const msgKey = isMobile ? 'bomb_tutorial_mobile' : 'bomb_tutorial';
+            const msg = t('tutorial', msgKey);
+
+            const x = GAME_CONSTANTS.WIDTH * 0.75;
+            const y = (GAME_CONSTANTS.HEIGHT * 0.82);
+
+            // Pass null as tutorialId so it doesn't auto-flag as seen. It flags on cursorBombFired.
+            _createTutorialPopup(msg, x, y, false, '#ffffff', '#ffffff', null, '38px', 10000);
+            messageBus.publish('bombShowHint', true);
         }
     }
 

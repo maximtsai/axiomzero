@@ -72,6 +72,7 @@ window.TRANSLATIONS.en = {
         wide_pulse_child_1: { name: 'AREA SATURATION', desc: '[color=#8FD9F8]+1[/color] cursor damage per additional enemy hit.', popup: 'AREA SATURATION' },
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]6/8/10[/color] damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size.', popup: 'COLOSSAL CURSOR' },
+        resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack deals [color=#8FD9F8]double damage[/color].', popup: 'RESONANCE ACTIVE' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#8FD9F8]2s[/color] during combat.', popup: 'SNIFFER ACTIVE' },
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through all enemies.', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy.', popup: 'ARTILLERY ACTIVE' },
@@ -180,7 +181,9 @@ window.TRANSLATIONS.en = {
         upgrade_use: 'SPEND DATA ◈ TO EVOLVE',
         unlock_shards: 'Unlock new abilities with ◆',
         duo_swap_free: 'SWAPPING ◆ ABILITIES IS FREE',
-        controls_mouse: 'CONTROLS: MOUSE ONLY'
+        controls_mouse: 'CONTROLS: MOUSE ONLY',
+        bomb_tutorial: 'SPACEBAR TO USE BOMB',
+        bomb_tutorial_mobile: 'CLICK TO USE BOMB'
     },
     options: {
         title: '// OPTIONS CONFIGURATION ',
@@ -248,7 +251,7 @@ window.TRANSLATIONS.en = {
         coin_title: '[color=#00FF00]COIN[/color]',
         coin_desc: 'A token that can influence the physical world. Provides high-tier upgrades.',
         health_title: 'HEALTH',
-        health_desc: 'The physical durability of your server tower. If this reaches zero, the current iteration fails.',
+        health_desc: 'Your core\'s physical durability. If this reaches zero, the current iteration fails.',
         exp_title: 'EXPERIENCE',
         exp_desc: 'Progress toward your next INSIGHT. Gained passively over time while in combat.',
         exp: 'EXP ',

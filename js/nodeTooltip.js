@@ -296,16 +296,17 @@ const nodeTooltip = (() => {
 
         // Animations
         if (!isPurchaseRefresh) {
-            container.setScale(0.75, 1.1).setAngle(6);
+            container.setScale(0.8, 1.1).setAngle(6);
             PhaserScene.tweens.add({
                 targets: container,
-                scaleX: 1.11, scaleY: 0.95, angle: -2, y: container.y,
-                duration: 95, ease: 'Quart.easeOut',
+                scaleX: 1.11, scaleY: 0.95, angle: -3, y: container.y,
+                duration: 100, ease: 'Quart.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({
                         targets: container,
                         scaleX: 1, scaleY: 1, angle: 0,
-                        duration: 180, ease: 'Back.easeOut'
+                        easeParams: [3],
+                        duration: 175, ease: 'Back.easeOut'
                     });
                 }
             });
