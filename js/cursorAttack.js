@@ -705,7 +705,7 @@ class PulseAttackView {
         const startSize = 50 + baseSize * 0.15;
         let endSize = 50 + baseSize * 1.08;
         if (isResonance) {
-            endSize *= 2.0;
+            endSize += 120;
         }
 
         fx.setPosition(x, y);
@@ -1114,7 +1114,10 @@ const pulseAttack = (() => {
     function _fire() {
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;
-        const damageSize = (model.size / 2) + 5;
+
+        const isResonanceHit = _determineResonance(model);
+        let damageSize = (model.size / 2) + 5;
+        if (isResonanceHit) damageSize += 10;
 
         // Play cursor pulse sound with unique detune
         let detune = (Math.random() * 500 - 250);
@@ -1125,7 +1128,6 @@ const pulseAttack = (() => {
         const s = audio.play('cursor_pulse', 0.3);
         if (s) s.detune = detune;
 
-        const isResonanceHit = _determineResonance(model);
         view.playFireAnimation(isResonanceHit);
         view.playWaveEffect(cx, cy, model.size, isResonanceHit);
 

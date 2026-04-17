@@ -207,7 +207,7 @@ const gameHUD = (() => {
         bombBtn.setDepth(depth + 3).setScrollFactor(0);
 
         testDefensesBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 72 },
+            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons' },
             press: { ref: 'button_press.png', atlas: 'buttons' },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -446,6 +446,7 @@ const gameHUD = (() => {
     function refreshTestDefensesButton() {
         if (!testDefensesBtn) return;
         const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
+
         testDefensesBtn.setVisible(isUnlocked).setState(isUnlocked ? NORMAL : DISABLE);
     }
 
