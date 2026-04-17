@@ -22,7 +22,7 @@ const upgradeTree = (() => {
     let draggableGroup = null;
     let treeMask = null;
     let treeMaskContainer = null;
-    let coordText = null;
+    let maskShape = null;
     let currentHoverLabel = " ";
 
     let buyPulsePool = null;
@@ -69,7 +69,7 @@ const upgradeTree = (() => {
         treeMaskContainer.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2);
 
         // Create a shared GeometryMask that clips at halfWidth
-        const maskShape = PhaserScene.add.graphics();
+        maskShape = PhaserScene.add.graphics();
         maskShape.fillStyle(0xffffff);
         maskShape.fillRect(0, 0, GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.HEIGHT);
         maskShape.setScrollFactor(0);
@@ -542,7 +542,6 @@ const upgradeTree = (() => {
             const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
             slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3); // behind node button (2.0)
             slice.setScrollFactor(0);
-            treeGroup.add(slice);
             draggableGroup.add(slice);
             return slice;
         }, resetFn, 10).preAllocate(4);
@@ -551,7 +550,6 @@ const upgradeTree = (() => {
             const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'max_pulse.png', 80, 80, 25, 25, 25, 25);
             slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
             slice.setScrollFactor(0);
-            treeGroup.add(slice);
             draggableGroup.add(slice);
             return slice;
         }, resetFn, 10).preAllocate(4);
@@ -678,7 +676,7 @@ const upgradeTree = (() => {
         pulse.setScale(2.1 * scale);
         pulse.setAlpha(0);
 
-        treeGroup.add(pulse);
+        // Only add to draggableGroup (it auto-proxies to mask container)
         draggableGroup.add(pulse);
 
         PhaserScene.tweens.add({
@@ -1357,5 +1355,5 @@ const upgradeTree = (() => {
         if (coinMineBtn) coinMineBtn.setAlpha(alpha);
     }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();

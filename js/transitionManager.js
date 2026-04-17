@@ -36,7 +36,7 @@ const transitionManager = (() => {
         blocker.setDepth(200000);
         blocker.setScrollFactor(0);
 
-        const duration = GAME_CONSTANTS.TRANSITION_DURATION * 5;
+        const duration = GAME_CONSTANTS.TRANSITION_DURATION;
 
         if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
             messageBus.publish('AnnounceText', t('ui', 'combat_intro'));
@@ -115,7 +115,7 @@ const transitionManager = (() => {
             if (shape) {
                 PhaserScene.tweens.add({
                     targets: shape,
-                    x: targetX - 500,
+                    x: targetX,
                     duration: duration,
                     ease: 'Cubic.easeOut'
                 });
