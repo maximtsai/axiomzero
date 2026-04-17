@@ -248,8 +248,7 @@ const upgradeTree = (() => {
         panelBg.setScrollFactor(0);
         panelBg.setVisible(false);
 
-        // Add to treeGroup for panel transitions, and draggableGroup for scrolling sync
-        treeGroup.add(panelBg);
+        // Add to draggableGroup for scrolling sync and treeMaskContainer for transitions
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half

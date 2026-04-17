@@ -36,7 +36,7 @@ const transitionManager = (() => {
         blocker.setDepth(200000);
         blocker.setScrollFactor(0);
 
-        const duration = GAME_CONSTANTS.TRANSITION_DURATION;
+        const duration = GAME_CONSTANTS.TRANSITION_DURATION * 5;
 
         if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
             messageBus.publish('AnnounceText', t('ui', 'combat_intro'));
