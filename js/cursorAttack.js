@@ -368,7 +368,7 @@ class PulseAttackView {
         if (this.spriteGlow && model.resonanceLevel > 0) {
             const nextIsResonance = model.currentAttackCount === 3;
             const isBombing = model.bombArmed || model.bombAnimating || model.bombFired;
-            
+
             if (nextIsResonance && !this.glowIsFiring && !isBombing) {
                 const jitterDist = 3;
                 const jX = (Math.random() - 0.5) * jitterDist;
@@ -376,8 +376,11 @@ class PulseAttackView {
 
                 this.spriteGlow.setVisible(true);
                 this.spriteGlow.setPosition(targetX + jX, targetY + jY);
-                this.spriteGlow.setAlpha(0.05 + Math.random() * 0.45);
-                this.spriteGlow.setRotation(this.sprite.rotation + (Math.random() - 0.5) * 0.05);
+                this.spriteGlow.setAlpha(Math.random() * 0.6);
+                const goalScale = this.sprite.scaleX + Math.random() * 1 - 0.5;
+                this.spriteGlow.setScale(goalScale * 0.2 + this.sprite.scaleX * 0.8);
+                const goalRot = this.sprite.rotation + (Math.random() - 0.5) * 0.8;
+                this.spriteGlow.setRotation(goalRot * 0.2 + this.sprite.rotation * 0.8);
             } else if (!this.glowIsFiring) {
                 this.spriteGlow.setVisible(false);
             } else {
