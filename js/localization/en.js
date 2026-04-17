@@ -260,7 +260,7 @@ window.TRANSLATIONS.en = {
         shard_acquired: '+1 SHARD ACQUIRED'
     },
     tower_stats: {
-        title: 'TOWER STATS',
+        title: 'AXIOM CORE',
         damage: 'DAMAGE: {0}',
         regen: 'REGEN: {0}/s',
         armor: 'ARMOR: {0}',

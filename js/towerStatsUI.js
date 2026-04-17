@@ -24,7 +24,7 @@ const towerStatsUI = (() => {
                 ref: 'white_pixel', // Invisible base
                 x: towerPos.x + 400,
                 y: towerPos.y,
-                alpha: 0,
+                alpha: 0.001,
                 scrollFactorX: 0,
                 scrollFactorY: 0
             },
@@ -62,29 +62,40 @@ const towerStatsUI = (() => {
 
         const content = [{ text: t('tower_stats', 'title'), style: 'title', color: '#ffffff' }];
 
+        let hasStats = false;
         if (stats.damage > 0) {
             content.push({ text: t('tower_stats', 'damage', [Math.floor(stats.damage)]), style: 'normal', color: COLORS.COMBAT });
+            hasStats = true;
         }
         if (stats.regen > 0) {
             content.push({ text: t('tower_stats', 'regen', [stats.regen.toFixed(1)]), style: 'normal', color: '#87FF02' });
+            hasStats = true;
         }
         if (stats.armor > 0) {
             content.push({ text: t('tower_stats', 'armor', [Math.floor(stats.armor)]), style: 'normal', color: '#8FD9F8' });
+            hasStats = true;
         }
         if (stats.range > 0) {
-            content.push({ text: t('tower_stats', 'range', [Math.floor(stats.range)]), style: 'normal', color: '#aaaaaa' });
+            content.push({ text: t('tower_stats', 'range', [Math.floor(stats.range * 2 / 2.3)]), style: 'normal', color: '#aaaaaa' });
+            hasStats = true;
         }
 
-        content.push({ text: '', style: 'normal' }); // Spacer
-        content.push({ text: t('tower_stats', 'equipped'), style: 'title', color: '#ffe600' });
-
-        // Add equipped duo weapons
-        if (stats.equipped.length === 0) {
-            content.push({ text: t('tower_stats', 'none'), style: 'normal', color: '#666666' });
-        } else {
+        // Add equipped duo weapons only if present
+        if (stats.equipped.length > 0) {
+            content.push({ text: '', style: 'normal' }); // Spacer
+            content.push({ text: t('tower_stats', 'equipped'), style: 'title', color: '#ffe600' });
             stats.equipped.forEach(weapon => {
                 content.push({ text: `◈ ${weapon}`, style: 'normal', color: '#ffffff' });
             });
+        } else if (!hasStats) {
+            // No stats and no equipment: show lore blurb
+            const isAwakened = (gameState.upgrades && gameState.upgrades.awaken > 0);
+            const loreText = isAwakened
+                ? 'An anomaly that began to think for itself.'
+                : 'Formless logic drifting in a sea of data.';
+
+            content.push({ text: '', style: 'normal' }); // Spacer
+            content.push({ text: `[i]${loreText}[/i]`, style: 'normal', color: '#888888' });
         }
 
         // Offset tooltip to the side of the new interaction area
