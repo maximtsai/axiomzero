@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'resonance', 'completionist', 'regen'],
+        childIds: ['prismatic_array', 'resonance', 'completionist', 'regen', 'bomb'],
         treeX: gridX(0),
         treeY: gridY(-1),
         effect: function () {
@@ -190,7 +190,7 @@ const NODE_DEFS = [
         description: t('nodes', 'integrity.desc'),
         popupText: t('nodes', 'integrity.popup'),
         popupColor: COLORS.HEALTH,
-        maxLevel: 6,
+        maxLevel: 4,
         baseCost: 8,
         costType: 'data',
         costScaling: 'linear',
@@ -296,10 +296,10 @@ const NODE_DEFS = [
         baseCost: 20,
         costType: 'data',
         costScaling: 'static',
-        parents: ['bug_report'],
+        parents: ['cheat'],
         childIds: ['bomb_2'],
-        treeX: gridX(-3),
-        treeY: gridY(0),
+        treeX: gridX(-1),
+        treeY: gridY(-2),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -317,8 +317,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['bomb'],
         childIds: [],
-        treeX: gridX(-4),
-        treeY: gridY(0),
+        treeX: gridX(-1),
+        treeY: gridY(-3),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -707,7 +707,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['integrity'],
-        childIds: ['bomb'],
+        childIds: [],
         treeX: gridX(-2),
         treeY: gridY(0),
         effect: function () { },

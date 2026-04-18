@@ -2,6 +2,8 @@
 // Manages the visual health bar: background, fill, flare, and numeric text.
 // Handles logarithmic scaling based on max health.
 
+const HEALTH_BAR_GAP = 5;
+
 class HealthBar {
     /**
      * @param {Object} config
@@ -25,8 +27,8 @@ class HealthBar {
 
     _createElements() {
         // ── Background ──
-        this.bg = PhaserScene.add.image(this.baseX, this.y, 'white_pixel');
-        this.bg.setOrigin(0, 0).setDisplaySize(this.baseW, this.h).setTint(GAME_CONSTANTS.HEALTH_BAR_TINT).setDepth(this.depth).setScrollFactor(0);
+        this.bg = PhaserScene.add.nineslice(this.baseX, this.y, 'ui', 'health_nineslice.png', this.baseW, this.h, 3, 3, 3, 3);
+        this.bg.setOrigin(0, 0).setDepth(this.depth).setScrollFactor(0);
 
         // ── Damage Flare ──
         this.flare = PhaserScene.add.image(this.baseX, this.y + this.h / 2, 'ui', 'white_vertical_line.png');
@@ -34,11 +36,11 @@ class HealthBar {
         this.flare.setAlpha(0);
 
         // ── Fill ──
-        this.fill = PhaserScene.add.image(this.baseX, this.y, 'white_pixel');
-        this.fill.setOrigin(0, 0).setDisplaySize(this.baseW, this.h).setTint(0x00ff66).setDepth(this.depth + 2).setScrollFactor(0);
+        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP, this.y + HEALTH_BAR_GAP, 'white_pixel');
+        this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setTint(0x00F261).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        this.text = PhaserScene.add.text(this.baseX + this.baseW + 8, this.y - 4, '', {
+        this.text = PhaserScene.add.text(this.baseX + this.baseW + 12, this.y - 4, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: helper.isMobileDevice() ? '30px' : '26px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
@@ -57,15 +59,17 @@ class HealthBar {
 
         const ratio = Math.max(0, current / max);
 
-        this.bg.setDisplaySize(dynamicW, this.h);
-        this.fill.setDisplaySize(dynamicW * ratio, this.h);
+        if (this.bg.width !== dynamicW) {
+            this.bg.width = dynamicW;
+        }
+        this.fill.setDisplaySize((dynamicW - HEALTH_BAR_GAP * 2) * ratio, this.h - HEALTH_BAR_GAP * 2);
 
         // Reposition text to the right of the dynamic bar
-        this.text.x = this.bg.x + dynamicW + 8;
+        this.text.x = this.bg.x + dynamicW + 12;
 
-        // Color shift: cyan → orange → red as health drops
+        // Color shift: green → orange → red as health drops
         if (ratio > 0.5) {
-            this.fill.setTint(0x00ff66);
+            this.fill.setTint(0x00F261);
         } else if (ratio > 0.25) {
             this.fill.setTint(GAME_CONSTANTS.COLOR_RESOURCE);
         } else {

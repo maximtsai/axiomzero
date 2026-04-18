@@ -214,6 +214,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">ui/health_nineslice.png</key>
             <key type="filename">ui/nineslice.png</key>
             <key type="filename">ui/nineslice_box.png</key>
             <struct type="IndividualSpriteSettings">

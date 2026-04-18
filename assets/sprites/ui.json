@@ -60,57 +60,32 @@
 					}
 				},
 				{
+					"filename": "health_nineslice.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 213,
+						"y": 45,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "nineslice.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 213,
-						"y": 45,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "nineslice_box.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 213,
-						"y": 45,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "white_outline.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -135,6 +110,56 @@
 					}
 				},
 				{
+					"filename": "nineslice_box.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 235,
+						"y": 45,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "white_outline.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 213,
+						"y": 67,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "white_vertical_line.png",
 					"rotated": false,
 					"trimmed": false,
@@ -149,7 +174,7 @@
 						"h": 38
 					},
 					"frame": {
-						"x": 213,
+						"x": 235,
 						"y": 67,
 						"w": 5,
 						"h": 38
@@ -174,7 +199,7 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 220,
+						"x": 242,
 						"y": 67,
 						"w": 10,
 						"h": 10
@@ -515,6 +540,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8a1e092ffc0bb43648f0772cfdb374c9:ac1aed86e831b47110043f31785d4fbe:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:742db3728b26093cf44d3958c08c7d20:eff9c07623c3a0c3878fa24b404d1f88:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

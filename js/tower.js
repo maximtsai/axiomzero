@@ -706,16 +706,15 @@ const tower = (() => {
         if (survived) {
             view.playHitFlash();
             zoomShake(1.007);
-
-            // BUG REPORT: Drop 1 DATA every 5 damage taken
+            // BUG REPORT: Drop 1 DATA every 3 damage taken
             const actualDamage = damageTaken * (model.damageReceivedMultiplier || 1);
             if ((gameState.upgrades || {}).bug_report && actualDamage > 0) {
                 model.bugReportAccumulator += actualDamage;
-                while (model.bugReportAccumulator >= 5) {
+                while (model.bugReportAccumulator >= 3) {
                     const pos = getPosition();
-                    const dist = 60 + Math.random() * 120; // Burst out further than normal drops
+                    const dist = 50 + Math.random() * 120; // 50 min, 170 max
                     resourceManager.spawnDataDrop(pos.x, pos.y, dist);
-                    model.bugReportAccumulator -= 5;
+                    model.bugReportAccumulator -= 3;
                 }
             }
 
