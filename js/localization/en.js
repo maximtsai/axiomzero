@@ -33,6 +33,8 @@ window.TRANSLATIONS.en = {
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], and [color=white]+2 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
+        completionist: { name: 'COMPLETIONIST', desc: 'Gain [color=cyan]+10 DATA[/color] whenever you max out a node.', popup: '+10 DATA' },
+        bug_report: { name: 'BUG REPORT', desc: 'Your core drops [color=cyan]1 DATA[/color] every time it takes [color=#ff5555]5 damage[/color].', popup: 'DATA RECOVERED' },
         emergency_depot: { name: 'EMERGENCY DEPOT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#8FD9F8]+3 SHARDS[/color], and [color=white]+3 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
         automated_defense: { name: 'AUTO DEFENSE', desc: 'Tower automatically attacks enemies.', popup: 'TOWER ATTACK UNLOCKED' },
         pulse_damage: { name: 'IMPACT', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },

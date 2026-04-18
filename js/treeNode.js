@@ -407,6 +407,25 @@ class Node {
         // System notifications
         messageBus.publish('upgradePurchased', this.id, this.level);
 
+        // Completionist bonus: +10 DATA when maxing out ANY node
+        if (this.isMaxed() && gameState.upgrades && gameState.upgrades['completionist']) {
+            resourceManager.addData(10);
+            if (typeof floatingText !== 'undefined' && typeof tower !== 'undefined') {
+                const pos = tower.getPosition();
+                floatingText.show(
+                    pos.x + (Math.random() - 0.5) * 100,
+                    pos.y + (Math.random() - 0.5) * 100,
+                    '+10 DATA',
+                    {
+                        color: '#00ccff', // Matching cyan DATA color
+                        fontSize: 24,
+                        travel: 60,
+                        noScale: true
+                    }
+                );
+            }
+        }
+
         // Final visual refresh
         if (this.isDuoBox) {
             const sibling = upgradeTree.getNode(this.duoSiblingId);

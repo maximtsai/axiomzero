@@ -16,6 +16,7 @@ class TowerModel {
         this.attackTimer = 0;
         this.armor = 0;
         this.exp = 0;
+        this.bugReportAccumulator = 0;
 
         this.alive = false;
         this.active = false;       // true only during COMBAT_PHASE
@@ -73,6 +74,7 @@ class TowerModel {
         // EXP no longer resets between waves
         this.isInvincible = false;
         this.hasWarnedThisWave = false;
+        this.bugReportAccumulator = 0;
         messageBus.publish('healthChanged', this.health, this.maxHealth);
         messageBus.publish('expChanged', this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
@@ -704,6 +706,18 @@ const tower = (() => {
         if (survived) {
             view.playHitFlash();
             zoomShake(1.007);
+
+            // BUG REPORT: Drop 1 DATA every 5 damage taken
+            const actualDamage = damageTaken * (model.damageReceivedMultiplier || 1);
+            if ((gameState.upgrades || {}).bug_report && actualDamage > 0) {
+                model.bugReportAccumulator += actualDamage;
+                while (model.bugReportAccumulator >= 5) {
+                    const pos = getPosition();
+                    const dist = 60 + Math.random() * 120; // Burst out further than normal drops
+                    resourceManager.spawnDataDrop(pos.x, pos.y, dist);
+                    model.bugReportAccumulator -= 5;
+                }
+            }
 
             // Critical Health Warning Check
             if (!model.hasWarnedThisWave && ((model.health - 2.1) / model.maxHealth) < 0.20) {
