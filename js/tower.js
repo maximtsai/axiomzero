@@ -31,7 +31,7 @@ class TowerModel {
         const integrityLv = ups.integrity || 0;
         const intensityLv = ups.intensity || 0;
         const regenLv = ups.regen || 0;
-        const focusLv = ups.focus || 0;
+        const coverageLv = ups.coverage || 0;
         const focus2Lv = ups.focus_range_2 || 0;
         const focus3Lv = ups.focus_range_3 || 0;
         const armorLv = ups.armor || 0;
@@ -52,7 +52,7 @@ class TowerModel {
 
         if (autoDefLv > 0) {
             // node grants base 230 range
-            this.attackRange = 230 * (1 + 0.2 * focusLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
+            this.attackRange = 230 * (1 + 0.2 * coverageLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
         } else {
             this.attackRange = 0;
         }
@@ -706,15 +706,18 @@ const tower = (() => {
         if (survived) {
             view.playHitFlash();
             zoomShake(1.007);
-            // BUG REPORT: Drop 1 DATA every 3 damage taken
+            // BUG REPORT: Drop 1 DATA on hit + 1 extra per 5 cumulative damage
             const actualDamage = damageTaken * (model.damageReceivedMultiplier || 1);
             if ((gameState.upgrades || {}).bug_report && actualDamage > 0) {
                 model.bugReportAccumulator += actualDamage;
-                while (model.bugReportAccumulator >= 3) {
-                    const pos = getPosition();
+                const bonusDrops = Math.floor(model.bugReportAccumulator / 5);
+                model.bugReportAccumulator %= 5;
+
+                const dropCount = 1 + bonusDrops;
+                const pos = getPosition();
+                for (let i = 0; i < dropCount; i++) {
                     const dist = 50 + Math.random() * 120; // 50 min, 170 max
                     resourceManager.spawnDataDrop(pos.x, pos.y, dist);
-                    model.bugReportAccumulator -= 3;
                 }
             }
 

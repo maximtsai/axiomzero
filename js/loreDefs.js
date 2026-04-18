@@ -15,10 +15,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['data_compression'],
+        parents: ['bug_report'],
         childIds: [],
         treeX: gridX(-3),
-        treeY: gridY(1),
+        treeY: gridY(0),
         requiresMaxParent: true,
         tooltipExtraWidth: 200,
         effect: function () {
