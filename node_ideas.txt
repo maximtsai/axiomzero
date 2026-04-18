@@ -29,7 +29,6 @@
 - Play collect data drop sound effect.
 - add boss icon to level.
 - Make level select buttons go up down instead
-- Progress bar to red?
 - Add turbo button
 - Map node that when clicked, unlocks the ability to extend the node map to full screen. First plays a little animation that then reveals location of several duo nodes.
 - Chatgpt logo for boss but 5 wings instead
@@ -40,8 +39,7 @@ love this design. I want to keep its attack pattern fairly simple, it spawns in,
 - Node to add arc lightning on cursor hit.
 - Node to make killed enemies hve a moderate chance to spawn homing missiles.
 	- Recursion. enemies killed by homing missiles have a small chance to spawn more homing missiles
-- Every 4th shot is exta powerful
 
 
-slightly darken red enemy sprite
-slightly brighten boss pink sprite.
+
+OVERCLOCKING: Reduces all weapon cooldowns by 15%, but the Tower takes 1 damage every 5 seconds. (A risk-reward node that forces you to rely on Health Regen).

@@ -33,6 +33,9 @@ window.TRANSLATIONS.en = {
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], and [color=white]+2 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
+        peak_traffic: { name: 'PEAK TRAFFIC', desc: 'After [color=#8FD9F8]20s[/color] of combat, enemies drop [color=#8FD9F8]+50%[/color] more [color=cyan]DATA[/color].', popup: 'TRAFFIC PEAKING' },
+        backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#8FD9F8]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },
+        restore_point: { name: 'RESTORE POINT', desc: 'When [b]BACKUP SERVER[/b] triggers, restore [color=#8FD9F8]40%[/color] health.', popup: 'RESTORE POINT LOADED' },
         completionist: { name: 'COMPLETIONIST', desc: 'Gain [color=cyan]+10 DATA[/color] whenever you max out a node.', popup: '+10 DATA' },
         bug_report: { name: 'BUG REPORT', desc: 'Your core drops [color=cyan]DATA[/color] every time it takes damage.', popup: 'DATA RECOVERED' },
         emergency_depot: { name: 'EMERGENCY DEPOT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#8FD9F8]+3 SHARDS[/color], and [color=white]+3 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },

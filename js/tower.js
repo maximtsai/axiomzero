@@ -24,6 +24,7 @@ class TowerModel {
         this.awakened = false; // true after awaken() is called
         this.paused = false;
         this.hasWarnedThisWave = false;
+        this.backupUsed = false;
     }
 
     recalcStats() {
@@ -90,6 +91,15 @@ class TowerModel {
         this.health -= reducedAmount;
         if (this.health <= 0) {
             this.health = 0;
+
+            // ── Backup Server logic ──
+            const ups = gameState.upgrades || {};
+            if (ups.backup_server && !this.backupUsed) {
+                this.resurrect();
+                messageBus.publish('towerBackupTriggered');
+                return true; // Survived via backup
+            }
+
             this.die();
             return false; // Did not survive
         }
@@ -109,6 +119,20 @@ class TowerModel {
         this.isInvincible = false;
         messageBus.publish('healthChanged', this.health, this.maxHealth);
         messageBus.publish('towerDied');
+    }
+
+    resurrect() {
+        this.alive = true;
+        this.active = true;
+        const ups = gameState.upgrades || {};
+        if (ups.restore_point > 0) {
+            this.health = this.maxHealth * 0.4;
+        } else {
+            this.health = 1;
+        }
+        this.backupUsed = true;
+        this.isInvincible = false; // controller will set the timed one
+        messageBus.publish('healthChanged', this.health, this.maxHealth);
     }
 }
 
@@ -930,6 +954,22 @@ const tower = (() => {
         getPosition, isAlive, getDamage, getArmor, getRegen, getRange,
         getMaxHealth: () => model.maxHealth,
         getHealth: () => model.health,
+        resurrect: () => {
+            model.resurrect();
+            // controller level invincibility is better handled by waveManager or a helper here
+        },
+        setHealth: (h) => {
+            model.health = h;
+            messageBus.publish('healthChanged', model.health, model.maxHealth);
+        },
+        setInvincible: (duration) => {
+            model.isInvincible = true;
+            PhaserScene.time.delayedCall(duration, () => {
+                model.isInvincible = false;
+            });
+        },
+        isBackupUsed: () => model.backupUsed,
+        setBackupUsed: (val) => { model.backupUsed = val; },
         getExpState: () => ({
             expAtStart: _expAtCombatStart,
             expNow: model.exp,

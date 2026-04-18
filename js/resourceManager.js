@@ -602,8 +602,15 @@ const resourceManager = (() => {
         if (compressionLv > 0 && Math.random() < (0.25 * compressionLv)) {
             compressionMult = 2;
         }
+        
+        let timeMult = 1;
+        if ((gameState.upgrades || {}).peak_traffic > 0) {
+            if (waveManager.getWaveElapsedTime() >= 20) {
+                timeMult = 1.5;
+            }
+        }
 
-        const totalDrop = baseResourceDrop * dataDropMult * compressionMult;
+        const totalDrop = baseResourceDrop * dataDropMult * compressionMult * timeMult;
 
         // Add to the fractional drop accumulator
         dropAccumulator += totalDrop;

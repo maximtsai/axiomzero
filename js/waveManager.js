@@ -40,6 +40,7 @@ const waveManager = (() => {
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
+        messageBus.subscribe('towerBackupTriggered', _onTowerBackupTriggered);
     }
 
     function _onPhaseChanged(phase) {
@@ -110,6 +111,69 @@ const waveManager = (() => {
             }
         });
         combatRegistry = [];
+    }
+
+    function _onTowerBackupTriggered() {
+        tower.setInvincible(3000);
+
+        // Light version of death visuals
+        audio.play('retro_explosion', 0.6, false);
+        PhaserScene.cameras.main.shake(300, 0.008);
+
+        const flash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        flash.setAlpha(0.4).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10);
+        PhaserScene.tweens.add({
+            targets: flash,
+            alpha: 0,
+            duration: 400,
+            onComplete: () => flash.destroy()
+        });
+
+        // Brief slow-mo for impact
+        PhaserScene.time.timeScale = 0.2;
+        setTimeout(() => { PhaserScene.time.timeScale = 1.0; }, 200);
+
+        // ── Floating "BACKUP SERVER" text ──
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const backupText = PhaserScene.add.text(cx, cy + 40, t('nodes', 'backup_server.name'), {
+            fontFamily: 'MunroSmall',
+            fontSize: '36px',
+            color: '#ffffff',
+            stroke: '#00f0f0', // Cyan theme for friendly systems
+            strokeThickness: 2,
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS + 10).setAlpha(0);
+
+        // Register for cleanup just in case wave ends early
+        registerCombatObject(backupText);
+
+        // Entrance flicker and stay for duration of invincibility
+        PhaserScene.tweens.add({
+            targets: backupText,
+            alpha: 1,
+            duration: 100,
+            yoyo: true,
+            repeat: 3,
+            onComplete: () => {
+                backupText.setAlpha(1);
+                // Slight chromatic aberration if available
+                if (typeof glitchFX !== 'undefined') {
+                    glitchFX.triggerChromaticAberration(backupText, 1800, 0.5);
+                }
+
+                // Fade out as invincibility wears off
+                PhaserScene.tweens.add({
+                    targets: backupText,
+                    alpha: 0,
+                    delay: 1500,
+                    duration: 200,
+                    onComplete: () => backupText.destroy()
+                });
+            }
+        });
+
+        debugLog('BACKUP SERVER triggered — 3s invincibility granted');
     }
 
     function _onTowerDied() {
@@ -325,8 +389,9 @@ const waveManager = (() => {
     }
 
     function getProgress() { return waveProgress; }
+    function getWaveElapsedTime() { return waveProgress * currentWaveDuration; }
 
     updateManager.addFunction(_update);
 
-    return { init, endIteration, getProgress, registerCombatObject };
+    return { init, endIteration, getProgress, getWaveElapsedTime, registerCombatObject };
 })();
