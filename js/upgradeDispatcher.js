@@ -25,7 +25,7 @@ const upgradeDispatcher = (() => {
         pulseAttack.setDamage(base);
 
         pulseAttack.setIsolationLevel(getLevel('manual_pulse_child_1_1'));
-        pulseAttack.setSaturationLevel(getLevel('wide_pulse_child_1'));
+        pulseAttack.setSaturationLevel(getLevel('area_saturation'));
         recalcResonance();
     }
 
@@ -52,7 +52,7 @@ const upgradeDispatcher = (() => {
     /** Recalculates total pulse size from all pulse upgrade nodes. */
     function recalcPulseSize() {
         const expansionLv = getLevel('pulse_expansion');
-        const aoeBonus = getLevel('wide_pulse');
+        const aoeBonus = getLevel('broadcast_protocol');
         const colossalBonus = getLevel('colossal_cursor');
 
         pulseAttack.setSize(100 * (1 + 0.25 * expansionLv + 0.3 * aoeBonus + 0.5 * colossalBonus));
@@ -60,7 +60,7 @@ const upgradeDispatcher = (() => {
 
     /** Recalculates pulse manual mode. */
     function recalcPulseMode() {
-        pulseAttack.setManualMode(getLevel('manual_pulse') > 0);
+        pulseAttack.setManualMode(getLevel('manual_protocol') > 0);
         recalcPulseCharges();
     }
 

@@ -211,6 +211,7 @@ function _showOptionsPopup() {
             bigFontCheckbox.hover.ref = isBigFontEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
             bigFontCheckbox.setState(bigFontCheckbox.state);
             updateAllTextSizes();
+            messageBus.publish('settingChanged_bigFont', isBigFontEnabled);
         }
     });
     bigFontCheckbox.setDepth(depth + 3);

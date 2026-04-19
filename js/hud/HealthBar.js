@@ -23,6 +23,8 @@ class HealthBar {
         this.lastHealth = -1;
 
         this._createElements();
+
+        messageBus.subscribe('settingChanged_bigFont', () => this.refreshFontSize());
     }
 
     _createElements() {
@@ -40,11 +42,13 @@ class HealthBar {
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setTint(0x00F261).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        this.text = PhaserScene.add.text(this.baseX + this.baseW + 12, this.y - 4, '', {
+        const baseFontSize = helper.isMobileDevice() ? 30 : 26;
+        const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
+        this.text = PhaserScene.add.text(this.baseX + this.baseW + 12, this.y + 11, '', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: helper.isMobileDevice() ? '30px' : '26px',
+            fontSize: finalFontSize + 'px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
-        }).setOrigin(0, 0).setDepth(this.depth + 2).setScrollFactor(0);
+        }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0);
     }
 
     /**
@@ -85,7 +89,17 @@ class HealthBar {
         }
 
         this.lastHealth = current;
+
         this.text.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
+    }
+
+    refreshFontSize() {
+        if (!this.text) return;
+        const baseFontSize = helper.isMobileDevice() ? 30 : 26;
+        const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
+        if (this.text.style.fontSize !== targetSize) {
+            this.text.setFontSize(targetSize);
+        }
     }
 
     playFlareEffect() {

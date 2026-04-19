@@ -139,7 +139,7 @@ class TowerModel {
 
         // Apply repulsion wave to nearby enemies
         const pushbackRange = 350;
-        const pushbackAmount = 60;
+        const pushbackAmount = 75;
         if (typeof enemyManager !== 'undefined') {
             const nearby = enemyManager.getEnemiesInRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
             for (let i = 0; i < nearby.length; i++) {
@@ -717,11 +717,12 @@ const tower = (() => {
     }
 
     function takeDamage(amount, x, y) {
-        const canTakeDamage = model.alive && !model.isInvincible;
+        if (!model.alive || model.isInvincible) return true; // Successfully 'survived' because we are invincible/dead
+
         const damageTaken = Math.max(0, amount - model.armor);
         const survived = model.takeDamage(amount);
 
-        if (canTakeDamage && damageTaken > 0.5) {
+        if (damageTaken > 0.5) {
             let volume = 0.9;
             let detune = 25;
             const pct = damageTaken / model.maxHealth;

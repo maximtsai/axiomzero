@@ -11,6 +11,8 @@ const BOSS_2_STATES = {
     BOMBARD: 'bombard'
 };
 
+const BOSS_2_PROJECTILE_DAMAGE = 4;
+
 class Boss2Model extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
@@ -27,7 +29,7 @@ class Boss2Model extends BossModel {
         // Attack timers
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = 4.5;
+        this.projectileDamage = BOSS_2_PROJECTILE_DAMAGE;
 
         // SETUP state
         this.attackCount = 0;      // attacks fired while circling
@@ -50,7 +52,7 @@ class Boss2Model extends BossModel {
         this.state = BOSS_2_STATES.TRAVEL;
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = config.projectileDamage || 4.5;
+        this.projectileDamage = config.projectileDamage || BOSS_2_PROJECTILE_DAMAGE;
         this.attackCount = 0;
         this.setupDelay = 0;
         this.setupTarget = null;
@@ -558,7 +560,7 @@ class Boss2 extends Boss {
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
-            projectileDamage: 4.5 // Static projectile damage
+            projectileDamage: BOSS_2_PROJECTILE_DAMAGE // Static projectile damage
         });
 
         this.setHPOrigin(0.47, 0.5);

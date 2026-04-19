@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'resonance', 'completionist', 'regen', 'bomb', 'data_compression', 'peak_traffic', 'backup_server'],
+        childIds: ['prismatic_array', 'resonance', 'completionist', 'regen', 'data_compression', 'peak_traffic', 'backup_server'],
         treeX: gridX(0),
         treeY: gridY(-1),
         effect: function () {
@@ -365,10 +365,10 @@ const NODE_DEFS = [
         baseCost: 20,
         costType: 'data',
         costScaling: 'static',
-        parents: ['cheat'],
+        parents: ['test_defenses'],
         childIds: ['bomb_2'],
-        treeX: gridX(-1),
-        treeY: gridY(-2),
+        treeX: gridX(-3),
+        treeY: gridY(1),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -386,8 +386,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['bomb'],
         childIds: [],
-        treeX: gridX(-1),
-        treeY: gridY(-3),
+        treeX: gridX(-3),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -856,7 +856,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['magnet'],
-        childIds: [],
+        childIds: ['bomb'],
         treeX: gridX(-2),
         treeY: gridY(1),
         effect: function () {

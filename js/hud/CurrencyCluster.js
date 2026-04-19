@@ -18,6 +18,8 @@ class CurrencyCluster {
 
         this.resources = {};
         this._createElements();
+
+        messageBus.subscribe('settingChanged_bigFont', () => this.refreshFontSize());
     }
 
     _createElements() {
@@ -35,11 +37,13 @@ class CurrencyCluster {
             icon.setScale(type.id === 'data' ? 1 : 1.06);
 
             const initialVal = this._getResourceValue(type.id);
-            const text = PhaserScene.add.text(this.x + 28, this.baseY - 11, Math.floor(initialVal).toString(), {
+            const baseFontSize = helper.isMobileDevice() ? 32 : 27;
+            const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
+            const text = PhaserScene.add.text(this.x + 28, this.baseY + 5, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: helper.isMobileDevice() ? '32px' : '27px',
+                fontSize: finalFontSize + 'px',
                 color: type.color,
-            }).setOrigin(0, 0).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
+            }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
 
             const btn = new Button({
                 normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + 45, y: this.baseY },
@@ -107,7 +111,7 @@ class CurrencyCluster {
                 ui.icon.setVisible(showComponent);
                 ui.text.setVisible(showComponent);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
-                ui.text.y = currentY - 16;
+                ui.text.y = currentY;
 
                 currentY += this.spacing;
             } else {
@@ -177,6 +181,17 @@ class CurrencyCluster {
         }
         ui.text.setText(Math.floor(val).toString());
         ui.lastValue = val;
+    }
+
+    refreshFontSize() {
+        Object.values(this.resources).forEach(res => {
+            if (!res.text) return;
+            const baseFontSize = helper.isMobileDevice() ? 32 : 27;
+            const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
+            if (res.text.style.fontSize !== targetSize) {
+                res.text.setFontSize(targetSize);
+            }
+        });
     }
 
     _getResourceValue(id) {
