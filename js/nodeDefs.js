@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'resonance', 'completionist', 'regen', 'data_compression', 'peak_traffic', 'backup_server'],
+        childIds: ['prismatic_array', 'completionist', 'regen', 'data_compression', 'peak_traffic', 'backup_server'],
         treeX: gridX(0),
         treeY: gridY(-1),
         effect: function () {
@@ -203,7 +203,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['pulse_damage'],
         requiresMaxParent: true,
-        childIds: ['diagnostic_analytics'],
+        childIds: ['resonance'],
         treeX: gridX(2),
         treeY: gridY(0),
         effect: function () {
@@ -307,7 +307,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['intensity'],
         requiresMaxParent: true,
-        childIds: ['packet_sniffing', 'diagnostic_analytics'],
+        childIds: ['packet_sniffing', 'resonance'],
         treeX: gridX(2),
         treeY: gridY(1),
         effect: function () {
@@ -325,10 +325,10 @@ const NODE_DEFS = [
         baseCost: 20,
         costType: 'data',
         costScaling: 'static',
-        parents: ['pulse_expansion', 'coverage'],
+        parents: ['reveal_map'],
         requiresMaxParent: true,
-        treeX: gridX(3),
-        treeY: gridY(0.5),
+        treeX: gridX(0.5),
+        treeY: gridY(5),
         effect: function () {
             // This is checked by iterationOverScreen.js
         },
@@ -739,10 +739,10 @@ const NODE_DEFS = [
         baseCost: 25,
         costType: 'data',
         costScaling: 'static',
-        parents: ['cheat'],
+        parents: ['coverage', 'pulse_expansion'],
         childIds: [],
-        treeX: gridX(0.5),
-        treeY: gridY(-2.0),
+        treeX: gridX(3),
+        treeY: gridY(0.5),
         effect: function () {
             upgradeDispatcher.recalcResonance();
         },
@@ -795,7 +795,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['overcharge', 'security_test_1'],
+        childIds: ['overcharge', 'security_test_1', 'diagnostic_analytics'],
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {
@@ -851,7 +851,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'test_defenses.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 25,
+        baseCost: 10,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -945,8 +945,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['coverage'],
         childIds: ['junk_barrier'],
-        treeX: gridX(3),
-        treeY: gridY(1.5),
+        treeX: gridX(2.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcPacketSniffing();
         },

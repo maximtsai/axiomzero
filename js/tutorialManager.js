@@ -67,7 +67,7 @@ const tutorialManager = (() => {
             // 1. Pause spawner 4 seconds before tutorial starts
             const dcDelay = PhaserScene.time.delayedCall(DelayAmt, () => {
                 if (gameStateMachine.is(GAME_CONSTANTS.PHASE_COMBAT)) {
-                    messageBus.publish('addEnemySpawnDelay', 7500);
+                    messageBus.publish('addEnemySpawnDelay', 6000);
                 }
             });
             _activeDelayedCalls.push(dcDelay);
