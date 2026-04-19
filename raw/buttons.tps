@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.2.0</string>
+        <string>7.0.3</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -227,6 +227,9 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/button_c_hover.png</key>
+            <key type="filename">buttons/button_c_normal_mobile.png</key>
+            <key type="filename">buttons/button_c_press.png</key>
             <key type="filename">buttons/button_hover.png</key>
             <key type="filename">buttons/button_normal.png</key>
             <key type="filename">buttons/button_press.png</key>
@@ -234,13 +237,43 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.6</double>
+                <double>0.8</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
                 <rect>94,34,188,67</rect>
                 <key>scale9Paddings</key>
                 <rect>94,34,188,67</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/button_c_normal.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.8</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>89,28,178,55</rect>
+                <key>scale9Paddings</key>
+                <rect>89,28,178,55</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/button_normal_mobile.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.8</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>94,32,188,64</rect>
+                <key>scale9Paddings</key>
+                <rect>94,32,188,64</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

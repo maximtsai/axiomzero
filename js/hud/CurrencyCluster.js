@@ -40,7 +40,7 @@ class CurrencyCluster {
             icon.setScale(type.id === 'data' ? 1 : 1.06);
 
             const initialVal = this._getResourceValue(type.id);
-            const baseFontSize = helper.isMobileDevice() ? 32 : 27;
+            const baseFontSize = helper.isMobileDevice() ? 30 : 25;
             const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
             const text = PhaserScene.add.text(this.x + CURRENCY_TEXT_X_OFFSET, this.baseY + 5, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
@@ -188,7 +188,7 @@ class CurrencyCluster {
     refreshFontSize() {
         Object.values(this.resources).forEach(res => {
             if (!res.text) return;
-            const baseFontSize = helper.isMobileDevice() ? 32 : 27;
+            const baseFontSize = helper.isMobileDevice() ? 30 : 25;
             const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
             if (res.text.style.fontSize !== targetSize) {
                 res.text.setFontSize(targetSize);

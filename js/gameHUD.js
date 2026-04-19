@@ -136,7 +136,7 @@ const gameHUD = (() => {
 
         // 2. Currency Cluster Component
         const currY = HUD_Y + BAR_H + BAR_GAP + 13;
-        const spacing = helper.isMobileDevice() ? 42 : 38;
+        const spacing = helper.isMobileDevice() ? 40 : 36;
         currencyCluster = new CurrencyCluster({
             x: groupX,
             y: currY,
@@ -156,20 +156,20 @@ const gameHUD = (() => {
 
         // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
             press: { ref: 'button_press.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
             onMouseUp: () => messageBus.publish('endIterationRequested'),
         });
-        endIterationBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9).addText(t('ui', 'end_iteration'), {
+        endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: helper.isMobileDevice() ? '18px' : '19px',
+            fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', alpha: 1 },
             press: { ref: 'button_press.png', atlas: 'buttons', alpha: 1 },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0.5 },
@@ -181,18 +181,18 @@ const gameHUD = (() => {
                 }
             },
         });
-        bombBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
+        bombBtn.setScale(0.675);
         const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
         bombBtnTxt = bombBtn.addText(`BOMB\n${bombKeyHint}`, {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: helper.isMobileDevice() ? '18px' : '19px',
+            fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center'
         });
         bombBtn.setDepth(depth + 3).setScrollFactor(0);
 
         testDefensesBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons' },
             press: { ref: 'button_press.png', atlas: 'buttons' },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -209,9 +209,10 @@ const gameHUD = (() => {
                 if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(null);
             }
         });
+        testDefensesBtn.setScale(0.675);
         testDefensesBtn.addText("TEST WEAPONS", {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: helper.isMobileDevice() ? '18px' : '19px',
+            fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         testDefensesBtn.setDepth(depth + 3).setScrollFactor(0).setVisible(false);

@@ -144,7 +144,7 @@ const iterationOverScreen = (() => {
         // UPGRADES button — shifted down to accommodate EXP bar
         upgradesBtn = new Button({
             normal: {
-                ref: 'button_normal.png',
+                ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png',
                 atlas: 'buttons',
                 x: cx,
                 y: cy + 190,
@@ -178,7 +178,7 @@ const iterationOverScreen = (() => {
         // RETRY SESSION button
         retryBtn = new Button({
             normal: {
-                ref: 'button_normal.png',
+                ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png',
                 atlas: 'buttons',
                 x: cx,
                 y: cy + 285,

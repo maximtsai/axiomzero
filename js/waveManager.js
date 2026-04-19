@@ -25,7 +25,8 @@ const waveManager = (() => {
     let currentWaveDuration = 45;
     let sessionTerminalEventStarted = false; // Prevents "double death" (Victory + Defeat same frame)
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
-    let growthThresholdProgress = -1; // -1 means no trigger scheduled for this wave
+    let sessionGrowthAwardedOnBackup = false;
+    let sessionGrowthAwardedOnDeath = false;
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -61,11 +62,8 @@ const waveManager = (() => {
         sessionTerminalEventStarted = false;
 
         // ── Iterative Growth Logic ──
-        if ((gameState.upgrades || {}).iterative_growth && !tower.isIterativeGrowthUsed()) {
-            growthThresholdProgress = 20 / currentWaveDuration;
-        } else {
-            growthThresholdProgress = -1;
-        }
+        sessionGrowthAwardedOnBackup = false;
+        sessionGrowthAwardedOnDeath = false;
 
         const currentLevel = gameState.currentLevel || 1;
         const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
@@ -181,6 +179,12 @@ const waveManager = (() => {
             }
         });
 
+        // ── Iterative Growth Perk ──
+        if ((gameState.upgrades || {}).iterative_growth && !sessionGrowthAwardedOnBackup) {
+            sessionGrowthAwardedOnBackup = true;
+            _awardIterativeGrowth();
+        }
+
         debugLog('BACKUP SERVER triggered — 3s invincibility granted');
     }
 
@@ -217,6 +221,12 @@ const waveManager = (() => {
 
         // 3. Signal HUD to hide the END ITERATION button immediately
         messageBus.publish('towerDeathStarted');
+
+        // ── Iterative Growth Perk ──
+        if ((gameState.upgrades || {}).iterative_growth && !sessionGrowthAwardedOnDeath) {
+            sessionGrowthAwardedOnDeath = true;
+            _awardIterativeGrowth();
+        }
 
         // 4. Play explosion sound
         audio.play('retro_explosion', 1.0, false);
@@ -393,17 +403,12 @@ const waveManager = (() => {
         if (!progressPaused) {
             waveProgress = Math.min(1, waveProgress + dt / currentWaveDuration);
             messageBus.publish('waveProgressChanged', waveProgress);
-
-            // ── Iterative Growth Logic ──
-            if (growthThresholdProgress > 0 && waveProgress >= growthThresholdProgress) {
-                growthThresholdProgress = -1;
-                _awardIterativeGrowth();
-            }
         }
     }
 
     function _awardIterativeGrowth() {
-        tower.setIterativeGrowthUsed(true);
+        // We no longer strictly lock it via tower.setIterativeGrowthUsed(true) to allow dual awards (Backup + Death)
+        // tower.setIterativeGrowthUsed(true); 
         gameState.permanentHpBonus = (gameState.permanentHpBonus || 0) + 2;
 
         tower.recalcStats();

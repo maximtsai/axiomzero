@@ -437,17 +437,17 @@ const upgradeTree = (() => {
     function _createDeployButton() {
         deployBtn = new Button({
             normal: {
-                ref: 'button_normal.png',
+                ref: helper.isMobileDevice() ? 'button_c_normal_mobile.png' : 'button_c_normal.png',
                 atlas: 'buttons',
-                x: PANEL_W - 109 + TREE_X_OFFSET,
-                y: GAME_CONSTANTS.HEIGHT - 56,
+                x: PANEL_W - 108 + TREE_X_OFFSET,
+                y: GAME_CONSTANTS.HEIGHT - 52.5,
             },
             hover: {
-                ref: 'button_hover.png',
+                ref: 'button_c_hover.png',
                 atlas: 'buttons',
             },
             press: {
-                ref: 'button_press.png',
+                ref: 'button_c_press.png',
                 atlas: 'buttons',
             },
             onMouseUp: _onDeployClicked,
@@ -458,10 +458,10 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        deployBtn.setScale(helper.isMobileDevice() ? 0.95 : 0.9, helper.isMobileDevice() ? 1.0 : 0.9);
+        deployBtn.setScale(0.675);
         deployBtn.addText(t('ui', 'deploy'), {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '25px',
+            fontSize: '28px',
             color: '#ffffff',
         });
         deployBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
@@ -1223,7 +1223,7 @@ const upgradeTree = (() => {
 
         // START Button
         const startBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 80 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 80 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 80 },
             press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 80 },
             onMouseUp: () => {
@@ -1232,19 +1232,19 @@ const upgradeTree = (() => {
                 transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
             }
         });
-        startBtn.addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '24px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
+        startBtn.setScale(0.675).addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '28px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         startBtn.setDepth(depth + 2);
         startBtn.setScrollFactor(0);
         levelSelectButtons.push(startBtn);
 
         // BACK Button
         const backBtn = new Button({
-            normal: { ref: 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 140 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 140 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 140 },
             press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
             onMouseUp: _closeLevelSelect
         });
-        backBtn.addText(t('ui', 'back'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#aaaaaa' });
+        backBtn.setScale(0.675).addText(t('ui', 'back'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '25px', color: '#aaaaaa' });
         backBtn.setDepth(depth + 2);
         backBtn.setScrollFactor(0);
         levelSelectButtons.push(backBtn);

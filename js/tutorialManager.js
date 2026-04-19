@@ -217,7 +217,7 @@ const tutorialManager = (() => {
         _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '38px');
 
         // Play glow on specific primary nodes
-        const nodesToGlow = ['automated_defense', 'integrity', 'pulse_damage'];
+        const nodesToGlow = ['automated_defense', 'integrity', 'focus'];
         nodesToGlow.forEach(id => {
             if (typeof upgradeTree !== 'undefined') {
                 const node = upgradeTree.getNode(id);
