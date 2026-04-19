@@ -628,8 +628,11 @@ const enemyManager = (() => {
             if (enemy.model.type === 'test') {
                 testEnemyCount = Math.max(0, testEnemyCount - 1);
                 if (testEnemyCount <= 0 && typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-                    GAME_VARS.testingDefenses = false;
-                    messageBus.publish('testingDefensesEnded');
+                    const bombArmed = (typeof pulseAttack !== 'undefined' && pulseAttack.getModel().bombArmed);
+                    if (!bombArmed) {
+                        GAME_VARS.testingDefenses = false;
+                        messageBus.publish('testingDefensesEnded');
+                    }
                 }
             }
         }

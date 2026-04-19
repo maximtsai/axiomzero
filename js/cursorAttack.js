@@ -1292,6 +1292,15 @@ const pulseAttack = (() => {
 
         view.playBombCancelAnimation(model.size);
         messageBus.publish('cursorBombCancelled');
+
+        // If no enemies left after cancelling, end testing
+        if (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
+            const enemyCount = enemyManager.getActiveEnemies().length;
+            if (enemyCount === 0) {
+                GAME_VARS.testingDefenses = false;
+                messageBus.publish('testingDefensesEnded');
+            }
+        }
     }
 
     function armBomb() {

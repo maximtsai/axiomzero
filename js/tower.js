@@ -226,7 +226,7 @@ class TowerView {
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
         this.rangeSprite.setBlendMode(Phaser.BlendModes.ADD);
         if (rangeScale > 0.001) {
-            this.rangeSprite.setAlpha(0.40 / 3);
+            this.rangeSprite.setAlpha(0.45 / 3);
             this.rangeSprite.setScale(rangeScale * 0.2);
         } else {
             this.rangeSprite.setAlpha(0);
@@ -274,7 +274,7 @@ class TowerView {
         // Alpha animation: dim → full → bright → back to dim
         PhaserScene.tweens.add({
             targets: this.rangeSprite,
-            alpha: 0.40,
+            alpha: 0.45,
             duration: 450,
             ease: 'Cubic.easeOut',
             completeDelay: 100,
@@ -836,10 +836,7 @@ const tower = (() => {
             if (model.health > model.maxHealth) model.health = model.maxHealth;
             if (model.health <= 0) {
                 model.health = 0;
-                model.die();
-                view.cleanupRangeSprite();
-                view.playDeathShockwave();
-                debugLog('Tower destroyed');
+                die();
                 return;
             }
             messageBus.publish('healthChanged', model.health, model.maxHealth);

@@ -1,5 +1,8 @@
 // UIButtons - Helper functions for creating UI buttons
 
+const UI_RADIUS_SMALL = 20;
+const UI_RADIUS_LARGE = 64;
+
 function createOptionsButton(x, y) {
     const button = new Button({
         normal: {
@@ -351,7 +354,7 @@ function _showOptionsPopup() {
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
-    const resetBg = PhaserScene.add.nineslice(W, dataHeaderY + 36, 'ui', 'warning_btn_9slice.png', width - 80, 56, 20, 20, 20, 20);
+    const resetBg = PhaserScene.add.nineslice(W, dataHeaderY + 36, 'ui', 'warning_btn_9slice.png', width - 80, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
     resetBg.setDepth(depth + 3);
     resetBg.setScrollFactor(0);
     resetBg.setAlpha(0.5);
@@ -555,7 +558,7 @@ function _showResetConfirmPopup() {
     blocker.setScrollFactor(0);
     elements.push(blocker);
 
-    const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
+    const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
@@ -566,7 +569,7 @@ function _showResetConfirmPopup() {
     elements.push(warningText);
 
     // YES Button
-    const yesBg = PhaserScene.add.nineslice(W - 110, H + 70, 'ui', 'warning_btn_9slice.png', 160, 56, 20, 20, 20, 20);
+    const yesBg = PhaserScene.add.nineslice(W - 110, H + 70, 'ui', 'warning_btn_9slice.png', 160, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
     yesBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.5);
     elements.push(yesBg);
 
@@ -596,7 +599,7 @@ function _showResetConfirmPopup() {
     elements.push(yesBtn);
 
     // NO Button
-    const noBg = PhaserScene.add.nineslice(W + 110, H + 70, 'ui', 'glow_btn_9slice.png', 160, 56, 20, 20, 20, 20);
+    const noBg = PhaserScene.add.nineslice(W + 110, H + 70, 'ui', 'glow_btn_9slice.png', 160, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
     noBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
     elements.push(noBg);
 

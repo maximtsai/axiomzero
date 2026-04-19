@@ -328,9 +328,10 @@ const resourceManager = (() => {
         messageBus.publish('currencyChanged', 'shard', gameState.shard, amount);
 
         if (amount > 0) {
+            if (typeof audio !== 'undefined') audio.play('levelup', 0.64);
             floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
                 fontFamily: 'JetBrainsMono_Bold',
-                fontSize: 40,
+                fontSize: 36,
                 color: '#ff5555',
                 color2: '#ffaa00',
                 depth: GAME_CONSTANTS.DEPTH_UI + 100,
@@ -602,7 +603,7 @@ const resourceManager = (() => {
         if (compressionLv > 0 && Math.random() < (0.25 * compressionLv)) {
             compressionMult = 2;
         }
-        
+
         let timeMult = 1;
         if ((gameState.upgrades || {}).peak_traffic > 0) {
             if (waveManager.getWaveElapsedTime() >= 20) {

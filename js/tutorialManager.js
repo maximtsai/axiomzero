@@ -138,6 +138,7 @@ const tutorialManager = (() => {
 
     function _checkBombTutorial() {
         if (gameState.tutorialsSeen.bomb || _bombTutorialActiveThisPhase) return;
+        if (gameStateMachine.getPhase() !== GAME_CONSTANTS.PHASE_UPGRADE) return;
 
         const pulseModel = pulseAttack.getModel();
         if (pulseModel.maxBombUses >= 1) {

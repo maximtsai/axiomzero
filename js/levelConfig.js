@@ -33,7 +33,7 @@ const LEVEL_CONFIG = {
     },
     2: {
         spawnInterval: 600, // ms between regular spawns (base)
-        lateSpawnInterval: 525,
+        lateSpawnInterval: 600,
         spawnPauseDuration: 1500,
         initialWeights: {
             basic: 1,
@@ -50,7 +50,7 @@ const LEVEL_CONFIG = {
             shooter: 0,
             swarmer: 0.05,
             heavy: 0,
-            fast: 0.3,
+            fast: 0.175,
             sniper: 0,
             cache: 0.005,
             protector: 0.0
@@ -60,7 +60,7 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss2',        // Identifier for the main boss
         dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
-        levelScalingModifier: 1.6, // Scales up *base* stats of enemies before wave scaling applies
+        levelScalingModifier: 1.5, // Scales up *base* stats of enemies before wave scaling applies
     },
     3: {
         spawnInterval: 550, // ms between regular spawns (base)
@@ -90,7 +90,7 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss3',
         dataDropMultiplier: 1.6,
-        levelScalingModifier: 2.2,
+        levelScalingModifier: 2.1,
     },
     4: {
         spawnInterval: 550, // ms between regular spawns (base)
@@ -122,7 +122,7 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss5',
         dataDropMultiplier: 2,
-        levelScalingModifier: 3.2,
+        levelScalingModifier: 3,
     },
     5: {
         spawnInterval: 550,

@@ -1,6 +1,9 @@
-// CurrencyCluster.js
-// Manages the cluster of resource counters (Data, Insight, Shards, etc.)
 // Handles counting animations, individual hover tooltips, and vertical layout.
+
+const CURRENCY_ORDER = ['data', 'insight', 'shard', 'coin', 'processor'];
+const CURRENCY_BG_X_OFFSET = 45;
+const CURRENCY_ICON_X_OFFSET = 11;
+const CURRENCY_TEXT_X_OFFSET = 28;
 
 class CurrencyCluster {
     /**
@@ -32,24 +35,24 @@ class CurrencyCluster {
         ];
 
         resourceTypes.forEach((type, i) => {
-            const icon = PhaserScene.add.image(this.x + 11, this.baseY, 'player', type.icon);
+            const icon = PhaserScene.add.image(this.x + CURRENCY_ICON_X_OFFSET, this.baseY, 'player', type.icon);
             icon.setOrigin(0.5, 0.5).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
             icon.setScale(type.id === 'data' ? 1 : 1.06);
 
             const initialVal = this._getResourceValue(type.id);
             const baseFontSize = helper.isMobileDevice() ? 32 : 27;
             const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
-            const text = PhaserScene.add.text(this.x + 28, this.baseY + 5, Math.floor(initialVal).toString(), {
+            const text = PhaserScene.add.text(this.x + CURRENCY_TEXT_X_OFFSET, this.baseY + 5, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: finalFontSize + 'px',
                 color: type.color,
             }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
 
             const btn = new Button({
-                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + 45, y: this.baseY },
-                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + 45, y: this.baseY },
-                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + 45, y: this.baseY },
-                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + 45, y: this.baseY },
+                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
+                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
+                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
+                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
                 onHover: () => {
                     let sfxclick = audio.play('click', 0.95);
                     if (sfxclick) sfxclick.detune = Phaser.Math.Between(-150, -50);
@@ -87,9 +90,8 @@ class CurrencyCluster {
         if (!isVisible) return;
 
         let currentY = this.baseY;
-        const order = ['data', 'insight', 'shard', 'coin', 'processor'];
-
-        order.forEach(id => {
+ 
+        CURRENCY_ORDER.forEach(id => {
             const ui = this.resources[id];
             if (!ui) return;
 
@@ -104,7 +106,7 @@ class CurrencyCluster {
 
                 if (ui.btn) {
                     ui.btn.setVisible(isUpgradePhase);
-                    ui.btn.setPos(this.x + 45, currentY);
+                    ui.btn.setPos(this.x + CURRENCY_BG_X_OFFSET, currentY);
                     ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
                 }
 

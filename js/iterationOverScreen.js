@@ -123,7 +123,7 @@ const iterationOverScreen = (() => {
         const barW = 320;
         const barH = 14;
         const barX = cx - barW / 2;
-        const barY = cy + 95; // positioned below resource summary
+        const barY = cy + 99; // positioned below resource summary
 
         expBarBg = PhaserScene.add.image(barX, barY, 'white_pixel');
         expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x444455).setDepth(depth + 2).setVisible(false);

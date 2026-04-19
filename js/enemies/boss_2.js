@@ -11,18 +11,18 @@ const BOSS_2_STATES = {
     BOMBARD: 'bombard'
 };
 
-const BOSS_2_PROJECTILE_DAMAGE = 4;
+const BOSS_2_PROJECTILE_DAMAGE = 3;
 
 class Boss2Model extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
-        this.initialSpeedMult = 4.5; // Same burst of speed as Boss 1
-        this.rampDuration = 1.5;
+        this.initialSpeedMult = 4.2; // Same burst of speed as Boss 1
+        this.rampDuration = 1.1;
         this.size = 60;
         this.bossId = 'boss2';
 
         this.state = BOSS_2_STATES.TRAVEL;
-        this.maxRotationSpeed = 0.6; // Radians per second, give it some "weight"
+        this.maxRotationSpeed = 0.5; // Radians per second, give it some "weight"
         this.currentMoveRotation = 0;
         this.pastRotationChange = 0;
 
@@ -45,6 +45,7 @@ class Boss2Model extends BossModel {
         this.spawnCount = 0;
         this.spawnTimer = 0;
         this.barrageCount = 0;
+        this.activeSound = null;
     }
 
     activate(x, y, config = {}) {
@@ -74,10 +75,7 @@ class Boss2Model extends BossModel {
         if (!this.alive || this.stunned) return burnTick;
 
         const getDiff = (a, b) => {
-            let d = a - b;
-            while (d > Math.PI) d -= Math.PI * 2;
-            while (d < -Math.PI) d += Math.PI * 2;
-            return d;
+            return Phaser.Math.Angle.Wrap(a - b);
         };
 
         const rotateTowards = (current, target, maxChange) => {
@@ -90,7 +88,7 @@ class Boss2Model extends BossModel {
             // This naturally eases out the rotation as we get closer to the target.
             const smoothedStep = diff * 0.20;
             let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
-            rotationChange = this.pastRotationChange * 0.65 + rotationChange * 0.35;
+            rotationChange = this.pastRotationChange * 0.9 + rotationChange * 0.1;
             this.pastRotationChange = rotationChange;
             return current + rotationChange
         };
@@ -124,12 +122,15 @@ class Boss2Model extends BossModel {
                 this.state = BOSS_2_STATES.CIRCLING;
                 this.circlingTime = 0;
                 this.attackCount = 0; // Reset circling attack count
-                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.6;
+                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.5;
+                if (typeof audio !== 'undefined') {
+                    this.activeSound = audio.play('ship_creak', 1.05);
+                }
             } else {
-                const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0;
+                const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5;
                 if (this.speed < targetSpeed) {
-                    // Gradually accelerate towards 3x base speed
-                    this.speed += 80 * dt;
+                    // Gradually accelerate towards 3.5x base speed
+                    this.speed += 10 * dt;
                     if (this.speed > targetSpeed) this.speed = targetSpeed;
                 }
             }
@@ -175,7 +176,7 @@ class Boss2Model extends BossModel {
                 // Choose flank target at the very end of the delay
                 if (this.setupDelay <= 0 && this.setupTarget === null) {
                     this.setupDelay = 0;
-                    this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0; // Return to 3x speed
+                    this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5; // Return to 3.5x speed
                     const futureX = this.x + this.vx * 3;
                     if (futureX < GAME_CONSTANTS.halfWidth) {
                         this.setupTarget = { x: 210, y: GAME_CONSTANTS.halfHeight };
@@ -238,6 +239,7 @@ class Boss2Model extends BossModel {
             if (Math.abs(tDiff) < 0.01) {
                 this.turretRotation = angleToTowerCenter;
                 this.state = BOSS_2_STATES.BOMBARD;
+                this.pastRotationChange = 0;
                 this.bombardTimer = 2.0;
                 this.spawnCount = 0;
                 this.spawnTimer = 0;
@@ -556,7 +558,7 @@ class Boss2 extends Boss {
             maxHealth: bossHealth,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE, // Static hull damage
             selfDamage: 0,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.0, // 3.0x speed
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5, // 3.5x speed
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
@@ -576,6 +578,14 @@ class Boss2 extends Boss {
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_2_name') });
         });
+    }
+
+    onDeath(isFinal = true) {
+        if (this.model && this.model.activeSound) {
+            this.model.activeSound.stop();
+            this.model.activeSound = null;
+        }
+        super.onDeath(isFinal);
     }
 
     update(dt) {
@@ -626,7 +636,7 @@ class Boss2 extends Boss {
                     this.model.setupTarget = null;
                     this.model.state = BOSS_2_STATES.SETUP;
                     if (typeof audio !== 'undefined') {
-                        audio.play('warship_aim', 0.82);
+                        this.model.activeSound = audio.play('warship_aim', 0.82);
                     }
                 }
             }

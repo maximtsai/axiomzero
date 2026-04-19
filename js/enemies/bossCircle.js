@@ -1,4 +1,4 @@
-// js/enemies/bossCircle.js — Phase 1 alternative boss (MVC).
+// js/enemies/bossCircle.js — Phase 1 alternative boss (MVC). Boss1.
 // Spawns when wave progress reaches 100%.
 
 const BOSS_CIRCLE_STATE = {
@@ -245,7 +245,7 @@ class BossCircle extends Boss {
                 if (!this.model.rotationStarted) {
                     this.model.rotationStarted = true;
                     if (typeof audio !== 'undefined') {
-                        audio.play('creak_turn_bosscircle', 0.95);
+                        audio.play('creak_turn_bosscircle', 1.1);
                     }
                     PhaserScene.tweens.add({
                         targets: this.model,
@@ -367,9 +367,9 @@ class BossCircle extends Boss {
                     duration: 500,
                     ease: 'Quart.easeIn',
                     onComplete: () => {
-                        // Deal 50 damage
+                        // Deal 25 damage
                         if (typeof tower !== 'undefined') {
-                            tower.takeDamage(40);
+                            tower.takeDamage(25);
                             cameraManager.shake(400, 0.02);
                             // if (typeof audio !== 'undefined') audio.play('explosion_large', 0.8);
                         }
