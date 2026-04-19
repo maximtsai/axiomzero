@@ -8,6 +8,7 @@
 class SwarmerEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_SWARMER;
         this.type = 'swarmer';
         this.baseResourceDrop = 0.4;
     }
@@ -32,7 +33,7 @@ class SwarmerEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.5,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.25,
-            size: 17
+            size: GAME_CONSTANTS.ENEMY_SIZE_SWARMER
         });
 
         if (this.view.img) {

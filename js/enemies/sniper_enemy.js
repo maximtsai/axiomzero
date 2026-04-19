@@ -15,6 +15,7 @@ const SNIPER_STATE = {
 class SniperEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_SNIPER;
         this.type = 'sniper';
         this.baseResourceDrop = 4;
         this.cannotRotate = true;
@@ -141,7 +142,7 @@ class SniperEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.9,
-            size: 31
+            size: GAME_CONSTANTS.ENEMY_SIZE_SNIPER
         });
 
         const m = this.model;

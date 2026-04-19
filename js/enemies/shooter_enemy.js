@@ -13,6 +13,7 @@ const SHOOTER_STATE = {
 class ShooterEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_SHOOTER;
         this.type = 'shooter';
         this.baseResourceDrop = 1.5;
         this.state = SHOOTER_STATE.MOVING;
@@ -42,7 +43,7 @@ class ShooterEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 3,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 23
+            size: GAME_CONSTANTS.ENEMY_SIZE_SHOOTER
         });
 
         this.model.projectileDamage = GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY);

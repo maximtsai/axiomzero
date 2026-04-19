@@ -439,20 +439,16 @@ const upgradeTree = (() => {
             normal: {
                 ref: 'button_normal.png',
                 atlas: 'buttons',
-                x: PANEL_W - 110 + TREE_X_OFFSET,
-                y: GAME_CONSTANTS.HEIGHT - 57,
+                x: PANEL_W - 109 + TREE_X_OFFSET,
+                y: GAME_CONSTANTS.HEIGHT - 56,
             },
             hover: {
                 ref: 'button_hover.png',
                 atlas: 'buttons',
-                x: PANEL_W - 110 + TREE_X_OFFSET,
-                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             press: {
                 ref: 'button_press.png',
                 atlas: 'buttons',
-                x: PANEL_W - 110 + TREE_X_OFFSET,
-                y: GAME_CONSTANTS.HEIGHT - 57,
             },
             onMouseUp: _onDeployClicked,
             onHover: () => {

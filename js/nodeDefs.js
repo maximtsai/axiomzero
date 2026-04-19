@@ -242,7 +242,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'integrity.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 4,
-        baseCost: 8,
+        baseCost: 4,
         costType: 'data',
         costScaling: 'linear',
         costStep: 8,

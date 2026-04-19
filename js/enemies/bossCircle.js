@@ -221,8 +221,9 @@ class BossCircle extends Boss {
     update(dt) {
         if (!this.model.alive) return;
 
-        const tx = GAME_CONSTANTS.halfWidth;
-        const ty = GAME_CONSTANTS.halfHeight;
+        const tPos = tower.getPosition();
+        const tx = tPos.x;
+        const ty = tPos.y;
         const dx = tx - this.model.x;
         const dy = ty - this.model.y;
         const dist = Math.sqrt(dx * dx + dy * dy);

@@ -59,7 +59,7 @@ class HealthBar {
     update(current, max) {
         // Logarithmic scaling: expands as max health increases
         const logBase = Math.log10(GAME_CONSTANTS.TOWER_BASE_HEALTH);
-        const dynamicW = Math.max(this.baseW, this.baseW + 222.3 * (Math.log10(max) - logBase));
+        const dynamicW = Math.max(this.baseW, this.baseW + GAME_CONSTANTS.HEALTH_BAR_SCALING_FACTOR * (Math.log10(max) - logBase));
 
         const ratio = Math.max(0, current / max);
 
@@ -129,7 +129,6 @@ class HealthBar {
     setAlpha(alpha) {
         this.bg.setAlpha(alpha);
         this.fill.setAlpha(alpha);
-        this.flare.setAlpha(alpha);
         this.text.setAlpha(alpha);
     }
 

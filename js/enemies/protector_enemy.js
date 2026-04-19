@@ -20,6 +20,7 @@ const PROTECTOR_RUSH_DURATION = 1.65;
 class ProtectorEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_PROTECTOR;
         this.type = 'protector';
         this.baseResourceDrop = 3;
         this.cannotRotate = true;
@@ -130,7 +131,7 @@ class ProtectorEnemy extends Enemy {
             damage: 0,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.5,
-            size: 26
+            size: GAME_CONSTANTS.ENEMY_SIZE_PROTECTOR
         });
 
         this.model.state = PROTECTOR_STATE.RUSHING;

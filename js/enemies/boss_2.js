@@ -13,6 +13,18 @@ const BOSS_2_STATES = {
 
 const BOSS_2_PROJECTILE_DAMAGE = 3;
 
+const BOSS_2_CONFIG = {
+    PROJECTILE_DAMAGE: 3,
+    MAX_SPEED_MULT: 3.5,
+    CIRCLING_SPEED_MULT: 1.5,
+    ENTRY_RADIUS: 370,
+    ORBIT_RADIUS: 270,
+    ATTACK_COOLDOWN: 5.0, // Seconds between gun bursts
+    FLANK_X_OFFSET: 210,
+    TOWER_AVOIDANCE_RADIUS: 250
+};
+
+
 class Boss2Model extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
@@ -64,49 +76,56 @@ class Boss2Model extends BossModel {
         this.barrageCount = 0;
 
         // Initial rotation towards tower
-        const dx = GAME_CONSTANTS.halfWidth - x;
-        const dy = GAME_CONSTANTS.halfHeight - y;
+        const tPos = tower.getPosition();
+        const dx = tPos.x - x;
+        const dy = tPos.y - y;
         this.currentMoveRotation = Math.atan2(dy, dx);
         this.baseRotation = this.currentMoveRotation;
+    }
+
+    getDiff(a, b) {
+        return Phaser.Math.Angle.Wrap(a - b);
+    }
+
+    rotateTowards(current, target, maxChange) {
+        const diff = this.getDiff(target, current);
+
+        // Snap directly to target if distance is tiny
+        if (Math.abs(diff) < 0.02) return target;
+
+        // Arrival Smoothing: move a fraction (20%) of the way each frame
+        // This naturally eases out the rotation as we get closer to the target.
+        const smoothedStep = diff * 0.20;
+        let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
+
+        // Framerate-independent smoothing for the momentum/inertia (0.9 decay at 60fps)
+        const lerpFactor = 1 - Math.pow(0.9, dt * 60); 
+        rotationChange = this.pastRotationChange + (rotationChange - this.pastRotationChange) * lerpFactor;
+        
+        this.pastRotationChange = rotationChange;
+        return current + rotationChange
+    }
+
+    syncVelocity(s) {
+        if (s !== undefined) this.speed = s;
+        const effectiveSpeed = this.speed * this.speedMult;
+        this.vx = Math.cos(this.currentMoveRotation) * effectiveSpeed;
+        this.vy = Math.sin(this.currentMoveRotation) * effectiveSpeed;
     }
 
     update(dt) {
         const burnTick = super.update(dt);
         if (!this.alive || this.stunned) return burnTick;
 
-        const getDiff = (a, b) => {
-            return Phaser.Math.Angle.Wrap(a - b);
-        };
-
-        const rotateTowards = (current, target, maxChange) => {
-            const diff = getDiff(target, current);
-
-            // Snap directly to target if distance is tiny
-            if (Math.abs(diff) < 0.02) return target;
-
-            // Arrival Smoothing: move a fraction (20%) of the way each frame
-            // This naturally eases out the rotation as we get closer to the target.
-            const smoothedStep = diff * 0.20;
-            let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
-            rotationChange = this.pastRotationChange * 0.9 + rotationChange * 0.1;
-            this.pastRotationChange = rotationChange;
-            return current + rotationChange
-        };
-
-        const syncVelocity = (s) => {
-            if (s !== undefined) this.speed = s;
-            const effectiveSpeed = this.speed * this.speedMult;
-            this.vx = Math.cos(this.currentMoveRotation) * effectiveSpeed;
-            this.vy = Math.sin(this.currentMoveRotation) * effectiveSpeed;
-        };
-
         // Update attack cooldown
         if (this.attackCooldown > 0) {
             this.attackCooldown -= dt;
         }
 
-        const centerX = GAME_CONSTANTS.halfWidth;
-        const centerY = GAME_CONSTANTS.halfHeight;
+
+        const tPos = tower.getPosition();
+        const centerX = tPos.x;
+        const centerY = tPos.y;
         const dx = this.x - centerX;
         const dy = this.y - centerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -114,33 +133,33 @@ class Boss2Model extends BossModel {
         if (this.state === BOSS_2_STATES.TRAVEL) {
             // Rotate gradually towards the player
             const angleToTower = Math.atan2(-dy, -dx);
-            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, angleToTower, 0.6 * this.maxRotationSpeed * dt);
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, angleToTower, 0.6 * this.maxRotationSpeed * dt);
             this.baseRotation = this.currentMoveRotation;
 
             // Move directly towards tower (aimAt is already called by Enemy.update/ramp)
-            if (dist < 370) {
+            if (dist < BOSS_2_CONFIG.ENTRY_RADIUS) {
                 this.state = BOSS_2_STATES.CIRCLING;
                 this.circlingTime = 0;
                 this.attackCount = 0; // Reset circling attack count
-                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 1.5;
+                this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * BOSS_2_CONFIG.CIRCLING_SPEED_MULT;
                 if (typeof audio !== 'undefined') {
                     this.activeSound = audio.play('ship_creak', 1.05);
                 }
             } else {
-                const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5;
+                const targetSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * BOSS_2_CONFIG.MAX_SPEED_MULT;
                 if (this.speed < targetSpeed) {
-                    // Gradually accelerate towards 3.5x base speed
+                    // Gradually accelerate towards max speed
                     this.speed += 10 * dt;
                     if (this.speed > targetSpeed) this.speed = targetSpeed;
                 }
             }
 
             // Sync velocity with speed and rotation to ensure movement continues
-            syncVelocity();
+            this.syncVelocity();
         } else if (this.state === BOSS_2_STATES.CIRCLING) {
             this.circlingTime += dt;
             // 1. Calculate desired velocity vector
-            const targetOrbitRadius = 270;
+            const targetOrbitRadius = BOSS_2_CONFIG.ORBIT_RADIUS;
 
             // Tangent clockwise: (dy, -dx)
             // Radial towards center: (-dx, -dy)
@@ -158,16 +177,11 @@ class Boss2Model extends BossModel {
             const desiredVy = ty + cy * radialWeight;
             const targetRotation = Math.atan2(desiredVy, desiredVx);
 
-            // 2. Smoothly rotate currentMoveRotation towards targetRotation
-            let diff = targetRotation - this.currentMoveRotation;
-            while (diff > Math.PI) diff -= Math.PI * 2;
-            while (diff < -Math.PI) diff += Math.PI * 2;
-
-            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
             this.baseRotation = this.currentMoveRotation;
 
             // 3. Update velocity based on current rotation and current speed
-            syncVelocity();
+            this.syncVelocity();
         } else if (this.state === BOSS_2_STATES.SETUP) {
             if (this.setupDelay > 0) {
                 // Drift with momentum — just let position update happen naturally
@@ -176,12 +190,13 @@ class Boss2Model extends BossModel {
                 // Choose flank target at the very end of the delay
                 if (this.setupDelay <= 0 && this.setupTarget === null) {
                     this.setupDelay = 0;
-                    this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5; // Return to 3.5x speed
+                    this.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * BOSS_2_CONFIG.MAX_SPEED_MULT; // Return to max speed
                     const futureX = this.x + this.vx * 3;
-                    if (futureX < GAME_CONSTANTS.halfWidth) {
-                        this.setupTarget = { x: 210, y: GAME_CONSTANTS.halfHeight };
+                    const tPos = tower.getPosition();
+                    if (futureX < tPos.x) {
+                        this.setupTarget = { x: BOSS_2_CONFIG.FLANK_X_OFFSET, y: tPos.y };
                     } else {
-                        this.setupTarget = { x: GAME_CONSTANTS.WIDTH - 210, y: GAME_CONSTANTS.halfHeight };
+                        this.setupTarget = { x: GAME_CONSTANTS.WIDTH - BOSS_2_CONFIG.FLANK_X_OFFSET, y: tPos.y };
                     }
                 }
             } else if (this.setupTarget !== null) {
@@ -197,8 +212,8 @@ class Boss2Model extends BossModel {
                     let desiredVx = tdx / targetDist;
                     let desiredVy = tdy / targetDist;
 
-                    // Tower avoidance: if within 250 units, add radial push outward
-                    const avoidRadius = 250;
+                    // Tower avoidance: if within target distance, add radial push outward
+                    const avoidRadius = BOSS_2_CONFIG.TOWER_AVOIDANCE_RADIUS;
                     if (dist < avoidRadius) {
                         const pushStrength = Phaser.Math.Clamp((avoidRadius - dist) / avoidRadius, 0, 1);
                         // Radial push (dx, dy are already the center-to-boss vector)
@@ -207,10 +222,10 @@ class Boss2Model extends BossModel {
                     }
 
                     const targetRotation = Math.atan2(desiredVy, desiredVx);
-                    this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
+                    this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
                     this.baseRotation = this.currentMoveRotation;
 
-                    syncVelocity();
+                    this.syncVelocity();
                 }
             }
         } else if (this.state === BOSS_2_STATES.AIMING) {
@@ -219,7 +234,7 @@ class Boss2Model extends BossModel {
             if (speedMag > 0) {
                 const decel = 120 * dt;
                 const newSpeed = Math.max(0, speedMag - decel);
-                syncVelocity(newSpeed);
+                this.syncVelocity(newSpeed);
             }
 
             // Boss Rotation (perpendicular to tower)
@@ -227,15 +242,15 @@ class Boss2Model extends BossModel {
             const opt1 = angleToTowerCenter + Math.PI / 2;
             const opt2 = angleToTowerCenter - Math.PI / 2;
 
-            const targetBodyRot = Math.abs(getDiff(opt1, this.currentMoveRotation)) < Math.abs(getDiff(opt2, this.currentMoveRotation)) ? opt1 : opt2;
-            this.currentMoveRotation = rotateTowards(this.currentMoveRotation, targetBodyRot, this.maxRotationSpeed * dt);
+            const targetBodyRot = Math.abs(this.getDiff(opt1, this.currentMoveRotation)) < Math.abs(this.getDiff(opt2, this.currentMoveRotation)) ? opt1 : opt2;
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetBodyRot, this.maxRotationSpeed * dt);
             this.baseRotation = this.currentMoveRotation;
 
             // Turret Rotation (slowly towards tower)
             let tChange = this.maxTurretRotationSpeed * dt;
             if (speedMag > 0.01) tChange *= 0.25;
 
-            const tDiff = getDiff(angleToTowerCenter, this.turretRotation);
+            const tDiff = this.getDiff(angleToTowerCenter, this.turretRotation);
             if (Math.abs(tDiff) < 0.01) {
                 this.turretRotation = angleToTowerCenter;
                 this.state = BOSS_2_STATES.BOMBARD;
@@ -245,7 +260,7 @@ class Boss2Model extends BossModel {
                 this.spawnTimer = 0;
                 this.barrageCount = 0;
             } else {
-                this.turretRotation = rotateTowards(this.turretRotation, angleToTowerCenter, tChange);
+                this.turretRotation = this.rotateTowards(this.turretRotation, angleToTowerCenter, tChange);
             }
         } else if (this.state === BOSS_2_STATES.BOMBARD) {
             // Decelerate if still moving
@@ -552,7 +567,7 @@ class Boss2 extends Boss {
     activate(x, y, scaleFactor = 1.0) {
         this._isCharging = false;
         // Intended: Minibosses/Bosses do not scale with level progression
-        const bossHealth = 285;
+        const bossHealth = 270;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
@@ -586,6 +601,14 @@ class Boss2 extends Boss {
             this.model.activeSound = null;
         }
         super.onDeath(isFinal);
+    }
+
+    deactivate() {
+        if (this.model && this.model.activeSound) {
+            this.model.activeSound.stop();
+            this.model.activeSound = null;
+        }
+        super.deactivate();
     }
 
     update(dt) {
@@ -644,10 +667,11 @@ class Boss2 extends Boss {
     }
 
     _fireProjectilePair() {
-        this.model.attackCooldown = 4.5;
+        this.model.attackCooldown = BOSS_2_CONFIG.ATTACK_COOLDOWN;
 
-        const centerX = GAME_CONSTANTS.halfWidth;
-        const centerY = GAME_CONSTANTS.halfHeight;
+        const tPos = tower.getPosition();
+        const centerX = tPos.x;
+        const centerY = tPos.y;
 
         const fireSingle = (lateralOffset, detuneOffset) => {
             if (!this.model.alive) return;

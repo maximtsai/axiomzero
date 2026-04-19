@@ -3,6 +3,7 @@
 class CacheEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_CACHE;
         this.type = 'cache';
         this.baseResourceDrop = 12;
         this.jitterTimer = 0;
@@ -145,7 +146,7 @@ class CacheEnemy extends Enemy {
             rampDuration: 1,
             damage: 0,
             selfDamage: 0,
-            size: 28,
+            size: GAME_CONSTANTS.ENEMY_SIZE_CACHE,
             baseResourceDrop: 12
         });
 

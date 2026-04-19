@@ -9,6 +9,7 @@
 class ShellEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_SHELL;
         this.type = 'shell';
         this.baseResourceDrop = 0;
     }
@@ -42,7 +43,7 @@ class ShellEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * levelScale * 2,
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * levelScale * 4,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5,
-            size: 32
+            size: GAME_CONSTANTS.ENEMY_SIZE_SHELL
         });
 
         this.setEnemyGlow('shell_glow.png');

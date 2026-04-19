@@ -8,6 +8,7 @@
 class BasicEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_BASIC;
         this.type = 'basic';
         this.baseResourceDrop = 1;
     }
@@ -33,7 +34,7 @@ class BasicEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 22
+            size: GAME_CONSTANTS.ENEMY_SIZE_BASIC
         });
         this.setEnemyGlow('basic_enemy_glow.png');
     }

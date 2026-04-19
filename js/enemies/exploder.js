@@ -7,6 +7,7 @@
 class ExploderEnemyModel extends EnemyModel {
     constructor() {
         super();
+        this.size = GAME_CONSTANTS.ENEMY_SIZE_EXPLODER;
         this.type = 'exploder';
         this.baseResourceDrop = 1; // Same as basic for now
     }
@@ -31,7 +32,7 @@ class ExploderEnemy extends Enemy {
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor, // Dies on hit
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
-            size: 18,
+            size: GAME_CONSTANTS.ENEMY_SIZE_EXPLODER,
             ...extraConfig
         });
         

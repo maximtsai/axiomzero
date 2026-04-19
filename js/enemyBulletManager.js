@@ -107,9 +107,7 @@ const enemyBulletManager = (() => {
 
             // Handle dead/expired bullets
             if (!b.alive || b.life <= 0) {
-                _deactivate(b);
-                activeBullets[i] = activeBullets[activeBullets.length - 1];
-                activeBullets.pop();
+                _releaseBullet(i);
                 continue;
             }
 
@@ -129,11 +127,16 @@ const enemyBulletManager = (() => {
                 if (b.shakeOnHit && typeof cameraManager !== 'undefined') {
                     cameraManager.shake(b.shakeDuration, b.shakeIntensity);
                 }
-                _deactivate(b);
-                activeBullets[i] = activeBullets[activeBullets.length - 1];
-                activeBullets.pop();
+                _releaseBullet(i);
             }
         }
+    }
+
+    function _releaseBullet(index) {
+        const b = activeBullets[index];
+        _deactivate(b);
+        activeBullets[index] = activeBullets[activeBullets.length - 1];
+        activeBullets.pop();
     }
 
     function _onPhaseChanged(phase) {
