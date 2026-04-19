@@ -40,4 +40,5 @@ const audioFiles = [
     { name: 'warship_aim', src: 'audio/warship_aim.mp3' },
     { name: 'three_taps', src: 'audio/three_taps.mp3' },
     { name: 'legion_warcry', src: 'audio/legion_warcry.mp3' },
+    { name: 'health', src: 'audio/health.mp3' },
 ];

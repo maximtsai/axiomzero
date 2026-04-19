@@ -62,6 +62,8 @@ class EnemyModel {
         this.hitByPulse = false;
         this.hitByShockwave = false;
         this.laserDmgBonus = 0;
+        this.pushback = 0;
+        this.pushbackScale = 1.0;
     }
 
     activate(x, y, config = {}) {
@@ -116,6 +118,7 @@ class EnemyModel {
         this.laserDmgBonus = 0;
         this.wasIsolatedHit = false;
         this.wasResonanceHit = false;
+        this.pushback = 0;
     }
 
     deactivate() {
@@ -141,6 +144,26 @@ class EnemyModel {
 
     update(dt) {
         if (!this.alive) return;
+
+        // Pushback logic
+        if (this.pushback > 0.01) {
+            const decayFactor = 0.2 * (dt / (1 / 60)); 
+            const reduction = this.pushback * decayFactor;
+            
+            this.pushback -= reduction;
+
+            // Move backwards along current trajectory
+            if (this.pushbackScale > 0) {
+                const vLen = Math.sqrt(this.vx * this.vx + this.vy * this.vy) || 1;
+                const moveAmt = reduction * this.pushbackScale;
+                this.x -= (this.vx / vLen) * moveAmt;
+                this.y -= (this.vy / vLen) * moveAmt;
+            }
+
+            if (this.pushback < 0.01) this.pushback = 0;
+        } else if (this.pushback > 0 && this.pushback <= 0.01) {
+            this.pushback = 0;
+        }
 
         this.aliveTime += dt;
 

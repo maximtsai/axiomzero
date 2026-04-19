@@ -25,6 +25,7 @@ class TowerModel {
         this.paused = false;
         this.hasWarnedThisWave = false;
         this.backupUsed = false;
+        this.iterativeGrowthUsed = false;
     }
 
     recalcStats() {
@@ -41,7 +42,8 @@ class TowerModel {
         const anchorHp = (ups.physical_anchor || 0) * 40;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp + (ups.cheat ? 10 : 0);
+        const permanentHp = gameState.permanentHpBonus || 0;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp + permanentHp;
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         const autoDefLv = ups.automated_defense || 0;
@@ -133,6 +135,18 @@ class TowerModel {
         this.backupUsed = true;
         this.isInvincible = false; // controller will set the timed one
         messageBus.publish('healthChanged', this.health, this.maxHealth);
+
+        // Apply repulsion wave to nearby enemies
+        const pushbackRange = 300;
+        const pushbackAmount = 35;
+        if (typeof enemyManager !== 'undefined') {
+            const nearby = enemyManager.getEnemiesInDiamondRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
+            for (let i = 0; i < nearby.length; i++) {
+                if (nearby[i].model) {
+                    nearby[i].model.pushback = pushbackAmount;
+                }
+            }
+        }
     }
 }
 
@@ -970,6 +984,8 @@ const tower = (() => {
         },
         isBackupUsed: () => model.backupUsed,
         setBackupUsed: (val) => { model.backupUsed = val; },
+        isIterativeGrowthUsed: () => model.iterativeGrowthUsed,
+        setIterativeGrowthUsed: (val) => { model.iterativeGrowthUsed = val; },
         getExpState: () => ({
             expAtStart: _expAtCombatStart,
             expNow: model.exp,

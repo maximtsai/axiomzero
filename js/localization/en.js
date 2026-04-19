@@ -45,6 +45,7 @@ window.TRANSLATIONS.en = {
         pulse_expansion: { name: 'SIGNAL STRENGTH', desc: '[color=#8FD9F8]+25%[/color] cursor attack size', popup: '+25% SIGNAL STRENGTH' },
         overcharge: { name: 'OVERCHARGE', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         integrity: { name: 'INTEGRITY', desc: '[color=#87FF02]+5[/color] health', popup: '+5 HEALTH' },
+        iterative_growth: { name: 'ITERATIVE GROWTH', desc: 'After [color=#8FD9F8]20s[/color] of combat, permanently gain [color=#87FF02]+2[/color] MAX HP.', popup: 'PERMANENT HP GAIN' },
         intensity: { name: 'FIREPOWER', desc: '[color=#8FD9F8]+2[/color] tower damage', popup: '+2 DAMAGE' },
         coverage: { name: 'COVERAGE', desc: '[color=#8FD9F8]+20%[/color] tower range', popup: '+20% ATTACK RANGE' },
         diagnostic_analytics: { name: 'DIAGNOSTICS', desc: 'Shows detailed weapon damage stats.', popup: 'DIAGNOSTICS UNLOCKED' },

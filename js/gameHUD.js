@@ -84,22 +84,7 @@ const gameHUD = (() => {
         messageBus.subscribe('waveModeFarmingStarted', () => {
             if (waveProgressBar) waveProgressBar.setVisible(false);
             isFarming = true;
-            if (farmingTimerTxt) {
-                farmingTimerTxt.lastSec = -1;
-                farmingTimerTxt.setVisible(false);
-                PhaserScene.time.delayedCall(450, () => {
-                    if (isFarming && farmingTimerTxt) {
-                        farmingTimerTxt.setVisible(true).setAlpha(0.2);
-                        farmingTimerTxt.setText('00:00');
-                        PhaserScene.tweens.add({
-                            targets: farmingTimerTxt,
-                            alpha: 1,
-                            duration: 1000,
-                            ease: 'Power1'
-                        });
-                    }
-                });
-            }
+            _playFarmingTimerFlicker();
         });
         messageBus.subscribe('waveModeNormalStarted', () => {
             setWaveProgressBarVisible(true);
@@ -231,12 +216,14 @@ const gameHUD = (() => {
         });
         testDefensesBtn.setDepth(depth + 3).setScrollFactor(0).setVisible(false);
 
-        farmingTimerTxt = PhaserScene.add.text(groupX, HUD_Y + BAR_H + 4, '00:00', {
+        farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 25, '00:00', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '22px',
-            color: '#aaaaaa',
+            fontSize: '24px',
+            color: '#00f5ff', // Cyan matching the progress bar
+            stroke: '#000000',
+            strokeThickness: 1
         }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
-        farmingTimerTxt.setShadow(2, 2, '#000000', 2, true, true);
+        farmingTimerTxt.setShadow(0, 0, '#000000', 3, true, true);
 
         // 4. Wave Progress Bar (Restore missing initialization)
         waveProgressBar = new ProgressBar(PhaserScene, {
@@ -397,6 +384,36 @@ const gameHUD = (() => {
 
     function _onTowerDeathStarted() {
         endIterationBtn.setVisible(false).setState(DISABLE);
+    }
+
+    function _playFarmingTimerFlicker() {
+        if (!farmingTimerTxt) return;
+
+        farmingTimerTxt.lastSec = -1;
+        farmingTimerTxt.setText('00:00');
+        farmingTimerTxt.setVisible(true).setAlpha(0);
+
+        // Wait 0.5s before starting the flicker sequence
+        PhaserScene.time.delayedCall(500, () => {
+            if (!isFarming) return;
+
+            // Flicker Sequence (Matching waveProgressBar timings)
+            farmingTimerTxt.setAlpha(0.5);
+
+            PhaserScene.time.delayedCall(40, () => {
+                farmingTimerTxt.setAlpha(0);
+
+                PhaserScene.time.delayedCall(75, () => {
+                    farmingTimerTxt.setAlpha(0.6);
+                    PhaserScene.time.delayedCall(200, () => {
+                        farmingTimerTxt.setAlpha(0.4);
+                        PhaserScene.time.delayedCall(75, () => {
+                            farmingTimerTxt.setAlpha(1);
+                        });
+                    });
+                });
+            });
+        });
     }
 
     function setWaveProgressBarVisible(vis) {

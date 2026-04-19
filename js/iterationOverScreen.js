@@ -807,6 +807,7 @@ const iterationOverScreen = (() => {
         resourceManager.clearDrops();
         tower.reset();
         tower.setBackupUsed(false);
+        tower.setIterativeGrowthUsed(false);
         transitionManager.transitionTo(GAME_CONSTANTS.PHASE_UPGRADE);
     }
 
@@ -820,6 +821,7 @@ const iterationOverScreen = (() => {
         resourceManager.clearDrops();
         tower.reset(true);
         tower.setBackupUsed(false);
+        tower.setIterativeGrowthUsed(false);
         gameStateMachine.goTo(GAME_CONSTANTS.PHASE_COMBAT);
     }
 

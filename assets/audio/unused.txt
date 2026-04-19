@@ -1,0 +1,37 @@
+# Unused Audio Assets
+The following sound files are present in the assets/audio folder but are not registered in assets/audioFiles.js.
+
+- beatecho.mp3
+- bossmusic_standard.mp3
+- coin_gain.mp3
+- creepy_tone.mp3
+- deep_drop.mp3
+- deep_sight.mp3
+- downer.mp3
+- downer2.mp3
+- eldritch_call.mp3
+- emergency.mp3
+- ending.mp3
+- glitch_call.mp3
+- growl.mp3
+- infra_background.mp3
+- laser.mp3
+- lowbell.mp3
+- matter_body.mp3
+- mind_shield.mp3
+- mind_ultimate_cast.mp3
+- quitebeat.mp3
+- sinister_intro.mp3
+- somber_beast.mp3
+- somberbeast.mp3
+- sombercry.mp3
+- squish.mp3
+- stomp.mp3
+- thud.mp3
+- time_strike.mp3
+- time_strike_hit.mp3
+- timeslow.mp3
+- void_ultimate.mp3
+- warcry.mp3
+- warship_turn.mp3
+- wind.mp3

@@ -14,6 +14,7 @@ class MinibossModel extends EnemyModel {
         this.isBoss = true;
         this.isMiniboss = true;
         this.knockBackModifier = 0;
+        this.pushbackScale = 0;
         this.multiplier = 1;
     }
 }

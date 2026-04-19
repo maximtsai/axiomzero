@@ -25,6 +25,7 @@ const waveManager = (() => {
     let currentWaveDuration = 45;
     let sessionTerminalEventStarted = false; // Prevents "double death" (Victory + Defeat same frame)
     let combatRegistry = [];    // Registry for ephemeral objects that must be cleared on end iteration
+    let growthThresholdProgress = -1; // -1 means no trigger scheduled for this wave
 
     function init() {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
@@ -58,6 +59,13 @@ const waveManager = (() => {
         frozen = false;
         progressPaused = false;
         sessionTerminalEventStarted = false;
+
+        // ── Iterative Growth Logic ──
+        if ((gameState.upgrades || {}).iterative_growth && !tower.isIterativeGrowthUsed()) {
+            growthThresholdProgress = 20 / currentWaveDuration;
+        } else {
+            growthThresholdProgress = -1;
+        }
 
         const currentLevel = gameState.currentLevel || 1;
         const levelBeaten = (gameState.levelsDefeated || 0) >= currentLevel;
@@ -385,7 +393,58 @@ const waveManager = (() => {
         if (!progressPaused) {
             waveProgress = Math.min(1, waveProgress + dt / currentWaveDuration);
             messageBus.publish('waveProgressChanged', waveProgress);
+
+            // ── Iterative Growth Logic ──
+            if (growthThresholdProgress > 0 && waveProgress >= growthThresholdProgress) {
+                growthThresholdProgress = -1;
+                _awardIterativeGrowth();
+            }
         }
+    }
+
+    function _awardIterativeGrowth() {
+        tower.setIterativeGrowthUsed(true);
+        gameState.permanentHpBonus = (gameState.permanentHpBonus || 0) + 2;
+
+        tower.recalcStats();
+        tower.heal(2);
+        _showAdaptiveRepairNotification();
+    }
+
+    function _showAdaptiveRepairNotification() {
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+
+        const text = PhaserScene.add.text(cx, cy - 20, "+2 MAX HP", {
+            fontFamily: 'MunroSmall',
+            fontSize: '32px',
+            color: '#87FF02',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS).setAlpha(0);
+
+        registerCombatObject(text);
+
+        if (typeof audio !== 'undefined') {
+            audio.play('health', 0.4);
+        }
+
+        PhaserScene.tweens.add({
+            targets: text,
+            alpha: 1,
+            y: cy - 60,
+            duration: 600,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: text,
+                    alpha: 0,
+                    delay: 500,
+                    duration: 600,
+                    onComplete: () => text.destroy()
+                });
+            }
+        });
     }
 
     function getProgress() { return waveProgress; }

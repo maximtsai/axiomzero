@@ -702,7 +702,7 @@ const enemyManager = (() => {
             if (!bossManager.isMinibossAlive() && !bossManager.isBossAlive()) {
                 combatTime += dt;
             }
-            if (!bossManager.isMinibossAlive()) {
+            if (!bossManager.isMinibossAlive() || waveIsFarming) {
                 roundTimeElapsed += dt;
             }
             GAME_VARS.roundTimeElapsed = roundTimeElapsed;
