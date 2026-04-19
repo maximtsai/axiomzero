@@ -421,7 +421,7 @@ const waveManager = (() => {
             color: '#87FF02',
             stroke: '#000000',
             strokeThickness: 2
-        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS).setAlpha(0);
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS).setAlpha(0.25);
 
         registerCombatObject(text);
 
@@ -439,8 +439,9 @@ const waveManager = (() => {
                 PhaserScene.tweens.add({
                     targets: text,
                     alpha: 0,
-                    delay: 500,
-                    duration: 600,
+                    delay: 750,
+                    duration: 750,
+                    ease: 'Cubic.easeIn',
                     onComplete: () => text.destroy()
                 });
             }

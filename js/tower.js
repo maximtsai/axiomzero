@@ -78,6 +78,7 @@ class TowerModel {
         this.isInvincible = false;
         this.hasWarnedThisWave = false;
         this.bugReportAccumulator = 0;
+        this.backupUsed = false;
         messageBus.publish('healthChanged', this.health, this.maxHealth);
         messageBus.publish('expChanged', this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
@@ -137,10 +138,10 @@ class TowerModel {
         messageBus.publish('healthChanged', this.health, this.maxHealth);
 
         // Apply repulsion wave to nearby enemies
-        const pushbackRange = 300;
-        const pushbackAmount = 35;
+        const pushbackRange = 350;
+        const pushbackAmount = 60;
         if (typeof enemyManager !== 'undefined') {
-            const nearby = enemyManager.getEnemiesInDiamondRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
+            const nearby = enemyManager.getEnemiesInRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
             for (let i = 0; i < nearby.length; i++) {
                 if (nearby[i].model) {
                     nearby[i].model.pushback = pushbackAmount;
@@ -681,6 +682,7 @@ const tower = (() => {
         model.recalcStats();
         model.health = model.maxHealth;
         model.alive = true;
+        model.backupUsed = false;
         model.exp = gameState.exp || 0;
 
         _expAtCombatStart = model.exp;

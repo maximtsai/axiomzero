@@ -195,6 +195,44 @@ const spatialGridUtils = (() => {
         return result;
     }
 
+    function getEnemiesInRange(cx, cy, radius, out) {
+        const result = out || [];
+        result.length = 0;
+
+        for (let i = 0; i < specialEnemies.length; i++) {
+            const e = specialEnemies[i];
+            const dx = e.model.x - cx;
+            const dy = e.model.y - cy;
+            const reach = radius + (e.model.size || 0);
+            if (dx * dx + dy * dy <= reach * reach) {
+                result.push(e);
+            }
+        }
+
+        const minCellX = Math.floor((cx - radius - GRID_PADDING) / CELL_SIZE);
+        const maxCellX = Math.floor((cx + radius + GRID_PADDING) / CELL_SIZE);
+        const minCellY = Math.floor((cy - radius - GRID_PADDING) / CELL_SIZE);
+        const maxCellY = Math.floor((cy + radius + GRID_PADDING) / CELL_SIZE);
+
+        for (let x = minCellX; x <= maxCellX; x++) {
+            for (let y = minCellY; y <= maxCellY; y++) {
+                const arr = spatialGrid[getGridKey(x, y)];
+                if (arr) {
+                    for (let i = 0; i < arr.length; i++) {
+                        const e = arr[i];
+                        const dx = e.model.x - cx;
+                        const dy = e.model.y - cy;
+                        const reach = radius + (e.model.size || 0);
+                        if (dx * dx + dy * dy <= reach * reach) {
+                            result.push(e);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     return {
         init,
         clear,
@@ -202,6 +240,7 @@ const spatialGridUtils = (() => {
         insert,
         getNearestEnemy,
         getEnemiesInSquareRange,
-        getEnemiesInDiamondRange
+        getEnemiesInDiamondRange,
+        getEnemiesInRange
     };
 })();

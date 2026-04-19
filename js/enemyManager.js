@@ -496,6 +496,10 @@ const enemyManager = (() => {
         return spatialGridUtils.getEnemiesInDiamondRange(cx, cy, radius, ignoreEnemy, out);
     }
 
+    function getEnemiesInRange(cx, cy, radius, out) {
+        return spatialGridUtils.getEnemiesInRange(cx, cy, radius, out);
+    }
+
     // ── damage ───────────────────────────────────────────────────────────────
 
     function damageEnemy(enemy, amount, source = 'other') {
@@ -816,10 +820,7 @@ const enemyManager = (() => {
         const tPos = tower.getPosition();
         if (!tPos) return;
 
-        const contactR = GAME_CONSTANTS.ENEMY_CONTACT_RADIUS;
-        const contactR2 = contactR * contactR;
-
-        // Note: we iterate forward to handle mid-loop deaths/swaps correctly
+        // PASS 1: Update positions and populate spatial grid
         let i = 0;
         while (i < activeEnemies.length) {
             const e = activeEnemies[i];
@@ -831,13 +832,31 @@ const enemyManager = (() => {
             const prevLen = activeEnemies.length;
             e.update(dt * spawnSpeedMultiplier);
 
-            if (e.model.hasPostUpdate) {
-                e.model.postUpdate(dt);
+            if (e.model.alive) {
+                if (e.model.hasPostUpdate) {
+                    e.model.postUpdate(dt);
+                }
+                spatialGridUtils.insert(e);
             }
 
-            spatialGridUtils.insert(e);
+            // Cleanup if enemy died during update (e.g. from DOT)
+            if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
+                continue;
+            }
+            i++;
+        }
 
-            // Tower contact check
+        // PASS 2: Tower contact and collision checks
+        i = 0;
+        while (i < activeEnemies.length) {
+            const e = activeEnemies[i];
+            if (!e || !e.model.alive) {
+                i++;
+                continue;
+            }
+
+            const prevLen = activeEnemies.length;
+
             if (!e.model.isMiniboss) {
                 const dx = e.model.x - tPos.x;
                 const dy = e.model.y - tPos.y;
@@ -856,15 +875,12 @@ const enemyManager = (() => {
                             _killEnemy(e);
                         }
                     }
-
                     if (activeEnemies.length === 0) break;
                 } else {
                     e.model.isAttacking = false;
                 }
             }
 
-            // If an enemy was removed from the current position i, do not increment i,
-            // as index i now contains a new element from the swap-and-pop.
             if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
                 continue;
             }
@@ -993,6 +1009,8 @@ const enemyManager = (() => {
         getEnemyCount,
         getActiveEnemies,
         getActiveProtectors,
+        getEnemiesInRange,
+        getEnemiesInDiamondRange,
         getEnemiesInSquareRange,
         getEnemiesByType,
         damageEnemy,
