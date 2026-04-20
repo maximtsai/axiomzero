@@ -20,6 +20,7 @@ const tooltipManager = (() => {
     let bg = null;
     let outline = null;
     let textObjects = [];
+    let decorations = [];
     let visible = false;
 
     // Font presets
@@ -54,7 +55,7 @@ const tooltipManager = (() => {
      * Show tooltip near the given screen position.
      * @param {number} x - Screen X
      * @param {number} y - Screen Y (tooltip appears above this point by default)
-     * @param {{ text: string, style?: string }[]} lines - Lines to display.
+     * @param {{ text: string, style?: string, underline?: boolean, color?: string }[]} lines - Lines to display.
      * @param {number} [customWidth] - Optional override width.
      */
     function show(x, y, lines, customWidth) {
@@ -69,6 +70,9 @@ const tooltipManager = (() => {
         // Create text objects
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
+            
+            if (line.marginTop) currentY += line.marginTop;
+
             const font = FONTS[line.style] || FONTS.normal;
             const t = PhaserScene.add.rexBBCodeText(0, currentY, line.text, {
                 ...font,
@@ -81,6 +85,25 @@ const tooltipManager = (() => {
             if (line.color) t.setColor(line.color);
 
             textObjects.push(t);
+
+            if (line.underline) {
+                const colorStr = line.color || font.color || '#ffffff';
+                const colorNum = Phaser.Display.Color.HexStringToColor(colorStr).color;
+                
+                const lineObj = PhaserScene.add.image(0, currentY + t.height + 2, 'white_pixel')
+                    .setOrigin(0, 0)
+                    .setDepth(DEPTH + 1.1)
+                    .setScrollFactor(0)
+                    .setTint(colorNum)
+                    .setDisplaySize(t.width, 2);
+                
+                lineObj.relX = t.x;
+                lineObj.relY = lineObj.y;
+                decorations.push(lineObj);
+                
+                currentY += 10; // Extra spacing for the underline + gap
+            }
+
             currentY += t.height + LINE_GAP;
             if (t.width > maxW) maxW = t.width;
         }
@@ -114,16 +137,28 @@ const tooltipManager = (() => {
             );
         }
 
+        // Position decorations
+        for (let i = 0; i < decorations.length; i++) {
+            const d = decorations[i];
+            d.setPosition(posX + PADDING + (d.relX || 0), posY + PADDING + (d.relY || 0));
+        }
+
         visible = true;
     }
 
     /** Hide and destroy all tooltip elements. */
     function hide() {
-        if (!visible && textObjects.length === 0) return;
+        if (!visible && textObjects.length === 0 && decorations.length === 0) return;
         for (let i = 0; i < textObjects.length; i++) {
             textObjects[i].destroy();
         }
         textObjects.length = 0;
+
+        for (let i = 0; i < decorations.length; i++) {
+            decorations[i].destroy();
+        }
+        decorations.length = 0;
+
         if (bg) bg.setAlpha(0);
         if (outline) outline.setAlpha(0);
         visible = false;

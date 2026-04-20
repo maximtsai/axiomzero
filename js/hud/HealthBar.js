@@ -42,7 +42,7 @@ class HealthBar {
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setTint(0x00F261).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        const baseFontSize = helper.isMobileDevice() ? 30 : 26;
+        const baseFontSize = helper.isMobileDevice() ? 30 : 25;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
         this.text = PhaserScene.add.text(this.baseX + this.baseW + 12, this.y + 11, '', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -95,7 +95,7 @@ class HealthBar {
 
     refreshFontSize() {
         if (!this.text) return;
-        const baseFontSize = helper.isMobileDevice() ? 30 : 26;
+        const baseFontSize = helper.isMobileDevice() ? 30 : 25;
         const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
         if (this.text.style.fontSize !== targetSize) {
             this.text.setFontSize(targetSize);

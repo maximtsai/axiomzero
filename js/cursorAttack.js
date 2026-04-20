@@ -1148,22 +1148,11 @@ const pulseAttack = (() => {
 
         // ISOLATION PROTOCOL logic
         if (hits.length === 1 && model.isolationLevel > 0) {
-            actualDamage *= (1 + 0.40 * model.isolationLevel);
+            actualDamage *= (1 + 0.50 * model.isolationLevel);
         }
         // AREA SATURATION logic
         else if (hits.length > 1 && model.saturationLevel > 0) {
             actualDamage += (model.saturationLevel * (hits.length - 1));
-        }
-
-        // Apply double damage from RESONANCE last so it doubles additive bonuses too
-        if (isResonanceHit) {
-            actualDamage *= 2;
-        }
-
-        if (isResonanceHit) {
-            // Audio punch for resonance hit
-            const r = audio.play('retro1', 0.5);
-            if (r) r.detune = 200;
         }
 
         for (let i = 0; i < hits.length; i++) {
@@ -1175,18 +1164,25 @@ const pulseAttack = (() => {
                 enemy.model.wasIsolatedHit = true;
             }
 
-            // RESONANCE bonus visual flag
-            if (isResonanceHit) {
-                enemy.model.wasResonanceHit = true;
-            }
-
             // REPEAT EXPLOIT logic
             if (model.persistentExploitLevel > 0 && enemy.model.hitByPulse) {
                 damageToApply += (4 * model.persistentExploitLevel);
             }
 
+            // RESONANCE bonus — applies to base damage AND all bonuses (Isolation, Saturation, Repeat Exploit)
+            if (isResonanceHit) {
+                damageToApply *= 2;
+                enemy.model.wasResonanceHit = true;
+            }
+
             enemyManager.damageEnemy(enemy, damageToApply, 'cursor');
             enemy.model.hitByPulse = true;
+        }
+
+        if (isResonanceHit) {
+            // Audio punch for resonance hit
+            const r = audio.play('retro1', 0.5);
+            if (r) r.detune = 200;
         }
 
         // AFTERSHOCK logic
@@ -1234,7 +1230,7 @@ const pulseAttack = (() => {
         model.bombFired = false;
         model.canQueueBomb = false;
         model.clickQueued = false;
-        model.charges = model.maxCharges;
+        model.charges = Math.ceil(model.maxCharges / 2);
         model.fireTimer = 0;
         model.bombUses = model.maxBombUses;
         model.currentAttackCount = 0;

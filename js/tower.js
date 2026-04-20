@@ -43,7 +43,7 @@ class TowerModel {
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
         const permanentHp = gameState.permanentHpBonus || 0;
-        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 5 * systemRedundancyLv + anchorHp + permanentHp;
+        this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 20 * systemRedundancyLv + anchorHp + permanentHp;
         const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
 
         const autoDefLv = ups.automated_defense || 0;

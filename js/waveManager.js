@@ -257,7 +257,7 @@ const waveManager = (() => {
         // Create the "SIGNAL LOST" text
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
-        const signalText = PhaserScene.add.text(cx, cy - 90, t('results', 'signal_lost'), {
+        const signalText = PhaserScene.add.text(cx, cy - 98, t('results', 'signal_lost'), {
             fontFamily: 'MunroSmall',
             fontSize: '68px',
             color: '#ffffff',
@@ -420,26 +420,29 @@ const waveManager = (() => {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
-        const text = PhaserScene.add.text(cx, cy - 20, "+2 MAX HP", {
+        const text = PhaserScene.add.text(cx, cy - 10, "+2 MAX HP", {
             fontFamily: 'MunroSmall',
             fontSize: '32px',
             color: '#87FF02',
             stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS).setAlpha(0.25);
+            strokeThickness: 3
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_POPUPS).setAlpha(0);
 
         registerCombatObject(text);
 
         if (typeof audio !== 'undefined') {
-            audio.play('health', 0.4);
+            setTimeout(() => {
+                audio.play('health', 0.4);
+            }, 150)
         }
 
         PhaserScene.tweens.add({
+            delay: 100,
             targets: text,
-            alpha: 1,
-            y: cy - 60,
+            alpha: 1.25,
+            y: cy - 50,
             duration: 600,
-            ease: 'Cubic.easeOut',
+            ease: 'Back.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: text,

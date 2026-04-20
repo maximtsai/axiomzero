@@ -85,11 +85,11 @@ const towerStatsUI = (() => {
         const stats = _getStats();
         const pos = tower.getPosition();
 
-        const content = [{ text: t('tower_stats', 'title'), style: 'title', color: '#ffffff' }];
+        const content = [{ text: t('tower_stats', 'title'), style: 'title', color: '#ffffff', underline: true }];
 
         let hasStats = false;
         if (stats.damage > 0) {
-            content.push({ text: t('tower_stats', 'damage', [Math.floor(stats.damage)]), style: 'normal', color: COLORS.COMBAT });
+            content.push({ text: t('tower_stats', 'damage', [Math.floor(stats.damage)]), style: 'normal', color: '#ff5e00' });
             hasStats = true;
         }
         if (stats.regen > 0) {
@@ -108,7 +108,7 @@ const towerStatsUI = (() => {
         // Add equipped duo weapons only if present
         if (stats.equipped.length > 0) {
             content.push({ text: '', style: 'normal' }); // Spacer
-            content.push({ text: t('tower_stats', 'equipped'), style: 'title', color: '#ffe600' });
+            content.push({ text: t('tower_stats', 'equipped'), style: 'title', color: '#ffe600', underline: true, marginTop: 2 });
             stats.equipped.forEach(weapon => {
                 content.push({ text: `◈ ${weapon}`, style: 'normal', color: '#ffffff' });
             });

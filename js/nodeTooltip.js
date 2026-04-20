@@ -26,7 +26,7 @@ const nodeTooltip = (() => {
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
 
-        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x1c253b).setAlpha(0.78);
+        bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x182035).setAlpha(0.86);
         container.add(bg);
 
         // Icon holder
@@ -243,7 +243,7 @@ const nodeTooltip = (() => {
             }
 
             let costColor = '#30ffff';
-            if (node.costType === 'insight') costColor = '#ff9500';
+            if (node.costType === 'insight') costColor = '#f0f0f0';
             else if (node.costType === 'processor') costColor = '#ffe600';
             else if (node.costType === 'shard') costColor = '#ff2d78';
             else if (node.costType === 'coin') costColor = '#00ff66';

@@ -56,13 +56,16 @@ class Boss extends Enemy {
             const bossDepth = (this.view && this.view.img) ? this.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
             // Default standard boss death
+
             if (customEmitters.createBossExplosionRays) {
-                customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
+                PhaserScene.time.delayedCall(150, () => {
+                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
+                });
             }
             if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
-                PhaserScene.time.delayedCall(700, () => {
+                PhaserScene.time.delayedCall(800, () => {
                     enemyManager.killAllNonBossEnemies();
-                    PhaserScene.cameras.main.shake(1000, 0.023);
+                    PhaserScene.cameras.main.shake(1500, 0.028);
                 });
             }
         }

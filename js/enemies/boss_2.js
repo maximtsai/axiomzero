@@ -11,17 +11,17 @@ const BOSS_2_STATES = {
     BOMBARD: 'bombard'
 };
 
-const BOSS_2_PROJECTILE_DAMAGE = 3;
+
 
 const BOSS_2_CONFIG = {
-    PROJECTILE_DAMAGE: 3,
+    PROJECTILE_DAMAGE: 2.5,
     MAX_SPEED_MULT: 3.5,
     CIRCLING_SPEED_MULT: 1.5,
     ENTRY_RADIUS: 370,
-    ORBIT_RADIUS: 270,
-    ATTACK_COOLDOWN: 5.0, // Seconds between gun bursts
+    ORBIT_RADIUS: 265,
+    ATTACK_COOLDOWN: 4.5, // Seconds between gun bursts
     FLANK_X_OFFSET: 210,
-    TOWER_AVOIDANCE_RADIUS: 250
+    TOWER_AVOIDANCE_RADIUS: 240
 };
 
 
@@ -41,7 +41,7 @@ class Boss2Model extends BossModel {
         // Attack timers
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = BOSS_2_PROJECTILE_DAMAGE;
+        this.projectileDamage = BOSS_2_CONFIG.PROJECTILE_DAMAGE;
 
         // SETUP state
         this.attackCount = 0;      // attacks fired while circling
@@ -65,7 +65,7 @@ class Boss2Model extends BossModel {
         this.state = BOSS_2_STATES.TRAVEL;
         this.circlingTime = 0;
         this.attackCooldown = 0;
-        this.projectileDamage = config.projectileDamage || BOSS_2_PROJECTILE_DAMAGE;
+        this.projectileDamage = config.projectileDamage || BOSS_2_CONFIG.PROJECTILE_DAMAGE;
         this.attackCount = 0;
         this.setupDelay = 0;
         this.setupTarget = null;
@@ -99,9 +99,9 @@ class Boss2Model extends BossModel {
         let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
 
         // Framerate-independent smoothing for the momentum/inertia (0.9 decay at 60fps)
-        const lerpFactor = 1 - Math.pow(0.9, dt * 60); 
+        const lerpFactor = 1 - Math.pow(0.9, dt * 60);
         rotationChange = this[memoryKey] + (rotationChange - this[memoryKey]) * lerpFactor;
-        
+
         this[memoryKey] = rotationChange;
         return current + rotationChange
     }
@@ -577,7 +577,7 @@ class Boss2 extends Boss {
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
-            projectileDamage: BOSS_2_PROJECTILE_DAMAGE // Static projectile damage
+            projectileDamage: BOSS_2_CONFIG.PROJECTILE_DAMAGE // Static projectile damage
         });
 
         this.setHPOrigin(0.47, 0.5);

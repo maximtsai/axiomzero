@@ -7,7 +7,7 @@ class LightningAttackModel {
         this.FIRE_INTERVAL = 3000;  // ms between strikes
         this.BASE_DAMAGE = 12;
         this.BASE_CHAIN_COUNT = 2;  // total enemies hit (1 primary + 1 chain)
-        this.CHAIN_RANGE = 115;     // px — max distance for chain to jump
+        this.CHAIN_RANGE = 125;     // px — max distance for chain to jump
 
         this.active = false;  // true when combat phase AND unlocked
         this.unlocked = false;

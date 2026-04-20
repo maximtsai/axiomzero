@@ -132,7 +132,7 @@ const gameHUD = (() => {
                 }
             }
         });
-        healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.05 : 1).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.1 : 1.05).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
 
         // 2. Currency Cluster Component
         const currY = HUD_Y + BAR_H + BAR_GAP + 13;
@@ -156,9 +156,10 @@ const gameHUD = (() => {
 
         // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', },
+            press: { ref: 'button_press.png', atlas: 'buttons', },
+            disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
             onMouseUp: () => messageBus.publish('endIterationRequested'),
         });
         endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
