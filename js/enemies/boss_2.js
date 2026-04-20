@@ -35,8 +35,8 @@ class Boss2Model extends BossModel {
 
         this.state = BOSS_2_STATES.TRAVEL;
         this.maxRotationSpeed = 0.5; // Radians per second, give it some "weight"
-        this.currentMoveRotation = 0;
-        this.pastRotationChange = 0;
+        this.pastMoveRotationChange = 0;
+        this.pastTurretRotationChange = 0;
 
         // Attack timers
         this.circlingTime = 0;
@@ -87,7 +87,7 @@ class Boss2Model extends BossModel {
         return Phaser.Math.Angle.Wrap(a - b);
     }
 
-    rotateTowards(current, target, maxChange) {
+    rotateTowards(current, target, maxChange, dt, memoryKey = 'pastMoveRotationChange') {
         const diff = this.getDiff(target, current);
 
         // Snap directly to target if distance is tiny
@@ -100,9 +100,9 @@ class Boss2Model extends BossModel {
 
         // Framerate-independent smoothing for the momentum/inertia (0.9 decay at 60fps)
         const lerpFactor = 1 - Math.pow(0.9, dt * 60); 
-        rotationChange = this.pastRotationChange + (rotationChange - this.pastRotationChange) * lerpFactor;
+        rotationChange = this[memoryKey] + (rotationChange - this[memoryKey]) * lerpFactor;
         
-        this.pastRotationChange = rotationChange;
+        this[memoryKey] = rotationChange;
         return current + rotationChange
     }
 
@@ -133,7 +133,7 @@ class Boss2Model extends BossModel {
         if (this.state === BOSS_2_STATES.TRAVEL) {
             // Rotate gradually towards the player
             const angleToTower = Math.atan2(-dy, -dx);
-            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, angleToTower, 0.6 * this.maxRotationSpeed * dt);
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, angleToTower, 0.6 * this.maxRotationSpeed * dt, dt);
             this.baseRotation = this.currentMoveRotation;
 
             // Move directly towards tower (aimAt is already called by Enemy.update/ramp)
@@ -177,7 +177,7 @@ class Boss2Model extends BossModel {
             const desiredVy = ty + cy * radialWeight;
             const targetRotation = Math.atan2(desiredVy, desiredVx);
 
-            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt, dt);
             this.baseRotation = this.currentMoveRotation;
 
             // 3. Update velocity based on current rotation and current speed
@@ -222,7 +222,7 @@ class Boss2Model extends BossModel {
                     }
 
                     const targetRotation = Math.atan2(desiredVy, desiredVx);
-                    this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt);
+                    this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetRotation, this.maxRotationSpeed * dt, dt);
                     this.baseRotation = this.currentMoveRotation;
 
                     this.syncVelocity();
@@ -243,7 +243,7 @@ class Boss2Model extends BossModel {
             const opt2 = angleToTowerCenter - Math.PI / 2;
 
             const targetBodyRot = Math.abs(this.getDiff(opt1, this.currentMoveRotation)) < Math.abs(this.getDiff(opt2, this.currentMoveRotation)) ? opt1 : opt2;
-            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetBodyRot, this.maxRotationSpeed * dt);
+            this.currentMoveRotation = this.rotateTowards(this.currentMoveRotation, targetBodyRot, this.maxRotationSpeed * dt, dt);
             this.baseRotation = this.currentMoveRotation;
 
             // Turret Rotation (slowly towards tower)
@@ -254,13 +254,13 @@ class Boss2Model extends BossModel {
             if (Math.abs(tDiff) < 0.01) {
                 this.turretRotation = angleToTowerCenter;
                 this.state = BOSS_2_STATES.BOMBARD;
-                this.pastRotationChange = 0;
+                this.pastTurretRotationChange = 0;
                 this.bombardTimer = 2.0;
                 this.spawnCount = 0;
                 this.spawnTimer = 0;
                 this.barrageCount = 0;
             } else {
-                this.turretRotation = this.rotateTowards(this.turretRotation, angleToTowerCenter, tChange);
+                this.turretRotation = this.rotateTowards(this.turretRotation, angleToTowerCenter, tChange, dt, 'pastTurretRotationChange');
             }
         } else if (this.state === BOSS_2_STATES.BOMBARD) {
             // Decelerate if still moving
@@ -268,14 +268,14 @@ class Boss2Model extends BossModel {
             if (speedMag > 0) {
                 const decel = 120 * dt;
                 const newSpeed = Math.max(0, speedMag - decel);
-                syncVelocity(newSpeed);
+                this.syncVelocity(newSpeed);
             }
 
             // Turret Rotation: Track tower normally, but realign with ship during the final delay
             const angleToTowerCenter = Math.atan2(-dy, -dx);
             const targetTurretRot = (this.barrageCount === 2) ? this.baseRotation : angleToTowerCenter;
 
-            this.turretRotation = rotateTowards(this.turretRotation, targetTurretRot, this.maxTurretRotationSpeed * dt);
+            this.turretRotation = this.rotateTowards(this.turretRotation, targetTurretRot, this.maxTurretRotationSpeed * dt, dt, 'pastTurretRotationChange');
 
             if (this.bombardTimer > 0) {
                 this.bombardTimer -= dt;
@@ -596,7 +596,7 @@ class Boss2 extends Boss {
     }
 
     onDeath(isFinal = true) {
-        if (this.model && this.model.activeSound) {
+        if (this.model && this.model.activeSound && this.model.activeSound.stop) {
             this.model.activeSound.stop();
             this.model.activeSound = null;
         }
@@ -604,7 +604,7 @@ class Boss2 extends Boss {
     }
 
     deactivate() {
-        if (this.model && this.model.activeSound) {
+        if (this.model && this.model.activeSound && this.model.activeSound.stop) {
             this.model.activeSound.stop();
             this.model.activeSound = null;
         }
