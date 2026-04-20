@@ -33,7 +33,16 @@ class PulseAttackModel {
         this.maxBombUses = 0;
         this.bombUses = 0;
         this.resonanceLevel = 0;
+        this.crescendoLevel = 0;
         this.currentAttackCount = 0;
+    }
+
+    getEffectiveSize() {
+        const nextIsResonance = this.currentAttackCount === 3;
+        if (nextIsResonance && this.crescendoLevel > 0) {
+            return this.size + 100;
+        }
+        return this.size;
     }
 
     resetTimer() {
@@ -100,7 +109,10 @@ class PulseAttackView {
         this.aftershockBright = null;
         this.aftershockRed = null;
         this.spriteGlow = null;
-        this.glowIsFiring = false;
+        this.isResonanceFiring = false;
+        this.firingSizeAtStart = 0; // The nineslice width when the shot began
+        this.visualSize = 0; // Internal tracker for smooth setSize interpolation
+        this.refluxTween = null; // Reference to the Crescendo size-back tween
 
         this.artillerySprite = null;
         this.artilleryBright = null;
@@ -129,6 +141,7 @@ class PulseAttackView {
             initialSize, initialSize,
             this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE
         );
+        this.visualSize = initialSize;
         this.sprite.rotVel = 0;
         this.sprite.setOrigin(0.5, 0.5);
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
@@ -363,33 +376,55 @@ class PulseAttackView {
         this.sprite.rotation += this.sprite.rotVel * delta * 0.14;
 
         this.spriteBright.setRotation(this.sprite.rotation);
+        this.spriteGlow.setRotation(this.sprite.rotation);
 
         // Resonance Glow Jitter Logic
         if (this.spriteGlow && model.resonanceLevel > 0) {
             const nextIsResonance = model.currentAttackCount === 3;
             const isBombing = model.bombArmed || model.bombAnimating || model.bombFired;
 
-            if (nextIsResonance && !this.glowIsFiring && !isBombing) {
+            if (nextIsResonance && !this.isResonanceFiring && !isBombing) {
                 const jitterDist = 3;
                 const jX = (Math.random() - 0.5) * jitterDist;
                 const jY = (Math.random() - 0.5) * jitterDist;
 
+                const targetSize = model.getEffectiveSize();
+                // (Size update handled below in global expansion block)
+
                 this.spriteGlow.setVisible(true);
                 this.spriteGlow.setPosition(targetX + jX, targetY + jY);
                 this.spriteGlow.setAlpha(Math.random() * 0.6);
-                const goalScale = this.sprite.scaleX + Math.random() * 1 - 0.5;
-                this.spriteGlow.setScale(goalScale * 0.2 + this.sprite.scaleX * 0.8);
+                const goalScale = 1.0 + Math.random() * 0.1 - 0.05;
+                this.spriteGlow.setScale(goalScale);
                 const goalRot = this.sprite.rotation + (Math.random() - 0.5) * 0.8;
                 this.spriteGlow.setRotation(goalRot * 0.2 + this.sprite.rotation * 0.8);
-            } else if (!this.glowIsFiring) {
+
+            } else if (!this.isResonanceFiring) {
                 this.spriteGlow.setVisible(false);
-            } else {
-                // Firing state: follow accurately without jitter
-                this.spriteGlow.setPosition(targetX, targetY);
-                this.spriteGlow.setRotation(this.sprite.rotation);
             }
         } else if (this.spriteGlow) {
             this.spriteGlow.setVisible(false);
+        }
+
+        // --- Basic Size Tracking & Crescendo Visual Expansion ---
+        if (!this.isResonanceFiring && !this.refluxTween) {
+            const targetSize = model.getEffectiveSize();
+            // Optimization 1: Skip expensive nine-slice updates if size is stable
+            const isSizeStable = Math.abs(this.visualSize - targetSize) < 0.01;
+
+            if (!isSizeStable) {
+                const isExpanding = (targetSize > model.size);
+                if (isExpanding) {
+                    let lerpFactor = 1 - Math.pow(0.85, delta / 16.666);
+                    this.visualSize += (targetSize - this.visualSize) * Math.min(lerpFactor, 1.0);
+                    if (Math.abs(this.visualSize - targetSize) < 0.05) this.visualSize = targetSize;
+                    this.setSize(this.visualSize);
+                } else {
+                    let lerpFactor = 1 - Math.pow(0.8, delta / 16.666);
+                    this.visualSize = Phaser.Math.Linear(this.visualSize, targetSize, Math.min(lerpFactor, 1.0));
+                    this.setSize(this.visualSize);
+                }
+            }
         }
 
         if (this.artillerySprite && (!model.bombArmed && model.bombFired)) {
@@ -432,27 +467,38 @@ class PulseAttackView {
         }
     }
 
-    playCursorReentryEffect(baseSize) {
-        this.reentryExtraSize = 280;
-        PhaserScene.tweens.add({
+    playCursorReentryEffect(targetSize) {
+        if (this.refluxTween) {
+            this.refluxTween.stop();
+        }
+
+        this.visualSize = targetSize + 280;
+        this.setSize(this.visualSize);
+
+        this.refluxTween = PhaserScene.tweens.add({
             targets: this,
-            reentryExtraSize: 0,
+            visualSize: targetSize,
             duration: 250,
             ease: 'Quart.easeOut',
             onUpdate: () => {
-                this.setSize(baseSize + this.reentryExtraSize);
+                this.setSize(this.visualSize);
+            },
+            onComplete: () => {
+                this.refluxTween = null;
             }
         });
     }
 
-    playFireAnimation(isResonanceHit = false) {
+    playFireAnimation(model, isResonanceHit = false) {
         if (!this.sprite) return;
 
         const flippedLeft = Math.random() < 0.5;
         const goalRot = flippedLeft ? -0.29 : 0.29;
 
         const extraScale = Math.max(0, (200 - this.sprite.width) * 0.005);
-        const resMultiplier = isResonanceHit ? 1.3 : 1.0;
+        this.firingSizeAtStart = this.sprite.width;
+        let resMultiplier = isResonanceHit ? 1.3 : 1.0;
+        if (isResonanceHit && model.crescendoLevel > 0) resMultiplier = 1.22;
 
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
@@ -465,13 +511,6 @@ class PulseAttackView {
         this.spriteRed.setRotation((Math.random() - 0.5) * 0.09);
 
         // Tween alpha back to 0
-        PhaserScene.tweens.add({
-            delay: 60,
-            targets: [this.spriteBright, this.spriteRed],
-            alpha: 0,
-            duration: this.FLASH_DURATION,
-            ease: 'Quart.easeOut',
-        });
         PhaserScene.tweens.add({
             delay: 90,
             targets: [this.spriteBright, this.spriteRed],
@@ -524,7 +563,7 @@ class PulseAttackView {
         }
         // Sync Glow Animation
         if (isResonanceHit && this.spriteGlow) {
-            this.glowIsFiring = true;
+            this.isResonanceFiring = true;
             this.spriteGlow.setAlpha(1.0);
             this.spriteGlow.setVisible(true);
             this.spriteGlow.setScale(this.sprite.scaleX, this.sprite.scaleY);
@@ -536,7 +575,7 @@ class PulseAttackView {
                 duration: 450,
                 ease: 'Quart.easeOut',
                 onComplete: () => {
-                    this.glowIsFiring = false;
+                    this.isResonanceFiring = false;
                     this.spriteGlow.setVisible(false);
                 }
             });
@@ -548,6 +587,24 @@ class PulseAttackView {
                 duration: 250,
                 ease: 'Cubic.easeOut'
             });
+
+            // Crescendo size reflux tween: shrink from expanded size back to default
+            if (model.crescendoLevel > 0) {
+                if (this.refluxTween) this.refluxTween.stop();
+                this.refluxTween = PhaserScene.tweens.add({
+                    delay: 75,
+                    targets: this,
+                    visualSize: model.size,
+                    duration: 300,
+                    ease: 'Cubic.easeInOut',
+                    onUpdate: () => {
+                        this.setSize(this.visualSize);
+                    },
+                    onComplete: () => {
+                        this.refluxTween = null;
+                    }
+                });
+            }
         }
     }
 
@@ -563,6 +620,7 @@ class PulseAttackView {
 
         if (this.spriteGlow && !visible) {
             this.spriteGlow.setVisible(false);
+            this.isResonanceFiring = false;
         }
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
@@ -1120,8 +1178,12 @@ const pulseAttack = (() => {
         const cy = GAME_VARS.mouseposy;
 
         const isResonanceHit = _determineResonance(model);
-        let damageSize = (model.size / 2) + 5;
-        if (isResonanceHit) damageSize += 10;
+        // Crescendo: Flat +100 addition to current size (matching default size)
+        const currentSize = (isResonanceHit && model.crescendoLevel > 0) ? model.size + 100 : model.size;
+
+        let damageSize = (currentSize / 2) + 5;
+        if (isResonanceHit && model.crescendoLevel <= 0) damageSize += 10;
+
 
         // Play cursor pulse sound with unique detune
         let detune = (Math.random() * 500 - 250);
@@ -1132,8 +1194,8 @@ const pulseAttack = (() => {
         const s = audio.play('cursor_pulse', 0.3);
         if (s) s.detune = detune;
 
-        view.playFireAnimation(isResonanceHit);
-        view.playWaveEffect(cx, cy, model.size, isResonanceHit);
+        view.playFireAnimation(model, isResonanceHit);
+        view.playWaveEffect(cx, cy, currentSize, isResonanceHit);
 
         // Micro camera shake
         zoomShake(1.005);
@@ -1191,7 +1253,7 @@ const pulseAttack = (() => {
                 const isInCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT || (typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses);
                 if (!model.active || model.paused || !tower.isAlive() || !isInCombat) return;
 
-                view.playAftershockAnimation(cx, cy, model.size);
+                view.playAftershockAnimation(cx, cy, currentSize);
                 view.playRecoil();
 
                 const aftershockDamage = 4 + 2 * model.aftershockLevel;
@@ -1269,6 +1331,10 @@ const pulseAttack = (() => {
     function setResonanceLevel(level) {
         model.resonanceLevel = level;
         if (level === 0) model.currentAttackCount = 0;
+    }
+
+    function setCrescendoLevel(level) {
+        model.crescendoLevel = level;
     }
 
     function getBombFinalSize() {
@@ -1399,7 +1465,8 @@ const pulseAttack = (() => {
                     }
                 }
 
-                view.playCursorReentryEffect(model.size);
+                const targetSize = model.getEffectiveSize();
+                view.playCursorReentryEffect(targetSize);
                 messageBus.publish('cursorBombReady');
             }
         );
@@ -1411,5 +1478,5 @@ const pulseAttack = (() => {
         messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
 })();

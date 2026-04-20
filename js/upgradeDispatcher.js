@@ -31,8 +31,9 @@ const upgradeDispatcher = (() => {
 
     /** Recalculates resonance level. */
     function recalcResonance() {
-        if (typeof pulseAttack !== 'undefined' && pulseAttack.setResonanceLevel) {
-            pulseAttack.setResonanceLevel(getLevel('resonance'));
+        if (typeof pulseAttack !== 'undefined') {
+            if (pulseAttack.setResonanceLevel) pulseAttack.setResonanceLevel(getLevel('resonance'));
+            if (pulseAttack.setCrescendoLevel) pulseAttack.setCrescendoLevel(getLevel('crescendo'));
         }
     }
 

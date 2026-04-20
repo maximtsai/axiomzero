@@ -161,7 +161,8 @@ window.TRANSLATIONS.en = {
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },
         stray_logs_child_above: { name: 'STRAY LOGS III', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         physical_anchor: { name: 'PURCHASE SERVERS', desc: '[color=#8FD9F8]+40[/color] max health.', popup: '+40 MAX HEALTH' },
-        sustaining_siphon: { name: 'SUSTAINING SIPHON', desc: 'Heal [color=#8FD9F8]1 HP[/color] for every enemy killed by a resonance hit.', popup: 'HEALTH RECLAIMED' },
+        sustaining_siphon: { name: 'SUSTAINING SIPHON', desc: 'Heal [color=#87FF02]1 HP[/color] for every enemy killed by a Resonance attack.', popup: 'HEALTH RECLAIMED' },
+        crescendo: { name: 'CRESCENDO', desc: 'Resonance attacks gain [color=#8FD9F8]+100%[/color] cursor attack size.', popup: 'AMPLIFIED' },
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color].', popup: 'ROOT ACCESS GRANTED' },
         label: {
             lore: 'LORE',
