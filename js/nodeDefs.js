@@ -759,7 +759,9 @@ const NODE_DEFS = [
         childIds: [],
         treeX: gridX(5),
         treeY: gridY(-1),
-        effect: function () { },
+        effect: function () {
+            upgradeDispatcher.recalcResonance();
+        },
     },
     {
         id: 'sustaining_siphon',

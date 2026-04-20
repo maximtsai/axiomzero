@@ -56,7 +56,6 @@ class Boss extends Enemy {
             const bossDepth = (this.view && this.view.img) ? this.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
             // Default standard boss death
-
             if (customEmitters.createBossExplosionRays) {
                 PhaserScene.time.delayedCall(150, () => {
                     customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});

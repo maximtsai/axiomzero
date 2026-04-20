@@ -13,9 +13,11 @@ class TimeManager {
     }
 
     /** Apply a timeScale value to all Phaser time systems and GAME_VARS. */
-    _applyTimeScale(val) {
+    applyTimeScale(val, applyToTweens = true) {
         GAME_VARS.timeScale = val;
-        PhaserScene.tweens.timeScale = val;
+        if (applyToTweens) {
+            PhaserScene.tweens.timeScale = val;
+        }
         PhaserScene.time.timeScale = val;
         PhaserScene.anims.globalTimeScale = val;
     }
@@ -26,7 +28,7 @@ class TimeManager {
      * @param {number} [magnitude] - timeScale during pause (default 0.5).
      */
     setTempPause(dur = 100, magnitude) {
-        this._applyTimeScale(magnitude || 0.5);
+        this.applyTimeScale(magnitude || 0.5);
         if (this.currTimeoutAmt) {
             if (GAME_VARS.timeScale > this.currTimeoutAmt) {
                 return;
@@ -38,7 +40,7 @@ class TimeManager {
             clearTimeout(this.currTimeoutPause);
         }
         this.currTimeoutPause = setTimeout(() => {
-            this._applyTimeScale(GAME_VARS.gameManualSlowSpeed || 1);
+            this.applyTimeScale(GAME_VARS.gameManualSlowSpeed || 1);
             this.currTimeoutAmt = null;
         }, dur)
     }
@@ -46,28 +48,59 @@ class TimeManager {
     /** Pause the game until explicitly unpaused. @param {number} [amt=0.002] */
     setPermPause(amt = 0.002) {
         GAME_VARS.permTimeScale = amt;
-        this._applyTimeScale(amt);
+        this.applyTimeScale(amt);
     }
 
     /** Restore normal game speed (respects manual slow if active). */
     setUnpause() {
         const speed = GAME_VARS.gameManualSlowSpeed || 1;
         GAME_VARS.permTimeScale = speed;
-        this._applyTimeScale(speed);
+        this.applyTimeScale(speed);
     }
 
     /** Set a persistent slow-motion speed. @param {number} amt - timeScale value. */
     setGameSlow(amt) {
         GAME_VARS.gameManualSlowSpeed = amt;
         GAME_VARS.gameManualSlowSpeedInverse = 1 / amt;
-        this._applyTimeScale(amt);
+        this.applyTimeScale(amt);
     }
 
     /** Remove slow-motion and restore normal speed. */
     clearGameSlow() {
         GAME_VARS.gameManualSlowSpeed = 1;
         GAME_VARS.gameManualSlowSpeedInverse = 1;
-        this._applyTimeScale(1);
+        this.applyTimeScale(1);
+    }
+
+    /**
+     * Tween the game timeScale to a target value.
+     * @param {number} targetScale - Target timeScale value.
+     * @param {number} duration - Duration in ms.
+     * @param {string} [ease='Linear'] - Easing function.
+     * @param {boolean} [applyToTweens=true] - Whether to apply scaling to Phaser tweens.
+     * @param {function} [onComplete] - Callback on finish.
+     */
+    tweenTimeScale(targetScale, duration, ease = 'Linear', applyToTweens = true, onComplete = null) {
+        // Kill any existing timeScale tweens on GAME_VARS to prevent clashing
+        if (PhaserScene.tweens) {
+            PhaserScene.tweens.killTweensOf(GAME_VARS, 'timeScale');
+        }
+
+        PhaserScene.tweens.add({
+            targets: GAME_VARS,
+            timeScale: targetScale,
+            duration,
+            ease,
+            onUpdate: () => {
+                this.applyTimeScale(GAME_VARS.timeScale, applyToTweens);
+            },
+            onComplete: () => {
+                this.applyTimeScale(targetScale, applyToTweens);
+                if (onComplete) onComplete();
+            }
+        });
     }
 
 }
+
+const timeManager = new TimeManager();

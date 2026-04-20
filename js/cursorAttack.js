@@ -924,12 +924,11 @@ class PulseAttackView {
                 PhaserScene.cameras.main.setZoom(1.03);
                 // Zoom in slightly here
                 // DETONATE
-                // Slow down the game (80% slower = 0.2x speed)
+                // Slow down the game (85% slower = 0.15x speed)
+                // (False applies it to everything EXCEPT tweens, so explosions remain fluid)
                 this.artillerySprite.setVisible(false);
                 this.artilleryBrightGlow.setVisible(false);
-                PhaserScene.time.timeScale = 0.15;
-                PhaserScene.anims.globalTimeScale = 0.15;
-                GAME_VARS.timeScale = 0.15;
+                timeManager.applyTimeScale(0.15, false);
 
                 PhaserScene.time.delayedCall(10, () => {
                     this.artilleryBrightGlow.setVisible(false);
@@ -964,10 +963,7 @@ class PulseAttackView {
                         PhaserScene.time.delayedCall(20, () => {
                             PhaserScene.time.delayedCall(13, () => {
                                 // Always restore game speed to 1.0 to prevent capture bugs
-                                PhaserScene.time.timeScale = 1.0;
-                                PhaserScene.tweens.timeScale = 1.0;
-                                PhaserScene.anims.globalTimeScale = 1.0;
-                                GAME_VARS.timeScale = 1.0;
+                                timeManager.applyTimeScale(1.0);
                             });
                             // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
 
@@ -1168,8 +1164,10 @@ const pulseAttack = (() => {
         model.currentAttackCount++;
         if (model.currentAttackCount >= 4) {
             model.currentAttackCount = 0;
+            console.log("[Resonance] HIT TRIGGERED");
             return true;
         }
+        console.log(`[Resonance] Charge: ${model.currentAttackCount}/4`);
         return false;
     }
 
@@ -1180,6 +1178,10 @@ const pulseAttack = (() => {
         const isResonanceHit = _determineResonance(model);
         // Crescendo: Flat +100 addition to current size (matching default size)
         const currentSize = (isResonanceHit && model.crescendoLevel > 0) ? model.size + 100 : model.size;
+
+        if (isResonanceHit && model.crescendoLevel > 0) {
+            console.log(`[Crescendo] Active! Size: ${currentSize} (Bonus +100)`);
+        }
 
         let damageSize = (currentSize / 2) + 5;
         if (isResonanceHit && model.crescendoLevel <= 0) damageSize += 10;
@@ -1242,6 +1244,9 @@ const pulseAttack = (() => {
         }
 
         if (isResonanceHit) {
+            // Impact slowdown for resonance hit
+            timeManager.setTempPause(60, 0.35);
+
             // Audio punch for resonance hit
             const r = audio.play('retro1', 0.5);
             if (r) r.detune = 200;
@@ -1334,6 +1339,7 @@ const pulseAttack = (() => {
     }
 
     function setCrescendoLevel(level) {
+        console.log(`[Crescendo] Level updated to: ${level}`);
         model.crescendoLevel = level;
     }
 

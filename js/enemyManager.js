@@ -654,9 +654,25 @@ const enemyManager = (() => {
             if (enemy.view && enemy.view.img) {
                 customEmitters.minibossExplosion(enemy.view.img);
             }
+            if (typeof zoomShake !== 'undefined') {
+                zoomShake(1.025);
+            }
         } else if (wasBoss && !skipBossEffects) {
             bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
+
+            // Brief but intense screenshake for boss death
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(300, 0.018);
+            }
+            if (typeof zoomShake !== 'undefined') {
+                zoomShake(1.025);
+            }
+
+            // Cinematic time slow on boss death (90% reduction)
+            timeManager.applyTimeScale(0.1);
+            timeManager.tweenTimeScale(1, 200);
+
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
             // Standard boss death

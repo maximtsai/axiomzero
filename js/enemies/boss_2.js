@@ -207,6 +207,9 @@ class Boss2Model extends BossModel {
 
                 if (targetDist < 100) {
                     this.state = BOSS_2_STATES.AIMING;
+                    if (typeof audio !== 'undefined') {
+                        this.model.activeSound = audio.play('warship_aim', 1.05);
+                    }
                 } else {
                     // Normalize steering vector to ensure weights are consistent
                     let desiredVx = tdx / targetDist;
@@ -658,9 +661,6 @@ class Boss2 extends Boss {
                     this.model.setupDelay = 1.5;
                     this.model.setupTarget = null;
                     this.model.state = BOSS_2_STATES.SETUP;
-                    if (typeof audio !== 'undefined') {
-                        this.model.activeSound = audio.play('warship_aim', 0.82);
-                    }
                 }
             }
         }
