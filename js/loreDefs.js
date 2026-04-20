@@ -39,10 +39,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['junk_barrier'],
+        parents: ['bomb'],
         childIds: [],
-        treeX: gridX(4),
-        treeY: gridY(1.5),
+        treeX: gridX(3),
+        treeY: gridY(-0.5),
         requiresMaxParent: true,
         tooltipExtraWidth: 200,
         effect: function () {

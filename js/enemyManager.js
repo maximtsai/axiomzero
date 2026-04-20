@@ -577,7 +577,7 @@ const enemyManager = (() => {
                 const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
                 if (pieces.length > 1) {
                     enemy.onDeath(false); // Staged death
-                    _killEnemy(enemy, true);
+                    _killEnemy(enemy, true, wasResonance);
                     return;
                 }
             }
@@ -588,14 +588,14 @@ const enemyManager = (() => {
             if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
-                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy));
+                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy, false, wasResonance));
             } else {
-                _killEnemy(enemy);
+                _killEnemy(enemy, false, wasResonance);
             }
         }
     }
 
-    function _killEnemy(enemy, skipBossEffects = false) {
+    function _killEnemy(enemy, skipBossEffects = false, wasResonance = false) {
         if (typeof customEmitters !== 'undefined') {
             if (enemy.model.type === 'shell') {
                 const vx = enemy.model.vx || 0;
@@ -692,7 +692,7 @@ const enemyManager = (() => {
                 });
             }
 
-            messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type);
+            messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type, wasResonance);
             if (enemy.model.type !== 'test') sessionKills++;
         }
     }

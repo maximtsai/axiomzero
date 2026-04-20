@@ -943,9 +943,15 @@ const tower = (() => {
         debugLog('Tower invincible for 2.8s after boss defeat');
     }
 
-    function _onEnemyDeath(x, y) {
+    function _onEnemyDeath(x, y, drop, type, wasResonance = false) {
         if (!model.alive || !model.awakened) return;
         const ups = gameState.upgrades || {};
+
+        // Sustaining Siphon: Heal 1hp on resonance kill
+        if (wasResonance && ups.sustaining_siphon) {
+            heal(1);
+        }
+
         if (ups.malware_siphon > 0) {
             const towerPos = view.getPosition();
             const dx = x - towerPos.x;

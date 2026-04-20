@@ -985,10 +985,15 @@ const upgradeTree = (() => {
             treeGroup.add(debugLogBtn);
         }
 
+        const isMobile = helper.isMobileDevice();
+        const zoomNormalAsset = isMobile ? 'increment_dim_mobile.png' : 'increment_dim.png';
+        const zoomHoverAsset = 'increment_normal.png';
+        const zoomPressAsset = 'increment_dim_press.png';
+
         zoomInBtn = new Button({
-            normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing },
-            hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing },
-            press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing },
+            normal: { ref: zoomNormalAsset, atlas: 'buttons', x: x, y: baseY - spacing },
+            hover: { ref: zoomHoverAsset, atlas: 'buttons', x: x, y: baseY - spacing },
+            press: { ref: zoomPressAsset, atlas: 'buttons', x: x, y: baseY - spacing },
             onMouseUp: () => { zoomHelper(0.25); },
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
@@ -997,16 +1002,16 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '30px', color: '#ffffff' });
+        zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
         zoomInBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         zoomInBtn.setScrollFactor(0);
         zoomInBtn.setVisible(false);
         treeGroup.add(zoomInBtn);
 
         zoomOutBtn = new Button({
-            normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY },
-            hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY },
-            press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY },
+            normal: { ref: zoomNormalAsset, atlas: 'buttons', x: x, y: baseY },
+            hover: { ref: zoomHoverAsset, atlas: 'buttons', x: x, y: baseY },
+            press: { ref: zoomPressAsset, atlas: 'buttons', x: x, y: baseY },
             onMouseUp: () => { zoomHelper(-0.25); },
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
@@ -1015,7 +1020,7 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        zoomOutBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
+        zoomOutBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '38px', color: '#ffffff' });
         zoomOutBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         zoomOutBtn.setScrollFactor(0);
         zoomOutBtn.setVisible(false);

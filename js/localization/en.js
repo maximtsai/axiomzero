@@ -78,7 +78,7 @@ window.TRANSLATIONS.en = {
         area_saturation: { name: 'AREA SATURATION', desc: '[color=#8FD9F8]+1[/color] cursor damage per additional enemy hit.', popup: 'AREA SATURATION' },
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]6/8/10[/color] damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size.', popup: 'COLOSSAL CURSOR' },
-        resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack deals [color=#8FD9F8]double damage[/color] (including Repeat Exploit).', popup: 'RESONANCE ACTIVE' },
+        resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack deals [color=#8FD9F8]double damage[/color]', popup: 'RESONANCE ACTIVE' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#8FD9F8]2s[/color] during combat.', popup: 'SNIFFER ACTIVE' },
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through all enemies.', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy.', popup: 'ARTILLERY ACTIVE' },
@@ -161,6 +161,7 @@ window.TRANSLATIONS.en = {
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },
         stray_logs_child_above: { name: 'STRAY LOGS III', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         physical_anchor: { name: 'PURCHASE SERVERS', desc: '[color=#8FD9F8]+40[/color] max health.', popup: '+40 MAX HEALTH' },
+        sustaining_siphon: { name: 'SUSTAINING SIPHON', desc: 'Heal [color=#8FD9F8]1 HP[/color] for every enemy killed by a resonance hit.', popup: 'HEALTH RECLAIMED' },
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color].', popup: 'ROOT ACCESS GRANTED' },
         label: {
             lore: 'LORE',
