@@ -560,6 +560,10 @@ class PulseAttackView {
         const showAftershock = visible && this.aftershockLevel > 0;
         this.aftershockBright.setVisible(showAftershock);
         this.aftershockRed.setVisible(showAftershock);
+
+        if (this.spriteGlow && !visible) {
+            this.spriteGlow.setVisible(false);
+        }
         if (visible && isIdle) {
             this.sprite.setAlpha(this.IDLE_ALPHA);
         }

@@ -110,10 +110,10 @@ const gameHUD = (() => {
 
         // Invisible button overlay for health bar info
         healthBtn = new Button({
-            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
-            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
-            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
-            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 95, y: HUD_Y + (BAR_H / 2) },
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 101, y: HUD_Y + (BAR_H / 2) },
+            hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons' },
+            press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons' },
+            disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons' },
             onHover: () => {
                 let sfxRel = audio.play('click', 0.95);
                 if (sfxRel) sfxRel.detune = Phaser.Math.Between(-150, -50);
@@ -132,7 +132,7 @@ const gameHUD = (() => {
                 }
             }
         });
-        healthBtn.setOrigin(0.5, 0.5).setScale(1, helper.isMobileDevice() ? 1.05 : 1).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.05 : 1).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
 
         // 2. Currency Cluster Component
         const currY = HUD_Y + BAR_H + BAR_GAP + 13;
