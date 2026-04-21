@@ -11,11 +11,9 @@ const BOSS_2_STATES = {
     BOMBARD: 'bombard'
 };
 
-
-
 const BOSS_2_CONFIG = {
     PROJECTILE_DAMAGE: 2.5,
-    MAX_SPEED_MULT: 3.5,
+    MAX_SPEED_MULT: 3.0,
     CIRCLING_SPEED_MULT: 1.5,
     ENTRY_RADIUS: 370,
     ORBIT_RADIUS: 265,
@@ -23,7 +21,6 @@ const BOSS_2_CONFIG = {
     FLANK_X_OFFSET: 210,
     TOWER_AVOIDANCE_RADIUS: 240
 };
-
 
 class Boss2Model extends BossModel {
     constructor(levelScalingModifier = 1) {
@@ -98,7 +95,7 @@ class Boss2Model extends BossModel {
         const smoothedStep = diff * 0.20;
         let rotationChange = Phaser.Math.Clamp(smoothedStep, -maxChange, maxChange);
 
-        // Framerate-independent smoothing for the momentum/inertia (0.9 decay at 60fps)
+        // Framerate-independent smoothing for momentum/inertia
         const lerpFactor = 1 - Math.pow(0.9, dt * 60);
         rotationChange = this[memoryKey] + (rotationChange - this[memoryKey]) * lerpFactor;
 
@@ -576,7 +573,7 @@ class Boss2 extends Boss {
             maxHealth: bossHealth,
             damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE, // Static hull damage
             selfDamage: 0,
-            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 3.5, // 3.5x speed
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * BOSS_2_CONFIG.MAX_SPEED_MULT,
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
             size: this.model.size,
@@ -686,13 +683,7 @@ class Boss2 extends Boss {
             const vx = dx / dist;
             const vy = dy / dist;
 
-            // Perpendicular vector for lateral offset (right relative to flight)
-            // (vx, vy) rotated 90 deg clockwise is (vy, -vx)
-            // Wait, standard screen coords: (vx, vy) -> (vy, -vx) is right?
-            // Let's test: pointing Right (1, 0) -> (0, -1) is Up.
-            // Pointing Down (0, 1) -> (1, 0) is Right.
-            // Right relative to direction (vx, vy) is (-vy, vx). 
-            // Let's re-verify: (1,0) direction, right is (0, 1). Yes.
+            // Perpendicular vector for lateral offset (right relative to direction)
             const rx = -vy;
             const ry = vx;
 

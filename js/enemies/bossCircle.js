@@ -354,13 +354,13 @@ class BossCircle extends Boss {
             onComplete: () => {
                 this.model.behaviorState = BOSS_CIRCLE_STATE.ATTACKING;
 
-                // Step 2: Charge in reaching 150 units from player
+                // Step 2: Charge in reaching 142 units from player
                 const tx = GAME_CONSTANTS.halfWidth;
                 const ty = GAME_CONSTANTS.halfHeight;
                 const dx = tx - this.model.x;
                 const dy = ty - this.model.y;
                 const currentDist = Math.sqrt(dx * dx + dy * dy);
-                const targetOffset = Math.max(0, currentDist - 150);
+                const targetOffset = Math.max(0, currentDist - 142);
 
                 PhaserScene.tweens.add({
                     targets: this.model,

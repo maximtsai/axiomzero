@@ -331,7 +331,7 @@ class PulseAttackView {
             this.sprite.setSize(newSize, newSize);
         }
         if (this.spriteBright) {
-            this.spriteBright.setSize(newSize, newSize);
+            this.spriteBright.setSize(newSize + 4, newSize + 4);
         }
         if (this.spriteRed) {
             this.spriteRed.setSize(newSize + 4, newSize + 4);
@@ -502,7 +502,7 @@ class PulseAttackView {
 
         // Pulse flash overlay
         this.spriteBright.setAlpha(this.FLASH_ALPHA);
-        this.spriteBright.setScale((1.35 + extraScale) * resMultiplier);
+        this.spriteBright.setScale((1.31 + extraScale) * resMultiplier);
         this.spriteBright.setRotation(goalRot);
         this.sprite.setRotation(goalRot);
 

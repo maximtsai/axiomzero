@@ -165,6 +165,10 @@ const iterationOverScreen = (() => {
                 depth: depth + 12,
             },
             onMouseUp: _onUpgradesClicked,
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
+            },
         });
         upgradesBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         upgradesBtn.addText(t('ui', 'upgrades'), {
@@ -205,6 +209,10 @@ const iterationOverScreen = (() => {
                 alpha: 0
             },
             onMouseUp: _onRetryClicked,
+            onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
+            },
         });
         retryBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         retryBtn.addText(t('ui', 'retry'), {
