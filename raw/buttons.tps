@@ -416,6 +416,13 @@
             <key type="filename">buttons/increment_disable.png</key>
             <key type="filename">buttons/increment_hover.png</key>
             <key type="filename">buttons/increment_normal.png</key>
+            <key type="filename">buttons/insight_max_pulse.png</key>
+            <key type="filename">buttons/insight_node_ghost.png</key>
+            <key type="filename">buttons/insight_node_maxed.png</key>
+            <key type="filename">buttons/insight_node_unlocked.png</key>
+            <key type="filename">buttons/insight_node_unlocked_disabled.png</key>
+            <key type="filename">buttons/insight_node_unlocked_hover.png</key>
+            <key type="filename">buttons/insight_node_unlocked_press.png</key>
             <key type="filename">buttons/node_green_unlocked.png</key>
             <key type="filename">buttons/node_red_unlocked.png</key>
             <struct type="IndividualSpriteSettings">
@@ -489,6 +496,48 @@
                 <rect>15,15,30,30</rect>
                 <key>scale9Paddings</key>
                 <rect>15,15,30,30</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/insight_buy_pulse.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>20,20,39,39</rect>
+                <key>scale9Paddings</key>
+                <rect>20,20,39,39</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/insight_node_glow0.png</key>
+            <key type="filename">buttons/insight_node_glow1.png</key>
+            <key type="filename">buttons/insight_node_glow10.png</key>
+            <key type="filename">buttons/insight_node_glow11.png</key>
+            <key type="filename">buttons/insight_node_glow12.png</key>
+            <key type="filename">buttons/insight_node_glow2.png</key>
+            <key type="filename">buttons/insight_node_glow3.png</key>
+            <key type="filename">buttons/insight_node_glow4.png</key>
+            <key type="filename">buttons/insight_node_glow5.png</key>
+            <key type="filename">buttons/insight_node_glow6.png</key>
+            <key type="filename">buttons/insight_node_glow7.png</key>
+            <key type="filename">buttons/insight_node_glow8.png</key>
+            <key type="filename">buttons/insight_node_glow9.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,15,29,29</rect>
+                <key>scale9Paddings</key>
+                <rect>15,15,29,29</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

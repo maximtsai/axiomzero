@@ -27,6 +27,8 @@ const upgradeTree = (() => {
 
     let buyPulsePool = null;
     let maxPulsePool = null;
+    let insightMaxPulsePool = null;
+    let insightBuyPulsePool = null;
 
     let zoomInBtn = null;
     let zoomOutBtn = null;
@@ -546,20 +548,47 @@ const upgradeTree = (() => {
             draggableGroup.add(slice);
             return slice;
         }, resetFn, 10).preAllocate(4);
+
+        insightMaxPulsePool = new ObjectPool(() => {
+            const img = PhaserScene.add.image(0, 0, 'buttons', 'insight_max_pulse.png');
+            img.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
+            img.setScrollFactor(0);
+            draggableGroup.add(img);
+            return img;
+        }, resetFn, 10).preAllocate(2);
+
+        insightBuyPulsePool = new ObjectPool(() => {
+            const img = PhaserScene.add.image(0, 0, 'buttons', 'insight_buy_pulse.png');
+            img.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
+            img.setScrollFactor(0);
+            draggableGroup.add(img);
+            return img;
+        }, resetFn, 10).preAllocate(4);
     }
 
-    function playPurchasePulse(x, y, isMaxed) {
+    function playPurchasePulse(x, y, isMaxed, isInsight = false) {
         if (!buyPulsePool || !maxPulsePool) return;
 
         const dur = isMaxed ? 750 : 600;
         const startAlpha = isMaxed ? 1.3 : 1;
 
-        // Primary pulse
-        _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 156 : 98, dur, startAlpha);
+        if (isInsight && isMaxed) {
+            if (!insightMaxPulsePool) return;
+            // Native image size assumed to be around 128x128
+            _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.5, dur, startAlpha);
+            _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.0, dur + 50, startAlpha - 0.35, 70);
+        } else if (isInsight && !isMaxed) {
+            if (!insightBuyPulsePool) return;
+            // Scaling proportionally matching the 64 -> 98 transition of the nine-slice (~1.53x)
+            _animatePulseScale(x, y, insightBuyPulsePool, 1.0, 1.7, dur, startAlpha);
+        } else {
+            // Primary pulse
+            _animatePulse(x, y, isMaxed ? maxPulsePool : buyPulsePool, 64, isMaxed ? 156 : 98, dur, startAlpha);
 
-        // Secondary inner pulse (Max only)
-        if (isMaxed) {
-            _animatePulse(x, y, maxPulsePool, 64, 130, dur + 50, startAlpha - 0.35, 70);
+            // Secondary inner pulse (Max only)
+            if (isMaxed) {
+                _animatePulse(x, y, maxPulsePool, 64, 130, dur + 50, startAlpha - 0.35, 70);
+            }
         }
     }
 
@@ -719,6 +748,35 @@ const upgradeTree = (() => {
             targets: pulse,
             width: targetSize,
             height: targetSize,
+            duration: duration,
+            ease: 'Quart.easeOut'
+        });
+
+        PhaserScene.tweens.add({
+            delay: delay,
+            targets: pulse,
+            alpha: 0,
+            duration: duration,
+            onComplete: () => {
+                pool.release(pulse);
+            }
+        });
+    }
+
+    function _animatePulseScale(x, y, pool, startScale, targetScale, duration, alpha, delay = 0) {
+        const pulse = pool.get();
+        pulse.setPosition(x, y);
+        pulse.setVisible(true);
+        pulse.setActive(true);
+        pulse.setAlpha(alpha);
+
+        pulse.setScale(startScale);
+
+        PhaserScene.tweens.add({
+            delay: delay,
+            targets: pulse,
+            scaleX: targetScale,
+            scaleY: targetScale,
             duration: duration,
             ease: 'Quart.easeOut'
         });
@@ -929,7 +987,8 @@ const upgradeTree = (() => {
 
         // 3. Purchase pulses
         if (!data.isDuoBox) {
-            playPurchasePulse(data.x, data.y + 1, data.isMaxed);
+            const nodeInfo = nodes[data.id];
+            playPurchasePulse(data.x, data.y + 1, data.isMaxed, nodeInfo && nodeInfo.costType === 'insight');
         } else {
             const node = nodes[data.id];
             if (node && node._playDuoPulse) {

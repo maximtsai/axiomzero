@@ -111,4 +111,17 @@ function createAnimations(scene) {
         frameRate: 20,
         repeat: 0
     });
+
+    scene.anims.create({
+        key: 'insight_node_glow',
+        frames: scene.anims.generateFrameNames('buttons', {
+            prefix: 'insight_node_glow',
+            suffix: '.png',
+            start: 0,
+            end: 12,
+            zeroPad: 0,
+        }),
+        frameRate: 20,
+        repeat: 0
+    });
 }

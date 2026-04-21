@@ -67,7 +67,9 @@ class Node {
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
         this.labelCategory = def.label || "UPGRADE";
-        this.prefix = 'node';
+        
+        // Asset prefixing based on cost type
+        this.prefix = (this.costType === 'insight') ? 'insight_node' : 'node';
 
         this.duoBackingSprite = null;
         this.duoBackingOutline = null;
@@ -580,7 +582,8 @@ class Node {
         }
 
         // Reveal Glow sprite
-        this.glowSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_glow1.png')
+        const startFrame = (this.costType === 'insight') ? 'insight_node_glow0.png' : 'node_glow0.png';
+        this.glowSprite = PhaserScene.add.sprite(x, y, 'buttons', startFrame)
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
             .setVisible(false)

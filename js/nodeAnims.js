@@ -12,7 +12,8 @@ const nodeAnims = {
     playRevealGlow: (node) => {
         if (!node.glowSprite) return;
         node.glowSprite.setVisible(true).setAlpha(1);
-        node.glowSprite.play('node_glow');
+        const animKey = (node.costType === 'insight') ? 'insight_node_glow' : 'node_glow';
+        node.glowSprite.play(animKey);
         node.glowSprite.once('animationcomplete', () => {
             if (node.glowSprite) node.glowSprite.setVisible(false).setAlpha(0);
         });
