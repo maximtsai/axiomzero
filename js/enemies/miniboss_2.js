@@ -117,7 +117,7 @@ class Miniboss2 extends Miniboss {
         m.maxHealth = MB2.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
 
-        // Base damage is 0 natively so it doesn't accidentally trigger tower damage on simple overlap
+        // Base damage is 0 natively so it doesn't accidentally trigger core damage on simple overlap
         // It relies purely on the manual lunge collision logic.
         m.damage = 0;
         m.selfDamage = 0;

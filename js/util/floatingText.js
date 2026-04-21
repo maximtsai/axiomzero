@@ -121,8 +121,8 @@ const floatingText = (() => {
 
             const progress = Math.min(1, t._elapsed / t._totalDuration);
 
-            // Movement: Quad.easeOut
-            const movementProgress = 1 - Math.pow(1 - progress, 2);
+            // Movement: Cubic.easeOut
+            const movementProgress = 1 - Math.pow(1 - progress, 3);
             t.y = t._startY - (t._targetTravel * movementProgress);
 
             // Fade out: starts after 60% of duration, Quad.easeIn

@@ -2,7 +2,7 @@
 //
 // Behaviour:
 //   • Moves at 2.5x speed of basic enemy.
-//   • Deals 1.5x tower damage on contact.
+//   • Deals 1.25x damage on contact.
 //   • Deals 0.501 of its max health to itself on tower contact.
 //   • Uses fast.png from enemies atlas.
 
@@ -40,7 +40,7 @@ class FastEnemy extends Enemy {
     activate(x, y, scaleFactor, extraConfig = {}) {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.5 * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
+            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 1.25 * (1 + (scaleFactor - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY),
             selfDamage: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor * 0.501,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 2.5,
             size: GAME_CONSTANTS.ENEMY_SIZE_FAST,

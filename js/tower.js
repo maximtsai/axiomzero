@@ -38,8 +38,9 @@ class TowerModel {
         const focus3Lv = ups.focus_range_3 || 0;
         const armorLv = ups.armor || 0;
         const baseHpLv = ups.base_hp_boost || 0;
-        const overclockLv = ups.overclock || 0;
+        const clockSpeedLv = ups.clock_speed || 0;
         const anchorHp = (ups.physical_anchor || 0) * 40;
+        this.emergencyOverclockLv = ups.emergency_overclock || 0;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
         const permanentHp = gameState.permanentHpBonus || 0;
@@ -63,7 +64,7 @@ class TowerModel {
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.2 * regenLv; // baseDecay commented out per request
         this.armor = armorLv * 1; // 1 flat damage reduction per level
-        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * overclockLv);
+        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
 
         // Root Access damage reduction
         this.damageReceivedMultiplier = (ups.root_access || 0) >= 1 ? 0.9 : 1.0;
@@ -111,9 +112,14 @@ class TowerModel {
     }
 
     heal(amount) {
-        if (!this.alive) return;
+        if (!this.alive) return 0;
+        const oldHealth = this.health;
         this.health = Math.min(this.health + amount, this.maxHealth);
-        messageBus.publish('healthChanged', this.health, this.maxHealth);
+        const actualHealed = this.health - oldHealth;
+        if (actualHealed > 0) {
+            messageBus.publish('healthChanged', this.health, this.maxHealth);
+        }
+        return actualHealed;
     }
 
     die() {
@@ -639,6 +645,7 @@ const tower = (() => {
     const view = new TowerView();
     let _hurtSoundIndex = 0;
     let _expAtCombatStart = 0;
+    let _healingAccumulator = 0;
 
     function init() {
         view._hitAnimPool = new ObjectPool(
@@ -672,6 +679,9 @@ const tower = (() => {
         messageBus.subscribe('bossDefeated', _onEnemyDeath);
         messageBus.subscribe('towerShakeRequested', function (duration) {
             view.shake(duration, function () { messageBus.publish('towerShakeComplete'); });
+        });
+        messageBus.subscribe('trackHeal', (amt) => {
+            _healingAccumulator += amt;
         });
         messageBus.subscribe('testingDefensesEnded', () => { model.attackTimer = 0; });
         updateManager.addFunction(_update);
@@ -797,7 +807,10 @@ const tower = (() => {
     }
 
     function heal(amount) {
-        model.heal(amount);
+        const actual = model.heal(amount);
+        if (actual > 0) {
+            messageBus.publish('trackHeal', actual);
+        }
     }
 
     function die() {
@@ -827,6 +840,26 @@ const tower = (() => {
         if (!model.alive || (!model.active && !isTesting) || model.paused) return;
 
         const dt = delta / 1000; // seconds
+
+        // Unified Healing Popup Text (Accumulated from previous frame or multiple calls this frame)
+        if (_healingAccumulator > 0) {
+            const pos = view.getPosition();
+            let healAmountText = Math.floor(_healingAccumulator);
+            if (healAmountText === 0 && _healingAccumulator > 0) healAmountText = 1;
+
+            if (healAmountText > 0) {
+                floatingText.show(pos.x, pos.y - 35, `+${healAmountText} HEAL`, {
+                    fontFamily: 'JetBrainsMono_Bold',
+                    fontSize: 28,
+                    color: '#00ff66',
+                    depth: GAME_CONSTANTS.DEPTH_TOWER,
+                    travel: 50,
+                    stroke: '#000000',
+                    strokeThickness: 2
+                });
+            }
+            _healingAccumulator = 0;
+        }
 
         if (model.active) {
             // Applied health regeneration (Auto-Restore)
@@ -864,7 +897,12 @@ const tower = (() => {
 
         // Auto-attack
         if (model.awakened && (gameState.upgrades && gameState.upgrades.automated_defense >= 1)) {
-            model.attackTimer += delta;
+            let tick = delta;
+            if (model.emergencyOverclockLv > 0 && (model.health / model.maxHealth) <= 0.5) {
+                tick *= 2;
+            }
+
+            model.attackTimer += tick;
             if (model.attackTimer >= model.attackCooldown) {
                 model.attackTimer -= model.attackCooldown;
                 _tryAutoAttack();

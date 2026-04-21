@@ -1164,10 +1164,8 @@ const pulseAttack = (() => {
         model.currentAttackCount++;
         if (model.currentAttackCount >= 4) {
             model.currentAttackCount = 0;
-            console.log("[Resonance] HIT TRIGGERED");
             return true;
         }
-        console.log(`[Resonance] Charge: ${model.currentAttackCount}/4`);
         return false;
     }
 
@@ -1178,10 +1176,6 @@ const pulseAttack = (() => {
         const isResonanceHit = _determineResonance(model);
         // Crescendo: Flat +100 addition to current size (matching default size)
         const currentSize = (isResonanceHit && model.crescendoLevel > 0) ? model.size + 100 : model.size;
-
-        if (isResonanceHit && model.crescendoLevel > 0) {
-            console.log(`[Crescendo] Active! Size: ${currentSize} (Bonus +100)`);
-        }
 
         let damageSize = (currentSize / 2) + 5;
         if (isResonanceHit && model.crescendoLevel <= 0) damageSize += 10;
@@ -1339,7 +1333,6 @@ const pulseAttack = (() => {
     }
 
     function setCrescendoLevel(level) {
-        console.log(`[Crescendo] Level updated to: ${level}`);
         model.crescendoLevel = level;
     }
 

@@ -4,7 +4,7 @@
 const LEVEL_CONFIG = {
     1: {
         spawnInterval: 1100, // ms between regular spawns (base)
-        lateSpawnInterval: 750,
+        lateSpawnInterval: 700,
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -33,7 +33,7 @@ const LEVEL_CONFIG = {
     },
     2: {
         spawnInterval: 600, // ms between regular spawns (base)
-        lateSpawnInterval: 600,
+        lateSpawnInterval: 525,
         spawnPauseDuration: 1500,
         initialWeights: {
             basic: 1,
@@ -90,7 +90,7 @@ const LEVEL_CONFIG = {
 
         mainBoss: 'Boss3',
         dataDropMultiplier: 1.6,
-        levelScalingModifier: 2.1,
+        levelScalingModifier: 2,
     },
     4: {
         spawnInterval: 550, // ms between regular spawns (base)

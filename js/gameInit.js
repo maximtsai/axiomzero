@@ -47,15 +47,6 @@ messageBus.subscribeOnce('assetsLoaded', () => {
 
             if (healAmount > 0) {
                 tower.heal(healAmount);
-                const pos = tower.getPosition();
-                let healAmountText = Math.floor(healAmount);
-                if (healAmountText == 0) healAmountText = 1;
-                floatingText.show(pos.x, pos.y - yOffset, `+${healAmountText} HEALED`, {
-                    fontFamily: 'JetBrainsMono_Bold',
-                    fontSize: 22,
-                    color: '#00ff66',
-                    depth: GAME_CONSTANTS.DEPTH_TOWER
-                });
             }
         }
     }
