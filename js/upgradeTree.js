@@ -403,15 +403,12 @@ const upgradeTree = (() => {
     }
 
     function _refreshAllNodes() {
-        // Optimization: refreshState() is recursive. We only need to trigger it
-        // from the root nodes to refresh the entire tree logic correctly.
+        // Refresh every node in the tree. refreshState() is recursive, which handles
+        // downstream propagation, but iterating through all nodes ensures that isolated 
+        // branches or nodes with custom revelation logic are always caught.
         for (const id in nodes) {
-            const n = nodes[id];
-            if (n.parents.length === 0) {
-                n.refreshState();
-            }
-            // Ensure logical node is enabled; internal _updateVisual handles hiding button/label if HIDDEN.
-            n.setVisible(true);
+            nodes[id].setVisible(true);
+            nodes[id].refreshState();
         }
     }
 

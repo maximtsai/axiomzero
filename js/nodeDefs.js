@@ -444,8 +444,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['emergency_overclock'],
         childIds: [],
-        treeX: gridX(-2.5),
-        treeY: gridY(5.5),
+        treeX: gridX(-1.5),
+        treeY: gridY(5),
         effect: function () {
             // Logic integrated into gameInit.js listeners
         },
@@ -526,6 +526,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['lightning_weapon'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(-1.5),
         treeY: gridY(2),
         effect: function () {
@@ -546,6 +547,7 @@ const NODE_DEFS = [
         costStep: 10,
         parents: ['lightning_weapon'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(-1.5),
         treeY: gridY(3),
         effect: function () {
@@ -566,6 +568,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['shockwave_weapon'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(1.5),
         treeY: gridY(2),
         effect: function () {
@@ -586,6 +589,7 @@ const NODE_DEFS = [
         costStep: 20,
         parents: ['shockwave_weapon'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(1.5),
         treeY: gridY(3),
         effect: function () {
@@ -1243,6 +1247,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['laser'],
         childIds: ['laser_aperture', 'laser_disintegration'],
+        isDuoChild: true,
         treeX: gridX(1.0 - 1.5),
         treeY: gridY(9.5),
         effect: function () {
@@ -1261,6 +1266,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['laser_duration'],
         childIds: ['laser_twin_beams'],
+        isDuoChild: true,
         treeX: gridX(1.0 - 1.5 - 1.0),
         treeY: gridY(9.5),
         effect: function () {
@@ -1280,6 +1286,7 @@ const NODE_DEFS = [
         costStep: 50,
         parents: ['laser_duration'],
         childIds: ['laser_twin_beams'],
+        isDuoChild: true,
         treeX: gridX(1.0 - 1.5),
         treeY: gridY(10.5),
         effect: function () {
@@ -1298,6 +1305,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['laser_aperture', 'laser_disintegration'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(-1.5),
         treeY: gridY(10.5),
         effect: function () {
@@ -1316,6 +1324,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['artillery_shells'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(3.5),
         treeY: gridY(10.0),
         requiresMaxParent: true,
@@ -1335,6 +1344,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['artillery'],
         childIds: ['artillery_volley'],
+        isDuoChild: true,
         treeX: gridX(2.5),
         treeY: gridY(10.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
@@ -1352,6 +1362,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['artillery'],
         childIds: ['artillery_stun'],
+        isDuoChild: true,
         treeX: gridX(2.5),
         treeY: gridY(9.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
@@ -1368,6 +1379,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['artillery_first_strike'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(3.5),
         treeY: gridY(9.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
@@ -1543,6 +1555,7 @@ const NODE_DEFS = [
         costStep: 20,
         parents: ['manual_protocol'],
         childIds: ['manual_pulse_child_1_1', 'manual_pulse_child_1_2'],
+        isDuoChild: true,
         treeX: gridX(4.0),
         treeY: gridY(6),
         effect: function () {
@@ -1562,6 +1575,7 @@ const NODE_DEFS = [
         costStep: 50,
         parents: ['manual_pulse_child_1'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(5.0),
         treeY: gridY(6.5),
         effect: function () {
@@ -1580,6 +1594,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['manual_pulse_child_1'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(5.0),
         treeY: gridY(5.5),
         effect: function () {
@@ -1599,6 +1614,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['broadcast_protocol'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(1.5),
         treeY: gridY(7),
         effect: function () {
@@ -1619,6 +1635,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['broadcast_protocol'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(1.5),
         treeY: gridY(5),
         effect: function () {
@@ -1638,6 +1655,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['broadcast_protocol'],
         childIds: [],
+        isDuoChild: true,
         treeX: gridX(1.0),
         treeY: gridY(6),
         requiresMaxParent: false,

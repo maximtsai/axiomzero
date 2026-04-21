@@ -131,13 +131,6 @@ const treeLineManager = (() => {
             if (!p.isPlaceholder && p.getAlpha() === 0) shouldHide = true;
             if (!n.isPlaceholder && n.getAlpha() === 0) shouldHide = true;
 
-            // Special handling for Duo descendants
-            if (shouldHide && n.isDuoDescendant && n.isDuoDescendant()) {
-                if (n.isDuoPathPurchased()) {
-                    shouldHide = false;
-                }
-            }
-
             if (shouldHide) {
                 line.setVisible(false);
             } else {

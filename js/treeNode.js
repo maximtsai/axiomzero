@@ -58,6 +58,7 @@ class Node {
 
         // Tier and Duo-Box properties
         this.isDuoBox = def.isDuoBox || false;
+        this.isDuoChild = def.isDuoChild || false;
         this.shardId = def.shardId || null;
         this.duoBoxTier = def.duoBoxTier || 0;
         this.duoSiblingId = def.duoSiblingId || null;
@@ -221,20 +222,25 @@ class Node {
         this.revealed = !!(gameState.revealedNodes && gameState.revealedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
         this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
 
+        let anyRevealed = false;
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
         if (this.parents.length > 0) {
-            let anyRevealed = false;
+            if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN) {
+                // console.log(`[NODE] Testing ${this.id} for revelation... (parents: ${this.parents.join(',')})`);
+            }
             for (let pid of this.parents) {
                 const parent = upgradeTree.getNode(pid);
                 if (parent) {
                     let isHidden = parent.state === NODE_STATE.HIDDEN;
                     if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
-                        isHidden = true; // Still "hidden" from this child's perspective
+                        isHidden = true; 
                     }
-                    // Only nodes that are purchasable or already bought reveal their children naturally.
-                    // Ghost nodes (previews or event-revealed) do NOT reveal their children,
-                    // UNLESS they have been purchased (level > 0) or are part of a purchased Duo path.
-                    const canReveal = !isHidden && (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoPathPurchased());
+                    const canReveal = !isHidden && (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoChild);
+                    
+                    if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN && canReveal) {
+                        console.log(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
+                    }
+
                     if (canReveal) {
                         anyRevealed = true;
                         break;
@@ -283,21 +289,30 @@ class Node {
         } else if (this.level >= this.maxLevel) {
             this.setState(NODE_STATE.MAXED);
         } else if (this.isRequirementsMet() || this.forceUnlocked) {
+            if (FLAGS.DEBUG && this.state !== NODE_STATE.UNLOCKED) {
+                console.log(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
+            }
             this.setState(NODE_STATE.UNLOCKED);
         } else {
             // If we reached here, the node is either force-revealed or has a purchasable parent.
             // Default to GHOST state (preview).
+            if (FLAGS.DEBUG && this.state !== NODE_STATE.GHOST) {
+                console.log(`[NODE] ${this.id} -> GHOST (anyRevealed: ${anyRevealed})`);
+            }
             this.setState(NODE_STATE.GHOST);
         }
 
         // 3. Update duo-box backing sprite if we own it
         this._updateDuoBacking();
 
-        // 3a. Optimization: Only update visuals if affordability changed while state stayed same.
+        // 3a. Optimization: Only update visuals if affordability changed or alpha changed while state stayed same.
         // (State changes already trigger _updateVisual in setState)
         const currentAfford = this.canAfford();
-        if (currentAfford !== this.lastAffordStatus) {
+        const currentGhostAlpha = this.state === NODE_STATE.GHOST ? this.getGhostAlpha() : 1;
+        
+        if (currentAfford !== this.lastAffordStatus || currentGhostAlpha !== this.lastGhostAlpha) {
             this.lastAffordStatus = currentAfford;
+            this.lastGhostAlpha = currentGhostAlpha;
             this._updateVisual();
         }
 
@@ -380,12 +395,8 @@ class Node {
 
         this.effect(this.level);
 
-        // Reveal logic
-        if (this.childIds.length > 0) upgradeTree._revealChildren(this.id);
-        if (this.isDuoBox) {
-            const sibling = upgradeTree.getNode(this.duoSiblingId);
-            if (sibling && sibling.childIds.length > 0) upgradeTree._revealChildren(sibling.id);
-        }
+        // Reveal logic - refresh the whole tree to ensure cascades work (e.g. grandchildren becoming ghosts)
+        upgradeTree._refreshAllNodes();
 
         // Feedback via messageBus (Decoupled §5)
         messageBus.publish('node_purchase_feedback', {
