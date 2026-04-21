@@ -92,7 +92,7 @@ class BossCircleView extends EnemyView {
             const triggerOne = (p, finalScale) => {
                 if (!p || !p.scene) return;
                 // Reset state
-                p.setScale(0.5);
+                p.setScale(0.44);
                 p.setAlpha(1);
 
                 // Tween scale
@@ -194,11 +194,11 @@ class BossCircle extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 250;
+        const bossHealth = 255;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 3,
+            damage: 25,
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.95,
             initialSpeedMult: this.model.initialSpeedMult,
@@ -251,7 +251,7 @@ class BossCircle extends Boss {
                     PhaserScene.tweens.add({
                         targets: this.model,
                         rotationOffset: Math.PI,
-                        duration: 7500,
+                        duration: 7000,
                         ease: 'Quad.easeInOut',
                         onComplete: () => {
                             this.model.rotationFinished = true;
@@ -348,9 +348,9 @@ class BossCircle extends Boss {
         PhaserScene.tweens.add({
             targets: this.model,
             visualOffset: -18,
-            duration: 950,
-            ease: 'Quart.easeInOut',
-            completeDelay: 300,
+            duration: 1200,
+            ease: 'Quint.easeInOut',
+            completeDelay: 400,
             onComplete: () => {
                 this.model.behaviorState = BOSS_CIRCLE_STATE.ATTACKING;
 
@@ -365,8 +365,8 @@ class BossCircle extends Boss {
                 PhaserScene.tweens.add({
                     targets: this.model,
                     visualOffset: targetOffset,
-                    duration: 500,
-                    ease: 'Quart.easeIn',
+                    duration: 650,
+                    ease: 'Quint.easeIn',
                     onComplete: () => {
                         // Deal 25 damage
                         if (typeof tower !== 'undefined') {

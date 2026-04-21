@@ -4,8 +4,8 @@
 			"image": "ui-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 256,
-				"h": 394
+				"w": 458,
+				"h": 224
 			},
 			"scale": 1,
 			"frames": [
@@ -35,24 +35,24 @@
 					}
 				},
 				{
-					"filename": "progress_container.png",
+					"filename": "dropdown_normal.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 60,
-						"h": 60
+						"w": 200,
+						"h": 40
 					},
 					"spriteSourceSize": {
-						"x": 9,
-						"y": 9,
-						"w": 42,
-						"h": 42
+						"x": 0,
+						"y": 0,
+						"w": 200,
+						"h": 40
 					},
 					"frame": {
 						"x": 213,
 						"y": 1,
-						"w": 42,
-						"h": 42
+						"w": 200,
+						"h": 40
 					},
 					"anchor": {
 						"x": 0.5,
@@ -60,149 +60,24 @@
 					}
 				},
 				{
-					"filename": "health_nineslice.png",
+					"filename": "white_line.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 20,
-						"h": 20
+						"w": 200,
+						"h": 2
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 20,
-						"h": 20
+						"w": 200,
+						"h": 2
 					},
 					"frame": {
-						"x": 213,
-						"y": 45,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "nineslice.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 235,
-						"y": 45,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "nineslice_box.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 235,
-						"y": 45,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "white_outline.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 20
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 213,
-						"y": 67,
-						"w": 20,
-						"h": 20
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "white_vertical_line.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 5,
-						"h": 38
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 5,
-						"h": 38
-					},
-					"frame": {
-						"x": 235,
-						"y": 67,
-						"w": 5,
-						"h": 38
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "ui_background.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 10,
-						"h": 10
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 10,
-						"h": 10
-					},
-					"frame": {
-						"x": 242,
-						"y": 67,
-						"w": 10,
-						"h": 10
+						"x": 1,
+						"y": 213,
+						"w": 200,
+						"h": 2
 					},
 					"anchor": {
 						"x": 0.5,
@@ -224,8 +99,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 1,
-						"y": 213,
+						"x": 213,
+						"y": 43,
 						"w": 64,
 						"h": 64
 					},
@@ -249,33 +124,8 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 67,
-						"y": 213,
-						"w": 64,
-						"h": 64
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "close_button_press.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 68,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 2,
-						"y": 2,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 133,
-						"y": 213,
+						"x": 213,
+						"y": 109,
 						"w": 64,
 						"h": 64
 					},
@@ -299,8 +149,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 199,
-						"y": 213,
+						"x": 213,
+						"y": 175,
 						"w": 49,
 						"h": 48
 					},
@@ -310,24 +160,49 @@
 					}
 				},
 				{
-					"filename": "checkbox_off_normal.png",
+					"filename": "close_button_press.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 248,
-						"h": 48
+						"w": 68,
+						"h": 68
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 49,
-						"h": 48
+						"x": 2,
+						"y": 2,
+						"w": 64,
+						"h": 64
 					},
 					"frame": {
-						"x": 199,
-						"y": 263,
-						"w": 49,
-						"h": 48
+						"x": 279,
+						"y": 43,
+						"w": 64,
+						"h": 64
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "progress_container.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 42,
+						"h": 42
+					},
+					"frame": {
+						"x": 415,
+						"y": 1,
+						"w": 42,
+						"h": 42
 					},
 					"anchor": {
 						"x": 0.5,
@@ -349,8 +224,8 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 1,
-						"y": 279,
+						"x": 279,
+						"y": 109,
 						"w": 60,
 						"h": 60
 					},
@@ -374,8 +249,8 @@
 						"h": 60
 					},
 					"frame": {
-						"x": 63,
-						"y": 279,
+						"x": 345,
+						"y": 43,
 						"w": 60,
 						"h": 60
 					},
@@ -385,24 +260,24 @@
 					}
 				},
 				{
-					"filename": "warning_btn_9slice.png",
+					"filename": "checkbox_off_normal.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 60,
-						"h": 60
+						"w": 248,
+						"h": 48
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 60,
-						"h": 60
+						"w": 49,
+						"h": 48
 					},
 					"frame": {
-						"x": 125,
-						"y": 279,
-						"w": 60,
-						"h": 60
+						"x": 264,
+						"y": 175,
+						"w": 49,
+						"h": 48
 					},
 					"anchor": {
 						"x": 0.5,
@@ -424,8 +299,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 187,
-						"y": 313,
+						"x": 407,
+						"y": 45,
 						"w": 49,
 						"h": 48
 					},
@@ -449,10 +324,35 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 1,
-						"y": 341,
+						"x": 315,
+						"y": 171,
 						"w": 49,
 						"h": 48
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "warning_btn_9slice.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 341,
+						"y": 109,
+						"w": 60,
+						"h": 60
 					},
 					"anchor": {
 						"x": 0.5,
@@ -474,8 +374,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 52,
-						"y": 341,
+						"x": 366,
+						"y": 171,
 						"w": 49,
 						"h": 48
 					},
@@ -499,8 +399,8 @@
 						"h": 48
 					},
 					"frame": {
-						"x": 103,
-						"y": 341,
+						"x": 407,
+						"y": 95,
 						"w": 49,
 						"h": 48
 					},
@@ -510,24 +410,149 @@
 					}
 				},
 				{
-					"filename": "white_line.png",
+					"filename": "health_nineslice.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 200,
-						"h": 2
+						"w": 20,
+						"h": 20
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 200,
-						"h": 2
+						"w": 20,
+						"h": 20
 					},
 					"frame": {
-						"x": 1,
-						"y": 391,
-						"w": 200,
-						"h": 2
+						"x": 403,
+						"y": 145,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "nineslice.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 425,
+						"y": 145,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "nineslice_box.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 425,
+						"y": 145,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "white_vertical_line.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 5,
+						"h": 38
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 5,
+						"h": 38
+					},
+					"frame": {
+						"x": 417,
+						"y": 167,
+						"w": 5,
+						"h": 38
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "white_outline.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 424,
+						"y": 167,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "ui_background.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 10,
+						"h": 10
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 10,
+						"h": 10
+					},
+					"frame": {
+						"x": 447,
+						"y": 145,
+						"w": 10,
+						"h": 10
 					},
 					"anchor": {
 						"x": 0.5,
@@ -540,6 +565,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:742db3728b26093cf44d3958c08c7d20:eff9c07623c3a0c3878fa24b404d1f88:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a0b91233ba5cbced457997778820f42b:871d38ef4008ffcd670c084d54adc8c2:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

@@ -65,7 +65,7 @@ const LORE_DEFS = [
         costScaling: 'static',
         parents: ['cheat'],
         childIds: ['lore_4'],
-        treeX: gridX(-1),
+        treeX: gridX(-0.5),
         treeY: gridY(-1),
         tooltipExtraWidth: 200,
         effect: function () {

@@ -93,7 +93,7 @@ function _showOptionsPopup() {
 
     // --- AUDIO SECTION ---
     const audioHeaderY = H - height / 2 + 75;
-    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 15, t('options', 'audio'), {
+    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 15, t('options', 'audio') + '♫', {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
     }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
     elements.push(audioLabel);
@@ -138,7 +138,7 @@ function _showOptionsPopup() {
 
     // --- VISUAL SECTION ---
     const visualHeaderY = audioHeaderY + 135;
-    const visualLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY - 1, t('options', 'visual'), {
+    const visualLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY - 1, t('options', 'visual') + '⏿', {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
     }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
     elements.push(visualLabel);
@@ -320,7 +320,7 @@ function _showOptionsPopup() {
 
     // --- LANGUAGE SECTION ---
     const languageHeaderY = visualHeaderY + 166;
-    const languageLabel = PhaserScene.add.text(W - width / 2 + 40, languageHeaderY + 19, t('options', 'language'), {
+    const languageLabel = PhaserScene.add.text(W - width / 2 + 40, languageHeaderY + 19, t('options', 'language') + "文/A", {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
     }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
     elements.push(languageLabel);
@@ -335,7 +335,7 @@ function _showOptionsPopup() {
 
     // --- DATA SECTION ---
     const dataHeaderY = languageHeaderY + 130;
-    const dataLabel = PhaserScene.add.text(W - width / 2 + 40, dataHeaderY - 5, t('options', 'data_label'), {
+    const dataLabel = PhaserScene.add.text(W - width / 2 + 40, dataHeaderY - 5, t('options', 'data_label') + ' ⚠', {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
     }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
     elements.push(dataLabel);

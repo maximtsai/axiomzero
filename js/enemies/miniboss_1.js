@@ -58,6 +58,8 @@ class Miniboss1View extends EnemyView {
             this.chargeSprite.setScale(0.2);
             this.chargeSprite.setAlpha(1);
         }
+        this.setEnemyGlow('miniboss_1_glow.png');
+
     }
 
     deactivate() {

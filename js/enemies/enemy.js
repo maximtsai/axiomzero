@@ -147,9 +147,9 @@ class EnemyModel {
 
         // Pushback logic
         if (this.pushback > 0.01) {
-            const decayFactor = 0.2 * (dt / (1 / 60)); 
+            const decayFactor = 0.2 * (dt / (1 / 60));
             const reduction = this.pushback * decayFactor;
-            
+
             this.pushback -= reduction;
 
             // Move backwards along current trajectory
@@ -430,7 +430,7 @@ class EnemyView {
         if (this.img && this.img.scene) {
             this.img.setTintFill(0xffffff);
             if (this.hpImg) this.hpImg.setTintFill(0xffffff);
-            if (this.enemyGlow) this.enemyGlow.setTintFill(0xffffff);
+            // if (this.enemyGlow) this.enemyGlow.setTintFill(0xffffff);
         }
     }
 
@@ -480,6 +480,7 @@ class EnemyView {
         if (this.enemyGlow) {
             this.enemyGlow.setFrame(frame);
             this.enemyGlow.setVisible(true);
+            this.enemyGlow.setBlendMode(Phaser.BlendModes.LIGHTEN);
         }
     }
 }

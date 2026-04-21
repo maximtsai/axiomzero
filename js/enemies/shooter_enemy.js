@@ -51,6 +51,8 @@ class ShooterEnemy extends Enemy {
         this.model.fireCooldown = 0;
         this.model.baseAttackInterval = 2500;
         this.model.state = SHOOTER_STATE.MOVING;
+        this.setEnemyGlow('basic_enemy_glow.png');
+
     }
 
     update(dt) {
