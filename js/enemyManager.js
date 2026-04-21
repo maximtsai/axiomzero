@@ -83,7 +83,6 @@ const enemyManager = (() => {
         messageBus.subscribe('unfreezeEnemies', unfreeze);
         messageBus.subscribe('gamePaused', () => { paused = true; });
         messageBus.subscribe('gameResumed', () => { paused = false; });
-        messageBus.subscribe('waveProgressChanged', _onWaveProgress);
         messageBus.subscribe('towerDied', _onTowerDied);
         messageBus.subscribe('addEnemySpawnDelay', (amount) => {
             if (amount > 0) manualDelay += amount;
@@ -510,6 +509,16 @@ const enemyManager = (() => {
 
         // Use the actual damage applied to health for statistics
         statsTracker.recordDamage(result.actualApplied, source);
+
+        // Track lifetime max damage in one hit
+        if (result.actualApplied > gameState.stats.maxDamageInOneHit) {
+            gameState.stats.maxDamageInOneHit = result.actualApplied;
+        }
+        
+        // Publish event for achievements (only for high damage to reduce event overhead)
+        if (result.actualApplied >= 100) {
+            messageBus.publish('100DamageDealt', result.actualApplied, source);
+        }
 
         let isExecuted = false;
 

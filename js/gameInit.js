@@ -100,6 +100,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     tooltipManager.init();
     scoreManager.init();
     milestoneTracker.init();
+    achievementManager.init();
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
 

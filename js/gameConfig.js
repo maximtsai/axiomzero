@@ -171,6 +171,7 @@ const GAME_STATE_DEFAULTS = {
     revealedNodes: {},     // { nodeId: true } — special events can reveal part of the tree
     levelsDefeated: 0,     // highest boss level defeated
     minibossLevelsDefeated: 0, // highest miniboss level defeated
+    achievements: {},      // { achievementId: true }
 
     // Lifetime Stats
     stats: {
@@ -188,6 +189,7 @@ const GAME_STATE_DEFAULTS = {
         totalDataSpent: 0,
         totalDamageDealt: 0,
         totalExecutions: 0,
+        maxDamageInOneHit: 0,
     },
 
     // Claimed Milestones
