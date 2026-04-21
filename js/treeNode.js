@@ -201,6 +201,10 @@ class Node {
 
     // Handles Duo-Box swapping and recursive ghosting
     refreshState() {
+        const oldState = this.state;
+        const oldLevel = this.level;
+        const oldGhostAlpha = (this.state === NODE_STATE.GHOST) ? this.getGhostAlpha() : 1;
+
         // 1. Determine if this branch is active (for Duo-Boxes)
         if (this.isDuoBox) {
             const activeShard = gameState.activeShards[this.duoBoxTier];
@@ -316,10 +320,15 @@ class Node {
             this._updateVisual();
         }
 
-        // 4. Recursively refresh children so ghost/active state cascades down the tree
-        for (let i = 0; i < this.childIds.length; i++) {
-            const child = upgradeTree.getNode(this.childIds[i]);
-            if (child) child.refreshState();
+        // 4. Recursively refresh children ONLY if something meaningful changed that could affect them.
+        // This optimization prevents O(N^2) redundancy during global refreshes.
+        const meaningfulChange = (this.state !== oldState || this.level !== oldLevel || currentGhostAlpha !== oldGhostAlpha);
+
+        if (meaningfulChange) {
+            for (let i = 0; i < this.childIds.length; i++) {
+                const child = upgradeTree.getNode(this.childIds[i]);
+                if (child) child.refreshState();
+            }
         }
     }
 
