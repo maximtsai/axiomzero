@@ -184,6 +184,10 @@ const GAME_STATE_DEFAULTS = {
         totalNodesPurchased: 0,
         longestWaveMs: 0,
         bossesDefeated: 0,
+        totalIterationsEnded: 0,
+        totalDataSpent: 0,
+        totalDamageDealt: 0,
+        totalExecutions: 0,
     },
 
     // Claimed Milestones

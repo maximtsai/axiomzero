@@ -67,7 +67,7 @@ class Node {
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
         this.labelCategory = def.label || "UPGRADE";
-        
+
         // Asset prefixing based on cost type
         this.prefix = (this.costType === 'insight') ? 'insight_node' : 'node';
 
@@ -239,10 +239,10 @@ class Node {
                 if (parent) {
                     let isHidden = parent.state === NODE_STATE.HIDDEN;
                     if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
-                        isHidden = true; 
+                        isHidden = true;
                     }
                     const canReveal = !isHidden && (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoChild);
-                    
+
                     if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN && canReveal) {
                         console.log(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
                     }
@@ -315,7 +315,7 @@ class Node {
         // (State changes already trigger _updateVisual in setState)
         const currentAfford = this.canAfford();
         const currentGhostAlpha = this.state === NODE_STATE.GHOST ? this.getGhostAlpha() : 1;
-        
+
         if (currentAfford !== this.lastAffordStatus || currentGhostAlpha !== this.lastGhostAlpha) {
             this.lastAffordStatus = currentAfford;
             this.lastGhostAlpha = currentGhostAlpha;
@@ -429,15 +429,15 @@ class Node {
         // System notifications
         messageBus.publish('upgradePurchased', this.id, this.level);
 
-        // Completionist bonus: +10 DATA when maxing out ANY node
+        // Completionist bonus: +20 DATA when maxing out ANY node
         if (this.isMaxed() && gameState.upgrades && gameState.upgrades['completionist']) {
-            resourceManager.addData(10);
+            resourceManager.addData(20);
             if (typeof floatingText !== 'undefined' && typeof tower !== 'undefined') {
                 const pos = tower.getPosition();
                 floatingText.show(
                     pos.x + (Math.random() - 0.5) * 100,
                     pos.y + (Math.random() - 0.5) * 100,
-                    '+10 DATA',
+                    '+20 DATA',
                     {
                         color: '#00ccff', // Matching cyan DATA color
                         fontSize: 24,

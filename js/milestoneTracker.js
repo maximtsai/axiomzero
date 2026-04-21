@@ -41,6 +41,7 @@ const milestoneTracker = (() => {
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('currencyChanged', _onCurrencyChanged);
     }
 
     // ── Event handlers ───────────────────────────────────────────────────
@@ -64,6 +65,12 @@ const milestoneTracker = (() => {
     function _onBossDefeated() {
         gameState.stats.bossesDefeated++;
     }
+    
+    function _onCurrencyChanged(type, current, delta) {
+        if (type === 'data' && delta < 0) {
+            gameState.stats.totalDataSpent += Math.abs(delta);
+        }
+    }
 
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
@@ -72,11 +79,26 @@ const milestoneTracker = (() => {
 
         // Add session stats when an iteration ends (WAVE_COMPLETE or GAME_OVER)
         if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
+            if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
+                gameState.stats.totalIterationsEnded++;
+            }
             gameState.stats.totalDataCollected += resourceManager.getSessionData();
             gameState.stats.totalInsightEarned += resourceManager.getSessionInsight();
             gameState.stats.totalShardsCollected += resourceManager.getSessionShards();
             gameState.stats.totalProcessorsCollected += resourceManager.getSessionProcessors();
             gameState.stats.totalCoinsCollected += resourceManager.getSessionCoins();
+
+            // Aggregate combat performance from statsTracker
+            const sessionStats = statsTracker.getStats();
+            gameState.stats.totalExecutions += (sessionStats.executions || 0);
+
+            let sessionDamage = 0;
+            if (sessionStats.damage) {
+                for (const key in sessionStats.damage) {
+                    sessionDamage += (sessionStats.damage[key] || 0);
+                }
+            }
+            gameState.stats.totalDamageDealt += sessionDamage;
         }
 
         // Save game data when Deploy is clicked (enters COMBAT), 
