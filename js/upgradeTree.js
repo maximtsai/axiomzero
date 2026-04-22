@@ -58,6 +58,10 @@ const upgradeTree = (() => {
     const TREE_X_OFFSET = 8;
     const TREE_CENTER_X = PANEL_W / 2 + TREE_X_OFFSET;  // 408
 
+    // Content-Aware Bounds
+    let contentBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+    const NODE_SIZE_PADDING = 80;
+
     // ── init ─────────────────────────────────────────────────────────────
 
     function init() {
@@ -88,6 +92,7 @@ const upgradeTree = (() => {
 
         _createPanel();
         _createNodes();
+        _calculateContentBounds(); // Measure the tree after nodes are created
         _createDeployButton();
         _createCoinMineButton();
         _createZoomButtons();
@@ -147,9 +152,7 @@ const upgradeTree = (() => {
                 zoomGoal = newScale;
                 draggableGroup.setScale(newScale);
                 draggableGroup.setPosition(nextX, nextY);
-
-                // No bounds clamping on zoom-out to avoid "snapping" or "stuck" feel, 
-                // but let the regular update loop handle positional clamping if needed.
+                _applyConstraints();
             }
         });
     }
@@ -340,18 +343,9 @@ const upgradeTree = (() => {
 
             dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
 
-            const currentX = draggableGroup.x;
-            const currentY = draggableGroup.y;
-
-            // Restrict movement based on global tree drag constants
-            const nextX = Phaser.Math.Clamp(currentX + dx, GAME_CONSTANTS.TREE_DRAG_MIN_X, GAME_CONSTANTS.TREE_DRAG_MAX_X);
-            const nextY = Phaser.Math.Clamp(currentY + dy, GAME_CONSTANTS.TREE_DRAG_MIN_Y, GAME_CONSTANTS.TREE_DRAG_MAX_Y);
-
-            const finalDx = nextX - currentX;
-            const finalDy = nextY - currentY;
-
-            if (finalDx !== 0 || finalDy !== 0) {
-                draggableGroup.moveBy(finalDx, finalDy);
+            if (dx !== 0 || dy !== 0) {
+                draggableGroup.moveBy(dx, dy);
+                _applyConstraints();
             }
 
             lastDragX = x;
@@ -385,6 +379,62 @@ const upgradeTree = (() => {
         titleText.setShadow(0, 0, '#00f5ff', 12, true, true);
 
         treeGroup.add(titleText);
+    }
+
+    /** Measures the total extent of the node tree in local space to drive constraints. */
+    function _calculateContentBounds() {
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        for (const def of NODE_DEFS) {
+            // Nodes are positioned at (treeX + offset) in the group
+            const lx = def.treeX + TREE_X_OFFSET;
+            const ly = def.treeY;
+
+            minX = Math.min(minX, lx - NODE_SIZE_PADDING);
+            maxX = Math.max(maxX, lx + NODE_SIZE_PADDING);
+            minY = Math.min(minY, ly - NODE_SIZE_PADDING);
+            maxY = Math.max(maxY, ly + NODE_SIZE_PADDING);
+        }
+
+        contentBounds = { 
+            minX: minX - 400, // Extra 400px space to the left
+            maxX, 
+            minY: minY - 400, // Extra 400px space to the top
+            maxY 
+        };
+    }
+
+    /** Scale-aware constraint engine. Pans between edges if zoomed in, centers if zoomed out. */
+    function _applyConstraints() {
+        if (!draggableGroup) return;
+
+        const scale = draggableGroup.getScale();
+        const viewportW = PANEL_W;
+        const viewportH = GAME_CONSTANTS.HEIGHT;
+
+        const contentW = (contentBounds.maxX - contentBounds.minX) * scale;
+        const contentH = (contentBounds.maxY - contentBounds.minY) * scale;
+
+        // --- Horizontal Constraints ---
+        if (contentW <= viewportW) {
+            const centerLocal = (contentBounds.minX + contentBounds.maxX) / 2;
+            draggableGroup.x = (viewportW / 2) - (centerLocal * scale);
+        } else {
+            const leftLimit = -(contentBounds.minX * scale);
+            const rightLimit = viewportW - (contentBounds.maxX * scale);
+            draggableGroup.x = Phaser.Math.Clamp(draggableGroup.x, rightLimit, leftLimit);
+        }
+
+        // --- Vertical Constraints ---
+        if (contentH <= viewportH) {
+            const centerLocal = (contentBounds.minY + contentBounds.maxY) / 2;
+            draggableGroup.y = (viewportH / 2) - (centerLocal * scale);
+        } else {
+            const topLimit = -(contentBounds.minY * scale);
+            const bottomLimit = viewportH - (contentBounds.maxY * scale);
+            draggableGroup.y = Phaser.Math.Clamp(draggableGroup.y, bottomLimit, topLimit);
+        }
     }
 
     function _createNodes() {
@@ -1015,7 +1065,8 @@ const upgradeTree = (() => {
                 duration: 250,
                 ease: 'Cubic.easeOut',
                 pivotX: PANEL_W / 2,
-                pivotY: GAME_CONSTANTS.halfHeight
+                pivotY: GAME_CONSTANTS.halfHeight,
+                onUpdate: () => _applyConstraints()
             });
         };
 
@@ -1150,7 +1201,7 @@ const upgradeTree = (() => {
             .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
             .setScrollFactor(0)
             .setDepth(depth);
- 
+
         helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
 
 

@@ -100,6 +100,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                     _x = pivotX - ((pivotX - startX) / startScale) * _scale;
                     _y = pivotY - ((pivotY - startY) / startScale) * _scale;
                     _syncChildren();
+                    if (config.onUpdate) config.onUpdate(tween, target);
                 },
                 onComplete: () => {
                     _scaleTween = null;
