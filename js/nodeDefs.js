@@ -1241,7 +1241,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_05.png',
         description: t('nodes', 'laser_duration.desc'),
         popupText: t('nodes', 'laser_duration.popup'),
-        maxLevel: 5,
+        maxLevel: 3,
         baseCost: 50,
         costType: 'data',
         costScaling: 'static',

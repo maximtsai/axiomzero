@@ -499,7 +499,6 @@ class Boss3 extends Boss {
             }
 
             super.onDeath(true);
-            if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
         }
     }
 

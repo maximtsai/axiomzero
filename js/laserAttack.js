@@ -1,6 +1,6 @@
 // laserAttack.js — Orbiting laser turret weapon (Tier 3 Duo)
 // Activated by the "laser" node.
-// An orbiting turret fires a 1000px beam outward for 4 seconds, then has a 6s cooldown.
+// An orbiting turret fires a 1000px beam outward for 3.5 seconds, then has a 4s cooldown.
 
 class LaserAttackModel {
     constructor() {
@@ -11,7 +11,7 @@ class LaserAttackModel {
         this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
         this.BASE_DAMAGE_PER_TICK = 3;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
-        this.FIRE_DURATION = 3000;       // ms beam is active
+        this.FIRE_DURATION = 3500;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
 
         this.active = false;    // true when combat phase AND node purchased
@@ -48,7 +48,7 @@ class LaserAttackModel {
     }
 
     getFireDuration() {
-        return this.FIRE_DURATION + this.durationLevel * 400;
+        return this.FIRE_DURATION + this.durationLevel * 500;
     }
 
     getTurretX(towerX, offset = 0) {

@@ -586,14 +586,10 @@ const enemyManager = (() => {
             if (enemy.model.type === 'boss3') {
                 const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
                 if (pieces.length > 1) {
-                    enemy.onDeath(false); // Staged death
                     _killEnemy(enemy, true, wasResonance);
                     return;
                 }
             }
-
-            // Standard death
-            enemy.onDeath(true); // Final/Core death
 
             if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
@@ -606,6 +602,10 @@ const enemyManager = (() => {
     }
 
     function _killEnemy(enemy, skipBossEffects = false, wasResonance = false) {
+        // Trigger unit-specific death logic (resources, explosions, sounds)
+        // Shards/Staged deaths pass skipBossEffects=true, so they get onDeath(false)
+        enemy.onDeath(!skipBossEffects);
+
         if (typeof customEmitters !== 'undefined') {
             if (enemy.model.type === 'shell') {
                 const vx = enemy.model.vx || 0;
@@ -669,7 +669,6 @@ const enemyManager = (() => {
             }
         } else if (wasBoss && !skipBossEffects) {
             bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
-            if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
 
             // Brief but intense screenshake for boss death
             if (typeof cameraManager !== 'undefined') {
@@ -695,9 +694,6 @@ const enemyManager = (() => {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
-            // Trigger unit-specific death logic (resources, explosions, sounds)
-            enemy.onDeath();
-
             messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type, wasResonance);
             if (enemy.model.type !== 'test') sessionKills++;
         }
