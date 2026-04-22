@@ -387,12 +387,12 @@ const iterationOverScreen = (() => {
                 ease: 'Quad.easeOut',
                 onUpdate: () => {
                     if (dataNumberText && dataNumberText.active) {
-                        dataNumberText.setText(`◈ ${Math.floor(counter.val).toLocaleString()}`);
+                        dataNumberText.setText(`◈ ${helper.formatNumber(counter.val)}`);
                     }
                 },
                 onComplete: () => {
                     if (dataNumberText && dataNumberText.active) {
-                        dataNumberText.setText(`◈ ${sessionData.toLocaleString()}`);
+                        dataNumberText.setText(`◈ ${helper.formatNumber(sessionData)}`);
                     }
                     _dataCountTween = null;
                     // Fire burst effect at the number's position

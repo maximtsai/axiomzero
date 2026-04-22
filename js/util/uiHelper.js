@@ -257,5 +257,48 @@ Object.assign(helper, {
                 });
             }
         });
+    },
+
+    /**
+     * Formats a number with comma separators or abbreviated suffixes (K, M, B).
+     * @param {number} value - The number to format.
+     * @param {number} [decimals=0] - Max decimal places to show.
+     * @param {boolean} [abbreviate=false] - Whether to use K, M, B suffixes.
+     */
+    formatNumber: function (value, decimals = 0, abbreviate = false) {
+        if (value === undefined || value === null) return '0';
+        const val = Number(value);
+        if (isNaN(val)) return '0';
+
+        if (abbreviate && val >= 1000) {
+            const suffixes = ['', 'K', 'M', 'B', 'T', 'P', 'E'];
+            const suffixNum = Math.floor(Math.log10(val) / 3);
+            const shortValue = val / Math.pow(1000, suffixNum);
+            return shortValue.toFixed(shortValue < 10 ? 1 : 0) + suffixes[suffixNum];
+        }
+
+        if (decimals === 0) {
+            return Math.floor(val).toLocaleString();
+        }
+        return val.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    },
+
+    /**
+     * Formats seconds into a string (e.g., "M:SS" or "H:MM:SS").
+     * @param {number} totalSeconds - Total seconds to format.
+     */
+    formatTime: function (totalSeconds) {
+        const total = Math.max(0, Math.floor(totalSeconds));
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const seconds = total % 60;
+
+        const mStr = minutes.toString().padStart(2, '0');
+        const sStr = seconds.toString().padStart(2, '0');
+
+        if (hours > 0) {
+            return `${hours}:${mStr}:${sStr}`;
+        }
+        return `${mStr}:${sStr}`;
     }
 });

@@ -88,9 +88,7 @@ const scoreManager = (() => {
      * Format seconds into MM:SS format.
      */
     function formatTime(seconds) {
-        const mm = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const ss = Math.floor(seconds % 60).toString().padStart(2, '0');
-        return `${mm}:${ss}`;
+        return helper.formatTime(seconds);
     }
 
     return {

@@ -364,9 +364,7 @@ const gameHUD = (() => {
             const totalSec = Math.floor(enemyManager.getRoundTimeElapsed());
             if (farmingTimerTxt.lastSec !== totalSec) {
                 farmingTimerTxt.lastSec = totalSec;
-                const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
-                const ss = (totalSec % 60).toString().padStart(2, '0');
-                farmingTimerTxt.setText(`${mm}:${ss}`);
+                farmingTimerTxt.setText(helper.formatTime(totalSec));
             }
         }
     }
