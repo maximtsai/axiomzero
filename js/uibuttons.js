@@ -89,18 +89,9 @@ function _showOptionsPopup() {
 
     // --- AUDIO SECTION ---
     const audioHeaderY = H - height / 2 + 75;
-    const audioLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 15, t('options', 'audio') + '♫', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
-    }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(audioLabel);
-    textObjects.push({ obj: audioLabel, size: 23 });
-
-    const audioLine = PhaserScene.add.image(W, audioHeaderY + 24, 'pixels', 'black_pixel.png');
-    audioLine.setDisplaySize(width - 80, 2);
-    audioLine.setAlpha(1);
-    audioLine.setDepth(depth + 3);
-    audioLine.setScrollFactor(0);
-    elements.push(audioLine);
+    const audioHeader = helper.createHeader(W - width / 2 + 40, audioHeaderY + 15, width, t('options', 'audio') + '♫', depth + 3);
+    elements.push(audioHeader.text, audioHeader.line);
+    textObjects.push({ obj: audioHeader.text, size: 23 });
 
     const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 51, t('options', 'music_vol'), {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
@@ -134,95 +125,35 @@ function _showOptionsPopup() {
 
     // --- VISUAL SECTION ---
     const visualHeaderY = audioHeaderY + 135;
-    const visualLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY - 1, t('options', 'visual') + '⏿', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
-    }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(visualLabel);
-    textObjects.push({ obj: visualLabel, size: 23 });
-
-    const visualLine = PhaserScene.add.image(W, visualHeaderY + 8, 'pixels', 'black_pixel.png');
-    visualLine.setDisplaySize(width - 80, 2);
-    visualLine.setAlpha(1);
-    visualLine.setDepth(depth + 3);
-    visualLine.setScrollFactor(0);
-    elements.push(visualLine);
+    const visualHeader = helper.createHeader(W - width / 2 + 40, visualHeaderY - 1, width, t('options', 'visual') + '⏿', depth + 3);
+    elements.push(visualHeader.text, visualHeader.line);
+    textObjects.push({ obj: visualHeader.text, size: 23 });
 
     // Chromatic Aberration Checkbox
-    let isChromaEnabled = gameState.settings.chromaticAberration; // Default to true
-    const chromaCheckbox = new Button({
-        normal: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 165, y: visualHeaderY + 35 },
-        hover: { atlas: 'ui', ref: isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
-        onMouseUp: () => {
-            isChromaEnabled = !isChromaEnabled;
-            gameState.settings.chromaticAberration = isChromaEnabled;
-            saveGame();
-            chromaCheckbox.normal.ref = isChromaEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
-            chromaCheckbox.hover.ref = isChromaEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
-            chromaCheckbox.setState(chromaCheckbox.state);
-        }
+    const chroma = helper.createCheckbox(W - width / 2 + 95, visualHeaderY + 35, t('options', 'chroma'), gameState.settings.chromaticAberration, depth + 3, (val) => {
+        gameState.settings.chromaticAberration = val;
+        saveGame();
     });
-    chromaCheckbox.setDepth(depth + 3);
-    chromaCheckbox.setScrollFactor(0);
-    chromaCheckbox.setScale(1.0);
-    elements.push(chromaCheckbox);
-
-    const chromaLabel = PhaserScene.add.text(W - width / 2 + 95, visualHeaderY + 35, t('options', 'chroma'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
-    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
-    elements.push(chromaLabel);
-    textObjects.push({ obj: chromaLabel, size: 21 });
+    elements.push(chroma.btn, chroma.text);
+    textObjects.push({ obj: chroma.text, size: 21 });
 
     // Damage Numbers Checkbox
-    let isDamageEnabled = gameState.settings.showDamageNumbers;
-    const damageCheckbox = new Button({
-        normal: { atlas: 'ui', ref: isDamageEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W + 120, y: visualHeaderY + 35 },
-        hover: { atlas: 'ui', ref: isDamageEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
-        onMouseUp: () => {
-            isDamageEnabled = !isDamageEnabled;
-            gameState.settings.showDamageNumbers = isDamageEnabled;
-            saveGame();
-            damageCheckbox.normal.ref = isDamageEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
-            damageCheckbox.hover.ref = isDamageEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
-            damageCheckbox.setState(damageCheckbox.state);
-        }
+    const dmgCheck = helper.createCheckbox(W + 50, visualHeaderY + 35, t('options', 'dmg_numbers'), gameState.settings.showDamageNumbers, depth + 3, (val) => {
+        gameState.settings.showDamageNumbers = val;
+        saveGame();
     });
-    damageCheckbox.setDepth(depth + 3);
-    damageCheckbox.setScrollFactor(0);
-    damageCheckbox.setScale(1.0);
-    elements.push(damageCheckbox);
-
-    const damageNumbersLabel = PhaserScene.add.text(W + 50, visualHeaderY + 35, t('options', 'dmg_numbers'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
-    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
-    elements.push(damageNumbersLabel);
-    textObjects.push({ obj: damageNumbersLabel, size: 21 });
+    elements.push(dmgCheck.btn, dmgCheck.text);
+    textObjects.push({ obj: dmgCheck.text, size: 21 });
 
     // BIG font Checkbox (Visual row 2)
-    let isBigFontEnabled = gameState.settings.bigFont;
-    const bigFontCheckbox = new Button({
-        normal: { atlas: 'ui', ref: isBigFontEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: W - width / 2 + 165, y: visualHeaderY + 80 },
-        hover: { atlas: 'ui', ref: isBigFontEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
-        onMouseUp: () => {
-            isBigFontEnabled = !isBigFontEnabled;
-            gameState.settings.bigFont = isBigFontEnabled;
-            saveGame();
-            bigFontCheckbox.normal.ref = isBigFontEnabled ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
-            bigFontCheckbox.hover.ref = isBigFontEnabled ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
-            bigFontCheckbox.setState(bigFontCheckbox.state);
-            updateAllTextSizes();
-            messageBus.publish('settingChanged_bigFont', isBigFontEnabled);
-        }
+    const bigFont = helper.createCheckbox(W - width / 2 + 95, visualHeaderY + 80, t('options', 'big_font'), gameState.settings.bigFont, depth + 3, (val) => {
+        gameState.settings.bigFont = val;
+        saveGame();
+        updateAllTextSizes();
+        messageBus.publish('settingChanged_bigFont', val);
     });
-    bigFontCheckbox.setDepth(depth + 3);
-    bigFontCheckbox.setScrollFactor(0);
-    bigFontCheckbox.setScale(1.0);
-    elements.push(bigFontCheckbox);
-
-    const bigFontLabel = PhaserScene.add.text(W - width / 2 + 95, visualHeaderY + 80, t('options', 'big_font'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
-    }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
-    elements.push(bigFontLabel);
-    textObjects.push({ obj: bigFontLabel, size: 21 });
+    elements.push(bigFont.btn, bigFont.text);
+    textObjects.push({ obj: bigFont.text, size: 21 });
 
     const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 130, t('options', 'particles'), {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
@@ -316,33 +247,15 @@ function _showOptionsPopup() {
 
     // --- LANGUAGE SECTION ---
     const languageHeaderY = visualHeaderY + 166;
-    const languageLabel = PhaserScene.add.text(W - width / 2 + 40, languageHeaderY + 19, t('options', 'language') + "文/A", {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
-    }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(languageLabel);
-    textObjects.push({ obj: languageLabel, size: 23 });
-
-    const languageLine = PhaserScene.add.image(W, languageHeaderY + 28, 'pixels', 'black_pixel.png');
-    languageLine.setDisplaySize(width - 80, 2);
-    languageLine.setAlpha(1);
-    languageLine.setDepth(depth + 3);
-    languageLine.setScrollFactor(0);
-    elements.push(languageLine);
+    const langHeader = helper.createHeader(W - width / 2 + 40, languageHeaderY + 19, width, t('options', 'language') + "文/A", depth + 3);
+    elements.push(langHeader.text, langHeader.line);
+    textObjects.push({ obj: langHeader.text, size: 23 });
 
     // --- DATA SECTION ---
     const dataHeaderY = languageHeaderY + 130;
-    const dataLabel = PhaserScene.add.text(W - width / 2 + 40, dataHeaderY - 5, t('options', 'data_label') + ' ⚠', {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
-    }).setOrigin(0, 0.8).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(dataLabel);
-    textObjects.push({ obj: dataLabel, size: 23 });
-
-    const dataLine = PhaserScene.add.image(W, dataHeaderY + 4, 'pixels', 'black_pixel.png');
-    dataLine.setDisplaySize(width - 80, 2);
-    dataLine.setAlpha(1);
-    dataLine.setDepth(depth + 3);
-    dataLine.setScrollFactor(0);
-    elements.push(dataLine);
+    const dataHeader = helper.createHeader(W - width / 2 + 40, dataHeaderY - 5, width, t('options', 'data_label') + ' ⚠', depth + 3);
+    elements.push(dataHeader.text, dataHeader.line);
+    textObjects.push({ obj: dataHeader.text, size: 23 });
 
     const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'pixels', 'black_pixel.png');
     resetUnderlay.setDisplaySize(width - 477, 31);
@@ -350,104 +263,48 @@ function _showOptionsPopup() {
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
-    const resetBg = PhaserScene.add.nineslice(W + 190, dataHeaderY + 83, 'ui', 'warning_btn_9slice.png', width - 450, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
-    resetBg.setDepth(depth + 3);
-    resetBg.setScrollFactor(0);
-    resetBg.setAlpha(0.5);
-    elements.push(resetBg);
-
-    const resetText = PhaserScene.add.text(W + 190, dataHeaderY + 83, t('options', 'reset_progress'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ff3366',
-    }).setOrigin(0.5, 0.5).setDepth(depth + 3).setScrollFactor(0).setAlpha(0.5);
-    elements.push(resetText);
-    textObjects.push({ obj: resetText, size: 21 });
+    const resetGlow = helper.createGlowButton(W + 190, dataHeaderY + 83, width - 450, 56, t('options', 'reset_progress'), depth + 3, () => {
+        _showResetConfirmPopup();
+    }, true);
+    elements.push(resetGlow.bg, resetGlow.text, resetGlow.btn);
+    textObjects.push({ obj: resetGlow.text, size: 21 });
 
     updateAllTextSizes();
 
     // --- EXPORT BUTTON ---
-    const exportBg = PhaserScene.add.nineslice(W - 240, dataHeaderY + 35, 'ui', 'glow_btn_9slice.png', 240, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
-    exportBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
-    elements.push(exportBg);
-
-    const exportText = PhaserScene.add.text(W - 240, dataHeaderY + 35, t('options', 'export_data'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#ffffff',
-    }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(exportText);
-    textObjects.push({ obj: exportText, size: 18 });
-
-    const exportBtn = new Button({
-        normal: { ref: 'white_pixel', x: W - 240, y: dataHeaderY + 35, alpha: 0.001, scaleX: 120, scaleY: 28 },
-        onHover: () => { exportBg.setAlpha(1); },
-        onHoverOut: () => { exportBg.setAlpha(0.75); },
-        onMouseUp: () => {
-            const str = exportSaveToString();
-            if (str) {
-                navigator.clipboard.writeText(str).then(() => {
-                    // Small visual feedback could go here, for now alert is fine
-                    alert(t('options', 'export_success'));
-                }).catch(() => {
-                    prompt(t('options', 'export_success'), str);
-                });
-            } else {
-                alert(t('options', 'export_fail'));
-            }
+    const exportGlow = helper.createGlowButton(W - 240, dataHeaderY + 35, 240, 56, t('options', 'export_data'), depth + 3, () => {
+        const str = exportSaveToString();
+        if (str) {
+            navigator.clipboard.writeText(str).then(() => {
+                alert(t('options', 'export_success'));
+            }).catch(() => {
+                prompt(t('options', 'export_success'), str);
+            });
+        } else {
+            alert(t('options', 'export_fail'));
         }
     });
-    exportBtn.setDepth(depth + 4).setScrollFactor(0);
-    elements.push(exportBtn);
+    elements.push(exportGlow.bg, exportGlow.text, exportGlow.btn);
+    textObjects.push({ obj: exportGlow.text, size: 18 });
 
     // --- IMPORT BUTTON ---
-    const importBg = PhaserScene.add.nineslice(W - 240, dataHeaderY + 83, 'ui', 'glow_btn_9slice.png', 240, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
-    importBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
-    elements.push(importBg);
-
-    const importText = PhaserScene.add.text(W - 240, dataHeaderY + 83, t('options', 'import_data'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#ffffff',
-    }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
-    elements.push(importText);
-    textObjects.push({ obj: importText, size: 18 });
-
-    const importBtn = new Button({
-        normal: { ref: 'white_pixel', x: W - 240, y: dataHeaderY + 83, alpha: 0.001, scaleX: 120, scaleY: 28 },
-        onHover: () => { importBg.setAlpha(1); },
-        onHoverOut: () => { importBg.setAlpha(0.75); },
-        onMouseUp: () => {
-            const str = prompt(t('options', 'import_prompt'));
-            if (str) {
-                const result = importSaveFromString(str);
-                if (result.success) {
-                    alert(t('options', 'import_success'));
-                    window.location.reload();
-                } else {
-                    const errorMsg = t('options', result.error) || t('options', 'err_generic');
-                    alert(t('options', 'import_fail').replace('{0}', errorMsg));
-                }
+    const importGlow = helper.createGlowButton(W - 240, dataHeaderY + 83, 240, 56, t('options', 'import_data'), depth + 3, () => {
+        const str = prompt(t('options', 'import_prompt'));
+        if (str) {
+            const result = importSaveFromString(str);
+            if (result.success) {
+                alert(t('options', 'import_success'));
+                window.location.reload();
+            } else {
+                const errorMsg = t('options', result.error) || t('options', 'err_generic');
+                alert(t('options', 'import_fail').replace('{0}', errorMsg));
             }
         }
     });
-    importBtn.setDepth(depth + 4).setScrollFactor(0);
-    elements.push(importBtn);
+    elements.push(importGlow.bg, importGlow.text, importGlow.btn);
+    textObjects.push({ obj: importGlow.text, size: 18 });
 
-    const resetBtn = new Button({
-        normal: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.001, scaleX: width * 0.5 - 235, scaleY: 28 },
-        hover: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.001, scaleX: width * 0.5 - 235, scaleY: 28 },
-        press: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.1, scaleX: width * 0.5 - 235, scaleY: 28 },
-        onHover: () => {
-            resetBg.setAlpha(1);
-            resetText.setAlpha(1);
-        },
-        onHoverOut: () => {
-            resetBg.setAlpha(0.5);
-            resetText.setAlpha(0.75);
-        },
-        onMouseUp: () => {
-            _showResetConfirmPopup();
-        }
-    });
-
-    resetBtn.setDepth(depth + 4);
-    resetBtn.setScrollFactor(0);
-    elements.push(resetBtn);
+    // (resetBtn removed as it is now part of resetGlow)
 
     const closeBtn = new Button({
         normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 35, y: H - height / 2 + 36 },
@@ -626,64 +483,18 @@ function _showResetConfirmPopup() {
     elements.push(warningText);
 
     // YES Button
-    const yesBg = PhaserScene.add.nineslice(W - 110, H + 70, 'ui', 'warning_btn_9slice.png', 160, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
-    yesBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.5);
-    elements.push(yesBg);
-
-    const yesText = PhaserScene.add.text(W - 110, H + 70, t('ui', 'yes'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff'
-    }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0).setAlpha(0.5);
-    elements.push(yesText);
-
-    const yesBtn = new Button({
-        normal: { ref: 'white_pixel', x: W - 110, y: H + 70, alpha: 0.001, scaleX: 80, scaleY: 28 },
-        press: { ref: 'white_pixel', alpha: 0.001 },
-        onHover: () => {
-            yesBg.setAlpha(1);
-            yesText.setAlpha(1);
-        },
-        onHoverOut: () => {
-            yesBg.setAlpha(0.5);
-            yesText.setAlpha(0.5);
-        },
-        onMouseUp: () => {
-            clearSave();
-            window.location.reload();
-        }
-    });
-    yesBtn.setDepth(depth + 4);
-    yesBtn.setScrollFactor(0);
-    elements.push(yesBtn);
+    const yesGlow = helper.createGlowButton(W - 110, H + 70, 160, 56, t('ui', 'yes'), depth + 3, () => {
+        clearSave();
+        window.location.reload();
+    }, true);
+    elements.push(yesGlow.bg, yesGlow.text, yesGlow.btn);
 
     // NO Button
-    const noBg = PhaserScene.add.nineslice(W + 110, H + 70, 'ui', 'glow_btn_9slice.png', 160, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
-    noBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
-    elements.push(noBg);
-
-    const noText = PhaserScene.add.text(W + 110, H + 70, t('ui', 'no'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '20px', color: '#ffffff'
-    }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0).setAlpha(0.75);
-    elements.push(noText);
-
-    const noBtn = new Button({
-        normal: { ref: 'white_pixel', x: W + 110, y: H + 70, alpha: 0.001, scaleX: 80, scaleY: 28 },
-        press: { ref: 'white_pixel', alpha: 0.001 },
-        onHover: () => {
-            noBg.setAlpha(1);
-            noText.setAlpha(1);
-        },
-        onHoverOut: () => {
-            noBg.setAlpha(0.75);
-            noText.setAlpha(0.75);
-        },
-        onMouseUp: () => {
-            helper.hideGlobalClickBlocker();
-            elements.forEach(el => { if (el && el.destroy) el.destroy(); });
-        }
+    const noGlow = helper.createGlowButton(W + 110, H + 70, 160, 56, t('ui', 'no'), depth + 3, () => {
+        helper.hideGlobalClickBlocker();
+        elements.forEach(el => { if (el && el.destroy) el.destroy(); });
     });
-    noBtn.setDepth(depth + 4);
-    noBtn.setScrollFactor(0);
-    elements.push(noBtn);
+    elements.push(noGlow.bg, noGlow.text, noGlow.btn);
 
     const closeBtn = new Button({
         normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 36, y: H - height / 2 + 36 },

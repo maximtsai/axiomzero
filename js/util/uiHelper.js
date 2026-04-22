@@ -300,5 +300,70 @@ Object.assign(helper, {
             return `${hours}:${mStr}:${sStr}`;
         }
         return `${mStr}:${sStr}`;
+    },
+
+    /**
+     * Creates a header label and a horizontal line below it.
+     */
+    createHeader: function (x, y, width, label, depth) {
+        const text = PhaserScene.add.text(x, y, label, {
+            fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
+        }).setOrigin(0, 0.8).setDepth(depth).setScrollFactor(0);
+
+        const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'pixels', 'black_pixel.png');
+        line.setDisplaySize(width - 80, 2);
+        line.setDepth(depth);
+        line.setScrollFactor(0);
+
+        return { text, line };
+    },
+
+    /**
+     * Creates a labeled checkbox with toggle logic.
+     */
+    createCheckbox: function (x, y, label, initialState, depth, onToggle) {
+        let state = initialState;
+        const btn = new Button({
+            normal: { atlas: 'ui', ref: state ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: x + 70, y: y },
+            hover: { atlas: 'ui', ref: state ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
+            onMouseUp: () => {
+                state = !state;
+                onToggle(state);
+                btn.normal.ref = state ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png';
+                btn.hover.ref = state ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png';
+                btn.setState(btn.state);
+            }
+        });
+        btn.setDepth(depth).setScrollFactor(0);
+
+        const text = PhaserScene.add.text(x, y, label, {
+            fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
+        }).setOrigin(0, 0.5).setDepth(depth).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
+
+        return { btn, text, getState: () => state };
+    },
+
+    /**
+     * Creates a styled button with a nine-slice background and hover effects.
+     */
+    createGlowButton: function (x, y, width, height, label, depth, onClick, isWarning = false) {
+        const ref = isWarning ? 'warning_btn_9slice.png' : 'glow_btn_9slice.png';
+        const textColor = isWarning ? '#ff3366' : '#ffffff';
+        const bg = PhaserScene.add.nineslice(x, y, 'ui', ref, width, height, 20, 20, 20, 20);
+        bg.setDepth(depth).setScrollFactor(0).setAlpha(0.75);
+
+        const text = PhaserScene.add.text(x, y, label, {
+            fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: textColor,
+        }).setOrigin(0.5).setDepth(depth).setScrollFactor(0);
+
+        const btn = new Button({
+            normal: { ref: 'white_pixel', x: x, y: y, alpha: 0.001, scaleX: width / 2, scaleY: height / 2 },
+            onHover: () => { bg.setAlpha(1); },
+            onHoverOut: () => { bg.setAlpha(0.75); },
+            onMouseUp: onClick
+        });
+        btn.setDepth(depth + 1).setScrollFactor(0);
+
+        return { bg, text, btn };
     }
 });
