@@ -26,6 +26,7 @@ const upgradeDispatcher = (() => {
 
         pulseAttack.setIsolationLevel(getLevel('manual_pulse_child_1_1'));
         pulseAttack.setSaturationLevel(getLevel('area_saturation'));
+        if (pulseAttack.setInstabilityLevel) pulseAttack.setInstabilityLevel(getLevel('instability_mark'));
         recalcResonance();
     }
 
@@ -34,6 +35,7 @@ const upgradeDispatcher = (() => {
         if (typeof pulseAttack !== 'undefined') {
             if (pulseAttack.setResonanceLevel) pulseAttack.setResonanceLevel(getLevel('resonance'));
             if (pulseAttack.setCrescendoLevel) pulseAttack.setCrescendoLevel(getLevel('crescendo'));
+            if (pulseAttack.setAmplitudeLevel) pulseAttack.setAmplitudeLevel(getLevel('amplitude'));
         }
     }
 

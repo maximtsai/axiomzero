@@ -34,6 +34,8 @@ class PulseAttackModel {
         this.bombUses = 0;
         this.resonanceLevel = 0;
         this.crescendoLevel = 0;
+        this.amplitudeLevel = 0;
+        this.instabilityLevel = 0;
         this.currentAttackCount = 0;
     }
 
@@ -1229,12 +1231,18 @@ const pulseAttack = (() => {
 
             // RESONANCE bonus — applies to base damage AND all bonuses (Isolation, Saturation, Repeat Exploit)
             if (isResonanceHit) {
-                damageToApply *= 2;
+                const multiplier = model.amplitudeLevel > 0 ? 3 : 2;
+                damageToApply *= multiplier;
                 enemy.model.wasResonanceHit = true;
             }
 
             enemyManager.damageEnemy(enemy, damageToApply, 'cursor');
             enemy.model.hitByPulse = true;
+
+            // Apply Instability Mark
+            if (model.instabilityLevel > 0) {
+                enemy.model.hasInstabilityMark = true;
+            }
         }
 
         if (isResonanceHit) {
@@ -1255,13 +1263,16 @@ const pulseAttack = (() => {
                 view.playAftershockAnimation(cx, cy, currentSize);
                 view.playRecoil();
 
-                const aftershockDamage = 4 + 2 * model.aftershockLevel;
+                const aftershockDamage = 4 * model.aftershockLevel;
                 const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
                 const damageX = _getDamageCoordX(cx);
 
                 const aftershockHits = enemyManager.getEnemiesInSquareRange(damageX, cy, aftershockSizeRadius, _hitBuffer);
                 for (let i = 0; i < aftershockHits.length; i++) {
                     enemyManager.damageEnemy(aftershockHits[i], aftershockDamage, 'cursor');
+                    if (model.instabilityLevel > 0) {
+                        aftershockHits[i].model.hasInstabilityMark = true;
+                    }
                 }
             });
         }
@@ -1334,6 +1345,14 @@ const pulseAttack = (() => {
 
     function setCrescendoLevel(level) {
         model.crescendoLevel = level;
+    }
+
+    function setAmplitudeLevel(level) {
+        model.amplitudeLevel = level;
+    }
+
+    function setInstabilityLevel(level) {
+        model.instabilityLevel = level;
     }
 
     function getBombFinalSize() {
@@ -1477,5 +1496,5 @@ const pulseAttack = (() => {
         messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, setAmplitudeLevel, setInstabilityLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
 })();

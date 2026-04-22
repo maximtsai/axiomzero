@@ -64,6 +64,7 @@ class EnemyModel {
         this.laserDmgBonus = 0;
         this.pushback = 0;
         this.pushbackScale = 1.0;
+        this.hasInstabilityMark = false;
     }
 
     activate(x, y, config = {}) {
@@ -118,6 +119,7 @@ class EnemyModel {
         this.laserDmgBonus = 0;
         this.wasIsolatedHit = false;
         this.wasResonanceHit = false;
+        this.hasInstabilityMark = false;
         this.pushback = 0;
     }
 
@@ -129,6 +131,7 @@ class EnemyModel {
         this.burnDamage = 0;
         this.burnTimer = 0;
         this.laserDmgBonus = 0;
+        this.hasInstabilityMark = false;
     }
 
     aimAt(tx, ty) {

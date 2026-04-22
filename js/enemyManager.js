@@ -505,7 +505,17 @@ const enemyManager = (() => {
     function damageEnemy(enemy, amount, source = 'other') {
         if (!enemy || !enemy.model.alive) return;
 
-        const result = enemy.takeDamage(amount);
+        let finalDamage = amount;
+        let isInstabilityProc = false;
+
+        // INSTABILITY logic: +10 damage from non-cursor sources if marked
+        if (enemy.model.hasInstabilityMark && source !== 'cursor') {
+            finalDamage += 10;
+            enemy.model.hasInstabilityMark = false;
+            isInstabilityProc = true;
+        }
+
+        const result = enemy.takeDamage(finalDamage);
         let died = result.died;
 
         // Use the actual damage applied to health for statistics
@@ -534,12 +544,12 @@ const enemyManager = (() => {
         }
 
         // Use the final calculated damage from the enemy class (handles rounding/protector reduction)
-        const finalAmount = Math.floor(enemy.model.lastDamageAmount !== undefined ? enemy.model.lastDamageAmount : amount);
+        const finalAmount = Math.floor(enemy.model.lastDamageAmount !== undefined ? enemy.model.lastDamageAmount : finalDamage);
         const isProtected = enemy.model.lastDamageWasProtected || false;
 
-        // Color is HOSTILE (pink) normally. Purple for execution.
+        // Color is HOSTILE (pink) normally. Purple for execution and instability.
         let textColor = isProtected ? '#d4c6c9' : helper.colorToHexString(GAME_CONSTANTS.COLOR_HOSTILE);
-        if (isExecuted) textColor = '#bf24ff';
+        if (isExecuted || isInstabilityProc) textColor = '#bf24ff';
 
         // Unconditionally capture and reset visual override flags so they don't bleed
         const wasIsolated = enemy.model.wasIsolatedHit;

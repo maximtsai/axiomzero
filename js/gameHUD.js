@@ -370,12 +370,7 @@ const gameHUD = (() => {
     }
 
     function _getResourceVal(id) {
-        if (id === 'data') return resourceManager.getData();
-        if (id === 'insight') return resourceManager.getInsight();
-        if (id === 'shard') return resourceManager.getShards();
-        if (id === 'processor') return resourceManager.getProcessors();
-        if (id === 'coin') return resourceManager.getCoins();
-        return 0;
+        return helper.getResource(id);
     }
 
     function _onWaveProgressChanged(progress) {

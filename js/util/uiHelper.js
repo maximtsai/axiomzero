@@ -365,5 +365,34 @@ Object.assign(helper, {
         btn.setDepth(depth + 1).setScrollFactor(0);
 
         return { bg, text, btn };
+    },
+
+    /**
+     * Retrieves the current value of a resource by its ID.
+     */
+    getResource: function (id) {
+        if (typeof resourceManager === 'undefined') return 0;
+        switch (id) {
+            case 'data': return resourceManager.getData();
+            case 'insight': return resourceManager.getInsight();
+            case 'shard': return resourceManager.getShards();
+            case 'processor': return resourceManager.getProcessors();
+            case 'coin': return resourceManager.getCoins();
+            default: return 0;
+        }
+    },
+
+    /**
+     * Returns the symbolic icon for a resource.
+     */
+    getResourceIcon: function (id) {
+        switch (id) {
+            case 'data': return '◈';
+            case 'insight': return '◐';
+            case 'shard': return '◆';
+            case 'processor': return '■';
+            case 'coin': return 'ⓒ';
+            default: return '';
+        }
     }
 });

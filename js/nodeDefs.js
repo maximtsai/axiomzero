@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'regen', 'peak_traffic', 'backup_server', 'bomb_2', 'lore_3'],
+        childIds: ['prismatic_array', 'regen', 'peak_traffic', 'backup_server', 'bomb_2', 'lore_3', 'zero_day_exploit'],
         treeX: gridX(0),
         treeY: gridY(-1),
         effect: function () {
@@ -762,9 +762,9 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['bomb'],
-        childIds: ['sustaining_siphon', 'crescendo'],
+        childIds: ['sustaining_siphon', 'crescendo', 'amplitude'],
         treeX: gridX(4),
-        treeY: gridY(0),
+        treeY: gridY(1),
         effect: function () {
             upgradeDispatcher.recalcResonance();
         },
@@ -783,8 +783,28 @@ const NODE_DEFS = [
         parents: ['resonance'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: gridX(5),
-        treeY: gridY(-1),
+        treeX: gridX(4.5),
+        treeY: gridY(2),
+        effect: function () {
+            upgradeDispatcher.recalcResonance();
+        },
+    },
+    {
+        id: 'amplitude',
+        name: t('nodes', 'amplitude.name'),
+        icon: 'Skillicon14_02.png',
+        description: t('nodes', 'amplitude.desc'),
+        popupText: t('nodes', 'amplitude.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 150,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['resonance'],
+        requiresMaxParent: true,
+        childIds: [],
+        treeX: gridX(3.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcResonance();
         },
@@ -804,7 +824,7 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: [],
         treeX: gridX(5),
-        treeY: gridY(0),
+        treeY: gridY(1.0),
         effect: function () { },
     },
     {
@@ -1001,30 +1021,11 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['coverage'],
-        childIds: ['junk_barrier'],
+        childIds: [],
         treeX: gridX(2.5),
         treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcPacketSniffing();
-        },
-    },
-    {
-        id: 'junk_barrier',
-        name: t('nodes', 'junk_barrier.name'),
-        icon: 'Skillicon14_06.png',
-        description: t('nodes', 'junk_barrier.desc'),
-        maxLevel: 5,
-        baseCost: 10,
-        label: 'GATE',
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['packet_sniffing'],
-        childIds: ['forgotten_backdoor'],
-        treeX: gridX(3.5),
-        treeY: gridY(2.5),
-        tooltipExtraWidth: 60,
-        effect: function () {
-            // No longer refunds anything
         },
     },
     {
@@ -1038,8 +1039,8 @@ const NODE_DEFS = [
         costType: 'data',
         requiresMaxParent: true,
         costScaling: 'static',
-        parents: ['junk_barrier'],
-        childIds: ['backdoor_2', 'zero_day_exploit'],
+        parents: [],
+        childIds: ['backdoor_2'],
         treeX: gridX(4),
         treeY: gridY(3.5),
         effect: function () { },
@@ -1457,10 +1458,10 @@ const NODE_DEFS = [
         label: "HACKING",
         costType: 'data',
         costScaling: 'static',
-        parents: ['forgotten_backdoor'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(3),
-        treeY: gridY(3.5),
+        treeX: gridX(-0.5),
+        treeY: gridY(-2.0),
         effect: function () { },
     },
     {
@@ -1468,7 +1469,7 @@ const NODE_DEFS = [
         isPlaceholder: true,
         parents: ['repeat_exploit'],
         monitorsDuoTier: 2,
-        childIds: ['manual_protocol', 'broadcast_protocol'],
+        childIds: ['manual_protocol', 'broadcast_protocol', 'instability_mark'],
         treeX: gridX(2.5),
         treeY: gridY(6.0),
         effect: function () { },
@@ -1492,6 +1493,25 @@ const NODE_DEFS = [
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(500);
             }
+        },
+    },
+    {
+        id: 'instability_mark',
+        name: t('nodes', 'instability_mark.name'),
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'instability_mark.desc'),
+        popupText: t('nodes', 'instability_mark.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 150,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['placeholder_duo_2'],
+        childIds: [],
+        treeX: gridX(2.5),
+        treeY: gridY(7.5),
+        effect: function () {
+            upgradeDispatcher.recalcPulseDamage();
         },
     },
     {
@@ -1629,7 +1649,7 @@ const NODE_DEFS = [
         description: t('nodes', 'aftershock.desc'),
         popupText: t('nodes', 'aftershock.popup'),
         popupColor: COLORS.DAMAGE,
-        maxLevel: 3,
+        maxLevel: 2,
         baseCost: 40,
         costType: 'data',
         costScaling: 'linear',
