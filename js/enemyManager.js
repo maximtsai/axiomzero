@@ -79,6 +79,7 @@ const enemyManager = (() => {
         spatialGridUtils.init();
         _buildPools();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('waveProgressChanged', _onWaveProgress);
         messageBus.subscribe('freezeEnemies', freeze);
         messageBus.subscribe('unfreezeEnemies', unfreeze);
         messageBus.subscribe('gamePaused', () => { paused = true; });

@@ -4,6 +4,7 @@
 
 const transitionManager = (() => {
     let transitioning = false;
+    let isWiping = false;
     let blocker = null;
     let _failsafeTimer = null;
     let _revealTimer = null;
@@ -20,21 +21,8 @@ const transitionManager = (() => {
         if (transitioning) return;
         transitioning = true;
 
-        // Block clicks during transition
-        blocker = new Button({
-            normal: {
-                ref: 'white_pixel',
-                x: GAME_CONSTANTS.halfWidth,
-                y: GAME_CONSTANTS.halfHeight,
-                scaleX: GAME_CONSTANTS.WIDTH,
-                scaleY: GAME_CONSTANTS.HEIGHT,
-                alpha: 0.001,
-                tint: 0x000000,
-            },
-            onMouseUp: () => { }
-        });
-        blocker.setDepth(200000);
-        blocker.setScrollFactor(0);
+        // Block clicks during transition using the global helper
+        helper.createGlobalClickBlocker(false);
 
         const duration = GAME_CONSTANTS.TRANSITION_DURATION;
 
@@ -143,10 +131,7 @@ const transitionManager = (() => {
             _revealTimer = null;
         }
         transitioning = false;
-        if (blocker) {
-            blocker.destroy();
-            blocker = null;
-        }
+        helper.hideGlobalClickBlocker();
         messageBus.publish('transitionComplete');
     }
 

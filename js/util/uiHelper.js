@@ -36,7 +36,8 @@ Object.assign(helper, {
                     y: GAME_CONSTANTS.halfHeight,
                     alpha: 0.001,
                     scaleX: 1000,
-                    scaleY: 1000
+                    scaleY: 1000,
+                    depth: 999999 // Ensure it starts at a very high depth
                 },
                 onMouseUp: function () { }
             });
@@ -44,6 +45,7 @@ Object.assign(helper, {
         } else {
             globalObjects.clickBlocker.setState(NORMAL);
             globalObjects.clickBlocker.setOnMouseUpFunc(function () { });
+            globalObjects.clickBlocker.setDepth(999999);
             buttonManager.bringButtonToTop(globalObjects.clickBlocker);
         }
         if (showPointer) {
@@ -52,13 +54,18 @@ Object.assign(helper, {
         }
         return globalObjects.clickBlocker;
     },
-
+ 
     /** Disables the global click blocker and restores the default cursor. */
     hideGlobalClickBlocker: function () {
         if (!globalObjects.clickBlocker) { return; }
         globalObjects.clickBlocker.setState(DISABLE);
         const canvas = PhaserScene.sys.canvas;
         if (canvas) { canvas.style.cursor = 'default'; }
+    },
+ 
+    /** Returns true if the global click blocker is currently active (blocking). */
+    isGlobalBlockerActive: function () {
+        return globalObjects.clickBlocker && globalObjects.clickBlocker.state !== DISABLE;
     },
 
     restartGame: function () {
@@ -193,5 +200,62 @@ Object.assign(helper, {
         });
 
         return indicator;
+    },
+ 
+    _isWiping: false,
+ 
+    /**
+     * Perform a full-screen black wipe transition with input blocking and error safety.
+     * @param {Function} callback - Function to execute when the screen is fully obscured.
+     */
+    screenWipe: function (callback) {
+        if (this._isWiping) return;
+        this._isWiping = true;
+ 
+        const W = GAME_CONSTANTS.WIDTH;
+        const H = GAME_CONSTANTS.HEIGHT;
+        const halfW = GAME_CONSTANTS.halfWidth;
+        const halfH = GAME_CONSTANTS.halfHeight;
+ 
+        // Use existing global click blocker to eat all inputs during the wipe
+        const blocker = this.createGlobalClickBlocker(false);
+        blocker.setDepth(999999); // Just below the visual wipe
+ 
+        // Create the visual black pixel (2x2 base size)
+        const wipe = PhaserScene.add.image(-halfW, halfH, 'pixels', 'black_pixel.png');
+        wipe.setDisplaySize(W, H);
+        wipe.setDepth(1000000); // Highest possible depth layer
+        wipe.setScrollFactor(0);
+        wipe.setOrigin(0.5);
+ 
+        // Phase 1: Slide in from left to center
+        PhaserScene.tweens.add({
+            targets: wipe,
+            x: halfW,
+            duration: 450,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                // Screen is now fully black. Execute the provided logic safely.
+                try {
+                    if (typeof callback === 'function') callback();
+                } catch (e) {
+                    console.error('[uiHelper] screenWipe callback failed:', e);
+                }
+ 
+                // Phase 2: Slide out from center to right
+                PhaserScene.tweens.add({
+                    targets: wipe,
+                    x: W + halfW,
+                    duration: 450,
+                    ease: 'Cubic.easeOut',
+                    delay: 50,
+                    onComplete: () => {
+                        wipe.destroy();
+                        this.hideGlobalClickBlocker();
+                        this._isWiping = false;
+                    }
+                });
+            }
+        });
     }
 });

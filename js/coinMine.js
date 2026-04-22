@@ -21,11 +21,7 @@ const coinMine = (() => {
         bgOverlay.setScrollFactor(0);
         bgOverlay.setInteractive();
 
-        blocker = new Button({
-            normal: { ref: 'white_pixel', x: cx, y: cy, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT }
-        });
-        blocker.setDepth(depth + 1);
-        blocker.setScrollFactor(0);
+
 
         popupBg = PhaserScene.add.nineslice(cx, cy, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
         popupBg.setDepth(depth + 2);
@@ -53,8 +49,7 @@ const coinMine = (() => {
         visible = true;
 
         bgOverlay.setVisible(true);
-        blocker.setVisible(true);
-        blocker.setState(NORMAL);
+        helper.createGlobalClickBlocker(false).setDepth(depth + 1);
         popupBg.setVisible(true);
         titleText.setVisible(true);
         closeBtn.setVisible(true);
@@ -70,10 +65,7 @@ const coinMine = (() => {
         if (popupBg) popupBg.setVisible(false);
         if (titleText) titleText.setVisible(false);
         if (bgOverlay) bgOverlay.setVisible(false);
-        if (blocker) {
-            blocker.setVisible(false);
-            blocker.setState(DISABLE);
-        }
+        helper.hideGlobalClickBlocker();
         if (closeBtn) {
             closeBtn.setVisible(false);
             closeBtn.setState(DISABLE);

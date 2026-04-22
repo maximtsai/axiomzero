@@ -204,14 +204,14 @@ const gameHUD = (() => {
             onHover: () => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
-                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel("CREATE\nTEST ENEMIES");
+                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(t('ui', 'create_test_enemies'));
             },
             onHoverOut: () => {
                 if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(null);
             }
         });
         testDefensesBtn.setScale(0.675);
-        testDefensesBtn.addText("TEST WEAPONS", {
+        testDefensesBtn.addText(t('ui', 'test_weapons'), {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,

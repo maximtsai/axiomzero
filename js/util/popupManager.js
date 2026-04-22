@@ -49,20 +49,8 @@ function _createDarkOverlay(opts) {
  * Returns the Button.
  */
 function _createFullscreenBlocker(depth) {
-    const blocker = new Button({
-        normal: {
-            ref: 'white_pixel',
-            x: GAME_CONSTANTS.halfWidth,
-            y: GAME_CONSTANTS.halfHeight,
-            scaleX: GAME_CONSTANTS.WIDTH,
-            scaleY: GAME_CONSTANTS.HEIGHT,
-            alpha: 0.001,
-            tint: 0x000000,
-        },
-        onMouseUp: () => { }
-    });
+    const blocker = helper.createGlobalClickBlocker(false);
     blocker.setDepth(depth);
-    blocker.setScrollFactor(0);
     return blocker;
 }
 
@@ -119,7 +107,7 @@ function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], 
         popupBG.destroy();
         titleObj.destroy();
         bodyObj.destroy();
-        blocker.destroy();
+        helper.hideGlobalClickBlocker();
         btnObjs.forEach(b => b.destroy());
     }
 
@@ -216,7 +204,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
     const dur = superFast ? 0.2 : 50;
 
     const darkBG = _createDarkOverlay({ ref: 'black_pixel', scaleX: 500, depth: _POPUP.OVERLAY_DEPTH, targetAlpha: 0.75, duration: dur });
-    const dieClickBlocker = _createFullscreenBlocker(_POPUP.OVERLAY_DEPTH);
+    helper.createGlobalClickBlocker(false).setDepth(_POPUP.OVERLAY_DEPTH);
 
     const popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 50, 'ui', 'paper_half.png')
         .setDepth(_POPUP.DEPTH).setScale(0.88, 0.73);
@@ -246,7 +234,8 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
         onHover: () => { if (canvas) canvas.style.cursor = 'pointer'; },
         onHoverOut: () => { if (canvas) canvas.style.cursor = 'default'; },
         onMouseUp: () => {
-            _destroyAll([closeBtn, noBtn, yesBtn, darkBG, dieClickBlocker, newText, descText, popupBG]);
+            helper.hideGlobalClickBlocker();
+            _destroyAll([closeBtn, noBtn, yesBtn, darkBG, newText, descText, popupBG]);
             onYes();
         }
     });
@@ -264,14 +253,15 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
         onHover: () => { if (canvas) canvas.style.cursor = 'pointer'; },
         onHoverOut: () => { if (canvas) canvas.style.cursor = 'default'; },
         onMouseUp: () => {
-            _destroyAll([closeBtn, noBtn, yesBtn, darkBG, dieClickBlocker, newText, descText, popupBG]);
+            helper.hideGlobalClickBlocker();
+            _destroyAll([closeBtn, noBtn, yesBtn, darkBG, newText, descText, popupBG]);
         }
     });
     closeBtn.setOrigin(0.5, 0.5);
     closeBtn.setDepth(_POPUP.DEPTH);
     closeBtn.setScrollFactor(0);
 
-    const itemsToDestroy = [closeBtn, null, yesBtn, darkBG, dieClickBlocker, newText, descText, popupBG];
+    const itemsToDestroy = [closeBtn, null, yesBtn, darkBG, newText, descText, popupBG];
 
     noBtn = new Button({
         normal: { ref: 'menu_btn2_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.halfWidth - 160, y: popupBG.y + 69 },
@@ -281,6 +271,7 @@ function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', on
         onHover: () => { if (canvas) canvas.style.cursor = 'pointer'; },
         onHoverOut: () => { if (canvas) canvas.style.cursor = 'default'; },
         onMouseUp: () => {
+            helper.hideGlobalClickBlocker();
             itemsToDestroy[1] = noBtn;
             _destroyAll(itemsToDestroy);
         }

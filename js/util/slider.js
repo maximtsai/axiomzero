@@ -43,7 +43,16 @@ class Slider {
         }
 
         this.hitArea = new Button({
-            normal: { ref: 'black_pixel.png', atlas: 'pixels', x: x, y: y, alpha: 0.001, scaleX: width * 0.6, scaleY: height * 0.5 },
+            normal: {
+                ref: 'black_pixel.png',
+                atlas: 'pixels',
+                x: x,
+                y: y,
+                alpha: 0.001,
+                scaleX: width * 0.6,
+                scaleY: height * 0.5,
+                depth: depth // Fix: Assign depth so buttonManager sees it at the correct layer
+            },
             onMouseDown: (mx, my) => {
                 this._startDrag(mx);
                 this._updateKnobTexture('press');

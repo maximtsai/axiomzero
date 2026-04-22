@@ -322,6 +322,7 @@ const upgradeTree = (() => {
             if (hoveredBtn && hoveredBtn.getDepth() > 10000) return;
 
             if (levelSelectOverlay && levelSelectOverlay.visible) return;
+            if (helper.isGlobalBlockerActive()) return;
 
             isDraggingTree = true;
             dragDistanceTotal = 0;
@@ -1144,18 +1145,13 @@ const upgradeTree = (() => {
         selectedLevel = maxLevel;
 
         // Black back screen — Click blocker
-        levelSelectOverlay = new Button({
-            normal: {
-                ref: 'black_pixel',
-                x: cx,
-                y: cy,
-                alpha: 0.55,
-            },
-            onMouseUp: () => { /* No-op click blocker */ }
-        });
-        levelSelectOverlay.setScale(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        levelSelectOverlay.setScrollFactor(0);
-        levelSelectOverlay.setDepth(depth);
+        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'black_pixel')
+            .setAlpha(0.55)
+            .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
+            .setScrollFactor(0)
+            .setDepth(depth);
+ 
+        helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
 
 
         levelSelectContainer = PhaserScene.add.container(cx, cy).setDepth(depth + 1);
@@ -1317,6 +1313,7 @@ const upgradeTree = (() => {
         if (levelSelectOverlay) {
             levelSelectOverlay.destroy();
             levelSelectOverlay = null;
+            helper.hideGlobalClickBlocker();
         }
         if (levelSelectContainer) {
             levelSelectContainer.destroy();

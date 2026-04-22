@@ -73,12 +73,8 @@ function _showOptionsPopup() {
     PhaserScene.tweens.add({ targets: darkBG, alpha: 0.75, duration: 60 });
     elements.push(darkBG);
 
-    const blocker = new Button({
-        normal: { ref: 'white_pixel', x: W, y: H, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT }
-    });
-    blocker.setDepth(depth + 1);
-    blocker.setScrollFactor(0);
-    elements.push(blocker);
+    // Use the global helper to block background clicks/dragging
+    helper.createGlobalClickBlocker(false);
 
     const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
     popupBG.setDepth(depth + 2);
@@ -423,7 +419,8 @@ function _showOptionsPopup() {
                     alert(t('options', 'import_success'));
                     window.location.reload();
                 } else {
-                    alert(t('options', 'import_fail').replace('{0}', result.error));
+                    const errorMsg = t('options', result.error) || t('options', 'err_generic');
+                    alert(t('options', 'import_fail').replace('{0}', errorMsg));
                 }
             }
         }
@@ -464,6 +461,7 @@ function _showOptionsPopup() {
 
     function closePopup() {
         messageBus.publish('gameResumed');
+        helper.hideGlobalClickBlocker();
         elements.forEach(el => {
             if (el && el.destroy) el.destroy();
         });
@@ -614,12 +612,8 @@ function _showResetConfirmPopup() {
     PhaserScene.tweens.add({ targets: darkBG, alpha: 0.85, duration: 80 });
     elements.push(darkBG);
 
-    const blocker = new Button({
-        normal: { ref: 'white_pixel', x: W, y: H, alpha: 0.001, scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT }
-    });
-    blocker.setDepth(depth + 1);
-    blocker.setScrollFactor(0);
-    elements.push(blocker);
+    // Use the global helper to block background clicks/dragging
+    helper.createGlobalClickBlocker(false).setDepth(depth + 1);
 
     const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
@@ -683,6 +677,7 @@ function _showResetConfirmPopup() {
             noText.setAlpha(0.75);
         },
         onMouseUp: () => {
+            helper.hideGlobalClickBlocker();
             elements.forEach(el => { if (el && el.destroy) el.destroy(); });
         }
     });
@@ -695,6 +690,7 @@ function _showResetConfirmPopup() {
         hover: { ref: 'close_button_hover.png', atlas: 'ui' },
         press: { ref: 'close_button_press.png', atlas: 'ui' },
         onMouseUp: () => {
+            helper.hideGlobalClickBlocker();
             elements.forEach(el => { if (el && el.destroy) el.destroy(); });
         }
     });

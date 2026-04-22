@@ -169,7 +169,11 @@ function _calculateChecksum(str) {
 /** Export current game state to a compressed, scrambled string. */
 function exportSaveToString() {
     try {
-        const payload = JSON.stringify({ version: SAVE_VERSION, data: gameState });
+        // Create a copy of state and remove local settings before exporting
+        const exportData = JSON.parse(JSON.stringify(gameState));
+        delete exportData.settings;
+
+        const payload = JSON.stringify({ version: SAVE_VERSION, data: exportData });
         const checksum = _calculateChecksum(payload);
         const combined = checksum + '|' + payload;
         
@@ -185,27 +189,33 @@ function exportSaveToString() {
 /** Import game state from a compressed, scrambled string. */
 function importSaveFromString(str) {
     try {
-        if (!str) return { success: false, error: 'Empty string' };
+        if (!str) return { success: false, error: 'err_empty' };
         
         const decompressed = LZString.decompressFromEncodedURIComponent(str.trim());
-        if (!decompressed) return { success: false, error: 'Decompression failed' };
+        if (!decompressed) return { success: false, error: 'err_decompression' };
 
         const pipeIndex = decompressed.indexOf('|');
-        if (pipeIndex === -1) return { success: false, error: 'Invalid format' };
+        if (pipeIndex === -1) return { success: false, error: 'err_format' };
 
         const checksum = decompressed.substring(0, pipeIndex);
         const payload = decompressed.substring(pipeIndex + 1);
 
         if (_calculateChecksum(payload) !== checksum) {
-            return { success: false, error: 'Checksum mismatch (Tampered save)' };
+            return { success: false, error: 'err_checksum' };
         }
 
         const parsed = JSON.parse(payload);
         if (!parsed || typeof parsed.version !== 'number' || !parsed.data) {
-            return { success: false, error: 'Malformed or incomplete payload' };
+            return { success: false, error: 'err_malformed' };
         }
 
-        // Stage 1: Reset to defaults to prevent "Ghost Data"
+        // GUARD: Prevent importing from newer versions of the game
+        if (parsed.version > SAVE_VERSION) {
+            return { success: false, error: 'import_version_err' };
+        }
+
+        // Stage 1: Reset to defaults to prevent "Ghost Data", but preserve local settings
+        const localSettings = JSON.parse(JSON.stringify(gameState.settings));
         Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
 
         // Stage 2: Apply loaded data
@@ -213,15 +223,21 @@ function importSaveFromString(str) {
         for (const key in data) {
             // SECURITY: Prevent Prototype Pollution
             if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+            
+            // UI/Audio settings are local to the device and shouldn't be overwritten by imports
+            if (key === 'settings') continue;
 
             gameState[key] = data[key];
         }
+
+        // Restore preserved settings
+        gameState.settings = localSettings;
 
         gameState.isImported = true;
         saveGame(); // Persist the imported state immediately
         return { success: true };
     } catch (e) {
         console.error('Import failed:', e);
-        return { success: false, error: e.message };
+        return { success: false, error: 'err_generic' };
     }
 }
