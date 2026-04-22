@@ -54,7 +54,7 @@ window.TRANSLATIONS.en = {
         system_redundancy_new: { name: 'SYSTEM REDUNDANCY', desc: '[color=#87FF02]+20[/color] MAX HP', popup: '+20 MAX HEALTH' },
         regen: { name: 'AUTO-RESTORE', desc: '[color=#87FF02]+0.2[/color] health regen', popup: '+0.2 REGEN' },
         coin_mine_unlock: { name: 'COIN MINE', desc: 'Unlocks the Coin Mine.', popup: 'MINE UNLOCKED' },
-        armor: { name: 'ARMOR', desc: 'Reduce damage taken from enemy attacks by [color=#8FD9F8]1[/color] per lvl.', popup: '+1 ARMOR' },
+        armor: { name: 'ARMOR', desc: 'Reduce damage taken from enemy attacks by [color=#8FD9F8]2.[/color]', popup: '+2 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Your core shoots chain lightning every [color=#8FD9F8]3s[/color].', popup: 'LIGHTNING WEAPON' },
         shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Your core releases a damaging shockwave every [color=#8FD9F8]3s[/color].', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+1[/color] lightning chain target', popup: '+1 CHAIN' },

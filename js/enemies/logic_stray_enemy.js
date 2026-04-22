@@ -115,4 +115,10 @@ class LogicStrayEnemy extends Enemy {
         m.vx = Math.cos(finalAngle) * m.speed;
         m.vy = Math.sin(finalAngle) * m.speed;
     }
+
+    onDeath(isFinal = true) {
+        if (typeof resourceManager !== 'undefined') {
+            resourceManager.spawnProcessorDrop(this.model.x, this.model.y);
+        }
+    }
 }

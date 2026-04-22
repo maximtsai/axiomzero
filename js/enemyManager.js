@@ -695,28 +695,8 @@ const enemyManager = (() => {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
-            if (enemy.model.type === 'logic_stray') {
-                resourceManager.spawnProcessorDrop(ex, ey);
-            } else if (enemy.model.type === 'exploder') {
-                const ups = gameState.upgrades || {};
-                const payloadLv = ups.volatile_payload || 0;
-                // Intentionally slightly fudged numbers compared to description
-                const explosionRange = 188 * (1 + 0.16 * payloadLv);
-                const explosionDamage = enemy.model.maxHealth * 1.25;
-                const bx = ex;
-                const by = ey;
-
-                PhaserScene.time.delayedCall(270, () => {
-                    if (typeof customEmitters !== 'undefined' && customEmitters.createExploderExplosion) {
-                        customEmitters.createExploderExplosion(bx, by, explosionRange * explosionRange, explosionDamage);
-                    }
-
-                    const targets = getEnemiesInDiamondRange(bx, by, explosionRange);
-                    for (let i = 0; i < targets.length; i++) {
-                        damageEnemy(targets[i], explosionDamage, 'friendlyfire');
-                    }
-                });
-            }
+            // Trigger unit-specific death logic (resources, explosions, sounds)
+            enemy.onDeath();
 
             messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type, wasResonance);
             if (enemy.model.type !== 'test') sessionKills++;

@@ -156,6 +156,23 @@ class CacheEnemy extends Enemy {
 
         console.log(`[CacheEnemy] SPAWNED at ${Math.floor(x)}, ${Math.floor(y)}`);
         this.view.coreParts.forEach(p => p.setVisible(true));
+
+        // Play appear sound after 4s if still alive and in window, with retries
+        if (typeof audio !== 'undefined') {
+            const tryPlay = (retryCount) => {
+                if (!this.model || !this.model.alive) return;
+
+                const inWindow = this.model.x >= 0 && this.model.x <= GAME_CONSTANTS.WIDTH &&
+                    this.model.y >= 0 && this.model.y <= GAME_CONSTANTS.HEIGHT;
+
+                if (inWindow || retryCount >= 2) {
+                    audio.play('datacache_appear', 0.3);
+                } else {
+                    PhaserScene.time.delayedCall(2000, () => tryPlay(retryCount + 1));
+                }
+            };
+            PhaserScene.time.delayedCall(2500, () => tryPlay(0));
+        }
     }
 
     update(dt) {
@@ -265,6 +282,14 @@ class CacheEnemy extends Enemy {
         }
 
         return result;
+    }
+
+    onDeath(isFinal = true) {
+        if (typeof audio !== 'undefined') {
+            PhaserScene.time.delayedCall(400, () => {
+                audio.play('coin_gain', 1.0);
+            });
+        }
     }
 
     deactivate() {

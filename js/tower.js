@@ -63,7 +63,7 @@ class TowerModel {
         const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.2 * regenLv; // baseDecay commented out per request
-        this.armor = armorLv * 1; // 1 flat damage reduction per level
+        this.armor = armorLv * 2; // 2 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
 
         // Root Access damage reduction
@@ -555,17 +555,17 @@ class TowerView {
         });
     }
 
-    playWarnShockwave(duration = 750) {
+    playWarnShockwave(duration = 750, startAlpha = 1.0, endScale = 3.0) {
         if (!this.warnShockwave) {
             this.warnShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'warnwave.png');
             this.warnShockwave.setDepth(-2).setAlpha(1).setBlendMode(Phaser.BlendModes.ADD);
         }
         // Reset and trigger
-        this.warnShockwave.setVisible(true).setAlpha(1).setScale(0.25);
+        this.warnShockwave.setVisible(true).setAlpha(startAlpha).setScale(0.25);
 
         PhaserScene.tweens.add({
             targets: this.warnShockwave,
-            scale: 3,
+            scale: endScale,
             duration: duration,
             ease: 'Cubic.easeOut'
         });
@@ -773,9 +773,17 @@ const tower = (() => {
             }
 
             // Critical Health Warning Check
-            if (!model.hasWarnedThisWave && ((model.health - 2.1) / model.maxHealth) < 0.20) {
+            const overclockLv = model.emergencyOverclockLv || 0;
+            const threshold = overclockLv > 0 ? 0.50 : 0.20;
+            const hpPct = (model.health / model.maxHealth);
+
+            if (!model.hasWarnedThisWave && hpPct <= threshold) {
                 model.hasWarnedThisWave = true;
-                view.playWarnShockwave();
+                if (overclockLv > 0) {
+                    view.playWarnShockwave(750, 1.2, 3.3);
+                } else {
+                    view.playWarnShockwave();
+                }
                 // Optional: slow down zoom shake slightly to emphasize core hit
                 zoomShake(1.015);
 
