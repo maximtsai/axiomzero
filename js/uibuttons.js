@@ -52,7 +52,7 @@ function _showOptionsPopup() {
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
     const width = 800;
-    const height = 600;
+    const height = 644;
     const elements = [];
     const textObjects = [];
 
@@ -348,19 +348,19 @@ function _showOptionsPopup() {
     dataLine.setScrollFactor(0);
     elements.push(dataLine);
 
-    const resetUnderlay = PhaserScene.add.image(W, dataHeaderY + 35, 'pixels', 'black_pixel.png');
-    resetUnderlay.setDisplaySize(width - 107, 31);
+    const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'pixels', 'black_pixel.png');
+    resetUnderlay.setDisplaySize(width - 477, 31);
     resetUnderlay.setDepth(depth + 3).setAlpha(0.6);
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
-    const resetBg = PhaserScene.add.nineslice(W, dataHeaderY + 36, 'ui', 'warning_btn_9slice.png', width - 80, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
+    const resetBg = PhaserScene.add.nineslice(W + 190, dataHeaderY + 83, 'ui', 'warning_btn_9slice.png', width - 450, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
     resetBg.setDepth(depth + 3);
     resetBg.setScrollFactor(0);
     resetBg.setAlpha(0.5);
     elements.push(resetBg);
 
-    const resetText = PhaserScene.add.text(W, dataHeaderY + 36, t('options', 'reset_progress'), {
+    const resetText = PhaserScene.add.text(W + 190, dataHeaderY + 83, t('options', 'reset_progress'), {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ff3366',
     }).setOrigin(0.5, 0.5).setDepth(depth + 3).setScrollFactor(0).setAlpha(0.5);
     elements.push(resetText);
@@ -368,10 +368,73 @@ function _showOptionsPopup() {
 
     updateAllTextSizes();
 
+    // --- EXPORT BUTTON ---
+    const exportBg = PhaserScene.add.nineslice(W - 240, dataHeaderY + 35, 'ui', 'glow_btn_9slice.png', 240, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
+    exportBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
+    elements.push(exportBg);
+
+    const exportText = PhaserScene.add.text(W - 240, dataHeaderY + 35, t('options', 'export_data'), {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#ffffff',
+    }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(exportText);
+    textObjects.push({ obj: exportText, size: 18 });
+
+    const exportBtn = new Button({
+        normal: { ref: 'white_pixel', x: W - 240, y: dataHeaderY + 35, alpha: 0.001, scaleX: 120, scaleY: 28 },
+        onHover: () => { exportBg.setAlpha(1); },
+        onHoverOut: () => { exportBg.setAlpha(0.75); },
+        onMouseUp: () => {
+            const str = exportSaveToString();
+            if (str) {
+                navigator.clipboard.writeText(str).then(() => {
+                    // Small visual feedback could go here, for now alert is fine
+                    alert(t('options', 'export_success'));
+                }).catch(() => {
+                    prompt(t('options', 'export_success'), str);
+                });
+            } else {
+                alert(t('options', 'export_fail'));
+            }
+        }
+    });
+    exportBtn.setDepth(depth + 4).setScrollFactor(0);
+    elements.push(exportBtn);
+
+    // --- IMPORT BUTTON ---
+    const importBg = PhaserScene.add.nineslice(W - 240, dataHeaderY + 83, 'ui', 'glow_btn_9slice.png', 240, 56, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL, UI_RADIUS_SMALL);
+    importBg.setDepth(depth + 3).setScrollFactor(0).setAlpha(0.75);
+    elements.push(importBg);
+
+    const importText = PhaserScene.add.text(W - 240, dataHeaderY + 83, t('options', 'import_data'), {
+        fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: '#ffffff',
+    }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
+    elements.push(importText);
+    textObjects.push({ obj: importText, size: 18 });
+
+    const importBtn = new Button({
+        normal: { ref: 'white_pixel', x: W - 240, y: dataHeaderY + 83, alpha: 0.001, scaleX: 120, scaleY: 28 },
+        onHover: () => { importBg.setAlpha(1); },
+        onHoverOut: () => { importBg.setAlpha(0.75); },
+        onMouseUp: () => {
+            const str = prompt(t('options', 'import_prompt'));
+            if (str) {
+                const result = importSaveFromString(str);
+                if (result.success) {
+                    alert(t('options', 'import_success'));
+                    window.location.reload();
+                } else {
+                    alert(t('options', 'import_fail').replace('{0}', result.error));
+                }
+            }
+        }
+    });
+    importBtn.setDepth(depth + 4).setScrollFactor(0);
+    elements.push(importBtn);
+
     const resetBtn = new Button({
-        normal: { ref: 'white_pixel', x: W, y: dataHeaderY + 36, alpha: 0.001, scaleX: width * 0.5 - 50, scaleY: 24 },
-        hover: { ref: 'white_pixel', x: W, y: dataHeaderY + 36, alpha: 0.001, scaleX: width * 0.5 - 50, scaleY: 24 },
-        press: { ref: 'white_pixel', x: W, y: dataHeaderY + 36, alpha: 0.1, scaleX: width * 0.5 - 50, scaleY: 24 },
+        normal: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.001, scaleX: width * 0.5 - 235, scaleY: 28 },
+        hover: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.001, scaleX: width * 0.5 - 235, scaleY: 28 },
+        press: { ref: 'white_pixel', x: W + 190, y: dataHeaderY + 83, alpha: 0.1, scaleX: width * 0.5 - 235, scaleY: 28 },
         onHover: () => {
             resetBg.setAlpha(1);
             resetText.setAlpha(1);

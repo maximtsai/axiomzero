@@ -161,6 +161,7 @@ const GAME_STATE_DEFAULTS = {
 
     // First-launch flag — drives AWAKEN-only tree state
     isFirstLaunch: true,
+    isImported: false,
 
     // Purchased upgrade levels  { nodeId: level }
     upgrades: {},

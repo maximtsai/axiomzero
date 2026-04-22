@@ -211,7 +211,14 @@ window.TRANSLATIONS.en = {
         data_label: 'DATA',
         reset_progress: '[ ⚠ RESET PROGRESS !! ]',
         confirm_reset: '[ CLICK AGAIN TO CONFIRM ]',
-        reset_confirm_text: 'ARE YOU SURE YOU WANT TO\nPERMANENTLY RESET ALL PROGRESS?'
+        reset_confirm_text: 'ARE YOU SURE YOU WANT TO\nPERMANENTLY RESET ALL PROGRESS?',
+        export_data: '[ EXPORT SAVE ]',
+        import_data: '[ IMPORT SAVE ]',
+        export_success: 'Save string copied to clipboard!',
+        export_fail: 'Failed to export save.',
+        import_prompt: 'Paste your save string here:',
+        import_success: 'Save imported successfully! Reloading...',
+        import_fail: 'Import failed: {0}'
     },
     results: {
         iteration_complete: 'ITERATION ENDED',

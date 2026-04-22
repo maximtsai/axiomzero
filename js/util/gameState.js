@@ -113,22 +113,25 @@ function loadGame() {
         const parsed = JSON.parse(raw);
 
         let data;
-        if (parsed && typeof parsed.version === 'number') {
+        if (parsed && typeof parsed.version === 'number' && parsed.data) {
             // Versioned format
             data = _migrateState(parsed.version, parsed.data);
-        } else {
+        } else if (parsed && typeof parsed.version !== 'number') {
             // Legacy format (plain object) — treat as version 0
             data = _migrateState(0, parsed);
+        } else {
+            return false;
         }
 
-        // Deep merge data into current gameState to avoid losing fields that weren't in the save
+        // Stage 1: Reset to defaults to prevent "Ghost Data" from previous session
+        Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
+
+        // Stage 2: Apply loaded data
         for (const key in data) {
-            if (data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
-                if (!gameState[key]) gameState[key] = {};
-                Object.assign(gameState[key], data[key]);
-            } else {
-                gameState[key] = data[key];
-            }
+            // SECURITY: Prevent Prototype Pollution
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+
+            gameState[key] = data[key];
         }
 
         debugLog('Game loaded');
@@ -148,4 +151,77 @@ function hasSave() {
 function clearSave() {
     localStorage.removeItem(SAVE_KEY);
     debugLog('Save cleared');
+}
+
+// ─── Export/Import Utilities ──────────────────────────────────────────────────
+
+
+/** Simple checksum to prevent manual editing */
+function _calculateChecksum(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36);
+}
+
+/** Export current game state to a compressed, scrambled string. */
+function exportSaveToString() {
+    try {
+        const payload = JSON.stringify({ version: SAVE_VERSION, data: gameState });
+        const checksum = _calculateChecksum(payload);
+        const combined = checksum + '|' + payload;
+        
+        // This format is URL-safe and doesn't use trailing "=" padding,
+        // making it much more reliable for copy-pasting on various platforms.
+        return LZString.compressToEncodedURIComponent(combined);
+    } catch (e) {
+        console.error('Export failed:', e);
+        return null;
+    }
+}
+
+/** Import game state from a compressed, scrambled string. */
+function importSaveFromString(str) {
+    try {
+        if (!str) return { success: false, error: 'Empty string' };
+        
+        const decompressed = LZString.decompressFromEncodedURIComponent(str.trim());
+        if (!decompressed) return { success: false, error: 'Decompression failed' };
+
+        const pipeIndex = decompressed.indexOf('|');
+        if (pipeIndex === -1) return { success: false, error: 'Invalid format' };
+
+        const checksum = decompressed.substring(0, pipeIndex);
+        const payload = decompressed.substring(pipeIndex + 1);
+
+        if (_calculateChecksum(payload) !== checksum) {
+            return { success: false, error: 'Checksum mismatch (Tampered save)' };
+        }
+
+        const parsed = JSON.parse(payload);
+        if (!parsed || typeof parsed.version !== 'number' || !parsed.data) {
+            return { success: false, error: 'Malformed or incomplete payload' };
+        }
+
+        // Stage 1: Reset to defaults to prevent "Ghost Data"
+        Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
+
+        // Stage 2: Apply loaded data
+        const data = _migrateState(parsed.version, parsed.data);
+        for (const key in data) {
+            // SECURITY: Prevent Prototype Pollution
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+
+            gameState[key] = data[key];
+        }
+
+        gameState.isImported = true;
+        saveGame(); // Persist the imported state immediately
+        return { success: true };
+    } catch (e) {
+        console.error('Import failed:', e);
+        return { success: false, error: e.message };
+    }
 }
