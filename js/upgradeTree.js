@@ -402,11 +402,11 @@ const upgradeTree = (() => {
             maxY = Math.max(maxY, ly + NODE_SIZE_PADDING);
         }
 
-        contentBounds = { 
+        contentBounds = {
             minX: minX - 400, // Extra 400px space to the left
-            maxX, 
+            maxX,
             minY: minY - 400, // Extra 400px space to the top
-            maxY 
+            maxY
         };
     }
 
@@ -588,16 +588,20 @@ const upgradeTree = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         slideBtn = new Button({
-            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx, y: cy },
+            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx, y: cy, alpha: 1 },
             hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
             press: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy },
             disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
-            onMouseUp: () => { console.log("clicked"); }
+            onMouseUp: () => {
+                if (typeof cameraManager !== 'undefined') {
+                    cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, 800, 'Cubic.easeOut');
+                }
+            }
         });
 
         slideBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
         slideBtn.setScrollFactor(0);
-        slideBtn.setVisible(false);
+        slideBtn.setState(DISABLE);
         slideBtn.setOrigin(0, 0.5);
         treeGroup.add(slideBtn);
     }
@@ -922,7 +926,6 @@ const upgradeTree = (() => {
         }
 
         if (slideBtn) {
-            slideBtn.setVisible(true);
             slideBtn.setState(NORMAL);
         }
 
@@ -962,6 +965,9 @@ const upgradeTree = (() => {
 
         for (const id in nodes) {
             nodes[id].setVisible(false);
+        }
+        if (slideBtn) {
+            slideBtn.setState(DISABLE);
         }
         treeLineManager.hideLines();
     }

@@ -556,6 +556,16 @@ class Button {
                 this.updateTextPosition();
             }
         }
+        if (y !== undefined) {
+            this.normal.y = y;
+            this.hover.y = y;
+            this.press.y = y;
+            this.disable.y = y;
+            this.bgSprite.y = y;
+            if (this.text) {
+                this.updateTextPosition();
+            }
+        }
         return this;
     }
 
