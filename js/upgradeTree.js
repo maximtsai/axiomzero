@@ -65,7 +65,7 @@ const upgradeTree = (() => {
     let contentBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
     const NODE_SIZE_PADDING = 80;
 
-    const SLIDE_DURATION = 600;
+    const SLIDE_DURATION = 500;
 
     // ── init ─────────────────────────────────────────────────────────────
 
@@ -622,7 +622,7 @@ const upgradeTree = (() => {
         treeGroup.add(slideLeftBtn);
     }
 
-    function _onSlideRightClicked() {
+    function _onSlideRightClicked(customDuration = SLIDE_DURATION) {
         if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
 
         fullUpgradeView = true;
@@ -631,7 +631,7 @@ const upgradeTree = (() => {
         const targetXHalf = GAME_CONSTANTS.WIDTH * 0.25;
 
         helper.createGlobalClickBlocker(false);
-        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, SLIDE_DURATION, 'Cubic.easeOut');
+        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, customDuration, 'Cubic.easeOut');
 
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setTestButtonVisible(false);
@@ -643,42 +643,46 @@ const upgradeTree = (() => {
 
         if (treeGroup) {
             treeGroup.tweenTo(targetX, 0, {
-                duration: SLIDE_DURATION,
+                duration: customDuration,
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
-                    helper.hideGlobalClickBlocker();
-                    if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
                     _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
                 }
             });
+
+            // Enable navigation button slightly before tween ends for better feel
+            PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
+                helper.hideGlobalClickBlocker();
+                if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+            });
         }
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: 1.98, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: 1.98, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
-            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutlineGlitch) {
-            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 1598, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (deployBtn) {
-            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX + 782, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX + 782, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
-            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomOutBtn) {
-            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (debugLogBtn) {
-            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
     }
 
-    function _onSlideLeftClicked() {
+    function _onSlideLeftClicked(customDuration = SLIDE_DURATION) {
         if (typeof cameraManager === 'undefined' || !slideLeftBtn) return;
 
         fullUpgradeView = false;
@@ -689,16 +693,13 @@ const upgradeTree = (() => {
         _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
         helper.createGlobalClickBlocker(false);
 
-        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.25, SLIDE_DURATION, 'Cubic.easeOut');
+        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.25, customDuration, 'Cubic.easeOut');
 
         if (treeGroup) {
             treeGroup.tweenTo(targetX, 0, {
-                duration: SLIDE_DURATION,
+                duration: customDuration,
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
-                    helper.hideGlobalClickBlocker();
-                    if (slideRightBtn) slideRightBtn.setState(NORMAL);
-
                     // Restore HUD buttons only after transition completes
                     if (typeof gameHUD !== 'undefined') {
                         gameHUD.setTestButtonVisible(true);
@@ -709,30 +710,36 @@ const upgradeTree = (() => {
                     }
                 }
             });
+
+            // Enable navigation button slightly before tween ends for better feel
+            PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
+                helper.hideGlobalClickBlocker();
+                if (slideRightBtn) slideRightBtn.setState(NORMAL);
+            });
         }
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, scaleX: 1, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, scaleX: 1, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
-            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 816, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 816, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutlineGlitch) {
-            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 816, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 816, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (deployBtn) {
-            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
-            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomOutBtn) {
-            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (debugLogBtn) {
-            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
     }
 

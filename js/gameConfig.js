@@ -115,7 +115,7 @@ GAME_CONSTANTS.DEPTH_POPUPS = 10000;
 // ─── Transitions ──────────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.TRANSITION_DURATION = 600;  // ms — camera slide duration
-GAME_CONSTANTS.FULL_VIEW_TRANSITION_BOOST = 3000; // ms — extra duration for expanded tree view
+GAME_CONSTANTS.FULL_VIEW_TRANSITION_BOOST = 200; // ms — extra duration for expanded tree view
 
 
 // ─── Audio Transitions ────────────────────────────────────────────────────────
