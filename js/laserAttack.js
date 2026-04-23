@@ -11,7 +11,7 @@ class LaserAttackModel {
         this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
         this.BASE_DAMAGE_PER_TICK = 3;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
-        this.FIRE_DURATION = 3500;       // ms beam is active
+        this.FIRE_DURATION = 5000;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
 
         this.active = false;    // true when combat phase AND node purchased
@@ -27,7 +27,6 @@ class LaserAttackModel {
         this.charging = false;   // true during pre-fire visual state
 
         // Upgrade levels
-        this.durationLevel = 0; // laser_duration (+0.5s per level)
         this.apertureLevel = 0; // laser_aperture (+60px width)
         this.disintegrationLevel = 0; // laser_disintegration (+1 base damage)
         this.twinLevel = 0;       // laser_twin_beams (dual turret)
@@ -48,7 +47,7 @@ class LaserAttackModel {
     }
 
     getFireDuration() {
-        return this.FIRE_DURATION + this.durationLevel * 500;
+        return this.FIRE_DURATION;
     }
 
     getTurretX(towerX, offset = 0) {
@@ -352,8 +351,7 @@ const laserAttack = (() => {
         view.hide();
     }
 
-    function setLevels({ duration = 0, aperture = 0, disintegration = 0, twin = 0 } = {}) {
-        model.durationLevel = duration;
+    function setLevels({ aperture = 0, disintegration = 0, twin = 0 } = {}) {
         model.apertureLevel = aperture;
         model.disintegrationLevel = disintegration;
         model.twinLevel = twin;

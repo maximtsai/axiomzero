@@ -65,7 +65,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['prismatic_array', 'regen', 'peak_traffic', 'backup_server', 'bomb_2', 'lore_3', 'zero_day_exploit'],
         treeX: gridX(0),
-        treeY: gridY(-1),
+        treeY: gridY(-0.5),
         effect: function () {
             resourceManager.addData(5000);
             resourceManager.addInsight(2);
@@ -90,7 +90,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: ['restore_point'],
         treeX: gridX(-1),
-        treeY: gridY(-1.5),
+        treeY: gridY(-1.0),
         effect: function () { },
     },
     {
@@ -107,7 +107,7 @@ const NODE_DEFS = [
         parents: ['backup_server'],
         childIds: [],
         treeX: gridX(-1.5),
-        treeY: gridY(-2),
+        treeY: gridY(-1.5),
         effect: function () { },
     },
     {
@@ -124,7 +124,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: ['junk_data_2'],
         treeX: gridX(1),
-        treeY: gridY(-1),
+        treeY: gridY(-0.5),
         effect: function () { },
     },
     {
@@ -346,7 +346,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.4),
-        treeY: gridY(-2.8),
+        treeY: gridY(-2.3),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
         },
@@ -385,7 +385,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(0.5),
-        treeY: gridY(-2.0),
+        treeY: gridY(-1.5),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -611,7 +611,7 @@ const NODE_DEFS = [
         parents: ['system_redundancy_new'],
         treeX: gridX(-2.5),
         treeY: gridY(3.5),
-        childIds: ['security_test_2'],
+        childIds: [],
         effect: function () {
             // Recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
         },
@@ -745,7 +745,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.5),
-        treeY: gridY(-2.0),
+        treeY: gridY(-1.5),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -855,7 +855,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['data_chest_unlock', 'completionist'],
         requiresMaxParent: true,
-        childIds: [],
+        childIds: ['security_test_2'],
         treeX: gridX(0),
         treeY: gridY(6),
         effect: function () { },
@@ -1079,7 +1079,7 @@ const NODE_DEFS = [
         parents: ['peak_traffic'],
         childIds: [],
         treeX: gridX(2),
-        treeY: gridY(-1),
+        treeY: gridY(-0.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -1216,7 +1216,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['diagnostic_analytics'],
-        childIds: ['laser_duration'],
+        childIds: ['laser_aperture', 'laser_disintegration'],
         isDuoBox: true,
         duoBoxTier: 3,
         shardId: 'laser',
@@ -1253,25 +1253,6 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'laser_duration',
-        name: t('nodes', 'laser_duration.name'),
-        icon: 'Skillicon14_05.png',
-        description: t('nodes', 'laser_duration.desc'),
-        popupText: t('nodes', 'laser_duration.popup'),
-        maxLevel: 3,
-        baseCost: 50,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['laser'],
-        childIds: ['laser_aperture', 'laser_disintegration'],
-        isDuoChild: true,
-        treeX: gridX(-5.0),
-        treeY: gridY(6.5),
-        effect: function () {
-            upgradeDispatcher.recalcLaser();
-        },
-    },
-    {
         id: 'laser_aperture',
         name: t('nodes', 'laser_aperture.name'),
         icon: 'Skillicon14_22.png',
@@ -1281,11 +1262,11 @@ const NODE_DEFS = [
         baseCost: 200,
         costType: 'data',
         costScaling: 'static',
-        parents: ['laser_duration'],
+        parents: ['laser'],
         childIds: ['laser_twin_beams'],
         isDuoChild: true,
-        treeX: gridX(-6.0),
-        treeY: gridY(6.5),
+        treeX: gridX(-5.0),
+        treeY: gridY(6.0),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1301,11 +1282,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
-        parents: ['laser_duration'],
+        parents: ['laser'],
         childIds: ['laser_twin_beams'],
         isDuoChild: true,
         treeX: gridX(-5.0),
-        treeY: gridY(7.5),
+        treeY: gridY(7.0),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1324,7 +1305,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-6.0),
-        treeY: gridY(7.5),
+        treeY: gridY(6.5),
         effect: function () {
             upgradeDispatcher.recalcLaser();
         },
@@ -1460,7 +1441,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.5),
-        treeY: gridY(-2.0),
+        treeY: gridY(-1.5),
         effect: function () { },
     },
     {
@@ -1483,10 +1464,10 @@ const NODE_DEFS = [
         baseCost: 600,
         costType: 'data',
         costScaling: 'static',
-        parents: ['armor'],
+        parents: ['milestones'],
         childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
-        treeX: gridX(-2),
-        treeY: gridY(5.5),
+        treeX: gridX(0),
+        treeY: gridY(7),
         tooltipExtraWidth: 25,
         effect: function () {
             if (typeof resourceManager !== 'undefined') {

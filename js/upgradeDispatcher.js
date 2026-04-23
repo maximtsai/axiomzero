@@ -99,7 +99,6 @@ const upgradeDispatcher = (() => {
     function recalcLaser() {
         if (typeof laserAttack === 'undefined') return;
         laserAttack.setLevels({
-            duration: getLevel('laser_duration'),
             aperture: getLevel('laser_aperture'),
             disintegration: getLevel('laser_disintegration'),
             twin: getLevel('laser_twin_beams')

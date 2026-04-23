@@ -598,6 +598,7 @@ const upgradeTree = (() => {
         slideBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
         slideBtn.setScrollFactor(0);
         slideBtn.setVisible(false);
+        slideBtn.setOrigin(0, 0.5);
         treeGroup.add(slideBtn);
     }
 

@@ -148,7 +148,6 @@ window.TRANSLATIONS.en = {
         trojan_access: { name: 'TROJAN PAYLOAD', desc: 'Enemies have [color=#8FD9F8]8%[/color] chance to spawn as an [color=#E13500]EXPLODER[/color] that hurts other enemies.', popup: 'TROJAN ACTIVE' },
         volatile_payload: { name: 'VOLATILE PAYLOAD', desc: '[color=#8FD9F8]+20%[/color] [color=#E13500]EXPLODER[/color] blast radius per lvl.', popup: '+20% EXPLOSION RADIUS' },
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Repeated cursor hits on same enemy deal [color=#8FD9F8]+4[/color] bonus dmg.', popup: 'REPEAT EXPLOIT ACTIVE' },
-        laser_duration: { name: 'DURATION', desc: '[color=#8FD9F8]+0.5s[/color] laser duration', popup: '+0.5s DURATION' },
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width.', popup: 'BEAM AMPLIFIED' },
         laser_disintegration: { name: 'DISINTEGRATION', desc: '[color=#8FD9F8]+1[/color] starting laser damage.', popup: '+1 LASER DAMAGE' },
         laser_twin_beams: { name: 'TWIN BEAMS', desc: 'You now fire two lasers.', popup: 'TWIN BEAMS ACTIVE' },

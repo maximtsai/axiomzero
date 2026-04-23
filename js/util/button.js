@@ -100,6 +100,9 @@ class Button {
             this.bgSprite = this.scene.add.sprite(0, 0, initialRef);
         }
         this.bgSprite.setDepth(this.depth);
+        if (this.normal.origin) {
+            this.bgSprite.setOrigin(this.normal.origin.x, this.normal.origin.y);
+        }
 
         this.isDraggable = data.isDraggable || false;
         this.hoverWhileDisabled = data.hoverWhileDisabled || false;
@@ -550,23 +553,7 @@ class Button {
             this.disable.x = x;
             this.bgSprite.x = x;
             if (this.text) {
-                this.text.x = x;
-                if (this.text.offsetX) {
-                    this.text.x += this.text.offsetX;
-                }
-            }
-        }
-        if (y !== undefined) {
-            this.normal.y = y;
-            this.hover.y = y;
-            this.press.y = y;
-            this.disable.y = y;
-            this.bgSprite.y = y;
-            if (this.text) {
-                this.text.y = y;
-                if (this.text.offsetY) {
-                    this.text.y += this.text.offsetY;
-                }
+                this.updateTextPosition();
             }
         }
         return this;
@@ -638,8 +625,37 @@ class Button {
 
     setOrigin(origX, origY) {
         if (this.isDestroyed || !this.bgSprite) return this;
+
+        // Persist to all states so it doesn't get "reset" on state changes
+        this.normal.origin = { x: origX, y: origY };
+        this.hover.origin = { x: origX, y: origY };
+        this.press.origin = { x: origX, y: origY };
+        this.disable.origin = { x: origX, y: origY };
+
         this.bgSprite.setOrigin(origX, origY);
+
+        // Re-center text if it exists
+        if (this.text) {
+            this.updateTextPosition();
+        }
+
         return this;
+    }
+
+    /** Helper to keep text centered relative to the sprite, accounting for origin/scale. */
+    updateTextPosition() {
+        if (!this.text || !this.bgSprite) return;
+
+        const spr = this.bgSprite;
+        const width = spr.width * spr.scaleX;
+        const height = spr.height * spr.scaleY;
+
+        // Calculate visual center offset from the registration point (x, y)
+        const offsetX = (0.5 - spr.originX) * width;
+        const offsetY = (0.5 - spr.originY) * height;
+
+        this.text.x = spr.x + offsetX + (this.text.offsetX || 0);
+        this.text.y = spr.y + offsetY + (this.text.offsetY || 0);
     }
 
     _applyRussianTextScale() {
