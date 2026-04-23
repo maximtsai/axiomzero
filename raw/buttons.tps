@@ -662,6 +662,37 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/slide_left_btn.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,43,30,85</rect>
+                <key>scale9Paddings</key>
+                <rect>15,43,30,85</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/slide_left_btn_hover.png</key>
+            <key type="filename">buttons/slide_left_btn_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>17,43,34,85</rect>
+                <key>scale9Paddings</key>
+                <rect>17,43,34,85</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/slide_right_btn.png</key>
             <key type="filename">buttons/slide_right_btn_hover.png</key>
             <key type="filename">buttons/slide_right_btn_press.png</key>

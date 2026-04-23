@@ -504,5 +504,12 @@ const gameHUD = (() => {
         }
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setAlpha, setBombPulse, clearBombPulse };
+    function setTestButtonVisible(visible) {
+        if (!testDefensesBtn) return;
+        testDefensesBtn.setVisible(visible);
+        if (!visible) testDefensesBtn.setState(DISABLE);
+        else refreshTestDefensesButton(); // ensures state matches unlock status if shown
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setAlpha, setBombPulse, clearBombPulse };
 })();

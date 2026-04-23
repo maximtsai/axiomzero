@@ -14,10 +14,10 @@ const upgradeTree = (() => {
     let panelOutline = null;
     let panelOutlineGlitch = null;
     let dragSurface = null;
-    let titleText = null;
     let deployBtn = null;
     let coinMineBtn = null;
-    let slideBtn = null;
+    let slideRightBtn = null;
+    let slideLeftBtn = null;
 
     let treeGroup = null;
     let draggableGroup = null;
@@ -262,14 +262,14 @@ const upgradeTree = (() => {
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half
-        panelOutline = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
+        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 5, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
-        panelOutlineGlitch = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png');
+        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 5, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
         panelOutlineGlitch.setTint(0x888888); // Grey tint
@@ -373,17 +373,6 @@ const upgradeTree = (() => {
         });
 
         treeGroup.add(dragSurface);
-
-        // Title
-        titleText = PhaserScene.add.text(TREE_CENTER_X, 48, t('ui', 'neural_tree'), {
-            fontFamily: 'Michroma',
-            fontSize: '28px',
-            color: '#00f5ff',
-            align: 'center',
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20).setScrollFactor(0).setVisible(false);
-        titleText.setShadow(0, 0, '#00f5ff', 12, true, true);
-
-        treeGroup.add(titleText);
     }
 
     /** Measures the total extent of the node tree in local space to drive constraints. */
@@ -587,23 +576,83 @@ const upgradeTree = (() => {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
-        slideBtn = new Button({
+        slideRightBtn = new Button({
             normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx, y: cy, alpha: 1 },
             hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
             press: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy },
             disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
-            onMouseUp: () => {
-                if (typeof cameraManager !== 'undefined') {
-                    cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, 800, 'Cubic.easeOut');
-                }
-            }
+            onMouseUp: _onSlideRightClicked,
+            onHover: () => {
+                let sfx = audio.play('click', 0.85);
+                if (sfx) sfx.detune = Phaser.Math.Between(-100, 100);
+            },
+            onHoverOut: () => { }
         });
 
-        slideBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
-        slideBtn.setScrollFactor(0);
-        slideBtn.setState(DISABLE);
-        slideBtn.setOrigin(0, 0.5);
-        treeGroup.add(slideBtn);
+        slideRightBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
+        slideRightBtn.setScrollFactor(0);
+        slideRightBtn.setState(DISABLE);
+        slideRightBtn.setOrigin(0, 0.5);
+        treeGroup.add(slideRightBtn);
+
+        slideLeftBtn = new Button({
+            normal: { ref: 'slide_left_btn.png', atlas: 'buttons', x: cx, y: cy, alpha: 1 },
+            hover: { ref: 'slide_left_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
+            press: { ref: 'slide_left_btn_press.png', atlas: 'buttons', x: cx, y: cy },
+            disable: { ref: 'slide_left_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
+            onMouseUp: _onSlideLeftClicked,
+            onHover: () => {
+                let sfx = audio.play('click', 0.85);
+                if (sfx) sfx.detune = Phaser.Math.Between(-100, 100);
+            },
+            onHoverOut: () => { }
+        });
+
+        slideLeftBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
+        slideLeftBtn.setScrollFactor(0);
+        slideLeftBtn.setState(DISABLE);
+        slideLeftBtn.setOrigin(1, 0.5);
+        treeGroup.add(slideLeftBtn);
+    }
+
+    function _onSlideRightClicked() {
+        if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
+
+        slideRightBtn.setState(DISABLE);
+        const duration = 600;
+        const targetX = GAME_CONSTANTS.WIDTH * 0.5;
+        const targetXHalf = GAME_CONSTANTS.WIDTH * 0.25;
+
+        helper.createGlobalClickBlocker(false);
+        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, duration, 'Cubic.easeOut');
+
+        if (typeof gameHUD !== 'undefined') {
+            gameHUD.setTestButtonVisible(false);
+        }
+
+        if (treeGroup) {
+            treeGroup.tweenTo(targetX, 0, {
+                duration,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    helper.hideGlobalClickBlocker();
+                    if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+                }
+            });
+        }
+        if (treeMaskContainer) {
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration, ease: 'Cubic.easeOut' });
+        }
+        if (maskShape) {
+            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, duration, ease: 'Cubic.easeOut' });
+        }
+        // if (panelOutline) {
+        //     PhaserScene.tweens.add({ targets: panelOutline, originX: 0.25, width: 1600, duration, ease: 'Cubic.easeOut' });
+        // }
+    }
+
+    function _onSlideLeftClicked() {
+        // Placeholder for left slide functionality
     }
 
     function _initPools() {
@@ -896,7 +945,6 @@ const upgradeTree = (() => {
 
         panelOutline.setVisible(true);
         dragSurface.setVisible(true);
-        titleText.setVisible(true);
 
         if (zoomInBtn) {
             zoomInBtn.setVisible(true);
@@ -925,19 +973,20 @@ const upgradeTree = (() => {
             coinMineBtn.setState(NORMAL);
         }
 
-        if (slideBtn) {
-            slideBtn.setState(NORMAL);
+        if (slideRightBtn) {
+            slideRightBtn.setState(NORMAL);
+        }
+        if (slideLeftBtn) {
+            slideLeftBtn.setState(NORMAL);
         }
 
         treeLineManager.updateLines();
     }
-
     function hide() {
         visible = false;
         panelBg.setVisible(false);
         panelOutline.setVisible(false);
         dragSurface.setVisible(false);
-        titleText.setVisible(false);
         deployBtn.setVisible(false);
         if (coordText) coordText.setVisible(false);
 
@@ -966,16 +1015,22 @@ const upgradeTree = (() => {
         for (const id in nodes) {
             nodes[id].setVisible(false);
         }
-        if (slideBtn) {
-            slideBtn.setState(DISABLE);
+        if (slideRightBtn) {
+            slideRightBtn.setState(DISABLE);
+        }
+        if (slideLeftBtn) {
+            slideLeftBtn.setState(DISABLE);
         }
         treeLineManager.hideLines();
     }
 
     function preTransitionHide() {
         if (coordText) coordText.setVisible(false);
-        if (slideBtn) {
-            slideBtn.setState(DISABLE);
+        if (slideRightBtn) {
+            slideRightBtn.setState(DISABLE);
+        }
+        if (slideLeftBtn) {
+            slideLeftBtn.setState(DISABLE);
         }
     }
 
