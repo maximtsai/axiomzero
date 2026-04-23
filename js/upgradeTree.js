@@ -378,7 +378,7 @@ const upgradeTree = (() => {
             }
         });
 
-        treeGroup.add(dragSurface);
+        // dragSurface is intentionally NOT added to treeGroup so it stays static during transitions
     }
 
     /** Measures the total extent of the node tree in local space to drive constraints. */
@@ -588,7 +588,7 @@ const upgradeTree = (() => {
             hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons' },
             press: { ref: 'slide_right_btn_press.png', atlas: 'buttons' },
             disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', alpha: 0 },
-            onMouseUp: _onSlideRightClicked,
+            onMouseUp: () => _onSlideRightClicked(),
             onHover: () => {
                 let sfx = audio.play('click', 0.85);
                 if (sfx) sfx.detune = Phaser.Math.Between(-100, 100);
@@ -607,7 +607,7 @@ const upgradeTree = (() => {
             hover: { ref: 'slide_left_btn_hover.png', atlas: 'buttons' },
             press: { ref: 'slide_left_btn_press.png', atlas: 'buttons' },
             disable: { ref: 'slide_left_btn_press.png', atlas: 'buttons', alpha: 0 },
-            onMouseUp: _onSlideLeftClicked,
+            onMouseUp: () => _onSlideLeftClicked(),
             onHover: () => {
                 let sfx = audio.play('click', 0.85);
                 if (sfx) sfx.detune = Phaser.Math.Between(-100, 100);
@@ -624,6 +624,10 @@ const upgradeTree = (() => {
 
     function _onSlideRightClicked(customDuration = SLIDE_DURATION) {
         if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
+        
+        // If called as a callback, customDuration might be a Pointer object.
+        // Force fallback to SLIDE_DURATION if it's not a number.
+        if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;
 
         fullUpgradeView = true;
         slideRightBtn.setState(DISABLE);
@@ -657,7 +661,7 @@ const upgradeTree = (() => {
             });
         }
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, scaleX: 1, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
             PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: 1.98, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -680,11 +684,19 @@ const upgradeTree = (() => {
         if (debugLogBtn) {
             PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
+
+        // Expand drag surface to full screen
+        if (dragSurface) {
+            dragSurface.setX(GAME_CONSTANTS.WIDTH / 2);
+            dragSurface.setScale(GAME_CONSTANTS.WIDTH / 2, GAME_CONSTANTS.HEIGHT / 2);
+        }
     }
 
     function _onSlideLeftClicked(customDuration = SLIDE_DURATION) {
         if (typeof cameraManager === 'undefined' || !slideLeftBtn) return;
 
+        // Force fallback to SLIDE_DURATION if it's not a number.
+        if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;
         fullUpgradeView = false;
         slideLeftBtn.setState(DISABLE);
         const targetX = 0;
@@ -740,6 +752,12 @@ const upgradeTree = (() => {
         }
         if (debugLogBtn) {
             PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
+        }
+
+        // Retract drag surface to left panel
+        if (dragSurface) {
+            dragSurface.setX(TREE_CENTER_X);
+            dragSurface.setScale(PANEL_W / 2, GAME_CONSTANTS.HEIGHT / 2);
         }
     }
 
@@ -1687,8 +1705,18 @@ const upgradeTree = (() => {
             panelW = 1598;
             deployX = deployBtnInitialX + 782;
             _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
+
+            if (dragSurface) {
+                dragSurface.setX(GAME_CONSTANTS.WIDTH / 2);
+                dragSurface.setScale(GAME_CONSTANTS.WIDTH / 2, GAME_CONSTANTS.HEIGHT / 2);
+            }
         } else {
             _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
+
+            if (dragSurface) {
+                dragSurface.setX(TREE_CENTER_X);
+                dragSurface.setScale(PANEL_W / 2, GAME_CONSTANTS.HEIGHT / 2);
+            }
         }
 
         if (treeGroup) {

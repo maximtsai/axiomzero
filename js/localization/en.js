@@ -155,7 +155,6 @@ window.TRANSLATIONS.en = {
         artillery_shells: { name: 'HIGH EXPLOSIVE', desc: '[color=#8FD9F8]+25%[/color] artillery blast radius.', popup: '+25% RADIUS' },
         artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP.', popup: 'FIRST STRIKE' },
         shell_access: { name: 'SHELL ACCESS', desc: '[color=#8FD9F8]+4[/color] tower basic damage.', popup: '+4 TOWER DMG' },
-        injection_attack: { name: 'INJECTION ATTACK', desc: 'Cursor marks targets. Marked enemies take [color=#8FD9F8]+2[/color] damage from all other sources.', popup: 'INJECTION ACTIVE' },
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP.', popup: 'ZERO-DAY ACTIVE' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network.', popup: 'GATEWAY FOUND' },
@@ -167,6 +166,7 @@ window.TRANSLATIONS.en = {
         milestones: { name: 'MILESTONES', desc: 'Unlocks the Milestones menu.' },
         crescendo: { name: 'CRESCENDO', desc: 'Resonance attacks gain [color=#8FD9F8]+100%[/color] cursor attack size.', popup: 'AMPLIFIED' },
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color].', popup: 'ROOT ACCESS GRANTED' },
+        core_synergy: { name: 'CORE SYNERGY', desc: '[color=#8FD9F8]+2[/color] core damage.', popup: '+2 DAMAGE' },
         label: {
             lore: 'LORE',
             gate: 'GATE',

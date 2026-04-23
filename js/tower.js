@@ -39,6 +39,7 @@ class TowerModel {
         const armorLv = ups.armor || 0;
         const baseHpLv = ups.base_hp_boost || 0;
         const clockSpeedLv = ups.clock_speed || 0;
+        const synergyLv = ups.core_synergy || 0;
         const anchorHp = (ups.physical_anchor || 0) * 40;
         this.emergencyOverclockLv = ups.emergency_overclock || 0;
 
@@ -49,7 +50,7 @@ class TowerModel {
 
         const autoDefLv = ups.automated_defense || 0;
         if (autoDefLv > 0) {
-            this.damage = 5 + 2 * intensityLv + shellDamage;
+            this.damage = 5 + 2 * intensityLv + 2 * synergyLv + shellDamage;
         } else {
             this.damage = 0;
         }
