@@ -1299,7 +1299,11 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
+        let zoomInText = zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
+        zoomInText.offsetX = 1;
+        zoomInText.offsetY = -2;
+        zoomInBtn.updateTextPosition();
+
         zoomInBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         zoomInBtn.setScrollFactor(0);
         zoomInBtn.setVisible(false);
@@ -1658,10 +1662,10 @@ const upgradeTree = (() => {
     }
 
     /**
-     * Specialized transition entry for the upgrade tree.
+     * Specialized transition entry for the upgrade tree (Combat -> Upgrade).
      * Tweens elements to their correct positions based on fullUpgradeView state.
      */
-    function transitionIn(duration) {
+    function onEnterUpgradePhase(duration) {
         let treeTargetX = 0;
         let maskTargetX = 0;
         let maskScaleX = 1;
@@ -1683,12 +1687,14 @@ const upgradeTree = (() => {
         if (treeGroup) {
             treeGroup.tweenTo(treeTargetX, 0, { duration, ease: 'Cubic.easeOut' });
         }
+
         if (treeMaskContainer) {
             PhaserScene.tweens.add({ targets: treeMaskContainer, x: maskTargetX, duration, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
             PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: maskScaleX, duration, ease: 'Cubic.easeOut' });
         }
+
         if (panelOutline) {
             PhaserScene.tweens.add({ targets: panelOutline, x: panelX, width: panelW, duration, ease: 'Cubic.easeOut' });
         }
@@ -1698,24 +1704,49 @@ const upgradeTree = (() => {
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployX, duration, ease: 'Cubic.easeOut' });
         }
-        
+
         // Zoom buttons and Debug button
         if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
     }
 
-    /** Specialized transition exit for the upgrade tree */
-    function transitionOut(duration) {
-        const targetX = -GAME_CONSTANTS.halfWidth - 10;
-        if (treeGroup) treeGroup.tweenTo(targetX, 0, { duration, ease: 'Cubic.easeOut' });
+    /** Specialized transition exit for the upgrade tree (Upgrade -> Combat) */
+    function onExitUpgradePhase(duration) {
+        const treeGroupTargetX = -GAME_CONSTANTS.halfWidth - 20;
+        let baseTargetX = treeGroupTargetX;
+        if (fullUpgradeView) {
+            baseTargetX -= 782;
+        }
+
+        if (treeGroup) {
+            treeGroup.tweenTo(treeGroupTargetX, 0, { duration, ease: 'Cubic.easeOut' });
+        }
+
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetX, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: treeGroupTargetX, duration, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: targetX, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: maskShape, x: baseTargetX, duration, ease: 'Cubic.easeOut' });
         }
+
+        if (panelOutline) {
+            PhaserScene.tweens.add({ targets: panelOutline, x: baseTargetX, duration, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutlineGlitch) {
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: baseTargetX, duration, ease: 'Cubic.easeOut' });
+        }
+
+        if (deployBtn) {
+            let btnTargetX = -114;
+            PhaserScene.tweens.add({ targets: deployBtn, x: btnTargetX, duration, ease: 'Cubic.easeOut' });
+        }
+
+        const buttonOffscreenX = -GAME_CONSTANTS.WIDTH - 4;
+        if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
+        if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
+        if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
     }
 
-    return { init, show, hide, getNode, isVisible, isFullView, transitionIn, transitionOut, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    return { init, show, hide, getNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();

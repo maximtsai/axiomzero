@@ -24,7 +24,10 @@ const transitionManager = (() => {
         // Block clicks during transition using the global helper
         helper.createGlobalClickBlocker(false);
 
-        const duration = GAME_CONSTANTS.TRANSITION_DURATION;
+        let duration = GAME_CONSTANTS.TRANSITION_DURATION;
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView()) {
+            duration += GAME_CONSTANTS.FULL_VIEW_TRANSITION_BOOST;
+        }
 
         if (targetPhase === GAME_CONSTANTS.PHASE_COMBAT) {
             messageBus.publish('AnnounceText', t('ui', 'combat_intro'));
@@ -40,8 +43,8 @@ const transitionManager = (() => {
                 _revealTimer = null;
             }
 
-            if (typeof upgradeTree !== 'undefined' && upgradeTree.transitionOut) {
-                upgradeTree.transitionOut(duration);
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.onExitUpgradePhase) {
+                upgradeTree.onExitUpgradePhase(duration);
             }
             _startFailsafe(duration);
             cameraManager.toCombatView(duration, () => {
@@ -62,8 +65,8 @@ const transitionManager = (() => {
             // First switch phase so tree UI appears, then slide camera
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_UPGRADE);
 
-            if (typeof upgradeTree !== 'undefined' && upgradeTree.transitionIn) {
-                upgradeTree.transitionIn(duration);
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.onEnterUpgradePhase) {
+                upgradeTree.onEnterUpgradePhase(duration);
             }
             _startFailsafe(duration);
 
