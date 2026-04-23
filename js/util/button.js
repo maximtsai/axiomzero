@@ -24,6 +24,9 @@ const ButtonState = {
     DISABLE: "disable"
 };
 
+/** Shared rectangle for hit detection to avoid GC pressure */
+const hitBoundsRect = new Phaser.Geom.Rectangle();
+
 /**
  * @typedef {Object} ButtonStateData
  * @property {string} [ref] - Atlas or image reference
@@ -243,17 +246,9 @@ class Button {
         let x = valX + cam.scrollX * scrollFactorX;
         let y = valY + cam.scrollY * scrollFactorY;
 
-        let width = currImage.width * Math.abs(currImage.scaleX);
-        let leftMost = currImage.x - currImage.originX * width;
-        let rightMost = leftMost + width;
-        if (x < leftMost || x > rightMost) {
-            return false;
-        }
-
-        let height = currImage.height * Math.abs(currImage.scaleY);
-        let topMost = currImage.y - currImage.originY * height;
-        let botMost = topMost + height;
-        if (y < topMost || y > botMost) {
+        // Use getBounds() with a shared rectangle to account for parent container transforms while avoiding GC pressure
+        currImage.getBounds(hitBoundsRect);
+        if (x < hitBoundsRect.x || x > hitBoundsRect.right || y < hitBoundsRect.y || y > hitBoundsRect.bottom) {
             return false;
         }
         return true;
@@ -427,6 +422,16 @@ class Button {
 
     set alpha(value) {
         this.setAlpha(value);
+    }
+
+    /**
+     * Get the world-space bounds of the button, accounting for parent containers and scaling.
+     * @param {Phaser.Geom.Rectangle} [output] - Optional rectangle to store the result in.
+     * @returns {Phaser.Geom.Rectangle} The bounds of the button.
+     */
+    getBounds(output) {
+        if (this.isDestroyed || !this.bgSprite) return output || new Phaser.Geom.Rectangle();
+        return this.bgSprite.getBounds(output);
     }
 
     get depth() {

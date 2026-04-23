@@ -15,6 +15,7 @@ const upgradeTree = (() => {
     let panelOutlineGlitch = null;
     let dragSurface = null;
     let deployBtn = null;
+    let deployBtnInitialX = 0;
     let coinMineBtn = null;
     let slideRightBtn = null;
     let slideLeftBtn = null;
@@ -42,6 +43,7 @@ const upgradeTree = (() => {
 
     let visible = false;
     let hasShownThisSession = false;
+    let fullUpgradeView = false;
     let hintPulseTimer = null;
     let awakenHintTimer = null;
     let lastCoordX = -1;
@@ -62,6 +64,8 @@ const upgradeTree = (() => {
     // Content-Aware Bounds
     let contentBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
     const NODE_SIZE_PADDING = 80;
+
+    const SLIDE_DURATION = 600;
 
     // ── init ─────────────────────────────────────────────────────────────
 
@@ -262,14 +266,16 @@ const upgradeTree = (() => {
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half
-        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 5, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 413, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutline.setOrigin(0, 0.5);
         panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
         panelOutline.setVisible(false);
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
-        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 5, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 413, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutlineGlitch.setOrigin(0, 0.5);
         panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
         panelOutlineGlitch.setTint(0x888888); // Grey tint
@@ -514,6 +520,7 @@ const upgradeTree = (() => {
         // Hidden until tower is spawned
         deployBtn.setVisible(false);
         deployBtn.setState(DISABLE);
+        deployBtnInitialX = deployBtn.x;
         // Virtual group handles tracking positions relative to master
         treeGroup.add(deployBtn);
 
@@ -577,10 +584,10 @@ const upgradeTree = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         slideRightBtn = new Button({
-            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx, y: cy, alpha: 1 },
-            hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
-            press: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy },
-            disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
+            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx + 5, y: cy, alpha: 1 },
+            hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons' },
+            press: { ref: 'slide_right_btn_press.png', atlas: 'buttons' },
+            disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', alpha: 0 },
             onMouseUp: _onSlideRightClicked,
             onHover: () => {
                 let sfx = audio.play('click', 0.85);
@@ -596,10 +603,10 @@ const upgradeTree = (() => {
         treeGroup.add(slideRightBtn);
 
         slideLeftBtn = new Button({
-            normal: { ref: 'slide_left_btn.png', atlas: 'buttons', x: cx, y: cy, alpha: 1 },
-            hover: { ref: 'slide_left_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
-            press: { ref: 'slide_left_btn_press.png', atlas: 'buttons', x: cx, y: cy },
-            disable: { ref: 'slide_left_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
+            normal: { ref: 'slide_left_btn.png', atlas: 'buttons', x: cx - 23, y: cy, alpha: 1 },
+            hover: { ref: 'slide_left_btn_hover.png', atlas: 'buttons' },
+            press: { ref: 'slide_left_btn_press.png', atlas: 'buttons' },
+            disable: { ref: 'slide_left_btn_press.png', atlas: 'buttons', alpha: 0 },
             onMouseUp: _onSlideLeftClicked,
             onHover: () => {
                 let sfx = audio.play('click', 0.85);
@@ -618,13 +625,13 @@ const upgradeTree = (() => {
     function _onSlideRightClicked() {
         if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
 
+        fullUpgradeView = true;
         slideRightBtn.setState(DISABLE);
-        const duration = 600;
         const targetX = GAME_CONSTANTS.WIDTH * 0.5;
         const targetXHalf = GAME_CONSTANTS.WIDTH * 0.25;
 
         helper.createGlobalClickBlocker(false);
-        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, duration, 'Cubic.easeOut');
+        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, SLIDE_DURATION, 'Cubic.easeOut');
 
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setTestButtonVisible(false);
@@ -632,27 +639,103 @@ const upgradeTree = (() => {
 
         if (treeGroup) {
             treeGroup.tweenTo(targetX, 0, {
-                duration,
+                duration: SLIDE_DURATION,
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
                     helper.hideGlobalClickBlocker();
                     if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+                    _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
                 }
             });
         }
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
         }
         if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: 1.98, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
         }
-        // if (panelOutline) {
-        //     PhaserScene.tweens.add({ targets: panelOutline, originX: 0.25, width: 1600, duration, ease: 'Cubic.easeOut' });
-        // }
+        if (panelOutline) {
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutlineGlitch) {
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 1598, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (deployBtn) {
+            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX + 782, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (zoomInBtn) {
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (zoomOutBtn) {
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (debugLogBtn) {
+            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
     }
 
     function _onSlideLeftClicked() {
-        // Placeholder for left slide functionality
+        if (typeof cameraManager === 'undefined' || !slideLeftBtn) return;
+
+        fullUpgradeView = false;
+        slideLeftBtn.setState(DISABLE);
+        const targetX = 0;
+        const targetXHalf = 0;
+
+        _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
+        helper.createGlobalClickBlocker(false);
+
+        cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.25, SLIDE_DURATION, 'Cubic.easeOut');
+
+        if (treeGroup) {
+            treeGroup.tweenTo(targetX, 0, {
+                duration: SLIDE_DURATION,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    helper.hideGlobalClickBlocker();
+                    if (slideRightBtn) slideRightBtn.setState(NORMAL);
+
+                    // Restore test button only after transition completes
+                    if (typeof gameHUD !== 'undefined') {
+                        gameHUD.setTestButtonVisible(true);
+                    }
+                }
+            });
+        }
+        if (treeMaskContainer) {
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (maskShape) {
+            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, scaleX: 1, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutline) {
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 816, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutlineGlitch) {
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 816, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (deployBtn) {
+            PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (zoomInBtn) {
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (zoomOutBtn) {
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+        if (debugLogBtn) {
+            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: SLIDE_DURATION, ease: 'Cubic.easeOut' });
+        }
+    }
+
+    /** Helper to update the hit area of all nodes to support full-screen expansion */
+    function _updateNodesHitArea(width) {
+        for (const id in nodes) {
+            const node = nodes[id];
+            if (node && node.btn) {
+                node.btn.setHitArea(0, 0, width, GAME_CONSTANTS.HEIGHT);
+            }
+        }
     }
 
     function _initPools() {
@@ -977,7 +1060,7 @@ const upgradeTree = (() => {
             slideRightBtn.setState(NORMAL);
         }
         if (slideLeftBtn) {
-            slideLeftBtn.setState(NORMAL);
+            slideLeftBtn.setState(DISABLE);
         }
 
         treeLineManager.updateLines();
@@ -1473,8 +1556,16 @@ const upgradeTree = (() => {
     function getNode(id) { return nodes[id] || null; }
 
     function isVisible() { return visible; }
+    function isFullView() { return fullUpgradeView; }
 
-
+    function _revealChildren(id) {
+        for (const cid in nodes) {
+            const n = nodes[cid];
+            if (n.parents && n.parents.includes(id)) {
+                n.refreshState();
+            }
+        }
+    }
 
     function _showDeployButton() {
         if (deployBtn) {
@@ -1554,5 +1645,5 @@ const upgradeTree = (() => {
         if (coinMineBtn) coinMineBtn.setAlpha(alpha);
     }
 
-    return { init, show, hide, getNode, isVisible, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    return { init, show, hide, getNode, isVisible, isFullView, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();

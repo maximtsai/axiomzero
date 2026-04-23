@@ -255,6 +255,11 @@ const nodeTooltip = (() => {
         const totalHeight = currentY + 3;
         bg.setDisplaySize(currentBgWidth, totalHeight);
 
+        // Use getBounds() to account for parent container transforms (e.g. treeMaskContainer shifts)
+        const btnBounds = node.btn.getBounds();
+        const centerX = btnBounds.centerX;
+        const centerY = btnBounds.centerY;
+
         // Position above the node (Duo nodes appear 56px higher)
         // Check for top-of-screen intersection to flip position if needed
         const nodeHeight = node.size || 80;
@@ -262,7 +267,7 @@ const nodeTooltip = (() => {
         const topSafeMargin = 15;
 
         let showAbove = true;
-        if (node.btn.y - verticalOffset - totalHeight < topSafeMargin) {
+        if (centerY - verticalOffset - totalHeight < topSafeMargin) {
             showAbove = false;
         }
 
@@ -274,14 +279,14 @@ const nodeTooltip = (() => {
         }
 
         // Clamp X position to stay within the leftpanel bounds
-        let targetX = node.btn.x + horizontalOffset;
+        let targetX = centerX + horizontalOffset;
         const halfW = currentBgWidth / 2;
         const margin = 10;
         targetX = Math.max(targetX, halfW + margin);
 
         // Final container position and child alignment
         if (showAbove) {
-            container.setPosition(targetX, node.btn.y - verticalOffset);
+            container.setPosition(targetX, centerY - verticalOffset);
             bg.y = -totalHeight;
             container.iterate(child => {
                 if (child === bg) return;
@@ -289,7 +294,7 @@ const nodeTooltip = (() => {
             });
         } else {
             // Position below the node
-            container.setPosition(targetX, node.btn.y + verticalOffset + 1);
+            container.setPosition(targetX, centerY + verticalOffset + 1);
             bg.y = 0;
             // Children are already relative to container top (Y=3), so no further shift needed
         }
