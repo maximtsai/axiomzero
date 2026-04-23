@@ -775,9 +775,9 @@ const tower = (() => {
             // Critical Health Warning Check
             const overclockLv = model.emergencyOverclockLv || 0;
             const threshold = overclockLv > 0 ? 0.50 : 0.20;
-            const hpPct = (model.health / model.maxHealth);
+            const thresholdValue = (model.maxHealth * threshold) + 0.1;
 
-            if (!model.hasWarnedThisWave && hpPct <= threshold) {
+            if (!model.hasWarnedThisWave && model.health <= thresholdValue) {
                 model.hasWarnedThisWave = true;
                 if (overclockLv > 0) {
                     view.playWarnShockwave(750, 1.2, 3.3);
@@ -907,7 +907,7 @@ const tower = (() => {
         // Auto-attack
         if (model.awakened && (gameState.upgrades && gameState.upgrades.automated_defense >= 1)) {
             let tick = delta;
-            if (model.emergencyOverclockLv > 0 && (model.health / model.maxHealth) <= 0.5) {
+            if (model.emergencyOverclockLv > 0 && model.health <= (model.maxHealth * 0.5 + 0.1)) {
                 tick *= 2;
             }
 

@@ -213,36 +213,6 @@ const LORE_DEFS = [
             }
         },
     },
-    {
-        id: 'system_redundancy_placeholder',
-        name: t('nodes', 'system_redundancy_placeholder.name'),
-        icon: 'Skillicon14_08.png',
-        description: t('nodes', 'system_redundancy_placeholder.desc'),
-        popupText: t('nodes', 'system_redundancy_placeholder.popup'),
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        parents: ['gateway_discovery'],
-        childIds: ['stray_logs_child_above'],
-        treeX: gridX(-2.5),
-        treeY: gridY(9.0),
-        effect: function () { },
-    },
-    {
-        id: 'stray_logs_child_above',
-        name: t('nodes', 'stray_logs_child_above.name'),
-        icon: 'Skillicon14_08.png',
-        description: t('nodes', 'stray_logs_child_above.desc'),
-        popupText: t('nodes', 'stray_logs_child_above.popup'),
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        parents: ['system_redundancy_placeholder'],
-        childIds: [],
-        treeX: gridX(-3.0),
-        treeY: gridY(10.0),
-        effect: function () { },
-    },
 ];
 
 // Automatically integrate with the main NODE_DEFS array if it exists.

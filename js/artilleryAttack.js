@@ -6,7 +6,7 @@ class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
         this.BASE_DAMAGE = 30;
-        this.BASE_SIZE = 340; // px — damage area side length (square)
+        this.BASE_SIZE = 360; // px — damage area side length (square)
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false; // true after artillery node purchased
@@ -34,8 +34,8 @@ class ArtilleryAttackModel {
     }
 
     getDamageArea() {
-        // Increases size by 10% per level
-        return this.BASE_SIZE * (1 + 0.1 * this.radiusLevel);
+        // Increases size by 25% per level
+        return this.BASE_SIZE * (1 + 0.25 * this.radiusLevel);
     }
 
     setTargetingMargins(n) {
@@ -60,20 +60,19 @@ class ArtilleryAttackView {
     }
 
     update(delta) {
+        const dt = 60 / 1000 * delta;
         for (let i = 0; i < this._strikePool.length; i++) {
             const obj = this._strikePool[i];
             if (!obj.inUse) continue;
 
             const base = obj.base;
-            const rotAccel = base.rotation * -0.1 - obj.rotVel * 0.25;
-            obj.rotVel += rotAccel;
-            base.rotation += obj.rotVel * delta * 0.14;
+            const rotAccel = base.rotation * -0.15 - obj.rotVel * 0.2;
+            obj.rotVel += rotAccel - obj.rotVel * 0.01;
+            base.rotation += obj.rotVel * dt;
 
             obj.center.setRotation(base.rotation);
             obj.bright.setRotation(base.rotation);
             obj.black.setRotation(base.rotation);
-            // Red stays with its own random initial rotation or follows? 
-            obj.red.setRotation(base.rotation * 0.5);
         }
     }
 
@@ -112,9 +111,9 @@ class ArtilleryAttackView {
         obj.inUse = true;
         obj.base.setSize(size, size);
         // center is a plain image, no setSize needed
-        obj.bright.setSize(size, size);
-        obj.black.setSize(size, size);
-        obj.red.setSize(size + 2, size + 2);
+        obj.bright.setSize(size + 2, size + 2);
+        obj.black.setSize(size + 3, size + 3);
+        obj.red.setSize(size + 4, size + 4);
         obj.base.setRotation(0);
         obj.center.setRotation(0);
         obj.bright.setRotation(0);
@@ -141,7 +140,7 @@ class ArtilleryAttackView {
 
     playStrikeSequence(x, y, size, onDamage, durationOffset = 0) {
         const obj = this._getStrikeObject(size);
-        const { base, center, bright, red } = obj;
+        const { base, center, bright, black, red } = obj;
 
         base.setPosition(x, y).setVisible(true).setAlpha(0.05).setScale(1.04);
         center.setPosition(x, y).setVisible(true).setAlpha(0.05).setScale(1.04);
@@ -158,13 +157,24 @@ class ArtilleryAttackView {
                 PhaserScene.tweens.add({
                     targets: [base, center],
                     alpha: 0.9,
-                    duration: 1100 + durationOffset,
+                    duration: 1100 + durationOffset - 150,
                     ease: 'Quad.easeIn',
                     onComplete: () => {
-                        // Deal damage
-                        onDamage();
-                        // Stage 3: Burst animation (similar to cursor)
-                        this._playBurstAnimation(obj, x, y, size);
+                        // Anticipation Phase (150ms)
+                        PhaserScene.tweens.add({
+                            targets: [base, center],
+                            scaleX: 1.05,
+                            scaleY: 1.05,
+                            alpha: 1.0,
+                            duration: 150,
+                            ease: 'Cubic.easeOut',
+                            onComplete: () => {
+                                // Deal damage
+                                onDamage();
+                                // Stage 3: Burst animation
+                                this._playBurstAnimation(obj, x, y, size);
+                            }
+                        });
                     }
                 });
             }
@@ -184,68 +194,91 @@ class ArtilleryAttackView {
         const { base, center, bright, black, red } = obj;
 
         const flippedLeft = Math.random() < 0.5;
-        const goalRot = flippedLeft ? -0.3 : 0.3;
+        const goalRot = flippedLeft ? -0.18 : 0.18;
 
         // Stage 1: Reveal main explosion components immediately
-        bright.setPosition(x, y).setVisible(true).setAlpha(1).setScale(1.25).setRotation(goalRot);
+        bright.setPosition(x, y).setVisible(true).setAlpha(1).setScale(1.28).setRotation(goalRot);
         base.setAlpha(1).setScale(1.2).setRotation(goalRot);
         center.setAlpha(1).setScale(1.2).setRotation(goalRot);
         red.setPosition(x, y).setVisible(true).setAlpha(0.45).setScale(1.1).setRotation((Math.random() - 0.5) * 0.09);
 
-        // Stage 2: Black sprite follows "bright" 100%, but is only visible during the [60ms, 100ms] window
         black.setPosition(x, y).setVisible(false).setAlpha(1.0).setScale(1.25).setRotation(goalRot);
 
-        PhaserScene.time.delayedCall(60, () => {
-            if (obj.inUse) black.setVisible(true);
-        });
-        PhaserScene.time.delayedCall(120, () => {
-            if (obj.inUse) black.setVisible(false);
-        });
-
-        // White tint flash — instant detonation feel
-        bright.setTintFill(0xffffff);
-        center.setTintFill(0xffffff);
-        PhaserScene.time.delayedCall(50, () => {
-            if (obj.inUse) {
-                bright.setAlpha(0.5).clearTint();
-                center.clearTint();
-            }
+        // Shutter Flicker Effect (Rapid sequence at start)
+        PhaserScene.time.delayedCall(8, () => {
+            bright.setVisible(false);
+            PhaserScene.time.delayedCall(6, () => {
+                bright.setVisible(true);
+                PhaserScene.time.delayedCall(4, () => {
+                    bright.setVisible(false);
+                    PhaserScene.time.delayedCall(3, () => {
+                        bright.setVisible(true);
+                    });
+                });
+            });
         });
 
-        /** Recoil: briefly shrink the base sprite then spring back. */
         PhaserScene.tweens.add({
-            targets: base,
-            scaleX: 0.92,
-            scaleY: 0.92,
-            duration: 40,
+            targets: [base, center, bright, red],
+            rotation: goalRot * 1.01,
+            duration: 30,
             ease: 'Cubic.easeOut',
             onComplete: () => {
+                if (obj.inUse) {
+                    black.setVisible(true);
+                }
+                bright.setAlpha(0.5).setScale(1.25);
+
+                // Brief hitstop/slowdown for impact using timeManager
+                if (typeof timeManager !== 'undefined') {
+                    timeManager.setTempPause(60, 0.25);
+                }
+                PhaserScene.time.delayedCall(20, () => {
+                    if (obj.inUse) {
+                        black.setVisible(false);
+                    }
+                });
+                /** Recoil: briefly shrink the base sprite then spring back. */
                 PhaserScene.tweens.add({
                     targets: base,
-                    scaleX: 1,
-                    scaleY: 1,
-                    duration: 180,
-                    ease: 'Back.easeOut',
-                    easeParams: [3],
+                    scaleX: 0.92,
+                    scaleY: 0.92,
+                    duration: 40,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        PhaserScene.tweens.add({
+                            targets: base,
+                            scaleX: 1,
+                            scaleY: 1,
+                            duration: 200,
+                            ease: 'Back.easeOut',
+                            easeParams: [3.5],
+                        });
+                    }
                 });
             }
         });
 
+
         // Tween flash back to 0 — BLACK stays alpha 1 (but is hidden by visibility timer)
         PhaserScene.tweens.add({
-            delay: 75,
-            targets: [bright, red, center],
+            delay: 180,
+            targets: [base, bright, red, center],
             alpha: 0,
-            duration: 500,
-            ease: 'Quart.easeOut',
+            duration: 300,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                this._releaseStrikeObject(obj);
+            }
         });
 
-        // Scale back to original size — BLACK follows BRIGHT's scale
+        // Scale back to original size
         PhaserScene.tweens.add({
+            delay: 50,
             targets: [center, bright, black],
             scaleX: 1,
             scaleY: 1,
-            duration: 240,
+            duration: 260,
             ease: 'Cubic.easeOut',
         });
 
@@ -254,11 +287,8 @@ class ArtilleryAttackView {
             scaleX: 0.98,
             scaleY: 0.98,
             rotation: 0,
-            duration: 240,
-            ease: 'Back.easeIn',
-            onComplete: () => {
-                this._releaseStrikeObject(obj);
-            }
+            duration: 250,
+            ease: 'Back.easeIn'
         });
 
         // Camera impact
@@ -276,7 +306,7 @@ const artilleryAttack = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
-        messageBus.subscribe('testingDefensesStarted', () => { model.fireTimer = 0; });
+        messageBus.subscribe('testingDefensesStarted', () => { model.fireTimer = 3000; });
         messageBus.subscribe('testingDefensesEnded', () => { model.fireTimer = 0; });
         updateManager.addFunction(_update);
     }
@@ -342,8 +372,10 @@ const artilleryAttack = (() => {
         view.playStrikeSequence(x, y, size, () => {
             // Damage callback
             if (typeof audio !== 'undefined') {
-                const s = audio.play('artillery_explode', 0.9);
-                if (s) s.detune = (Math.random() - 0.5) * 160;
+                PhaserScene.time.delayedCall(80, () => {
+                    const s = audio.play('artillery_explode', 0.9);
+                    if (s) s.detune = (Math.random() - 0.5) * 160;
+                });
             }
             PhaserScene.cameras.main.shake(60, 0.007);
             const halfSize = size / 2;
@@ -458,7 +490,7 @@ const artilleryAttack = (() => {
     }
 
     return {
-        init, unlock, lock, setLevels, update: (delta) => view.update(delta),
+        init, unlock, lock, setLevels,
         setTargetingMargins: (n) => model.setTargetingMargins(n)
     };
 })();

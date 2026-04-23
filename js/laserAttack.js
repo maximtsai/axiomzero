@@ -304,7 +304,7 @@ const laserAttack = (() => {
             model.firing = false;
             model.tapering = false;
             model.charging = false;
-            model.cooldownTimer = 0;
+            model.cooldownTimer = 1000;
             if (_beamSound) {
                 audio.fadeAway(_beamSound, 150);
                 _beamSound = null;
@@ -365,7 +365,7 @@ const laserAttack = (() => {
             // Begin cooldown at combat start so first shot fires after COOLDOWN_DURATION
             model.firing = false;
             model.charging = false;
-            model.cooldownTimer = 0;
+            model.cooldownTimer = 1000;
             model.fireTimer = 0;
             model.tickTimer = 0;
             if (model.unlocked) view.show(model);

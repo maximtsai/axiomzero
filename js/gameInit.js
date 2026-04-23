@@ -42,10 +42,11 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     // Helper for Recovery Protocol passive
     function _applyThreatAdaptation(yOffset) {
         if (gameState.upgrades && gameState.upgrades.threat_response >= 1) {
-            const missingHealth = tower.getMaxHealth() - tower.getHealth();
-            const healAmount = missingHealth * 0.5;
+            const currentHP = tower.getHealth();
+            const targetHP = tower.getMaxHealth() * 0.5;
 
-            if (healAmount > 0) {
+            if (currentHP < targetHP) {
+                const healAmount = targetHP - currentHP;
                 tower.heal(healAmount);
             }
         }

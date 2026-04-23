@@ -17,6 +17,7 @@ const upgradeTree = (() => {
     let titleText = null;
     let deployBtn = null;
     let coinMineBtn = null;
+    let slideBtn = null;
 
     let treeGroup = null;
     let draggableGroup = null;
@@ -95,9 +96,13 @@ const upgradeTree = (() => {
         _calculateContentBounds(); // Measure the tree after nodes are created
         _createDeployButton();
         _createCoinMineButton();
+        _createSlideButton();
         _createZoomButtons();
         _initPools();
         treeLineManager.init({ treeGroup, draggableGroup, nodes });
+
+        // Initial snap to constraints
+        _applyConstraints();
 
         // Optimization: Sort by depth after initialization to ensure lines (depth+1) are behind nodes (depth+2).
         // We delay by 0ms so that show() has a chance to run and create the lazy-loaded lines first.
@@ -405,13 +410,14 @@ const upgradeTree = (() => {
         };
     }
 
-    /** Scale-aware constraint engine. Pans between edges if zoomed in, centers if zoomed out. */
-    function _applyConstraints() {
+    /** 
+     * Scale-aware constraint engine. Pans between edges if zoomed in, centers if zoomed out. 
+     * Accepts custom viewport dimensions to support future window-resizing features.
+     */
+    function _applyConstraints(viewportW = PANEL_W, viewportH = GAME_CONSTANTS.HEIGHT) {
         if (!draggableGroup) return;
 
         const scale = draggableGroup.getScale();
-        const viewportW = PANEL_W;
-        const viewportH = GAME_CONSTANTS.HEIGHT;
 
         const contentW = (contentBounds.maxX - contentBounds.minX) * scale;
         const contentH = (contentBounds.maxY - contentBounds.minY) * scale;
@@ -575,6 +581,24 @@ const upgradeTree = (() => {
         coinMineBtn.setState(DISABLE);
 
         treeGroup.add(coinMineBtn);
+    }
+
+    function _createSlideButton() {
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+
+        slideBtn = new Button({
+            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx, y: cy },
+            hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons', x: cx, y: cy },
+            press: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy },
+            disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', x: cx, y: cy, alpha: 0 },
+            onMouseUp: () => { console.log("clicked"); }
+        });
+
+        slideBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
+        slideBtn.setScrollFactor(0);
+        slideBtn.setVisible(false);
+        treeGroup.add(slideBtn);
     }
 
     function _initPools() {
@@ -896,6 +920,11 @@ const upgradeTree = (() => {
             coinMineBtn.setState(NORMAL);
         }
 
+        if (slideBtn) {
+            slideBtn.setVisible(true);
+            slideBtn.setState(NORMAL);
+        }
+
         treeLineManager.updateLines();
     }
 
@@ -938,6 +967,9 @@ const upgradeTree = (() => {
 
     function preTransitionHide() {
         if (coordText) coordText.setVisible(false);
+        if (slideBtn) {
+            slideBtn.setState(DISABLE);
+        }
     }
 
     /** Shows HUD-fixed elements after transition slide finished */

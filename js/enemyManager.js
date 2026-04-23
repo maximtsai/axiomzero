@@ -508,9 +508,9 @@ const enemyManager = (() => {
         let finalDamage = amount;
         let isInstabilityProc = false;
 
-        // INSTABILITY logic: +10 damage from non-cursor sources if marked
+        // INSTABILITY logic: +12 damage from non-cursor sources if marked
         if (enemy.model.hasInstabilityMark && source !== 'cursor') {
-            finalDamage += 10;
+            finalDamage += 12;
             enemy.model.hasInstabilityMark = false;
             isInstabilityProc = true;
         }
