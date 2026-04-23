@@ -289,7 +289,9 @@ const gameHUD = (() => {
     function _showUpgradeHUD() {
         visible = true;
         healthBar.setVisible(true);
-        healthBtn.setVisible(true).setState(NORMAL);
+
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        setHealthBtnVisible(!isFullView);
 
         currencyCluster.updateLayout(true, true);
 
@@ -459,7 +461,11 @@ const gameHUD = (() => {
         if (!testDefensesBtn) return;
         const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
 
-        testDefensesBtn.setVisible(isUnlocked).setState(isUnlocked ? NORMAL : DISABLE);
+        // Hide if tree is in full view expansion
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        const show = isUnlocked && !isFullView;
+
+        testDefensesBtn.setVisible(show).setState(show ? NORMAL : DISABLE);
     }
 
     function setAlpha(alpha) {
@@ -511,5 +517,10 @@ const gameHUD = (() => {
         else refreshTestDefensesButton(); // ensures state matches unlock status if shown
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setAlpha, setBombPulse, clearBombPulse };
+    function setHealthBtnVisible(visible) {
+        if (!healthBtn) return;
+        healthBtn.setVisible(visible).setState(visible ? NORMAL : DISABLE);
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setHealthBtnVisible, setAlpha, setBombPulse, clearBombPulse };
 })();

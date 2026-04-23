@@ -266,7 +266,7 @@ const upgradeTree = (() => {
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half
-        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 413, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutline.setOrigin(0, 0.5);
         panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
@@ -274,7 +274,7 @@ const upgradeTree = (() => {
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
-        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 413, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutlineGlitch.setOrigin(0, 0.5);
         panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
@@ -635,6 +635,10 @@ const upgradeTree = (() => {
 
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setTestButtonVisible(false);
+            gameHUD.setHealthBtnVisible(false);
+        }
+        if (typeof towerStatsUI !== 'undefined') {
+            towerStatsUI.setEnabled(false);
         }
 
         if (treeGroup) {
@@ -695,9 +699,13 @@ const upgradeTree = (() => {
                     helper.hideGlobalClickBlocker();
                     if (slideRightBtn) slideRightBtn.setState(NORMAL);
 
-                    // Restore test button only after transition completes
+                    // Restore HUD buttons only after transition completes
                     if (typeof gameHUD !== 'undefined') {
                         gameHUD.setTestButtonVisible(true);
+                        gameHUD.setHealthBtnVisible(true);
+                    }
+                    if (typeof towerStatsUI !== 'undefined') {
+                        towerStatsUI.setEnabled(true);
                     }
                 }
             });
@@ -1057,10 +1065,14 @@ const upgradeTree = (() => {
         }
 
         if (slideRightBtn) {
-            slideRightBtn.setState(NORMAL);
+            slideRightBtn.setState(fullUpgradeView ? DISABLE : NORMAL);
         }
         if (slideLeftBtn) {
-            slideLeftBtn.setState(DISABLE);
+            slideLeftBtn.setState(fullUpgradeView ? NORMAL : DISABLE);
+        }
+
+        if (typeof gameHUD !== 'undefined') {
+            gameHUD.setTestButtonVisible(!fullUpgradeView);
         }
 
         treeLineManager.updateLines();
@@ -1645,5 +1657,65 @@ const upgradeTree = (() => {
         if (coinMineBtn) coinMineBtn.setAlpha(alpha);
     }
 
-    return { init, show, hide, getNode, isVisible, isFullView, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    /**
+     * Specialized transition entry for the upgrade tree.
+     * Tweens elements to their correct positions based on fullUpgradeView state.
+     */
+    function transitionIn(duration) {
+        let treeTargetX = 0;
+        let maskTargetX = 0;
+        let maskScaleX = 1;
+        let panelW = 816;
+        let panelX = -6;
+        let deployX = deployBtnInitialX;
+
+        if (fullUpgradeView) {
+            treeTargetX = GAME_CONSTANTS.WIDTH * 0.5;
+            maskTargetX = GAME_CONSTANTS.WIDTH * 0.25;
+            maskScaleX = 1.98;
+            panelW = 1598;
+            deployX = deployBtnInitialX + 782;
+            _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
+        } else {
+            _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
+        }
+
+        if (treeGroup) {
+            treeGroup.tweenTo(treeTargetX, 0, { duration, ease: 'Cubic.easeOut' });
+        }
+        if (treeMaskContainer) {
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: maskTargetX, duration, ease: 'Cubic.easeOut' });
+        }
+        if (maskShape) {
+            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: maskScaleX, duration, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutline) {
+            PhaserScene.tweens.add({ targets: panelOutline, x: panelX, width: panelW, duration, ease: 'Cubic.easeOut' });
+        }
+        if (panelOutlineGlitch) {
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: panelX, width: panelW, duration, ease: 'Cubic.easeOut' });
+        }
+        if (deployBtn) {
+            PhaserScene.tweens.add({ targets: deployBtn, x: deployX, duration, ease: 'Cubic.easeOut' });
+        }
+        
+        // Zoom buttons and Debug button
+        if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+        if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+        if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+    }
+
+    /** Specialized transition exit for the upgrade tree */
+    function transitionOut(duration) {
+        const targetX = -GAME_CONSTANTS.halfWidth - 10;
+        if (treeGroup) treeGroup.tweenTo(targetX, 0, { duration, ease: 'Cubic.easeOut' });
+        if (treeMaskContainer) {
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetX, duration, ease: 'Cubic.easeOut' });
+        }
+        if (maskShape) {
+            PhaserScene.tweens.add({ targets: maskShape, x: targetX, duration, ease: 'Cubic.easeOut' });
+        }
+    }
+
+    return { init, show, hide, getNode, isVisible, isFullView, transitionIn, transitionOut, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();

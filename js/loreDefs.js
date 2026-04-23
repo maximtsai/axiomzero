@@ -65,8 +65,8 @@ const LORE_DEFS = [
         costScaling: 'static',
         parents: ['cheat'],
         childIds: ['lore_4'],
-        treeX: gridX(-0.5),
-        treeY: gridY(-1),
+        treeX: gridX(-2.0),
+        treeY: gridY(-2.0),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_3');

@@ -40,9 +40,9 @@ const transitionManager = (() => {
                 _revealTimer = null;
             }
 
-            const targetX = -GAME_CONSTANTS.halfWidth - 10;
-            _tweenTreeGroup(targetX, duration);
-            _tweenTreeMaskContainer(targetX, duration);
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.transitionOut) {
+                upgradeTree.transitionOut(duration);
+            }
             _startFailsafe(duration);
             cameraManager.toCombatView(duration, () => {
                 // Hide tree before publishing transitionComplete so subscribers see correct state
@@ -62,10 +62,16 @@ const transitionManager = (() => {
             // First switch phase so tree UI appears, then slide camera
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_UPGRADE);
 
-            const targetX = 0;
-            _tweenTreeGroup(targetX, duration);
-            _tweenTreeMaskContainer(targetX, duration);
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.transitionIn) {
+                upgradeTree.transitionIn(duration);
+            }
             _startFailsafe(duration);
+
+            let camTargetX = -GAME_CONSTANTS.halfWidth / 2;
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView()) {
+                camTargetX = -GAME_CONSTANTS.WIDTH * 0.75;
+            }
+
             // Bug 2 fix: use Phaser time so this respects time scaling, not wall-clock
             _revealTimer = PhaserScene.time.delayedCall(duration * 0.6, () => {
                 _revealTimer = null;
@@ -73,46 +79,13 @@ const transitionManager = (() => {
                     upgradeTree.revealCoordText();
                 }
             });
-            cameraManager.toUpgradeView(duration, () => {
+            cameraManager.slideTo(camTargetX, duration, 'Cubic.easeOut', () => {
                 _endTransition();
             });
         } else {
             // Fallback — instant transition
             gameStateMachine.goTo(targetPhase);
             _endTransition();
-        }
-    }
-
-    function _tweenTreeGroup(targetX, duration) {
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
-            const group = upgradeTree.getGroup();
-            if (group) {
-                group.tweenTo(targetX, 0, { duration, ease: 'Cubic.easeOut' });
-            }
-        }
-    }
-
-    function _tweenTreeMaskContainer(targetX, duration) {
-        if (typeof upgradeTree !== 'undefined') {
-            const container = upgradeTree.getTreeMaskContainer();
-            const shape = upgradeTree.getMaskShape ? upgradeTree.getMaskShape() : null;
-
-            if (container) {
-                PhaserScene.tweens.add({
-                    targets: container,
-                    x: targetX,
-                    duration: duration,
-                    ease: 'Cubic.easeOut'
-                });
-            }
-            if (shape) {
-                PhaserScene.tweens.add({
-                    targets: shape,
-                    x: targetX,
-                    duration: duration,
-                    ease: 'Cubic.easeOut'
-                });
-            }
         }
     }
 

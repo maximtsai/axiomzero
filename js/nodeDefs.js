@@ -65,7 +65,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['prismatic_array', 'regen', 'peak_traffic', 'backup_server', 'bomb_2', 'lore_3', 'zero_day_exploit'],
         treeX: gridX(0),
-        treeY: gridY(-0.5),
+        treeY: gridY(-1.5),
         effect: function () {
             resourceManager.addData(5000);
             resourceManager.addInsight(2);
@@ -90,7 +90,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: ['restore_point'],
         treeX: gridX(-1),
-        treeY: gridY(-1.0),
+        treeY: gridY(-2.0),
         effect: function () { },
     },
     {
@@ -107,7 +107,7 @@ const NODE_DEFS = [
         parents: ['backup_server'],
         childIds: [],
         treeX: gridX(-1.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.5),
         effect: function () { },
     },
     {
@@ -124,7 +124,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: ['junk_data_2'],
         treeX: gridX(1),
-        treeY: gridY(-0.5),
+        treeY: gridY(-1.5),
         effect: function () { },
     },
     {
@@ -346,7 +346,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.4),
-        treeY: gridY(-2.3),
+        treeY: gridY(-3.3),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
         },
@@ -385,7 +385,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(0.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.5),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -745,7 +745,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.5),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -1079,7 +1079,7 @@ const NODE_DEFS = [
         parents: ['peak_traffic'],
         childIds: [],
         treeX: gridX(2),
-        treeY: gridY(-0.5),
+        treeY: gridY(-1.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -1441,7 +1441,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-0.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.5),
         effect: function () { },
     },
     {

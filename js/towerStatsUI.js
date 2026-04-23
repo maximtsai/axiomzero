@@ -76,9 +76,27 @@ const towerStatsUI = (() => {
 
     function _onPhaseChanged(phase) {
         _isActive = (phase === GAME_CONSTANTS.PHASE_UPGRADE);
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        
         if (_statsBtn) {
-            _statsBtn.setVisible(_isActive);
+            _statsBtn.setVisible(_isActive && !isFullView);
+            if (!_isActive || isFullView) {
+                _statsBtn.setState(DISABLE);
+            } else {
+                _statsBtn.setState(NORMAL);
+            }
         }
+    }
+
+    function setEnabled(enabled) {
+        if (!_statsBtn) return;
+        
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        const shouldEnable = enabled && !isFullView;
+
+        _statsBtn.setVisible(shouldEnable);
+        _statsBtn.setState(shouldEnable ? NORMAL : DISABLE);
+        if (!shouldEnable) tooltipManager.hide();
     }
 
     function _showStatsTooltip() {
@@ -159,6 +177,7 @@ const towerStatsUI = (() => {
     }
 
     return {
-        init
+        init,
+        setEnabled
     };
 })();
