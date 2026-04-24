@@ -169,9 +169,7 @@ const shockwaveAttack = (() => {
             const dy = e.model.y - pos.y;
             const distSq = dx * dx + dy * dy;
 
-            // Inclusion check: shockwave edge touches enemy edge
-            const checkR = model.radius + (e.model.size || 12);
-            if (distSq <= checkR * checkR) {
+            if (e.checkCollision(pos.x, pos.y, 1.0, model.radius, 15)) {
                 validHits.push(e);
             }
         }

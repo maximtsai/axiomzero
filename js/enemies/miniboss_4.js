@@ -138,7 +138,7 @@ class Miniboss4 extends Miniboss {
         m.health = m.maxHealth;
         m.damage = 15 * (m.multiplier || 1); // Does not deal contact damage usually
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB4.SPEED_MULT;
-        m.size = 65;
+        m.size = 70;
 
         m.state = 'MOVING';
         m.fireCooldown = 2000; // First shot delay after entering range

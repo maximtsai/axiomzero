@@ -1217,6 +1217,10 @@ const pulseAttack = (() => {
 
         for (let i = 0; i < hits.length; i++) {
             const enemy = hits[i];
+
+            // Check collision with 0px fallback (matching square Pulse visual)
+            if (!enemy.checkSquareCollision(damageX, cy, damageSize, 0)) continue;
+
             let damageToApply = actualDamage;
 
             // ISOLATION bonus visual flag
@@ -1448,15 +1452,19 @@ const pulseAttack = (() => {
                 model.bombArmed = false;
 
                 // Slow down hit enemies too
-                const damageSize = finalSize / 2 + 5;
+                const damageSize = finalSize / 2;
                 const damage = model.damage + 40;
 
                 const damageX = _getDamageCoordX(cx);
                 const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
                 for (let i = 0; i < hits.length; i++) {
-                    enemyManager.damageEnemy(hits[i], damage, 'cursor');
-                    if (typeof hits[i].forceSlow === 'function') {
-                        hits[i].forceSlow(0.25, 0.1);
+                    const e = hits[i];
+                    // Check collision with 0px fallback (matching square Bomb visual)
+                    if (!e.checkSquareCollision(damageX, cy, damageSize, 0)) continue;
+
+                    enemyManager.damageEnemy(e, damage, 'cursor');
+                    if (typeof e.forceSlow === 'function') {
+                        e.forceSlow(0.25, 0.1);
                     }
                 }
 

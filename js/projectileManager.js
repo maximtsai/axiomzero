@@ -159,12 +159,7 @@ const projectileManager = (() => {
                 const e = _queryResults[j];
                 if (!e.model.alive) continue;
 
-                // Scale hit detection by enemy size (Standard basic size is 12)
-                const hitRadius = (e.model.size || 12) * hitRadiusRatio;
-
-                const dx = p.x - e.model.x;
-                const dy = p.y - e.model.y;
-                if (dx * dx + dy * dy < hitRadius * hitRadius) {
+                if (e.checkCollision(p.x, p.y, hitRadiusRatio, 0, 15)) {
                     // Spark burst pointing from enemy toward tower
                     const tPos = tower.getPosition();
                     const hitAngle = Math.atan2(tPos.y - e.model.y, tPos.x - e.model.x) * GAME_CONSTANTS.DEG_TO_RADIAL - 180;

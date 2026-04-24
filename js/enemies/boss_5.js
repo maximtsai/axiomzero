@@ -7,7 +7,7 @@ class Boss5Model extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.5;
-        this.size = 273; // 195 * 1.4
+        this.size = 275; // 195 * 1.4 + 5
         this.bossId = 'boss5';
         this.staggering = false;
         this.staggerPhaseComplete = false;

@@ -18,7 +18,7 @@ class BossCircleModel extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 5.5;
         this.rampDuration = 2.1;
-        this.size = 168;
+        this.size = 170;
         this.bossId = 'bossCircle';
 
         // Custom behavior state

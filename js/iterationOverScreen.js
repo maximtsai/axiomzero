@@ -125,17 +125,19 @@ const iterationOverScreen = (() => {
         }).setOrigin(0.5).setDepth(depth + 1);
 
         // ── EXP Progress Bar ──────────────────────────────────────────
-        barW = 316;
+        barW = 304; // Requested: 8px shorter than inner 308px container width
         barH = 7;
         barX = cx - barW / 2;
         barY = cy + 108; // moved 5px down
 
-        const containerW = barW + 4;
+        const containerW = 320;
         const containerH = 21;
-        expBarBg = PhaserScene.add.nineslice(barX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
+        const stableBarX = cx - 158; // Original center-alignment point
+
+        expBarBg = PhaserScene.add.nineslice(stableBarX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
         expBarBg.setOrigin(0, 0.5).setDepth(depth + 2).setVisible(false).setAlpha(0.7);
 
-        expBarFill = PhaserScene.add.image(barX, barY, 'white_pixel');
+        expBarFill = PhaserScene.add.image(stableBarX + 1, barY, 'white_pixel');
         expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffffff).setDepth(depth + 3).setVisible(false).setAlpha(0.7);
 
         expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
@@ -259,15 +261,15 @@ const iterationOverScreen = (() => {
         // ── Sparkle emitter for Insight Level Up ──
         _insightSparkleEmitter = PhaserScene.add.particles(0, 0, 'ui', {
             frame: 'sparkle.png',
-            speed: { min: 70, max: 140 },
-            lifespan: 1700,
+            speed: { min: 50, max: 100 },
+            lifespan: 1500,
             scale: { start: 1.0, end: 0, ease: 'Quart.easeIn' },
             alpha: 1,
             rotate: { start: 0, end: 720 },
             gravityY: 0,
-            frequency: 45,
+            frequency: 35,
             emitting: false,
-            depth: depth + 10,
+            depth: depth + 11,
             emitZone: {
                 source: new Phaser.Geom.Rectangle(barX, barY - barH / 2, barW, barH),
                 type: 'random'
@@ -527,7 +529,7 @@ const iterationOverScreen = (() => {
             return;
         }
 
-        const barW = 320;
+        // barW is now globally set to 300 in init()
         const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER;
 
         // Show bar elements
@@ -578,11 +580,11 @@ const iterationOverScreen = (() => {
         expHoverBtn.setState(NORMAL);
     }
 
-    function _runExpSegment(segments, idx, barW, depth) {
+    function _runExpSegment(segments, idx, currentBarW, depth) {
         if (idx >= segments.length) return;
         const seg = segments[idx];
-        const fromW = barW * Math.max(0, seg.from);
-        const toW = barW * Math.min(1, seg.to);
+        const fromW = currentBarW * Math.max(0, seg.from);
+        const toW = currentBarW * Math.min(1, seg.to);
         const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
 
         expBarFill.setDisplaySize(fromW, barH);

@@ -8,7 +8,7 @@ class BossSquareModel extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 7.0;
         this.rampDuration = 1.4;
-        this.size = 163; // Increased 25% from 130
+        this.size = 165; // Increased 25% from 130
         this.bossId = 'bossSquare';
     }
 }

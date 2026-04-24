@@ -27,7 +27,7 @@ class Boss2Model extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 4.2; // Same burst of speed as Boss 1
         this.rampDuration = 1.1;
-        this.size = 90;
+        this.size = 95;
         this.bossId = 'boss2';
 
         this.state = BOSS_2_STATES.TRAVEL;
@@ -108,6 +108,31 @@ class Boss2Model extends BossModel {
         const effectiveSpeed = this.speed * this.speedMult;
         this.vx = Math.cos(this.currentMoveRotation) * effectiveSpeed;
         this.vy = Math.sin(this.currentMoveRotation) * effectiveSpeed;
+    }
+
+    /** Capsule hitbox check (Line segment distance). */
+    checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 12) {
+        const r = (this.size !== undefined ? this.size : sizeFallback) * radiusRatio + extraRadius;
+        const halfLen = r * 1.1; // Total length is 2*halfLen + 2r. Aspect ratio ~2.1:1.
+
+        const dx = px - this.x;
+        const dy = py - this.y;
+
+        const cos = Math.cos(-this.baseRotation);
+        const sin = Math.sin(-this.baseRotation);
+
+        const rx = dx * cos - dy * sin;
+        const ry = dx * sin + dy * cos;
+
+        const closestX = Math.max(-halfLen, Math.min(halfLen, rx));
+        const distSq = (rx - closestX) * (rx - closestX) + (ry * ry);
+
+        return distSq < (r * r);
+    }
+
+    checkSquareCollision(px, py, halfSize, sizeFallback = 15) {
+        // Approximate capsule vs square by using the capsule check with the square's half-size as extra radius.
+        return this.checkCollision(px, py, 1.0, halfSize, sizeFallback);
     }
 
     update(dt) {

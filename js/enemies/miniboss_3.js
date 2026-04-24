@@ -51,7 +51,7 @@ class Miniboss3 extends Miniboss {
         m.damage = MB3.ATTACK_DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY); // Intended static damage
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB3.SPEED_MULT;
         m.knockBackModifier = 0; // Immune to knockback
-        m.size = 94;
+        m.size = 98;
 
         m.attackCooldown = 0; // Ready immediately
         m.isSlamming = false;

@@ -47,7 +47,7 @@ class LogicStrayEnemy extends Enemy {
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED;
         m.damage = 0;
         m.selfDamage = 0;
-        m.size = 20;
+        m.size = 25;
         m.isEnraged = false;
         m.rotationTime = Math.random() * 3;
         m.ghostTimer = 0;

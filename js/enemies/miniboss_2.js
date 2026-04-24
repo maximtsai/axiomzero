@@ -125,7 +125,7 @@ class Miniboss2 extends Miniboss {
         m.baseSpeed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB2.SPEED_MULT;
         m.speed = 0; // Starts paused
         m.knockBackModifier = MB2.KNOCKBACK_MOD; // Will not get bounced backwards
-        m.size = 60; // Approximate size
+        m.size = 65; // Approximate size
 
         m.state = MINIBOSS2_STATE.SPAWN_PAUSE;
         m.stateTimer = MB2.INITIAL_WAIT_MS;

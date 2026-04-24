@@ -520,12 +520,7 @@ const laserAttack = (() => {
             const cpx = ox + cos * t;
             const cpy = oy + sin * t;
 
-            // Optimization 2: Squared distance comparison (avoids expensive Math.sqrt)
-            const dx = e.model.x - cpx;
-            const dy = e.model.y - cpy;
-            const reach = halfDmgW + (e.model.size || 0);
-
-            if ((dx * dx + dy * dy) < (reach * reach)) {
+            if (e.checkCollision(cpx, cpy, 1.0, halfDmgW, 3)) {
                 _tickHitSet.add(e);
                 const currentBonus = e.model.laserDmgBonus || 0;
                 enemyManager.damageEnemy(e, dmg + currentBonus, 'laser');

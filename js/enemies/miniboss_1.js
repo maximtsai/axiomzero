@@ -156,7 +156,7 @@ class Miniboss1 extends Miniboss {
         m.damage = 0;
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB1.SPEED_MULT;
         m.knockBackModifier = MB1.KNOCKBACK_MOD;
-        m.size = 60;
+        m.size = 65;
 
         m.state = MINIBOSS_STATE.MOVING;
         m.fireCooldown = MB1.FIRE_INTERVAL;
