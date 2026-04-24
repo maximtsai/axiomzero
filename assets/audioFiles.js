@@ -44,4 +44,5 @@ const audioFiles = [
     { name: 'ship_creak', src: 'audio/ship_creak.mp3' },
     { name: 'coin_gain', src: 'audio/coin_gain.mp3' },
     { name: 'datacache_appear', src: 'audio/datacache_appear.mp3' },
+    { name: 'switch', src: 'audio/switch.mp3' },
 ];

@@ -58,6 +58,7 @@ class Node {
 
         // Tier and Duo-Box properties
         this.isDuoBox = def.isDuoBox || false;
+        this.isLeftDuo = def.isLeftDuo || false;
         this.isDuoChild = def.isDuoChild || false;
         this.shardId = def.shardId || null;
         this.duoBoxTier = def.duoBoxTier || 0;
@@ -638,6 +639,13 @@ class Node {
 
         if (FLAGS.DEBUG) {
             console.log(`[NODE] Clicked: ${this.id} (${this.name})`);
+        }
+
+        if (this.isDuoBox) {
+            let sfx = audio.play('switch');
+            if (sfx) {
+                sfx.detune = this.isLeftDuo ? -150 : 20;
+            }
         }
 
         // 1. Duo-box swap logic

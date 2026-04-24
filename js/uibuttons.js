@@ -259,7 +259,7 @@ function _showOptionsPopup() {
 
     const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'pixels', 'black_pixel.png');
     resetUnderlay.setDisplaySize(width - 477, 31);
-    resetUnderlay.setDepth(depth + 3).setAlpha(0.6);
+    resetUnderlay.setDepth(depth + 3).setAlpha(0.5);
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
@@ -267,6 +267,20 @@ function _showOptionsPopup() {
         _showResetConfirmPopup();
     }, true);
     elements.push(resetGlow.bg, resetGlow.text, resetGlow.btn);
+    resetGlow.text.setAlpha(0.7);
+
+    const oldResetHoverFunc = resetGlow.btn.onHoverFunc;
+    resetGlow.btn.onHoverFunc = () => {
+        if (oldResetHoverFunc) oldResetHoverFunc();
+        resetUnderlay.setAlpha(1);
+        resetGlow.text.setAlpha(1);
+    };
+    const oldResetHoverOutFunc = resetGlow.btn.onHoverOutFunc;
+    resetGlow.btn.onHoverOutFunc = () => {
+        if (oldResetHoverOutFunc) oldResetHoverOutFunc();
+        resetUnderlay.setAlpha(0.5);
+        resetGlow.text.setAlpha(0.7);
+    };
     textObjects.push({ obj: resetGlow.text, size: 21 });
 
     updateAllTextSizes();
