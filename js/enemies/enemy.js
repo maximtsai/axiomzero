@@ -315,6 +315,35 @@ class EnemyModel {
         return this.health / this.maxHealth;
     }
 
+    /**
+     * Specialized collision check.
+     * @param {number} px - Point X
+     * @param {number} py - Point Y
+     * @param {number} radiusRatio - Multiplier for the enemy's base size (Default 1.0)
+     * @param {number} extraRadius - Flat addition to the hit radius (Default 0)
+     * @param {number} sizeFallback - Radius to use if this.size is undefined (Default 15)
+     */
+    checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 15) {
+        const baseR = (this.size !== undefined ? this.size : sizeFallback);
+        const r = baseR * radiusRatio + extraRadius;
+        const dx = px - this.x;
+        const dy = py - this.y;
+        return (dx * dx + dy * dy < r * r);
+    }
+
+    /**
+     * Square (AABB) collision check.
+     * @param {number} px - Center X of the square
+     * @param {number} py - Center Y of the square
+     * @param {number} halfSize - Half-width of the square
+     * @param {number} sizeFallback - Radius to use if this.size is undefined (Default 15)
+     */
+    checkSquareCollision(px, py, halfSize, sizeFallback = 15) {
+        const r = (this.size !== undefined ? this.size : sizeFallback);
+        const reach = halfSize + r;
+        return (Math.abs(px - this.x) <= reach && Math.abs(py - this.y) <= reach);
+    }
+
     /** Override in subclasses for custom feedback config. */
     getHitFeedbackConfig() {
         return {};
@@ -584,6 +613,14 @@ class Enemy {
         PhaserScene.time.delayedCall(result.stunDuration, () => {
             this.model.stunned = false;
         });
+    }
+
+    checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 15) {
+        return this.model.checkCollision(px, py, radiusRatio, extraRadius, sizeFallback);
+    }
+
+    checkSquareCollision(px, py, halfSize, sizeFallback = 15) {
+        return this.model.checkSquareCollision(px, py, halfSize, sizeFallback);
     }
 
     stun(duration) {
