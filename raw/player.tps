@@ -222,6 +222,7 @@
                 <false/>
             </struct>
             <key type="filename">player/artillery_flash.png</key>
+            <key type="filename">player/unlock_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

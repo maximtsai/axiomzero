@@ -155,6 +155,25 @@ function _showOptionsPopup() {
     elements.push(bigFont.btn, bigFont.text);
     textObjects.push({ obj: bigFont.text, size: 21 });
 
+    // Fullscreen Checkbox (Visual row 2, right)
+    const currentFullscreen = PhaserScene.scale.isFullscreen;
+    gameState.settings.fullscreen = currentFullscreen; // Sync setting with reality
+    const fullscreen = helper.createCheckbox(W + 50, visualHeaderY + 80, t('options', 'fullscreen'), currentFullscreen, depth + 3, (val) => {
+        gameState.settings.fullscreen = val;
+        saveGame();
+        if (val) {
+            if (PhaserScene.scale.fullscreenUnsupported) {
+                console.warn('Fullscreen not supported');
+            } else {
+                PhaserScene.scale.startFullscreen();
+            }
+        } else {
+            PhaserScene.scale.stopFullscreen();
+        }
+    });
+    elements.push(fullscreen.btn, fullscreen.text);
+    textObjects.push({ obj: fullscreen.text, size: 21 });
+
     const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 130, t('options', 'particles'), {
         fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);

@@ -1690,6 +1690,24 @@ const upgradeTree = (() => {
      * Specialized transition entry for the upgrade tree (Combat -> Upgrade).
      * Tweens elements to their correct positions based on fullUpgradeView state.
      */
+    function unlockNode(id) {
+        if (!nodes[id]) return false;
+        if (!gameState.unlockedNodes) gameState.unlockedNodes = {};
+        gameState.unlockedNodes[id] = true;
+        nodes[id].refreshState();
+        _refreshAllNodes();
+        return true;
+    }
+
+    function revealNode(id) {
+        if (!nodes[id]) return false;
+        if (!gameState.revealedNodes) gameState.revealedNodes = {};
+        gameState.revealedNodes[id] = true;
+        nodes[id].refreshState();
+        _refreshAllNodes();
+        return true;
+    }
+
     function onEnterUpgradePhase(duration) {
         let treeTargetX = 0;
         let maskTargetX = 0;
@@ -1783,5 +1801,5 @@ const upgradeTree = (() => {
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
     }
 
-    return { init, show, hide, getNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
 })();

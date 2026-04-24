@@ -18,7 +18,7 @@ const LORE_DEFS = [
         parents: ['bug_report'],
         childIds: [],
         treeX: gridX(-3),
-        treeY: gridY(0),
+        treeY: gridY(-0.5),
         requiresMaxParent: true,
         tooltipExtraWidth: 200,
         effect: function () {
@@ -87,7 +87,7 @@ const LORE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['lore_3'],
-        childIds: ['lore_5'],
+        childIds: [],
         treeX: gridX(-4.5),
         treeY: gridY(-2.5),
         tooltipExtraWidth: 200,
@@ -109,10 +109,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_4'],
-        childIds: ['lore_6'],
-        treeX: gridX(-4.5),
-        treeY: gridY(-1.5),
+        parents: ['regen'],
+        childIds: [],
+        treeX: gridX(-3.0),
+        treeY: gridY(1.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_5');
@@ -132,10 +132,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_5'],
-        childIds: ['lore_7'],
-        treeX: gridX(-4.5),
-        treeY: gridY(-0.5),
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(3.0),
+        treeY: gridY(-1.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_6');
@@ -155,10 +155,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_6'],
-        childIds: ['lore_8'],
-        treeX: gridX(-4.5),
-        treeY: gridY(0.5),
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(3.0),
+        treeY: gridY(-2.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_7');
@@ -178,10 +178,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_7'],
-        childIds: ['lore_9'],
-        treeX: gridX(-4.5),
-        treeY: gridY(1.5),
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(3.0),
+        treeY: gridY(-3.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_8');
@@ -201,10 +201,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['lore_8'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-4.5),
-        treeY: gridY(2.5),
+        treeX: gridX(3.0),
+        treeY: gridY(-4.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_9');

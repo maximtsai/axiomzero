@@ -25,10 +25,15 @@ const iterationOverScreen = (() => {
     let _expFillTween = null;  // Active bar fill tween (so we can kill on exit)
     let _expDelayEvent = null; // Active post-levelup delay event
     let _activeBurstTweens = []; // Track data burst tweens for cleanup
+    let _insightSparkleEmitter = null;
 
     // Session state
     let _lastRunData = null; // null until at least one run completes
     let _dataCountTween = null;
+    let barW = 320;
+    let barH = 11;
+    let barX = 0;
+    let barY = 0;
 
     let visible = false;
     let isBossKill = false;
@@ -120,18 +125,20 @@ const iterationOverScreen = (() => {
         }).setOrigin(0.5).setDepth(depth + 1);
 
         // ── EXP Progress Bar ──────────────────────────────────────────
-        const barW = 320;
-        const barH = 14;
-        const barX = cx - barW / 2;
-        const barY = cy + 99; // positioned below resource summary
+        barW = 316;
+        barH = 7;
+        barX = cx - barW / 2;
+        barY = cy + 108; // moved 5px down
 
-        expBarBg = PhaserScene.add.image(barX, barY, 'white_pixel');
-        expBarBg.setOrigin(0, 0.5).setDisplaySize(barW, barH).setTint(0x444455).setDepth(depth + 2).setVisible(false);
+        const containerW = barW + 4;
+        const containerH = 21;
+        expBarBg = PhaserScene.add.nineslice(barX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
+        expBarBg.setOrigin(0, 0.5).setDepth(depth + 2).setVisible(false).setAlpha(0.7);
 
         expBarFill = PhaserScene.add.image(barX, barY, 'white_pixel');
-        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffffff).setDepth(depth + 3).setVisible(false);
+        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffffff).setDepth(depth + 3).setVisible(false).setAlpha(0.7);
 
-        expBarLabel = PhaserScene.add.text(cx, barY - 23, 'INSIGHT PROGRESS', {
+        expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '23px',
             color: '#aaaaaa',
@@ -248,6 +255,24 @@ const iterationOverScreen = (() => {
         expHoverBtn.setDepth(depth + 20);
         expHoverBtn.setScrollFactor(0);
         expHoverBtn.setVisible(false);
+
+        // ── Sparkle emitter for Insight Level Up ──
+        _insightSparkleEmitter = PhaserScene.add.particles(0, 0, 'ui', {
+            frame: 'sparkle.png',
+            speed: { min: 70, max: 140 },
+            lifespan: 1700,
+            scale: { start: 1.0, end: 0, ease: 'Quart.easeIn' },
+            alpha: 1,
+            rotate: { start: 0, end: 720 },
+            gravityY: 0,
+            frequency: 45,
+            emitting: false,
+            depth: depth + 10,
+            emitZone: {
+                source: new Phaser.Geom.Rectangle(barX, barY - barH / 2, barW, barH),
+                type: 'random'
+            }
+        });
     }
 
     // ── show / hide ──────────────────────────────────────────────────
@@ -506,16 +531,22 @@ const iterationOverScreen = (() => {
         const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER;
 
         // Show bar elements
-        expBarBg.setVisible(true);
-        expBarFill.setVisible(true).setDisplaySize(0, 14);
-        expBarLabel.setVisible(true);
-        expBarIcon.setVisible(true).setAlpha(0.3);
+        expBarBg.setVisible(true).setAlpha(0);
+        expBarFill.setVisible(true).setDisplaySize(0, barH).setAlpha(0.7);
+        expBarLabel.setVisible(true).setAlpha(0);
+        expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
 
-        // Fade label in
+        // Fade elements in
         PhaserScene.tweens.add({
-            targets: [expBarBg, expBarLabel],
-            alpha: { from: 0, to: 1 },
+            targets: expBarBg,
+            alpha: 0.7,
+            duration: 350,
+            ease: 'Cubic.easeOut',
+        });
+        PhaserScene.tweens.add({
+            targets: expBarLabel,
+            alpha: 1,
             duration: 350,
             ease: 'Cubic.easeOut',
         });
@@ -540,11 +571,10 @@ const iterationOverScreen = (() => {
     }
 
     function _showStaticExpBar(ratio) {
-        const barW = 320;
-        expBarBg.setVisible(true).setAlpha(1);
-        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), 14);
+        expBarBg.setVisible(true).setAlpha(0.7);
+        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), barH).setAlpha(0.7);
         expBarLabel.setVisible(true).setAlpha(1);
-        expBarIcon.setVisible(true).setAlpha(0.3);
+        expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
     }
 
@@ -555,7 +585,7 @@ const iterationOverScreen = (() => {
         const toW = barW * Math.min(1, seg.to);
         const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
 
-        expBarFill.setDisplaySize(fromW, 14);
+        expBarFill.setDisplaySize(fromW, barH);
 
         _expFillTween = PhaserScene.tweens.add({
             targets: expBarFill,
@@ -575,7 +605,6 @@ const iterationOverScreen = (() => {
     }
 
     function _playLevelUpEffect(depth, barW, segments, idx, fillDuration) {
-        // Flash the bar white
         PhaserScene.tweens.add({
             targets: expBarFill,
             tint: { from: 0xffffff, to: 0xffd700 },
@@ -583,7 +612,10 @@ const iterationOverScreen = (() => {
             ease: 'Cubic.easeOut',
         });
 
-        // Glow the icon
+        // Start sparkle emission
+        if (_insightSparkleEmitter) _insightSparkleEmitter.start();
+
+        // Glow the icon and KEEP it at alpha 1
         PhaserScene.tweens.add({
             targets: expBarIcon,
             alpha: 1,
@@ -594,13 +626,20 @@ const iterationOverScreen = (() => {
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: expBarIcon,
-                    alpha: 0.3,
                     scaleX: 1,
                     scaleY: 1,
                     duration: 400,
                     ease: 'Quad.easeIn',
                 });
             }
+        });
+
+        // Set bar elements to full opacity when insight gained
+        PhaserScene.tweens.add({
+            targets: [expBarBg, expBarFill],
+            alpha: 1,
+            duration: 250,
+            ease: 'Sine.easeOut'
         });
 
         // Pop a floating insight icon at the bar's right end
@@ -630,7 +669,7 @@ const iterationOverScreen = (() => {
 
         _expDelayEvent = PhaserScene.time.delayedCall(450, () => {
             if (!visible) return;
-            expBarFill.setDisplaySize(0, 14);
+            expBarFill.setDisplaySize(0, barH);
             _runExpSegment(segments, idx + 1, barW, depth);
         });
     }
@@ -795,6 +834,7 @@ const iterationOverScreen = (() => {
         if (expBarFill) expBarFill.setVisible(false);
         if (expBarLabel) expBarLabel.setVisible(false);
         if (expBarIcon) expBarIcon.setVisible(false);
+        if (_insightSparkleEmitter) _insightSparkleEmitter.stop();
 
         // Clean up transient anim elements (insight pop icons + data burst pieces)
         expAnimElements.forEach(el => { if (el && el.active) el.destroy(); });

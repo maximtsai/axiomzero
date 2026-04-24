@@ -156,7 +156,7 @@ const gameHUD = (() => {
 
         // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', },
             press: { ref: 'button_press.png', atlas: 'buttons', },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -170,7 +170,7 @@ const gameHUD = (() => {
         endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', alpha: 1 },
             press: { ref: 'button_press.png', atlas: 'buttons', alpha: 1 },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0.5 },
@@ -193,7 +193,7 @@ const gameHUD = (() => {
         bombBtn.setDepth(depth + 3).setScrollFactor(0);
 
         testDefensesBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons' },
             press: { ref: 'button_press.png', atlas: 'buttons' },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -218,7 +218,7 @@ const gameHUD = (() => {
         });
         testDefensesBtn.setDepth(depth + 3).setScrollFactor(0).setVisible(false);
 
-        farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 25, '00:00', {
+        farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 22, '00:00', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '24px',
             color: '#00f5ff', // Cyan matching the progress bar
@@ -230,7 +230,7 @@ const gameHUD = (() => {
         // 4. Wave Progress Bar (Restore missing initialization)
         waveProgressBar = new ProgressBar(PhaserScene, {
             x: GAME_CONSTANTS.halfWidth,
-            y: GAME_CONSTANTS.HEIGHT - 28,
+            y: GAME_CONSTANTS.HEIGHT - 26,
             width: 1570,
             height: 18,
             padding: 6,

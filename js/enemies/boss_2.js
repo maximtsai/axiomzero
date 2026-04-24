@@ -27,7 +27,7 @@ class Boss2Model extends BossModel {
         super(levelScalingModifier);
         this.initialSpeedMult = 4.2; // Same burst of speed as Boss 1
         this.rampDuration = 1.1;
-        this.size = 60;
+        this.size = 90;
         this.bossId = 'boss2';
 
         this.state = BOSS_2_STATES.TRAVEL;

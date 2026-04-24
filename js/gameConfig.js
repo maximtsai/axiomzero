@@ -171,6 +171,7 @@ const GAME_STATE_DEFAULTS = {
     activeShards: {},      // { tierNum: 'shardId' } — which shard node is active per tier
     duoBoxPurchased: {},   // { tierNum: true } — has player purchased either node in this tier's duo-box?
     revealedNodes: {},     // { nodeId: true } — special events can reveal part of the tree
+    unlockedNodes: {},     // { nodeId: true } — manual force-unlocks (bypass parent requirements)
     levelsDefeated: 0,     // highest boss level defeated
     minibossLevelsDefeated: 0, // highest miniboss level defeated
     achievements: {},      // { achievementId: true }
@@ -212,6 +213,7 @@ const GAME_STATE_DEFAULTS = {
         chromaticAberration: true,
         showDamageNumbers: true,
         minimalParticles: false,
-        bigFont: false
+        bigFont: false,
+        fullscreen: FLAGS.IS_EXE
     }
 };
