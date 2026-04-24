@@ -892,7 +892,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['impulse', 'system_redundancy_new', 'data_chest_unlock', 'completionist'],
+        childIds: ['system_redundancy_new', 'data_chest_unlock', 'completionist'],
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {

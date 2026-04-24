@@ -241,7 +241,7 @@ window.TRANSLATIONS.en = {
         no_damage_dealt: 'NO DAMAGE DEALT',
         insight_progress: 'INSIGHT PROGRESS',
         insight_progress_title: 'INSIGHT',
-        insight_progress_desc: 'Quantified experience gained over time. [b]INSIGHT[/b] unlocks upgrades that improve [color=cyan]DATA[/color] gathering.',
+        insight_progress_desc: 'Quantified experience gained over time. INSIGHT unlocks upgrades that improve [color=cyan]DATA[/color] gathering.',
         cursor: 'CURSOR',
         tower: 'TOWER',
         lightning: 'LIGHTNING',

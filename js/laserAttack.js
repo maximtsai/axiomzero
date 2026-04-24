@@ -11,7 +11,7 @@ class LaserAttackModel {
         this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
         this.BASE_DAMAGE_PER_TICK = 3;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
-        this.FIRE_DURATION = 5000;       // ms beam is active
+        this.FIRE_DURATION = 4500;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
 
         this.active = false;    // true when combat phase AND node purchased

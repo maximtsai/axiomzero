@@ -76,7 +76,7 @@ class TowerModel {
         this.health = this.maxHealth;
         this.alive = true;
         this.attackTimer = 0;
-        // EXP no longer resets between waves
+        // EXP no longer resets between waves, but we capture the starting point for summary screens
         this.isInvincible = false;
         this.hasWarnedThisWave = false;
         this.bugReportAccumulator = 0;
@@ -721,6 +721,7 @@ const tower = (() => {
 
     function reset(isIntense = false) {
         model.reset();
+        _expAtCombatStart = model.exp;
         if (model.awakened) {
             const showRange = (gameState.upgrades && gameState.upgrades.automated_defense >= 1);
             view.refreshRangeSprite(showRange ? model.attackRange : 0, view.getPosition(), isIntense);
@@ -753,6 +754,16 @@ const tower = (() => {
 
             const s = audio.play(key, volume);
             if (s) s.detune = detune;
+
+            // Trigger hit particles: 2 base + 1 per 10% max health lost
+            const hitPct = damageTaken / model.maxHealth;
+            const particleCount = 2 + Math.floor(hitPct / 0.1);
+            const pos = getPosition();
+            const px = (x !== undefined) ? x : pos.x;
+            const py = (y !== undefined) ? y : pos.y;
+            if (typeof customEmitters !== 'undefined') {
+                customEmitters.towerHit(px, py, particleCount);
+            }
         }
 
         if (survived) {

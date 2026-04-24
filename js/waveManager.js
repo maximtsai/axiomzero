@@ -205,10 +205,9 @@ const waveManager = (() => {
 
         // 1. Freeze all enemies — stop movement and spawning
         messageBus.publish('freezeEnemies');
-        PhaserScene.time.timeScale = 0.05;
-        setTimeout(() => {
-            PhaserScene.time.timeScale = 1.0;
-        }, 150);
+        if (typeof timeManager !== 'undefined') {
+            timeManager.setTempPause(150, 0.05);
+        }
 
         // 1.5. Subliminal Black Flash (75ms)
         const darkFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel');

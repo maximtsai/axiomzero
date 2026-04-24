@@ -308,6 +308,24 @@ const customEmitters = (() => {
         e2.explode(shrapnelCount, x, y);
     }
 
+    // tower hit (lighter version of core death explosion)
+    const towerHitParams = {
+        frame: 'white_pixel.png',
+        speed: { min: 80, max: 180, ease: 'Cubic.easeOut' },
+        lifespan: { min: 400, max: 1000 },
+        scale: { start: 18, end: 4, ease: 'Quad.easeIn' },
+        alpha: { start: 0.6, end: 0, ease: 'Quad.easeIn' },
+        gravityY: 0,
+        emitting: false,
+    }
+
+    const _towerHit = _make('pixels', towerHitParams, GAME_CONSTANTS.DEPTH_TOWER - 2);
+
+    function towerHit(x, y, count = 2) {
+        const e = _towerHit();
+        e.explode(count, x, y);
+    }
+
     // ── Logic Stray Ghost ──────────────────────────────────────────────────────────
     const logicStrayGhostPool = new ObjectPool(
         () => {
@@ -860,6 +878,7 @@ const customEmitters = (() => {
         basicStrike,
         basicStrikeManual,
         towerDeath,
+        towerHit,
         logicStrayGhost,
         createEnemyDeathAnim,
         minibossExplosion,
