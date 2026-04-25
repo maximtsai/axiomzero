@@ -82,7 +82,7 @@ window.TRANSLATIONS.en = {
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]4/8[/color] damage.', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size.', popup: 'COLOSSAL CURSOR' },
         resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack deals [color=#8FD9F8]double damage[/color]', popup: 'RESONANCE ACTIVE' },
-        amplitude: { name: 'AMPLITUDE', desc: 'Resonance attacks deal [color=#8FD9F8]triple damage[/color] (x3).', popup: 'AMPLITUDE INCREASED' },
+        amplitude: { name: 'AMPLITUDE', desc: 'Resonance attack damage increased to [color=#8FD9F8]triple damage[/color] (x3).', popup: 'AMPLITUDE INCREASED' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#8FD9F8]2s[/color] during combat.', popup: 'SNIFFER ACTIVE' },
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through all enemies.', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy.', popup: 'ARTILLERY ACTIVE' },

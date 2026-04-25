@@ -4,44 +4,41 @@ const UI_RADIUS_SMALL = 20;
 const UI_RADIUS_LARGE = 64;
 
 function createOptionsButton(x, y) {
+    let icon;
     const button = new Button({
         normal: {
             atlas: 'buttons',
-            ref: 'options_normal.png',
+            ref: 'sq_button_normal.png',
             x: x,
             y: y
         },
         hover: {
             atlas: 'buttons',
-            ref: 'options_hover.png',
-            x: x,
-            y: y
+            ref: 'sq_button_hover.png',
         },
         press: {
             atlas: 'buttons',
-            ref: 'options_press.png',
-            x: x,
-            y: y
+            ref: 'sq_button_press.png',
         },
         onMouseUp: function () {
             _showOptionsPopup();
+        },
+        onHover: () => {
+            if (icon) icon.setAlpha(1.0);
+        },
+        onHoverOut: () => {
+            if (icon) icon.setAlpha(0.75);
         }
     });
 
-    button.onHover = () => {
-        if (button.state !== DISABLE) {
-            button.setScale(helper.isMobileDevice() ? 0.85 : 0.72);
-        }
-    };
-    button.onHoverOut = () => {
-        if (button.state !== DISABLE) {
-            button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);
-        }
-    };
+    icon = PhaserScene.add.image(x, y, 'buttons', 'gear_icon.png');
+    icon.setDepth(7001).setScrollFactor(0);
+    icon.setAlpha(0.75);
 
     button.setDepth(7000);
     button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);
     button.setScrollFactor(0);
+    icon.setScale(button.bgSprite.scaleX);
     return button;
 }
 

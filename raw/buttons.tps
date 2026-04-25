@@ -228,13 +228,12 @@
                 <false/>
             </struct>
             <key type="filename">buttons/bomb_icon.png</key>
-            <key type="filename">buttons/buy_pulse.png</key>
-            <key type="filename">buttons/max_pulse.png</key>
+            <key type="filename">buttons/gear_icon.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>1</double>
+                <double>0.9</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -291,6 +290,22 @@
                 <rect>94,32,188,64</rect>
                 <key>scale9Paddings</key>
                 <rect>94,32,188,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/buy_pulse.png</key>
+            <key type="filename">buttons/max_pulse.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>18,18,36,36</rect>
+                <key>scale9Paddings</key>
+                <rect>18,18,36,36</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -380,9 +395,6 @@
                 <false/>
             </struct>
             <key type="filename">buttons/empty_square.png</key>
-            <key type="filename">buttons/options_hover.png</key>
-            <key type="filename">buttons/options_normal.png</key>
-            <key type="filename">buttons/options_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -750,7 +762,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>1</double>
+                <double>0.9</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -765,7 +777,7 @@
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>1</double>
+                <double>0.9</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>

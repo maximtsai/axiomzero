@@ -39,7 +39,7 @@ const customEmitters = (() => {
     let activeGhosts = [];
     let activeExplosionRays = [];
     let _lastExploderBoomTime = 0;
-    const BOOM_CHAIN_WINDOW = 500;
+    const BOOM_CHAIN_WINDOW = 750;
 
     // ── Explosion Rays (Boss Death) ──────────────────────────────────────────
     const explosionRayPool = new ObjectPool(

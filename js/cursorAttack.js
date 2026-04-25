@@ -1091,7 +1091,8 @@ const pulseAttack = (() => {
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
-            if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive()) return;
+            const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+            if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive() || isFullView) return;
 
             if (model.bombArmed) {
                 if (model.bombReadyToFire) {

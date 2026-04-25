@@ -639,6 +639,7 @@ const upgradeTree = (() => {
 
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setTestButtonVisible(false);
+            gameHUD.setBombButtonVisible(false);
             gameHUD.setHealthBtnVisible(false);
         }
         if (typeof towerStatsUI !== 'undefined') {
@@ -651,6 +652,7 @@ const upgradeTree = (() => {
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
                     _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
+                    if (typeof gameHUD !== 'undefined') gameHUD.setCurrencyHUDShifted(true);
                 }
             });
 
@@ -715,7 +717,9 @@ const upgradeTree = (() => {
                     // Restore HUD buttons only after transition completes
                     if (typeof gameHUD !== 'undefined') {
                         gameHUD.setTestButtonVisible(true);
+                        gameHUD.setBombButtonVisible(true);
                         gameHUD.setHealthBtnVisible(true);
+                        gameHUD.setCurrencyHUDShifted(false);
                     }
                     if (typeof towerStatsUI !== 'undefined') {
                         towerStatsUI.setEnabled(true);
