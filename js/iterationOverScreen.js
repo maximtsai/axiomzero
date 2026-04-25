@@ -261,13 +261,14 @@ const iterationOverScreen = (() => {
         // ── Sparkle emitter for Insight Level Up ──
         _insightSparkleEmitter = PhaserScene.add.particles(0, 0, 'ui', {
             frame: 'sparkle.png',
-            speed: { min: 50, max: 100 },
-            lifespan: 1500,
+            speed: { min: 40, max: 80 },
+            ease: 'Quad.easeOut',
+            lifespan: 1800,
             scale: { start: 1.0, end: 0, ease: 'Quart.easeIn' },
             alpha: 1,
-            rotate: { start: 0, end: 720 },
-            gravityY: 0,
-            frequency: 35,
+            rotate: { start: 0, end: 5400 },
+            gravityY: 5,
+            frequency: 75,
             emitting: false,
             depth: depth + 11,
             emitZone: {
@@ -275,6 +276,7 @@ const iterationOverScreen = (() => {
                 type: 'random'
             }
         });
+        _insightSparkleEmitter.setDepth(depth + 11);
     }
 
     // ── show / hide ──────────────────────────────────────────────────

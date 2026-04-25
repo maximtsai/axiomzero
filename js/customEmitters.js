@@ -227,10 +227,10 @@ const customEmitters = (() => {
 
     const enemyDamageParams = {
         frame: 'damage_particle.png',
-        speed: { min: 100, max: 450 },
-        lifespan: { min: 200, max: 550 },
+        speed: { start: 300, end: 0, ease: 'Cubic.easeOut' },
+        lifespan: { min: 180, max: 580 },
         scaleX: { start: 1, end: 0, ease: 'Quart.easeIn' },
-        scaleY: { start: 0.65, end: 0, ease: 'Quint.easeIn' },
+        scaleY: { start: 0.6, end: 0.4, ease: 'Quart.easeIn' },
         rotate: {
             onUpdate: (particle) => {
                 return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
@@ -766,11 +766,11 @@ const customEmitters = (() => {
 
                         PhaserScene.tweens.add({
                             targets: [main, bright, red],
-                            scaleX: 1,
-                            scaleY: 1,
+                            scaleX: 0.98,
+                            scaleY: 0.98,
                             rotation: baseRot,
-                            duration: 400,
-                            ease: 'Quart.easeOut'
+                            duration: 350,
+                            ease: 'Quint.easeOut'
                         });
 
                         PhaserScene.tweens.add({

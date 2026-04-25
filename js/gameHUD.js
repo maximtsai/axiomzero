@@ -15,6 +15,7 @@ const gameHUD = (() => {
     let farmingTimerTxt = null;
     let bombBtn = null;
     let bombBtnTxt = null;
+    let bombIcon = null;
     let isFarming = false;
     let bombCanCancel = false;
     let bombPulseIndicator = null;
@@ -156,7 +157,7 @@ const gameHUD = (() => {
 
         // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 105, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 107, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', },
             press: { ref: 'button_press.png', atlas: 'buttons', },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -170,10 +171,10 @@ const gameHUD = (() => {
         endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 105, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', alpha: 1 },
-            press: { ref: 'button_press.png', atlas: 'buttons', alpha: 1 },
-            disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0.5 },
+            normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 45, y: GAME_CONSTANTS.HEIGHT - 75, alpha: 1 },
+            hover: { ref: 'sq_button_hover.png', atlas: 'buttons', alpha: 1 },
+            press: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 1 },
+            disable: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 0.5 },
             onMouseUp: () => {
                 if (bombCanCancel) {
                     if (typeof pulseAttack !== 'undefined' && pulseAttack.cancelBomb) pulseAttack.cancelBomb();
@@ -181,16 +182,26 @@ const gameHUD = (() => {
                     _armBomb();
                 }
             },
+            onHover: () => {
+                if (bombIcon) bombIcon.setAlpha(1);
+            },
+            onHoverOut: () => {
+                _updateBombUI();
+            }
         });
         bombBtn.setScale(0.675);
-        const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
-        bombBtnTxt = bombBtn.addText(`BOMB\n${bombKeyHint}`, {
+        bombBtnTxt = bombBtn.addText('', {
             fontFamily: 'JetBrainsMono_Bold',
             fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center'
         });
+        bombBtnTxt.setOrigin(0.5, 0.5);
+        bombBtn.setTextOffset(0, -44);
         bombBtn.setDepth(depth + 3).setScrollFactor(0);
+
+        bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 45, GAME_CONSTANTS.HEIGHT - 75, 'buttons', 'bomb_icon.png');
+        bombIcon.setScale(0.675).setDepth(depth + 4).setScrollFactor(0).setAlpha(0.9);
 
         testDefensesBtn = new Button({
             normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
@@ -251,19 +262,35 @@ const gameHUD = (() => {
         if (!bombBtn || typeof pulseAttack === 'undefined') return;
         const model = pulseAttack.getModel();
         const hasBombs = model.maxBombUses > 0;
+
         bombBtn.setVisible(hasBombs);
+        if (bombIcon) bombIcon.setVisible(hasBombs);
+
         if (hasBombs) {
+            const isDisabled = (model.bombUses <= 0 && !bombCanCancel) || model.bombArmed || model.bombFired;
+
             if (bombCanCancel) {
                 bombBtn.setState(NORMAL);
-                if (bombBtnTxt) bombBtnTxt.setText(`CANCEL\n(CLICK)`);
+                if (bombBtnTxt) bombBtnTxt.setText(t('ui', 'cancel')); // Text handled by icon/numbers
             } else {
-                if (model.bombUses > 0 && !model.bombArmed && !model.bombFired) {
+                if (!isDisabled) {
                     bombBtn.setState(NORMAL);
                 } else {
                     bombBtn.setState(DISABLE);
                 }
-                const bombKeyHint = helper.isMobileDevice() ? "<CLICK>" : "<SPACEBAR>";
-                if (bombBtnTxt) bombBtnTxt.setText(`BOMB (${model.bombUses}/${model.maxBombUses})\n${bombKeyHint}`);
+                if (bombBtnTxt) bombBtnTxt.setText(`${model.bombUses}/${model.maxBombUses}`);
+            }
+
+            // Update icon alpha
+            if (bombIcon) {
+                const isInteracted = bombBtn.state === HOVER || bombBtn.state === PRESS;
+                if (isInteracted) {
+                    bombIcon.setAlpha(1);
+                } else if (isDisabled) {
+                    bombIcon.setAlpha(0.5);
+                } else {
+                    bombIcon.setAlpha(0.75);
+                }
             }
         }
     }
@@ -317,6 +344,7 @@ const gameHUD = (() => {
 
         endIterationBtn.setVisible(false).setState(DISABLE);
         if (bombBtn) bombBtn.setVisible(false).setState(DISABLE);
+        if (bombIcon) bombIcon.setVisible(false);
         if (testDefensesBtn) testDefensesBtn.setVisible(false).setState(DISABLE);
         if (waveProgressBar) waveProgressBar.setVisible(false);
         if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
