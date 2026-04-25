@@ -143,7 +143,7 @@ const treeLineManager = (() => {
                 if (isGhost && (parentActive || isDuoBranch || revealedLine)) {
                     line.setAlpha(0.25);
                 } else {
-                    line.setAlpha((parentActive || isDuoBranch || revealedLine || ghostToActive) ? 0.6 : 0);
+                    line.setAlpha((parentActive || isDuoBranch || revealedLine) ? 0.6 : 0);
                 }
             }
         }
