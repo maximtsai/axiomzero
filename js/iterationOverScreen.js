@@ -836,7 +836,10 @@ const iterationOverScreen = (() => {
         if (expBarFill) expBarFill.setVisible(false);
         if (expBarLabel) expBarLabel.setVisible(false);
         if (expBarIcon) expBarIcon.setVisible(false);
-        if (_insightSparkleEmitter) _insightSparkleEmitter.stop();
+        if (_insightSparkleEmitter) {
+            _insightSparkleEmitter.stop();
+            _insightSparkleEmitter.killAll();
+        }
 
         // Clean up transient anim elements (insight pop icons + data burst pieces)
         expAnimElements.forEach(el => { if (el && el.active) el.destroy(); });

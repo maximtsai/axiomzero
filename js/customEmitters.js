@@ -38,6 +38,8 @@ const customEmitters = (() => {
     let activeManualStrikes = [];
     let activeGhosts = [];
     let activeExplosionRays = [];
+    let _lastExploderBoomTime = 0;
+    const BOOM_CHAIN_WINDOW = 500;
 
     // ── Explosion Rays (Boss Death) ──────────────────────────────────────────
     const explosionRayPool = new ObjectPool(
@@ -697,7 +699,7 @@ const customEmitters = (() => {
         red.setRotation(baseRot).setAlpha(0).setVisible(true).setActive(true);
 
         const black = exploderExplosionBlackPool.get();
-        black.setPosition(x, y).setSize(size + 1, size + 1).setOrigin(0.5, 0.5);
+        black.setPosition(x, y).setSize(size + 1, size + 1).setOrigin(0.5, 0.5).setScale(0.93);
         black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11);
         black.setRotation(startRot).setAlpha(1).setVisible(false).setActive(true);
 
@@ -705,61 +707,88 @@ const customEmitters = (() => {
 
         // --- New Hitstop Sequence ---
         // 1. Initial appearance (brief moment)
-        main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(0.95);
-        bright.setVisible(true).setAlpha(0.8).setRotation(startRot).setScale(0.95);
-        red.setVisible(true).setAlpha(0.6).setRotation(startRot).setScale(0.95);
+        main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(0.93);
+        bright.setVisible(true).setAlpha(0.8).setRotation(startRot).setScale(0.93);
+        red.setVisible(true).setAlpha(0.6).setRotation(startRot).setScale(0.93);
 
         PhaserScene.time.delayedCall(35, () => {
             if (!main.active) return;
 
             // 2. Black sprite covers and game 'pauses'
             black.setVisible(true);
+            main.setVisible(false);
+            bright.setVisible(false);
+            red.setVisible(false);
             timeManager.applyTimeScale(0.15, false); // Less extreme slow-down
-            if (typeof audio !== 'undefined') {
-                const boom = audio.play('exploder_boom', 0.85);
-                if (boom) boom.detune = Phaser.Math.Between(-300, 150);
-            }
-
-            PhaserScene.time.delayedCall(15, () => {
-                if (!main.active) {
-                    timeManager.applyTimeScale(1.0);
-                    return;
-                }
-
-                // 3. Resume and Detonate (The 'Pop')
+            PhaserScene.time.delayedCall(8, () => {
+                PhaserScene.cameras.main.setZoom(1.005);
                 black.setVisible(false);
-                timeManager.applyTimeScale(1.0);
+                main.setVisible(true);
+                bright.setVisible(true).setAlpha(1);
+                red.setVisible(true).setAlpha(0.75);
+                PhaserScene.time.delayedCall(8, () => {
+                    black.setVisible(true);
+                    main.setVisible(false);
+                    bright.setVisible(false);
+                    red.setVisible(false);
+                    if (typeof audio !== 'undefined') {
+                        const now = PhaserScene.time.now;
+                        let sKey = 'exploder_boom';
+                        let detuneMin = -400;
+                        let detuneMax = -150;
 
-                main.setAlpha(1).setRotation(startRot).setScale(1.15);
-                bright.setAlpha(1).setRotation(startRot).setScale(1.17);
-                red.setAlpha(0.7).setRotation(startRotSmall).setScale(1.20);
+                        if (now - _lastExploderBoomTime < BOOM_CHAIN_WINDOW) {
+                            sKey = 'exploder_boom_second';
+                            detuneMin = -100;
+                            detuneMax = 250;
+                        }
+                        _lastExploderBoomTime = now;
 
-                // Flash shake
-                zoomShake(1.012);
-
-                PhaserScene.tweens.add({
-                    targets: [main, bright, red],
-                    scaleX: 1,
-                    scaleY: 1,
-                    rotation: baseRot,
-                    duration: 400,
-                    ease: 'Quart.easeOut'
-                });
-
-                PhaserScene.tweens.add({
-                    targets: [main, bright, red],
-                    delay: 70,
-                    alpha: 0,
-                    duration: 350,
-                    ease: 'Quad.easeOut',
-                    onComplete: () => {
-                        exploderExplosionMainPool.release(main);
-                        exploderExplosionBrightPool.release(bright);
-                        exploderExplosionRedPool.release(red);
-                        exploderExplosionBlackPool.release(black);
+                        const boom = audio.play(sKey, 0.85);
+                        if (boom) boom.detune = Phaser.Math.Between(detuneMin, detuneMax);
                     }
-                });
-            });
+                    PhaserScene.time.delayedCall(12, () => {
+                        if (!main.active) {
+                            timeManager.applyTimeScale(1.0);
+                            return;
+                        }
+
+                        // 3. Resume and Detonate (The 'Pop')
+                        black.setVisible(false);
+                        timeManager.applyTimeScale(1.0);
+
+                        main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.1);
+                        bright.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.12);
+                        red.setVisible(true).setAlpha(0.7).setRotation(startRotSmall).setScale(1.15);
+
+                        // Flash shake
+                        zoomShake(1.012);
+
+                        PhaserScene.tweens.add({
+                            targets: [main, bright, red],
+                            scaleX: 1,
+                            scaleY: 1,
+                            rotation: baseRot,
+                            duration: 400,
+                            ease: 'Quart.easeOut'
+                        });
+
+                        PhaserScene.tweens.add({
+                            targets: [main, bright, red],
+                            delay: 70,
+                            alpha: 0,
+                            duration: 350,
+                            ease: 'Quad.easeOut',
+                            onComplete: () => {
+                                exploderExplosionMainPool.release(main);
+                                exploderExplosionBrightPool.release(bright);
+                                exploderExplosionRedPool.release(red);
+                                exploderExplosionBlackPool.release(black);
+                            }
+                        });
+                    });
+                })
+            })
         });
     }
 

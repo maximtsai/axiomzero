@@ -46,4 +46,5 @@ const audioFiles = [
     { name: 'datacache_appear', src: 'audio/datacache_appear.mp3' },
     { name: 'switch', src: 'audio/switch.mp3' },
     { name: 'exploder_boom', src: 'audio/exploder_boom.mp3' },
+    { name: 'exploder_boom_second', src: 'audio/exploder_boom_second.mp3' },
 ];
