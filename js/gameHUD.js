@@ -21,12 +21,25 @@ const gameHUD = (() => {
     let bombPulseIndicator = null;
     let bombPulseTimer = null;
 
-    // Layout
-    const HUD_X = 20;
-    const HUD_Y = 20;
-    const BAR_W = 200;
-    const BAR_H = helper.isMobileDevice() ? 28 : 24;
-    const BAR_GAP = helper.isMobileDevice() ? 18 : 14;
+    // Layout & Depth Configuration
+    const DEPTHS = {
+        BAR_BASE: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2,
+        BAR_OVERLAY: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3,
+        BUTTONS: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 5,
+        ICONS: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 6,
+        PROGRESS: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2,
+        TEXT: GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3
+    };
+
+    const LAYOUT = {
+        HUD_X: 20,
+        HUD_Y: 20,
+        BAR_W: 200,
+        BAR_H: helper.isMobileDevice() ? 28 : 24,
+        BAR_GAP: helper.isMobileDevice() ? 18 : 14,
+        CURRENCY_SPACING: helper.isMobileDevice() ? 40 : 36,
+        GROUP_X_OFFSET: 10
+    };
 
     let visible = false;
     let needsLayoutUpdate = false;
@@ -37,35 +50,28 @@ const gameHUD = (() => {
     function init() {
         _createElements();
         _hideAll();
+        _setupSubscriptions();
+
+        updateManager.addFunction(_update);
+    }
+
+    function _setupSubscriptions() {
+        // Core Phase/Transition
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+        messageBus.subscribe('transitionComplete', _onTransitionComplete);
+        messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
+        messageBus.subscribe('bossDefeated', _onBossDefeated);
+
+        // Tower Stats
         messageBus.subscribe('healthChanged', _onHealthChanged);
         messageBus.subscribe('currencyChanged', _onCurrencyChanged);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
-        messageBus.subscribe('towerDeathStarted', _onTowerDeathStarted);
-        messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
-        messageBus.subscribe('bossDefeated', () => {
-            if (endIterationBtn) endIterationBtn.setState(DISABLE);
-        });
 
-        messageBus.subscribe('transitionComplete', () => {
-            if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT && endIterationBtn) {
-                endIterationBtn.setVisible(true);
-                endIterationBtn.setState(NORMAL);
-            }
-        });
-
-        messageBus.subscribe('cursorBombArmed', () => {
-            if (bombBtn) bombBtn.setState(DISABLE);
-        });
+        // Bomb UI logic
+        messageBus.subscribe('cursorBombArmed', () => { if (bombBtn) bombBtn.setState(DISABLE); });
         messageBus.subscribe('bombUsesChanged', _updateBombUI);
-        messageBus.subscribe('cursorBombReady', () => {
-            bombCanCancel = false;
-            _updateBombUI();
-        });
-        messageBus.subscribe('cursorBombCanCancel', () => {
-            bombCanCancel = true;
-            _updateBombUI();
-        });
+        messageBus.subscribe('cursorBombReady', () => { bombCanCancel = false; _updateBombUI(); });
+        messageBus.subscribe('cursorBombCanCancel', () => { bombCanCancel = true; _updateBombUI(); });
         messageBus.subscribe('cursorBombCancelled', () => {
             bombCanCancel = false;
             _updateBombUI();
@@ -76,42 +82,32 @@ const gameHUD = (() => {
             _updateBombUI();
             clearBombPulse();
         });
-
         messageBus.subscribe('bombShowHint', (enabled) => {
             if (enabled) setBombPulse();
             else clearBombPulse();
         });
 
-        messageBus.subscribe('waveModeFarmingStarted', () => {
-            if (waveProgressBar) waveProgressBar.setVisible(false);
-            isFarming = true;
-            _playFarmingTimerFlicker();
-        });
-        messageBus.subscribe('waveModeNormalStarted', () => {
-            setWaveProgressBarVisible(true);
-            isFarming = false;
-            if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
-        });
-
-        updateManager.addFunction(_update);
+        // Wave Progress
+        messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
+        messageBus.subscribe('waveModeFarmingStarted', _onFarmingStarted);
+        messageBus.subscribe('waveModeNormalStarted', _onNormalWaveStarted);
     }
 
     function _createElements() {
-        const depth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2;
-        const groupX = GAME_CONSTANTS.halfWidth + 10 + HUD_X;
+        const groupX = GAME_CONSTANTS.halfWidth + LAYOUT.GROUP_X_OFFSET + LAYOUT.HUD_X;
 
         // 1. Health Bar Component
         healthBar = new HealthBar({
             x: groupX,
-            y: HUD_Y,
-            width: BAR_W,
-            height: BAR_H,
-            depth: depth
+            y: LAYOUT.HUD_Y,
+            width: LAYOUT.BAR_W,
+            height: LAYOUT.BAR_H,
+            depth: DEPTHS.BAR_BASE
         });
 
         // Invisible button overlay for health bar info
         healthBtn = new Button({
-            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 101, y: HUD_Y + (BAR_H / 2) },
+            normal: { ref: 'wide_pointer2_normal.png', atlas: 'buttons', x: groupX + 101, y: LAYOUT.HUD_Y + (LAYOUT.BAR_H / 2) },
             hover: { ref: 'wide_pointer2_hover.png', atlas: 'buttons' },
             press: { ref: 'wide_pointer2_hover.png', atlas: 'buttons' },
             disable: { ref: 'wide_pointer2_normal.png', atlas: 'buttons' },
@@ -133,16 +129,15 @@ const gameHUD = (() => {
                 }
             }
         });
-        healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.1 : 1.05).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.1 : 1.05).setDepth(DEPTHS.BAR_OVERLAY).setScrollFactor(0).setVisible(false);
 
         // 2. Currency Cluster Component
-        const currY = HUD_Y + BAR_H + BAR_GAP + 13;
-        const spacing = helper.isMobileDevice() ? 40 : 36;
+        const currY = LAYOUT.HUD_Y + LAYOUT.BAR_H + LAYOUT.BAR_GAP + 13;
         currencyCluster = new CurrencyCluster({
             x: groupX,
             y: currY,
-            depth: depth,
-            spacing: spacing
+            depth: DEPTHS.BAR_BASE,
+            spacing: LAYOUT.CURRENCY_SPACING
         });
 
         // Add to upgrade tree group if needed
@@ -168,7 +163,7 @@ const gameHUD = (() => {
             fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
-        endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
+        endIterationBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
         bombBtn = new Button({
             normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 42, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
@@ -198,10 +193,10 @@ const gameHUD = (() => {
         });
         bombBtnTxt.setOrigin(0.5, 0.5);
         bombBtn.setTextOffset(0, -44);
-        bombBtn.setDepth(depth + 3).setScrollFactor(0);
+        bombBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
         bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 42, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
-        bombIcon.setScale(0.675).setDepth(depth + 4).setScrollFactor(0).setAlpha(0.9);
+        bombIcon.setScale(0.675).setDepth(DEPTHS.ICONS).setScrollFactor(0).setAlpha(0.9);
 
         testDefensesBtn = new Button({
             normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
@@ -227,7 +222,7 @@ const gameHUD = (() => {
             fontSize: '19px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
-        testDefensesBtn.setDepth(depth + 3).setScrollFactor(0).setVisible(false);
+        testDefensesBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0).setVisible(false);
 
         farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 22, '00:00', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -235,10 +230,10 @@ const gameHUD = (() => {
             color: '#00f5ff', // Cyan matching the progress bar
             stroke: '#000000',
             strokeThickness: 1
-        }).setOrigin(0, 0.5).setDepth(depth + 1).setScrollFactor(0).setVisible(false);
+        }).setOrigin(0, 0.5).setDepth(DEPTHS.TEXT).setScrollFactor(0).setVisible(false);
         farmingTimerTxt.setShadow(0, 0, '#000000', 3, true, true);
 
-        // 4. Wave Progress Bar (Restore missing initialization)
+        // 4. Wave Progress Bar
         waveProgressBar = new ProgressBar(PhaserScene, {
             x: GAME_CONSTANTS.halfWidth,
             y: GAME_CONSTANTS.HEIGHT - 26,
@@ -247,9 +242,28 @@ const gameHUD = (() => {
             padding: 6,
             bgColor: 0x1a1e2e,
             fillColor: 0x00f5ff,
-            depth: depth
+            depth: DEPTHS.PROGRESS
         });
         waveProgressBar.setVisible(false);
+    }
+
+    function _flickerElement(element, steps, onComplete = null) {
+        if (!element) return;
+        let currentStep = 0;
+
+        function nextStep() {
+            if (currentStep >= steps.length) {
+                if (onComplete) onComplete();
+                return;
+            }
+            const { alpha, delay, borderAlpha } = steps[currentStep];
+            if (element.setAlpha) element.setAlpha(alpha);
+            if (borderAlpha !== undefined && element.setBorderAlpha) element.setBorderAlpha(borderAlpha);
+
+            currentStep++;
+            PhaserScene.time.delayedCall(delay, nextStep);
+        }
+        nextStep();
     }
 
     function _armBomb() {
@@ -262,81 +276,69 @@ const gameHUD = (() => {
         if (!bombBtn || typeof pulseAttack === 'undefined') return;
         const model = pulseAttack.getModel();
         const hasBombs = model.maxBombUses > 0;
-
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
         const shouldShow = hasBombs && !isFullView;
 
         bombBtn.setVisible(shouldShow);
         if (bombIcon) bombIcon.setVisible(shouldShow);
+        if (!shouldShow) return;
 
-        if (shouldShow) {
-            const isDisabled = (model.bombUses <= 0 && !bombCanCancel) || model.bombArmed || model.bombFired;
+        const isDisabled = (model.bombUses <= 0 && !bombCanCancel) || model.bombArmed || model.bombFired;
 
-            if (bombCanCancel) {
-                bombBtn.setState(NORMAL);
-                if (bombBtnTxt) bombBtnTxt.setText(t('ui', 'cancel')); // Text handled by icon/numbers
-            } else {
-                if (!isDisabled) {
-                    bombBtn.setState(NORMAL);
-                } else {
-                    bombBtn.setState(DISABLE);
-                }
-                if (bombBtnTxt) bombBtnTxt.setText(`${model.bombUses}/${model.maxBombUses}`);
-            }
+        if (bombCanCancel) {
+            bombBtn.setState(NORMAL);
+            if (bombBtnTxt) bombBtnTxt.setText(t('ui', 'cancel'));
+        } else {
+            bombBtn.setState(isDisabled ? DISABLE : NORMAL);
+            if (bombBtnTxt) bombBtnTxt.setText(`${model.bombUses}/${model.maxBombUses}`);
+        }
 
-            // Update icon alpha
-            if (bombIcon) {
-                const isInteracted = bombBtn.state === HOVER || bombBtn.state === PRESS;
-                if (isInteracted) {
-                    bombIcon.setAlpha(1);
-                } else if (isDisabled) {
-                    bombIcon.setAlpha(0.5);
-                } else {
-                    bombIcon.setAlpha(0.75);
-                }
-            }
+        if (bombIcon) {
+            const isInteracted = bombBtn.state === HOVER || bombBtn.state === PRESS;
+            bombIcon.setAlpha(isInteracted ? 1 : (isDisabled ? 0.5 : 0.75));
         }
     }
 
-    function _showCombatHUD() {
-        visible = true;
-        healthBar.setVisible(true);
-        healthBtn.setVisible(false).setState(DISABLE);
+    function _refreshHUDVisibility() {
+        const phase = gameStateMachine.getPhase();
+        const isCombat = phase === GAME_CONSTANTS.PHASE_COMBAT;
+        const isUpgrade = phase === GAME_CONSTANTS.PHASE_UPGRADE;
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
 
-        currencyCluster.updateLayout(true, false);
+        visible = isCombat || isUpgrade;
 
-        if (!isFarming) {
-            setWaveProgressBarVisible(true);
+        if (healthBar) healthBar.setVisible(visible);
+        if (healthBtn) healthBtn.setVisible(isUpgrade && !isFullView).setState(isUpgrade && !isFullView ? NORMAL : DISABLE);
+        if (currencyCluster) {
+            currencyCluster.setVisible(visible);
+            currencyCluster.updateLayout(visible, isUpgrade);
+        }
+
+        if (isUpgrade) {
+            // Count up animation for currencies when entering upgrade phase
+            ['data', 'insight', 'shard', 'coin', 'processor'].forEach(id => {
+                const val = _getResourceVal(id);
+                if (val >= 2) currencyCluster.animateToValue(id, val);
+                else currencyCluster.setStaticValue(id, val);
+            });
         }
 
         const isTrans = typeof transitionManager !== 'undefined' && transitionManager.isTransitioning();
-        endIterationBtn.setVisible(!isTrans).setState(isTrans ? DISABLE : NORMAL);
+        if (endIterationBtn) endIterationBtn.setVisible(isCombat && !isTrans).setState(isTrans ? DISABLE : NORMAL);
 
-        if (bombBtn) _updateBombUI();
-        if (testDefensesBtn) testDefensesBtn.setVisible(false).setState(DISABLE);
+        _updateBombUI();
+        refreshTestDefensesButton();
+
+        if (waveProgressBar) waveProgressBar.setVisible(isCombat && !isFarming);
+        if (farmingTimerTxt) farmingTimerTxt.setVisible(isCombat && isFarming);
+    }
+
+    function _showCombatHUD() {
+        _refreshHUDVisibility();
     }
 
     function _showUpgradeHUD() {
-        visible = true;
-        healthBar.setVisible(true);
-
-        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
-        setHealthBtnVisible(!isFullView);
-
-        currencyCluster.updateLayout(true, true);
-
-        // Count up animation for currencies when entering upgrade phase
-        ['data', 'insight', 'shard', 'coin', 'processor'].forEach(id => {
-            const val = _getResourceVal(id);
-            if (val >= 2) currencyCluster.animateToValue(id, val);
-            else currencyCluster.setStaticValue(id, val);
-        });
-
-        endIterationBtn.setVisible(false).setState(DISABLE);
-        if (bombBtn) _updateBombUI();
-        if (waveProgressBar) waveProgressBar.setVisible(false);
-
-        refreshTestDefensesButton();
+        _refreshHUDVisibility();
     }
 
     function _hideAll() {
@@ -345,7 +347,7 @@ const gameHUD = (() => {
         if (healthBtn) healthBtn.setVisible(false).setState(DISABLE);
         if (currencyCluster) currencyCluster.setVisible(false);
 
-        endIterationBtn.setVisible(false).setState(DISABLE);
+        if (endIterationBtn) endIterationBtn.setVisible(false).setState(DISABLE);
         if (bombBtn) bombBtn.setVisible(false).setState(DISABLE);
         if (bombIcon) bombIcon.setVisible(false);
         if (testDefensesBtn) testDefensesBtn.setVisible(false).setState(DISABLE);
@@ -355,6 +357,28 @@ const gameHUD = (() => {
     }
 
     // ── event handlers ───────────────────────────────────────────────────────
+    function _onTransitionComplete() {
+        if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT && endIterationBtn) {
+            endIterationBtn.setVisible(true);
+            endIterationBtn.setState(NORMAL);
+        }
+    }
+
+    function _onBossDefeated() {
+        if (endIterationBtn) endIterationBtn.setState(DISABLE);
+    }
+
+    function _onFarmingStarted() {
+        if (waveProgressBar) waveProgressBar.setVisible(false);
+        isFarming = true;
+        _playFarmingTimerFlicker();
+    }
+
+    function _onNormalWaveStarted() {
+        setWaveProgressBarVisible(true);
+        isFarming = false;
+        if (farmingTimerTxt) farmingTimerTxt.setVisible(false);
+    }
 
     function _onPhaseChanged(phase) {
         bombCanCancel = false;
@@ -425,22 +449,14 @@ const gameHUD = (() => {
         PhaserScene.time.delayedCall(500, () => {
             if (!isFarming) return;
 
-            // Flicker Sequence (Matching waveProgressBar timings)
-            farmingTimerTxt.setAlpha(0.5);
-
-            PhaserScene.time.delayedCall(40, () => {
-                farmingTimerTxt.setAlpha(0);
-
-                PhaserScene.time.delayedCall(75, () => {
-                    farmingTimerTxt.setAlpha(0.6);
-                    PhaserScene.time.delayedCall(200, () => {
-                        farmingTimerTxt.setAlpha(0.4);
-                        PhaserScene.time.delayedCall(75, () => {
-                            farmingTimerTxt.setAlpha(1);
-                        });
-                    });
-                });
-            });
+            const steps = [
+                { alpha: 0.5, delay: 40 },
+                { alpha: 0, delay: 75 },
+                { alpha: 0.6, delay: 200 },
+                { alpha: 0.4, delay: 75 },
+                { alpha: 1, delay: 0 }
+            ];
+            _flickerElement(farmingTimerTxt, steps);
         });
     }
 
@@ -449,42 +465,17 @@ const gameHUD = (() => {
         waveProgressBar.setVisible(vis);
 
         if (vis) {
-            // Animation sequence:
-            // 0.5 alpha, wait 0.05s (50ms), 0 alpha, wait 0.2s (200ms), 0.5 alpha, wait 0.1s (100ms), 0 alpha, wait 0.75s (750ms), 1 alpha.
-            waveProgressBar.setAlpha(0.5);
-            waveProgressBar.setBorderAlpha(0.3);
-
-            PhaserScene.time.delayedCall(40, () => {
-                waveProgressBar.setAlpha(0);
-                waveProgressBar.setBorderAlpha(0);
-
-                PhaserScene.time.delayedCall(100, () => {
-                    waveProgressBar.setAlpha(0.6);
-                    waveProgressBar.setBorderAlpha(0.4);
-
-                    PhaserScene.time.delayedCall(40, () => {
-                        waveProgressBar.setAlpha(0);
-                        waveProgressBar.setBorderAlpha(0);
-
-                        PhaserScene.time.delayedCall(350, () => {
-                            waveProgressBar.setAlpha(0.7);
-                            waveProgressBar.setBorderAlpha(0.4);
-
-                            PhaserScene.time.delayedCall(250, () => {
-                                waveProgressBar.setAlpha(0.4);
-                                waveProgressBar.setBorderAlpha(0.2);
-                                PhaserScene.time.delayedCall(100, () => {
-                                    waveProgressBar.setAlpha(1);
-                                    waveProgressBar.setBorderAlpha(0.5);
-                                    PhaserScene.time.delayedCall(400, () => {
-                                        waveProgressBar.setBorderAlpha(0.6);
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
+            const steps = [
+                { alpha: 0.5, borderAlpha: 0.3, delay: 40 },
+                { alpha: 0, borderAlpha: 0, delay: 100 },
+                { alpha: 0.6, borderAlpha: 0.4, delay: 40 },
+                { alpha: 0, borderAlpha: 0, delay: 350 },
+                { alpha: 0.7, borderAlpha: 0.4, delay: 250 },
+                { alpha: 0.4, borderAlpha: 0.2, delay: 100 },
+                { alpha: 1, borderAlpha: 0.5, delay: 400 },
+                { alpha: 1, borderAlpha: 0.6, delay: 0 }
+            ];
+            _flickerElement(waveProgressBar, steps);
         }
     }
 
@@ -541,24 +532,26 @@ const gameHUD = (() => {
         }
     }
 
-    function setTestButtonVisible(visible) {
+    function setTestButtonVisible(vis) {
         if (!testDefensesBtn) return;
-        testDefensesBtn.setVisible(visible);
-        if (!visible) testDefensesBtn.setState(DISABLE);
-        else refreshTestDefensesButton(); // ensures state matches unlock status if shown
+        // This is now mostly handled by _refreshHUDVisibility, but we keep it 
+        // for explicit overrides if needed.
+        testDefensesBtn.setVisible(vis);
+        if (!vis) testDefensesBtn.setState(DISABLE);
+        else refreshTestDefensesButton();
     }
 
-    function setBombButtonVisible(visible) {
+    function setBombButtonVisible(vis) {
         if (!bombBtn) return;
-        bombBtn.setVisible(visible);
-        if (bombIcon) bombIcon.setVisible(visible);
-        if (!visible) bombBtn.setState(DISABLE);
+        bombBtn.setVisible(vis);
+        if (bombIcon) bombIcon.setVisible(vis);
+        if (!vis) bombBtn.setState(DISABLE);
         else _updateBombUI();
     }
 
-    function setHealthBtnVisible(visible) {
+    function setHealthBtnVisible(vis) {
         if (!healthBtn) return;
-        healthBtn.setVisible(visible).setState(visible ? NORMAL : DISABLE);
+        healthBtn.setVisible(vis).setState(vis ? NORMAL : DISABLE);
     }
 
     function setCurrencyHUDShifted(shifted) {

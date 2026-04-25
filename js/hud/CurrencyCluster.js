@@ -1,9 +1,22 @@
-// Handles counting animations, individual hover tooltips, and vertical layout.
-
 const CURRENCY_ORDER = ['data', 'insight', 'shard', 'coin', 'processor'];
-const CURRENCY_BG_X_OFFSET = 45;
-const CURRENCY_ICON_X_OFFSET = 11;
-const CURRENCY_TEXT_X_OFFSET = 28;
+
+const RESOURCE_DEFS = {
+    data: { icon: 'resrc_data.png', color: '#00f5ff', scale: 1 },
+    insight: { icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL, scale: 1.06 },
+    shard: { icon: 'resrc_shard.png', color: '#ffb300', scale: 1.06 },
+    coin: { icon: 'resrc_coin.png', color: '#00ff66', scale: 1.06 },
+    processor: { icon: 'resrc_processor.png', color: '#ffe600', scale: 1.06 }
+};
+
+const CONFIG = {
+    BG_X_OFFSET: 45,
+    ICON_X_OFFSET: 11,
+    TEXT_X_OFFSET: 28,
+    TEXT_Y_OFFSET: 5,
+    TOOLTIP_WIDTH: 410,
+    BTN_SCALE: helper.isMobileDevice() ? 1.14 : 1.09,
+    ICON_MOBILE_Y_OFFSET: 2
+};
 
 class CurrencyCluster {
     /**
@@ -25,43 +38,44 @@ class CurrencyCluster {
         messageBus.subscribe('settingChanged_bigFont', () => this.refreshFontSize());
     }
 
+    _getFontSize() {
+        const base = helper.isMobileDevice() ? 30 : 25;
+        const extra = (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) ? 3 : 0;
+        return (base + extra) + 'px';
+    }
+
+    _getResourceValue(id) {
+        return helper.getResource(id);
+    }
+
     _createElements() {
-        const resourceTypes = [
-            { id: 'data', icon: 'resrc_data.png', color: '#00f5ff' },
-            { id: 'insight', icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL },
-            { id: 'shard', icon: 'resrc_shard.png', color: '#ffb300' },
-            { id: 'coin', icon: 'resrc_coin.png', color: '#00ff66' },
-            { id: 'processor', icon: 'resrc_processor.png', color: '#ffe600' }
-        ];
-
-        resourceTypes.forEach((type, i) => {
-            const icon = PhaserScene.add.image(this.x + CURRENCY_ICON_X_OFFSET, this.baseY, 'player', type.icon);
+        CURRENCY_ORDER.forEach(id => {
+            const def = RESOURCE_DEFS[id];
+            const icon = PhaserScene.add.image(this.x + CONFIG.ICON_X_OFFSET, this.baseY, 'player', def.icon);
             icon.setOrigin(0.5, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);
-            icon.setScale(type.id === 'data' ? 1 : 1.06);
+            icon.setScale(def.scale);
 
-            const initialVal = this._getResourceValue(type.id);
-            const baseFontSize = helper.isMobileDevice() ? 30 : 25;
-            const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
-            const text = PhaserScene.add.text(this.x + CURRENCY_TEXT_X_OFFSET, this.baseY + 5, Math.floor(initialVal).toString(), {
+            const initialVal = this._getResourceValue(id);
+            const text = PhaserScene.add.text(this.x + CONFIG.TEXT_X_OFFSET, this.baseY + CONFIG.TEXT_Y_OFFSET, Math.floor(initialVal).toString(), {
                 fontFamily: 'JetBrainsMono_Regular',
-                fontSize: finalFontSize + 'px',
-                color: type.color,
+                fontSize: this._getFontSize(),
+                color: def.color,
             }).setOrigin(0, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);
 
             const btn = new Button({
-                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
-                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
-                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
-                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
+                normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CONFIG.BG_X_OFFSET, y: this.baseY },
+                hover: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CONFIG.BG_X_OFFSET, y: this.baseY },
+                press: { ref: 'wide_pointer_hover.png', atlas: 'buttons', x: this.x + CONFIG.BG_X_OFFSET, y: this.baseY },
+                disable: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CONFIG.BG_X_OFFSET, y: this.baseY },
                 onHover: () => {
                     let sfxclick = audio.play('click', 0.95);
                     if (sfxclick) sfxclick.detune = Phaser.Math.Between(-150, -50);
                     tooltipManager.show(btn.x + 50, btn.y + 17, [
-                        { text: t('hud', `${type.id}_title`), style: 'title', color: type.color },
-                        { text: t('hud', `${type.id}_desc`), style: 'normal' }
-                    ], 410);
+                        { text: t('hud', `${id}_title`), style: 'title', color: def.color },
+                        { text: t('hud', `${id}_desc`), style: 'normal' }
+                    ], CONFIG.TOOLTIP_WIDTH);
                     if (typeof upgradeTree !== 'undefined') {
-                        upgradeTree.setHoverLabel(type.id.toUpperCase());
+                        upgradeTree.setHoverLabel(id.toUpperCase());
                     }
                 },
                 onHoverOut: () => {
@@ -71,13 +85,9 @@ class CurrencyCluster {
                     }
                 }
             });
-            btn.setOrigin(0.5, 0.5);
-            btn.setScale(1, helper.isMobileDevice() ? 1.14 : 1.09);
-            btn.setDepth(this.depth - 1);
-            btn.setScrollFactor(0);
-            btn.setVisible(false);
+            btn.setOrigin(0.5, 0.5).setScale(1, CONFIG.BTN_SCALE).setDepth(this.depth - 1).setScrollFactor(0).setVisible(false);
 
-            this.resources[type.id] = { icon, text, btn, countTween: null, lastValue: initialVal };
+            this.resources[id] = { icon, text, btn, countTween: null, lastValue: initialVal };
         });
     }
 
@@ -101,33 +111,27 @@ class CurrencyCluster {
             // Data is ALWAYS visible; other currencies only if quantity > 0 and in upgrade phase
             const shouldShow = isData || (val > 0 && isUpgradePhase);
 
+            ui.icon.setVisible(shouldShow);
+            ui.text.setVisible(shouldShow);
+            if (ui.btn) {
+                ui.btn.setVisible(shouldShow && isUpgradePhase);
+                ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
+            }
+
             if (shouldShow) {
-                const showComponent = isUpgradePhase || isData; // Hide interactive elements in combat
-
-                if (ui.btn) {
-                    ui.btn.setVisible(isUpgradePhase);
-                    ui.btn.setPos(this.x + CURRENCY_BG_X_OFFSET, currentY);
-                    ui.btn.setState(isUpgradePhase ? NORMAL : DISABLE);
-                }
-
-                ui.icon.setVisible(showComponent);
-                ui.text.setVisible(showComponent);
-                ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
+                const iconY = currentY + (helper.isMobileDevice() ? CONFIG.ICON_MOBILE_Y_OFFSET : 0);
+                ui.icon.y = iconY;
                 ui.text.y = currentY;
+                if (ui.btn) ui.btn.setPos(this.x + CONFIG.BG_X_OFFSET, currentY);
+
                 currentY += this.spacing;
-            } else {
-                if (ui.btn) ui.btn.setVisible(false);
-                ui.icon.setVisible(false);
-                ui.text.setVisible(false);
             }
         });
 
-        // Re-sync upgrade tree virtual group offsets (required for correct scroll/pan/zoom)
+        // Re-sync upgrade tree virtual group offsets
         if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
             const treeGroup = upgradeTree.getGroup();
-            if (treeGroup && treeGroup.recalculateOffsets) {
-                treeGroup.recalculateOffsets();
-            }
+            if (treeGroup && treeGroup.recalculateOffsets) treeGroup.recalculateOffsets();
         }
     }
 
