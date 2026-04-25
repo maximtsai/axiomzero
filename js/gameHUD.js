@@ -171,7 +171,7 @@ const gameHUD = (() => {
         endIterationBtn.setDepth(depth + 3).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 45, y: GAME_CONSTANTS.HEIGHT - 75, alpha: 1 },
+            normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 42, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
             hover: { ref: 'sq_button_hover.png', atlas: 'buttons', alpha: 1 },
             press: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 1 },
             disable: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 0.5 },
@@ -200,7 +200,7 @@ const gameHUD = (() => {
         bombBtn.setTextOffset(0, -44);
         bombBtn.setDepth(depth + 3).setScrollFactor(0);
 
-        bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 45, GAME_CONSTANTS.HEIGHT - 75, 'buttons', 'bomb_icon.png');
+        bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 42, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
         bombIcon.setScale(0.675).setDepth(depth + 4).setScrollFactor(0).setAlpha(0.9);
 
         testDefensesBtn = new Button({
@@ -263,10 +263,13 @@ const gameHUD = (() => {
         const model = pulseAttack.getModel();
         const hasBombs = model.maxBombUses > 0;
 
-        bombBtn.setVisible(hasBombs);
-        if (bombIcon) bombIcon.setVisible(hasBombs);
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        const shouldShow = hasBombs && !isFullView;
 
-        if (hasBombs) {
+        bombBtn.setVisible(shouldShow);
+        if (bombIcon) bombIcon.setVisible(shouldShow);
+
+        if (shouldShow) {
             const isDisabled = (model.bombUses <= 0 && !bombCanCancel) || model.bombArmed || model.bombFired;
 
             if (bombCanCancel) {
@@ -545,10 +548,22 @@ const gameHUD = (() => {
         else refreshTestDefensesButton(); // ensures state matches unlock status if shown
     }
 
+    function setBombButtonVisible(visible) {
+        if (!bombBtn) return;
+        bombBtn.setVisible(visible);
+        if (bombIcon) bombIcon.setVisible(visible);
+        if (!visible) bombBtn.setState(DISABLE);
+        else _updateBombUI();
+    }
+
     function setHealthBtnVisible(visible) {
         if (!healthBtn) return;
         healthBtn.setVisible(visible).setState(visible ? NORMAL : DISABLE);
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setHealthBtnVisible, setAlpha, setBombPulse, clearBombPulse };
+    function setCurrencyHUDShifted(shifted) {
+        // Reverted to standalone HUD: no longer shifts with tree
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBtnVisible, setCurrencyHUDShifted, setAlpha, setBombPulse, clearBombPulse };
 })();

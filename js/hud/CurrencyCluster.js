@@ -36,7 +36,7 @@ class CurrencyCluster {
 
         resourceTypes.forEach((type, i) => {
             const icon = PhaserScene.add.image(this.x + CURRENCY_ICON_X_OFFSET, this.baseY, 'player', type.icon);
-            icon.setOrigin(0.5, 0.5).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
+            icon.setOrigin(0.5, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);
             icon.setScale(type.id === 'data' ? 1 : 1.06);
 
             const initialVal = this._getResourceValue(type.id);
@@ -46,7 +46,7 @@ class CurrencyCluster {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: finalFontSize + 'px',
                 color: type.color,
-            }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0).setVisible(false);
+            }).setOrigin(0, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);
 
             const btn = new Button({
                 normal: { ref: 'wide_pointer_normal.png', atlas: 'buttons', x: this.x + CURRENCY_BG_X_OFFSET, y: this.baseY },
@@ -73,7 +73,7 @@ class CurrencyCluster {
             });
             btn.setOrigin(0.5, 0.5);
             btn.setScale(1, helper.isMobileDevice() ? 1.14 : 1.09);
-            btn.setDepth(this.depth + 1);
+            btn.setDepth(this.depth - 1);
             btn.setScrollFactor(0);
             btn.setVisible(false);
 
@@ -90,7 +90,7 @@ class CurrencyCluster {
         if (!isVisible) return;
 
         let currentY = this.baseY;
- 
+
         CURRENCY_ORDER.forEach(id => {
             const ui = this.resources[id];
             if (!ui) return;
@@ -114,7 +114,6 @@ class CurrencyCluster {
                 ui.text.setVisible(showComponent);
                 ui.icon.y = currentY + (helper.isMobileDevice() ? 2 : 0);
                 ui.text.y = currentY;
-
                 currentY += this.spacing;
             } else {
                 if (ui.btn) ui.btn.setVisible(false);
@@ -196,6 +195,19 @@ class CurrencyCluster {
         });
     }
 
+    setPos(x, y) {
+        // testing if if does nothing for now
+    }
+
+    setDepth(depth) {
+        this.depth = depth;
+        Object.values(this.resources).forEach(res => {
+            res.icon.setDepth(depth);
+            res.text.setDepth(depth);
+            if (res.btn) res.btn.setDepth(depth - 1);
+        });
+    }
+
     _getResourceValue(id) {
         if (typeof resourceManager === 'undefined') return 0;
         if (id === 'data') return resourceManager.getData();
@@ -207,16 +219,18 @@ class CurrencyCluster {
     }
 
     setVisible(vis) {
-        Object.values(this.resources).forEach(res => {
-            if (!vis) {
+        if (!vis) {
+            Object.values(this.resources).forEach(res => {
                 res.icon.setVisible(false);
                 res.text.setVisible(false);
                 if (res.btn) {
                     res.btn.setVisible(false);
                     res.btn.setState(DISABLE);
                 }
-            }
-        });
+            });
+        } else {
+            // this.updateLayout(true, true);
+        }
     }
 
     setAlpha(alpha) {
@@ -233,6 +247,7 @@ class CurrencyCluster {
             group.add(res.icon);
             group.add(res.text);
             if (res.btn && res.btn.getContainer) group.add(res.btn.getContainer());
+
         });
     }
 }
