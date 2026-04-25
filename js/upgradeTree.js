@@ -134,8 +134,8 @@ const upgradeTree = (() => {
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
             if (!visible || !draggableGroup) return;
 
-            // Only zoom if pointer is within the upgrade panel bounds (800px left half)
-            if (pointer.x > PANEL_W) return;
+            // Only zoom if pointer is within bounds. In full view, bounds is the whole screen.
+            if (!fullUpgradeView && pointer.x > PANEL_W) return;
 
             const zoomStep = 0.08;
             const minScale = 0.5;
@@ -624,7 +624,7 @@ const upgradeTree = (() => {
 
     function _onSlideRightClicked(customDuration = SLIDE_DURATION) {
         if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
-        
+
         // If called as a callback, customDuration might be a Pointer object.
         // Force fallback to SLIDE_DURATION if it's not a number.
         if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;
