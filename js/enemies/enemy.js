@@ -581,7 +581,7 @@ class Enemy {
 
     // ── Damage ────────────────────────────────────────────────────────────────
 
-    takeDamage(amount) {
+    takeDamage(amount, source = 'other') {
         const result = this.model.takeDamage(amount);
 
         // Visual feedback
@@ -592,6 +592,12 @@ class Enemy {
 
         this.view.updateHPCrop(this.model.getHealthPct());
         this.view.playHitFeedback(this.model.getHitFeedbackConfig());
+
+        // Particle effect (Standard enemies and minibosses only)
+        if ((!this.model.isBoss || this.model.isMiniboss) && typeof customEmitters !== 'undefined') {
+            const isHalf = (source === 'laser');
+            customEmitters.enemyDamage(this.model.x, this.model.y, isHalf);
+        }
 
         return result;
     }

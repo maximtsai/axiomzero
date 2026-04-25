@@ -515,7 +515,7 @@ const enemyManager = (() => {
             isInstabilityProc = true;
         }
 
-        const result = enemy.takeDamage(finalDamage);
+        const result = enemy.takeDamage(finalDamage, source);
         let died = result.died;
 
         // Use the actual damage applied to health for statistics
@@ -704,7 +704,15 @@ const enemyManager = (() => {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
-            messageBus.publish('enemyKilled', ex, ey, enemy.model.baseResourceDrop, enemy.model.type, wasResonance);
+            messageBus.publish('enemyKilled', {
+                x: ex,
+                y: ey,
+                drop: enemy.model.baseResourceDrop,
+                type: enemy.model.type,
+                isBoss: wasBoss,
+                isMiniboss: wasMiniboss,
+                wasResonance: wasResonance
+            });
             if (enemy.model.type !== 'test') sessionKills++;
         }
     }

@@ -223,6 +223,31 @@ const customEmitters = (() => {
 
     const _strike = _make('pixels', strikeParams, 152);
 
+    const enemyDamageParams = {
+        frame: 'damage_particle.png',
+        speed: { min: 100, max: 450 },
+        lifespan: { min: 200, max: 550 },
+        scaleX: { start: 1, end: 0, ease: 'Quart.easeIn' },
+        scaleY: { start: 0.65, end: 0, ease: 'Quint.easeIn' },
+        rotate: {
+            onUpdate: (particle) => {
+                return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
+            }
+        },
+        gravityY: 500,
+        emitting: false,
+    };
+
+    const _enemyDamage = _make('enemies', enemyDamageParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+
+    function enemyDamage(x, y, isHalf = false) {
+        if (gameState.settings.minimalParticles) return;
+        let count = isHalf ? 1 : Phaser.Math.Between(2, 3);
+
+        const e = _enemyDamage();
+        e.explode(count, x, y);
+    }
+
     function basicStrike(x, y, angle) {
         const count = Math.floor(Math.random() * 3) + 3;
         const e = _strike();
@@ -672,30 +697,45 @@ const customEmitters = (() => {
         red.setRotation(baseRot).setAlpha(0).setVisible(true).setActive(true);
 
         const black = exploderExplosionBlackPool.get();
-        black.setPosition(x, y).setSize(size, size).setOrigin(0.5, 0.5);
+        black.setPosition(x, y).setSize(size + 1, size + 1).setOrigin(0.5, 0.5);
         black.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11);
-        black.setRotation(baseRot).setAlpha(1).setVisible(false).setActive(true);
+        black.setRotation(startRot).setAlpha(1).setVisible(false).setActive(true);
 
         PhaserScene.cameras.main.shake(150, 0.006);
 
-        // Sequence: 30ms Gap -> 50ms Black -> Bright Pop
-        PhaserScene.time.delayedCall(30, () => {
-            if (black.active) black.setVisible(true);
-            bright.setVisible(false);
-            main.setVisible(false);
+        // --- New Hitstop Sequence ---
+        // 1. Initial appearance (brief moment)
+        main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(0.95);
+        bright.setVisible(true).setAlpha(0.8).setRotation(startRot).setScale(0.95);
+        red.setVisible(true).setAlpha(0.6).setRotation(startRot).setScale(0.95);
 
-            PhaserScene.time.delayedCall(50, () => {
-                if (black.active) black.setVisible(false);
-                if (!bright.active) return;
+        PhaserScene.time.delayedCall(35, () => {
+            if (!main.active) return;
 
-                main.setVisible(true).setAlpha(1).setRotation(startRot);
-                bright.setVisible(true).setAlpha(1).setRotation(startRot);
-                red.setAlpha(0.7).setRotation(startRotSmall);
+            // 2. Black sprite covers and game 'pauses'
+            black.setVisible(true);
+            timeManager.applyTimeScale(0.15, false); // Less extreme slow-down
+            if (typeof audio !== 'undefined') {
+                const boom = audio.play('exploder_boom', 0.85);
+                if (boom) boom.detune = Phaser.Math.Between(-300, 150);
+            }
 
-                // Immediate scale pop like the bomb
-                main.setScale(1.2);
-                bright.setScale(1.22);
-                red.setScale(1.25);
+            PhaserScene.time.delayedCall(15, () => {
+                if (!main.active) {
+                    timeManager.applyTimeScale(1.0);
+                    return;
+                }
+
+                // 3. Resume and Detonate (The 'Pop')
+                black.setVisible(false);
+                timeManager.applyTimeScale(1.0);
+
+                main.setAlpha(1).setRotation(startRot).setScale(1.15);
+                bright.setAlpha(1).setRotation(startRot).setScale(1.17);
+                red.setAlpha(0.7).setRotation(startRotSmall).setScale(1.20);
+
+                // Flash shake
+                zoomShake(1.012);
 
                 PhaserScene.tweens.add({
                     targets: [main, bright, red],
@@ -719,9 +759,6 @@ const customEmitters = (() => {
                         exploderExplosionBlackPool.release(black);
                     }
                 });
-
-                // Extra shake on the bright flash
-                zoomShake(1.012);
             });
         });
     }
@@ -885,6 +922,7 @@ const customEmitters = (() => {
         createBossExplosionRays,
         playExplosionPulse,
         createExploderExplosion,
+        enemyDamage,
         malwareSiphonFX,
         cacheTrail,
         playShellDeath: (x, y, depth) => {

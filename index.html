@@ -22,6 +22,17 @@
 
   <link rel="stylesheet" href="styles.css">
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KY3742X8X1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-KY3742X8X1');
+  </script>
+
+
   <script src="flags.js"></script>
   <script src="phaser.min.js"></script>
   <script src="lz-string.min.js"></script>
@@ -62,6 +73,7 @@
   <script src="js/util/slider.js"></script>
   <script src="js/util/debugManager.js"></script>
   <script src="js/util/notificationManager.js"></script>
+  <script src="js/util/analyticsManager.js"></script>
   <script src="js/util/cameraManager.js"></script>
   <script src="js/util/cinematicManager.js"></script>
   <script src="js/util/treeLineManager.js"></script>
@@ -150,6 +162,81 @@
   </div>
 
   <div id="preload-notice">INITIALIZING SYSTEM...</div>
+
+  <style>
+    #boot-error {
+      display: none;
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #ff3b3b;
+      font-family: 'Michroma', sans-serif;
+      z-index: 9999;
+      width: 90%;
+      max-width: 600px;
+      letter-spacing: 1px;
+    }
+
+    #boot-error .msg {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    #boot-error button {
+      background: transparent;
+      border: 1px solid #ff3b3b;
+      color: #ff3b3b;
+      padding: 12px 24px;
+      font-family: 'VCR', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    #boot-error button:hover {
+      background: #ff3b3b;
+      color: #05080f;
+    }
+  </style>
+
+  <script>
+    // BOOTSTRAP WATCHDOG
+    // Detects failures during the initial <script> loading phase (e.g. net::ERR_NETWORK_CHANGED)
+    window.AXIOM_BOOTSTRAP_COMPLETE = false;
+    window.BOOT_TIMER = setTimeout(function () {
+      if (!window.AXIOM_BOOTSTRAP_COMPLETE) {
+        console.error("Axiom Zero: Timeout Error - Critical files failed to load.");
+
+        // 1. Attempt one automatic retry (wrapped in try-catch for strict privacy modes)
+        try {
+          const retryCount = parseInt(sessionStorage.getItem('axiom_boot_retry') || '0');
+          if (retryCount < 1) {
+            sessionStorage.setItem('axiom_boot_retry', (retryCount + 1).toString());
+            location.reload();
+            return;
+          }
+        } catch (e) {
+          console.warn("Axiom Zero: Storage blocked, skipping auto-retry.");
+        }
+
+        // 2. If retry failed or already retried, show manual error UI
+        const errorDiv = document.getElementById('boot-error');
+        if (errorDiv) errorDiv.style.display = 'block';
+
+        const notice = document.getElementById('preload-notice');
+        if (notice) notice.style.color = '#ff3b3b';
+      }
+    }, 10000); // 10s grace period for all dependencies to load
+  </script>
+
+  <div id="boot-error">
+    <div class="msg">CRITICAL SYSTEM ERROR:<br>INITIALIZATION FILES FAILED TO LOAD.</div>
+    <button onclick="location.reload()">RETRY CONNECTION</button>
+  </div>
 
   <script>
     // Simple focus handler for CrazyGames/Portals

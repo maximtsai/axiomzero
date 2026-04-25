@@ -138,9 +138,13 @@ const treeLineManager = (() => {
                 const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
                 const isDuoBranch = (n.isDuoDescendant && n.isDuoDescendant());
                 const revealedLine = (p.revealed || n.revealed);
-                const ghostToActive = (p.state === NODE_STATE.GHOST && (n.state === NODE_STATE.UNLOCKED || n.state === NODE_STATE.MAXED));
+                const isGhost = (n.state === NODE_STATE.GHOST);
 
-                line.setAlpha((parentActive || isDuoBranch || revealedLine || ghostToActive) ? 0.6 : 0);
+                if (isGhost && (parentActive || isDuoBranch || revealedLine)) {
+                    line.setAlpha(0.25);
+                } else {
+                    line.setAlpha((parentActive || isDuoBranch || revealedLine || ghostToActive) ? 0.6 : 0);
+                }
             }
         }
     }

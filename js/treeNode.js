@@ -428,7 +428,12 @@ class Node {
         this._playLocalPurchaseAnimations();
 
         // System notifications
-        messageBus.publish('upgradePurchased', this.id, this.level);
+        messageBus.publish('upgradePurchased', {
+            id: this.id,
+            level: this.level,
+            costType: this.costType,
+            cost: cost
+        });
 
         // Completionist bonus: +20 DATA when maxing out ANY node
         if (this.isMaxed() && gameState.upgrades && gameState.upgrades['completionist']) {

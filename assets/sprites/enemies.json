@@ -1485,6 +1485,31 @@
 					}
 				},
 				{
+					"filename": "damage_particle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 54,
+						"h": 18
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 0,
+						"w": 30,
+						"h": 18
+					},
+					"frame": {
+						"x": 1557,
+						"y": 1996,
+						"w": 30,
+						"h": 18
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "default_enemy_glow.png",
 					"rotated": false,
 					"trimmed": false,
@@ -2101,6 +2126,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:7933095510244563c9559ab965a82789:219186686d5dcddfb21237f6cb959380:b46d94f51ab09644cd324819ab72f7d7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a3a193be2fa6268346cba947755da9a4:20fb41a91fc3573ec3e86f5ef3b00618:b46d94f51ab09644cd324819ab72f7d7$"
 	}
 }

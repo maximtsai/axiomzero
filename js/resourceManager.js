@@ -97,7 +97,7 @@ const resourceManager = (() => {
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('minibossDefeated', _onMinibossDefeated);
         messageBus.subscribe('triggerResourceVacuum', _vacuumAllDrops);
-        messageBus.subscribe('upgradePurchased', (id) => {
+        messageBus.subscribe('upgradePurchased', ({ id }) => {
             if (id === 'magnet') _recalcPickupRadius();
         });
         messageBus.subscribe('gamePaused', () => { paused = true; });
@@ -587,7 +587,7 @@ const resourceManager = (() => {
 
     let dropAccumulator = 0;
 
-    function _onEnemyKilled(x, y, baseResourceDrop, enemyType) {
+    function _onEnemyKilled({ x, y, drop: baseResourceDrop, type: enemyType }) {
         const config = getCurrentLevelConfig();
         let dataDropMult = config.dataDropMultiplier || 1;
 

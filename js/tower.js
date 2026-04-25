@@ -81,8 +81,8 @@ class TowerModel {
         this.hasWarnedThisWave = false;
         this.bugReportAccumulator = 0;
         this.backupUsed = false;
-        messageBus.publish('healthChanged', this.health, this.maxHealth);
-        messageBus.publish('expChanged', this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
 
     takeDamage(amount) {
@@ -101,14 +101,14 @@ class TowerModel {
             const ups = gameState.upgrades || {};
             if (ups.backup_server && !this.backupUsed) {
                 this.resurrect();
-                messageBus.publish('towerBackupTriggered');
+                messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_BACKUP_TRIGGERED);
                 return true; // Survived via backup
             }
 
             this.die();
             return false; // Did not survive
         }
-        messageBus.publish('healthChanged', this.health, this.maxHealth);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
         return true; // Survived and took damage
     }
 
@@ -118,7 +118,7 @@ class TowerModel {
         this.health = Math.min(this.health + amount, this.maxHealth);
         const actualHealed = this.health - oldHealth;
         if (actualHealed > 0) {
-            messageBus.publish('healthChanged', this.health, this.maxHealth);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
         }
         return actualHealed;
     }
@@ -127,8 +127,8 @@ class TowerModel {
         this.alive = false;
         this.active = false;
         this.isInvincible = false;
-        messageBus.publish('healthChanged', this.health, this.maxHealth);
-        messageBus.publish('towerDied');
+        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_DIED);
     }
 
     resurrect() {
@@ -142,17 +142,15 @@ class TowerModel {
         }
         this.backupUsed = true;
         this.isInvincible = false; // controller will set the timed one
-        messageBus.publish('healthChanged', this.health, this.maxHealth);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
 
         // Apply repulsion wave to nearby enemies
         const pushbackRange = 350;
         const pushbackAmount = 75;
-        if (typeof enemyManager !== 'undefined') {
-            const nearby = enemyManager.getEnemiesInRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
-            for (let i = 0; i < nearby.length; i++) {
-                if (nearby[i].model) {
-                    nearby[i].model.pushback = pushbackAmount;
-                }
+        const nearby = enemyManager.getEnemiesInRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
+        for (let i = 0; i < nearby.length; i++) {
+            if (nearby[i].model) {
+                nearby[i].model.pushback = pushbackAmount;
             }
         }
     }
@@ -537,9 +535,7 @@ class TowerView {
         this.deathShockwave.setVisible(true).setAlpha(0.9).setScale(0.15);
 
         // Environment grid pulse via glitch system
-        if (typeof glitchFX !== 'undefined') {
-            glitchFX.triggerDeathGrid(duration);
-        }
+        glitchFX.triggerDeathGrid(duration);
 
         PhaserScene.tweens.add({
             targets: this.deathShockwave,
@@ -669,17 +665,17 @@ const tower = (() => {
             30
         );
 
-        messageBus.subscribe('phaseChanged', _onPhaseChanged);
-        messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
-        messageBus.subscribe('statsRecalculated', _onUpgradePurchased);
-        messageBus.subscribe('bossDefeated', _onBossDefeated);
-        messageBus.subscribe('gamePaused', () => { model.paused = true; });
-        messageBus.subscribe('gameResumed', () => { model.paused = false; });
-        messageBus.subscribe('enemyKilled', _onEnemyDeath);
-        messageBus.subscribe('minibossDefeated', _onEnemyDeath);
-        messageBus.subscribe('bossDefeated', _onEnemyDeath);
-        messageBus.subscribe('towerShakeRequested', function (duration) {
-            view.shake(duration, function () { messageBus.publish('towerShakeComplete'); });
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.PHASE_CHANGED, _onPhaseChanged);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.UPGRADE_PURCHASED, _onUpgradePurchased);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.STATS_RECALCULATED, _onUpgradePurchased);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.BOSS_DEFEATED, _onBossDefeated);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.GAME_PAUSED, () => { model.paused = true; });
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.GAME_RESUMED, () => { model.paused = false; });
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.ENEMY_KILLED, _onEnemyDeath);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.MINIBOSS_DEFEATED, _onEnemyDeath);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.BOSS_DEFEATED, _onEnemyDeath);
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.TOWER_SHAKE_REQUESTED, function (duration) {
+            view.shake(duration, function () { messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_SHAKE_COMPLETE); });
         });
         messageBus.subscribe('trackHeal', (amt) => {
             _healingAccumulator += amt;
@@ -700,9 +696,9 @@ const tower = (() => {
 
         view.spawn(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
 
-        messageBus.publish('towerSpawned');
-        messageBus.publish('healthChanged', model.health, model.maxHealth);
-        messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_SPAWNED);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
+        messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
 
     function awaken() {
@@ -715,7 +711,7 @@ const tower = (() => {
         const showRange = (gameState.upgrades && gameState.upgrades.automated_defense >= 1);
         view.updateRangeSprite(showRange ? (model.attackRange / 202) : 0);
 
-        messageBus.publish('towerAwakened');
+        messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_AWAKENED);
         debugLog('Tower awakened');
     }
 
@@ -761,9 +757,7 @@ const tower = (() => {
             const pos = getPosition();
             const px = (x !== undefined) ? x : pos.x;
             const py = (y !== undefined) ? y : pos.y;
-            if (typeof customEmitters !== 'undefined') {
-                customEmitters.towerHit(px, py, particleCount);
-            }
+            customEmitters.towerHit(px, py, particleCount);
         }
 
         if (survived) {
@@ -829,7 +823,7 @@ const tower = (() => {
     function heal(amount) {
         const actual = model.heal(amount);
         if (actual > 0) {
-            messageBus.publish('trackHeal', actual);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.TRACK_HEAL, actual);
         }
     }
 
@@ -892,7 +886,7 @@ const tower = (() => {
                 die();
                 return;
             }
-            messageBus.publish('healthChanged', model.health, model.maxHealth);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
 
             // EXP accumulation
             let expBoost = 1.0;
@@ -910,10 +904,10 @@ const tower = (() => {
             if (model.exp >= GAME_CONSTANTS.EXP_TO_INSIGHT) {
                 model.exp -= GAME_CONSTANTS.EXP_TO_INSIGHT;
                 resourceManager.addInsight(1);
-                messageBus.publish('insightGained');
+                messageBus.publish(GAME_CONSTANTS.EVENTS.INSIGHT_GAINED);
             }
             gameState.exp = model.exp;
-            messageBus.publish('expChanged', model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
         }
 
         // Auto-attack
@@ -964,7 +958,7 @@ const tower = (() => {
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             model.active = false;
             model.health = model.maxHealth;
-            messageBus.publish('healthChanged', model.health, model.maxHealth);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
             view.playUpgradePhaseAnimation(model.attackRange);
             if (view.sprite) {
                 view.sprite.setAlpha(1);
@@ -985,7 +979,7 @@ const tower = (() => {
 
         if (!model.active) {
             model.health = model.maxHealth;
-            messageBus.publish('healthChanged', model.health, model.maxHealth);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
         }
 
         if (view.sprite) {
@@ -1039,7 +1033,7 @@ const tower = (() => {
         },
         setHealth: (h) => {
             model.health = h;
-            messageBus.publish('healthChanged', model.health, model.maxHealth);
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
         },
         setInvincible: (duration) => {
             model.isInvincible = true;

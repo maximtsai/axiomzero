@@ -17,6 +17,11 @@ class MainScene extends Phaser.Scene {
 
     create() {
         try {
+            // Signal bootstrap completion
+            window.AXIOM_BOOTSTRAP_COMPLETE = true;
+            if (window.BOOT_TIMER) clearTimeout(window.BOOT_TIMER);
+            try { sessionStorage.removeItem('axiom_boot_retry'); } catch (_) { /* storage blocked */ }
+
             window.PhaserScene = this;
             helper.initClickEffectPool(this);
             setupMouseInteraction(this);

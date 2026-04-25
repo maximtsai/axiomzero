@@ -35,7 +35,7 @@ class ExploderEnemy extends Enemy {
             size: GAME_CONSTANTS.ENEMY_SIZE_EXPLODER,
             ...extraConfig
         });
-        
+
         this.setEnemyGlow('bomb_glow.png');
     }
 
@@ -43,7 +43,7 @@ class ExploderEnemy extends Enemy {
         const ups = gameState.upgrades || {};
         const payloadLv = ups.volatile_payload || 0;
         // Intentionally slightly fudged numbers compared to description
-        const explosionRange = 188 * (1 + 0.16 * payloadLv);
+        const explosionRange = 185 * (1.1 + 0.25 * payloadLv);
         const explosionDamage = this.model.maxHealth * 1.25;
         const bx = this.model.x;
         const by = this.model.y;

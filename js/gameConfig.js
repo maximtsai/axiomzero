@@ -13,6 +13,59 @@ GAME_CONSTANTS.PHASE_COMBAT = 'COMBAT_PHASE';
 GAME_CONSTANTS.PHASE_WAVE_COMPLETE = 'WAVE_COMPLETE';
 GAME_CONSTANTS.PHASE_GAME_OVER = 'GAME_OVER';
 
+// ─── Message Bus Events ───────────────────────────────────────────────────────
+
+GAME_CONSTANTS.EVENTS = {
+    // Phase & Loading
+    PHASE_CHANGED: 'phaseChanged',
+    ASSETS_LOADED: 'assetsLoaded',
+    TRANSITION_COMPLETE: 'transitionComplete',
+
+    // Game State
+    GAME_PAUSED: 'gamePaused',
+    GAME_RESUMED: 'gameResumed',
+
+    // Tower & Player
+    TOWER_SPAWNED: 'towerSpawned',
+    TOWER_AWAKENED: 'towerAwakened',
+    TOWER_DIED: 'towerDied',
+    TOWER_BACKUP_TRIGGERED: 'towerBackupTriggered',
+    TOWER_SHAKE_REQUESTED: 'towerShakeRequested',
+    TOWER_SHAKE_COMPLETE: 'towerShakeComplete',
+    HEALTH_CHANGED: 'healthChanged',
+    EXP_CHANGED: 'expChanged',
+    INSIGHT_GAINED: 'insightGained',
+
+    // Combat & Waves
+    WAVE_COMPLETE: 'waveComplete',
+    WAVE_PROGRESS_CHANGED: 'waveProgressChanged',
+    FREEZE_ENEMIES: 'freezeEnemies',
+    UNFREEZE_ENEMIES: 'unfreezeEnemies',
+    ADD_SPAWN_DELAY: 'addEnemySpawnDelay',
+
+    // Enemies
+    ENEMY_KILLED: 'enemyKilled',
+    BOSS_SPAWNED: 'bossSpawned',
+    MINIBOSS_SPAWNED: 'minibossSpawned',
+    BOSS_DEFEATED: 'bossDefeated',
+    MINIBOSS_DEFEATED: 'minibossDefeated',
+
+    // Combat Details
+    TRACK_HEAL: 'trackHeal',
+    PULSE_DATA: 'pulseData',
+    BOMB_SHOW_HINT: 'bombShowHint',
+    WAVE_MODE_FARMING: 'waveModeFarmingStarted',
+    WAVE_MODE_NORMAL: 'waveModeNormalStarted',
+    TOWER_DEATH_STARTED: 'towerDeathStarted',
+
+    // System
+    UPGRADE_PURCHASED: 'upgradePurchased',
+    STATS_RECALCULATED: 'statsRecalculated',
+    CURRENCY_CHANGED: 'currencyChanged',
+    POINTER_DOWN: 'pointerDown',
+    TRIGGER_TUTORIAL: 'trigger_tutorial'
+};
+
 // ─── Colors (GDD §4) ──────────────────────────────────────────────────────────
 
 GAME_CONSTANTS.COLOR_BG = 0x05070a;

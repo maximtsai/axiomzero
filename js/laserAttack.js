@@ -371,6 +371,11 @@ const laserAttack = (() => {
             model.active = false;
             model.firing = false;
             model.charging = false;
+            model.tapering = false;
+            model.taperProgress = 0;
+            model.cooldownTimer = 0;
+            model.fireTimer = 0;
+            model.tickTimer = 0;
             if (_beamSound) {
                 audio.fadeAway(_beamSound, 200);
                 _beamSound = null;
@@ -399,10 +404,14 @@ const laserAttack = (() => {
             model.angle += model.ORBIT_SPEED * speedMult * (delta / 1000);
         }
 
-        view.update(model, towerPos.x, towerPos.y, delta);
-
         const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
-        if ((!model.active && !isTesting) || model.paused) return;
+        if ((!model.active && !isTesting) || model.paused) {
+            // Keep turret following tower even if not active
+            view.update(model, towerPos.x, towerPos.y, 0); 
+            return;
+        }
+
+        view.update(model, towerPos.x, towerPos.y, delta);
 
         if (model.firing) {
             model.fireTimer += delta;

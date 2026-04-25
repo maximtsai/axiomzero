@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth'],
+        childIds: ['prismatic_array', 'backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'unsecured_wallet'],
         treeX: gridX(0),
         treeY: gridY(-1.5),
         effect: function () {
@@ -221,11 +221,11 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 100,
-        parents: ['malware_siphon'],
-        childIds: ['root_access', 'unsecured_wallet'],
+        parents: ['cheat'],
+        childIds: ['root_access'],
 
-        treeX: gridX(7.0),
-        treeY: gridY(7.0),
+        treeX: gridX(-2.5),
+        treeY: gridY(-1.5),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -384,7 +384,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['regen', 'bypass'],
         childIds: ['peak_traffic'],
-        treeX: gridX(-4.0),
+        treeX: gridX(-4.5),
         treeY: gridY(2.0),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
@@ -406,7 +406,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['security_test_2', 'clock_speed'],
         childIds: ['gateway_discovery'],
-        treeX: gridX(-0.5),
+        treeX: gridX(-1.0),
         treeY: gridY(8.5),
         effect: function () {
             // Stats recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
@@ -425,7 +425,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['instability_mark'],
-        childIds: ['impact'],
+        childIds: ['root_access'],
         treeX: gridX(1.5),
         treeY: gridY(8.0),
         effect: function () { },
@@ -667,7 +667,7 @@ const NODE_DEFS = [
         costStepScaling: 10,
         parents: ['root_access'],
         childIds: ['base_hp_boost'],
-        treeX: gridX(0.0),
+        treeX: gridX(-0.5),
         treeY: gridY(8.5),
         effect: function () {
             // Recalculated via messageBus 'upgradePurchased' â†’ tower._onUpgradePurchased
@@ -719,7 +719,7 @@ const NODE_DEFS = [
         description: t('nodes', 'volatile_payload.desc'),
         popupText: t('nodes', 'volatile_payload.popup'),
         popupColor: COLORS.UTILITY,
-        maxLevel: 5,
+        maxLevel: 4,
         baseCost: 100,
         costType: 'data',
         costScaling: 'linear',
@@ -892,7 +892,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['system_redundancy_new', 'data_chest_unlock', 'completionist'],
+        childIds: ['system_redundancy_new', 'data_chest_unlock', 'completionist', 'impulse'],
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {
@@ -1063,8 +1063,8 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         parents: ['peak_traffic'],
         childIds: [],
-        treeX: gridX(2),
-        treeY: gridY(-1.5),
+        treeX: gridX(-4.5),
+        treeY: gridY(1.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -1083,7 +1083,7 @@ const NODE_DEFS = [
         baseCost: 75,
         costType: 'data',
         costScaling: 'static',
-        parents: ['trojan_access'],
+        parents: ['trojan_access', 'impulse'],
         childIds: ['placeholder_duo_2', 'manual_protocol', 'broadcast_protocol'],
         treeX: gridX(2.5),
         treeY: gridY(4.5),
@@ -1104,11 +1104,11 @@ const NODE_DEFS = [
         label: 'INSIGHT',
         costType: 'insight',
         costScaling: 'static',
-        parents: ['impact'],
+        parents: ['cheat'],
         childIds: [],
         tooltipExtraWidth: 100,
-        treeX: gridX(3.0),
-        treeY: gridY(8.0),
+        treeX: gridX(-3.5),
+        treeY: gridY(-1.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addCoin(1);
@@ -1116,6 +1116,26 @@ const NODE_DEFS = [
         },
     },
 
+    {
+        id: 'impulse',
+        name: t('nodes', 'impulse.name'),
+        icon: 'Skillicon14_02.png',
+        description: t('nodes', 'impulse.desc'),
+        popupText: t('nodes', 'impulse.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 40,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['reveal_map'],
+        childIds: ['repeat_exploit'],
+        treeX: gridX(1.5),
+        treeY: gridY(4),
+        effect: function () {
+            upgradeDispatcher.recalcPulseDamage();
+            if (typeof upgradeTree !== 'undefined') upgradeTree.unlockNode('trojan_access');
+        },
+    },
 
     {
         id: 'root_access',
@@ -1126,9 +1146,9 @@ const NODE_DEFS = [
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
-        parents: ['impact', 'shell_access'],
+        parents: ['malware_siphon', 'shell_access'],
         childIds: ['clock_speed'],
-        treeX: gridX(1.0),
+        treeX: gridX(0.5),
         treeY: gridY(8.0),
         effect: function () { },
     },
@@ -1336,10 +1356,10 @@ const NODE_DEFS = [
         label: t('nodes', 'label.plus_data'),
         costType: 'data',
         costScaling: 'static',
-        parents: [],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(4),
-        treeY: gridY(7.5),
+        treeX: gridX(-1.5),
+        treeY: gridY(-1.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(15);
@@ -1596,7 +1616,7 @@ const NODE_DEFS = [
         costType: 'data',
         parents: ['security_test_2', 'base_hp_boost'],
         childIds: ['physical_anchor', 'coin_mine_unlock'],
-        treeX: gridX(0.5),
+        treeX: gridX(0.0),
         treeY: gridY(8.0),
         effect: function () { },
     },
@@ -1635,7 +1655,7 @@ const NODE_DEFS = [
         costStep: 0,
         parents: ['gateway_discovery'],
         childIds: [],
-        treeX: gridX(-1.0),
+        treeX: gridX(-1.5),
         treeY: gridY(8.0),
         effect: function () {
             if (typeof upgradeTree !== 'undefined') {
@@ -1654,7 +1674,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['gateway_discovery'],
         childIds: [],
-        treeX: gridX(-0.5),
+        treeX: gridX(-1.0),
         treeY: gridY(7.0),
         popupText: t('nodes', 'physical_anchor.popup'),
         popupColor: COLORS.UTILITY,
