@@ -26,6 +26,7 @@ const iterationOverScreen = (() => {
     let _expDelayEvent = null; // Active post-levelup delay event
     let _activeBurstTweens = []; // Track data burst tweens for cleanup
     let _insightSparkleEmitter = null;
+    let dataParticlePool = null;
 
     // Session state
     let _lastRunData = null; // null until at least one run completes
@@ -43,7 +44,30 @@ const iterationOverScreen = (() => {
     function init() {
         _createElements();
         _hideAll();
+        _initPools();
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
+    }
+
+    function _initPools() {
+        dataParticlePool = new ObjectPool(
+            () => {
+                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'data_collect.png', 32, 32, 8, 8, 8, 8);
+                slice.setRotation(Phaser.Math.DegToRad(45));
+                slice.setScrollFactor(0);
+                slice.setTint(0x00f5ff);
+                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                    upgradeTree.assignToUICamera(slice);
+                }
+                return slice;
+            },
+            (slice) => {
+                slice.setVisible(false);
+                slice.setActive(false);
+                slice.setAlpha(0);
+                slice.setScale(1);
+            },
+            { maxSize: 50 }
+        );
     }
 
     function _createElements() {
@@ -479,45 +503,36 @@ const iterationOverScreen = (() => {
      */
     function _playDataBurst(cx, cy, amount) {
         const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4;
-        const spread = 80;
-
+        const startSpread = 40;
+        const spreadIncrement = 45;
         let count = 8; // Default for 1000+
         if (amount <= 9) count = 1;
         else if (amount <= 99) count = 3;
         else if (amount <= 999) count = 5;
 
         for (let i = 0; i < count; i++) {
+            const spread = startSpread + (i * spreadIncrement);
             let px = cx + (Math.random() - 0.5) * spread;
-            let py = cy + (Math.random() - 0.5) * spread;
+            let py = cy + (Math.random() - 0.5) * spread * 0.6;
 
-            const particle = PhaserScene.add.image(px, py, 'ui', 'square_particle.png');
-            particle.setDepth(GAME_CONSTANTS.DEPTH_ITERATION_OVER + 10).setTint(0x00f5ff);
-            
-            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-                upgradeTree.assignToUICamera(particle);
-            }
-            
-            expAnimElements.push(particle);
 
             // Stagger each piece slightly
-            const delay = i * 25;
+            const delay = 160 + i * 80;
             const startSize = 18 + Math.random() * 10;
-            const endSize = (count === 1) ? (startSize * 3) : (80 + Math.random() * 60);
+            const endSize = (count === 1) ? (startSize * 4) : (90 + Math.random() * 65);
 
             PhaserScene.time.delayedCall(delay, () => {
                 if (!visible) return;
 
-                const slice = PhaserScene.add.nineslice(px, py, 'player', 'data_collect.png', startSize, startSize, 8, 8, 8, 8);
-                slice.setRotation(Phaser.Math.DegToRad(45));
+                const slice = dataParticlePool.get();
+                slice.setPosition(px, py);
+                slice.width = startSize;
+                slice.height = startSize;
                 slice.setDepth(depth);
-                slice.setScrollFactor(0);
+                slice.setVisible(true);
+                slice.setActive(true);
                 slice.setAlpha(1);
-                slice.setTint(0x00f5ff);
                 expAnimElements.push(slice);
-                
-                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-                    upgradeTree.assignToUICamera(slice);
-                }
 
                 // Expand and fade only (no position tween)
                 const t = PhaserScene.tweens.add({
@@ -528,7 +543,7 @@ const iterationOverScreen = (() => {
                     duration: 1400 + Math.random() * 200,
                     ease: count === 1 ? 'Back.easeOut' : 'Cubic.easeOut',
                     onComplete: () => {
-                        if (slice.active) slice.destroy();
+                        dataParticlePool.release(slice);
                         const idx = expAnimElements.indexOf(slice);
                         if (idx !== -1) expAnimElements.splice(idx, 1);
                         _activeBurstTweens = _activeBurstTweens.filter(tween => tween !== t);
@@ -678,7 +693,7 @@ const iterationOverScreen = (() => {
         );
         popIcon.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4).setScale(1.2).setAlpha(1);
         expAnimElements.push(popIcon);
-        
+
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
             upgradeTree.assignToUICamera(popIcon);
         }
