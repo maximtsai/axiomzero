@@ -110,6 +110,31 @@
 					}
 				},
 				{
+					"filename": "particle_square_blur.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 24,
+						"h": 24
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 24
+					},
+					"frame": {
+						"x": 213,
+						"y": 28,
+						"w": 24,
+						"h": 24
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "progress_container.png",
 					"rotated": false,
 					"trimmed": false,
@@ -125,9 +150,59 @@
 					},
 					"frame": {
 						"x": 213,
-						"y": 28,
+						"y": 54,
 						"w": 21,
 						"h": 21
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "particle_square.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 236,
+						"y": 54,
+						"w": 16,
+						"h": 16
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "particle_square_hollow.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 16,
+						"h": 16
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 236,
+						"y": 72,
+						"w": 16,
+						"h": 16
 					},
 					"anchor": {
 						"x": 0.5,
@@ -150,7 +225,7 @@
 					},
 					"frame": {
 						"x": 213,
-						"y": 51,
+						"y": 77,
 						"w": 20,
 						"h": 20
 					},
@@ -175,7 +250,7 @@
 					},
 					"frame": {
 						"x": 235,
-						"y": 53,
+						"y": 90,
 						"w": 16,
 						"h": 16
 					},
@@ -200,7 +275,7 @@
 					},
 					"frame": {
 						"x": 213,
-						"y": 73,
+						"y": 99,
 						"w": 20,
 						"h": 20
 					},
@@ -225,7 +300,32 @@
 					},
 					"frame": {
 						"x": 213,
-						"y": 73,
+						"y": 99,
+						"w": 20,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sparkle_cyan.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 213,
+						"y": 121,
 						"w": 20,
 						"h": 20
 					},
@@ -250,7 +350,7 @@
 					},
 					"frame": {
 						"x": 213,
-						"y": 95,
+						"y": 143,
 						"w": 20,
 						"h": 20
 					},
@@ -378,6 +478,31 @@
 						"y": 329,
 						"w": 64,
 						"h": 64
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "particle_square_blur_big.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 40
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 40
+					},
+					"frame": {
+						"x": 1,
+						"y": 395,
+						"w": 40,
+						"h": 40
 					},
 					"anchor": {
 						"x": 0.5,
@@ -615,6 +740,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:595a641a8d1b4c269adf29244276cf5c:3e587a4ea11ff7af806ae92024b5ff0c:6af6d199855d1c5980a61db04791f8fb$"
+		"smartupdate": "$TexturePacker:SmartUpdate:42c02495dc055f95f571204b7247c494:749ceba16f2dfdd747228bd7753b37ac:6af6d199855d1c5980a61db04791f8fb$"
 	}
 }

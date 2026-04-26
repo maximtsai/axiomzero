@@ -596,7 +596,11 @@ class Enemy {
         // Particle effect (Standard enemies and minibosses only)
         if ((!this.model.isBoss || this.model.isMiniboss) && typeof customEmitters !== 'undefined') {
             const isHalf = (source === 'laser');
-            customEmitters.enemyDamage(this.model.x, this.model.y, isHalf);
+            if (this.model.type === 'swarmer') {
+                customEmitters.swarmerDamage(this.model.x, this.model.y, isHalf);
+            } else {
+                customEmitters.enemyDamage(this.model.x, this.model.y, isHalf);
+            }
         }
 
         return result;

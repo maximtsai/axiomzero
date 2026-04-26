@@ -1485,6 +1485,31 @@
 					}
 				},
 				{
+					"filename": "swarmer_damage_particle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 36,
+						"h": 12
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 21,
+						"h": 12
+					},
+					"frame": {
+						"x": 652,
+						"y": 1645,
+						"w": 21,
+						"h": 12
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "damage_particle.png",
 					"rotated": false,
 					"trimmed": true,
@@ -2126,6 +2151,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:a3a193be2fa6268346cba947755da9a4:20fb41a91fc3573ec3e86f5ef3b00618:b46d94f51ab09644cd324819ab72f7d7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:2218eaf04f318cbe1f78e0132d4f5783:cd97e1574d8c9aa91dd1254a58dca25c:b46d94f51ab09644cd324819ab72f7d7$"
 	}
 }

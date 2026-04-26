@@ -143,7 +143,7 @@ const iterationOverScreen = (() => {
         expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: '23px',
-            color: '#aaaaaa',
+            color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(depth + 2).setVisible(false);
 
@@ -550,7 +550,7 @@ const iterationOverScreen = (() => {
         });
         PhaserScene.tweens.add({
             targets: expBarLabel,
-            alpha: 1,
+            alpha: 0.8,
             duration: 350,
             ease: 'Cubic.easeOut',
         });
@@ -638,9 +638,8 @@ const iterationOverScreen = (() => {
             }
         });
 
-        // Set bar elements to full opacity when insight gained
         PhaserScene.tweens.add({
-            targets: [expBarBg, expBarFill],
+            targets: [expBarBg, expBarFill, expBarLabel],
             alpha: 1,
             duration: 250,
             ease: 'Sine.easeOut'
@@ -681,7 +680,7 @@ const iterationOverScreen = (() => {
     function _finishExpAnimation() {
         PhaserScene.tweens.add({
             targets: expBarLabel,
-            alpha: { from: 1, to: 0.4 },
+            alpha: { from: 0.8, to: 0.4 },
             duration: 800,
             yoyo: true,
             repeat: 0,

@@ -63,7 +63,7 @@ class TowerModel {
         }
         const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
-        this.healthRegen = 0.2 * regenLv; // baseDecay commented out per request
+        this.healthRegen = 0.4 * regenLv; // baseDecay commented out per request
         this.armor = armorLv * 2; // 2 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
 

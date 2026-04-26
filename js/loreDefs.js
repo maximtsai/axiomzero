@@ -109,7 +109,7 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['regen'],
+        parents: ['threat_response'],
         childIds: [],
         treeX: gridX(-3.0),
         treeY: gridY(1.5),

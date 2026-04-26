@@ -242,11 +242,28 @@ const customEmitters = (() => {
 
     const _enemyDamage = _make('enemies', enemyDamageParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
 
+    const swarmerDamageParams = Object.assign({}, enemyDamageParams, {
+        frame: 'swarmer_damage_particle.png',
+        speed: { start: 260, end: 0, ease: 'Cubic.easeOut' },
+        lifespan: { min: 190, max: 400 },
+        scaleX: { start: 1.1, end: 0, ease: 'Quart.easeIn' },
+        scaleY: { start: 0.75, end: 0.5, ease: 'Quart.easeIn' },
+    });
+
+    const _swarmerDamage = _make('enemies', swarmerDamageParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+
     function enemyDamage(x, y, isHalf = false) {
         if (gameState.settings.minimalParticles) return;
         let count = isHalf ? 1 : Phaser.Math.Between(2, 3);
 
         const e = _enemyDamage();
+        e.explode(count, x, y);
+    }
+
+    function swarmerDamage(x, y, isHalf = false) {
+        if (gameState.settings.minimalParticles) return;
+        const count = isHalf ? 1 : Phaser.Math.Between(1, 2);
+        const e = _swarmerDamage();
         e.explode(count, x, y);
     }
 
@@ -952,6 +969,7 @@ const customEmitters = (() => {
         playExplosionPulse,
         createExploderExplosion,
         enemyDamage,
+        swarmerDamage,
         malwareSiphonFX,
         cacheTrail,
         playShellDeath: (x, y, depth) => {

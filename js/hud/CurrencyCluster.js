@@ -48,6 +48,16 @@ class CurrencyCluster {
         return helper.getResource(id);
     }
 
+    _formatValue(id, val) {
+        if (id === 'coin') {
+            // Coins are stored as integers (e.g. 10) but displayed at 0.1x (e.g. 1.0)
+            // to make them feel more valuable/dense while keeping math simple.
+            const displayVal = val * 0.1;
+            return displayVal.toFixed(1);
+        }
+        return Math.floor(val).toString();
+    }
+
     _createElements() {
         CURRENCY_ORDER.forEach(id => {
             const def = RESOURCE_DEFS[id];
@@ -56,7 +66,7 @@ class CurrencyCluster {
             icon.setScale(def.scale);
 
             const initialVal = this._getResourceValue(id);
-            const text = PhaserScene.add.text(this.x + CONFIG.TEXT_X_OFFSET, this.baseY + CONFIG.TEXT_Y_OFFSET, Math.floor(initialVal).toString(), {
+            const text = PhaserScene.add.text(this.x + CONFIG.TEXT_X_OFFSET, this.baseY + CONFIG.TEXT_Y_OFFSET, this._formatValue(id, initialVal), {
                 fontFamily: 'JetBrainsMono_Regular',
                 fontSize: this._getFontSize(),
                 color: def.color,
@@ -166,10 +176,10 @@ class CurrencyCluster {
             duration: duration,
             ease: 'Quad.easeOut',
             onUpdate: () => {
-                ui.text.setText(Math.floor(counter.val).toString());
+                ui.text.setText(this._formatValue(id, counter.val));
             },
             onComplete: () => {
-                ui.text.setText(Math.floor(targetVal).toString());
+                ui.text.setText(this._formatValue(id, targetVal));
                 ui.lastValue = targetVal;
                 ui.countTween = null;
             }
@@ -184,7 +194,7 @@ class CurrencyCluster {
             ui.countTween.stop();
             ui.countTween = null;
         }
-        ui.text.setText(Math.floor(val).toString());
+        ui.text.setText(this._formatValue(id, val));
         ui.lastValue = val;
     }
 

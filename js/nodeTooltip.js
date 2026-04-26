@@ -20,6 +20,14 @@ const nodeTooltip = (() => {
     let lastShowTime = 0;
     const bgWidth = helper.isMobileDevice() ? 400 : 380;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
+ 
+    function _formatValue(node, val) {
+        if (node.costType === 'coin') {
+            // Coins are stored as integers (e.g. 10) but displayed at 0.1x (e.g. 1.0)
+            return (val * 0.1).toFixed(1);
+        }
+        return Math.floor(val).toString();
+    }
 
     function init() {
         if (container) return;
@@ -224,7 +232,7 @@ const nodeTooltip = (() => {
             if (isPurchaseRefresh && purchaseCost > 0) {
                 const targetRes = currentRes;
                 animValue.val = targetRes + purchaseCost;
-                costT.setText(iconStr + ' ' + Math.floor(animValue.val) + ' / ' + node.getCost());
+                costT.setText('\n' + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + '\n');
                 let calcDur = 250 + Math.floor(Math.sqrt(purchaseCost) * 5);
                 PhaserScene.tweens.add({
                     targets: animValue,
@@ -234,12 +242,12 @@ const nodeTooltip = (() => {
                     onUpdate: () => {
                         // Check if node is still the current one to avoid updating stale tooltips
                         if (currentNode === node && costT.visible) {
-                            costT.setText(iconStr + ' ' + Math.floor(animValue.val) + ' / ' + node.getCost());
+                            costT.setText('\n' + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + '\n');
                         }
                     }
                 });
             } else {
-                costT.setText(iconStr + ' ' + Math.floor(currentRes) + ' / ' + node.getCost());
+                costT.setText('\n' + iconStr + ' ' + _formatValue(node, currentRes) + ' / ' + _formatValue(node, node.getCost()) + '\n');
             }
 
             let costColor = '#30ffff';

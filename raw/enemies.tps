@@ -897,6 +897,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">enemies/swarmer_damage_particle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>9,3,18,6</rect>
+                <key>scale9Paddings</key>
+                <rect>9,3,18,6</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">enemies/swarmer_enemy_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
