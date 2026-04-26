@@ -49,6 +49,8 @@ const upgradeTree = (() => {
     let lastCoordX = -1;
     let lastCoordY = -1;
     let lastHoverLabel = "";
+    let _currencyDirty = false;
+    let _currencyFrameCount = 0;
 
     // Level Selection Popup
     let levelSelectOverlay = null;
@@ -1212,8 +1214,7 @@ const upgradeTree = (() => {
 
     function _onCurrencyChanged() {
         if (!gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
-        _refreshAllNodes();
-        treeLineManager.updateLines();
+        _currencyDirty = true;
     }
 
     function _onUpgradePurchased(data) {
@@ -1359,6 +1360,17 @@ const upgradeTree = (() => {
 
     function _update(delta) {
         if (!visible) return;
+
+        // Throttled currency refresh: once every 10 frames
+        if (_currencyDirty) {
+            _currencyFrameCount++;
+            if (_currencyFrameCount >= 10) {
+                _currencyFrameCount = 0;
+                _currencyDirty = false;
+                _refreshAllNodes();
+                treeLineManager.updateLines();
+            }
+        }
 
         // Coordinate Update (Requirement §N.2)
         // Optimization: Only update text if mouse moved or label changed to save texture re-generation
@@ -1603,11 +1615,14 @@ const upgradeTree = (() => {
     function isVisible() { return visible; }
     function isFullView() { return fullUpgradeView; }
 
-    function _revealChildren(id) {
-        for (const cid in nodes) {
-            const n = nodes[cid];
-            if (n.parents && n.parents.includes(id)) {
-                n.refreshState();
+    function _revealChildren(parentId) {
+        const parent = nodes[parentId];
+        if (!parent) return;
+        for (let i = 0; i < parent.childIds.length; i++) {
+            const childId = parent.childIds[i];
+            const child = nodes[childId];
+            if (child) {
+                child.refreshState();
             }
         }
     }

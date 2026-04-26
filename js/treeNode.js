@@ -84,6 +84,10 @@ class Node {
         this.revealed = false;    // Whether this node is force-revealed by an event
         this.forceUnlocked = false; // Whether this node is force-unlocked by an event
 
+        // Cached recursive lookups (updated in refreshState)
+        this._cachedIsDuoDescendant = this.isDuoBox;
+        this._cachedIsDuoPathPurchased = false;
+
         // Phaser objects
         this.btn = null;
         this.label = null;
@@ -144,29 +148,43 @@ class Node {
 
     // ── state management ─────────────────────────────────────────────────
 
+    /** Returns cached result. Updated during refreshState(). */
     isDuoDescendant() {
-        if (this.isDuoBox) return true;
-        if (this.parents.length === 0) return false;
-        for (let pid of this.parents) {
-            const p = upgradeTree.getNode(pid);
-            if (p && p.isDuoDescendant()) return true;
-        }
-        return false;
+        return this._cachedIsDuoDescendant;
     }
 
-    isDuoPathPurchased() {
-        if (this.isDuoBox) {
-            return this._isDuoTierPurchased();
-        }
-        if (this.isPlaceholder && this.monitorsDuoTier > 0) {
-            return this._isDuoTierPurchased(this.monitorsDuoTier);
-        }
-        if (this.parents.length === 0) return false;
+    /** Recomputes and caches isDuoDescendant from parent chain. */
+    _recomputeIsDuoDescendant() {
+        if (this.isDuoBox) { this._cachedIsDuoDescendant = true; return; }
+        if (this.parents.length === 0) { this._cachedIsDuoDescendant = false; return; }
         for (let pid of this.parents) {
             const p = upgradeTree.getNode(pid);
-            if (p && p.isDuoPathPurchased()) return true;
+            if (p && p._cachedIsDuoDescendant) { this._cachedIsDuoDescendant = true; return; }
         }
-        return false;
+        this._cachedIsDuoDescendant = false;
+    }
+
+    /** Returns cached result. Updated during refreshState(). */
+    isDuoPathPurchased() {
+        return this._cachedIsDuoPathPurchased;
+    }
+
+    /** Recomputes and caches isDuoPathPurchased from parent chain. */
+    _recomputeIsDuoPathPurchased() {
+        if (this.isDuoBox) {
+            this._cachedIsDuoPathPurchased = this._isDuoTierPurchased();
+            return;
+        }
+        if (this.isPlaceholder && this.monitorsDuoTier > 0) {
+            this._cachedIsDuoPathPurchased = this._isDuoTierPurchased(this.monitorsDuoTier);
+            return;
+        }
+        if (this.parents.length === 0) { this._cachedIsDuoPathPurchased = false; return; }
+        for (let pid of this.parents) {
+            const p = upgradeTree.getNode(pid);
+            if (p && p._cachedIsDuoPathPurchased) { this._cachedIsDuoPathPurchased = true; return; }
+        }
+        this._cachedIsDuoPathPurchased = false;
     }
 
     isRequirementsMet() {
@@ -207,6 +225,10 @@ class Node {
         const oldState = this.state;
         const oldLevel = this.level;
         const oldGhostAlpha = (this.state === NODE_STATE.GHOST) ? this.getGhostAlpha() : 1;
+
+        // Update cached recursive lookups
+        this._recomputeIsDuoDescendant();
+        this._recomputeIsDuoPathPurchased();
 
         // 1. Determine if this branch is active (for Duo-Boxes)
         if (this.isDuoBox) {
