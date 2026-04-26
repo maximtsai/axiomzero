@@ -11,6 +11,7 @@ class SwarmerEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_SWARMER;
         this.type = 'swarmer';
         this.baseResourceDrop = 0.4;
+        this.hijacksSpawned = 0.75;
     }
 }
 

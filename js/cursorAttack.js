@@ -1266,7 +1266,7 @@ const pulseAttack = (() => {
                 view.playRecoil();
 
                 const aftershockDamage = 4 * model.aftershockLevel;
-                const aftershockSizeRadius = ((model.size + 100) / 2) + 5;
+                const aftershockSizeRadius = ((currentSize + 100) / 2) + 5;
                 const damageX = _getDamageCoordX(cx);
 
                 const aftershockHits = enemyManager.getEnemiesInSquareRange(damageX, cy, aftershockSizeRadius, _hitBuffer);

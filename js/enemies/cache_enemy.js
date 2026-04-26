@@ -6,6 +6,7 @@ class CacheEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_CACHE;
         this.type = 'cache';
         this.baseResourceDrop = 12;
+        this.hijacksSpawned = 0;
         this.jitterTimer = 0;
         this.jitterPeriod = 0.5;
         this.orbitAngle = 0;

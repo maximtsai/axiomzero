@@ -1510,6 +1510,31 @@
 					}
 				},
 				{
+					"filename": "projectile_hijack.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 58,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 20
+					},
+					"frame": {
+						"x": 1557,
+						"y": 1996,
+						"w": 40,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "swarmer_damage_particle.png",
 					"rotated": false,
 					"trimmed": true,
@@ -1535,31 +1560,6 @@
 					}
 				},
 				{
-					"filename": "damage_particle.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 54,
-						"h": 18
-					},
-					"spriteSourceSize": {
-						"x": 24,
-						"y": 0,
-						"w": 30,
-						"h": 18
-					},
-					"frame": {
-						"x": 1557,
-						"y": 1996,
-						"w": 30,
-						"h": 18
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
 					"filename": "particle_square_blur.png",
 					"rotated": false,
 					"trimmed": false,
@@ -1574,10 +1574,35 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 2002,
-						"y": 1,
+						"x": 1557,
+						"y": 2018,
 						"w": 24,
 						"h": 24
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "damage_particle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 54,
+						"h": 18
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 0,
+						"w": 30,
+						"h": 18
+					},
+					"frame": {
+						"x": 1805,
+						"y": 253,
+						"w": 30,
+						"h": 18
 					},
 					"anchor": {
 						"x": 0.5,
@@ -2251,6 +2276,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:cff4a825816c96a9acbd4faba713eb35:ba92f61c34c4418382dc2abee432a6e8:b46d94f51ab09644cd324819ab72f7d7$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ccee01d8c45a6339b6c0247a2e980d46:a2cd1107517cad8926bac26aa12f5896:b46d94f51ab09644cd324819ab72f7d7$"
 	}
 }

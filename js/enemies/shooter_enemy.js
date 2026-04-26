@@ -16,6 +16,7 @@ class ShooterEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_SHOOTER;
         this.type = 'shooter';
         this.baseResourceDrop = 1.5;
+        this.hijacksSpawned = 1.5;
         this.state = SHOOTER_STATE.MOVING;
         this.fireCooldown = 0;
         this.baseProjectileDamage = 1.5;

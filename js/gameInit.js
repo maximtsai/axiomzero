@@ -78,6 +78,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     projectileManager.init();
     enemyBulletManager.init();
     resourceManager.init();
+    hijackManager.init();
 
     // Wave lifecycle — depends on tower, enemyManager
     waveManager.init();

@@ -733,7 +733,7 @@ class Node {
             }
 
             // Notify systems of state change
-            messageBus.publish('upgradePurchased');
+            messageBus.publish('upgradePurchased', { id: this.id });
             this._playDuoPulse();
 
             return true;

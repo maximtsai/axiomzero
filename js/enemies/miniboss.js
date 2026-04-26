@@ -16,6 +16,7 @@ class MinibossModel extends EnemyModel {
         this.knockBackModifier = 0;
         this.pushbackScale = 0;
         this.multiplier = 1;
+        this.hijacksSpawned = 7;
     }
 }
 

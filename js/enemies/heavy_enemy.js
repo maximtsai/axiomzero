@@ -12,6 +12,7 @@ class HeavyEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_HEAVY;
         this.type = 'heavy';
         this.baseResourceDrop = 3;
+        this.hijacksSpawned = 4;
         this.knockBackModifier = 0.6;
     }
 

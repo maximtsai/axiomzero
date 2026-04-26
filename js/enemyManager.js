@@ -525,7 +525,7 @@ const enemyManager = (() => {
         if (result.actualApplied > gameState.stats.maxDamageInOneHit) {
             gameState.stats.maxDamageInOneHit = result.actualApplied;
         }
-        
+
         // Publish event for achievements (only for high damage to reduce event overhead)
         if (result.actualApplied >= 100) {
             messageBus.publish('100DamageDealt', result.actualApplied, source);
@@ -570,10 +570,9 @@ const enemyManager = (() => {
 
             let baseFontSize = 40;
             if (!isExecuted) {
-                // Square root scaling: damage 10 is the 40px baseline.
-                // Clamp between 25px and 115px to avoid tiny or screen-filling numbers.
-                baseFontSize = 22 + Math.floor(Math.sqrt(finalAmount) * 4);
-                if (wasResonance) baseFontSize += 8;
+                // Square root scaling: normalized for better readability at high damage
+                baseFontSize = 25 + Math.floor(Math.sqrt(finalAmount) * 2);
+                if (wasResonance) baseFontSize += 4;
                 baseFontSize = Math.min(115, baseFontSize);
             } else {
                 baseFontSize = 36;
@@ -711,7 +710,8 @@ const enemyManager = (() => {
                 type: enemy.model.type,
                 isBoss: wasBoss,
                 isMiniboss: wasMiniboss,
-                wasResonance: wasResonance
+                wasResonance: wasResonance,
+                hijacksSpawned: enemy.model.hijacksSpawned
             });
             if (enemy.model.type !== 'test') sessionKills++;
         }

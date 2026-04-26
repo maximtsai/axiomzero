@@ -23,6 +23,7 @@ class ProtectorEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_PROTECTOR;
         this.type = 'protector';
         this.baseResourceDrop = 3;
+        this.hijacksSpawned = 3;
         this.cannotRotate = true;
         this.auraActive = false;
         this.state = PROTECTOR_STATE.MOVING;

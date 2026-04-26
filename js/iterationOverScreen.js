@@ -577,7 +577,7 @@ const iterationOverScreen = (() => {
 
         // Show bar elements
         expBarBg.setVisible(true).setAlpha(0);
-        expBarFill.setVisible(true).setDisplaySize(0, barH).setAlpha(0.7);
+        expBarFill.setVisible(true).setDisplaySize(0, barH).setAlpha(0.7).setTint(0xffffff);
         expBarLabel.setVisible(true).setAlpha(0);
         expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
@@ -617,7 +617,7 @@ const iterationOverScreen = (() => {
 
     function _showStaticExpBar(ratio) {
         expBarBg.setVisible(true).setAlpha(0.7);
-        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), barH).setAlpha(0.7);
+        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), barH).setAlpha(0.7).setTint(0xffffff);
         expBarLabel.setVisible(true).setAlpha(1);
         expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
@@ -630,6 +630,7 @@ const iterationOverScreen = (() => {
         const toW = currentBarW * Math.min(1, seg.to);
         const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
 
+        expBarFill.setTint(0xffffff);
         expBarFill.setDisplaySize(fromW, barH);
 
         _expFillTween = PhaserScene.tweens.add({

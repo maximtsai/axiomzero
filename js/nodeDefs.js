@@ -68,8 +68,9 @@ const NODE_DEFS = [
         treeY: gridY(-1.5),
         effect: function () {
             resourceManager.addData(5000);
-            resourceManager.addInsight(2);
+            resourceManager.addInsight(3);
             resourceManager.addShard(2);
+            resourceManager.addCoin(10);
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
                 tower.heal(10);
@@ -783,7 +784,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resonance'],
         requiresMaxParent: true,
-        childIds: [],
+        childIds: ['hijack'],
         treeX: gridX(4.5),
         treeY: gridY(2),
         effect: function () {
@@ -803,12 +804,48 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['resonance'],
         requiresMaxParent: true,
-        childIds: [],
+        childIds: ['hijack'],
         treeX: gridX(3.5),
         treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcResonance();
         },
+    },
+    {
+        id: 'hijack',
+        name: t('nodes', 'hijack.name'),
+        icon: 'Skillicon14_03.png',
+        description: t('nodes', 'hijack.desc'),
+        popupText: t('nodes', 'hijack.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 200,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['crescendo', 'amplitude'],
+        requiresMaxParent: true,
+        childIds: ['recursion'],
+        treeX: gridX(4.0),
+        treeY: gridY(3),
+        effect: function () { },
+    },
+    {
+        id: 'recursion',
+        name: t('nodes', 'recursion.name'),
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'recursion.desc'),
+        popupText: t('nodes', 'recursion.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 3,
+        costType: 'coin',
+        costScaling: 'static',
+        parents: ['hijack'],
+        requiresMaxParent: true,
+        childIds: [],
+        treeX: gridX(4.5),
+        treeY: gridY(4),
+        effect: function () { },
     },
     {
         id: 'sustaining_siphon',
@@ -818,7 +855,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'sustaining_siphon.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 3,
+        baseCost: 2,
         costType: 'coin',
         costScaling: 'static',
         parents: ['resonance'],
@@ -913,6 +950,9 @@ const NODE_DEFS = [
                         ease: 'Cubic.easeInOut',
                         duration: 1400,
                         onComplete: () => {
+                            if (typeof upgradeTree !== 'undefined') {
+                                upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 2);
+                            }
                             // Wait 1.6s more to fulfill the 3s cutscene requirement (1.4 + 1.6 = 3.0)
                             PhaserScene.time.delayedCall(1600, endCutscene);
                         }

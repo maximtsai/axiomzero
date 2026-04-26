@@ -10,6 +10,7 @@ class ExploderEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_EXPLODER;
         this.type = 'exploder';
         this.baseResourceDrop = 1; // Same as basic for now
+        this.hijacksSpawned = 2;
     }
 }
 

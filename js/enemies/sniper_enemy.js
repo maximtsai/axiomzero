@@ -18,6 +18,7 @@ class SniperEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_SNIPER;
         this.type = 'sniper';
         this.baseResourceDrop = 4;
+        this.hijacksSpawned = 4;
         this.cannotRotate = true;
         this.knockBackModifier = 0;
 

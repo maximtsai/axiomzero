@@ -17,6 +17,7 @@ class BossModel extends EnemyModel {
         this.pushbackScale = 0;
         this.size = 105;
         this.hasPostUpdate = false;
+        this.hijacksSpawned = 0;
     }
 
     postUpdate(dt) {

@@ -348,12 +348,7 @@ function _showOptionsPopup() {
     closeBtn.setScrollFactor(0);
     elements.push(closeBtn);
 
-    // Route all popup elements to the global UI camera so they draw correctly on top of the Upgrade Tree
-    elements.forEach(el => {
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(el);
-        }
-    });
+    _assignElementsToUI(elements);
 
     function closePopup() {
         messageBus.publish('gameResumed');
@@ -426,6 +421,23 @@ function createMuteSFXButton(x, y) {
     button.setDepth(7000);
     button.setScrollFactor(0);
     return button;
+}
+
+function _assignElementsToUI(elements) {
+    if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+        elements.forEach(el => {
+            if (!el) return;
+            if (el instanceof Slider) {
+                if (el.guide) upgradeTree.assignToUICamera(el.guide);
+                if (el.track) upgradeTree.assignToUICamera(el.track);
+                if (el.edge) upgradeTree.assignToUICamera(el.edge);
+                if (el.knob) upgradeTree.assignToUICamera(el.knob);
+                if (el.hitArea) upgradeTree.assignToUICamera(el.hitArea);
+            } else {
+                upgradeTree.assignToUICamera(el);
+            }
+        });
+    }
 }
 
 // Create a mute music button at position x, y
@@ -548,4 +560,6 @@ function _showResetConfirmPopup() {
     closeBtn.setScrollFactor(0);
     closeBtn.setScale(1);
     elements.push(closeBtn);
+
+    _assignElementsToUI(elements);
 }

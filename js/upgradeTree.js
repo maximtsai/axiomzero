@@ -81,15 +81,15 @@ const upgradeTree = (() => {
         // Create Secondary Cameras for clipping and UI 
         treeNodeCamera = PhaserScene.cameras.add(0, 0, PANEL_W, GAME_CONSTANTS.HEIGHT);
         treeNodeCamera.setBackgroundColor('rgba(0,0,0,0)');
-        
+
         uiCamera = PhaserScene.cameras.add(0, 0, GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         uiCamera.setBackgroundColor('rgba(0,0,0,0)');
-        
+
         // Hide tree from main camera, and world from tree cameras
         PhaserScene.cameras.main.ignore(treeMaskContainer);
         treeNodeCamera.ignore(PhaserScene.children.list);
         uiCamera.ignore(PhaserScene.children.list);
-        
+
         treeMaskContainer.cameraFilter &= ~treeNodeCamera.id; // Un-ignore the container itself
 
         // Global hook: newly spawned enemies/bullets get ignored by tree cameras
@@ -417,10 +417,10 @@ const upgradeTree = (() => {
         }
 
         contentBounds = {
-            minX: minX - 400, // Extra 400px space to the left
-            maxX,
-            minY: minY - 400, // Extra 400px space to the top
-            maxY
+            minX: minX - 700, // Increased by 300px (was -400)
+            maxX: maxX + 300, // Increased by 300px
+            minY: minY - 400,
+            maxY: maxY
         };
     }
 
@@ -1516,7 +1516,7 @@ const upgradeTree = (() => {
         PhaserScene.cameras.main.ignore(gameObject);
         if (gameObject.bgSprite) PhaserScene.cameras.main.ignore(gameObject.bgSprite);
         if (gameObject.text) PhaserScene.cameras.main.ignore(gameObject.text);
-        
+
         // Also ignore from treeNodeCamera
         if (treeNodeCamera) {
             treeNodeCamera.ignore(gameObject);
@@ -1680,5 +1680,5 @@ const upgradeTree = (() => {
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
     }
 
-    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

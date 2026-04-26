@@ -65,6 +65,9 @@ class EnemyModel {
         this.pushback = 0;
         this.pushbackScale = 1.0;
         this.hasInstabilityMark = false;
+        this.targetAttractiveness = 0;
+        this.isTargeted = false;
+        this.hijacksSpawned = 0;
     }
 
     activate(x, y, config = {}) {
@@ -121,6 +124,8 @@ class EnemyModel {
         this.wasResonanceHit = false;
         this.hasInstabilityMark = false;
         this.pushback = 0;
+        this.targetAttractiveness = this.size;
+        this.isTargeted = false;
     }
 
     deactivate() {
@@ -342,6 +347,11 @@ class EnemyModel {
         const r = (this.size !== undefined ? this.size : sizeFallback);
         const reach = halfSize + r;
         return (Math.abs(px - this.x) <= reach && Math.abs(py - this.y) <= reach);
+    }
+
+    /** Reset attractiveness to the base size. */
+    resetAttractiveness() {
+        this.targetAttractiveness = this.size;
     }
 
     /** Override in subclasses for custom feedback config. */
@@ -649,6 +659,10 @@ class Enemy {
         this.model.forceSlowMult = mult;
         const finalDuration = (this.isBoss || this.isMiniboss) ? duration * 0.66 : duration;
         this.model.forceSlowTimer = finalDuration;
+    }
+
+    resetAttractiveness() {
+        this.model.resetAttractiveness();
     }
 
     // ── Property proxies (backward-compatible API for enemyManager etc.) ─────

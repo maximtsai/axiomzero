@@ -12,6 +12,7 @@ class FastEnemyModel extends EnemyModel {
         this.size = GAME_CONSTANTS.ENEMY_SIZE_FAST;
         this.type = 'fast';
         this.baseResourceDrop = 1.5;
+        this.hijacksSpawned = 1.5;
     }
 
     getHitFeedbackConfig() {

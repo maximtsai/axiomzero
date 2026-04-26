@@ -59,7 +59,7 @@ const playBoss3HealPacket = (fx, fy, tx, ty, depth) => {
 class Boss3PieceModel extends BossModel {
     constructor(levelScalingModifier = 1) {
         super(levelScalingModifier);
-        this.size = 50;
+        this.size = 58;
         this.bossId = 'boss3';
         this.type = 'boss3';
         this.state = BOSS_3_PIECE_STATES.TRAVEL;
@@ -336,7 +336,7 @@ class Boss3 extends Boss {
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,
             rampDuration: this.model.rampDuration,
-            size: 50,
+            size: 58,
             ...config
         });
 
