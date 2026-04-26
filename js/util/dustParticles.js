@@ -5,7 +5,7 @@
  *   Emitter A: Small tight/hollow squares — ~50 particles, 1 draw call
  *   Emitter B: Large blurry blobs — ~8 particles, 1 draw call
  *
- * Both emitters use the 'ui' atlas for texture batching.
+ * Both emitters use the 'enemies' atlas for texture batching.
  * Depth: DEPTH_TOWER (200) < DUST_DEPTH (300) < DEPTH_HUD (1000)
  *
  * Particle lifecycle per particle:
@@ -18,7 +18,7 @@
  *   dustParticles.stop();
  */
 const dustParticles = (() => {
-    const DUST_DEPTH = GAME_CONSTANTS.DEPTH_ENEMIES - 10;
+    const DUST_DEPTH = GAME_CONSTANTS.DEPTH_ENEMIES - 7;
 
     let _emitterSmall = null;
     let _emitterBig = null;
@@ -49,7 +49,7 @@ const dustParticles = (() => {
 
     const _alphaOpsSmall = {
         onEmit: (particle) => {
-            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.06, 0.1);
+            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.05, 0.09);
             return particle.data.maxAlpha;
         },
         onUpdate: (particle, key, t) => {
@@ -78,7 +78,7 @@ const dustParticles = (() => {
 
     const _alphaOpsBig = {
         onEmit: (particle) => {
-            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.04, 0.09);
+            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.04, 0.08);
             return particle.data.maxAlpha;
         },
         onUpdate: (particle, key, t) => {
@@ -98,11 +98,16 @@ const dustParticles = (() => {
     function start(scene) {
         if (_emitterSmall) return; // Already running
 
+        // Respect minimal particles setting
+        if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.minimalParticles) {
+            return;
+        }
+
         const W = GAME_CONSTANTS.WIDTH;
         const H = GAME_CONSTANTS.HEIGHT;
 
         // ── Emitter A: Small sharp + hollow squares ───────────────────────────
-        _emitterSmall = scene.add.particles(0, 0, 'ui', {
+        _emitterSmall = scene.add.particles(0, 0, 'enemies', {
             frame: ['particle_square.png', 'particle_square_hollow.png', 'particle_square_blur.png'],
             x: { min: 0, max: W },
             y: { min: 0, max: H },
@@ -119,7 +124,7 @@ const dustParticles = (() => {
         }).setDepth(DUST_DEPTH).setScrollFactor(0.6);
 
         // ── Emitter B: Large blurry blob squares ─────────────────────────────
-        _emitterBig = scene.add.particles(0, 0, 'ui', {
+        _emitterBig = scene.add.particles(0, 0, 'enemies', {
             frame: 'particle_square_blur_big.png',
             x: { min: 0, max: W },
             y: { min: 0, max: H },
@@ -154,5 +159,24 @@ const dustParticles = (() => {
         return _emitterSmall !== null;
     }
 
-    return { start, stop, isActive };
+    let _initialized = false;
+
+    /**
+     * Initialize listeners
+     */
+    function init() {
+        if (_initialized) return;
+        _initialized = true;
+        messageBus.subscribe(GAME_CONSTANTS.EVENTS.SETTING_CHANGED_PARTICLES, (isMinimal) => {
+            if (isMinimal) {
+                stop();
+            } else {
+                if (typeof PhaserScene !== 'undefined') {
+                    start(PhaserScene);
+                }
+            }
+        });
+    }
+
+    return { start, stop, isActive, init };
 })();

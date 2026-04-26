@@ -104,6 +104,7 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     achievementManager.init();
     glitchFX.init();
     glitchFX.setColors(GAME_CONSTANTS.COLOR_HOSTILE, GAME_CONSTANTS.COLOR_FRIENDLY);
+    dustParticles.init();
     dustParticles.start(PhaserScene);
 
     // cursor AOE (must be unlocked via Upgrade Tree)

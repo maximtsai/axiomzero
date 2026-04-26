@@ -63,7 +63,8 @@ GAME_CONSTANTS.EVENTS = {
     STATS_RECALCULATED: 'statsRecalculated',
     CURRENCY_CHANGED: 'currencyChanged',
     POINTER_DOWN: 'pointerDown',
-    TRIGGER_TUTORIAL: 'trigger_tutorial'
+    TRIGGER_TUTORIAL: 'trigger_tutorial',
+    SETTING_CHANGED_PARTICLES: 'settingChanged_minimalParticles'
 };
 
 // ─── Colors (GDD §4) ──────────────────────────────────────────────────────────

@@ -200,6 +200,7 @@ function _showOptionsPopup() {
             gameState.settings.minimalParticles = false;
             saveGame();
             updateParticleButtons();
+            messageBus.publish('settingChanged_minimalParticles', false);
         }
     });
     fullBtn.setDepth(depth + 4);
@@ -235,6 +236,7 @@ function _showOptionsPopup() {
             gameState.settings.minimalParticles = true;
             saveGame();
             updateParticleButtons();
+            messageBus.publish('settingChanged_minimalParticles', true);
         }
     });
     minBtn.setDepth(depth + 4);

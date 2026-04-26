@@ -737,7 +737,7 @@ const customEmitters = (() => {
             bright.setVisible(false);
             red.setVisible(false);
             timeManager.applyTimeScale(0.15, false); // Less extreme slow-down
-            PhaserScene.time.delayedCall(8, () => {
+            PhaserScene.time.delayedCall(5, () => {
                 PhaserScene.cameras.main.setZoom(1.005);
                 black.setVisible(false);
                 main.setVisible(true);
@@ -764,12 +764,7 @@ const customEmitters = (() => {
                         const boom = audio.play(sKey, 0.85);
                         if (boom) boom.detune = Phaser.Math.Between(detuneMin, detuneMax);
                     }
-                    PhaserScene.time.delayedCall(12, () => {
-                        if (!main.active) {
-                            timeManager.applyTimeScale(1.0);
-                            return;
-                        }
-
+                    PhaserScene.time.delayedCall(8, () => {
                         // 3. Resume and Detonate (The 'Pop')
                         black.setVisible(false);
                         timeManager.applyTimeScale(1.0);
