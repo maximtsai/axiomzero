@@ -52,6 +52,10 @@ const gameHUD = (() => {
         _hideAll();
         _setupSubscriptions();
 
+        if (currencyCluster && typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            currencyCluster.assignToUICamera();
+        }
+
         updateManager.addFunction(_update);
     }
 

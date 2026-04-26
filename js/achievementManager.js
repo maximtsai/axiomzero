@@ -45,6 +45,9 @@ const achievementManager = (() => {
         saveGame();
     }
 
+    // NOTE: When adding visual achievement popups in the future, ensure they are 
+    // routed to upgradeTree.getUICamera() so they overlay the upgrade tree panel.
+
     // ── Event Handlers ───────────────────────────────────────────────────
 
     function _onPhaseChanged(phase) {

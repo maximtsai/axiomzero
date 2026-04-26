@@ -277,6 +277,20 @@ const iterationOverScreen = (() => {
             }
         });
         _insightSparkleEmitter.setDepth(depth + 11);
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(_insightSparkleEmitter);
+        }
+
+        const allStaticElements = [
+            overlay, titleText, dataNumberText, dataText, dataDeltaText, sniffedDataText,
+            insightText, shardText, processorText, expBarBg, expBarFill, expBarLabel, expBarIcon,
+            upgradesBtn, retryBtn, expHoverBtn
+        ];
+        allStaticElements.forEach(el => {
+            if (el && typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                upgradeTree.assignToUICamera(el);
+            }
+        });
     }
 
     // ── show / hide ──────────────────────────────────────────────────
@@ -465,6 +479,7 @@ const iterationOverScreen = (() => {
      */
     function _playDataBurst(cx, cy, amount) {
         const depth = GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4;
+        const spread = 80;
 
         let count = 8; // Default for 1000+
         if (amount <= 9) count = 1;
@@ -472,10 +487,17 @@ const iterationOverScreen = (() => {
         else if (amount <= 999) count = 5;
 
         for (let i = 0; i < count; i++) {
-            const angle = (i / count) * Math.PI * 2 + (Math.random() * 0.4);
-            const dist = (count === 1) ? 0 : (60 + (count * 10) + Math.random() * 80);
-            const startX = cx + Math.cos(angle) * dist;
-            const startY = cy + Math.cos(angle * 0.5) * (dist * 0.4);
+            let px = cx + (Math.random() - 0.5) * spread;
+            let py = cy + (Math.random() - 0.5) * spread;
+
+            const particle = PhaserScene.add.image(px, py, 'ui', 'square_particle.png');
+            particle.setDepth(GAME_CONSTANTS.DEPTH_ITERATION_OVER + 10).setTint(0x00f5ff);
+            
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                upgradeTree.assignToUICamera(particle);
+            }
+            
+            expAnimElements.push(particle);
 
             // Stagger each piece slightly
             const delay = i * 25;
@@ -485,13 +507,17 @@ const iterationOverScreen = (() => {
             PhaserScene.time.delayedCall(delay, () => {
                 if (!visible) return;
 
-                const slice = PhaserScene.add.nineslice(startX, startY, 'player', 'data_collect.png', startSize, startSize, 8, 8, 8, 8);
+                const slice = PhaserScene.add.nineslice(px, py, 'player', 'data_collect.png', startSize, startSize, 8, 8, 8, 8);
                 slice.setRotation(Phaser.Math.DegToRad(45));
                 slice.setDepth(depth);
                 slice.setScrollFactor(0);
                 slice.setAlpha(1);
                 slice.setTint(0x00f5ff);
                 expAnimElements.push(slice);
+                
+                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                    upgradeTree.assignToUICamera(slice);
+                }
 
                 // Expand and fade only (no position tween)
                 const t = PhaserScene.tweens.add({
@@ -652,6 +678,10 @@ const iterationOverScreen = (() => {
         );
         popIcon.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_ITERATION_OVER + 4).setScale(1.2).setAlpha(1);
         expAnimElements.push(popIcon);
+        
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(popIcon);
+        }
 
         PhaserScene.tweens.add({
             targets: popIcon,
@@ -805,6 +835,12 @@ const iterationOverScreen = (() => {
 
             diagElements.push(lbl, valText);
         }
+
+        diagElements.forEach(el => {
+            if (el && typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                upgradeTree.assignToUICamera(el);
+            }
+        });
     }
 
     function _hideAll() {

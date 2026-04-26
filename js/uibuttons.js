@@ -348,6 +348,13 @@ function _showOptionsPopup() {
     closeBtn.setScrollFactor(0);
     elements.push(closeBtn);
 
+    // Route all popup elements to the global UI camera so they draw correctly on top of the Upgrade Tree
+    elements.forEach(el => {
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(el);
+        }
+    });
+
     function closePopup() {
         messageBus.publish('gameResumed');
         helper.hideGlobalClickBlocker();

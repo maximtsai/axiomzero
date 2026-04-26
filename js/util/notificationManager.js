@@ -19,27 +19,32 @@ const notificationManager = (() => {
     function notify(text, opts = {}) {
         if (!PhaserScene) return null;
 
-        const x    = opts.x        !== undefined ? opts.x        : GAME_CONSTANTS.halfWidth;
-        const y    = opts.y        !== undefined ? opts.y        : GAME_CONSTANTS.halfHeight - 75;
-        const dur  = opts.duration !== undefined ? opts.duration : 1400;
-        const col  = opts.color    || '#ffffff';
+        const x = opts.x !== undefined ? opts.x : GAME_CONSTANTS.halfWidth;
+        const y = opts.y !== undefined ? opts.y : GAME_CONSTANTS.halfHeight - 75;
+        const dur = opts.duration !== undefined ? opts.duration : 1400;
+        const col = opts.color || '#ffffff';
         const size = opts.fontSize || 29;
 
         const t = PhaserScene.add.text(x, y, text, {
-            fontFamily:      'Arial',
-            fontSize:        size,
-            color:           col,
-            stroke:          '#000000',
+            fontFamily: 'Arial',
+            fontSize: size,
+            color: col,
+            stroke: '#000000',
             strokeThickness: 5,
-            align:           'center',
+            align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(DEPTH);
 
+        // May be needed later, but not needed now
+        // if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+        //     upgradeTree.assignToUICamera(t);
+        // }
+
         PhaserScene.tweens.add({
-            targets:  t,
-            y:        y - 69,
-            alpha:    0,
+            targets: t,
+            y: y - 69,
+            alpha: 0,
             duration: dur,
-            ease:     'Cubic.easeOut',
+            ease: 'Cubic.easeOut',
             onComplete: () => { if (t && t.active) t.destroy(); }
         });
 

@@ -33,6 +33,7 @@ const nodeTooltip = (() => {
         if (container) return;
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
+        container.isTreeElement = true; // Allow treeCamera to render it so it appears on top of nodes
 
         bg = PhaserScene.add.image(0, 0, 'white_pixel').setOrigin(0.5, 0).setTint(0x182035).setAlpha(0.86);
         container.add(bg);
@@ -91,6 +92,12 @@ const nodeTooltip = (() => {
 
         // Tooltip is a global UI element; it should NOT be added to tree groups
         // to avoid being clipped by the tree mask.
+
+        // Route tooltip to global UI camera so it renders exactly on top
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(container);
+            container.list.forEach(child => upgradeTree.assignToUICamera(child));
+        }
     }
 
     function _clearTweens() {

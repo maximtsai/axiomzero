@@ -49,6 +49,11 @@ const tooltipManager = (() => {
             .setAlpha(0)
             .setDepth(DEPTH + 0.5)
             .setScrollFactor(0);
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(bg);
+            upgradeTree.assignToUICamera(outline);
+        }
     }
 
     /**
@@ -84,6 +89,10 @@ const tooltipManager = (() => {
 
             if (line.color) t.setColor(line.color);
 
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                upgradeTree.assignToUICamera(t);
+            }
+
             textObjects.push(t);
 
             if (line.underline) {
@@ -99,6 +108,11 @@ const tooltipManager = (() => {
                 
                 lineObj.relX = t.x;
                 lineObj.relY = lineObj.y;
+                
+                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                    upgradeTree.assignToUICamera(lineObj);
+                }
+
                 decorations.push(lineObj);
                 
                 currentY += 10; // Extra spacing for the underline + gap

@@ -40,7 +40,15 @@ const coinMine = (() => {
             onMouseUp: hide
         });
         closeBtn.setDepth(depth + 3);
+        closeBtn.setDepth(depth + 3);
         closeBtn.setScrollFactor(0);
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(bgOverlay);
+            upgradeTree.assignToUICamera(popupBg);
+            upgradeTree.assignToUICamera(titleText);
+            upgradeTree.assignToUICamera(closeBtn);
+        }
 
         _hideAll();
     }
@@ -49,7 +57,10 @@ const coinMine = (() => {
         visible = true;
 
         bgOverlay.setVisible(true);
-        helper.createGlobalClickBlocker(false).setDepth(depth + 1);
+        let b = helper.createGlobalClickBlocker(false).setDepth(depth + 1);
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(b);
+        }
         popupBg.setVisible(true);
         titleText.setVisible(true);
         closeBtn.setVisible(true);

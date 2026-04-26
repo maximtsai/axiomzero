@@ -264,4 +264,13 @@ class CurrencyCluster {
 
         });
     }
+
+    assignToUICamera() {
+        if (typeof upgradeTree === 'undefined' || !upgradeTree.assignToUICamera) return;
+        Object.values(this.resources).forEach(res => {
+            upgradeTree.assignToUICamera(res.icon);
+            upgradeTree.assignToUICamera(res.text);
+            if (res.btn) upgradeTree.assignToUICamera(res.btn);
+        });
+    }
 }

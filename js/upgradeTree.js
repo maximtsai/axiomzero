@@ -22,9 +22,9 @@ const upgradeTree = (() => {
 
     let treeGroup = null;
     let draggableGroup = null;
-    let treeMask = null;
     let treeMaskContainer = null;
-    let maskShape = null;
+    let treeNodeCamera = null;
+    let uiCamera = null;
     let currentHoverLabel = " ";
 
     let buyPulsePool = null;
@@ -52,11 +52,7 @@ const upgradeTree = (() => {
     let _currencyDirty = false;
     let _currencyFrameCount = 0;
 
-    // Level Selection Popup
-    let levelSelectOverlay = null;
-    let levelSelectContainer = null;
-    let levelSelectButtons = [];
-    let selectedLevel = 1;
+
 
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
@@ -80,15 +76,36 @@ const upgradeTree = (() => {
         treeMaskContainer = PhaserScene.add.container(0, 0);
         treeMaskContainer.setScrollFactor(0);
         treeMaskContainer.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 2);
+        treeMaskContainer.isTreeElement = true;
 
-        // Create a shared GeometryMask that clips at halfWidth
-        maskShape = PhaserScene.add.graphics();
-        maskShape.fillStyle(0xffffff);
-        maskShape.fillRect(0, 0, GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.HEIGHT);
-        maskShape.setScrollFactor(0);
-        maskShape.setVisible(false);
-        treeMask = new Phaser.Display.Masks.GeometryMask(PhaserScene, maskShape);
-        treeMaskContainer.setMask(treeMask);
+        // Create Secondary Cameras for clipping and UI 
+        treeNodeCamera = PhaserScene.cameras.add(0, 0, PANEL_W, GAME_CONSTANTS.HEIGHT);
+        treeNodeCamera.setBackgroundColor('rgba(0,0,0,0)');
+        
+        uiCamera = PhaserScene.cameras.add(0, 0, GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        uiCamera.setBackgroundColor('rgba(0,0,0,0)');
+        
+        // Hide tree from main camera, and world from tree cameras
+        PhaserScene.cameras.main.ignore(treeMaskContainer);
+        treeNodeCamera.ignore(PhaserScene.children.list);
+        uiCamera.ignore(PhaserScene.children.list);
+        
+        treeMaskContainer.cameraFilter &= ~treeNodeCamera.id; // Un-ignore the container itself
+
+        // Global hook: newly spawned enemies/bullets get ignored by tree cameras
+        PhaserScene.events.on('addedtoscene', (child) => {
+            if (!child.isTreeElement) {
+                if (treeNodeCamera) treeNodeCamera.ignore(child);
+                if (uiCamera) uiCamera.ignore(child);
+            }
+        });
+
+        // Wrap treeGroup.add to assign UI elements to uiCamera
+        const _originalTreeGroupAdd = treeGroup.add;
+        treeGroup.add = (gameObject) => {
+            assignToUICamera(gameObject);
+            return _originalTreeGroupAdd(gameObject);
+        };
 
         // Wrap draggableGroup.add to auto-collect masked elements
         const _originalAdd = draggableGroup.add;
@@ -337,7 +354,7 @@ const upgradeTree = (() => {
             // Only block dragging if we are clicking a button belonging to a popup (very high depth)
             if (hoveredBtn && hoveredBtn.getDepth() > 10000) return;
 
-            if (levelSelectOverlay && levelSelectOverlay.visible) return;
+            if (typeof treePopups !== 'undefined' && treePopups.isAnyPopupVisible()) return;
             if (helper.isGlobalBlockerActive()) return;
 
             isDraggingTree = true;
@@ -664,11 +681,8 @@ const upgradeTree = (() => {
                 if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
             });
         }
-        if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, scaleX: 1, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
-        }
-        if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: 1.98, duration: customDuration, ease: 'Cubic.easeOut' });
+        if (treeNodeCamera) {
+            PhaserScene.tweens.add({ targets: treeNodeCamera, width: GAME_CONSTANTS.WIDTH, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
             PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -735,11 +749,8 @@ const upgradeTree = (() => {
                 if (slideRightBtn) slideRightBtn.setState(NORMAL);
             });
         }
-        if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: targetXHalf, duration: customDuration, ease: 'Cubic.easeOut' });
-        }
-        if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: targetXHalf, scaleX: 1, duration: customDuration, ease: 'Cubic.easeOut' });
+        if (treeNodeCamera) {
+            PhaserScene.tweens.add({ targets: treeNodeCamera, width: PANEL_W, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
             PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 816, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -1413,200 +1424,13 @@ const upgradeTree = (() => {
 
         // If high level boss defeated, show level selector
         if ((gameState.levelsDefeated || 0) >= 1) {
-            _showLevelSelectPopup();
+            treePopups.showLevelSelectPopup();
         } else {
             transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
         }
     }
 
-    function _showLevelSelectPopup() {
-        audio.play('retro1', 1.0);
-        const cx = GAME_CONSTANTS.halfWidth;
-        const cy = GAME_CONSTANTS.halfHeight;
-        const depth = GAME_CONSTANTS.DEPTH_POPUPS + 1000;
 
-        // Default to highest unlocked level (highest boss defeated + 1), capped by max config
-        const maxLevel = Math.min((gameState.levelsDefeated || 0) + 1, getMaxConfiguredLevel());
-        selectedLevel = maxLevel;
-
-        // Black back screen — Click blocker
-        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'black_pixel')
-            .setAlpha(0.55)
-            .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
-            .setScrollFactor(0)
-            .setDepth(depth);
-
-        helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
-
-
-        levelSelectContainer = PhaserScene.add.container(cx, cy).setDepth(depth + 1);
-        levelSelectContainer.setScrollFactor(0);
-
-        // Background box
-        const bg = PhaserScene.add.nineslice(0, 0, 'ui', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
-        levelSelectContainer.add(bg);
-
-        // Title
-        const title = PhaserScene.add.text(0, -140, t('ui', 'choose_level'), {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '34px',
-            color: '#00f5ff',
-            align: 'center',
-        }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
-        levelSelectContainer.add(title);
-
-        const levelDisplay = PhaserScene.add.text(0, -78, t('ui', 'level') + selectedLevel, {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '34px',
-            color: GAME_CONSTANTS.COLOR_NEUTRAL,
-            align: 'center',
-        }).setOrigin(0.5).setShadow(2, 2, '#000000', 2, true, true);
-        levelSelectContainer.add(levelDisplay);
-
-        // DATA Bonus text
-        const bonusDisplay = PhaserScene.add.text(0, -36, '', {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '22px',
-            color: '#00f5ff',
-            align: 'center',
-        }).setOrigin(0.5, 0.75).setShadow(1, 1, '#000000', 1, true, true);
-        levelSelectContainer.add(bonusDisplay);
-
-        // Best score text
-        const bestScoreDisplay = PhaserScene.add.text(0, -10, '', {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '18px',
-            color: '#00ff66',
-            align: 'center',
-        }).setOrigin(0.5).setShadow(1, 1, '#000000', 1, true, true);
-        levelSelectContainer.add(bestScoreDisplay);
-
-        const updateLevelUI = () => {
-            levelDisplay.setText(t('ui', 'level') + selectedLevel);
-
-            // Calculate and show DATA bonus
-            const isEndless = selectedLevel < maxLevel;
-            const config = LEVEL_CONFIG[selectedLevel] || {};
-            const mult = config.dataDropMultiplier || 1.0;
-
-            let bonusText = "";
-            if (isEndless) bonusText += "(ENDLESS)";
-            if (mult > 1.0) {
-                const pct = Math.round((mult - 1) * 100);
-                if (bonusText !== "") bonusText += " ";
-                bonusText += `+${pct}% DATA`;
-            }
-
-            if (bonusText !== "") {
-                bonusDisplay.setText(bonusText);
-                bonusDisplay.setVisible(true);
-
-                // Quick bounce animation for feedback
-                PhaserScene.tweens.add({
-                    targets: bonusDisplay,
-                    scale: { from: 1, to: 1.07 },
-                    duration: 100,
-                    yoyo: true,
-                    ease: 'Cubic.easeOut'
-                });
-            } else {
-                bonusDisplay.setVisible(false);
-            }
-
-            // High score display
-            const best = scoreManager.getBestScore(selectedLevel);
-            if (best) {
-                bestScoreDisplay.setText(`${t('ui', 'best_time')}: ${scoreManager.formatTime(best.bestTime)}  [${best.kills} KILLS]`);
-                bestScoreDisplay.setVisible(true);
-            } else {
-                bestScoreDisplay.setVisible(false);
-            }
-
-            // Update button states
-            minusBtn.setState(selectedLevel > 1 ? NORMAL : DISABLE);
-            plusBtn.setState(selectedLevel < maxLevel ? NORMAL : DISABLE);
-        };
-
-        // Minus button
-        const minusBtn = new Button({
-            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
-            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
-            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
-            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx - 35, y: cy + 15 },
-            onMouseUp: () => {
-                if (selectedLevel > 1) {
-                    selectedLevel--;
-                    updateLevelUI();
-                }
-            }
-        });
-        minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
-        minusBtn.setDepth(depth + 2);
-        minusBtn.setScrollFactor(0);
-        levelSelectButtons.push(minusBtn);
-
-        // Plus button
-        const plusBtn = new Button({
-            normal: { ref: 'increment_normal.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
-            hover: { ref: 'increment_hover.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
-            press: { ref: 'increment_press.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
-            disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
-            onMouseUp: () => {
-                if (selectedLevel < maxLevel) {
-                    selectedLevel++;
-                    updateLevelUI();
-                }
-            }
-        });
-        plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
-        plusBtn.setDepth(depth + 2);
-        plusBtn.setScrollFactor(0);
-        levelSelectButtons.push(plusBtn);
-
-        // START Button
-        const startBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 80 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 80 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 80 },
-            onMouseUp: () => {
-                gameState.currentLevel = selectedLevel;
-                _closeLevelSelect();
-                transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
-            }
-        });
-        startBtn.setScale(0.675).addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '28px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
-        startBtn.setDepth(depth + 2);
-        startBtn.setScrollFactor(0);
-        levelSelectButtons.push(startBtn);
-
-        // BACK Button
-        const backBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 140 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 140 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
-            onMouseUp: _closeLevelSelect
-        });
-        backBtn.setScale(0.675).addText(t('ui', 'back'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '25px', color: '#aaaaaa' });
-        backBtn.setDepth(depth + 2);
-        backBtn.setScrollFactor(0);
-        levelSelectButtons.push(backBtn);
-
-        updateLevelUI();
-    }
-
-    function _closeLevelSelect() {
-        if (levelSelectOverlay) {
-            levelSelectOverlay.destroy();
-            levelSelectOverlay = null;
-            helper.hideGlobalClickBlocker();
-        }
-        if (levelSelectContainer) {
-            levelSelectContainer.destroy();
-            levelSelectContainer = null;
-        }
-        levelSelectButtons.forEach(b => b.destroy());
-        levelSelectButtons = [];
-    }
 
     // ── public ───────────────────────────────────────────────────────────
 
@@ -1649,6 +1473,7 @@ const upgradeTree = (() => {
                 const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
                 ind2.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
                 deployBtn.indicator = ind2;
+                treeGroup.add(ind2);
 
                 deployBtn.hiTimer = PhaserScene.time.delayedCall(5000, () => {
                     if (deployBtn.indicator) {
@@ -1657,6 +1482,7 @@ const upgradeTree = (() => {
                     const ind3 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
                     ind3.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
                     deployBtn.indicator = ind3;
+                    treeGroup.add(ind3);
                     deployBtn.hiTimer = null;
                 });
             }
@@ -1678,12 +1504,45 @@ const upgradeTree = (() => {
         currentHoverLabel = label || " ";
     }
 
+    function assignToUICamera(gameObject) {
+        if (!uiCamera || !gameObject) return;
+
+        // Un-ignore from uiCamera so it gets rendered
+        if (gameObject.cameraFilter !== undefined) gameObject.cameraFilter &= ~uiCamera.id;
+        if (gameObject.bgSprite && gameObject.bgSprite.cameraFilter !== undefined) gameObject.bgSprite.cameraFilter &= ~uiCamera.id;
+        if (gameObject.text && gameObject.text.cameraFilter !== undefined) gameObject.text.cameraFilter &= ~uiCamera.id;
+
+        // Ignore from main camera so it doesn't render twice
+        PhaserScene.cameras.main.ignore(gameObject);
+        if (gameObject.bgSprite) PhaserScene.cameras.main.ignore(gameObject.bgSprite);
+        if (gameObject.text) PhaserScene.cameras.main.ignore(gameObject.text);
+        
+        // Also ignore from treeNodeCamera
+        if (treeNodeCamera) {
+            treeNodeCamera.ignore(gameObject);
+            if (gameObject.bgSprite) treeNodeCamera.ignore(gameObject.bgSprite);
+            if (gameObject.text) treeNodeCamera.ignore(gameObject.text);
+        }
+
+        // Handle Container children recursively
+        if (gameObject.list && Array.isArray(gameObject.list)) {
+            gameObject.list.forEach(child => assignToUICamera(child));
+        }
+    }
+
     /**
      * Apply the tree clipping mask to a game object.
      * Handles both Button instances and standard Phaser GameObjects.
      */
     function _applyTreeMask(gameObject) {
         if (!treeMaskContainer) return;
+
+        // Un-ignore from treeNodeCamera so it gets rendered
+        if (treeNodeCamera) {
+            if (gameObject.cameraFilter !== undefined) gameObject.cameraFilter &= ~treeNodeCamera.id;
+            if (gameObject.bgSprite && gameObject.bgSprite.cameraFilter !== undefined) gameObject.bgSprite.cameraFilter &= ~treeNodeCamera.id;
+            if (gameObject.text && gameObject.text.cameraFilter !== undefined) gameObject.text.cameraFilter &= ~treeNodeCamera.id;
+        }
 
         if (gameObject instanceof Button) {
             gameObject.addToContainer(treeMaskContainer);
@@ -1692,9 +1551,9 @@ const upgradeTree = (() => {
         }
     }
 
-    function getTreeMask() { return treeMask; }
     function getTreeMaskContainer() { return treeMaskContainer; }
-    function getMaskShape() { return maskShape; }
+    function getTreeNodeCamera() { return treeNodeCamera; }
+    function getUICamera() { return uiCamera; }
 
     function setUIAlpha(alpha) {
         if (coordText) coordText.setAlpha(alpha);
@@ -1763,8 +1622,9 @@ const upgradeTree = (() => {
         if (treeMaskContainer) {
             PhaserScene.tweens.add({ targets: treeMaskContainer, x: maskTargetX, duration, ease: 'Cubic.easeOut' });
         }
-        if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: 0, scaleX: maskScaleX, duration, ease: 'Cubic.easeOut' });
+        if (treeNodeCamera) {
+            const camTargetW = fullUpgradeView ? GAME_CONSTANTS.WIDTH : PANEL_W;
+            PhaserScene.tweens.add({ targets: treeNodeCamera, width: camTargetW, duration, ease: 'Cubic.easeOut' });
         }
 
         if (panelOutline) {
@@ -1798,8 +1658,8 @@ const upgradeTree = (() => {
         if (treeMaskContainer) {
             PhaserScene.tweens.add({ targets: treeMaskContainer, x: treeGroupTargetX, duration, ease: 'Cubic.easeOut' });
         }
-        if (maskShape) {
-            PhaserScene.tweens.add({ targets: maskShape, x: baseTargetX, duration, ease: 'Cubic.easeOut' });
+        if (treeNodeCamera) {
+            PhaserScene.tweens.add({ targets: treeNodeCamera, width: PANEL_W, duration, ease: 'Cubic.easeOut' });
         }
 
         if (panelOutline) {
@@ -1820,5 +1680,5 @@ const upgradeTree = (() => {
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
     }
 
-    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeMask, getTreeMaskContainer, getMaskShape, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha };
+    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();
