@@ -1645,7 +1645,7 @@ const upgradeTree = (() => {
         }
         if (treeNodeCamera) {
             const camTargetW = fullUpgradeView ? GAME_CONSTANTS.WIDTH : PANEL_W;
-            PhaserScene.tweens.add({ targets: treeNodeCamera, width: camTargetW, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeNodeCamera, x: 0, width: camTargetW, duration, ease: 'Cubic.easeOut' });
         }
 
         // Calculate x movement of panelOutline and width change too
@@ -1679,10 +1679,10 @@ const upgradeTree = (() => {
         }
 
         if (treeMaskContainer) {
-            PhaserScene.tweens.add({ targets: treeMaskContainer, x: treeGroupTargetX - 600, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeMaskContainer, x: treeGroupTargetX, duration, ease: 'Cubic.easeOut' });
         }
         if (treeNodeCamera) {
-            PhaserScene.tweens.add({ targets: treeNodeCamera, width: PANEL_W, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeNodeCamera, x: treeGroupTargetX, width: PANEL_W, duration, ease: 'Cubic.easeOut' });
         }
 
         if (panelOutline) {
