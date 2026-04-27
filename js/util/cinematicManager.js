@@ -81,20 +81,32 @@ const cinematicManager = (() => {
 
     function _createBlocker() {
         blocker = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        blocker.isTreeElement = true; // Prevent automatic ignore from tree cameras
         blocker.setDepth(BLOCKER_DEPTH)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
             .setScrollFactor(0)
-            .setAlpha(0.1)
+            .setAlpha(0.001)
             .setInteractive(); // absorbs pointer events
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(blocker);
+        }
     }
 
     function _createBars() {
         const cx = GAME_CONSTANTS.halfWidth;
         topBar = PhaserScene.add.image(cx, -BAR_HEIGHT / 2, 'black_pixel');
+        topBar.isTreeElement = true;
         topBar.setDepth(BAR_DEPTH).setDisplaySize(GAME_CONSTANTS.WIDTH, BAR_HEIGHT).setScrollFactor(0);
 
         bottomBar = PhaserScene.add.image(cx, GAME_CONSTANTS.HEIGHT + BAR_HEIGHT / 2, 'black_pixel');
+        bottomBar.isTreeElement = true;
         bottomBar.setDepth(BAR_DEPTH).setDisplaySize(GAME_CONSTANTS.WIDTH, BAR_HEIGHT).setScrollFactor(0);
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(topBar);
+            upgradeTree.assignToUICamera(bottomBar);
+        }
     }
 
     function _slideBarsIn() {

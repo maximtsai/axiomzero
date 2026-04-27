@@ -675,6 +675,13 @@ const upgradeTree = (() => {
                 }
             });
 
+            if (draggableGroup) {
+                draggableGroup.tweenBy(400, 0, {
+                    duration: customDuration,
+                    ease: 'Cubic.easeOut'
+                });
+            }
+
             // Enable navigation button slightly before tween ends for better feel
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
                 helper.hideGlobalClickBlocker();
@@ -742,6 +749,13 @@ const upgradeTree = (() => {
                     }
                 }
             });
+
+            if (draggableGroup) {
+                draggableGroup.tweenBy(-400, 0, {
+                    duration: customDuration,
+                    ease: 'Cubic.easeOut'
+                });
+            }
 
             // Enable navigation button slightly before tween ends for better feel
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {

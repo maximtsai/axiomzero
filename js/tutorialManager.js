@@ -49,7 +49,7 @@ const tutorialManager = (() => {
         const noUpgrades = upgradeKeys.length === 0;
         if (noUpgrades) {
             const msg = t('tutorial', 'controls_mouse');
-            const x = 0;
+            const x = 400;
             const y = 510;
             _createTutorialPopup(msg, x, y, true, '#ffffff', '#ffffff', null, '38px');
         }
@@ -130,7 +130,7 @@ const tutorialManager = (() => {
 
         if (condition) {
             const msg = t('tutorial', 'unlock_shards');
-            const x = 0;
+            const x = 400;
             const y = 625;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px', 7000);
         }
@@ -211,7 +211,7 @@ const tutorialManager = (() => {
     function _showUpgradeTutorial() {
         const msg = t('tutorial', 'upgrade_use');
         // 200px above Awaken node (treeX: 400, treeY: 750) -> moved up another 140px (down 60 from 350)
-        const x = 0;
+        const x = 400;
         const y = 410;
 
         _createTutorialPopup(msg, x, y, true, undefined, undefined, null, '38px');
@@ -255,6 +255,7 @@ const tutorialManager = (() => {
 
         // 2. Create the black background bar
         const bg = PhaserScene.add.image(x, y, 'white_pixel');
+        bg.isTreeElement = true; // Prevent automatic ignore from tree cameras
         bg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
         bg.setDisplaySize(0, finalHeight);
         bg.targetAlpha = 0.4;
@@ -266,7 +267,14 @@ const tutorialManager = (() => {
             color: color,
             align: 'left'
         }).setOrigin(0, 0.5).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 11 : GAME_CONSTANTS.DEPTH_HUD);
+        txt.isTreeElement = true;
         txt.setAlpha(1);
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(bg);
+            upgradeTree.assignToUICamera(txt);
+        }
+
         if (!isUpgradeTree) {
             bg.setScrollFactor(0);
             txt.setScrollFactor(0);
@@ -334,7 +342,7 @@ const tutorialManager = (() => {
         if (!gameState.tutorialsSeen['duo_swap']) {
             _clearTutorial();
             const msg = t('tutorial', 'duo_swap_free');
-            const x = 0;
+            const x = 400;
             const y = 625;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_swap', '38px');
         }

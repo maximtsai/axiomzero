@@ -39,6 +39,12 @@ function createOptionsButton(x, y) {
     button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);
     button.setScrollFactor(0);
     icon.setScale(button.bgSprite.scaleX);
+
+    if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+        upgradeTree.assignToUICamera(button);
+        upgradeTree.assignToUICamera(icon);
+    }
+
     return button;
 }
 
