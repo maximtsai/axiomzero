@@ -1581,6 +1581,7 @@ const upgradeTree = (() => {
         if (!nodes[id]) return false;
         if (!gameState.revealedNodes) gameState.revealedNodes = {};
         gameState.revealedNodes[id] = true;
+        nodes[id].revealedManually = true;
         nodes[id].refreshState();
         _refreshAllNodes();
         return true;

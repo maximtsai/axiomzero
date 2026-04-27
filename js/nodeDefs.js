@@ -919,10 +919,11 @@ const NODE_DEFS = [
         effect: async function () {
             if (typeof cinematicManager !== 'undefined') {
                 const endCutscene = await cinematicManager.playCutscene();
-                console.log("cutscene");
+                console.log("[Cinematic] Reveal Map sequence started");
 
                 const dragGroup = upgradeTree.getDraggableGroup();
                 const node = upgradeTree.getNode('reveal_map');
+
                 if (dragGroup && node && node.btn) {
                     const refX = GAME_CONSTANTS.halfWidth * 0.5;
                     const refY = GAME_CONSTANTS.halfHeight;
@@ -931,30 +932,41 @@ const NODE_DEFS = [
                     const groupX = dragGroup.x;
                     const groupY = dragGroup.y;
 
-                    // tweenScale with no pivot keeps the group anchor fixed.
-                    // After zoom-to-1, a child's world pos = groupAnchor + (currentWorldPos - groupAnchor) / s0
                     const nodeXAfterZoom = groupX + (node.btn.x - groupX) / s0;
                     const nodeYAfterZoom = groupY + (node.btn.y - groupY) / s0;
 
-                    // Pan delta needed to bring that predicted position to the reference point
                     const panX = refX - nodeXAfterZoom;
                     const panY = refY - nodeYAfterZoom;
 
-                    // Zoom out to 1.0 slightly slower than the pan
-                    dragGroup.tweenScale(1, {
-                        ease: 'Cubic.easeInOut',
-                        duration: 1400
-                    });
-
+                    // 1. Pan and Zoom to the button
+                    dragGroup.tweenScale(1, { ease: 'Cubic.easeInOut', duration: 1400 });
                     dragGroup.tweenBy(panX, panY, {
                         ease: 'Cubic.easeInOut',
                         duration: 1400,
                         onComplete: () => {
+                            // 2. Trigger the flickering glow and explosion animation
                             if (typeof upgradeTree !== 'undefined') {
                                 upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 2);
                             }
-                            // Wait 1.6s more to fulfill the 3s cutscene requirement (1.4 + 1.6 = 3.0)
-                            PhaserScene.time.delayedCall(1600, endCutscene);
+                            
+                            nodeAnims.playRevealMapActivationAnimation(node, () => {
+                                // 3. Sequential node revelation once explosion finishes
+                                // Stage 1: Immediate
+                                ['repeat_exploit', 'armor', 'emergency_overclock'].forEach(id => upgradeTree.revealNode(id));
+
+                                // Stage 2: 0.4s later
+                                PhaserScene.time.delayedCall(400, () => {
+                                    ['diagnostic_analytics', 'threat_response'].forEach(id => upgradeTree.revealNode(id));
+
+                                    // Stage 3: 0.4s later (total 0.8s)
+                                    PhaserScene.time.delayedCall(400, () => {
+                                        upgradeTree.revealNode('bomb_2');
+                                        
+                                        // Final Cleanup: end cutscene
+                                        PhaserScene.time.delayedCall(1200, endCutscene);
+                                    });
+                                });
+                            });
                         }
                     });
                 } else {

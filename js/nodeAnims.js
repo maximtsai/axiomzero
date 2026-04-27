@@ -194,5 +194,86 @@ const nodeAnims = {
                 pulse.destroy();
             }
         });
+    },
+
+    /**
+     * Plays the specialized multi-stage animation sequence for the Reveal Map gate.
+     * Includes a flickering glow, followed by a massive expansion explosion.
+     * 
+     * @param {Node} node - The Reveal Map node instance.
+     * @param {Function} onSequenceComplete - Callback triggered when the explosion finishes.
+     */
+    playRevealMapActivationAnimation: (node, onSequenceComplete) => {
+        if (!node.btn) return;
+
+        const scene = PhaserScene;
+        const x = node.btn.x;
+        const y = node.btn.y;
+        const nodeDepth = node.btn.depth;
+        const glowDepth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE; // Behind nodes and lines
+
+        // 1. Create the flickering glow sprite
+        const glow = scene.add.sprite(x, y, 'player', 'unlock_glow.png')
+            .setDepth(glowDepth)
+            .setAlpha(0.4)
+            .setScale(0.2);
+
+        // Ensure it moves with the tree
+        const dragGroup = upgradeTree.getDraggableGroup();
+        if (dragGroup) dragGroup.add(glow);
+
+        const duration = 2100;
+        const avgValues = { scale: 0.2, alpha: 0.4 };
+
+        // Main tween for average growth
+        scene.tweens.add({
+            targets: avgValues,
+            scale: 2.0,
+            alpha: 1.0,
+            duration: duration,
+            ease: 'Linear',
+            onUpdate: () => {
+                // Apply rapid flicker/jitter
+                const flickerScale = (Math.random() - 0.5) * 0.4;
+                const flickerAlpha = (Math.random() - 0.5) * 0.5;
+
+                glow.setScale(avgValues.scale + flickerScale);
+                glow.setAlpha(Phaser.Math.Clamp(avgValues.alpha + flickerAlpha, 0.4, 1.0));
+            },
+            onComplete: () => {
+                // Glow lingers for 0.05s after animation
+                scene.time.delayedCall(50, () => {
+                    if (glow.active) glow.destroy();
+                });
+
+                // 2. Create the expansion explosion
+                const explosion = scene.add.sprite(x, y, 'player', 'unlock_explosion.png')
+                    .setDepth(nodeDepth + 10) // Render above the node
+                    .setScale(0.5)
+                    .setAlpha(1);
+
+                if (dragGroup) dragGroup.add(explosion);
+
+                // Scale expansion
+                scene.tweens.add({
+                    targets: explosion,
+                    scale: 20,
+                    ease: 'Quad.easeIn',
+                    duration: 500
+                });
+
+                // Alpha fade out
+                scene.tweens.add({
+                    targets: explosion,
+                    alpha: 0,
+                    ease: 'Linear',
+                    duration: 500,
+                    onComplete: () => {
+                        explosion.destroy();
+                        if (onSequenceComplete) onSequenceComplete();
+                    }
+                });
+            }
+        });
     }
 };

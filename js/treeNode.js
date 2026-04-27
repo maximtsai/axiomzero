@@ -82,6 +82,7 @@ class Node {
         this.level = 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
         this.revealed = false;    // Whether this node is force-revealed by an event
+        this.revealedManually = false; // Whether this node was revealed via the revealNode API
         this.forceUnlocked = false; // Whether this node is force-unlocked by an event
 
         // Cached recursive lookups (updated in refreshState)
@@ -248,7 +249,7 @@ class Node {
         }
 
         // 1a. Check for event-based revelation/unlocking (ignored if node is already purchased, placeholders, or duo nodes)
-        this.revealed = !!(gameState.revealedNodes && gameState.revealedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
+        this.revealed = !!(this.revealedManually || (gameState.revealedNodes && gameState.revealedNodes[this.id])) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
         this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
 
         let anyRevealed = false;
