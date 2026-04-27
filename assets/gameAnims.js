@@ -1,3 +1,5 @@
+// anims.create
+// Create all frame by frame animations here.
 function createAnimations(scene) {
     scene.anims.create({
         key: 'hit_circle',
@@ -123,5 +125,18 @@ function createAnimations(scene) {
         }),
         frameRate: 20,
         repeat: 0
+    });
+
+    scene.anims.create({
+        key: 'button_flash',
+        frames: scene.anims.generateFrameNames('attacks', {
+            prefix: 'button_flash',
+            suffix: '.png',
+            start: 1,
+            end: 14,
+            zeroPad: 0,
+        }),
+        frameRate: 15,
+        repeat: 0,
     });
 }

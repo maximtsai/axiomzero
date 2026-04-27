@@ -641,7 +641,7 @@ const upgradeTree = (() => {
         treeGroup.add(slideLeftBtn);
     }
 
-    function _onSlideRightClicked(customDuration = SLIDE_DURATION) {
+    function _onSlideRightClicked(customDuration = SLIDE_DURATION, onComplete = null) {
         if (typeof cameraManager === 'undefined' || !slideRightBtn) return;
 
         // If called as a callback, customDuration might be a Pointer object.
@@ -704,7 +704,7 @@ const upgradeTree = (() => {
             PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomOutBtn) {
-            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut', onComplete: onComplete });
         }
         if (debugLogBtn) {
             PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -956,6 +956,13 @@ const upgradeTree = (() => {
         if (awakenHintTimer) {
             awakenHintTimer.remove();
             awakenHintTimer = null;
+        }
+    }
+
+    function _stopDeployHint() {
+        if (deployBtn && deployBtn.hiTimer) {
+            deployBtn.hiTimer.remove();
+            deployBtn.hiTimer = null;
         }
     }
 
@@ -1246,8 +1253,9 @@ const upgradeTree = (() => {
         _refreshAllNodes();
         treeLineManager.updateLines();
 
-        if (data) {
+        if (data && data.id !== 'awaken') {
             _stopAwakenHint();
+            _stopDeployHint();
         }
     }
 
@@ -1429,11 +1437,7 @@ const upgradeTree = (() => {
         // Mark first launch as complete
         gameState.isFirstLaunch = false;
 
-        if (deployBtn.hiTimer) {
-            deployBtn.hiTimer.remove();
-            deployBtn.hiTimer = null;
-        }
-
+        _stopDeployHint();
         _stopHintTimer();
 
         // If high level boss defeated, show level selector
@@ -1479,25 +1483,25 @@ const upgradeTree = (() => {
             const hasNoData = resourceManager.getData() <= 0;
 
             if (onlyAwaken && hasNoData) {
-                const bx = PANEL_W - 110 + TREE_X_OFFSET;
-                const by = GAME_CONSTANTS.HEIGHT - 57;
-                const bw = 344 * 0.6;
-                const bh = 120 * 0.6;
+                const playFlash = () => {
+                    if (!deployBtn) return;
+                    const flash = PhaserScene.add.sprite(deployBtn.x, deployBtn.y, 'attacks', 'button_flash1.png');
+                    flash.setDepth(deployBtn.getDepth() + 1);
+                    flash.setScrollFactor(0);
+                    flash.setBlendMode(Phaser.BlendModes.ADD);
+                    flash.play('button_flash');
+                    flash.on('animationcomplete', () => { if (flash && flash.destroy) flash.destroy(); });
 
-                const ind2 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                ind2.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
-                deployBtn.indicator = ind2;
-                treeGroup.add(ind2);
-
-                deployBtn.hiTimer = PhaserScene.time.delayedCall(5000, () => {
-                    if (deployBtn.indicator) {
-                        deployBtn.indicator.destroy();
+                    if (typeof assignToUICamera === 'function') {
+                        assignToUICamera(flash);
                     }
-                    const ind3 = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 80, bh + 80, bw, bh, 24);
-                    ind3.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);
-                    deployBtn.indicator = ind3;
-                    treeGroup.add(ind3);
-                    deployBtn.hiTimer = null;
+                };
+
+                playFlash();
+                deployBtn.hiTimer = PhaserScene.time.addEvent({
+                    delay: 4000,
+                    callback: playFlash,
+                    loop: true
                 });
             }
         }

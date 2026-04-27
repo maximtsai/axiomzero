@@ -98,29 +98,37 @@ const hijackManager = (() => {
 
     function clearAll() {
         for (let i = activeHijacks.length - 1; i >= 0; i--) {
-            pool.release(activeHijacks[i]);
+            _releaseToPool(activeHijacks[i]);
         }
         activeHijacks.length = 0;
         overflowCount = 0;
     }
 
+    function _releaseToPool(h) {
+        if (!h || h.inPool) return;
+        h.inPool = true;
+        pool.release(h);
+    }
+
     function _update(delta) {
         if (paused || activeHijacks.length === 0) return;
 
-        const dt = delta / 1000;
         for (let i = activeHijacks.length - 1; i >= 0; i--) {
             const h = activeHijacks[i];
             if (!h.active) {
-                activeHijacks.splice(i, 1);
-                pool.release(h);
+                // O(1) removal: swap with last element and pop
+                activeHijacks[i] = activeHijacks[activeHijacks.length - 1];
+                activeHijacks.pop();
+                _releaseToPool(h);
                 continue;
             }
 
             h.update(delta);
 
             if (!h.active) {
-                activeHijacks.splice(i, 1);
-                pool.release(h);
+                activeHijacks[i] = activeHijacks[activeHijacks.length - 1];
+                activeHijacks.pop();
+                _releaseToPool(h);
             }
         }
     }
@@ -141,6 +149,7 @@ class Hijack {
         this.recheckTimer = 0;
         this.wavyRotationForce = 0;
         this.wavySign = 0; // 1 or -1
+        this.inPool = false;
 
         this.img = PhaserScene.add.image(0, 0, 'enemies', 'projectile_hijack.png');
         this.img.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES);
@@ -158,6 +167,7 @@ class Hijack {
         this.visualRotation = rotation;
         this.lifetime = lifetime;
         this.active = true;
+        this.inPool = false;
         this.target = null;
         this.recheckTimer = 0;
         this.wavySign = Math.random() < 0.5 ? 1 : -1;
@@ -168,8 +178,6 @@ class Hijack {
         this.img.setRotation(rotation);
         this.img.setVisible(true);
         this.img.setActive(true);
-        this.img.setScale(0.85);
-
         this.img.setScale(0.8);
 
         this._recheck(0);
@@ -177,8 +185,8 @@ class Hijack {
 
     deactivate() {
         this.active = false;
+        this.inPool = true;
         this.img.setVisible(false);
-        this.img.setActive(false);
         this.img.setActive(false);
         this.target = null;
     }
@@ -206,7 +214,6 @@ class Hijack {
 
         this.img.setPosition(this.x, this.y);
         this.img.setRotation(this.visualRotation);
-        this.img.setRotation(this.visualRotation);
 
         // Recheck logic
         const threshold = this.isRapidChecking ? hijackManager.RECHECK_INTERVAL / 2 : hijackManager.RECHECK_INTERVAL;
@@ -233,6 +240,8 @@ class Hijack {
         if (!this.target || !this.target.model || !this.target.model.alive || !this.target.model.isTargeted) {
             needsNewTarget = true;
         }
+
+        const wasTargetless = !this.target || !this.target.model || !this.target.model.alive;
 
         if (needsNewTarget) {
             const centerX = this.x + Math.cos(this.rotation) * hijackManager.DETECTION_OFFSET;
@@ -262,7 +271,12 @@ class Hijack {
             if (bestEnemy) {
                 if (this.target && this.target.model) this.target.model.isTargeted = false;
                 this.target = bestEnemy;
-                this.target.model.targetAttractiveness -= 30;
+                
+                // Only penalize attractiveness if we were previously targetless
+                if (wasTargetless) {
+                    this.target.model.targetAttractiveness -= 30;
+                }
+                
                 this.target.model.isTargeted = true;
             }
         }

@@ -70,7 +70,7 @@
         <key>pngOptimizationLevel</key>
         <uint>1</uint>
         <key>webpQualityLevel</key>
-        <uint>85</uint>
+        <uint>81</uint>
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
@@ -173,6 +173,34 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">attacks/button_flash1.png</key>
+            <key type="filename">attacks/button_flash10.png</key>
+            <key type="filename">attacks/button_flash11.png</key>
+            <key type="filename">attacks/button_flash12.png</key>
+            <key type="filename">attacks/button_flash13.png</key>
+            <key type="filename">attacks/button_flash14.png</key>
+            <key type="filename">attacks/button_flash2.png</key>
+            <key type="filename">attacks/button_flash3.png</key>
+            <key type="filename">attacks/button_flash4.png</key>
+            <key type="filename">attacks/button_flash5.png</key>
+            <key type="filename">attacks/button_flash6.png</key>
+            <key type="filename">attacks/button_flash7.png</key>
+            <key type="filename">attacks/button_flash8.png</key>
+            <key type="filename">attacks/button_flash9.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.555</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>88,26,175,52</rect>
+                <key>scale9Paddings</key>
+                <rect>88,26,175,52</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">attacks/enemy_hit_circle0.png</key>
             <key type="filename">attacks/enemy_hit_circle1.png</key>
             <key type="filename">attacks/enemy_hit_circle2.png</key>

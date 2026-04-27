@@ -938,20 +938,18 @@ const NODE_DEFS = [
                     const panY = refY - nodeYAfterZoom;
 
                     // 1. Pan and Zoom to the button
+                    if (typeof upgradeTree !== 'undefined') {
+                        upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 3);
+                    }
                     dragGroup.tweenScale(1, { ease: 'Cubic.easeInOut', duration: 1400 });
                     dragGroup.tweenBy(panX, panY, {
                         ease: 'Cubic.easeInOut',
                         duration: 1400,
                         onComplete: () => {
-                            // 2. Trigger the flickering glow and explosion animation
-                            if (typeof upgradeTree !== 'undefined') {
-                                upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 2);
-                            }
-
                             nodeAnims.playRevealMapActivationAnimation(node, () => {
                                 // 3. Sequential node revelation once explosion finishes
                                 // Stage 1: Immediate
-                                PhaserScene.time.delayedCall(500, () => {
+                                PhaserScene.time.delayedCall(350, () => {
                                     upgradeTree.revealNode('armor');
                                     PhaserScene.time.delayedCall(150, () => {
                                         upgradeTree.revealNode('emergency_overclock');

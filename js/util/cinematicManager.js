@@ -13,7 +13,7 @@ const cinematicManager = (() => {
     const FADE_OUT_DUR = 600;
     const BLOCKER_DEPTH = 10001;
     const BAR_DEPTH = 10002;
-    const RESOLVE_PCT = 0.4; // Actions start at 40% of intro completion
+    const RESOLVE_PCT = 0.15; // Actions start at 40% of intro completion
 
     // --- State ---
     let active = false;

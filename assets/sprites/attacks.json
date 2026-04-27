@@ -4,8 +4,8 @@
 			"image": "attacks-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 2010,
-				"h": 1178
+				"w": 1608,
+				"h": 1202
 			},
 			"scale": 1,
 			"frames": [
@@ -74,760 +74,10 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 1,
-						"y": 403,
+						"x": 403,
+						"y": 1,
 						"w": 400,
 						"h": 400
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle0.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 805,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 805,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 867,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle1.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 867,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "glow_box.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 60,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 929,
-						"w": 60,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 59,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 991,
-						"w": 59,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 59,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 1053,
-						"w": 59,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle3.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 2,
-						"y": 0,
-						"w": 58,
-						"h": 60
-					},
-					"frame": {
-						"x": 1,
-						"y": 1115,
-						"w": 58,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle3.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 2,
-						"y": 0,
-						"w": 58,
-						"h": 60
-					},
-					"frame": {
-						"x": 61,
-						"y": 1115,
-						"w": 58,
-						"h": 60
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle4.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 1,
-						"w": 56,
-						"h": 59
-					},
-					"frame": {
-						"x": 62,
-						"y": 991,
-						"w": 56,
-						"h": 59
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 62,
-						"y": 1052,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 121,
-						"y": 1112,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike7.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 3,
-						"h": 3
-					},
-					"frame": {
-						"x": 121,
-						"y": 1172,
-						"w": 3,
-						"h": 3
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "explosion_pulse12.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 400,
-						"h": 400
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 3,
-						"h": 3
-					},
-					"frame": {
-						"x": 121,
-						"y": 1172,
-						"w": 3,
-						"h": 3
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike3.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 63,
-						"y": 805,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike4.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 63,
-						"y": 865,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike5.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 63,
-						"y": 925,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike6.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 58,
-						"h": 58
-					},
-					"frame": {
-						"x": 120,
-						"y": 985,
-						"w": 58,
-						"h": 58
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_strike0.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 4,
-						"w": 52,
-						"h": 52
-					},
-					"frame": {
-						"x": 122,
-						"y": 1045,
-						"w": 52,
-						"h": 52
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle4.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 51,
-						"h": 51
-					},
-					"frame": {
-						"x": 176,
-						"y": 1045,
-						"w": 51,
-						"h": 51
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle5.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 51,
-						"h": 51
-					},
-					"frame": {
-						"x": 181,
-						"y": 1098,
-						"w": 51,
-						"h": 51
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle8.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 33,
-						"y": 35,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 181,
-						"y": 1151,
-						"w": 20,
-						"h": 18
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle10.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 33,
-						"y": 35,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 181,
-						"y": 1151,
-						"w": 20,
-						"h": 18
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle5.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 6,
-						"w": 47,
-						"h": 50
-					},
-					"frame": {
-						"x": 123,
-						"y": 805,
-						"w": 47,
-						"h": 50
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle6.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 6,
-						"w": 47,
-						"h": 50
-					},
-					"frame": {
-						"x": 123,
-						"y": 857,
-						"w": 47,
-						"h": 50
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle7.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 14,
-						"w": 40,
-						"h": 41
-					},
-					"frame": {
-						"x": 123,
-						"y": 909,
-						"w": 40,
-						"h": 41
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle6.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 17,
-						"y": 15,
-						"w": 39,
-						"h": 41
-					},
-					"frame": {
-						"x": 165,
-						"y": 909,
-						"w": 39,
-						"h": 41
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle8.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 17,
-						"y": 15,
-						"w": 39,
-						"h": 41
-					},
-					"frame": {
-						"x": 180,
-						"y": 952,
-						"w": 39,
-						"h": 41
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "enemy_hit_circle7.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 22,
-						"y": 23,
-						"w": 33,
-						"h": 32
-					},
-					"frame": {
-						"x": 180,
-						"y": 995,
-						"w": 33,
-						"h": 32
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "hit_circle9.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 60,
-						"h": 60
-					},
-					"spriteSourceSize": {
-						"x": 22,
-						"y": 23,
-						"w": 33,
-						"h": 32
-					},
-					"frame": {
-						"x": 215,
-						"y": 995,
-						"w": 33,
-						"h": 32
 					},
 					"anchor": {
 						"x": 0.5,
@@ -849,7 +99,7 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 403,
+						"x": 805,
 						"y": 1,
 						"w": 400,
 						"h": 400
@@ -874,8 +124,8 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 403,
-						"y": 403,
+						"x": 1207,
+						"y": 1,
 						"w": 400,
 						"h": 400
 					},
@@ -899,8 +149,8 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 805,
-						"y": 1,
+						"x": 1,
+						"y": 403,
 						"w": 400,
 						"h": 400
 					},
@@ -924,7 +174,7 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 805,
+						"x": 403,
 						"y": 403,
 						"w": 400,
 						"h": 400
@@ -949,8 +199,8 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 1207,
-						"y": 1,
+						"x": 805,
+						"y": 403,
 						"w": 400,
 						"h": 400
 					},
@@ -974,8 +224,8 @@
 						"h": 399
 					},
 					"frame": {
-						"x": 1609,
-						"y": 1,
+						"x": 1207,
+						"y": 403,
 						"w": 400,
 						"h": 399
 					},
@@ -999,8 +249,8 @@
 						"h": 397
 					},
 					"frame": {
-						"x": 1609,
-						"y": 402,
+						"x": 1207,
+						"y": 804,
 						"w": 400,
 						"h": 397
 					},
@@ -1024,8 +274,8 @@
 						"h": 393
 					},
 					"frame": {
-						"x": 1207,
-						"y": 403,
+						"x": 1,
+						"y": 805,
 						"w": 399,
 						"h": 393
 					},
@@ -1049,10 +299,1110 @@
 						"h": 379
 					},
 					"frame": {
-						"x": 1207,
-						"y": 798,
+						"x": 402,
+						"y": 805,
 						"w": 399,
 						"h": 379
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle0.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 803,
+						"y": 805,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 803,
+						"y": 805,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 190,
+						"h": 52
+					},
+					"frame": {
+						"x": 803,
+						"y": 867,
+						"w": 190,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash8.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 190,
+						"h": 52
+					},
+					"frame": {
+						"x": 865,
+						"y": 805,
+						"w": 190,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash9.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 3,
+						"w": 187,
+						"h": 52
+					},
+					"frame": {
+						"x": 803,
+						"y": 921,
+						"w": 187,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 992,
+						"y": 921,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 992,
+						"y": 921,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 172,
+						"h": 52
+					},
+					"frame": {
+						"x": 995,
+						"y": 859,
+						"w": 172,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 111,
+						"h": 52
+					},
+					"frame": {
+						"x": 1057,
+						"y": 805,
+						"w": 111,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash14.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 3,
+						"h": 3
+					},
+					"frame": {
+						"x": 865,
+						"y": 859,
+						"w": 3,
+						"h": 3
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 3,
+						"h": 3
+					},
+					"frame": {
+						"x": 865,
+						"y": 859,
+						"w": 3,
+						"h": 3
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "explosion_pulse12.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 400,
+						"h": 400
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 3,
+						"h": 3
+					},
+					"frame": {
+						"x": 865,
+						"y": 859,
+						"w": 3,
+						"h": 3
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "glow_box.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 60
+					},
+					"frame": {
+						"x": 803,
+						"y": 975,
+						"w": 60,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 59,
+						"h": 60
+					},
+					"frame": {
+						"x": 865,
+						"y": 975,
+						"w": 59,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 59,
+						"h": 60
+					},
+					"frame": {
+						"x": 926,
+						"y": 975,
+						"w": 59,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 58,
+						"h": 60
+					},
+					"frame": {
+						"x": 987,
+						"y": 983,
+						"w": 58,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash10.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 88,
+						"y": 3,
+						"w": 104,
+						"h": 52
+					},
+					"frame": {
+						"x": 803,
+						"y": 1037,
+						"w": 104,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 58,
+						"h": 60
+					},
+					"frame": {
+						"x": 909,
+						"y": 1037,
+						"w": 58,
+						"h": 60
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 1,
+						"w": 56,
+						"h": 59
+					},
+					"frame": {
+						"x": 803,
+						"y": 1091,
+						"w": 56,
+						"h": 59
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 30,
+						"h": 44
+					},
+					"frame": {
+						"x": 861,
+						"y": 1091,
+						"w": 30,
+						"h": 44
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash13.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 179,
+						"y": 35,
+						"w": 13,
+						"h": 20
+					},
+					"frame": {
+						"x": 893,
+						"y": 1091,
+						"w": 13,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1047,
+						"y": 983,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash11.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 131,
+						"y": 3,
+						"w": 61,
+						"h": 52
+					},
+					"frame": {
+						"x": 1054,
+						"y": 913,
+						"w": 61,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1047,
+						"y": 1043,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 908,
+						"y": 1099,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 14,
+						"w": 40,
+						"h": 41
+					},
+					"frame": {
+						"x": 861,
+						"y": 1137,
+						"w": 40,
+						"h": 41
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 53,
+						"h": 49
+					},
+					"frame": {
+						"x": 803,
+						"y": 1152,
+						"w": 53,
+						"h": 49
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 968,
+						"y": 1099,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 4,
+						"w": 52,
+						"h": 52
+					},
+					"frame": {
+						"x": 969,
+						"y": 1045,
+						"w": 52,
+						"h": 52
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 20,
+						"h": 41
+					},
+					"frame": {
+						"x": 1023,
+						"y": 1045,
+						"w": 20,
+						"h": 41
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1028,
+						"y": 1103,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_strike6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 58,
+						"h": 58
+					},
+					"frame": {
+						"x": 1088,
+						"y": 1103,
+						"w": 58,
+						"h": 58
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 51,
+						"h": 51
+					},
+					"frame": {
+						"x": 1107,
+						"y": 967,
+						"w": 51,
+						"h": 51
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 51,
+						"h": 51
+					},
+					"frame": {
+						"x": 1117,
+						"y": 913,
+						"w": 51,
+						"h": 51
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 23,
+						"w": 33,
+						"h": 32
+					},
+					"frame": {
+						"x": 1169,
+						"y": 859,
+						"w": 33,
+						"h": 32
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle8.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 33,
+						"y": 35,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 1169,
+						"y": 893,
+						"w": 20,
+						"h": 18
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle10.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 33,
+						"y": 35,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 1169,
+						"y": 893,
+						"w": 20,
+						"h": 18
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle9.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 22,
+						"y": 23,
+						"w": 33,
+						"h": 32
+					},
+					"frame": {
+						"x": 1170,
+						"y": 805,
+						"w": 33,
+						"h": 32
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 19,
+						"h": 16
+					},
+					"frame": {
+						"x": 1170,
+						"y": 839,
+						"w": 19,
+						"h": 16
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle5.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 6,
+						"w": 47,
+						"h": 50
+					},
+					"frame": {
+						"x": 1107,
+						"y": 1020,
+						"w": 47,
+						"h": 50
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "button_flash12.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 194,
+						"h": 58
+					},
+					"spriteSourceSize": {
+						"x": 166,
+						"y": 29,
+						"w": 26,
+						"h": 26
+					},
+					"frame": {
+						"x": 1107,
+						"y": 1072,
+						"w": 26,
+						"h": 26
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 6,
+						"w": 47,
+						"h": 50
+					},
+					"frame": {
+						"x": 1148,
+						"y": 1072,
+						"w": 47,
+						"h": 50
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "enemy_hit_circle6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 15,
+						"w": 39,
+						"h": 41
+					},
+					"frame": {
+						"x": 1156,
+						"y": 1020,
+						"w": 39,
+						"h": 41
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "hit_circle8.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 60,
+						"h": 60
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 15,
+						"w": 39,
+						"h": 41
+					},
+					"frame": {
+						"x": 1160,
+						"y": 966,
+						"w": 39,
+						"h": 41
 					},
 					"anchor": {
 						"x": 0.5,
@@ -1065,6 +1415,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:1b0d5de7e9a6125ea2bb1ddeb6f529cf:eec73e0e0bf0e8986a063008267cbddb:824c311b23d45c8185d8536d4540223d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bd36ba76403cbcfd8bd9b5cfe8ab55ff:22536a005006b48a1adf2a082b1ebde7:824c311b23d45c8185d8536d4540223d$"
 	}
 }
