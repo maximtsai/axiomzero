@@ -1021,6 +1021,10 @@ class Node {
         if (this.state === NODE_STATE.GHOST && !this.revealedManually) return;
         nodeTooltip.show(this, isPurchaseRefresh, purchaseCost);
 
+        if (this.state === NODE_STATE.UNLOCKED && !this.isMaxed()) {
+            nodeAnims.playHoverJiggle(this);
+        }
+
         if (typeof upgradeTree !== 'undefined') {
             const label = this.isDuoBox ? "TWIN NODE" : `${this.labelCategory} NODE`;
             upgradeTree.setHoverLabel(label);

@@ -269,5 +269,45 @@ const nodeAnims = {
                 if (onSequenceComplete) onSequenceComplete();
             }
         });
-    }
+    },
+
+    /**
+     * Plays a repeating "jiggle" scale animation when hovering over an interactable node.
+     * @param {Node} node 
+     */
+    playHoverJiggle: (node) => {
+        if (!node.btn) return;
+
+        const targets = [node.btn, node.iconSprite].filter(Boolean);
+
+        // Stop any existing tween to avoid conflicts
+        if (node.hoverJiggleTween) {
+            node.hoverJiggleTween.stop();
+        }
+
+        // Immediate scale jump to 1.05
+        // targets.forEach(t => {
+        //     t.setScale(1.14);
+        //     t.setRotation(0.03);
+        // });
+
+        // Smoothly settle back to 1.0
+        PhaserScene.tweens.add({
+            targets: targets,
+            scaleX: 1.13,
+            scaleY: 1.13,
+            duration: 60,
+            ease: 'Quart.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: targets,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 280,
+                    ease: 'Back.easeOut',
+                    easeParams: [4]
+                });
+            }
+        });
+    },
 };
