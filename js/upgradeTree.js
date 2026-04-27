@@ -1591,13 +1591,15 @@ const upgradeTree = (() => {
         return true;
     }
 
-    function revealNode(id) {
+    function revealNode(id, revealedManually = true) {
         if (!nodes[id]) return false;
         if (!gameState.revealedNodes) gameState.revealedNodes = {};
         gameState.revealedNodes[id] = true;
-        nodes[id].revealedManually = true;
+        nodes[id].revealedManually = revealedManually;
         nodes[id].refreshState();
+        nodes[id].playRevealAnimation();
         _refreshAllNodes();
+        treeLineManager.updateLines();
         return true;
     }
 

@@ -919,7 +919,6 @@ const NODE_DEFS = [
         effect: async function () {
             if (typeof cinematicManager !== 'undefined') {
                 const endCutscene = await cinematicManager.playCutscene();
-                console.log("[Cinematic] Reveal Map sequence started");
 
                 const dragGroup = upgradeTree.getDraggableGroup();
                 const node = upgradeTree.getNode('reveal_map');
@@ -948,21 +947,22 @@ const NODE_DEFS = [
                             if (typeof upgradeTree !== 'undefined') {
                                 upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 2);
                             }
-                            
+
                             nodeAnims.playRevealMapActivationAnimation(node, () => {
                                 // 3. Sequential node revelation once explosion finishes
                                 // Stage 1: Immediate
-                                ['repeat_exploit', 'armor', 'emergency_overclock'].forEach(id => upgradeTree.revealNode(id));
+                                PhaserScene.time.delayedCall(500, () => {
+                                    upgradeTree.revealNode('armor');
+                                    PhaserScene.time.delayedCall(150, () => {
+                                        upgradeTree.revealNode('emergency_overclock');
+                                    });
+                                    PhaserScene.time.delayedCall(300, () => {
+                                        upgradeTree.revealNode('repeat_exploit');
+                                    });
 
-                                // Stage 2: 0.4s later
-                                PhaserScene.time.delayedCall(400, () => {
-                                    ['diagnostic_analytics', 'threat_response'].forEach(id => upgradeTree.revealNode(id));
-
-                                    // Stage 3: 0.4s later (total 0.8s)
-                                    PhaserScene.time.delayedCall(400, () => {
-                                        upgradeTree.revealNode('bomb_2');
-                                        
-                                        // Final Cleanup: end cutscene
+                                    // Stage 2: 0.4s later
+                                    PhaserScene.time.delayedCall(450, () => {
+                                        upgradeTree.revealNode('diagnostic_analytics');
                                         PhaserScene.time.delayedCall(1200, endCutscene);
                                     });
                                 });
@@ -1170,7 +1170,7 @@ const NODE_DEFS = [
         treeY: gridY(4),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
-            if (typeof upgradeTree !== 'undefined') upgradeTree.unlockNode('trojan_access');
+            if (typeof upgradeTree !== 'undefined') upgradeTree.revealNode('trojan_access', false);
         },
     },
 

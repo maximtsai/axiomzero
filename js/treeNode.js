@@ -88,6 +88,9 @@ class Node {
         // Cached recursive lookups (updated in refreshState)
         this._cachedIsDuoDescendant = this.isDuoBox;
         this._cachedIsDuoPathPurchased = false;
+        this.lastAffordStatus = false;
+        this.lastGhostAlpha = 0;
+        this.lastRevealedManually = false;
 
         // Phaser objects
         this.btn = null;
@@ -265,7 +268,11 @@ class Node {
                     if (parent.isDuoBox && !this._isDuoTierPurchased(parent.duoBoxTier)) {
                         isHidden = true;
                     }
-                    const canReveal = !isHidden && (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoChild);
+
+                    // NEW: duo nodes can be partially revealed (as ghosts) if parent is revealed manually
+                    const canRevealParentState = (parent.state !== NODE_STATE.GHOST || parent.level > 0 || parent.isDuoChild);
+                    const canRevealDuo = (this.isDuoBox && parent.revealedManually);
+                    const canReveal = !isHidden && (canRevealParentState || canRevealDuo);
 
                     if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN && canReveal) {
                         console.log(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
@@ -340,9 +347,10 @@ class Node {
         const currentAfford = this.canAfford();
         const currentGhostAlpha = this.state === NODE_STATE.GHOST ? this.getGhostAlpha() : 1;
 
-        if (currentAfford !== this.lastAffordStatus || currentGhostAlpha !== this.lastGhostAlpha) {
+        if (currentAfford !== this.lastAffordStatus || currentGhostAlpha !== this.lastGhostAlpha || this.revealedManually !== this.lastRevealedManually) {
             this.lastAffordStatus = currentAfford;
             this.lastGhostAlpha = currentGhostAlpha;
+            this.lastRevealedManually = this.revealedManually;
             this._updateVisual();
         }
 
@@ -819,8 +827,11 @@ class Node {
         this.btn.setDisableRef(sprite);
         this.btn.setVisible(true);
         this.btn.setState(DISABLE);
-        this.btn.setAlpha(this.getGhostAlpha());
-        if (this.iconSprite) this.iconSprite.setVisible(false);
+
+        // Manually revealed nodes have full alpha but use ghost sprite
+        const alpha = this.revealedManually ? 1.0 : this.getGhostAlpha();
+        this.btn.setAlpha(alpha);
+
         return sprite;
     }
 
@@ -905,7 +916,7 @@ class Node {
         let anyParentActive = (this.parents.length === 0);
         for (let pid of this.parents) {
             const p = upgradeTree.getNode(pid);
-            if (p && p.state !== NODE_STATE.HIDDEN && p.state !== NODE_STATE.GHOST) {
+            if (p && p.state !== NODE_STATE.HIDDEN && (p.state !== NODE_STATE.GHOST || p.revealedManually)) {
                 anyParentActive = true;
                 break;
             }
@@ -1006,7 +1017,8 @@ class Node {
     // ── hover tooltip ────────────────────────────────────────────────────
 
     _showHover(isPurchaseRefresh = false, purchaseCost = 0) {
-        if (this.isPlaceholder || this.state === NODE_STATE.HIDDEN || this.state === NODE_STATE.GHOST) return;
+        if (this.isPlaceholder || this.state === NODE_STATE.HIDDEN) return;
+        if (this.state === NODE_STATE.GHOST && !this.revealedManually) return;
         nodeTooltip.show(this, isPurchaseRefresh, purchaseCost);
 
         if (typeof upgradeTree !== 'undefined') {
@@ -1039,8 +1051,8 @@ class Node {
             this.btn.setVisible(vis && !isHidden);
         }
         if (this.iconSprite) {
-            // Ghost nodes should never show their icons
-            this.iconSprite.setVisible(vis && !isHidden && !isGhost);
+            // Ghost nodes usually shouldn't show their icons, unless manually revealed
+            this.iconSprite.setVisible(vis && !isHidden && (!isGhost || this.revealedManually));
         }
         if (this.label) {
             this.label.setVisible(vis && !isHidden);
@@ -1105,8 +1117,37 @@ class Node {
 
         this.btn.setVisible(isVisible);
         if (this.iconSprite) {
-            this.iconSprite.setVisible(isVisible && this.state !== NODE_STATE.GHOST);
+            this.iconSprite.setVisible(isVisible && (this.state !== NODE_STATE.GHOST || this.revealedManually));
         }
+    }
+
+    /**
+     * Plays a pop-in animation for manually revealed nodes.
+     */
+    playRevealAnimation() {
+        if (!this.btn) return;
+
+        // Start at 70% scale
+        const startScale = 0.85;
+        this.btn.setScale(startScale);
+        if (this.iconSprite) this.iconSprite.setScale(startScale);
+
+        // Tween to 100% scale with Back.easeOut
+        let spriteTargets = [this.btn, this.iconSprite].filter(Boolean)
+        PhaserScene.tweens.add({
+            targets: spriteTargets,
+            scale: 1.25,
+            duration: 100,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: spriteTargets,
+                    scale: 1,
+                    duration: 500,
+                    ease: 'Back.easeOut',
+                });
+            }
+        });
     }
 }
 

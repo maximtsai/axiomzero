@@ -126,10 +126,20 @@ const treeLineManager = (() => {
             if (!p || !n) continue;
 
             let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
+            // Exception: Always show lines between manually revealed nodes
+            if (p.revealedManually && n.revealedManually) shouldHide = false;
+            
+            // Exception: Duo box lines should ONLY be visible if the parent is Unlocked/Maxed or revealed manually
+            const parentIsActiveOrManual = (p.state !== NODE_STATE.HIDDEN && (p.state !== NODE_STATE.GHOST || p.revealedManually));
+            if ((n.isDuoBox || n.isPlaceholder) && !parentIsActiveOrManual) {
+                shouldHide = true;
+            } else if (n.isDuoBox && parentIsActiveOrManual) {
+                shouldHide = false;
+            }
 
             // Hide lines for normal nodes if alpha is 0
-            if (!p.isPlaceholder && p.getAlpha() === 0) shouldHide = true;
-            if (!n.isPlaceholder && n.getAlpha() === 0) shouldHide = true;
+            if (!p.isPlaceholder && p.getAlpha() === 0 && !p.revealedManually) shouldHide = true;
+            if (!n.isPlaceholder && n.getAlpha() === 0 && !n.revealedManually) shouldHide = true;
 
             if (shouldHide) {
                 line.setVisible(false);
@@ -138,9 +148,12 @@ const treeLineManager = (() => {
                 const parentActive = (p.state === NODE_STATE.UNLOCKED || p.state === NODE_STATE.MAXED);
                 const isDuoBranch = (n.isDuoDescendant && n.isDuoDescendant());
                 const revealedLine = (p.revealed || n.revealed);
+                const childManuallyRevealed = n.revealedManually;
                 const isGhost = (n.state === NODE_STATE.GHOST);
 
-                if (isGhost && (parentActive || isDuoBranch || revealedLine)) {
+                if (childManuallyRevealed) {
+                    line.setAlpha(0.6);
+                } else if (isGhost && (parentActive || isDuoBranch || revealedLine)) {
                     line.setAlpha(0.25);
                 } else {
                     line.setAlpha((parentActive || isDuoBranch || revealedLine) ? 0.6 : 0);

@@ -258,22 +258,15 @@ const nodeAnims = {
                 // Scale expansion
                 scene.tweens.add({
                     targets: explosion,
-                    scale: 15,
+                    alpha: 0.5,
+                    scale: 20,
                     ease: 'Quad.easeIn',
-                    duration: 300
-                });
-
-                // Alpha fade out
-                scene.tweens.add({
-                    targets: explosion,
-                    alpha: 0,
-                    ease: 'Linear',
-                    duration: 300,
+                    duration: 450,
                     onComplete: () => {
                         explosion.destroy();
-                        if (onSequenceComplete) onSequenceComplete();
                     }
                 });
+                if (onSequenceComplete) onSequenceComplete();
             }
         });
     }
