@@ -4,8 +4,8 @@
 			"image": "player-0.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 960,
-				"h": 1426
+				"w": 968,
+				"h": 1460
 			},
 			"scale": 1,
 			"frames": [
@@ -49,8 +49,8 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 559,
-						"y": 1,
+						"x": 1,
+						"y": 559,
 						"w": 400,
 						"h": 400
 					},
@@ -75,7 +75,7 @@
 					},
 					"frame": {
 						"x": 559,
-						"y": 403,
+						"y": 1,
 						"w": 400,
 						"h": 400
 					},
@@ -100,7 +100,7 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 559,
+						"y": 961,
 						"w": 260,
 						"h": 260
 					},
@@ -124,8 +124,8 @@
 						"h": 250
 					},
 					"frame": {
-						"x": 1,
-						"y": 821,
+						"x": 403,
+						"y": 559,
 						"w": 250,
 						"h": 250
 					},
@@ -149,8 +149,8 @@
 						"h": 202
 					},
 					"frame": {
-						"x": 263,
-						"y": 559,
+						"x": 1,
+						"y": 1223,
 						"w": 202,
 						"h": 202
 					},
@@ -174,8 +174,8 @@
 						"h": 202
 					},
 					"frame": {
-						"x": 1,
-						"y": 1073,
+						"x": 403,
+						"y": 811,
 						"w": 202,
 						"h": 202
 					},
@@ -185,24 +185,24 @@
 					}
 				},
 				{
-					"filename": "resrc_data_big.png",
+					"filename": "tower1_glow.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 152,
-						"h": 152
+						"w": 149,
+						"h": 149
 					},
 					"spriteSourceSize": {
-						"x": 10,
-						"y": 10,
-						"w": 132,
-						"h": 132
+						"x": 0,
+						"y": 0,
+						"w": 149,
+						"h": 149
 					},
 					"frame": {
-						"x": 1,
-						"y": 1277,
-						"w": 132,
-						"h": 132
+						"x": 559,
+						"y": 403,
+						"w": 149,
+						"h": 149
 					},
 					"anchor": {
 						"x": 0.5,
@@ -224,8 +224,8 @@
 						"h": 202
 					},
 					"frame": {
-						"x": 263,
-						"y": 763,
+						"x": 710,
+						"y": 403,
 						"w": 202,
 						"h": 202
 					},
@@ -249,8 +249,8 @@
 						"h": 202
 					},
 					"frame": {
-						"x": 253,
-						"y": 967,
+						"x": 655,
+						"y": 607,
 						"w": 202,
 						"h": 202
 					},
@@ -260,7 +260,7 @@
 					}
 				},
 				{
-					"filename": "artillery_flash.png",
+					"filename": "unlock_explosion.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -268,41 +268,16 @@
 						"h": 200
 					},
 					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 198,
-						"h": 198
-					},
-					"frame": {
-						"x": 467,
-						"y": 805,
-						"w": 198,
-						"h": 198
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "unlock_glow.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 200,
+						"x": 0,
+						"y": 0,
+						"w": 199,
 						"h": 200
 					},
-					"spriteSourceSize": {
-						"x": 16,
-						"y": 16,
-						"w": 168,
-						"h": 168
-					},
 					"frame": {
-						"x": 667,
-						"y": 805,
-						"w": 168,
-						"h": 168
+						"x": 607,
+						"y": 811,
+						"w": 199,
+						"h": 200
 					},
 					"anchor": {
 						"x": 0.5,
@@ -310,24 +285,49 @@
 					}
 				},
 				{
-					"filename": "outer_glow.png",
+					"filename": "resrc_shard_backing.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 124,
-						"h": 124
+						"w": 152,
+						"h": 152
 					},
 					"spriteSourceSize": {
-						"x": 1,
-						"y": 1,
-						"w": 122,
+						"x": 22,
+						"y": 15,
+						"w": 108,
 						"h": 122
 					},
 					"frame": {
-						"x": 837,
-						"y": 805,
-						"w": 122,
+						"x": 859,
+						"y": 607,
+						"w": 108,
 						"h": 122
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "player_attack_black.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 108,
+						"h": 108
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 108,
+						"h": 108
+					},
+					"frame": {
+						"x": 859,
+						"y": 731,
+						"w": 108,
+						"h": 108
 					},
 					"anchor": {
 						"x": 0.5,
@@ -349,10 +349,160 @@
 						"h": 158
 					},
 					"frame": {
-						"x": 457,
-						"y": 1005,
+						"x": 808,
+						"y": 841,
 						"w": 158,
 						"h": 158
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_data_big.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 152,
+						"h": 152
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 10,
+						"w": 132,
+						"h": 132
+					},
+					"frame": {
+						"x": 263,
+						"y": 961,
+						"w": 132,
+						"h": 132
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "artillery_flash.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 200,
+						"h": 200
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 198,
+						"h": 198
+					},
+					"frame": {
+						"x": 397,
+						"y": 1015,
+						"w": 198,
+						"h": 198
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "outer_glow.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 124,
+						"h": 124
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 122,
+						"h": 122
+					},
+					"frame": {
+						"x": 263,
+						"y": 1095,
+						"w": 122,
+						"h": 122
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "unlock_glow.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 200,
+						"h": 200
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 16,
+						"w": 168,
+						"h": 168
+					},
+					"frame": {
+						"x": 205,
+						"y": 1223,
+						"w": 168,
+						"h": 168
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_shard.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 19,
+						"w": 53,
+						"h": 63
+					},
+					"frame": {
+						"x": 914,
+						"y": 403,
+						"w": 53,
+						"h": 63
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower1 - Copy.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 149,
+						"h": 149
+					},
+					"spriteSourceSize": {
+						"x": 48,
+						"y": 46,
+						"w": 53,
+						"h": 56
+					},
+					"frame": {
+						"x": 914,
+						"y": 468,
+						"w": 53,
+						"h": 56
 					},
 					"anchor": {
 						"x": 0.5,
@@ -374,35 +524,10 @@
 						"h": 155
 					},
 					"frame": {
-						"x": 205,
-						"y": 1171,
+						"x": 808,
+						"y": 1001,
 						"w": 155,
 						"h": 155
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1_glow.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 149,
-						"h": 149
-					},
-					"frame": {
-						"x": 362,
-						"y": 1171,
-						"w": 149,
-						"h": 149
 					},
 					"anchor": {
 						"x": 0.5,
@@ -424,8 +549,8 @@
 						"h": 149
 					},
 					"frame": {
-						"x": 513,
-						"y": 1165,
+						"x": 597,
+						"y": 1015,
 						"w": 139,
 						"h": 149
 					},
@@ -449,35 +574,10 @@
 						"h": 116
 					},
 					"frame": {
-						"x": 467,
-						"y": 559,
+						"x": 738,
+						"y": 1013,
 						"w": 59,
 						"h": 116
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_shard_backing.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 152,
-						"h": 152
-					},
-					"spriteSourceSize": {
-						"x": 22,
-						"y": 15,
-						"w": 108,
-						"h": 122
-					},
-					"frame": {
-						"x": 617,
-						"y": 1005,
-						"w": 108,
-						"h": 122
 					},
 					"anchor": {
 						"x": 0.5,
@@ -499,8 +599,58 @@
 						"h": 119
 					},
 					"frame": {
-						"x": 727,
-						"y": 975,
+						"x": 597,
+						"y": 1166,
+						"w": 119,
+						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower4.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 119,
+						"h": 119
+					},
+					"frame": {
+						"x": 718,
+						"y": 1166,
+						"w": 119,
+						"h": 119
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 119,
+						"h": 119
+					},
+					"frame": {
+						"x": 839,
+						"y": 1158,
 						"w": 119,
 						"h": 119
 					},
@@ -524,85 +674,10 @@
 						"h": 110
 					},
 					"frame": {
-						"x": 848,
-						"y": 929,
+						"x": 375,
+						"y": 1219,
 						"w": 110,
 						"h": 110
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "player_attack_black.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 108,
-						"h": 108
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 108,
-						"h": 108
-					},
-					"frame": {
-						"x": 848,
-						"y": 1041,
-						"w": 108,
-						"h": 108
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower4.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 119,
-						"h": 119
-					},
-					"frame": {
-						"x": 727,
-						"y": 1096,
-						"w": 119,
-						"h": 119
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_data.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 15,
-						"w": 71,
-						"h": 71
-					},
-					"frame": {
-						"x": 654,
-						"y": 1129,
-						"w": 71,
-						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -624,160 +699,10 @@
 						"h": 108
 					},
 					"frame": {
-						"x": 848,
-						"y": 1151,
+						"x": 487,
+						"y": 1215,
 						"w": 108,
 						"h": 108
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "sparkle.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 106,
-						"h": 106
-					},
-					"spriteSourceSize": {
-						"x": 14,
-						"y": 6,
-						"w": 78,
-						"h": 96
-					},
-					"frame": {
-						"x": 467,
-						"y": 677,
-						"w": 78,
-						"h": 96
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower5.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 119,
-						"h": 119
-					},
-					"frame": {
-						"x": 654,
-						"y": 1217,
-						"w": 119,
-						"h": 119
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1_broke.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 149,
-						"h": 149
-					},
-					"spriteSourceSize": {
-						"x": 38,
-						"y": 29,
-						"w": 79,
-						"h": 87
-					},
-					"frame": {
-						"x": 135,
-						"y": 1338,
-						"w": 79,
-						"h": 87
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_insight.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 101,
-						"h": 101
-					},
-					"spriteSourceSize": {
-						"x": 21,
-						"y": 21,
-						"w": 59,
-						"h": 59
-					},
-					"frame": {
-						"x": 135,
-						"y": 1277,
-						"w": 59,
-						"h": 59
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 13,
-						"y": 13,
-						"w": 93,
-						"h": 93
-					},
-					"frame": {
-						"x": 216,
-						"y": 1328,
-						"w": 93,
-						"h": 93
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "resrc_shard_big.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 152,
-						"h": 152
-					},
-					"spriteSourceSize": {
-						"x": 37,
-						"y": 29,
-						"w": 78,
-						"h": 94
-					},
-					"frame": {
-						"x": 311,
-						"y": 1328,
-						"w": 78,
-						"h": 94
 					},
 					"anchor": {
 						"x": 0.5,
@@ -799,35 +724,10 @@
 						"h": 102
 					},
 					"frame": {
-						"x": 391,
-						"y": 1322,
+						"x": 375,
+						"y": 1331,
 						"w": 102,
 						"h": 102
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "inner_core.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 64,
-						"h": 64
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64
-					},
-					"frame": {
-						"x": 775,
-						"y": 1217,
-						"w": 64,
-						"h": 64
 					},
 					"anchor": {
 						"x": 0.5,
@@ -849,8 +749,8 @@
 						"h": 102
 					},
 					"frame": {
-						"x": 495,
-						"y": 1322,
+						"x": 597,
+						"y": 1287,
 						"w": 102,
 						"h": 102
 					},
@@ -860,24 +760,199 @@
 					}
 				},
 				{
-					"filename": "resrc_shard.png",
+					"filename": "tower2.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 101,
-						"h": 101
+						"w": 119,
+						"h": 119
 					},
 					"spriteSourceSize": {
-						"x": 24,
-						"y": 19,
-						"w": 53,
-						"h": 63
+						"x": 13,
+						"y": 13,
+						"w": 93,
+						"h": 93
 					},
 					"frame": {
-						"x": 599,
-						"y": 1316,
-						"w": 53,
-						"h": 63
+						"x": 701,
+						"y": 1287,
+						"w": 93,
+						"h": 93
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "sparkle.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 106,
+						"h": 106
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 6,
+						"w": 78,
+						"h": 96
+					},
+					"frame": {
+						"x": 796,
+						"y": 1287,
+						"w": 78,
+						"h": 96
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_shard_big.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 152,
+						"h": 152
+					},
+					"spriteSourceSize": {
+						"x": 37,
+						"y": 29,
+						"w": 78,
+						"h": 94
+					},
+					"frame": {
+						"x": 876,
+						"y": 1279,
+						"w": 78,
+						"h": 94
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 119,
+						"h": 119
+					},
+					"spriteSourceSize": {
+						"x": 35,
+						"y": 34,
+						"w": 49,
+						"h": 50
+					},
+					"frame": {
+						"x": 914,
+						"y": 526,
+						"w": 49,
+						"h": 50
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "inner_core.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64
+					},
+					"frame": {
+						"x": 205,
+						"y": 1393,
+						"w": 64,
+						"h": 64
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "heal.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 62,
+						"h": 62
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 62,
+						"h": 62
+					},
+					"frame": {
+						"x": 271,
+						"y": 1393,
+						"w": 62,
+						"h": 62
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "tower1_broke.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 149,
+						"h": 149
+					},
+					"spriteSourceSize": {
+						"x": 38,
+						"y": 29,
+						"w": 79,
+						"h": 87
+					},
+					"frame": {
+						"x": 479,
+						"y": 1331,
+						"w": 79,
+						"h": 87
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "data_collect.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 28,
+						"h": 28
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 28,
+						"h": 28
+					},
+					"frame": {
+						"x": 808,
+						"y": 811,
+						"w": 28,
+						"h": 28
 					},
 					"anchor": {
 						"x": 0.5,
@@ -899,8 +974,8 @@
 						"h": 83
 					},
 					"frame": {
-						"x": 654,
-						"y": 1338,
+						"x": 876,
+						"y": 1375,
 						"w": 83,
 						"h": 83
 					},
@@ -924,8 +999,8 @@
 						"h": 77
 					},
 					"frame": {
-						"x": 775,
-						"y": 1283,
+						"x": 701,
+						"y": 1382,
 						"w": 77,
 						"h": 77
 					},
@@ -935,99 +1010,24 @@
 					}
 				},
 				{
-					"filename": "heal.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 62,
-						"h": 62
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 62,
-						"h": 62
-					},
-					"frame": {
-						"x": 854,
-						"y": 1261,
-						"w": 62,
-						"h": 62
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1 - Copy.png",
+					"filename": "resrc_data.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 149,
-						"h": 149
+						"w": 101,
+						"h": 101
 					},
 					"spriteSourceSize": {
-						"x": 48,
-						"y": 46,
-						"w": 53,
-						"h": 56
+						"x": 15,
+						"y": 15,
+						"w": 71,
+						"h": 71
 					},
 					"frame": {
-						"x": 854,
-						"y": 1325,
-						"w": 53,
-						"h": 56
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "data_collect.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 28,
-						"h": 28
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 28,
-						"h": 28
-					},
-					"frame": {
-						"x": 667,
-						"y": 975,
-						"w": 28,
-						"h": 28
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "tower1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 119,
-						"h": 119
-					},
-					"spriteSourceSize": {
-						"x": 35,
-						"y": 34,
-						"w": 49,
-						"h": 50
-					},
-					"frame": {
-						"x": 739,
-						"y": 1362,
-						"w": 49,
-						"h": 50
+						"x": 780,
+						"y": 1385,
+						"w": 71,
+						"h": 71
 					},
 					"anchor": {
 						"x": 0.5,
@@ -1049,10 +1049,35 @@
 						"h": 26
 					},
 					"frame": {
-						"x": 205,
-						"y": 1073,
+						"x": 738,
+						"y": 1131,
 						"w": 26,
 						"h": 26
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "resrc_insight.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 101,
+						"h": 101
+					},
+					"spriteSourceSize": {
+						"x": 21,
+						"y": 21,
+						"w": 59,
+						"h": 59
+					},
+					"frame": {
+						"x": 560,
+						"y": 1391,
+						"w": 59,
+						"h": 59
 					},
 					"anchor": {
 						"x": 0.5,
@@ -1074,8 +1099,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 617,
-						"y": 1129,
+						"x": 914,
+						"y": 578,
 						"w": 24,
 						"h": 24
 					},
@@ -1099,8 +1124,8 @@
 						"h": 8
 					},
 					"frame": {
-						"x": 253,
-						"y": 821,
+						"x": 387,
+						"y": 1095,
 						"w": 8,
 						"h": 8
 					},
@@ -1124,8 +1149,8 @@
 						"h": 12
 					},
 					"frame": {
-						"x": 467,
-						"y": 775,
+						"x": 1,
+						"y": 1427,
 						"w": 12,
 						"h": 12
 					},
@@ -1149,8 +1174,8 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 528,
-						"y": 559,
+						"x": 335,
+						"y": 1393,
 						"w": 10,
 						"h": 10
 					},
@@ -1174,8 +1199,8 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 547,
-						"y": 559,
+						"x": 838,
+						"y": 811,
 						"w": 10,
 						"h": 10
 					},
@@ -1199,8 +1224,8 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 654,
-						"y": 1202,
+						"x": 853,
+						"y": 1385,
 						"w": 10,
 						"h": 10
 					},
@@ -1224,8 +1249,8 @@
 						"h": 10
 					},
 					"frame": {
-						"x": 1,
-						"y": 1411,
+						"x": 766,
+						"y": 1131,
 						"w": 10,
 						"h": 10
 					},
@@ -1249,8 +1274,8 @@
 						"h": 6
 					},
 					"frame": {
-						"x": 457,
-						"y": 967,
+						"x": 961,
+						"y": 1,
 						"w": 6,
 						"h": 6
 					},
@@ -1265,6 +1290,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:62ec8a83b82b311b58dde13b9a7a5968:371040691bbdce1a816f0d2d202330cc:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:78731283a33b414dc3186060905961e2:3f5996688b498cab41a57c9c1914e98e:e2b4716e83edbfec9c3741f281601216$"
 	}
 }

@@ -163,7 +163,7 @@ window.TRANSLATIONS.en = {
         instability_mark: { name: 'INSTABILITY', desc: 'Cursor hits [color=#bf24ff]mark[/color] enemies. Next non-cursor hit deals [color=#bf24ff]+12[/color] damage.', popup: 'INSTABILITY MARK' },
         milestones: { name: 'MILESTONES', desc: 'Unlocks the Milestones menu.' },
         crescendo: { name: 'CRESCENDO', desc: 'Resonance attacks gain [color=#8FD9F8]+100%[/color] size.', popup: 'AMPLIFIED' },
-        hijack: { name: 'HIJACK', desc: 'Resonance kills convert enemies into seeking missiles.', popup: 'SYSTEM HIJACKED' },
+        hijack: { name: 'HIJACK', desc: 'Resonance kills convert enemies into homing missiles.', popup: 'SYSTEM HIJACKED' },
         recursion: { name: 'RECURSION', desc: 'Hijack missiles can spawn more missiles on kill.', popup: 'RECURSIVE LOOP' },
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color].', popup: 'ROOT ACCESS GRANTED' },
         core_synergy: { name: 'CORE SYNERGY', desc: '[color=#8FD9F8]+2[/color] core damage.', popup: '+2 DAMAGE' },

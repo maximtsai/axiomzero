@@ -39,13 +39,12 @@ love this design. I want to keep its attack pattern fairly simple, it spawns in,
 - Node to add arc lightning on cursor hit.
 - Node to make killed enemies hve a moderate chance to spawn homing missiles.
 	- Recursion. enemies killed by homing missiles have a small chance to spawn more homing missiles
-
 - Make fast enemies have thinner outside stroke
+- For PC mode, animated background with new game, options, quit, credits at bottom left corner.
 
-
-
-OVERCLOCKING: Reduces all weapon cooldowns by 15%, but the Tower takes 1 damage every 5 seconds. (A risk-reward node that forces you to rely on Health Regen).
 
 - Found a hidden entry point in a forgotten server.
 password123 still works on an alarming number of servers.
 Found an open port labeled "DO NOT ENTER". It was not locked.
+
+- Enemies coming out of a void.

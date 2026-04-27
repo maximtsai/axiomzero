@@ -408,21 +408,22 @@ class PulseAttackView {
             this.spriteGlow.setVisible(false);
         }
 
+        const targetSize = model.getEffectiveSize();
+        const isExpanding = (targetSize > model.size);
+
         // --- Basic Size Tracking & Crescendo Visual Expansion ---
         if (!this.isResonanceFiring && !this.refluxTween) {
-            const targetSize = model.getEffectiveSize();
             // Optimization 1: Skip expensive nine-slice updates if size is stable
             const isSizeStable = Math.abs(this.visualSize - targetSize) < 0.01;
 
             if (!isSizeStable) {
-                const isExpanding = (targetSize > model.size);
                 if (isExpanding) {
-                    let lerpFactor = 1 - Math.pow(0.85, delta / 16.666);
+                    let lerpFactor = 1 - Math.pow(0.75, delta / 16.666);
                     this.visualSize += (targetSize - this.visualSize) * Math.min(lerpFactor, 1.0);
                     if (Math.abs(this.visualSize - targetSize) < 0.05) this.visualSize = targetSize;
                     this.setSize(this.visualSize);
                 } else {
-                    let lerpFactor = 1 - Math.pow(0.8, delta / 16.666);
+                    let lerpFactor = 1 - Math.pow(0.7, delta / 16.666);
                     this.visualSize = Phaser.Math.Linear(this.visualSize, targetSize, Math.min(lerpFactor, 1.0));
                     this.setSize(this.visualSize);
                 }
@@ -437,9 +438,14 @@ class PulseAttackView {
             this.artilleryBrightGlow?.setRotation(this.artillerySprite.rotation);
         }
 
-        const size = model.size;
-        const topY = targetY - size / 2 - 4; // 4px above edge (matching user's recent change)
-        const leftAnchorX = targetX - size / 2 + 4; // Offset from left edge
+        // Calculate ammo size with "leading" logic: move towards targetSize faster than visualSize
+        let ammoSize = this.visualSize;
+        if (isExpanding && !this.isResonanceFiring && !this.refluxTween) {
+            ammoSize += (targetSize - this.visualSize) * 0.5;
+        }
+
+        const topY = targetY + this.shakeY - ammoSize / 2 - 4; // 4px above edge (matching user's recent change)
+        const leftAnchorX = targetX + this.shakeX - ammoSize / 2 + 4; // Offset from left edge
         const spacing = 13;
 
         for (let i = 0; i < this.chargeSprites.length; i++) {
@@ -1193,8 +1199,13 @@ const pulseAttack = (() => {
         view.playFireAnimation(model, isResonanceHit);
         view.playWaveEffect(cx, cy, currentSize, isResonanceHit);
 
-        // Micro camera shake
-        zoomShake(1.005);
+        // camera shake
+        if (isResonanceHit) {
+            cameraManager.shake(80, 0.007);
+            zoomShake(1.006);
+        } else {
+            zoomShake(1.004);
+        }
 
         const damageX = _getDamageCoordX(cx);
 

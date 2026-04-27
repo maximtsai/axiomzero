@@ -121,6 +121,16 @@ const dustParticles = (() => {
             rotate: { min: 0, max: 360 },
             gravityY: 0,
             blendMode: Phaser.BlendModes.NORMAL,
+            emitCallback: (particle) => {
+                const tx = GAME_CONSTANTS.halfWidth;
+                const ty = GAME_CONSTANTS.halfHeight;
+                const dx = particle.x - tx;
+                const dy = particle.y - ty;
+                if (dx * dx + dy * dy < 300 * 300 && (particle.data.targetScale || 0) >= 1) {
+                    particle.x = Phaser.Math.Between(0, W);
+                    particle.y = Phaser.Math.Between(0, H);
+                }
+            }
         }).setDepth(DUST_DEPTH).setScrollFactor(0.6);
 
         // ── Emitter B: Large blurry blob squares ─────────────────────────────
@@ -137,6 +147,16 @@ const dustParticles = (() => {
             maxParticles: 0,
             gravityY: 0,
             blendMode: Phaser.BlendModes.NORMAL,
+            emitCallback: (particle) => {
+                const tx = GAME_CONSTANTS.halfWidth;
+                const ty = GAME_CONSTANTS.halfHeight;
+                const dx = particle.x - tx;
+                const dy = particle.y - ty;
+                if (dx * dx + dy * dy < 250 * 250) {
+                    particle.x = Phaser.Math.Between(0, W);
+                    particle.y = Phaser.Math.Between(0, H);
+                }
+            }
         }).setDepth(DUST_DEPTH - 1).setScrollFactor(0.4);
     }
 

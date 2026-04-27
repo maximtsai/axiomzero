@@ -1,4 +1,4 @@
-// Hijack.js — Hijacking logic for seeking missiles
+// Hijack.js — Hijacking logic for homing missiles
 /**
  * Hijack Projectile
  * 
@@ -12,12 +12,11 @@
 
 const hijackManager = (() => {
     const POOL_SIZE = 100;
-    const HIJACK_SPEED = GAME_CONSTANTS.PROJECTILE_SPEED * 0.3;
+    const HIJACK_SPEED = GAME_CONSTANTS.PROJECTILE_SPEED * 0.35;
     const AOE_RADIUS = 90;
     const RECHECK_INTERVAL = 333; // 1/3 second
     const DETECTION_OFFSET = 150;
     const DETECTION_RADIUS = 150;
-    const WAVY_FORCES = [-0.06, -0.01, 0.01, 0.06];
     const RAPID_RECHECK_RADIUS_SQ = 120 * 120;
 
     let pool = [];
@@ -48,7 +47,7 @@ const hijackManager = (() => {
                 const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
                 const basicEnemyHealth = GAME_CONSTANTS.ENEMY_BASE_HEALTH * currentScale;
                 const dmg = basicEnemyHealth;
-                const lifetime = 3000 + Math.random() * 500;
+                const lifetime = 2500 + Math.random() * 750;
 
                 // For resonance, we spawn missiles based on the enemy's hijacksSpawned property (with overflow accumulation)
                 const baseSpawn = data.hijacksSpawned || 0;
@@ -126,7 +125,7 @@ const hijackManager = (() => {
         }
     }
 
-    return { init, spawn, handleRecursion, clearAll, HIJACK_SPEED, AOE_RADIUS, DETECTION_OFFSET, DETECTION_RADIUS, WAVY_FORCES, RECHECK_INTERVAL, RAPID_RECHECK_RADIUS_SQ };
+    return { init, spawn, handleRecursion, clearAll, HIJACK_SPEED, AOE_RADIUS, DETECTION_OFFSET, DETECTION_RADIUS, RECHECK_INTERVAL, RAPID_RECHECK_RADIUS_SQ };
 })();
 
 class Hijack {
@@ -148,14 +147,6 @@ class Hijack {
         this.img.setVisible(false);
         this.img.setActive(false);
 
-        // Glow effect
-        this.glow = PhaserScene.add.image(0, 0, 'enemies', 'projectile_hijack.png');
-        this.glow.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 1);
-        this.glow.setBlendMode(Phaser.BlendModes.ADD);
-        this.glow.setAlpha(0.6);
-        this.glow.setVisible(false);
-        this.glow.setActive(false);
-
         this._queryResults = [];
     }
 
@@ -176,14 +167,10 @@ class Hijack {
         this.img.setPosition(x, y);
         this.img.setRotation(rotation);
         this.img.setVisible(true);
-        this.img.setActive(true).setAlpha(0.75);
-        this.img.setScale(0.8);
+        this.img.setActive(true);
+        this.img.setScale(0.85);
 
-        this.glow.setPosition(x, y);
-        this.glow.setRotation(rotation);
-        // this.glow.setVisible(true);
-        this.glow.setActive(true);
-        this.glow.setScale(1.1);
+        this.img.setScale(0.8);
 
         this._recheck(0);
     }
@@ -192,8 +179,7 @@ class Hijack {
         this.active = false;
         this.img.setVisible(false);
         this.img.setActive(false);
-        this.glow.setVisible(false);
-        this.glow.setActive(false);
+        this.img.setActive(false);
         this.target = null;
     }
 
@@ -220,8 +206,7 @@ class Hijack {
 
         this.img.setPosition(this.x, this.y);
         this.img.setRotation(this.visualRotation);
-        this.glow.setPosition(this.x, this.y);
-        this.glow.setRotation(this.visualRotation);
+        this.img.setRotation(this.visualRotation);
 
         // Recheck logic
         const threshold = this.isRapidChecking ? hijackManager.RECHECK_INTERVAL / 2 : hijackManager.RECHECK_INTERVAL;
@@ -277,7 +262,7 @@ class Hijack {
             if (bestEnemy) {
                 if (this.target && this.target.model) this.target.model.isTargeted = false;
                 this.target = bestEnemy;
-                this.target.model.targetAttractiveness -= 40;
+                this.target.model.targetAttractiveness -= 30;
                 this.target.model.isTargeted = true;
             }
         }
@@ -290,15 +275,11 @@ class Hijack {
             const diff = Phaser.Math.Angle.ShortestBetween(this.rotation, angleToTarget);
 
             // Homing test: consistently rotate toward target using max wavy force
-            this.wavyRotationForce = diff > 0 ? 0.06 : -0.06;
+            this.wavyRotationForce = diff > 0 ? 0.07 : -0.07;
         } else {
             // No target, just slight drift
             this.wavySign *= -1;
-            this.wavyRotationForce = this.wavySign * 0.01;
-        }
-
-        if (this.glow) {
-            this.glow.setVisible(!!this.target);
+            this.wavyRotationForce = this.wavySign * 0.025;
         }
 
         // 3. Rapid Check State
@@ -338,7 +319,7 @@ class Hijack {
 
                 // Recursion check: if it died from this damage
                 if (wasAlive && !e.model.alive) {
-                    const newLifetime = 2000 + Math.random() * 500;
+                    const newLifetime = 1750 + Math.random() * 750;
                     hijackManager.handleRecursion(e, e.model.x, e.model.y, this.damage, newLifetime);
                 }
             }
