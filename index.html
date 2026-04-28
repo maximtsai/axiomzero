@@ -251,7 +251,7 @@
     // Service Worker — dynamic asset caching for faster repeat loads.
     // Controlled by FLAGS.USE_SERVICE_WORKER in flags.js.
     if (FLAGS.USE_SERVICE_WORKER && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      navigator.serviceWorker.register('sw.js')
         .then(reg => {
           reg.addEventListener('updatefound', function () {
             // optional: notify user that an update is available

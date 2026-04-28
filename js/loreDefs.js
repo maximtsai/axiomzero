@@ -18,7 +18,7 @@ const LORE_DEFS = [
         parents: ['bug_report'],
         childIds: [],
         treeX: gridX(-3),
-        treeY: gridY(-0.5),
+        treeY: gridY(0),
         requiresMaxParent: true,
         tooltipExtraWidth: 200,
         effect: function () {
@@ -109,10 +109,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['threat_response'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-3.0),
-        treeY: gridY(1.5),
+        treeX: gridX(0),
+        treeY: gridY(-2.5),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_5');
@@ -135,7 +135,7 @@ const LORE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(3.0),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2),
         tooltipExtraWidth: 200,
         effect: function () {
             const node = upgradeTree.getNode('lore_6');

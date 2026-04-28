@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist', 'combat_shield'],
+        childIds: ['backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
         treeX: gridX(0),
         treeY: gridY(-1.5),
         effect: function () {
@@ -88,12 +88,33 @@ const NODE_DEFS = [
         baseCost: 0,
         costType: 'data',
         costScaling: 'static',
-        parents: ['cheat'],
-        childIds: [],
-        treeX: gridX(0),
-        treeY: gridY(-2.5),
-        effect: function () { 
+        parents: ['bomb_2'],
+        childIds: ['combat_shield_hp'],
+        treeX: gridX(-5.5),
+        treeY: gridY(2.0),
+        effect: function () {
             combatShield.unlock();
+            upgradeDispatcher.recalcCombatShield();
+        },
+    },
+    {
+        id: 'combat_shield_hp',
+        name: t('nodes', 'combat_shield_hp.name'),
+        icon: 'Skillicon14_18.png',
+        description: t('nodes', 'combat_shield_hp.desc'),
+        popupText: t('nodes', 'combat_shield_hp.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 5,
+        baseCost: 50,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 50,
+        parents: ['combat_shield'],
+        childIds: [],
+        treeX: gridX(-6.5),
+        treeY: gridY(2.0),
+        effect: function () {
+            upgradeDispatcher.recalcCombatShield();
         },
     },
     {
@@ -245,7 +266,7 @@ const NODE_DEFS = [
         childIds: ['root_access'],
 
         treeX: gridX(-2.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.0),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -403,8 +424,8 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['threat_response', 'bypass'],
-        childIds: ['peak_traffic'],
-        treeX: gridX(-4.5),
+        childIds: ['peak_traffic', 'combat_shield'],
+        treeX: gridX(-4),
         treeY: gridY(2.0),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
@@ -1027,8 +1048,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['test_defenses'],
         childIds: ['bomb_2'],
-        treeX: gridX(-3.5),
-        treeY: gridY(0.5),
+        treeX: gridX(-3),
+        treeY: gridY(1.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(150);
@@ -1393,7 +1414,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(-1.5),
-        treeY: gridY(-1.5),
+        treeY: gridY(-3.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(15);

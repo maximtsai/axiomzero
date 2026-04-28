@@ -155,6 +155,7 @@ window.TRANSLATIONS.en = {
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP.', popup: 'ZERO-DAY ACTIVE' },
         combat_shield: { name: 'COMBAT SHIELD', desc: 'Create a controllable shield with [color=#8FD9F8]15[/color] health.', popup: 'SHIELD DEPLOYED' },
+        combat_shield_hp: { name: 'REINFORCED PLATING', desc: 'Grants [color=#8FD9F8]+10[/color] health to the combat shield.', popup: '+10 SHIELD HEALTH' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network.', popup: 'GATEWAY FOUND' },
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },

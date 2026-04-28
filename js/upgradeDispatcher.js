@@ -128,6 +128,13 @@ const upgradeDispatcher = (() => {
         }
     }
 
+    /** Recalculates combat shield stats. */
+    function recalcCombatShield() {
+        if (typeof combatShield !== 'undefined') {
+            combatShield.maxHealth = 15 + getLevel('combat_shield_hp') * 10;
+        }
+    }
+
     /** Recalculates total bomb uses. */
     function recalcBombUses() {
         if (typeof pulseAttack !== 'undefined' && pulseAttack.setMaxBombUses) {
@@ -164,6 +171,9 @@ const upgradeDispatcher = (() => {
             recalcArtillery();
         }
         recalcThreatResponse();
+        if (typeof combatShield !== 'undefined') {
+            recalcCombatShield();
+        }
 
         // Notify any global listeners that a bulk update occurred
         messageBus.publish('statsRecalculated');
@@ -187,6 +197,7 @@ const upgradeDispatcher = (() => {
         recalcResonance,
         recalcLaser,
         recalcArtillery,
-        recalcBombUses
+        recalcBombUses,
+        recalcCombatShield
     };
 })();
