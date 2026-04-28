@@ -733,11 +733,11 @@ const tower = (() => {
         }
     }
 
-    function takeDamage(amount, x, y) {
+    function takeDamage(amount, x = 0, y = 0) {
         if (!model.alive || model.isInvincible) return true; // Successfully 'survived' because we are invincible/dead
 
         const damageTaken = Math.max(0, amount - model.armor);
-        const survived = model.takeDamage(amount);
+        const survived = model.takeDamage(amount, (x !== 0 ? x : null), (y !== 0 ? y : null));
 
         if (damageTaken > 0.5) {
             let volume = 0.9;

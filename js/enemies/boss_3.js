@@ -450,7 +450,7 @@ class Boss3 extends Boss {
                     _sharedAttackSprite.setFrame('boss3_attack.png');
                     _sharedAttackSprite.setVisible(false);
                     if (typeof tower !== 'undefined' && tower.isAlive()) {
-                        tower.takeDamage(_sharedAttackDamage);
+                        tower.takeDamage(_sharedAttackDamage, this.model.x, this.model.y);
                         _sharedAttackDamage += 1;
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.015);

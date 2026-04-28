@@ -200,7 +200,7 @@ const gameHUD = (() => {
         bombBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
         bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 42, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
-        bombIcon.setScale(0.675).setDepth(DEPTHS.ICONS).setScrollFactor(0).setAlpha(0.9);
+        bombIcon.setScale(0.675).setDepth(DEPTHS.ICONS).setScrollFactor(0).setAlpha(0.83);
 
         testDefensesBtn = new Button({
             normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH * 0.75, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
@@ -299,7 +299,7 @@ const gameHUD = (() => {
 
         if (bombIcon) {
             const isInteracted = bombBtn.state === HOVER || bombBtn.state === PRESS;
-            bombIcon.setAlpha(isInteracted ? 1 : (isDisabled ? 0.5 : 0.75));
+            bombIcon.setAlpha(isInteracted ? 1 : (isDisabled ? 0.5 : 0.83));
         }
     }
 

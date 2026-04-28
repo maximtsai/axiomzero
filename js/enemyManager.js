@@ -887,7 +887,7 @@ const enemyManager = (() => {
 
             const prevLen = activeEnemies.length;
 
-            if (!e.model.isMiniboss) {
+            if (true) {
                 const dx = e.model.x - tPos.x;
                 const dy = e.model.y - tPos.y;
                 const distSq = dx * dx + dy * dy;
@@ -895,7 +895,7 @@ const enemyManager = (() => {
                 const attackDistR2 = e.model.contactR2 || 2025;
 
                 if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
-                    const shieldReach = 15 + 35;
+                    const shieldReach = 56;
                     const shieldReachSq = shieldReach * shieldReach;
 
                     if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {

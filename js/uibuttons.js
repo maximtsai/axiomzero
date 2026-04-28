@@ -27,13 +27,13 @@ function createOptionsButton(x, y) {
             if (icon) icon.setAlpha(1.0);
         },
         onHoverOut: () => {
-            if (icon) icon.setAlpha(0.75);
+            if (icon) icon.setAlpha(0.83);
         }
     });
 
     icon = PhaserScene.add.image(x, y, 'buttons', 'gear_icon.png');
     icon.setDepth(7001).setScrollFactor(0);
-    icon.setAlpha(0.75);
+    icon.setAlpha(0.83);
 
     button.setDepth(7000);
     button.setScale(helper.isMobileDevice() ? 0.8 : 0.68);

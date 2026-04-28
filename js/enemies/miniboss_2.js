@@ -228,6 +228,10 @@ class Miniboss2 extends Miniboss {
 
                     // Force the manual attack
                     tower.takeDamage(MB2.DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY), m.x, m.y);
+                    
+                    if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive && combatShield.isAttackBlocked(m.x, m.y)) {
+                        messageBus.publish('freezeShield');
+                    }
                     if (typeof cameraManager !== 'undefined') {
                         cameraManager.shake(300, 0.02);
                     }

@@ -370,7 +370,7 @@ class BossCircle extends Boss {
                     onComplete: () => {
                         // Deal 25 damage
                         if (typeof tower !== 'undefined') {
-                            tower.takeDamage(25);
+                            tower.takeDamage(25, this.model.x, this.model.y);
                             cameraManager.shake(400, 0.02);
                             // if (typeof audio !== 'undefined') audio.play('explosion_large', 0.8);
                         }

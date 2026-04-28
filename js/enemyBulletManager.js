@@ -140,7 +140,7 @@ const enemyBulletManager = (() => {
             }
 
             if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
-                const shieldReach = 15 + 35;
+                const shieldReach = 46;
                 const shieldReachSq = shieldReach * shieldReach;
                 if (distSq < shieldReachSq && combatShield.isAttackBlocked(b.x, b.y)) {
                     combatShield.takeDamage(b.damage);
