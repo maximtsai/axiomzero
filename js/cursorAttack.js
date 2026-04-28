@@ -827,31 +827,30 @@ class PulseAttackView {
         const randStartRot = Math.random() < 0.5 ? -0.08 : 0.08;
         const tw1 = PhaserScene.tweens.add({
             targets: [this.artillerySprite],
-            width: initSize + 420,
-            height: initSize + 420,
+            width: initSize + 385,
+            height: initSize + 385,
             rotation: randStartRot,
-            duration: 100,
+            duration: 120,
             ease: 'Quart.easeOut',
-            easeParams: [4],
             onComplete: () => {
                 const tw2 = PhaserScene.tweens.add({
                     targets: [this.artillerySprite],
                     width: initSize + 320,
                     height: initSize + 320,
                     rotation: 0,
-                    duration: 140,
+                    duration: 120,
                     ease: 'Back.easeOut',
-                    easeParams: [2.5],
+                    easeParams: [1.8],
                     onComplete: () => {
                         if (onPhase1Complete) onPhase1Complete();
-                        const overshootSize = finalBombSize + 90;
+                        const overshootSize = finalBombSize + 80;
 
                         const tw3 = PhaserScene.tweens.add({
                             targets: [this.artillerySprite],
                             width: overshootSize,
                             height: overshootSize,
                             rotation: -randStartRot,
-                            duration: 90,
+                            duration: 130,
                             ease: 'Quart.easeOut',
                             onComplete: () => {
                                 // Phase 2: +150 units, 0.2s, Back.easeOut
@@ -862,9 +861,9 @@ class PulseAttackView {
                                     width: finalBombSize,
                                     height: finalBombSize,
                                     rotation: 0,
-                                    duration: 200,
+                                    duration: 160,
                                     ease: 'Back.easeOut',
-                                    easeParams: [3.5]
+                                    easeParams: [2]
                                 });
                                 this.armTweens.push(tw4);
                                 // Bug 3 fix: store so cancelBomb can cancel it
@@ -1459,6 +1458,11 @@ const pulseAttack = (() => {
             () => {
                 // This callback runs after the 0.2s anticipation
                 model.bombArmed = false;
+
+                if (typeof audio !== 'undefined') {
+                    const boom = audio.play('exploder_boom', 0.85);
+                    if (boom) boom.detune = Phaser.Math.Between(-400, -150);
+                }
 
                 // Slow down hit enemies too
                 const damageSize = finalSize / 2;

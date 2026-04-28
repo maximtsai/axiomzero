@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
+        childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
         treeX: gridX(0),
         treeY: gridY(-1.5),
         effect: function () {
@@ -88,10 +88,10 @@ const NODE_DEFS = [
         baseCost: 0,
         costType: 'data',
         costScaling: 'static',
-        parents: ['bomb_2'],
-        childIds: ['combat_shield_hp', 'placeholder_duo_4', 'sword', 'scythe'],
+        parents: ['placeholder_duo_4', 'data_compression'],
+        childIds: ['combat_shield_hp'],
         treeX: gridX(-5.5),
-        treeY: gridY(2.0),
+        treeY: gridY(4.5),
         effect: function () {
             combatShield.unlock();
             upgradeDispatcher.recalcCombatShield();
@@ -100,11 +100,11 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_4',
         isPlaceholder: true,
-        parents: ['combat_shield'],
+        parents: ['backup_server'],
         monitorsDuoTier: 4,
-        childIds: [],
+        childIds: ['combat_shield'],
         treeX: gridX(-5.5),
-        treeY: gridY(3.5),
+        treeY: gridY(3.0),
         effect: function () { },
     },
     {
@@ -118,7 +118,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['combat_shield'],
+        parents: ['backup_server'],
         childIds: ['sword_lunge', 'sword_flurry'],
         isDuoBox: true,
         isLeftDuo: true,
@@ -126,7 +126,7 @@ const NODE_DEFS = [
         shardId: 'sword',
         duoSiblingId: 'scythe',
         treeX: gridX(-5.5) - DUO_OFFSET,
-        treeY: gridY(3.5),
+        treeY: gridY(3.0),
         effect: function () {
             // Stub
         },
@@ -146,7 +146,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-7.0),
-        treeY: gridY(3.0),
+        treeY: gridY(2.5),
         effect: function () {
             // Stub
         },
@@ -166,7 +166,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-7.0),
-        treeY: gridY(4.0),
+        treeY: gridY(3.5),
         effect: function () {
             // Stub
         },
@@ -182,14 +182,14 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['combat_shield'],
+        parents: ['backup_server'],
         childIds: [],
         isDuoBox: true,
         duoBoxTier: 4,
         shardId: 'scythe',
         duoSiblingId: 'sword',
         treeX: gridX(-5.5) + DUO_OFFSET,
-        treeY: gridY(3.5),
+        treeY: gridY(3.0),
         effect: function () {
             // Stub
         },
@@ -209,7 +209,7 @@ const NODE_DEFS = [
         parents: ['combat_shield'],
         childIds: [],
         treeX: gridX(-6.5),
-        treeY: gridY(2.0),
+        treeY: gridY(4.5),
         effect: function () {
             upgradeDispatcher.recalcCombatShield();
         },
@@ -225,10 +225,10 @@ const NODE_DEFS = [
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
-        parents: ['cheat'],
-        childIds: ['restore_point'],
-        treeX: gridX(-1),
-        treeY: gridY(-2.0),
+        parents: ['bomb_2'],
+        childIds: ['restore_point', 'placeholder_duo_4', 'sword', 'scythe'],
+        treeX: gridX(-5.5),
+        treeY: gridY(1.5),
         effect: function () { },
     },
     {
@@ -244,8 +244,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['backup_server'],
         childIds: [],
-        treeX: gridX(-1.5),
-        treeY: gridY(-2.5),
+        treeX: gridX(-6.5),
+        treeY: gridY(1.5),
         effect: function () { },
     },
     {
@@ -521,7 +521,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['threat_response', 'bypass'],
-        childIds: ['peak_traffic', 'combat_shield'],
+        childIds: ['peak_traffic', 'backup_server'],
         treeX: gridX(-4),
         treeY: gridY(2.0),
         effect: function () {
@@ -1167,7 +1167,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['diagnostic_analytics'],
-        childIds: [],
+        childIds: ['combat_shield'],
         treeX: gridX(-4.5),
         treeY: gridY(5.0),
         effect: function () { },

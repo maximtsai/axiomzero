@@ -489,7 +489,11 @@ const gameHUD = (() => {
 
         // Hide if tree is in full view expansion
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
-        const show = isUnlocked && !isFullView;
+        
+        // Hide if in combat phase
+        const isCombat = (typeof gameStateMachine !== 'undefined' && gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT);
+        
+        const show = isUnlocked && !isFullView && !isCombat;
 
         testDefensesBtn.setVisible(show).setState(show ? NORMAL : DISABLE);
     }
@@ -540,6 +544,9 @@ const gameHUD = (() => {
         if (!testDefensesBtn) return;
         // This is now mostly handled by _refreshHUDVisibility, but we keep it 
         // for explicit overrides if needed.
+        const isCombat = (typeof gameStateMachine !== 'undefined' && gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT);
+        if (isCombat) vis = false;
+
         testDefensesBtn.setVisible(vis);
         if (!vis) testDefensesBtn.setState(DISABLE);
         else refreshTestDefensesButton();

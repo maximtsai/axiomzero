@@ -750,13 +750,12 @@ const customEmitters = (() => {
                     red.setVisible(false);
                     if (typeof audio !== 'undefined') {
                         const now = PhaserScene.time.now;
-                        let sKey = 'exploder_boom';
+                        let sKey = 'exploder_boom_second';
                         let detuneMin = -400;
                         let detuneMax = -150;
 
                         if (now - _lastExploderBoomTime < BOOM_CHAIN_WINDOW) {
-                            sKey = 'exploder_boom_second';
-                            detuneMin = -100;
+                            detuneMin = -50;
                             detuneMax = 250;
                         }
                         _lastExploderBoomTime = now;
