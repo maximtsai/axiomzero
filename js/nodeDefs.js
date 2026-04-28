@@ -738,16 +738,14 @@ const NODE_DEFS = [
         description: t('nodes', 'prismatic_array.desc'),
         popupText: t('nodes', 'prismatic_array.popup'),
         popupColor: COLORS.UTILITY,
-        maxLevel: 5,
-        baseCost: 50,
-        costType: 'data',
-        costScaling: 'linear',
-        costStep: 50,
-        costStepScaling: 12,
-        parents: ['cheat'],
+        maxLevel: 1,
+        baseCost: 4,
+        costType: 'coin',
+        costScaling: 'static',
+        parents: ['farsight'],
         childIds: [],
-        treeX: gridX(-0.5),
-        treeY: gridY(-2.5),
+        treeX: gridX(5.5),
+        treeY: gridY(8.0),
         effect: function () {
             // Recalculated via normal gameplay checks
         },
@@ -1181,7 +1179,7 @@ const NODE_DEFS = [
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
-        parents: ['malware_siphon', 'shell_access'],
+        parents: ['malware_siphon'],
         childIds: ['clock_speed'],
         treeX: gridX(0.5),
         treeY: gridY(8.0),
@@ -1359,25 +1357,7 @@ const NODE_DEFS = [
         treeY: gridY(6.0),
         effect: function () { upgradeDispatcher.recalcArtillery(); },
     },
-    {
-        id: 'shell_access',
-        name: t('nodes', 'shell_access.name'),
-        icon: 'Skillicon14_34.png',
-        description: t('nodes', 'shell_access.desc'),
-        maxLevel: 1,
-        baseCost: 250,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['security_test_2'],
-        childIds: ['root_access'],
-        treeX: gridX(0.5),
-        treeY: gridY(7.5),
-        popupText: t('nodes', 'shell_access.popup'),
-        popupColor: COLORS.COMBAT,
-        effect: function () {
-            // Recalculated by tower.js listener
-        },
-    },
+
 
     {
         id: 'unsecured_files',
@@ -1440,7 +1420,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: [],
-        childIds: ['base_hp_boost', 'shell_access', 'gateway_discovery'],
+        childIds: ['base_hp_boost', 'gateway_discovery'],
         treeX: gridX(0),
         treeY: gridY(7),
         tooltipExtraWidth: 25,
@@ -1462,7 +1442,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['placeholder_duo_2'],
-        childIds: ['malware_siphon', 'core_synergy'],
+        childIds: ['malware_siphon', 'peak_performance'],
         treeX: gridX(2.5),
         treeY: gridY(7.5),
         effect: function () {
@@ -1552,8 +1532,8 @@ const NODE_DEFS = [
         parents: ['manual_pulse_child_1'],
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(5.0),
-        treeY: gridY(6.5),
+        treeX: gridX(4.0),
+        treeY: gridY(7),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1572,8 +1552,8 @@ const NODE_DEFS = [
         requiresMaxParent: true,
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(5.0),
-        treeY: gridY(5.5),
+        treeX: gridX(4.0),
+        treeY: gridY(5),
         effect: function () {
             upgradeDispatcher.recalcPulseReload();
         },
@@ -1718,21 +1698,45 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'core_synergy',
-        name: t('nodes', 'core_synergy.name'),
-        icon: 'Skillicon14_26.png',
-        description: t('nodes', 'core_synergy.desc'),
-        popupText: t('nodes', 'core_synergy.popup'),
+        id: 'peak_performance',
+        name: t('nodes', 'peak_performance.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'peak_performance.desc'),
+        popupText: t('nodes', 'peak_performance.popup'),
         popupColor: COLORS.COMBAT,
-        maxLevel: 3,
+        maxLevel: 1,
         baseCost: 200,
         costType: 'data',
-        costScaling: 'linear',
-        costStep: 100,
+        costScaling: 'static',
         parents: ['instability_mark'],
-        childIds: [],
+        childIds: ['farsight'],
         treeX: gridX(3.5),
         treeY: gridY(8.0),
-        effect: function () { },
+        effect: function () {
+            if (typeof tower !== 'undefined') {
+                tower.recalcStats();
+            }
+        },
     },
+    {
+        id: 'farsight',
+        name: t('nodes', 'farsight.name'),
+        icon: 'Skillicon14_30.png',
+        description: t('nodes', 'farsight.desc'),
+        popupText: t('nodes', 'farsight.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 150,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['peak_performance'],
+        childIds: ['prismatic_array'],
+        treeX: gridX(4.5),
+        treeY: gridY(8.0),
+        effect: function () {
+            if (typeof tower !== 'undefined') {
+                tower.recalcStats();
+            }
+        },
+    }
 ];

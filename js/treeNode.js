@@ -381,6 +381,7 @@ class Node {
         else if (oldState === NODE_STATE.HIDDEN && newState === NODE_STATE.GHOST) {
             this._playGhostFadeIn();
         }
+
         // 3. Maxed Out Pop (Unlocked -> Maxed)
         if (oldState === NODE_STATE.UNLOCKED && newState === NODE_STATE.MAXED) {
             this._playMaxedAnimation();
@@ -931,7 +932,11 @@ class Node {
             return;
         }
 
+        const wasVisible = this.duoBackingSprite.visible;
         this.duoBackingSprite.setVisible(true);
+        if (!wasVisible) {
+            this._playDuoPulse(1.0, 1350, 2.0);
+        }
 
         const sibling = upgradeTree.getNode(this.duoSiblingId);
         const shardCount = (typeof resourceManager !== 'undefined') ? resourceManager.getShards() : 0;
@@ -1100,8 +1105,8 @@ class Node {
         if (this.glowSprite) { this.glowSprite.destroy(); this.glowSprite = null; }
     }
 
-    _playDuoPulse(scaleMult = 1.0) {
-        nodeAnims.playDuoPulse(this, scaleMult);
+    _playDuoPulse(scaleMult = 1.0, durationOverride = 1100, scaleOverride = 1.6) {
+        nodeAnims.playDuoPulse(this, scaleMult, durationOverride, scaleOverride);
     }
 
     /**

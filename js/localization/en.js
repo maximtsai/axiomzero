@@ -65,7 +65,7 @@ window.TRANSLATIONS.en = {
 
         clock_speed: { name: 'CLOCK SPEED', desc: '[color=#8FD9F8]-5%[/color] basic attack cooldown per lvl', popup: '-5% COOLDOWN' },
         emergency_overclock: { name: 'EMERGENCY OVERCLOCK', desc: 'Basic attack speed is [color=#8FD9F8]DOUBLED[/color] when below [color=#ff5555]50%[/color] health.', popup: 'EMERGENCY OVERCLOCK' },
-        prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]+20%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
+        prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]50%[/color] chance to fire an extra basic attack', popup: 'PRISMATIC ARRAY' },
         reveal_map: { name: 'REVEAL MAP', desc: 'Showing you how deep the rabbit hole goes.', popup: ' ' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "COMBAT TEST" button for practice.', popup: 'SANDBOX UNLOCKED' },
         bypass: { name: 'BYPASS', desc: 'A shortcut through the system. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'BYPASS ENABLED' },
@@ -152,7 +152,7 @@ window.TRANSLATIONS.en = {
         artillery_volley: { name: 'TRIPLE VOLLEY', desc: 'Fire [color=#8FD9F8]+2[/color] additional artillery strikes.', popup: 'TRIPLE VOLLEY' },
         artillery_shells: { name: 'HIGH EXPLOSIVE', desc: '[color=#8FD9F8]+25%[/color] artillery blast radius.', popup: '+25% RADIUS' },
         artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP.', popup: 'FIRST STRIKE' },
-        shell_access: { name: 'SHELL ACCESS', desc: '[color=#8FD9F8]+4[/color] tower basic damage.', popup: '+4 TOWER DMG' },
+
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP.', popup: 'ZERO-DAY ACTIVE' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network.', popup: 'GATEWAY FOUND' },
@@ -166,7 +166,8 @@ window.TRANSLATIONS.en = {
         hijack: { name: 'HIJACK', desc: 'Resonance kills convert enemies into homing missiles.', popup: 'SYSTEM HIJACKED' },
         recursion: { name: 'RECURSION', desc: 'Hijack missiles can spawn more missiles on kill.', popup: 'RECURSIVE LOOP' },
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color].', popup: 'ROOT ACCESS GRANTED' },
-        core_synergy: { name: 'CORE SYNERGY', desc: '[color=#8FD9F8]+2[/color] core damage.', popup: '+2 DAMAGE' },
+        peak_performance: { name: 'PEAK PERFORMANCE', desc: '[color=#8FD9F8]+10[/color] core damage while above [color=#8FD9F8]90%[/color] health.', popup: '+10 CORE DAMAGE' },
+        farsight: { name: 'FARSIGHT', desc: '[color=#8FD9F8]+20%[/color] core range.', popup: '+20% ATTACK RANGE' },
         label: {
             lore: 'LORE',
             gate: 'GATE',

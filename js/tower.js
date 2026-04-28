@@ -39,25 +39,25 @@ class TowerModel {
         const armorLv = ups.armor || 0;
         const baseHpLv = ups.base_hp_boost || 0;
         const clockSpeedLv = ups.clock_speed || 0;
-        const synergyLv = ups.core_synergy || 0;
         const anchorHp = (ups.physical_anchor || 0) * 40;
+        const farsightLv = ups.farsight || 0;
         this.emergencyOverclockLv = ups.emergency_overclock || 0;
 
         const systemRedundancyLv = ups.system_redundancy_new || 0;
         const permanentHp = gameState.permanentHpBonus || 0;
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 20 * systemRedundancyLv + anchorHp + permanentHp;
-        const shellDamage = (ups.shell_access || 0) * 4 + baseHpLv * 4;
+        const shellDamage = baseHpLv * 4;
 
         const autoDefLv = ups.automated_defense || 0;
         if (autoDefLv > 0) {
-            this.damage = 5 + 2 * intensityLv + 2 * synergyLv + shellDamage;
+            this.damage = 5 + 2 * intensityLv + shellDamage;
         } else {
             this.damage = 0;
         }
 
         if (autoDefLv > 0) {
             // node grants base 230 range
-            this.attackRange = 230 * (1 + 0.2 * coverageLv + 0.2 * focus2Lv + 0.2 * focus3Lv);
+            this.attackRange = 230 * (1 + 0.2 * coverageLv + 0.2 * focus2Lv + 0.2 * focus3Lv + 0.2 * farsightLv);
         } else {
             this.attackRange = 0;
         }
@@ -840,7 +840,14 @@ const tower = (() => {
     }
 
     function isAlive() { return model.alive; }
-    function getDamage() { return model.damage; }
+    function getDamage() { 
+        let dmg = model.damage;
+        const ups = gameState.upgrades || {};
+        if (ups.peak_performance && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
+            dmg += 10;
+        }
+        return dmg; 
+    }
     function getArmor() { return model.armor; }
     function getRegen() { return model.healthRegen; }
     function getRange() { return model.attackRange; }
@@ -929,14 +936,14 @@ const tower = (() => {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
-        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, model.damage);
+        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, getDamage());
         view.playRecoil(target.model.x, target.model.y);
 
         // PRISMATIC ARRAY effect
         const ups = gameState.upgrades || {};
         const prismaticLv = ups.prismatic_array || 0;
         if (prismaticLv > 0) {
-            const chance = 0.20 * prismaticLv;
+            const chance = 0.50 * prismaticLv;
             if (Math.random() < chance) {
                 PhaserScene.time.delayedCall(100, () => {
                     const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
@@ -944,7 +951,7 @@ const tower = (() => {
                     const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
                     if (newTarget) {
                         const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);
-                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, model.damage);
+                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, getDamage());
                     }
                 });
             }

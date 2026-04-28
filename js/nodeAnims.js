@@ -143,7 +143,7 @@ const nodeAnims = {
      * @param {Node} node 
      * @param {number} scaleMult - Size multiplier for the pulse.
      */
-    playDuoPulse: (node, scaleMult = 1.0) => {
+    playDuoPulse: (node, scaleMult = 1.0, durationOverride = 1100, scaleOverride = 1.6) => {
         if (!node.btn) return;
 
         let x = node.btn.x;
@@ -179,14 +179,14 @@ const nodeAnims = {
         PhaserScene.tweens.add({
             targets: pulse,
             alpha: 0,
-            duration: 1100,
+            duration: durationOverride,
         });
 
         PhaserScene.tweens.add({
             targets: pulse,
-            scaleX: 1.6 * scaleMult * treeScale,
-            scaleY: 1.6 * scaleMult * treeScale,
-            duration: 1100,
+            scaleX: scaleOverride * scaleMult * treeScale,
+            scaleY: scaleOverride * scaleMult * treeScale,
+            duration: durationOverride,
             ease: 'Quart.easeOut',
             onComplete: () => {
                 if (treeGroup) treeGroup.removeChild(pulse);
