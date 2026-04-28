@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['prismatic_array', 'backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
+        childIds: ['backup_server', 'lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist', 'combat_shield'],
         treeX: gridX(0),
         treeY: gridY(-1.5),
         effect: function () {
@@ -75,6 +75,25 @@ const NODE_DEFS = [
                 tower.recalcStats();
                 tower.heal(10);
             }
+        },
+    },
+    {
+        id: 'combat_shield',
+        name: t('nodes', 'combat_shield.name'),
+        icon: 'Skillicon14_07.png',
+        description: t('nodes', 'combat_shield.desc'),
+        popupText: t('nodes', 'combat_shield.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(0),
+        treeY: gridY(-2.5),
+        effect: function () { 
+            combatShield.unlock();
         },
     },
     {

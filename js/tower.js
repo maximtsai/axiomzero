@@ -85,8 +85,17 @@ class TowerModel {
         messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
     }
 
-    takeDamage(amount) {
+    takeDamage(amount, sourceX = null, sourceY = null) {
         if (!this.alive || this.isInvincible) return false;
+
+        if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
+            if (sourceX !== null && sourceY !== null) {
+                if (combatShield.isAttackBlocked(sourceX, sourceY)) {
+                    combatShield.takeDamage(amount);
+                    return true;
+                }
+            }
+        }
 
         let reducedAmount = Math.max(0, amount - this.armor);
 

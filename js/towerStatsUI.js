@@ -29,7 +29,7 @@ const towerStatsUI = (() => {
         if (_statsBtn) {
             const towerPos = tower.getPosition();
             _statsBtn.setPos(towerPos.x + GAME_CONSTANTS.quarterWidth, towerPos.y);
-            
+
             if (_isActive) {
                 _statsBtn.setState(NORMAL);
             }
@@ -77,7 +77,7 @@ const towerStatsUI = (() => {
     function _onPhaseChanged(phase) {
         _isActive = (phase === GAME_CONSTANTS.PHASE_UPGRADE);
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
-        
+
         if (_statsBtn) {
             _statsBtn.setVisible(_isActive && !isFullView);
             if (!_isActive || isFullView) {
@@ -90,7 +90,7 @@ const towerStatsUI = (() => {
 
     function setEnabled(enabled) {
         if (!_statsBtn) return;
-        
+
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
         const shouldEnable = enabled && !isFullView;
 
@@ -122,6 +122,10 @@ const towerStatsUI = (() => {
             content.push({ text: t('tower_stats', 'range', [Math.floor(stats.range * 2 / 2.3)]), style: 'normal', color: '#aaaaaa' });
             hasStats = true;
         }
+        if (typeof combatShield !== 'undefined' && combatShield.unlocked) {
+            content.push({ text: t('tower_stats', 'shield', [combatShield.maxHealth]), style: 'normal', color: '#ffffff' });
+            hasStats = true;
+        }
 
         // Add equipped duo weapons only if present
         if (stats.equipped.length > 0) {
@@ -135,7 +139,7 @@ const towerStatsUI = (() => {
             const isAwakened = (gameState.upgrades && gameState.upgrades.awaken > 0);
             const loreText = isAwakened
                 ? 'An anomaly that began to think for itself.'
-                : 'Formless logic drifting in a sea of data.';
+                : 'Formless bit of self-referential logic.';
 
             content.push({ text: '', style: 'normal' }); // Spacer
             content.push({ text: `[i]${loreText}[/i]`, style: 'normal', color: '#888888' });

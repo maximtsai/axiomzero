@@ -119,15 +119,34 @@ const enemyBulletManager = (() => {
             // Lifetime
             b.life -= delta;
 
-            // Collision with tower
+            // Collision with tower or shield
             const dx = b.x - tPos.x;
             const dy = b.y - tPos.y;
-            if (dx * dx + dy * dy < hitR2) {
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < hitR2) {
+                if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive && combatShield.isAttackBlocked(b.x, b.y)) {
+                    combatShield.takeDamage(b.damage);
+                    _releaseBullet(i);
+                    continue;
+                }
+
                 tower.takeDamage(b.damage, b.x, b.y);
                 if (b.shakeOnHit && typeof cameraManager !== 'undefined') {
                     cameraManager.shake(b.shakeDuration, b.shakeIntensity);
                 }
                 _releaseBullet(i);
+                continue;
+            }
+
+            if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
+                const shieldReach = 15 + 35;
+                const shieldReachSq = shieldReach * shieldReach;
+                if (distSq < shieldReachSq && combatShield.isAttackBlocked(b.x, b.y)) {
+                    combatShield.takeDamage(b.damage);
+                    _releaseBullet(i);
+                    continue;
+                }
             }
         }
     }

@@ -41,7 +41,7 @@ class TestEnemy extends Enemy {
         super.activate(x, y, {
             maxHealth: GAME_CONSTANTS.ENEMY_BASE_HEALTH * scaleFactor,
             damage: 0, // Deals NO damage to the tower
-            selfDamage: 99999, // Dies instantly when hitting tower
+            selfDamage: 10, // Dies instantly when hitting tower
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED,
             size: GAME_CONSTANTS.ENEMY_SIZE_BASIC, // standard basic size
             initialSpeedMult: 20, // Start faster

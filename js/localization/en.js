@@ -154,6 +154,7 @@ window.TRANSLATIONS.en = {
         artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP.', popup: 'FIRST STRIKE' },
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP.', popup: 'ZERO-DAY ACTIVE' },
+        combat_shield: { name: 'COMBAT SHIELD', desc: 'Create a controllable shield with [color=#8FD9F8]15[/color] health.', popup: 'SHIELD DEPLOYED' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network.', popup: 'GATEWAY FOUND' },
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },
@@ -296,6 +297,7 @@ window.TRANSLATIONS.en = {
         regen: 'REGEN: {0}/s',
         armor: 'ARMOR: {0}',
         range: 'RANGE: {0}',
+        shield: 'SHIELD: {0}',
         equipped: 'EQUIPPED SYSTEMS',
         none: 'NONE'
     }

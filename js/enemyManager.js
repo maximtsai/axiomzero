@@ -894,6 +894,31 @@ const enemyManager = (() => {
 
                 const attackDistR2 = e.model.contactR2 || 2025;
 
+                if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
+                    const shieldReach = 15 + 35;
+                    const shieldReachSq = shieldReach * shieldReach;
+
+                    if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
+                        combatShield.takeDamage(e.model.damage);
+
+                        if (e.model.selfDamage > 0 && e.model.type !== 'shooter' && e.model.type !== 'sniper') {
+                            damageEnemy(e, e.model.selfDamage);
+                        }
+
+                        if (!e.model.isBoss && !e.model.isMiniboss) {
+                            e.model.pushback = 120;
+                        }
+
+                        e.model.attackTimer = e.model.attackCooldown;
+
+                        if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
+                            continue;
+                        }
+                        i++;
+                        continue;
+                    }
+                }
+
                 if (distSq < attackDistR2) {
                     e.model.isAttacking = true;
 

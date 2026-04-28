@@ -119,6 +119,10 @@ messageBus.subscribeOnce('assetsLoaded', () => {
     shockwaveAttack.init();
     laserAttack.init();
     artilleryAttack.init();
+    combatShield.init();
+    if (gameState.upgrades && gameState.upgrades.combat_shield) {
+        combatShield.unlock();
+    }
     // Restore weapon state from save
     if (gameState.duoBoxPurchased && gameState.duoBoxPurchased[1]) {
         const activeShard = gameState.activeShards && gameState.activeShards[1];
