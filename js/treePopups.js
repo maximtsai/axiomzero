@@ -27,7 +27,7 @@ const treePopups = (() => {
 
         helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
 
-        const bg = PhaserScene.add.nineslice(cx, cy, 'ui', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
+        const bg = helper.createNineSlice(cx, cy, 'ui', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
         bg.setDepth(depth + 1).setScrollFactor(0);
         levelSelectButtons.push(bg);
 

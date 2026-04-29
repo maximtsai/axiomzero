@@ -23,7 +23,7 @@ const coinMine = (() => {
 
 
 
-        popupBg = PhaserScene.add.nineslice(cx, cy, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
+        popupBg = helper.createNineSlice(cx, cy, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
         popupBg.setDepth(depth + 2);
         popupBg.setScrollFactor(0);
 

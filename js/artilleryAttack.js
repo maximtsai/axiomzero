@@ -82,11 +82,11 @@ class ArtilleryAttackView {
     _createStrikeObject(size) {
         const obj = {
             inUse: false,
-            base: PhaserScene.add.nineslice(0, 0, 'player', 'artillery.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
+            base: helper.createNineSlice(0, 0, 'player', 'artillery.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
             center: PhaserScene.add.image(0, 0, 'player', 'artillery_center.png'),
-            bright: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_bright.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
-            black: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_black.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
-            red: PhaserScene.add.nineslice(0, 0, 'player', 'artillery_red.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
+            bright: helper.createNineSlice(0, 0, 'player', 'artillery_bright.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
+            black: helper.createNineSlice(0, 0, 'player', 'artillery_black.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
+            red: helper.createNineSlice(0, 0, 'player', 'artillery_red.png', size, size, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE, this.CORNER_SIZE),
             rotVel: 0
         };
 

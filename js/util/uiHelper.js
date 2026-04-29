@@ -76,12 +76,38 @@ Object.assign(helper, {
         return '#' + color.toString(16).padStart(6, '0');
     },
 
+    setBlendMode: function (sprite, blendMode) {
+        if (!sprite || typeof sprite.setBlendMode !== 'function') return sprite;
+        const targetMode = window.isCanvas ? Phaser.BlendModes.NORMAL : blendMode;
+        sprite.setBlendMode(targetMode);
+        return sprite;
+    },
+
+    setTint: function (sprite, color) {
+        if (!sprite || window.isCanvas || typeof sprite.setTint !== 'function') return sprite;
+        sprite.setTint(color);
+        return sprite;
+    },
+
+    setTintFill: function (sprite, color) {
+        if (!sprite || window.isCanvas || typeof sprite.setTintFill !== 'function') return sprite;
+        sprite.setTintFill(color);
+        return sprite;
+    },
+
+    createNineSlice: function (x, y, texture, frame, width, height, left, right, top, bottom) {
+        if (window.isCanvas && typeof CanvasNineSlice !== 'undefined') {
+            return new CanvasNineSlice(PhaserScene, x, y, texture, frame, width, height, left, right, top, bottom);
+        }
+        return PhaserScene.add.nineslice(x, y, texture, frame, width, height, left, right, top, bottom);
+    },
+
     /**
      * Creates a nine-sliced indicator at (x,y) that expands and fades in.
      */
     ninesliceIndicator: function (x, y, texture, frame, startW, startH, endW, endH, cornerSize = 10) {
         // Create the nine-slice image
-        const indicator = PhaserScene.add.nineslice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
+        const indicator = this.createNineSlice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
         indicator.setAlpha(0);
         indicator.setScrollFactor(0);
 
@@ -156,7 +182,7 @@ Object.assign(helper, {
      */
     ninesliceIndicatorShort: function (x, y, texture, frame, startW, startH, endW, endH, cornerSize = 10) {
         // Create the nine-slice image
-        const indicator = PhaserScene.add.nineslice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
+        const indicator = this.createNineSlice(x, y, texture, frame, startW, startH, cornerSize, cornerSize, cornerSize, cornerSize);
         indicator.setAlpha(0);
         indicator.setScrollFactor(0);
 
@@ -349,7 +375,7 @@ Object.assign(helper, {
     createGlowButton: function (x, y, width, height, label, depth, onClick, isWarning = false) {
         const ref = isWarning ? 'warning_btn_9slice.png' : 'glow_btn_9slice.png';
         const textColor = isWarning ? '#ff3366' : '#ffffff';
-        const bg = PhaserScene.add.nineslice(x, y, 'ui', ref, width, height, 20, 20, 20, 20);
+        const bg = this.createNineSlice(x, y, 'ui', ref, width, height, 20, 20, 20, 20);
         bg.setDepth(depth).setScrollFactor(0).setAlpha(0.75);
 
         const text = PhaserScene.add.text(x, y, label, {

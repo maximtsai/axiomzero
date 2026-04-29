@@ -81,7 +81,7 @@ const resourceManager = (() => {
 
         collectFXPool = new ObjectPool(
             () => {
-                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'data_collect.png', 28, 28, 8, 8, 8, 8);
+                const slice = helper.createNineSlice(0, 0, 'player', 'data_collect.png', 28, 28, 8, 8, 8, 8);
                 slice.setRotation(Phaser.Math.DegToRad(45));
                 slice.setDepth(GAME_CONSTANTS.DEPTH_HUD + 10);
                 slice.setScrollFactor(0);

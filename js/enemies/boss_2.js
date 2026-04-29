@@ -354,12 +354,12 @@ class Boss2View extends EnemyView {
         this.chargeSprite.setVisible(false);
 
         // Optional pink pulse nineslice effect identical to Boss 1 (if standard for bosses)
-        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 199, 199, 65, 65, 65, 65);
+        this.pulse = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 199, 199, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 219, 219, 65, 65, 65, 65);
+        this.pulse2 = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 219, 219, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);

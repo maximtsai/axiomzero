@@ -180,7 +180,7 @@ function showNineSlicePopup({ title = '', body = '', buttons = [], texture = 'po
         title, body, buttons, depth, fast,
         boxWidth: width,
         createBG: (W, H, depth, fast) => {
-            const bg = PhaserScene.add.nineslice(W, H - 10, atlas, texture, width, height, cornerSize, cornerSize, cornerSize, cornerSize);
+            const bg = helper.createNineSlice(W, H - 10, atlas, texture, width, height, cornerSize, cornerSize, cornerSize, cornerSize);
             bg._popupHalfH = height * 0.5;
             bg.setDepth(depth + 1).setAlpha(0);
             PhaserScene.tweens.add({ targets: bg, alpha: 1, ease: 'Back.easeOut', duration: fast ? 1 : 220 });

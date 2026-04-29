@@ -20,12 +20,12 @@ class BossSquareView extends EnemyView {
 
         // Add pink pulse nineslice — corner size 65px
         // Phaser 3.60+ nineslice: (x, y, texture, frame, width, height, left, right, top, bottom)
-        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
+        this.pulse = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
+        this.pulse2 = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);

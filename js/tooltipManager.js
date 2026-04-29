@@ -44,7 +44,7 @@ const tooltipManager = (() => {
             .setDepth(DEPTH)
             .setScrollFactor(0);
 
-        outline = PhaserScene.add.nineslice(0, 0, 'ui', 'white_outline.png', 10, 10, 8, 8, 8, 8);
+        outline = helper.createNineSlice(0, 0, 'ui', 'white_outline.png', 10, 10, 8, 8, 8, 8);
         outline.setOrigin(0, 0)
             .setAlpha(0)
             .setDepth(DEPTH + 0.5)

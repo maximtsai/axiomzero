@@ -208,7 +208,7 @@ class Boss3PieceView extends EnemyView {
         this.lineSprite.setVisible(false);
 
         // Pulse effect (pink themed for Legion)
-        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
+        this.pulse = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
         this.pulse.setTint(0xff66cc);
         this.pulse.setDepth(this.img.depth - 1);
         this.pulse.setVisible(false);

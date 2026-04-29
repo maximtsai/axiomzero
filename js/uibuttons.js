@@ -79,7 +79,7 @@ function _showOptionsPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false);
 
-    const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
+    const popupBG = helper.createNineSlice(W, H, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
@@ -183,7 +183,7 @@ function _showOptionsPopup() {
     elements.push(particlesLabel);
     textObjects.push({ obj: particlesLabel, size: 21 });
 
-    const fullBg = PhaserScene.add.nineslice(W - width / 2 + 244, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
     fullBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(fullBg);
 
@@ -219,7 +219,7 @@ function _showOptionsPopup() {
     elements.push(fullText);
     textObjects.push({ obj: fullText, size: 19 });
 
-    const minBg = PhaserScene.add.nineslice(W - width / 2 + 386, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
     minBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(minBg);
 
@@ -529,7 +529,7 @@ function _showResetConfirmPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false).setDepth(depth + 1);
 
-    const popupBG = PhaserScene.add.nineslice(W, H, 'ui', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
+    const popupBG = helper.createNineSlice(W, H, 'ui', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);

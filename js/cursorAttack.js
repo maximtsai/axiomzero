@@ -137,7 +137,7 @@ class PulseAttackView {
 
     init(initialSize) {
         // Base sprite
-        this.sprite = PhaserScene.add.nineslice(
+        this.sprite = helper.createNineSlice(
             0, 0,
             'player', 'player_attack.png',
             initialSize, initialSize,
@@ -154,7 +154,7 @@ class PulseAttackView {
         this.sprite.setVisible(false);
 
         // Red background pulse
-        this.spriteRed = PhaserScene.add.nineslice(
+        this.spriteRed = helper.createNineSlice(
             0, 0,
             'player', 'player_attack_red.png',
             initialSize + 4, initialSize + 4,
@@ -168,7 +168,7 @@ class PulseAttackView {
         this.spriteRed.setVisible(false);
 
         // Flash overlay sprite
-        this.spriteBright = PhaserScene.add.nineslice(
+        this.spriteBright = helper.createNineSlice(
             0, 0,
             'player', 'player_attack_bright.png',
             initialSize, initialSize,
@@ -182,7 +182,7 @@ class PulseAttackView {
         this.spriteBright.setVisible(false);
 
         // Aftershock sprites (100 units larger than base)
-        this.aftershockRed = PhaserScene.add.nineslice(
+        this.aftershockRed = helper.createNineSlice(
             0, 0,
             'player', 'player_attack_red.png',
             initialSize + 104, initialSize + 104,
@@ -195,7 +195,7 @@ class PulseAttackView {
         this.aftershockRed.setScrollFactor(0);
         this.aftershockRed.setVisible(false);
 
-        this.aftershockBright = PhaserScene.add.nineslice(
+        this.aftershockBright = helper.createNineSlice(
             0, 0,
             'player', 'player_attack.png',
             initialSize + 100, initialSize + 100,
@@ -212,7 +212,7 @@ class PulseAttackView {
         // Pointer sprite
         this.spritePointer = PhaserScene.add.image(0, 0, 'player', 'player_pointer.png');
         this.spritePointer.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4);
-        this.spritePointer.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.spritePointer, Phaser.BlendModes.ADD);
         this.spritePointer.setScrollFactor(0);
         this.spritePointer.setVisible(false);
 
@@ -227,7 +227,7 @@ class PulseAttackView {
         }
 
         // Resonance Glow sprite (3 depth units below main sprite)
-        this.spriteGlow = PhaserScene.add.nineslice(
+        this.spriteGlow = helper.createNineSlice(
             0, 0,
             'player', 'player_attack_glow.png',
             initialSize + this.GLOW_PADDING, initialSize + this.GLOW_PADDING,
@@ -241,7 +241,7 @@ class PulseAttackView {
         this.spriteGlow.setVisible(false);
 
         // Reload animation sprite (nineslice with 2px corners)
-        this.playerReloadSprite = PhaserScene.add.nineslice(
+        this.playerReloadSprite = helper.createNineSlice(
             0, 0,
             'player', 'player_nineslice.png',
             32, 32,
@@ -256,7 +256,7 @@ class PulseAttackView {
         // Wave effect pool
         this.wavePool = new ObjectPool(
             () => {
-                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
+                const slice = helper.createNineSlice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
                 slice.setOrigin(0.5, 0.5);
                 slice.setDepth(-2);
                 slice.setVisible(false);
@@ -273,7 +273,7 @@ class PulseAttackView {
         // Artillery Bomb sprites (40px corners)
         const artInitSize = initialSize + 20;
 
-        this.artillerySprite = PhaserScene.add.nineslice(
+        this.artillerySprite = helper.createNineSlice(
             0, 0,
             'player', 'artillery.png',
             artInitSize, artInitSize,
@@ -283,23 +283,25 @@ class PulseAttackView {
         this.artillerySprite.rotVel = 0;
         this.reentryExtraSize = 0;
 
-        this.artilleryBright = PhaserScene.add.nineslice(
+        this.artilleryBright = helper.createNineSlice(
             0, 0,
             'player', 'artillery_bright.png',
             artInitSize, artInitSize,
             40, 40, 40, 40
         );
-        this.artilleryBright.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+        this.artilleryBright.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 11).setScrollFactor(0).setVisible(false);
+        this.artilleryBright.setBlendMode(Phaser.BlendModes.ADD);
 
-        this.artilleryBrightGlow = PhaserScene.add.nineslice(
+        this.artilleryBrightGlow = helper.createNineSlice(
             0, 0,
             'player', 'artillery_bright_glow.png',
             artInitSize, artInitSize,
             70, 70, 70, 70
         );
-        this.artilleryBrightGlow.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+        this.artilleryBrightGlow.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 9).setScrollFactor(0).setVisible(false);
+        this.artilleryBrightGlow.setBlendMode(Phaser.BlendModes.ADD);
 
-        this.artilleryBlack = PhaserScene.add.nineslice(
+        this.artilleryBlack = helper.createNineSlice(
             0, 0,
             'player', 'artillery_black.png',
             artInitSize, artInitSize,
@@ -307,13 +309,14 @@ class PulseAttackView {
         );
         this.artilleryBlack.setOrigin(0.5, 0.5).setDepth(2).setScrollFactor(0).setVisible(false);
 
-        this.artilleryRed = PhaserScene.add.nineslice(
+        this.artilleryRed = helper.createNineSlice(
             0, 0,
             'player', 'artillery_red.png',
             artInitSize, artInitSize,
             40, 40, 40, 40
         );
-        this.artilleryRed.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setScrollFactor(0).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+        this.artilleryRed.setOrigin(0.5, 0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 8).setScrollFactor(0).setVisible(false);
+        this.artilleryRed.setBlendMode(Phaser.BlendModes.ADD);
 
         // Subtle detonation reminder text
         const reminderMsg = "CLICK TO DETONATE";
@@ -325,7 +328,7 @@ class PulseAttackView {
         });
         this.detonateReminderText.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD).setScrollFactor(0).setVisible(false).setAlpha(0);
         this.detonateReminderText.setStroke('#000000', 8);
-        this.detonateReminderText.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.detonateReminderText, Phaser.BlendModes.ADD);
     }
 
     setSize(newSize) {

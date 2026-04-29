@@ -285,7 +285,7 @@ const upgradeTree = (() => {
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half
-        panelOutline = PhaserScene.add.nineslice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutline = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutline.setOrigin(0, 0.5);
         panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
@@ -293,7 +293,7 @@ const upgradeTree = (() => {
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
-        panelOutlineGlitch = PhaserScene.add.nineslice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutlineGlitch = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
         panelOutlineGlitch.setOrigin(0, 0.5);
         panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
@@ -810,7 +810,7 @@ const upgradeTree = (() => {
 
         buyPulsePool = new ObjectPool(() => {
             // 9-slice: x, y, atlas, frame, width, height, left, right, top, bottom
-            const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
+            const slice = helper.createNineSlice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
             slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3); // behind node button (2.0)
             slice.setScrollFactor(0);
             draggableGroup.add(slice);
@@ -818,7 +818,7 @@ const upgradeTree = (() => {
         }, resetFn, 10).preAllocate(4);
 
         maxPulsePool = new ObjectPool(() => {
-            const slice = PhaserScene.add.nineslice(0, 0, 'buttons', 'max_pulse.png', 80, 80, 25, 25, 25, 25);
+            const slice = helper.createNineSlice(0, 0, 'buttons', 'max_pulse.png', 80, 80, 25, 25, 25, 25);
             slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
             slice.setScrollFactor(0);
             draggableGroup.add(slice);

@@ -51,7 +51,7 @@ const iterationOverScreen = (() => {
     function _initPools() {
         dataParticlePool = new ObjectPool(
             () => {
-                const slice = PhaserScene.add.nineslice(0, 0, 'player', 'data_collect.png', 32, 32, 8, 8, 8, 8);
+                const slice = helper.createNineSlice(0, 0, 'player', 'data_collect.png', 32, 32, 8, 8, 8, 8);
                 slice.setRotation(Phaser.Math.DegToRad(45));
                 slice.setScrollFactor(0);
                 slice.setTint(0x00f5ff);
@@ -158,7 +158,7 @@ const iterationOverScreen = (() => {
         const containerH = 21;
         const stableBarX = cx - 158; // Original center-alignment point
 
-        expBarBg = PhaserScene.add.nineslice(stableBarX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
+        expBarBg = helper.createNineSlice(stableBarX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
         expBarBg.setOrigin(0, 0.5).setDepth(depth + 2).setVisible(false).setAlpha(0.7);
 
         expBarFill = PhaserScene.add.image(stableBarX + 1, barY, 'white_pixel');

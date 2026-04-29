@@ -41,7 +41,7 @@ class ProgressBar {
         this.bg.setScrollFactor(0);
 
         // NineSlice border
-        this.border = this.scene.add.nineslice(this.x, this.y, 'ui', 'nineslice_box.png', this.width - 1, this.height - 1, 3, 3, 3, 3);
+        this.border = helper.createNineSlice(this.x, this.y, 'ui', 'nineslice_box.png', this.width - 1, this.height - 1, 3, 3, 3, 3);
         this.border.setDepth(this.depth + 1);
         this.border.setScrollFactor(0);
 

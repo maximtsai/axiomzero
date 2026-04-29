@@ -85,7 +85,7 @@ const customEmitters = (() => {
 
     const exploderExplosionMainPool = new ObjectPool(
         () => {
-            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery.png', 10, 10, 40, 40, 40, 40);
+            const node = helper.createNineSlice(0, 0, 'player', 'artillery.png', 10, 10, 40, 40, 40, 40);
             node.setActive(false);
             node.setVisible(false);
             return node;
@@ -103,7 +103,7 @@ const customEmitters = (() => {
 
     const exploderExplosionBrightPool = new ObjectPool(
         () => {
-            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery_bright.png', 10, 10, 40, 40, 40, 40);
+            const node = helper.createNineSlice(0, 0, 'player', 'artillery_bright.png', 10, 10, 40, 40, 40, 40);
             node.setActive(false);
             node.setVisible(false);
             return node;
@@ -121,7 +121,7 @@ const customEmitters = (() => {
 
     const exploderExplosionRedPool = new ObjectPool(
         () => {
-            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery_red.png', 10, 10, 30, 30, 30, 30);
+            const node = helper.createNineSlice(0, 0, 'player', 'artillery_red.png', 10, 10, 30, 30, 30, 30);
             node.setActive(false);
             node.setVisible(false);
             return node;
@@ -139,7 +139,7 @@ const customEmitters = (() => {
 
     const exploderExplosionBlackPool = new ObjectPool(
         () => {
-            const node = PhaserScene.add.nineslice(0, 0, 'player', 'artillery_black.png', 10, 10, 30, 30, 30, 30);
+            const node = helper.createNineSlice(0, 0, 'player', 'artillery_black.png', 10, 10, 30, 30, 30, 30);
             node.setActive(false);
             node.setVisible(false);
             return node;

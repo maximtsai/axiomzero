@@ -23,6 +23,7 @@ class MainScene extends Phaser.Scene {
             try { sessionStorage.removeItem('axiom_boot_retry'); } catch (_) { /* storage blocked */ }
 
             window.PhaserScene = this;
+            window.isCanvas = (this.renderer.type === Phaser.CANVAS);
             helper.initClickEffectPool(this);
             setupMouseInteraction(this);
             initDebug(this);

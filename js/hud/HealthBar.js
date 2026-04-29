@@ -29,7 +29,7 @@ class HealthBar {
 
     _createElements() {
         // ── Background ──
-        this.bg = PhaserScene.add.nineslice(this.baseX, this.y, 'ui', 'health_nineslice.png', this.baseW, this.h, 3, 3, 3, 3);
+        this.bg = helper.createNineSlice(this.baseX, this.y, 'ui', 'health_nineslice.png', this.baseW, this.h, 3, 3, 3, 3);
         this.bg.setOrigin(0, 0).setDepth(this.depth).setScrollFactor(0);
 
         // ── Damage Flare ──

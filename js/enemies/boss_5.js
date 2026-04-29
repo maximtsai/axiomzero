@@ -32,17 +32,17 @@ class Boss5View extends EnemyView {
 
         // Scaled pink pulse effect (1.4x larger than current Boss 5)
         const startSize = 553;
-        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse2 = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
 
-        this.pulse3 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse3 = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse3.setDepth(baseDepth - 1);
         this.pulse3.setVisible(false);
         this.pulse3.setAlpha(0);
