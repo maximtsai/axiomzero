@@ -30,6 +30,13 @@ let isMusicMuted = false;
 let filterNode = null;
 
 const audio = {
+    _clearActiveTween: function (sound) {
+        if (sound && sound.currTween) {
+            sound.currTween.stop();
+            sound.currTween = null;
+        }
+    },
+
     /** Re-read mute flags from gameState (call after external settings change). */
     recheckMuteState: function () {
         isSFXMuted = gameState.settings.sfxMuted;
@@ -106,6 +113,16 @@ const audio = {
         isSFXMuted = gameState.settings.sfxMuted;
         isMusicMuted = gameState.settings.musicMuted;
 
+        // Hook up SDK mute/unmute listeners
+        if (typeof sdk !== 'undefined') {
+            sdk.onAudioMute(function() {
+                audio.muteAll();
+            });
+            sdk.onAudioUnmute(function() {
+                audio.unmuteAll();
+            });
+        }
+
         // Initialize Low-Pass Filter (Disabled for testing)
         /*
         if (PhaserScene.sound.context && !filterNode) {
@@ -135,10 +152,7 @@ const audio = {
         s.loop = loop;
         s.isMusic = isMusic;
 
-        if (s.currTween) {
-            s.currTween.stop();
-            s.currTween = null;
-        }
+        audio._clearActiveTween(s);
 
         if (isMusic) {
             if (globalMusic) audio.fadeAway(globalMusic);
@@ -178,7 +192,7 @@ const audio = {
         }
         */
 
-        s.play();
+        s.play({ volume: s.volume, loop: s.loop });
         return s;
     },
 
@@ -208,7 +222,7 @@ const audio = {
         if (isMuted || (s.isMusic && isMusicMuted) || globalMusicVol <= 0.0001) s.volume = 0;
 
         s.stop();
-        s.play();
+        s.play({ volume: s.volume, loop: s.loop });
         return s;
     },
 
@@ -232,17 +246,11 @@ const audio = {
         // Cancel any active fade tweens before overriding volume, so they
         // don't race against and undo the value we are about to set.
         if (globalMusic) {
-            if (globalMusic.currTween) {
-                globalMusic.currTween.stop();
-                globalMusic.currTween = null;
-            }
+            audio._clearActiveTween(globalMusic);
             globalMusic.volume = globalMusic.fullVolume * newVol;
         }
         if (globalTempMusic) {
-            if (globalTempMusic.currTween) {
-                globalTempMusic.currTween.stop();
-                globalTempMusic.currTween = null;
-            }
+            audio._clearActiveTween(globalTempMusic);
             globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
         }
         if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;
@@ -259,13 +267,16 @@ const audio = {
             targetVolume = 0;
         }
 
+        audio._clearActiveTween(sound);
+
         if (!duration) {
             sound.volume = targetVolume;
         } else {
-            PhaserScene.tweens.add({
+            sound.currTween = PhaserScene.tweens.add({
                 targets: sound,
                 volume: targetVolume,
-                duration
+                duration,
+                onComplete: () => { sound.currTween = null; }
             });
         }
     },
@@ -335,6 +346,7 @@ const audio = {
     fadeAway: function (sound, duration = AUDIO_CONSTANTS.FADE_AWAY_DURATION, ease, onComplete) {
         const originalVolume = sound.fullVolume;
         sound.fullVolume = 0;
+        audio._clearActiveTween(sound);
         sound.currTween = PhaserScene.tweens.add({
             targets: sound,
             volume: 0,
@@ -343,6 +355,7 @@ const audio = {
             onComplete: function () {
                 sound.stop();
                 sound.fullVolume = originalVolume;
+                sound.currTween = null;
                 if (onComplete) onComplete();
             }
         });
@@ -357,18 +370,12 @@ const audio = {
         // and don't start any delayed tweens which might flicker the volume.
         if (targetVolume <= 0.0001) {
             sound.volume = 0;
-            if (sound.currTween) {
-                sound.currTween.stop();
-                sound.currTween = null;
-            }
+            audio._clearActiveTween(sound);
             return null;
         }
 
         // Stop any in-flight tween so this one becomes the authoritative fade.
-        if (sound.currTween) {
-            sound.currTween.stop();
-            sound.currTween = null;
-        }
+        audio._clearActiveTween(sound);
         sound.currTween = PhaserScene.tweens.add({
             delay: AUDIO_CONSTANTS.FADE_IN_DELAY,
             targets: sound,
@@ -389,3 +396,6 @@ const audio = {
         // Disabled for testing
     }
 };
+
+
+

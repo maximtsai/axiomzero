@@ -34,7 +34,7 @@ window.TRANSLATIONS.en = {
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
-        cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], and [color=white]+2 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
+        cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], [color=white]+3 INSIGHT[/color], and [color=#00FF00]+1.0 COIN[/color].', popup: 'RESOURCES ACQUIRED' },
         peak_traffic: { name: 'PEAK TRAFFIC', desc: 'After [color=#8FD9F8]20s[/color] of combat, enemies drop [color=#8FD9F8]+50%[/color] more [color=cyan]DATA[/color].', popup: 'TRAFFIC PEAKING' },
         backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#8FD9F8]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },
         restore_point: { name: 'RESTORE POINT', desc: 'When [b]BACKUP SERVER[/b] triggers, restore [color=#8FD9F8]40%[/color] health.', popup: 'RESTORE POINT LOADED' },
@@ -135,7 +135,7 @@ window.TRANSLATIONS.en = {
         junk_barrier: { name: 'UNSORTED LOGS', desc: 'A digital mountain of error logs and forgotten TODOs.' },
         security_test_2: { name: 'SECURITY TEST 2', desc: "Confirm you REALLY aren't a hostile AI. Fully refunds [color=cyan]DATA[/color] cost upon purchase.", popup: 'TEST PASSED' },
         threat_response: { name: 'ROLLBACK POINT', desc: 'Restores health to [color=#87FF02]50%[/color] when a Boss or Miniboss appears.', popup: 'ROLLBACK POINT UNLOCKED' },
-        unsecured_wallet: { name: 'ENCRYPTED WALLET', desc: 'Grants [color=#00FF00]+0.5 COIN[/color].\nA valuable, well secured resource. The wallet password was found in a file called "passwords.txt".', popup: '+0.5 COIN' },
+        unsecured_wallet: { name: 'ENCRYPTED WALLET', desc: 'Grants [color=#00FF00]+0.5 COIN[/color].\nHeavily encrypted, and highly valuable. The wallet password was found in a file called "passwords.txt".', popup: '+0.5 COIN' },
         unsecured_files: { name: 'UNSECURED FILES', desc: 'Instantly grants [color=cyan]+15 DATA[/color]. Scavenging fragments from a discarded, open directory.', popup: '+15 DATA' },
         junk_data_1: { name: 'COLLECT DATA', desc: 'Instantly grants [color=#8FD9F8]+5[/color] [color=cyan]DATA[/color].', popup: '+5 DATA' },
         junk_data_2: { name: 'JUNK DATA', desc: "Instantly grants [color=#8FD9F8]+10[/color] [color=cyan]DATA[/color]. One machine's trash is another's upgrade.", popup: '+10 DATA' },

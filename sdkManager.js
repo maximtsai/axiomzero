@@ -34,6 +34,7 @@ const sdk = {
 
                 await sdkRoot.init();
                 self._initialized = true;
+                self._setupSettingsListener(sdkRoot);
                 return true;
             })();
         })();
@@ -271,6 +272,113 @@ const sdk = {
         }
         sdkRoot.user.removeAuthListener(listener);
         return true;
+    },
+
+    // Audio Listeners
+    _muteCallbacks: [],
+    _unmuteCallbacks: [],
+    _isAudioMuted: false,
+    _isAudioSettingsResolved: false,
+
+    onAudioMute: function(callback) {
+        if (typeof callback === "function") {
+            this._muteCallbacks.push(callback);
+            // Only replay initial state if SDK has already resolved it
+            if (this._isAudioSettingsResolved && this._isAudioMuted) {
+                try { callback(); } catch (e) {}
+            }
+        }
+    },
+
+    onAudioUnmute: function(callback) {
+        if (typeof callback === "function") {
+            this._unmuteCallbacks.push(callback);
+            // Only replay initial state if SDK has already resolved it
+            if (this._isAudioSettingsResolved && !this._isAudioMuted) {
+                try { callback(); } catch (e) {}
+            }
+        }
+    },
+
+    _triggerAudioChange: function(mute) {
+        const callbacks = mute ? this._muteCallbacks : this._unmuteCallbacks;
+        callbacks.forEach(cb => {
+            try {
+                cb();
+            } catch (e) {
+                console.error("[SDK] Audio callback error:", e);
+            }
+        });
+    },
+
+    _setupSettingsListener: function(sdkRoot) {
+        const self = this;
+        if (sdkRoot && sdkRoot.game) {
+            if (sdkRoot.game.settings && sdkRoot.game.settings.muteAudio) {
+                self._isAudioMuted = true;
+            }
+            // Mark initial state as known so late-registered callbacks can replay it correctly
+            self._isAudioSettingsResolved = true;
+            self._triggerAudioChange(self._isAudioMuted);
+            if (typeof sdkRoot.game.addSettingsChangeListener === "function") {
+                sdkRoot.game.addSettingsChangeListener(function(newSettings) {
+                    if (newSettings && typeof newSettings.muteAudio !== "undefined") {
+                        self._isAudioMuted = newSettings.muteAudio;
+                        self._triggerAudioChange(newSettings.muteAudio);
+                    }
+                });
+            }
+        }
+    },
+
+    // Game Context
+    setGameContext: function(context) {
+        return this._call("set game context", function(sdkRoot) {
+            if (sdkRoot.game && typeof sdkRoot.game.setGameContext === "function") {
+                sdkRoot.game.setGameContext(context);
+                return true;
+            }
+            return false;
+        });
+    },
+
+    clearGameContext: function() {
+        return this._call("clear game context", function(sdkRoot) {
+            if (sdkRoot.game && typeof sdkRoot.game.clearGameContext === "function") {
+                sdkRoot.game.clearGameContext();
+                return true;
+            }
+            return false;
+        });
+    },
+
+    // Leaderboards
+    submitScore: function(score, optionsOrLeaderboardId) {
+        return this._call("submit score", function(sdkRoot) {
+            if (sdkRoot.user && typeof sdkRoot.user.submitScore === "function") {
+                const payload = {
+                    score: score
+                };
+                if (optionsOrLeaderboardId && typeof optionsOrLeaderboardId === "object" && optionsOrLeaderboardId.encryptedScore) {
+                    payload.encryptedScore = optionsOrLeaderboardId.encryptedScore;
+                }
+                sdkRoot.user.submitScore(payload);
+                return true;
+            }
+            return false;
+        });
+    },
+
+    showLeaderboard: function(leaderboardId) {
+        return this._call("show leaderboard", function(sdkRoot) {
+            if (sdkRoot.leaderboard && typeof sdkRoot.leaderboard.showLeaderboard === "function") {
+                sdkRoot.leaderboard.showLeaderboard({
+                    leaderboardId: leaderboardId
+                });
+                return true;
+            }
+            return false;
+        });
     },
 };
 

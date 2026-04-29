@@ -102,28 +102,10 @@ function isAllowedRuntimeHost() {
     return isLocalhost || isCrazyGamesHost || isItchHost || isPersonalHost;
 }
 
-function applyCrazyGamesMuteSetting(settings) {
-    if (!settings || typeof settings.muteAudio !== 'boolean') return;
-    if (settings.muteAudio) {
-        audio.muteAll();
-    } else {
-        audio.unmuteAll();
-    }
-}
-
 async function initSdkSettings() {
     if (typeof sdkInit !== 'function') return;
     try {
         await sdkInit();
-        if (typeof sdk.getSettings === 'function') {
-            const initialSettings = await sdk.getSettings();
-            applyCrazyGamesMuteSetting(initialSettings);
-        }
-        if (typeof sdk.addSettingsChangeListener === 'function') {
-            sdk.addSettingsChangeListener(newSettings => {
-                applyCrazyGamesMuteSetting(newSettings);
-            });
-        }
     } catch (error) {
         console.warn('SDK init skipped:', error);
     }
