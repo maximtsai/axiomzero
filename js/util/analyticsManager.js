@@ -43,7 +43,7 @@ const analyticsManager = (() => {
 
             // Track wave completion
             messageBus.subscribe('waveCompleted', () => {
-                const totalIterations = (gameState.stats && gameState.stats.totalIterationsEnded) || 0;
+                const totalIterations = (gameState.stats && gameState.stats.iterEnd) || 0;
                 const dataEarned = (typeof resourceManager !== 'undefined') ? resourceManager.getSessionData() : 0;
                 
                 // Collect active duo nodes (shards)

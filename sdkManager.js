@@ -187,7 +187,7 @@ const sdk = {
                 await self.init();
                 const sdkRoot = self._getRoot();
                 if (sdkRoot && sdkRoot.data && typeof sdkRoot.data.setItem === "function") {
-                    sdkRoot.data.setItem(key, value);
+                    await sdkRoot.data.setItem(key, value);
                     return true;
                 }
             } catch (error) {
@@ -200,15 +200,19 @@ const sdk = {
 
     removeItem: function(key) {
         return this._call("data remove item", function(sdkRoot) {
-            sdkRoot.data.removeItem(key);
-            return true;
+            if (sdkRoot && sdkRoot.data && typeof sdkRoot.data.removeItem === "function") {
+                return sdkRoot.data.removeItem(key);
+            }
+            return Promise.resolve();
         });
     },
 
     clearData: function() {
         return this._call("data clear", function(sdkRoot) {
-            sdkRoot.data.clear();
-            return true;
+            if (sdkRoot && sdkRoot.data && typeof sdkRoot.data.clear === "function") {
+                return sdkRoot.data.clear();
+            }
+            return Promise.resolve();
         });
     },
 
@@ -351,6 +355,7 @@ const sdk = {
             return false;
         });
     },
+
 
     // Leaderboards
     submitScore: function(score, optionsOrLeaderboardId) {

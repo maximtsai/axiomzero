@@ -17,8 +17,27 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
         try {
             const cloudSave = await sdk.getItem(SAVE_KEY);
             if (cloudSave) {
-                localStorage.setItem(SAVE_KEY, cloudSave);
-                debugLog('Cloud save fetched and injected into localStorage.');
+                let finalSave = cloudSave;
+                
+                if (typeof cloudSave === 'string') {
+                    const trimmed = cloudSave.trim();
+                    if (trimmed && trimmed[0] !== '{') {
+                        try {
+                            const decompressed = LZString.decompressFromEncodedURIComponent(trimmed);
+                            if (decompressed) {
+                                finalSave = decompressed;
+                            }
+                        } catch (decompError) {
+                            console.error('Failed to decompress cloud save:', decompError);
+                        }
+                    }
+                } else if (typeof cloudSave === 'object' && cloudSave !== null) {
+                    // SDK returned parsed object directly
+                    finalSave = JSON.stringify(cloudSave);
+                }
+                
+                localStorage.setItem(SAVE_KEY, finalSave);
+                debugLog('Cloud save fetched, unpacked, and injected into localStorage.');
             }
         } catch (e) {
             console.error('Failed to pre-fetch cloud save:', e);
@@ -27,9 +46,25 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
         try {
             const cloudOptions = await sdk.getItem(OPTIONS_KEY);
             if (cloudOptions && typeof gameOptions !== 'undefined') {
-                localStorage.setItem(OPTIONS_KEY, cloudOptions);
-                Object.assign(gameOptions, JSON.parse(cloudOptions));
-                debugLog('Cloud options fetched and updated.');
+                let finalOptions = cloudOptions;
+                let parsedOptions = null;
+
+                if (typeof cloudOptions === 'string') {
+                    try {
+                        parsedOptions = JSON.parse(cloudOptions);
+                    } catch (parseError) {
+                        console.error('Failed to parse cloud options string:', parseError);
+                    }
+                } else if (typeof cloudOptions === 'object' && cloudOptions !== null) {
+                    parsedOptions = cloudOptions;
+                    finalOptions = JSON.stringify(cloudOptions);
+                }
+
+                if (parsedOptions) {
+                    localStorage.setItem(OPTIONS_KEY, finalOptions);
+                    Object.assign(gameOptions, parsedOptions);
+                    debugLog('Cloud options fetched and updated.');
+                }
             }
         } catch (e) {
             console.error('Failed to pre-fetch cloud options:', e);
@@ -84,6 +119,17 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
 
     messageBus.subscribe('minibossSpawned', () => {
         _applyThreatAdaptation(60);
+    });
+
+    // Track active gameplay state for CrazyGames analytics
+    messageBus.subscribe(GAME_CONSTANTS.EVENTS.PHASE_CHANGED, (phase) => {
+        if (typeof sdk !== 'undefined') {
+            if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
+                sdk.gameplayStart();
+            } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
+                sdk.gameplayStop();
+            }
+        }
     });
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────

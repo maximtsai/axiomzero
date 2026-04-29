@@ -102,7 +102,16 @@ function saveGame() {
         debugLog('Game saved');
 
         if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
-            sdk.setItem(SAVE_KEY, payload).catch(e => {
+            // Suggestion 2: Selective Syncing (exclude localBestScores from cloud payloads)
+            const cloudState = { ...gameState };
+            delete cloudState.localBestScores;
+            
+            const cloudPayload = JSON.stringify({ version: SAVE_VERSION, data: cloudState });
+
+            // Suggestion 1: LZ-string compression
+            const compressed = LZString.compressToEncodedURIComponent(cloudPayload);
+
+            sdk.setItem(SAVE_KEY, compressed).catch(e => {
                 console.error('[Cloud] Cloud save failed:', e);
             });
         }

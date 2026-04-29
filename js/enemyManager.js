@@ -522,8 +522,8 @@ const enemyManager = (() => {
         statsTracker.recordDamage(result.actualApplied, source);
 
         // Track lifetime max damage in one hit
-        if (result.actualApplied > gameState.stats.maxDamageInOneHit) {
-            gameState.stats.maxDamageInOneHit = result.actualApplied;
+        if (result.actualApplied > gameState.stats.maxDmg) {
+            gameState.stats.maxDmg = result.actualApplied;
         }
 
         // Publish event for achievements (only for high damage to reduce event overhead)

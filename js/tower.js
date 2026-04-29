@@ -906,7 +906,7 @@ const tower = (() => {
 
             // EXP accumulation
             let expBoost = 1.0;
-            const lifetimeInsight = (gameState.stats && gameState.stats.totalInsightEarned) || 0;
+            const lifetimeInsight = (gameState.stats && gameState.stats.insightEarn) || 0;
             if (lifetimeInsight === 0) expBoost = 1.4;
             else if (lifetimeInsight === 1) expBoost = 1.2;
             else if (lifetimeInsight === 2) expBoost = 1.1;

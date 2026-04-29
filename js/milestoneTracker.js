@@ -18,16 +18,16 @@ const milestoneTracker = (() => {
     // ── Milestone definitions ────────────────────────────────────────────
     // Each milestone: { id, name, description, statKey, target, reward: {type, amount} }
     const milestones = [
-        { id: 'kill_100', name: t('milestones', 'kill_100.name'), description: t('milestones', 'kill_100.desc'), statKey: 'totalKills', target: 100, reward: { type: 'data', amount: 50 } },
-        { id: 'kill_500', name: t('milestones', 'kill_500.name'), description: t('milestones', 'kill_500.desc'), statKey: 'totalKills', target: 500, reward: { type: 'data', amount: 200 } },
-        { id: 'kill_2000', name: t('milestones', 'kill_2000.name'), description: t('milestones', 'kill_2000.desc'), statKey: 'totalKills', target: 2000, reward: { type: 'insight', amount: 2 } },
-        { id: 'data_1000', name: t('milestones', 'data_1000.name'), description: t('milestones', 'data_1000.desc'), statKey: 'totalDataCollected', target: 1000, reward: { type: 'data', amount: 100 } },
-        { id: 'data_10000', name: t('milestones', 'data_10000.name'), description: t('milestones', 'data_10000.desc'), statKey: 'totalDataCollected', target: 10000, reward: { type: 'insight', amount: 3 } },
-        { id: 'waves_10', name: t('milestones', 'waves_10.name'), description: t('milestones', 'waves_10.desc'), statKey: 'totalWavesCompleted', target: 10, reward: { type: 'data', amount: 75 } },
-        { id: 'waves_50', name: t('milestones', 'waves_50.name'), description: t('milestones', 'waves_50.desc'), statKey: 'totalWavesCompleted', target: 50, reward: { type: 'insight', amount: 2 } },
-        { id: 'nodes_5', name: t('milestones', 'nodes_5.name'), description: t('milestones', 'nodes_5.desc'), statKey: 'totalNodesPurchased', target: 5, reward: { type: 'data', amount: 50 } },
-        { id: 'nodes_15', name: t('milestones', 'nodes_15.name'), description: t('milestones', 'nodes_15.desc'), statKey: 'totalNodesPurchased', target: 15, reward: { type: 'insight', amount: 1 } },
-        { id: 'bossSquare', name: t('milestones', 'bossSquare.name'), description: t('milestones', 'bossSquare.desc'), statKey: 'bossesDefeated', target: 1, reward: { type: 'data', amount: 300 } },
+        { id: 'kill_100', name: t('milestones', 'kill_100.name'), description: t('milestones', 'kill_100.desc'), statKey: 'kills', target: 100, reward: { type: 'data', amount: 50 } },
+        { id: 'kill_500', name: t('milestones', 'kill_500.name'), description: t('milestones', 'kill_500.desc'), statKey: 'kills', target: 500, reward: { type: 'data', amount: 200 } },
+        { id: 'kill_2000', name: t('milestones', 'kill_2000.name'), description: t('milestones', 'kill_2000.desc'), statKey: 'kills', target: 2000, reward: { type: 'insight', amount: 2 } },
+        { id: 'data_1000', name: t('milestones', 'data_1000.name'), description: t('milestones', 'data_1000.desc'), statKey: 'dataColl', target: 1000, reward: { type: 'data', amount: 100 } },
+        { id: 'data_10000', name: t('milestones', 'data_10000.name'), description: t('milestones', 'data_10000.desc'), statKey: 'dataColl', target: 10000, reward: { type: 'insight', amount: 3 } },
+        { id: 'waves_10', name: t('milestones', 'waves_10.name'), description: t('milestones', 'waves_10.desc'), statKey: 'waveComp', target: 10, reward: { type: 'data', amount: 75 } },
+        { id: 'waves_50', name: t('milestones', 'waves_50.name'), description: t('milestones', 'waves_50.desc'), statKey: 'waveComp', target: 50, reward: { type: 'insight', amount: 2 } },
+        { id: 'nodes_5', name: t('milestones', 'nodes_5.name'), description: t('milestones', 'nodes_5.desc'), statKey: 'nodePurch', target: 5, reward: { type: 'data', amount: 50 } },
+        { id: 'nodes_15', name: t('milestones', 'nodes_15.name'), description: t('milestones', 'nodes_15.desc'), statKey: 'nodePurch', target: 15, reward: { type: 'insight', amount: 1 } },
+        { id: 'bossSquare', name: t('milestones', 'bossSquare.name'), description: t('milestones', 'bossSquare.desc'), statKey: 'bossDef', target: 1, reward: { type: 'data', amount: 300 } },
     ];
 
     // ── Wave timing ──────────────────────────────────────────────────────
@@ -47,28 +47,28 @@ const milestoneTracker = (() => {
     // ── Event handlers ───────────────────────────────────────────────────
 
     function _onEnemyKilled() {
-        gameState.stats.totalKills++;
+        gameState.stats.kills++;
     }
 
     function _onWaveCompleted() {
-        gameState.stats.totalWavesCompleted++;
+        gameState.stats.waveComp++;
         const elapsed = Date.now() - waveStartTime;
-        if (elapsed > gameState.stats.longestWaveMs) {
-            gameState.stats.longestWaveMs = elapsed;
+        if (elapsed > gameState.stats.longWave) {
+            gameState.stats.longWave = elapsed;
         }
     }
 
     function _onUpgradePurchased() {
-        gameState.stats.totalNodesPurchased++;
+        gameState.stats.nodePurch++;
     }
 
     function _onBossDefeated() {
-        gameState.stats.bossesDefeated++;
+        gameState.stats.bossDef++;
     }
     
     function _onCurrencyChanged(type, current, delta) {
         if (type === 'data' && delta < 0) {
-            gameState.stats.totalDataSpent += Math.abs(delta);
+            gameState.stats.dataSpent += Math.abs(delta);
         }
     }
 
@@ -80,17 +80,17 @@ const milestoneTracker = (() => {
         // Add session stats when an iteration ends (WAVE_COMPLETE or GAME_OVER)
         if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
             if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
-                gameState.stats.totalIterationsEnded++;
+                gameState.stats.iterEnd++;
             }
-            gameState.stats.totalDataCollected += resourceManager.getSessionData();
-            gameState.stats.totalInsightEarned += resourceManager.getSessionInsight();
-            gameState.stats.totalShardsCollected += resourceManager.getSessionShards();
-            gameState.stats.totalProcessorsCollected += resourceManager.getSessionProcessors();
-            gameState.stats.totalCoinsCollected += resourceManager.getSessionCoins();
+            gameState.stats.dataColl += resourceManager.getSessionData();
+            gameState.stats.insightEarn += resourceManager.getSessionInsight();
+            gameState.stats.shardColl += resourceManager.getSessionShards();
+            gameState.stats.totalProcColl += resourceManager.getSessionProcessors();
+            gameState.stats.coinColl += resourceManager.getSessionCoins();
 
             // Aggregate combat performance from statsTracker
             const sessionStats = statsTracker.getStats();
-            gameState.stats.totalExecutions += (sessionStats.executions || 0);
+            gameState.stats.execs += (sessionStats.executions || 0);
 
             let sessionDamage = 0;
             if (sessionStats.damage) {
@@ -98,7 +98,7 @@ const milestoneTracker = (() => {
                     sessionDamage += (sessionStats.damage[key] || 0);
                 }
             }
-            gameState.stats.totalDamageDealt += sessionDamage;
+            gameState.stats.dmgDealt += sessionDamage;
         }
 
         // Save game data when Deploy is clicked (enters COMBAT), 

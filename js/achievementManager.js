@@ -53,7 +53,7 @@ const achievementManager = (() => {
     function _onPhaseChanged(phase) {
         if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
             // "Iteration Over" screen appeared
-            if (gameState.stats.totalIterationsEnded >= 1) {
+            if (gameState.stats.iterEnd >= 1) {
                 unlock(ACHIEVEMENTS.FIRST_ITERATION);
             }
         }
@@ -68,13 +68,13 @@ const achievementManager = (() => {
     function _onBossDefeated() {
         // Milestone tracker and stats update before this usually, 
         // but we can check if bossesDefeated >= 1
-        if (gameState.stats.bossesDefeated >= 1) {
+        if (gameState.stats.bossDef >= 1) {
             unlock(ACHIEVEMENTS.BOSS_SLAYER_1);
         }
     }
 
     function _onEnemyKilled() {
-        if (gameState.stats.totalKills >= 100) {
+        if (gameState.stats.kills >= 100) {
             unlock(ACHIEVEMENTS.CENTURION);
         }
     }
