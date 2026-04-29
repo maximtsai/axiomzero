@@ -139,7 +139,7 @@ class ProtectorEnemy extends Enemy {
         this.model.rushElapsed = 0;
         this.model.auraActive = false;
 
-        if (this.view.img) this.view.img.setTint(0xffffff);
+        if (this.view.img) helper.setTint(this.view.img, 0xffffff);
     }
 
     deactivate() {

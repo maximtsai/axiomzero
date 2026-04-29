@@ -25,7 +25,7 @@ function tweenTint(image, endTint, duration, ease = 'Linear', onComplete = null)
         r: eR, g: eG, b: eB,
         duration, ease,
         onUpdate: () => {
-            image.setTint(
+            helper.setTint(image, 
                 (Math.round(proxy.r) << 16) |
                 (Math.round(proxy.g) << 8)  |
                  Math.round(proxy.b)

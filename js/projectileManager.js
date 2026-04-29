@@ -25,8 +25,8 @@ const projectileManager = (() => {
                 img.setScale(12, 5);
                 img.setVisible(false);
                 img.setActive(false);
-                img.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
-                img.setBlendMode(Phaser.BlendModes.ADD);
+                helper.setTint(img, GAME_CONSTANTS.COLOR_FRIENDLY);
+                helper.setBlendMode(img, Phaser.BlendModes.ADD);
                 return {
                     img: img,
                     alive: false,
@@ -48,7 +48,7 @@ const projectileManager = (() => {
             () => {
                 const spr = PhaserScene.add.sprite(0, 0, 'attacks', 'hit_circle1.png');
                 spr.setDepth(151); // Slightly above projectiles
-                spr.setBlendMode(Phaser.BlendModes.ADD);
+                helper.setBlendMode(spr, Phaser.BlendModes.ADD);
                 spr.setVisible(false);
                 spr.setActive(false);
                 spr.on('animationcomplete', function (anim) {

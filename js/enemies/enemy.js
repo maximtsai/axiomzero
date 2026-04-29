@@ -417,7 +417,7 @@ class EnemyView {
 
     update(dt, model) {
         if (this._wasBurning && (!model || model.burnDuration <= 0)) {
-            this.img.clearTint();
+            helper.clearTint(this.img);
             this._wasBurning = false;
         } else if (model && model.burnDuration > 0) {
             this._wasBurning = true;
@@ -470,8 +470,8 @@ class EnemyView {
 
     playHitFlash() {
         if (this.img && this.img.scene) {
-            this.img.setTintFill(0xffffff);
-            if (this.hpImg) this.hpImg.setTintFill(0xffffff);
+            helper.setTintFill(this.img, 0xffffff);
+            if (this.hpImg) helper.setTintFill(this.hpImg, 0xffffff);
             // if (this.enemyGlow) this.enemyGlow.setTintFill(0xffffff);
         }
     }
@@ -482,13 +482,13 @@ class EnemyView {
 
     refreshTint() {
         if (this.img && this.img.scene) {
-            this.img.clearTint();
+            helper.clearTint(this.img);
         }
         if (this.hpImg && this.hpImg.scene) {
-            this.hpImg.clearTint();
+            helper.clearTint(this.hpImg);
         }
         if (this.enemyGlow && this.enemyGlow.scene) {
-            this.enemyGlow.clearTint();
+            helper.clearTint(this.enemyGlow);
         }
     }
 
@@ -529,7 +529,7 @@ class EnemyView {
         if (this.enemyGlow) {
             this.enemyGlow.setFrame(frame);
             this.enemyGlow.setVisible(true);
-            this.enemyGlow.setBlendMode(Phaser.BlendModes.LIGHTEN);
+            helper.setBlendMode(this.enemyGlow, Phaser.BlendModes.LIGHTEN);
         }
     }
 }

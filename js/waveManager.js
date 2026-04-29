@@ -126,7 +126,7 @@ const waveManager = (() => {
         audio.play('retro_explosion', 0.6, false);
         PhaserScene.cameras.main.shake(300, 0.008);
 
-        const flash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        const flash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'buttons', 'white_pixel.png');
         flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         flash.setAlpha(0.4).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 10);
         PhaserScene.tweens.add({
@@ -210,7 +210,7 @@ const waveManager = (() => {
         }
 
         // 1.5. Subliminal Black Flash (75ms)
-        const darkFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'black_pixel');
+        const darkFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'buttons', 'black_pixel.png');
         darkFlash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         darkFlash.setAlpha(0.65).setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1);
         setTimeout(() => { if (darkFlash) darkFlash.destroy(); }, 75);
@@ -309,9 +309,10 @@ const waveManager = (() => {
             }
         }
 
-        const flash = PhaserScene.add.image(cx, cy, 'white_pixel');
+        const flash = PhaserScene.add.image(cx, cy, 'buttons', 'white_pixel.png');
         flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        flash.setTint(0xffffff).setAlpha(0.1).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 5);
+        flash.setAlpha(0.1).setDepth(GAME_CONSTANTS.DEPTH_DEATH_OVERLAY + 5);
+        helper.setTint(flash, 0xffffff);
 
         PhaserScene.tweens.add({
             targets: flash,
@@ -346,7 +347,7 @@ const waveManager = (() => {
             shockwave.setAlpha(0.8);
 
             // Flash tint cyan to match player colors
-            shockwave.setTintFill(GAME_CONSTANTS.COLOR_FRIENDLY);
+            helper.setTintFill(shockwave, GAME_CONSTANTS.COLOR_FRIENDLY);
 
             // Explode outward
             PhaserScene.tweens.add({

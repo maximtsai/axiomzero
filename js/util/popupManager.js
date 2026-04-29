@@ -31,15 +31,17 @@ const _POPUP = {
  * opts: { ref, scaleX, scaleY, tint, depth, targetAlpha, duration }
  */
 function _createDarkOverlay(opts) {
-    const ref = opts.ref || 'black_pixel';
+    const ref = opts.ref || 'black_pixel.png';
     const scaleX = opts.scaleX || 500;
     const scaleY = opts.scaleY || scaleX;
     const alpha = opts.targetAlpha !== undefined ? opts.targetAlpha : 0.75;
     const dur = opts.duration !== undefined ? opts.duration : 60;
 
-    const img = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, ref)
-        .setScale(scaleX, scaleY).setDepth(opts.depth).setAlpha(0);
-    if (opts.tint !== undefined) { img.setTint(opts.tint); }
+    const img = opts.atlas
+        ? PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, opts.atlas, ref)
+        : PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, ref);
+    img.setScale(scaleX, scaleY).setDepth(opts.depth).setAlpha(0);
+    if (opts.tint !== undefined) { helper.setTint(img, opts.tint); }
     PhaserScene.tweens.add({ targets: img, alpha, ease: 'Cubic.easeOut', duration: dur });
     return img;
 }
@@ -78,7 +80,7 @@ function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], 
 
     // Dark overlay + click blocker
     const darkBG = _createDarkOverlay({
-        ref: 'white_pixel', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
+        ref: 'white_pixel.png', atlas: 'buttons', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
         tint: 0x000000, depth, targetAlpha: 0.75, duration: fast ? 1 : 60,
     });
     const blocker = _createFullscreenBlocker(depth);
@@ -124,7 +126,7 @@ function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], 
         const tintPress = def.primary ? 0x1a3561 : 0x1a202c;
 
         const btn = new Button({
-            normal: { ref: 'white_pixel', x: bx, y: BTN_Y, scaleX: _POPUP.BTN_W, scaleY: _POPUP.BTN_H, tint: tintNormal },
+            normal: { ref: 'white_pixel.png', atlas: 'buttons', x: bx, y: BTN_Y, scaleX: _POPUP.BTN_W, scaleY: _POPUP.BTN_H, tint: tintNormal },
             hover: { tint: tintHover },
             press: { tint: tintPress },
             disable: { alpha: 0 },
@@ -159,8 +161,9 @@ function showPopup({ title = '', body = '', buttons = [], depth = _POPUP.DEPTH, 
         title, body, buttons, depth, fast,
         boxWidth: _POPUP.W,
         createBG: (W, H, depth, fast) => {
-            const bg = PhaserScene.add.image(W, H - 10, 'white_pixel')
-                .setScale(_POPUP.W, _POPUP.H).setTint(0x1a1a2e).setAlpha(0).setDepth(depth + 1);
+            const bg = PhaserScene.add.image(W, H - 10, 'buttons', 'white_pixel.png')
+                .setScale(_POPUP.W, _POPUP.H).setAlpha(0).setDepth(depth + 1);
+            helper.setTint(bg, 0x1a1a2e);
             bg._popupHalfH = _POPUP.H * 0.5;
             PhaserScene.tweens.add({ targets: bg, alpha: 1, ease: 'Back.easeOut', duration: fast ? 1 : 220 });
             return bg;
@@ -203,10 +206,10 @@ function showNineSlicePopup({ title = '', body = '', buttons = [], texture = 'po
 function showYesNoPopup(yesText, noText, titleText = '...', bodyText = '...', onYes = () => { }, superFast = false) {
     const dur = superFast ? 0.2 : 50;
 
-    const darkBG = _createDarkOverlay({ ref: 'black_pixel', scaleX: 500, depth: _POPUP.OVERLAY_DEPTH, targetAlpha: 0.75, duration: dur });
+    const darkBG = _createDarkOverlay({ ref: 'black_pixel.png', atlas: 'buttons', scaleX: 500, depth: _POPUP.OVERLAY_DEPTH, targetAlpha: 0.75, duration: dur });
     helper.createGlobalClickBlocker(false).setDepth(_POPUP.OVERLAY_DEPTH);
 
-    const popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 50, 'ui', 'paper_half.png')
+    const popupBG = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight - 50, 'buttons', 'paper_half.png')
         .setDepth(_POPUP.DEPTH).setScale(0.88, 0.73);
 
     const newText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, popupBG.y - 94, titleText, {

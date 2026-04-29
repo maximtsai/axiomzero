@@ -80,7 +80,7 @@ const cinematicManager = (() => {
     // -------------------------------------------------------------------------
 
     function _createBlocker() {
-        blocker = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        blocker = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'buttons', 'white_pixel.png');
         blocker.isTreeElement = true; // Prevent automatic ignore from tree cameras
         blocker.setDepth(BLOCKER_DEPTH)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
@@ -95,11 +95,11 @@ const cinematicManager = (() => {
 
     function _createBars() {
         const cx = GAME_CONSTANTS.halfWidth;
-        topBar = PhaserScene.add.image(cx, -BAR_HEIGHT / 2, 'black_pixel');
+        topBar = PhaserScene.add.image(cx, -BAR_HEIGHT / 2, 'buttons', 'black_pixel.png');
         topBar.isTreeElement = true;
         topBar.setDepth(BAR_DEPTH).setDisplaySize(GAME_CONSTANTS.WIDTH, BAR_HEIGHT).setScrollFactor(0);
 
-        bottomBar = PhaserScene.add.image(cx, GAME_CONSTANTS.HEIGHT + BAR_HEIGHT / 2, 'black_pixel');
+        bottomBar = PhaserScene.add.image(cx, GAME_CONSTANTS.HEIGHT + BAR_HEIGHT / 2, 'buttons', 'black_pixel.png');
         bottomBar.isTreeElement = true;
         bottomBar.setDepth(BAR_DEPTH).setDisplaySize(GAME_CONSTANTS.WIDTH, BAR_HEIGHT).setScrollFactor(0);
 

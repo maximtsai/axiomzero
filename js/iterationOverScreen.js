@@ -76,9 +76,10 @@ const iterationOverScreen = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         // Dark overlay
-        overlay = PhaserScene.add.image(cx, cy, 'white_pixel');
+        overlay = PhaserScene.add.image(cx, cy, 'buttons', 'white_pixel.png');
         overlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        overlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
+        overlay.setAlpha(0.75).setDepth(depth);
+        helper.setTint(overlay, 0x000000);
 
         // Title — Michroma
         titleText = PhaserScene.add.text(cx, cy - 190, t('results', 'iteration_complete'), {
@@ -158,11 +159,12 @@ const iterationOverScreen = (() => {
         const containerH = 21;
         const stableBarX = cx - 158; // Original center-alignment point
 
-        expBarBg = helper.createNineSlice(stableBarX - 6, barY, 'ui', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
+        expBarBg = helper.createNineSlice(stableBarX - 6, barY, 'buttons', 'progress_container.png', containerW, containerH, 6, 6, 6, 6);
         expBarBg.setOrigin(0, 0.5).setDepth(depth + 2).setVisible(false).setAlpha(0.7);
 
-        expBarFill = PhaserScene.add.image(stableBarX + 1, barY, 'white_pixel');
-        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setTint(0xffffff).setDepth(depth + 3).setVisible(false).setAlpha(0.7);
+        expBarFill = PhaserScene.add.image(stableBarX + 1, barY, 'buttons', 'white_pixel.png');
+        expBarFill.setOrigin(0, 0.5).setDisplaySize(0, barH).setDepth(depth + 3).setVisible(false).setAlpha(0.7);
+        helper.setTint(expBarFill, 0xffffff);
 
         expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
             fontFamily: 'JetBrainsMono_Regular',
@@ -259,7 +261,8 @@ const iterationOverScreen = (() => {
         // ── EXP bar hover area ──
         expHoverBtn = new Button({
             normal: {
-                ref: 'white_pixel',
+                ref: 'white_pixel.png',
+                atlas: 'buttons',
                 x: cx,
                 y: barY - 11,
                 alpha: 0.001,
@@ -283,7 +286,7 @@ const iterationOverScreen = (() => {
         expHoverBtn.setVisible(false);
 
         // ── Sparkle emitter for Insight Level Up ──
-        _insightSparkleEmitter = PhaserScene.add.particles(0, 0, 'ui', {
+        _insightSparkleEmitter = PhaserScene.add.particles(0, 0, 'buttons', {
             frame: 'sparkle.png',
             speed: { min: 40, max: 80 },
             ease: 'Quad.easeOut',
@@ -577,7 +580,8 @@ const iterationOverScreen = (() => {
 
         // Show bar elements
         expBarBg.setVisible(true).setAlpha(0);
-        expBarFill.setVisible(true).setDisplaySize(0, barH).setAlpha(0.7).setTint(0xffffff);
+        expBarFill.setVisible(true).setDisplaySize(0, barH).setAlpha(0.7);
+        helper.setTint(expBarFill, 0xffffff);
         expBarLabel.setVisible(true).setAlpha(0);
         expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
@@ -617,7 +621,8 @@ const iterationOverScreen = (() => {
 
     function _showStaticExpBar(ratio) {
         expBarBg.setVisible(true).setAlpha(0.7);
-        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), barH).setAlpha(0.7).setTint(0xffffff);
+        expBarFill.setVisible(true).setDisplaySize(barW * Math.min(1, Math.max(0, ratio)), barH).setAlpha(0.7);
+        helper.setTint(expBarFill, 0xffffff);
         expBarLabel.setVisible(true).setAlpha(1);
         expBarIcon.setVisible(true).setAlpha(0.7);
         expHoverBtn.setState(NORMAL);
@@ -630,7 +635,7 @@ const iterationOverScreen = (() => {
         const toW = currentBarW * Math.min(1, seg.to);
         const fillDuration = Math.max(250, (seg.to - seg.from) * 1600);
 
-        expBarFill.setTint(0xffffff);
+        helper.setTint(expBarFill, 0xffffff);
         expBarFill.setDisplaySize(fromW, barH);
 
         _expFillTween = PhaserScene.tweens.add({
@@ -754,12 +759,12 @@ const iterationOverScreen = (() => {
         const startY = GAME_CONSTANTS.HEIGHT - panelH - margin;
 
         // Background Panel
-        const panel = PhaserScene.add.image(startX, startY, 'white_pixel')
+        const panel = PhaserScene.add.image(startX, startY, 'buttons', 'white_pixel.png')
             .setOrigin(0)
             .setDisplaySize(panelW, panelH)
-            .setTint(0x000000)
             .setAlpha(0.4)
             .setDepth(depth);
+        helper.setTint(panel, 0x000000);
         diagElements.push(panel);
 
         const reportTitle = PhaserScene.add.text(startX + 15, startY + 15, t('results', 'diagnostic_report'), {
@@ -811,19 +816,19 @@ const iterationOverScreen = (() => {
             // Bar BG
             const barOffset = 135; // Was 85
             const bgW = barMaxWidth;
-            const bg = PhaserScene.add.image(startX + barOffset, y, 'white_pixel')
+            const bg = PhaserScene.add.image(startX + barOffset, y, 'buttons', 'white_pixel.png')
                 .setDepth(depth + 1)
                 .setDisplaySize(bgW, 10) // Was 6
-                .setTint(0x222222)
                 .setAlpha(0.4)
                 .setOrigin(0, 0.5);
+            helper.setTint(bg, 0x222222);
 
             // Bar Fill
-            const fill = PhaserScene.add.image(startX + barOffset, y, 'white_pixel')
+            const fill = PhaserScene.add.image(startX + barOffset, y, 'buttons', 'white_pixel.png')
                 .setDepth(depth + 2)
                 .setDisplaySize(bgW * pct, 10) // Was 6
-                .setTint(s.color)
                 .setOrigin(0, 0.5);
+            helper.setTint(fill, s.color);
 
             // Percentage
             const pText = PhaserScene.add.text(startX + barOffset + bgW + 12, y, `${Math.round(pct * 100)}%`, {

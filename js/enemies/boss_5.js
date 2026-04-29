@@ -258,11 +258,11 @@ class Boss5 extends Boss {
             callback: () => {
                 flickerCount++;
                 if (flickerCount % 2 === 1) {
-                    targets.forEach(t => t.setTintFill(0xffffff));
+                    targets.forEach(t => helper.setTintFill(t, 0xffffff));
                 } else {
-                    targets.forEach(t => t.clearTint());
+                    targets.forEach(t => helper.clearTint(t));
                     if (Math.random() < 0.35) {
-                        targets.forEach(t => t.setTint(0xff2d78));
+                        targets.forEach(t => helper.setTint(t, 0xff2d78));
                     }
                 }
             },
@@ -272,7 +272,7 @@ class Boss5 extends Boss {
         // After 1.5s stagger, actually die
         PhaserScene.time.delayedCall(1500, () => {
             if (flickerInterval) flickerInterval.remove();
-            targets.forEach(t => t.clearTint());
+            targets.forEach(t => helper.clearTint(t));
 
             m.staggering = false;
             m.invincible = false;

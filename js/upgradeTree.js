@@ -338,7 +338,7 @@ const upgradeTree = (() => {
 
         // Invisible drag surface - covers the 800px wide panel
         // Using a Phaser Image instead of the Button system to avoid click consumption issues
-        dragSurface = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'white_pixel');
+        dragSurface = PhaserScene.add.image(TREE_CENTER_X, GAME_CONSTANTS.halfHeight, 'buttons', 'white_pixel.png');
         dragSurface.setScale(PANEL_W / 2, GAME_CONSTANTS.HEIGHT / 2);
         dragSurface.setAlpha(0.001);
         dragSurface.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 0.1);
@@ -1488,7 +1488,7 @@ const upgradeTree = (() => {
                     const flash = PhaserScene.add.sprite(deployBtn.x, deployBtn.y, 'attacks', 'button_flash1.png');
                     flash.setDepth(deployBtn.getDepth() + 1);
                     flash.setScrollFactor(0);
-                    flash.setBlendMode(Phaser.BlendModes.ADD);
+                    helper.setBlendMode(flash, Phaser.BlendModes.ADD);
                     flash.play('button_flash');
                     flash.on('animationcomplete', () => { if (flash && flash.destroy) flash.destroy(); });
 

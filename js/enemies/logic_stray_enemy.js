@@ -55,7 +55,7 @@ class LogicStrayEnemy extends Enemy {
         if (this.view.img) {
             this.view.img.setAlpha(1);
             this.view.img.setScale(1);
-            this.view.img.setTint(0xffffff);
+            helper.setTint(this.view.img, 0xffffff);
         }
         if (this.view.hpImg) {
             this.view.hpImg.setAlpha(1);

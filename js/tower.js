@@ -186,8 +186,8 @@ class TowerView {
         this.sparkleSprite = PhaserScene.add.image(cx, cy, 'player', 'sparkle.png');
         this.sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sparkleSprite.setAlpha(0.8);
-        this.sparkleSprite.setTint(GAME_CONSTANTS.COLOR_FRIENDLY);
-        this.sparkleSprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setTint(this.sparkleSprite, GAME_CONSTANTS.COLOR_FRIENDLY);
+        helper.setBlendMode(this.sparkleSprite, Phaser.BlendModes.ADD);
 
         this.sparkleTween = PhaserScene.tweens.add({
             targets: this.sparkleSprite,
@@ -213,7 +213,7 @@ class TowerView {
         this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.glowSprite.setScale(1.0);
         this.glowSprite.setAlpha(1);
-        this.glowSprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.glowSprite, Phaser.BlendModes.ADD);
 
         // Pre-create death shockwave (temp depth 0 for visibility)
         this.deathShockwave = PhaserScene.add.image(cx, cy, 'player', 'deathwave.png');
@@ -226,19 +226,19 @@ class TowerView {
         this.sprite = PhaserScene.add.image(cx, cy, 'player', 'tower1.png');
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sprite.setAlpha(1);
-        this.sprite.clearTint();
+        helper.clearTint(this.sprite);
 
         this.artilleryCallSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_artillery_call.png');
         this.artilleryCallSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
         this.artilleryCallSprite.setAlpha(0);
-        this.artilleryCallSprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.artilleryCallSprite, Phaser.BlendModes.ADD);
 
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
         this.rangeSprite = PhaserScene.add.image(cx, cy, 'player', 'range.png');
         this.rangeSprite.setDepth(1);  // Rendered behind almost everything
-        this.rangeSprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.rangeSprite, Phaser.BlendModes.ADD);
         if (rangeScale > 0.001) {
             this.rangeSprite.setAlpha(0.45 / 3);
             this.rangeSprite.setScale(rangeScale * 0.2);
@@ -333,11 +333,9 @@ class TowerView {
 
     playHitFlash() {
         if (this.sprite) {
-            this.sprite.setTintFill(0xffffff);
+            helper.setTintFill(this.sprite, 0xffffff);
             PhaserScene.time.delayedCall(80, () => {
-                if (this.sprite && this.sprite.scene) {
-                    this.sprite.clearTint();
-                }
+                    helper.clearTint(this.sprite);
             });
         }
     }
@@ -538,7 +536,8 @@ class TowerView {
         if (!this.deathShockwave) {
             // Safety: create it if it doesn't exist for some reason
             this.deathShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'deathwave.png');
-            this.deathShockwave.setDepth(-2).setScrollFactor(0).setAlpha(0).setBlendMode(Phaser.BlendModes.ADD);
+            this.deathShockwave.setDepth(-2).setScrollFactor(0).setAlpha(0);
+            helper.setBlendMode(this.deathShockwave, Phaser.BlendModes.ADD);
         }
         // Reset and trigger
         this.deathShockwave.setVisible(true).setAlpha(0.9).setScale(0.15);
@@ -564,7 +563,8 @@ class TowerView {
     playWarnShockwave(duration = 750, startAlpha = 1.0, endScale = 3.0) {
         if (!this.warnShockwave) {
             this.warnShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'warnwave.png');
-            this.warnShockwave.setDepth(-2).setAlpha(1).setBlendMode(Phaser.BlendModes.ADD);
+            this.warnShockwave.setDepth(-2).setAlpha(1);
+            helper.setBlendMode(this.warnShockwave, Phaser.BlendModes.ADD);
         }
         // Reset and trigger
         this.warnShockwave.setVisible(true).setAlpha(startAlpha).setScale(0.25);
@@ -978,7 +978,7 @@ const tower = (() => {
             view.playUpgradePhaseAnimation(model.attackRange);
             if (view.sprite) {
                 view.sprite.setAlpha(1);
-                view.sprite.clearTint();
+                helper.clearTint(view.sprite);
             }
         } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
             model.active = false;
@@ -1000,7 +1000,7 @@ const tower = (() => {
 
         if (view.sprite) {
             view.sprite.setAlpha(1);
-            view.sprite.clearTint();
+            helper.clearTint(view.sprite);
         }
     }
 

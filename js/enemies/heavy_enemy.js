@@ -48,7 +48,7 @@ class HeavyEnemy extends Enemy {
             size: GAME_CONSTANTS.ENEMY_SIZE_HEAVY
         });
 
-        if (this.view.img) this.view.img.setTint(0xffffff);
+        if (this.view.img) helper.setTint(this.view.img, 0xffffff);
         this.setEnemyGlow('heavy_glow.png');
     }
 }

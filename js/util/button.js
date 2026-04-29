@@ -200,7 +200,7 @@ class Button {
             this.setRotation(stateData.rotation);
         }
         if (stateData.tint !== undefined) {
-            this.bgSprite.setTint(stateData.tint);
+            helper.setTint(this.bgSprite, stateData.tint);
         }
     }
 

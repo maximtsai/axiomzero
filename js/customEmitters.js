@@ -168,7 +168,7 @@ const customEmitters = (() => {
             sprite.setAlpha(1);
             sprite.setScale(1);
             sprite.setRotation(0);
-            sprite.clearTint();
+            helper.clearTint(sprite);
         },
         15
     );
@@ -382,7 +382,7 @@ const customEmitters = (() => {
             sprite.setActive(false);
             sprite.setVisible(false);
             sprite.setAlpha(0.4);
-            sprite.setTint(0xffffff);
+            helper.setTint(sprite, 0xffffff);
         },
         30
     );
@@ -413,7 +413,7 @@ const customEmitters = (() => {
         (sprite) => {
             sprite.setActive(false);
             sprite.setVisible(false);
-            sprite.clearTint();
+            helper.clearTint(sprite);
         },
         30
     );
@@ -448,7 +448,7 @@ const customEmitters = (() => {
 
             copy.setScale(absScaleX * targetScaleMultiplier * signX, absScaleY * targetScaleMultiplier * signY);
 
-            copy.setTintFill(0xffffff);
+            helper.setTintFill(copy, 0xffffff);
             copy.setVisible(true);
             copy.setActive(true);
             return copy;
@@ -467,7 +467,7 @@ const customEmitters = (() => {
             ease: 'Quad.easeOut',
             onComplete: () => {
                 copies.forEach(c => {
-                    c.clearTint();
+                    helper.clearTint(c);
                     PhaserScene.time.delayedCall(50, () => {
                         enemyDeathAnimPool.release(c);
                     });
@@ -492,16 +492,16 @@ const customEmitters = (() => {
         copy.setRotation(rotation);
         copy.setScale(scaleX, scaleY);
         copy.setDepth(depth);
-        copy.clearTint();
+        helper.clearTint(copy);
 
         PhaserScene.tweens.add({
             targets: copy,
             duration: 150,
             repeat: 2,
             yoyo: true,
-            onStart: () => { if (copy.active) copy.setTintFill(0xffffff); },
-            onYoyo: () => { if (copy.active) copy.clearTint(); },
-            onRepeat: () => { if (copy.active) copy.setTintFill(0xffffff); },
+            onStart: () => { if (copy.active) helper.setTintFill(copy, 0xffffff); },
+            onYoyo: () => { if (copy.active) helper.clearTint(copy); },
+            onRepeat: () => { if (copy.active) helper.setTintFill(copy, 0xffffff); },
             onComplete: () => {
                 copy.destroy();
             }
@@ -525,10 +525,10 @@ const customEmitters = (() => {
                 warning.setAlpha(1);
 
                 PhaserScene.time.delayedCall(50, () => {
-                    warning.setTint(0x000000);
+                    helper.setTint(warning, 0x000000);
 
                     PhaserScene.time.delayedCall(50, () => {
-                        warning.clearTint();
+                        helper.clearTint(warning);
                         warning.setScale(4 * effectScale);
                         if (PhaserScene.anims.exists('explosion_anim')) {
                             warning.play('explosion_anim');
@@ -890,7 +890,7 @@ const customEmitters = (() => {
         sprite.setAlpha(1);
         sprite.setScale(2);
         sprite.setDepth(1);
-        sprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(sprite, Phaser.BlendModes.ADD);
         PhaserScene.tweens.add({
             targets: sprite,
             alpha: 0,

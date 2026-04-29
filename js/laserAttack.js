@@ -104,9 +104,9 @@ class LaserAttackView {
             [glow, body, core].forEach(s => {
                 s.setOrigin(0, 0.5)
                     .setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 10)
-                    .setBlendMode(Phaser.BlendModes.ADD)
                     .setVisible(false)
                     .setScrollFactor(1);
+                helper.setBlendMode(s, Phaser.BlendModes.ADD);
             });
             return { glow, body, core };
         };
@@ -118,15 +118,15 @@ class LaserAttackView {
 
             [inner, white].forEach(s => {
                 s.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 9)
-                    .setBlendMode(Phaser.BlendModes.ADD)
                     .setVisible(false)
                     .setScrollFactor(1);
+                helper.setBlendMode(s, Phaser.BlendModes.ADD);
             });
 
             glow.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES - 11) // Behind inner core
-                .setBlendMode(Phaser.BlendModes.LIGHTEN)
                 .setVisible(false)
                 .setScrollFactor(1);
+            helper.setBlendMode(glow, Phaser.BlendModes.LIGHTEN);
 
             return { glow, inner, white };
         };

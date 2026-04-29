@@ -154,7 +154,7 @@ class SniperEnemy extends Enemy {
         m._isRampingUp = false;
         m._chargeWobbleTime = 0;
 
-        if (this.view.img) this.view.img.setTint(0xffffff);
+        if (this.view.img) helper.setTint(this.view.img, 0xffffff);
     }
 
     deactivate() {

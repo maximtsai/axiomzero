@@ -9,7 +9,7 @@ Object.assign(helper, {
     /** Must be called once after the Phaser scene is ready (pass PhaserScene). */
     initClickEffectPool: function(scene) {
         helper.clickEffectPool = new ObjectPool(
-            function()    { return scene.add.image(0, 0, 'white_pixel'); },
+            function()    { return scene.add.image(0, 0, 'buttons', 'white_pixel.png'); },
             function(obj) {
                 obj.setActive(false);
                 obj.setVisible(false);
@@ -30,7 +30,7 @@ Object.assign(helper, {
             clickImage.setActive(true);
             clickImage.setVisible(true);
         } else {
-            clickImage = PhaserScene.add.image(x, y, 'white_pixel');
+            clickImage = PhaserScene.add.image(x, y, 'buttons', 'white_pixel.png');
             clickImage.setAlpha(0.6);
             clickImage.setDepth(10000);
             clickImage.setScale(7);

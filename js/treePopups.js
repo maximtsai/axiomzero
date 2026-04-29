@@ -19,7 +19,7 @@ const treePopups = (() => {
         selectedLevel = maxLevel;
 
         // Black back screen — Click blocker
-        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'black_pixel')
+        levelSelectOverlay = PhaserScene.add.image(cx, cy, 'buttons', 'black_pixel.png')
             .setAlpha(0.55)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
             .setScrollFactor(0)
@@ -27,7 +27,7 @@ const treePopups = (() => {
 
         helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
 
-        const bg = helper.createNineSlice(cx, cy, 'ui', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
+        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
         bg.setDepth(depth + 1).setScrollFactor(0);
         levelSelectButtons.push(bg);
 

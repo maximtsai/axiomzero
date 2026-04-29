@@ -29,17 +29,19 @@ class HealthBar {
 
     _createElements() {
         // ── Background ──
-        this.bg = helper.createNineSlice(this.baseX, this.y, 'ui', 'health_nineslice.png', this.baseW, this.h, 3, 3, 3, 3);
+        this.bg = helper.createNineSlice(this.baseX, this.y, 'buttons', 'health_nineslice.png', this.baseW, this.h, 3, 3, 3, 3);
         this.bg.setOrigin(0, 0).setDepth(this.depth).setScrollFactor(0);
 
         // ── Damage Flare ──
-        this.flare = PhaserScene.add.image(this.baseX, this.y + this.h / 2, 'ui', 'white_vertical_line.png');
-        this.flare.setOrigin(0.5, 0.5).setScale(1, 0.75).setTint(0xffffff).setDepth(this.depth + 1).setScrollFactor(0);
+        this.flare = PhaserScene.add.image(this.baseX, this.y + this.h / 2, 'buttons', 'white_vertical_line.png');
+        this.flare.setOrigin(0.5, 0.5).setScale(1, 0.75).setDepth(this.depth + 1).setScrollFactor(0);
+        helper.setTint(this.flare, 0xffffff);
         this.flare.setAlpha(0);
 
         // ── Fill ──
-        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP, this.y + HEALTH_BAR_GAP, 'white_pixel');
-        this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setTint(0x00F261).setDepth(this.depth + 2).setScrollFactor(0);
+        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP, this.y + HEALTH_BAR_GAP, 'buttons', 'white_pixel.png');
+        this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
+        helper.setTint(this.fill, 0x00F261);
 
         // ── Text ──
         const baseFontSize = helper.isMobileDevice() ? 30 : 25;
@@ -73,11 +75,11 @@ class HealthBar {
 
         // Color shift: green → orange → red as health drops
         if (ratio > 0.5) {
-            this.fill.setTint(0x00F261);
+            helper.setTint(this.fill, 0x00F261);
         } else if (ratio > 0.25) {
-            this.fill.setTint(GAME_CONSTANTS.COLOR_RESOURCE);
+            helper.setTint(this.fill, GAME_CONSTANTS.COLOR_RESOURCE);
         } else {
-            this.fill.setTint(GAME_CONSTANTS.COLOR_HOSTILE);
+            helper.setTint(this.fill, GAME_CONSTANTS.COLOR_HOSTILE);
         }
 
         // Damage flare positioning

@@ -137,7 +137,7 @@ class Miniboss2 extends Miniboss {
         if (this.view.img) {
             this.view.img.setAlpha(1);
             this.view.img.setScale(1);
-            this.view.img.clearTint();
+            helper.clearTint(this.view.img);
         }
         if (this.view.hpImg) {
             this.view.hpImg.setAlpha(1);

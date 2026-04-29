@@ -254,9 +254,9 @@ const tutorialManager = (() => {
         measureText.destroy();
 
         // 2. Create the black background bar
-        const bg = PhaserScene.add.image(x, y, 'white_pixel');
+        const bg = PhaserScene.add.image(x, y, 'buttons', 'black_pixel.png');
         bg.isTreeElement = true; // Prevent automatic ignore from tree cameras
-        bg.setTint(0x000000).setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
+        bg.setAlpha(0.4).setDepth(isUpgradeTree ? GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10 : GAME_CONSTANTS.DEPTH_HUD - 1);
         bg.setDisplaySize(0, finalHeight);
         bg.targetAlpha = 0.4;
 

@@ -46,7 +46,7 @@ class ShockwaveAttackView {
         this.sprite.setDepth(150); // Below tower (200) but above enemies (100)
         this.sprite.setScale(0.05);
         this.sprite.setAlpha(0);
-        this.sprite.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(this.sprite, Phaser.BlendModes.ADD);
         this.sprite.setVisible(false);
     }
 

@@ -12,7 +12,7 @@ const boss3HealPacketPool = new ObjectPool(
         const spr = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_heal_packet.png');
         spr.setVisible(false);
         spr.setActive(false);
-        spr.setBlendMode(Phaser.BlendModes.ADD);
+        helper.setBlendMode(spr, Phaser.BlendModes.ADD);
         return spr;
     },
     (spr) => {

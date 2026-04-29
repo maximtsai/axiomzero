@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.2.0</string>
+        <string>7.0.3</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -228,7 +228,9 @@
                 <false/>
             </struct>
             <key type="filename">buttons/black_pixel.png</key>
+            <key type="filename">buttons/blue_pixel.png</key>
             <key type="filename">buttons/dark_green_pixel.png</key>
+            <key type="filename">buttons/dark_grey_pixel.png</key>
             <key type="filename">buttons/dark_red_pixel.png</key>
             <key type="filename">buttons/gold_pixel.png</key>
             <key type="filename">buttons/red_pixel.png</key>
@@ -326,6 +328,58 @@
                 <rect>18,18,36,36</rect>
                 <key>scale9Paddings</key>
                 <rect>18,18,36,36</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/checkbox_off_hover.png</key>
+            <key type="filename">buttons/checkbox_off_normal.png</key>
+            <key type="filename">buttons/checkbox_off_press.png</key>
+            <key type="filename">buttons/checkbox_on_hover.png</key>
+            <key type="filename">buttons/checkbox_on_normal.png</key>
+            <key type="filename">buttons/checkbox_on_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>62,12,124,24</rect>
+                <key>scale9Paddings</key>
+                <rect>62,12,124,24</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/close_button_hover.png</key>
+            <key type="filename">buttons/close_button_normal.png</key>
+            <key type="filename">buttons/close_button_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>17,17,34,34</rect>
+                <key>scale9Paddings</key>
+                <rect>17,17,34,34</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/dropdown_normal.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>50,10,100,20</rect>
+                <key>scale9Paddings</key>
+                <rect>50,10,100,20</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -429,6 +483,44 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/glow_btn_9slice.png</key>
+            <key type="filename">buttons/glow_max.png</key>
+            <key type="filename">buttons/indicator_pulse_thin.png</key>
+            <key type="filename">buttons/warning_btn_9slice.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>15,15,30,30</rect>
+                <key>scale9Paddings</key>
+                <rect>15,15,30,30</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/health_nineslice.png</key>
+            <key type="filename">buttons/nineslice.png</key>
+            <key type="filename">buttons/nineslice_box.png</key>
+            <key type="filename">buttons/nineslice_ui.png</key>
+            <key type="filename">buttons/sparkle_cyan.png</key>
+            <key type="filename">buttons/white_outline.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>5,5,10,10</rect>
+                <key>scale9Paddings</key>
+                <rect>5,5,10,10</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/icon_holder.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -517,21 +609,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">buttons/indicator_pulse_thin.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>15,15,30,30</rect>
-                <key>scale9Paddings</key>
-                <rect>15,15,30,30</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">buttons/insight_buy_pulse.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -595,21 +672,6 @@
                 <rect>34,34,67,67</rect>
                 <key>scale9Paddings</key>
                 <rect>34,34,67,67</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">buttons/nineslice_ui.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>5,5,10,10</rect>
-                <key>scale9Paddings</key>
-                <rect>5,5,10,10</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -695,6 +757,36 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/popup_nineslice.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>53,53,105,105</rect>
+                <key>scale9Paddings</key>
+                <rect>53,53,105,105</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/progress_container.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>5,5,11,11</rect>
+                <key>scale9Paddings</key>
+                <rect>5,5,11,11</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/slide_left_btn.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -776,6 +868,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/sparkle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/sq_button_hover.png</key>
             <key type="filename">buttons/sq_button_press.png</key>
             <struct type="IndividualSpriteSettings">
@@ -804,6 +911,66 @@
                 <rect>23,23,46,46</rect>
                 <key>scale9Paddings</key>
                 <rect>23,23,46,46</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/square.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,6,13,13</rect>
+                <key>scale9Paddings</key>
+                <rect>6,6,13,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/ui_background.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,3,5,5</rect>
+                <key>scale9Paddings</key>
+                <rect>3,3,5,5</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/white_line.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>50,1,100,1</rect>
+                <key>scale9Paddings</key>
+                <rect>50,1,100,1</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/white_vertical_line.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>1,10,3,19</rect>
+                <key>scale9Paddings</key>
+                <rect>1,10,3,19</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

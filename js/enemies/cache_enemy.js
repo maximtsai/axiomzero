@@ -28,22 +28,22 @@ class CacheEnemyView extends EnemyView {
     createVisuals() {
         if (!PhaserScene) return;
 
-        this.glow = PhaserScene.add.image(0, 0, 'white_pixel');
-        this.glow.setTint(0x0066ff);
+        this.glow = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
+        helper.setTint(this.glow, 0x0066ff);
         this.glow.setAlpha(0.4);
         this.glow.setScale(38);
         this.glow.setDepth(this.img.depth);
         this.coreParts.push(this.glow);
 
-        this.outerRing = PhaserScene.add.image(0, 0, 'white_pixel');
-        this.outerRing.setTint(0x00ccff);
+        this.outerRing = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
+        helper.setTint(this.outerRing, 0x00ccff);
         this.outerRing.setScale(22);
         this.outerRing.setAlpha(0.9);
         this.outerRing.setDepth(this.img.depth);
         this.coreParts.push(this.outerRing);
 
-        this.innerCore = PhaserScene.add.image(0, 0, 'white_pixel');
-        this.innerCore.setTint(0xe0f7ff);
+        this.innerCore = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
+        helper.setTint(this.innerCore, 0xe0f7ff);
         this.innerCore.setScale(12);
         this.innerCore.setDepth(this.img.depth);
         this.coreParts.push(this.innerCore);
@@ -107,14 +107,14 @@ class CacheEnemyView extends EnemyView {
 
     playHitFlash() {
         if (!this.coreParts || this.coreParts.length === 0) return;
-        this.coreParts.forEach(p => p.setTintFill(0xffffff));
+        this.coreParts.forEach(p => helper.setTintFill(p, 0xffffff));
     }
 
     clearHitFlash() {
         if (!this.coreParts || this.coreParts.length === 0) return;
-        this.glow.setTint(0x0066ff);
-        this.outerRing.setTint(0x00ccff);
-        this.innerCore.setTint(0xe0f7ff);
+        helper.setTint(this.glow, 0x0066ff);
+        helper.setTint(this.outerRing, 0x00ccff);
+        helper.setTint(this.innerCore, 0xe0f7ff);
     }
 
     destroy() {

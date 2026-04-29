@@ -31,7 +31,8 @@ Object.assign(helper, {
         if (!globalObjects.clickBlocker) {
             globalObjects.clickBlocker = new Button({
                 normal: {
-                    ref: 'black_pixel',
+                    ref: 'black_pixel.png',
+                    atlas: 'buttons',
                     x: GAME_CONSTANTS.halfWidth,
                     y: GAME_CONSTANTS.halfHeight,
                     alpha: 0.001,
@@ -92,6 +93,12 @@ Object.assign(helper, {
     setTintFill: function (sprite, color) {
         if (!sprite || window.isCanvas || typeof sprite.setTintFill !== 'function') return sprite;
         sprite.setTintFill(color);
+        return sprite;
+    },
+
+    clearTint: function (sprite) {
+        if (!sprite || window.isCanvas || typeof sprite.clearTint !== 'function') return sprite;
+        sprite.clearTint();
         return sprite;
     },
 
@@ -350,8 +357,8 @@ Object.assign(helper, {
     createCheckbox: function (x, y, label, initialState, depth, onToggle) {
         let state = initialState;
         const btn = new Button({
-            normal: { atlas: 'ui', ref: state ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: x + 70, y: y },
-            hover: { atlas: 'ui', ref: state ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
+            normal: { atlas: 'buttons', ref: state ? 'checkbox_on_normal.png' : 'checkbox_off_normal.png', x: x + 70, y: y },
+            hover: { atlas: 'buttons', ref: state ? 'checkbox_on_hover.png' : 'checkbox_off_hover.png' },
             onMouseUp: () => {
                 state = !state;
                 onToggle(state);
@@ -375,7 +382,7 @@ Object.assign(helper, {
     createGlowButton: function (x, y, width, height, label, depth, onClick, isWarning = false) {
         const ref = isWarning ? 'warning_btn_9slice.png' : 'glow_btn_9slice.png';
         const textColor = isWarning ? '#ff3366' : '#ffffff';
-        const bg = this.createNineSlice(x, y, 'ui', ref, width, height, 20, 20, 20, 20);
+        const bg = this.createNineSlice(x, y, 'buttons', ref, width, height, 20, 20, 20, 20);
         bg.setDepth(depth).setScrollFactor(0).setAlpha(0.75);
 
         const text = PhaserScene.add.text(x, y, label, {
@@ -383,7 +390,7 @@ Object.assign(helper, {
         }).setOrigin(0.5).setDepth(depth).setScrollFactor(0);
 
         const btn = new Button({
-            normal: { ref: 'white_pixel', x: x, y: y, alpha: 0.001, scaleX: width / 2, scaleY: height / 2 },
+            normal: { ref: 'white_pixel.png', atlas: 'buttons', x: x, y: y, alpha: 0.001, scaleX: width / 2, scaleY: height / 2 },
             onHover: () => { bg.setAlpha(1); },
             onHoverOut: () => { bg.setAlpha(0.75); },
             onMouseUp: onClick

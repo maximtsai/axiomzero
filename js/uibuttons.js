@@ -67,9 +67,9 @@ function _showOptionsPopup() {
         });
     };
 
-    const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
+    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'white_pixel.png');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-    darkBG.setTint(0x000000);
+    helper.setTint(darkBG, 0x000000);
     darkBG.setAlpha(0);
     darkBG.setDepth(depth);
     darkBG.setScrollFactor(0);
@@ -79,7 +79,7 @@ function _showOptionsPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false);
 
-    const popupBG = helper.createNineSlice(W, H, 'ui', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
+    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
@@ -183,13 +183,13 @@ function _showOptionsPopup() {
     elements.push(particlesLabel);
     textObjects.push({ obj: particlesLabel, size: 21 });
 
-    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
     fullBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(fullBg);
 
     const fullBtn = new Button({
-        normal: { ref: 'white_pixel', x: W - width / 2 + 244, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
-        disable: { ref: 'white_pixel', alpha: 0.001 },
+        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 244, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
+        disable: { ref: 'white_pixel.png', atlas: 'buttons', alpha: 0.001 },
         onHover: () => {
             if (fullBtn.state !== 'disable') {
                 fullBg.setAlpha(1);
@@ -219,13 +219,13 @@ function _showOptionsPopup() {
     elements.push(fullText);
     textObjects.push({ obj: fullText, size: 19 });
 
-    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'ui', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
     minBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(minBg);
 
     const minBtn = new Button({
-        normal: { ref: 'white_pixel', x: W - width / 2 + 386, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
-        disable: { ref: 'white_pixel', alpha: 0.001 },
+        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 386, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
+        disable: { ref: 'white_pixel.png', atlas: 'buttons', alpha: 0.001 },
         onHover: () => {
             if (minBtn.state !== 'disable') {
                 minBg.setAlpha(1);
@@ -345,9 +345,9 @@ function _showOptionsPopup() {
     // (resetBtn removed as it is now part of resetGlow)
 
     const closeBtn = new Button({
-        normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 35, y: H - height / 2 + 36 },
-        hover: { ref: 'close_button_hover.png', atlas: 'ui' },
-        press: { ref: 'close_button_press.png', atlas: 'ui' },
+        normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: W + width / 2 - 35, y: H - height / 2 + 36 },
+        hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
+        press: { ref: 'close_button_press.png', atlas: 'buttons' },
         onMouseUp: () => closePopup()
     });
     closeBtn.setDepth(depth + 3);
@@ -517,9 +517,9 @@ function _showResetConfirmPopup() {
     const height = 300;
     const elements = [];
 
-    const darkBG = PhaserScene.add.image(W, H, 'white_pixel');
+    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'white_pixel.png');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-    darkBG.setTint(0x000000);
+    helper.setTint(darkBG, 0x000000);
     darkBG.setAlpha(0);
     darkBG.setDepth(depth);
     darkBG.setScrollFactor(0);
@@ -529,7 +529,7 @@ function _showResetConfirmPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false).setDepth(depth + 1);
 
-    const popupBG = helper.createNineSlice(W, H, 'ui', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
+    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
@@ -554,9 +554,9 @@ function _showResetConfirmPopup() {
     elements.push(noGlow.bg, noGlow.text, noGlow.btn);
 
     const closeBtn = new Button({
-        normal: { ref: 'close_button_normal.png', atlas: 'ui', x: W + width / 2 - 36, y: H - height / 2 + 36 },
-        hover: { ref: 'close_button_hover.png', atlas: 'ui' },
-        press: { ref: 'close_button_press.png', atlas: 'ui' },
+        normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: W + width / 2 - 36, y: H - height / 2 + 36 },
+        hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
+        press: { ref: 'close_button_press.png', atlas: 'buttons' },
         onMouseUp: () => {
             helper.hideGlobalClickBlocker();
             elements.forEach(el => { if (el && el.destroy) el.destroy(); });

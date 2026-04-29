@@ -52,7 +52,7 @@ const announcementManager = (() => {
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 3, '#000000', 8, true, true);
 
         // Decorative Line (centered between them or below)
-        const line = PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'ui', 'white_line.png');
+        const line = PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'buttons', 'white_line.png');
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
 
         // Line Animation
@@ -143,7 +143,7 @@ const announcementManager = (() => {
             lineSpacing: -4
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
 
-        const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'ui', 'white_line.png');
+        const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'buttons', 'white_line.png');
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
 
         PhaserScene.tweens.add({

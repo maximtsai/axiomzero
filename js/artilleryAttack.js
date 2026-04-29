@@ -91,7 +91,8 @@ class ArtilleryAttackView {
         };
 
         obj.base.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
-        obj.center.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
+        obj.center.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setVisible(false);
+        helper.setBlendMode(obj.center, Phaser.BlendModes.ADD);
         obj.bright.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 3).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);
         obj.black.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 4).setVisible(false);
         obj.red.setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_TOWER).setBlendMode(Phaser.BlendModes.ADD).setVisible(false);

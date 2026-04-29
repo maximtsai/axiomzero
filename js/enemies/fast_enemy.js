@@ -50,6 +50,6 @@ class FastEnemy extends Enemy {
 
         this.setEnemyGlow('fast_glow.png');
 
-        if (this.view.img) this.view.img.setTint(0xffffff);
+        if (this.view.img) helper.setTint(this.view.img, 0xffffff);
     }
 }

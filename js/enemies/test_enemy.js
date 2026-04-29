@@ -49,7 +49,7 @@ class TestEnemy extends Enemy {
         });
 
         // Visually distinguish slightly from normal basic enemies (e.g., white tint)
-        if (this.view.img) this.view.img.setTint(0xffffff);
+        if (this.view.img) helper.setTint(this.view.img, 0xffffff);
     }
 
     // Override death to prevent wave progression logic or visual clutter

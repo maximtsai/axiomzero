@@ -37,14 +37,14 @@ const tooltipManager = (() => {
 
     function init() {
         // Background panel
-        bg = PhaserScene.add.image(0, 0, 'white_pixel');
+        bg = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
         bg.setOrigin(0, 0)
-            .setTint(0x111122)
             .setAlpha(0)
             .setDepth(DEPTH)
             .setScrollFactor(0);
+        helper.setTint(bg, 0x111122);
 
-        outline = helper.createNineSlice(0, 0, 'ui', 'white_outline.png', 10, 10, 8, 8, 8, 8);
+        outline = helper.createNineSlice(0, 0, 'buttons', 'white_outline.png', 10, 10, 8, 8, 8, 8);
         outline.setOrigin(0, 0)
             .setAlpha(0)
             .setDepth(DEPTH + 0.5)
@@ -75,7 +75,7 @@ const tooltipManager = (() => {
         // Create text objects
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            
+
             if (line.marginTop) currentY += line.marginTop;
 
             const font = FONTS[line.style] || FONTS.normal;
@@ -98,23 +98,23 @@ const tooltipManager = (() => {
             if (line.underline) {
                 const colorStr = line.color || font.color || '#ffffff';
                 const colorNum = Phaser.Display.Color.HexStringToColor(colorStr).color;
-                
-                const lineObj = PhaserScene.add.image(0, currentY + t.height + 2, 'white_pixel')
+
+                const lineObj = PhaserScene.add.image(0, currentY + t.height + 2, 'buttons', 'white_pixel.png')
                     .setOrigin(0, 0)
                     .setDepth(DEPTH + 1.1)
                     .setScrollFactor(0)
-                    .setTint(colorNum)
                     .setDisplaySize(t.width, 2);
-                
+                helper.setTint(lineObj, colorNum);
+
                 lineObj.relX = t.x;
                 lineObj.relY = lineObj.y;
-                
+
                 if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
                     upgradeTree.assignToUICamera(lineObj);
                 }
 
                 decorations.push(lineObj);
-                
+
                 currentY += 10; // Extra spacing for the underline + gap
             }
 

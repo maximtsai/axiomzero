@@ -42,7 +42,8 @@ const towerStatsUI = (() => {
 
         _statsBtn = new Button({
             normal: {
-                ref: 'white_pixel', // Invisible base
+                ref: 'white_pixel.png', // Invisible base
+                atlas: 'buttons',
                 x: towerPos.x + GAME_CONSTANTS.quarterWidth,
                 y: towerPos.y,
                 alpha: 0.001,

@@ -28,12 +28,12 @@ const glitchFX = (() => {
     function init() {
         // Pre-create a small pool of scanline sprites (reused)
         for (let i = 0; i < 4; i++) {
-            const line = PhaserScene.add.image(0, 0, 'white_pixel');
+            const line = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
             line.setOrigin(0, 0)
                 .setDepth(SCANLINE_DEPTH)
                 .setScrollFactor(0)
-                .setVisible(false)
-                .setBlendMode(Phaser.BlendModes.ADD);
+                .setVisible(false);
+            helper.setBlendMode(line, Phaser.BlendModes.ADD);
             scanlines.push(line);
         }
 
@@ -45,10 +45,17 @@ const glitchFX = (() => {
         bgGridHigh.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1).setVisible(false);
 
         // Pre-allocate system scan assets (Pooling)
-        wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
-        blueLine = PhaserScene.add.image(0, 0, 'white_pixel').setVisible(false).setDepth(-2).setBlendMode(Phaser.BlendModes.ADD).setOrigin(0.5, 0.5);
-        scanFade1 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.MULTIPLY).setAngle(-45);
-        scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setBlendMode(Phaser.BlendModes.ADD).setAngle(45);
+        wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false);
+        helper.setBlendMode(wave, Phaser.BlendModes.ADD);
+        
+        blueLine = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png').setVisible(false).setDepth(-2).setOrigin(0.5, 0.5);
+        helper.setBlendMode(blueLine, Phaser.BlendModes.ADD);
+        
+        scanFade1 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setAngle(-45);
+        helper.setBlendMode(scanFade1, Phaser.BlendModes.MULTIPLY);
+        
+        scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setAngle(45);
+        helper.setBlendMode(scanFade2, Phaser.BlendModes.ADD);
     }
 
     /**
@@ -88,7 +95,7 @@ const glitchFX = (() => {
             line.setPosition(offsetX, y);
             line.setDisplaySize(GAME_CONSTANTS.WIDTH + 40, h + extraH);
             line.setAlpha(0.25 * intensity);
-            line.setTint(Math.random() > 0.5 ? _color1 : _color2);
+            helper.setTint(line, Math.random() > 0.5 ? _color1 : _color2);
             line.setVisible(true);
 
             if (extraH > 0) {
@@ -161,9 +168,9 @@ const glitchFX = (() => {
             .setRotation(target.rotation)
             .setAlpha(0.35 * intensity)
             .setDepth(target.depth - 1)
-            .setTint(_ghostTint)
-            .setBlendMode(Phaser.BlendModes.ADD)
             .setScrollFactor(target.scrollFactorX, target.scrollFactorY);
+        helper.setTint(ghost, _ghostTint);
+        helper.setBlendMode(ghost, Phaser.BlendModes.ADD);
 
         PhaserScene.time.delayedCall(duration, () => {
             ghost.destroy();
@@ -209,8 +216,12 @@ const glitchFX = (() => {
         }
 
         const alphaMult = 0.8 * combinedIntensity;
-        redCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult).setTint(0xff0000).setBlendMode(Phaser.BlendModes.ADD);
-        cyanCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult).setTint(0x00ffff).setBlendMode(Phaser.BlendModes.ADD);
+        redCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult);
+        helper.setTint(redCopy, 0xff0000);
+        helper.setBlendMode(redCopy, Phaser.BlendModes.ADD);
+        cyanCopy.setDepth(target.depth - 1).setAlpha(target.alpha * alphaMult);
+        helper.setTint(cyanCopy, 0x00ffff);
+        helper.setBlendMode(cyanCopy, Phaser.BlendModes.ADD);
 
         const shakeTimer = PhaserScene.time.addEvent({
             delay: 30,
@@ -395,9 +406,9 @@ const glitchFX = (() => {
             .setVisible(true)
             .setDepth(GAME_CONSTANTS.DEPTH_HUD + 11)
             .setAlpha(0.04)
-            .setDisplaySize(GAME_CONSTANTS.WIDTH, startHeight)
-            .setTint(0x00f5ff)
-            .setBlendMode(Phaser.BlendModes.ADD);
+            .setDisplaySize(GAME_CONSTANTS.WIDTH, startHeight);
+        helper.setTint(blueLine, 0x00f5ff);
+        helper.setBlendMode(blueLine, Phaser.BlendModes.ADD);
 
         // expansion + fade in tween
         PhaserScene.tweens.add({

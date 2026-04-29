@@ -34,14 +34,13 @@ class ProgressBar {
 
     _create() {
         // Container (the "tray")
-        this.bg = this.scene.add.image(this.x, this.y, 'white_pixel');
+        this.bg = this.scene.add.image(this.x, this.y, 'buttons', 'dark_grey_pixel.png');
         this.bg.setDisplaySize(this.width - 2, this.height - 2);
-        this.bg.setTint(this.bgColor);
         this.bg.setDepth(this.depth);
         this.bg.setScrollFactor(0);
 
         // NineSlice border
-        this.border = helper.createNineSlice(this.x, this.y, 'ui', 'nineslice_box.png', this.width - 1, this.height - 1, 3, 3, 3, 3);
+        this.border = helper.createNineSlice(this.x, this.y, 'buttons', 'nineslice_box.png', this.width - 1, this.height - 1, 3, 3, 3, 3);
         this.border.setDepth(this.depth + 1);
         this.border.setScrollFactor(0);
 
@@ -51,10 +50,9 @@ class ProgressBar {
         const fillHeight = this.height - (this.padding * 2);
 
         // Position adjusted for the 2px smaller backing to keep fill centered
-        this.fill = this.scene.add.image(this.x - (this.width - 2) / 2 + (this.padding - 1), this.y, 'white_pixel');
+        this.fill = this.scene.add.image(this.x - (this.width - 2) / 2 + (this.padding - 1), this.y, 'buttons', 'blue_pixel.png');
         this.fill.setOrigin(0, 0.5);
         this.fill.setDisplaySize(0, fillHeight); // Start at scale 0
-        this.fill.setTint(this.fillColor);
         this.fill.setDepth(this.depth + 1);
         this.fill.setScrollFactor(0);
 
@@ -76,7 +74,7 @@ class ProgressBar {
      */
     setFillColor(color) {
         this.fillColor = color;
-        this.fill.setTint(color);
+        helper.setTint(this.fill, color);
     }
 
     /**

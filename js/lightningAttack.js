@@ -127,10 +127,12 @@ class LightningAttackView {
         const segments = [];
         for (let i = 0; i < points.length - 1; i++) {
             const glow = this.glowPool.get();
-            glow.setAlpha(1).setTint(0x4488ff).setVisible(true).setActive(true);
+            glow.setAlpha(1).setVisible(true).setActive(true);
+            helper.setTint(glow, 0x4488ff);
 
             const core = this.corePool.get();
-            core.setAlpha(1.0).setTint(0xccffff).setVisible(true).setActive(true);
+            core.setAlpha(1.0).setVisible(true).setActive(true);
+            helper.setTint(core, 0xccffff);
 
             segments.push(glow, core);
         }
