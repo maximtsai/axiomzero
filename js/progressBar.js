@@ -34,7 +34,7 @@ class ProgressBar {
 
     _create() {
         // Container (the "tray")
-        this.bg = this.scene.add.image(this.x, this.y, 'buttons', 'dark_grey_pixel.png');
+        this.bg = this.scene.add.image(this.x, this.y, 'buttons', 'black_pixel.png');
         this.bg.setDisplaySize(this.width - 2, this.height - 2);
         this.bg.setDepth(this.depth);
         this.bg.setScrollFactor(0);

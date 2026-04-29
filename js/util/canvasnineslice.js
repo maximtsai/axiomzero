@@ -148,18 +148,13 @@ class CanvasNineSlice extends Phaser.GameObjects.Container {
             const [cx, cy, cw, ch] = src[i];
             const [dx, dy, dw, dh] = dst[i];
 
-            // Scale so the crop region fills the destination cell exactly.
             const scaleX = dw / cw;
             const scaleY = dh / ch;
-            slice.setScale(scaleX, scaleY);
 
-            // Position: the slice's origin (0.5, 0.5) refers to the full
-            // frame center. Adjust so the crop's center lands at the cell center.
-            const cropCenterX = cx + cw / 2;
-            const cropCenterY = cy + ch / 2;
-            const offsetX = (cropCenterX - fw / 2) * scaleX;
-            const offsetY = (cropCenterY - fh / 2) * scaleY;
-            slice.setPosition(dx + dw / 2 - offsetX, dy + dh / 2 - offsetY);
+            // Set origin to the crop region's top-left within the full texture
+            slice.setOrigin(cx / fw, cy / fh);
+            slice.setScale(scaleX, scaleY);
+            slice.setPosition(dx, dy);
         }
     }
 }

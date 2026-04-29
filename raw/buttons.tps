@@ -233,6 +233,8 @@
             <key type="filename">buttons/dark_grey_pixel.png</key>
             <key type="filename">buttons/dark_red_pixel.png</key>
             <key type="filename">buttons/gold_pixel.png</key>
+            <key type="filename">buttons/green_pixel.png</key>
+            <key type="filename">buttons/navy_pixel.png</key>
             <key type="filename">buttons/red_pixel.png</key>
             <key type="filename">buttons/white_pixel.png</key>
             <struct type="IndividualSpriteSettings">

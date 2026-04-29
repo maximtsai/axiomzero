@@ -80,8 +80,8 @@ function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], 
 
     // Dark overlay + click blocker
     const darkBG = _createDarkOverlay({
-        ref: 'white_pixel.png', atlas: 'buttons', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
-        tint: 0x000000, depth, targetAlpha: 0.75, duration: fast ? 1 : 60,
+        ref: 'black_pixel.png', atlas: 'buttons', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
+        depth, targetAlpha: 0.75, duration: fast ? 1 : 60,
     });
     const blocker = _createFullscreenBlocker(depth);
 

@@ -67,9 +67,8 @@ function _showOptionsPopup() {
         });
     };
 
-    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'white_pixel.png');
+    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'black_pixel.png');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-    helper.setTint(darkBG, 0x000000);
     darkBG.setAlpha(0);
     darkBG.setDepth(depth);
     darkBG.setScrollFactor(0);
@@ -517,9 +516,8 @@ function _showResetConfirmPopup() {
     const height = 300;
     const elements = [];
 
-    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'white_pixel.png');
+    const darkBG = PhaserScene.add.image(W, H, 'buttons', 'black_pixel.png');
     darkBG.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-    helper.setTint(darkBG, 0x000000);
     darkBG.setAlpha(0);
     darkBG.setDepth(depth);
     darkBG.setScrollFactor(0);

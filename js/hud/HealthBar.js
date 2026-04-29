@@ -35,13 +35,11 @@ class HealthBar {
         // ── Damage Flare ──
         this.flare = PhaserScene.add.image(this.baseX, this.y + this.h / 2, 'buttons', 'white_vertical_line.png');
         this.flare.setOrigin(0.5, 0.5).setScale(1, 0.75).setDepth(this.depth + 1).setScrollFactor(0);
-        helper.setTint(this.flare, 0xffffff);
         this.flare.setAlpha(0);
 
         // ── Fill ──
-        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP, this.y + HEALTH_BAR_GAP, 'buttons', 'white_pixel.png');
+        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP, this.y + HEALTH_BAR_GAP, 'buttons', 'green_pixel.png');
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
-        helper.setTint(this.fill, 0x00F261);
 
         // ── Text ──
         const baseFontSize = helper.isMobileDevice() ? 30 : 25;

@@ -15,9 +15,9 @@ const coinMine = (() => {
         const width = 800;
         const height = 600;
 
-        bgOverlay = PhaserScene.add.image(cx, cy, 'buttons', 'white_pixel.png');
+        bgOverlay = PhaserScene.add.image(cx, cy, 'buttons', 'black_pixel.png');
         bgOverlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        bgOverlay.setTint(0x000000).setAlpha(0.75).setDepth(depth);
+        bgOverlay.setAlpha(0.75).setDepth(depth);
         bgOverlay.setScrollFactor(0);
         bgOverlay.setInteractive();
 

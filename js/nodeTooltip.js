@@ -35,8 +35,7 @@ const nodeTooltip = (() => {
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
         container.isTreeElement = true; // Allow treeCamera to render it so it appears on top of nodes
 
-        bg = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png').setOrigin(0.5, 0).setAlpha(0.86);
-        helper.setTint(bg, 0x182035);
+        bg = PhaserScene.add.image(0, 0, 'buttons', 'navy_pixel.png').setOrigin(0.5, 0).setAlpha(0.86);
         container.add(bg);
 
         // Icon holder

@@ -76,10 +76,9 @@ const iterationOverScreen = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         // Dark overlay
-        overlay = PhaserScene.add.image(cx, cy, 'buttons', 'white_pixel.png');
+        overlay = PhaserScene.add.image(cx, cy, 'buttons', 'black_pixel.png');
         overlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         overlay.setAlpha(0.75).setDepth(depth);
-        helper.setTint(overlay, 0x000000);
 
         // Title — Michroma
         titleText = PhaserScene.add.text(cx, cy - 190, t('results', 'iteration_complete'), {
@@ -759,12 +758,11 @@ const iterationOverScreen = (() => {
         const startY = GAME_CONSTANTS.HEIGHT - panelH - margin;
 
         // Background Panel
-        const panel = PhaserScene.add.image(startX, startY, 'buttons', 'white_pixel.png')
+        const panel = PhaserScene.add.image(startX, startY, 'buttons', 'black_pixel.png')
             .setOrigin(0)
             .setDisplaySize(panelW, panelH)
             .setAlpha(0.4)
             .setDepth(depth);
-        helper.setTint(panel, 0x000000);
         diagElements.push(panel);
 
         const reportTitle = PhaserScene.add.text(startX + 15, startY + 15, t('results', 'diagnostic_report'), {
