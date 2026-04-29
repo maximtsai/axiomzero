@@ -70,7 +70,7 @@ class Slider {
         });
         this.hitArea.setScrollFactor(0);
 
-        this.knob = PhaserScene.add.sprite(this.minX + initialValue * width, y, atlas, sprite);
+        this.knob = PhaserScene.add.image(this.minX + initialValue * width, y, atlas, sprite);
         this.knob.setDepth(depth + 2);
         this.knob.setScrollFactor(0);
 

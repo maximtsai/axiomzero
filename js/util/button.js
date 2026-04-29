@@ -98,9 +98,9 @@ class Button {
         // Create the single backing sprite
         let initialRef = this.normal.ref;
         if (this.normal.atlas) {
-            this.bgSprite = this.scene.add.sprite(0, 0, this.normal.atlas, initialRef);
+            this.bgSprite = this.scene.add.image(0, 0, this.normal.atlas, initialRef);
         } else {
-            this.bgSprite = this.scene.add.sprite(0, 0, initialRef);
+            this.bgSprite = this.scene.add.image(0, 0, initialRef);
         }
         this.bgSprite.setDepth(this.depth);
         if (this.normal.origin) {

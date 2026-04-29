@@ -35,7 +35,7 @@ const treeLineManager = (() => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx) + 1.57;
 
-        const line = PhaserScene.add.image(px + TREE_X_OFFSET, py, 'pixels', 'white_pixel.png');
+        const line = PhaserScene.add.image(px + TREE_X_OFFSET, py, 'buttons', 'white_pixel.png');
         line.setScale(1.5, distance / 2);
         line.setOrigin(0.5, 1);
         line.setRotation(angle);

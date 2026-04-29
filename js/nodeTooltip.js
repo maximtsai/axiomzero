@@ -40,7 +40,7 @@ const nodeTooltip = (() => {
 
         // Icon holder
         iconHolder = PhaserScene.add.image(0, 0, 'buttons', 'icon_holder.png');
-        iconSpr = PhaserScene.add.sprite(0, 0, 'buttons', 'Skillicon14_01.png').setDisplaySize(26, 26);
+        iconSpr = PhaserScene.add.image(0, 0, 'buttons', 'Skillicon14_01.png').setDisplaySize(26, 26);
         container.add([iconHolder, iconSpr]);
 
         nameT = PhaserScene.add.text(0, 0, '', {
@@ -72,7 +72,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0);
         container.add(lvT);
 
-        goldBg = PhaserScene.add.image(0, 0, 'pixels', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
+        goldBg = PhaserScene.add.image(0, 0, 'buttons', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'VCR',
             fontSize: '26px',
@@ -81,7 +81,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([goldBg, maxT]);
 
-        costBg = PhaserScene.add.image(0, 0, 'pixels', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
+        costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'VCR',
             fontSize: '26px',
@@ -205,7 +205,7 @@ const nodeTooltip = (() => {
             goldBg.setVisible(false);
             maxT.setVisible(false);
             costBg.setVisible(true).setPosition(0, currentY + 20);
-            costBg.setTexture('pixels', 'dark_green_pixel.png');
+            costBg.setTexture('buttons', 'dark_green_pixel.png');
             costT.setVisible(true).setPosition(0, currentY + 18);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
@@ -217,7 +217,7 @@ const nodeTooltip = (() => {
             costT.setVisible(true).setPosition(0, currentY + 18);
 
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
-            costBg.setTexture('pixels', bgPixel);
+            costBg.setTexture('buttons', bgPixel);
 
             let iconStr, currentRes;
             if (node.costType === 'shard') {

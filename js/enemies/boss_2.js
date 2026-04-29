@@ -340,10 +340,10 @@ class Boss2View extends EnemyView {
         // Lower base depth to DEPTH_ENEMIES - 2 (98) so turret at +1 (99) 
         // stays strictly below normal enemies at DEPTH_ENEMIES (100).
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 2;
-        super(Enemy.TEX_KEY, 'boss_2.png', 'boss2_hp.png', baseDepth);
+        super('bosses', 'boss_2.png', 'boss2_hp.png', baseDepth);
 
         // Add turret visual at center
-        this.turret = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_2_turret.png');
+        this.turret = PhaserScene.add.image(0, 0, 'bosses', 'boss_2_turret.png');
         this.turret.setDepth(baseDepth + 1);
         this.turret.setVisible(false);
         this.turret.setActive(false);
@@ -354,12 +354,12 @@ class Boss2View extends EnemyView {
         this.chargeSprite.setVisible(false);
 
         // Optional pink pulse nineslice effect identical to Boss 1 (if standard for bosses)
-        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 199, 199, 65, 65, 65, 65);
+        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 199, 199, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 219, 219, 65, 65, 65, 65);
+        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 219, 219, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
@@ -544,27 +544,40 @@ class Boss2View extends EnemyView {
     deactivate() {
         super.deactivate();
         if (this.turret) {
-            this.turret.setVisible(false);
-            this.turret.setActive(false);
+            this.turret.destroy();
+            this.turret = null;
         }
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
         }
         if (this.chargeSprite) {
-            this.chargeSprite.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.destroy();
+            this.chargeSprite = null;
         }
         if (this.pulse) {
-            this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.destroy();
+            this.pulse = null;
         }
         if (this.pulse2) {
-            this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
+            this.pulse2.destroy();
+            this.pulse2 = null;
         }
-        // NOTE: Don't clear the pool as this instance is pooled and reused.
-        // Let objects stay in the pool idle for the next activation.
+        if (this.img) {
+            this.img.destroy();
+            this.img = null;
+        }
+        if (this.hpImg) {
+            this.hpImg.destroy();
+            this.hpImg = null;
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.destroy();
+            this.enemyGlow = null;
+        }
     }
 
     playLaunchEffect(x, y) {

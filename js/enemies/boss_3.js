@@ -1,5 +1,6 @@
-// js/enemies/boss_3.js — Boss 3 (Legion) - An 8-piece fragmented boss.
+// js/enemies/boss_3.js — Boss 3 (Legion) - A 6-piece fragmented boss.
 // Each piece is a "Data Shard" that shares HP with its neighbors.
+
 
 const BOSS_3_PIECE_STATES = {
     TRAVEL: 'travel',
@@ -8,7 +9,7 @@ const BOSS_3_PIECE_STATES = {
 
 const boss3HealPacketPool = new ObjectPool(
     () => {
-        const spr = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_3_heal_packet.png');
+        const spr = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_heal_packet.png');
         spr.setVisible(false);
         spr.setActive(false);
         spr.setBlendMode(Phaser.BlendModes.ADD);
@@ -199,7 +200,7 @@ if (typeof messageBus !== 'undefined') {
 
 class Boss3PieceView extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'boss_3.png', 'boss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
+        super('bosses', 'boss_3.png', 'boss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
 
         this.lineSprite = PhaserScene.add.image(0, 0, 'pixels', 'pink_pixel.png');
         this.lineSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 3);
@@ -207,14 +208,14 @@ class Boss3PieceView extends EnemyView {
         this.lineSprite.setVisible(false);
 
         // Pulse effect (pink themed for Legion)
-        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
+        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
         this.pulse.setTint(0xff66cc);
         this.pulse.setDepth(this.img.depth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
         // Charge sprite
-        this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'boss_3_charge.png');
+        this.chargeSprite = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_charge.png');
         this.chargeSprite.setDepth(this.img.depth + 1);
         this.chargeSprite.setScale(1);
         this.chargeSprite.setAlpha(0);
@@ -291,18 +292,35 @@ class Boss3PieceView extends EnemyView {
 
     deactivate() {
         super.deactivate();
-        if (this.lineSprite) this.lineSprite.setVisible(false);
+        if (this.lineSprite) {
+            this.lineSprite.destroy();
+            this.lineSprite = null;
+        }
         if (this.pulse) {
-            this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.destroy();
+            this.pulse = null;
         }
         if (this.chargeSprite) {
-            this.chargeSprite.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.destroy();
+            this.chargeSprite = null;
         }
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
+        }
+        if (this.img) {
+            this.img.destroy();
+            this.img = null;
+        }
+        if (this.hpImg) {
+            this.hpImg.destroy();
+            this.hpImg = null;
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.destroy();
+            this.enemyGlow = null;
         }
     }
 
@@ -408,7 +426,7 @@ class Boss3 extends Boss {
         const ty = GAME_CONSTANTS.halfHeight;
 
         if (!_sharedAttackSprite) {
-            _sharedAttackSprite = PhaserScene.add.image(tx, ty, Enemy.TEX_KEY, 'boss3_attack.png');
+            _sharedAttackSprite = PhaserScene.add.image(tx, ty, 'bosses', 'boss3_attack.png');
             _sharedAttackSprite.setDepth(305); // Above projectiles (300)
         }
 
@@ -450,7 +468,7 @@ class Boss3 extends Boss {
                     _sharedAttackSprite.setFrame('boss3_attack.png');
                     _sharedAttackSprite.setVisible(false);
                     if (typeof tower !== 'undefined' && tower.isAlive()) {
-                        tower.takeDamage(_sharedAttackDamage, this.model.x, this.model.y);
+                        tower.takeDamage(_sharedAttackDamage);
                         _sharedAttackDamage += 1;
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.015);

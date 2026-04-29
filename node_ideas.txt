@@ -48,3 +48,5 @@ password123 still works on an alarming number of servers.
 Found an open port labeled "DO NOT ENTER". It was not locked.
 
 - Enemies coming out of a void.
+
+- Optimization: put pixels into buttons atlas

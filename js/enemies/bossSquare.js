@@ -16,16 +16,16 @@ class BossSquareModel extends BossModel {
 class BossSquareView extends EnemyView {
     constructor() {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
-        super(Enemy.TEX_KEY, 'boss_1.png', 'boss_hp.png', baseDepth);
+        super('bosses', 'boss_1.png', 'boss_hp.png', baseDepth);
 
         // Add pink pulse nineslice — corner size 65px
         // Phaser 3.60+ nineslice: (x, y, texture, frame, width, height, left, right, top, bottom)
-        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
+        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
+        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', 331, 331, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
@@ -137,12 +137,26 @@ class BossSquareView extends EnemyView {
             this.pulseTimer = null;
         }
         if (this.pulse) {
-            this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.destroy();
+            this.pulse = null;
         }
         if (this.pulse2) {
-            this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
+            this.pulse2.destroy();
+            this.pulse2 = null;
+        }
+        if (this.img) {
+            this.img.destroy();
+            this.img = null;
+        }
+        if (this.hpImg) {
+            this.hpImg.destroy();
+            this.hpImg = null;
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.destroy();
+            this.enemyGlow = null;
         }
     }
 }

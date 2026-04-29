@@ -19,7 +19,7 @@ class ShellEnemyView extends EnemyView {
     constructor() {
         // Depth is GAME_CONSTANTS.DEPTH_ENEMIES + 1.
         // This will set both the main image and the HP bar to the higher depth.
-        super(Enemy.TEX_KEY, 'shell.png', 'shell_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
+        super('bosses', 'shell.png', 'shell_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 1);
     }
 }
 

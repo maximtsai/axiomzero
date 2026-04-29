@@ -222,7 +222,7 @@ Object.assign(helper, {
         blocker.setDepth(999999); // Just below the visual wipe
 
         // Create the visual black pixel (2x2 base size)
-        const wipe = PhaserScene.add.image(-halfW, halfH, 'pixels', 'black_pixel.png');
+        const wipe = PhaserScene.add.image(-halfW, halfH, 'buttons', 'black_pixel.png');
         wipe.setDisplaySize(W, H);
         wipe.setDepth(1000000); // Highest possible depth layer
         wipe.setScrollFactor(0);
@@ -310,7 +310,7 @@ Object.assign(helper, {
             fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
         }).setOrigin(0, 0.8).setDepth(depth).setScrollFactor(0);
 
-        const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'pixels', 'black_pixel.png');
+        const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'buttons', 'black_pixel.png');
         line.setDisplaySize(width - 80, 2);
         line.setDepth(depth);
         line.setScrollFactor(0);

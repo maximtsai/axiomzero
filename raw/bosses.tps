@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>phaser-maxim</string>
         <key>textureFileName</key>
-        <filename>../assets/sprites/enemies-{n}.webp</filename>
+        <filename>../assets/sprites/bosses-{n}.webp</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrQualityLevel</key>
@@ -124,7 +124,7 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../assets/sprites/enemies.json</filename>
+                <filename>../assets/sprites/bosses.json</filename>
             </struct>
         </map>
         <key>multiPackMode</key>
@@ -173,25 +173,7 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">enemies/basic.png</key>
-            <key type="filename">enemies/basic_enemy_glow.png</key>
-            <key type="filename">enemies/bomb.png</key>
-            <key type="filename">enemies/bomb_glow.png</key>
-            <key type="filename">enemies/bullet.png</key>
-            <key type="filename">enemies/chargeup.png</key>
-            <key type="filename">enemies/enemy_glow.png</key>
-            <key type="filename">enemies/fast.png</key>
-            <key type="filename">enemies/heavy.png</key>
-            <key type="filename">enemies/logic_stray.png</key>
-            <key type="filename">enemies/projectile.png</key>
-            <key type="filename">enemies/protector.png</key>
-            <key type="filename">enemies/shooter.png</key>
-            <key type="filename">enemies/sniper.png</key>
-            <key type="filename">enemies/sniper_projectile.png</key>
-            <key type="filename">enemies/sniper_projectile_big.png</key>
-            <key type="filename">enemies/sniper_projectile_big1.png</key>
-            <key type="filename">enemies/sniper_projectile_big2.png</key>
-            <key type="filename">enemies/swarmer.png</key>
+            <key type="filename">bosses/boss2_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -200,13 +182,14 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>25,25,51,51</rect>
+                <rect>81,30,161,60</rect>
                 <key>scale9Paddings</key>
-                <rect>25,25,51,51</rect>
+                <rect>81,30,161,60</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/basic_enemy_hp.png</key>
+            <key type="filename">bosses/boss3_attack.png</key>
+            <key type="filename">bosses/boss3_attack_thick.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -215,13 +198,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>5,5,9,9</rect>
+                <rect>155,155,310,310</rect>
                 <key>scale9Paddings</key>
-                <rect>5,5,9,9</rect>
+                <rect>155,155,310,310</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/bomb_hp.png</key>
+            <key type="filename">bosses/boss5_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -230,13 +213,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>9,9,19,19</rect>
+                <rect>133,133,266,266</rect>
                 <key>scale9Paddings</key>
-                <rect>9,9,19,19</rect>
+                <rect>133,133,266,266</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/damage_particle.png</key>
+            <key type="filename">bosses/boss_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -245,14 +228,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>5,5,10,10</rect>
+                <rect>125,125,250,250</rect>
                 <key>scale9Paddings</key>
-                <rect>5,5,10,10</rect>
+                <rect>125,125,250,250</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/default_enemy_glow.png</key>
-            <key type="filename">enemies/invis.png</key>
+            <key type="filename">bosses/boss_2.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -261,24 +243,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>1,1,1,1</rect>
+                <rect>150,150,300,300</rect>
                 <key>scale9Paddings</key>
-                <rect>1,1,1,1</rect>
+                <rect>150,150,300,300</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/explosion_anim0.png</key>
-            <key type="filename">enemies/explosion_anim1.png</key>
-            <key type="filename">enemies/explosion_anim10.png</key>
-            <key type="filename">enemies/explosion_anim11.png</key>
-            <key type="filename">enemies/explosion_anim2.png</key>
-            <key type="filename">enemies/explosion_anim3.png</key>
-            <key type="filename">enemies/explosion_anim4.png</key>
-            <key type="filename">enemies/explosion_anim5.png</key>
-            <key type="filename">enemies/explosion_anim6.png</key>
-            <key type="filename">enemies/explosion_anim7.png</key>
-            <key type="filename">enemies/explosion_anim8.png</key>
-            <key type="filename">enemies/explosion_anim9.png</key>
+            <key type="filename">bosses/boss_2_turret.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -287,15 +258,29 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>30,30,59,59</rect>
+                <rect>75,30,150,60</rect>
                 <key>scale9Paddings</key>
-                <rect>30,30,59,59</rect>
+                <rect>75,30,150,60</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/explosion_flash.png</key>
-            <key type="filename">enemies/explosion_white.png</key>
-            <key type="filename">enemies/warning_area.png</key>
+            <key type="filename">bosses/boss_3.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>120,120,240,240</rect>
+                <key>scale9Paddings</key>
+                <rect>120,120,240,240</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">bosses/boss_3_charge.png</key>
+            <key type="filename">bosses/explosion_white.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -310,7 +295,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/fast_enemy_hp.png</key>
+            <key type="filename">bosses/boss_3_heal_packet.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -319,14 +304,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>9,6,18,11</rect>
+                <rect>25,25,50,50</rect>
                 <key>scale9Paddings</key>
-                <rect>9,6,18,11</rect>
+                <rect>25,25,50,50</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/fast_glow.png</key>
-            <key type="filename">enemies/heavy_glow.png</key>
+            <key type="filename">bosses/boss_3_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -335,13 +319,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>38,38,75,75</rect>
+                <rect>34,20,67,39</rect>
                 <key>scale9Paddings</key>
-                <rect>38,38,75,75</rect>
+                <rect>34,20,67,39</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/heavy_hp.png</key>
+            <key type="filename">bosses/boss_5.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -350,13 +334,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>19,21,37,43</rect>
+                <rect>210,210,420,420</rect>
                 <key>scale9Paddings</key>
-                <rect>19,21,37,43</rect>
+                <rect>210,210,420,420</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/logic_stray_enemy_hp.png</key>
+            <key type="filename">bosses/boss_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -365,13 +349,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>8,7,15,15</rect>
+                <rect>78,78,157,157</rect>
                 <key>scale9Paddings</key>
-                <rect>8,7,15,15</rect>
+                <rect>78,78,157,157</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_1.png</key>
+            <key type="filename">bosses/bosscircle.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -380,13 +364,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>50,50,101,101</rect>
+                <rect>138,133,277,267</rect>
                 <key>scale9Paddings</key>
-                <rect>50,50,101,101</rect>
+                <rect>138,133,277,267</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_1_enemy_hp.png</key>
+            <key type="filename">bosses/bosscircle_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -395,13 +379,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>11,13,21,25</rect>
+                <rect>77,82,155,165</rect>
                 <key>scale9Paddings</key>
-                <rect>11,13,21,25</rect>
+                <rect>77,82,155,165</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_1_glow.png</key>
+            <key type="filename">bosses/default_enemy_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -410,13 +394,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>68,71,136,141</rect>
+                <rect>1,1,1,1</rect>
                 <key>scale9Paddings</key>
-                <rect>68,71,136,141</rect>
+                <rect>1,1,1,1</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_2.png</key>
+            <key type="filename">bosses/explosion_ray.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -425,13 +409,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>76,76,151,151</rect>
+                <rect>240,72,480,144</rect>
                 <key>scale9Paddings</key>
-                <rect>76,76,151,151</rect>
+                <rect>240,72,480,144</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_2_hp.png</key>
+            <key type="filename">bosses/explosion_ray_thin.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -440,13 +424,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>33,20,66,41</rect>
+                <rect>240,20,480,40</rect>
                 <key>scale9Paddings</key>
-                <rect>33,20,66,41</rect>
+                <rect>240,20,480,40</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_3.png</key>
+            <key type="filename">bosses/pink_circle_pulse.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -455,13 +439,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>86,86,171,171</rect>
+                <rect>107,107,215,215</rect>
                 <key>scale9Paddings</key>
-                <rect>86,86,171,171</rect>
+                <rect>107,107,215,215</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_3_hp.png</key>
+            <key type="filename">bosses/pink_pulse.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -470,13 +454,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>38,43,75,85</rect>
+                <rect>40,40,80,80</rect>
                 <key>scale9Paddings</key>
-                <rect>38,43,75,85</rect>
+                <rect>40,40,80,80</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_sniper.png</key>
+            <key type="filename">bosses/shell.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -485,13 +469,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>74,74,147,147</rect>
+                <rect>27,15,55,30</rect>
                 <key>scale9Paddings</key>
-                <rect>74,74,147,147</rect>
+                <rect>27,15,55,30</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/miniboss_sniper_hp.png</key>
+            <key type="filename">bosses/shell_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -500,15 +484,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>27,27,55,55</rect>
+                <rect>50,35,99,70</rect>
                 <key>scale9Paddings</key>
-                <rect>27,27,55,55</rect>
+                <rect>50,35,99,70</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">enemies/particle_square.png</key>
-            <key type="filename">enemies/particle_square_hollow.png</key>
-            <key type="filename">enemies/swarmer_enemy_hp.png</key>
+            <key type="filename">bosses/shell_hp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -517,189 +499,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>4,4,8,8</rect>
+                <rect>23,13,45,25</rect>
                 <key>scale9Paddings</key>
-                <rect>4,4,8,8</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/particle_square_blur.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>6,6,12,12</rect>
-                <key>scale9Paddings</key>
-                <rect>6,6,12,12</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/particle_square_blur_big.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>10,10,20,20</rect>
-                <key>scale9Paddings</key>
-                <rect>10,10,20,20</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/projectile_hijack.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.88</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>16,6,31,11</rect>
-                <key>scale9Paddings</key>
-                <rect>16,6,31,11</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/protector_aoe.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>68,68,135,135</rect>
-                <key>scale9Paddings</key>
-                <rect>68,68,135,135</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/protector_enemy_hp.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>8,8,15,15</rect>
-                <key>scale9Paddings</key>
-                <rect>8,8,15,15</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/shooter_enemy_hp.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>6,6,11,11</rect>
-                <key>scale9Paddings</key>
-                <rect>6,6,11,11</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/shooter_glow.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>49,49,97,97</rect>
-                <key>scale9Paddings</key>
-                <rect>49,49,97,97</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/sniper_enemy_hp.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>8,8,17,17</rect>
-                <key>scale9Paddings</key>
-                <rect>8,8,17,17</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/swarmer_damage_particle.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>9,3,18,6</rect>
-                <key>scale9Paddings</key>
-                <rect>9,3,18,6</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/test.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>35,35,71,71</rect>
-                <key>scale9Paddings</key>
-                <rect>35,35,71,71</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/warning.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>75,38,151,75</rect>
-                <key>scale9Paddings</key>
-                <rect>75,38,151,75</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">enemies/warning_big.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>75,63,151,125</rect>
-                <key>scale9Paddings</key>
-                <rect>75,63,151,125</rect>
+                <rect>23,13,45,25</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -710,7 +512,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>enemies</filename>
+                    <filename>bosses</filename>
                 </array>
             </struct>
         </map>

@@ -281,7 +281,7 @@ function _showOptionsPopup() {
     elements.push(dataHeader.text, dataHeader.line);
     textObjects.push({ obj: dataHeader.text, size: 23 });
 
-    const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'pixels', 'black_pixel.png');
+    const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'buttons', 'black_pixel.png');
     resetUnderlay.setDisplaySize(width - 477, 31);
     resetUnderlay.setDepth(depth + 3).setAlpha(0.5);
     resetUnderlay.setScrollFactor(0);

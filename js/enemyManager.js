@@ -593,8 +593,15 @@ const enemyManager = (() => {
         if (died && !enemy.model.isGhosting) {
             // Handle multi-part bosses (Phalanx/Boss3)
             if (enemy.model.type === 'boss3') {
-                const pieces = activeEnemies.filter(e => e.model.type === 'boss3' && e.model.alive);
-                if (pieces.length > 1) {
+                let aliveBoss3Count = 0;
+                for (let j = 0; j < activeEnemies.length; j++) {
+                    const e = activeEnemies[j];
+                    if (e && e.model.type === 'boss3' && e.model.alive) {
+                        aliveBoss3Count++;
+                        if (aliveBoss3Count > 1) break;
+                    }
+                }
+                if (aliveBoss3Count > 1) {
                     _killEnemy(enemy, true, wasResonance);
                     return;
                 }
