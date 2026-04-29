@@ -46,7 +46,7 @@ class MainScene extends Phaser.Scene {
 // ─── Game config ─────────────────────────────────────────────────────────────
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     width: GAME_CONSTANTS.WIDTH,
     height: GAME_CONSTANTS.HEIGHT,
     backgroundColor: '#05070a',

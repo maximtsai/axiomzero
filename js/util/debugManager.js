@@ -14,7 +14,7 @@ function initDebug(scene) {
     if (!FLAGS.DEBUG) return;
 
     // ── FPS counter ───────────────────────────────────────────────────────────
-    const fpsText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 58, '', {
+    const fpsText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 70, '', {
         fontFamily: 'monospace',
         fontSize: 17,
         color: '#00ff00',
@@ -23,10 +23,10 @@ function initDebug(scene) {
     }).setOrigin(1, 0).setDepth(9999).setScrollFactor(0);
 
     // ── GAME_VARS inspector ───────────────────────────────────────────────────
-    const inspectorBg = scene.add.rectangle(GAME_CONSTANTS.WIDTH - 5, 58 + 25, 10, 10, 0x000000, 0.72)
+    const inspectorBg = scene.add.rectangle(GAME_CONSTANTS.WIDTH - 5, 70 + 25, 10, 10, 0x000000, 0.72)
         .setOrigin(1, 0).setDepth(9998).setScrollFactor(0);
 
-    const inspectorText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 58 + 30, '', {
+    const inspectorText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 70 + 30, '', {
         fontFamily: 'monospace',
         fontSize: 13,
         color: '#88ff88',
@@ -34,9 +34,19 @@ function initDebug(scene) {
         lineSpacing: 2,
     }).setOrigin(1, 0).setDepth(9999).setScrollFactor(0);
 
+    let lastDrawCountUpdate = 0;
+    let currentDrawCount = 'N/A';
+
     // ── Per-frame update ──────────────────────────────────────────────────────
     updateManager.addFunction(() => {
-        fpsText.setText('FPS ' + Math.round(scene.game.loop.actualFps));
+        const now = scene.time.now;
+        if (now - lastDrawCountUpdate >= 1000) {
+            lastDrawCountUpdate = now;
+            const drawCount = scene.sys.game.renderer.drawCount;
+            currentDrawCount = (drawCount !== undefined) ? drawCount : 'N/A';
+        }
+
+        fpsText.setText(`FPS ${Math.round(scene.game.loop.actualFps)} | DC ${currentDrawCount}`);
 
         const lines = Object.entries(GAME_VARS).map(([k, v]) => {
             let val;
