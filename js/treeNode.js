@@ -621,7 +621,7 @@ class Node {
 
         // Reveal Glow sprite
         const startFrame = (this.costType === 'insight') ? 'insight_node_glow0.png' : 'node_glow0.png';
-        this.glowSprite = PhaserScene.add.image(x, y, 'buttons', startFrame)
+        this.glowSprite = PhaserScene.add.sprite(x, y, 'buttons', startFrame)
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
             .setVisible(false)

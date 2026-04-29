@@ -34,18 +34,9 @@ function initDebug(scene) {
         lineSpacing: 2,
     }).setOrigin(1, 0).setDepth(9999).setScrollFactor(0);
 
-    let lastDrawCallUpdate = 0;
-    let cachedDrawCalls = 0;
-
     // ── Per-frame update ──────────────────────────────────────────────────────
     updateManager.addFunction(() => {
-        const now = Date.now();
-        if (now - lastDrawCallUpdate >= 1000) {
-            lastDrawCallUpdate = now;
-            cachedDrawCalls = (scene.game.renderer && scene.game.renderer.drawCalls) ? scene.game.renderer.drawCalls : 0;
-        }
-
-        fpsText.setText('FPS ' + Math.round(scene.game.loop.actualFps) + ' | DC ' + cachedDrawCalls);
+        fpsText.setText('FPS ' + Math.round(scene.game.loop.actualFps));
 
         const lines = Object.entries(GAME_VARS).map(([k, v]) => {
             let val;
