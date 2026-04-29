@@ -50,26 +50,90 @@ class CanvasNineSlice extends Phaser.GameObjects.Container {
     get width() { return this._width; }
     set width(value) {
         this._width = value;
-        this.updateSlices();
+        if (this.slices) {
+            this.updateSlices();
+        }
     }
 
     get height() { return this._height; }
     set height(value) {
         this._height = value;
-        this.updateSlices();
+        if (this.slices) {
+            this.updateSlices();
+        }
+    }
+
+    get alpha() {
+        return this._alpha !== undefined ? this._alpha : 1;
+    }
+    set alpha(value) {
+        this._alpha = value;
+        if (this.slices) {
+            this.slices.forEach(s => s.setAlpha(value));
+        }
+    }
+
+    get visible() {
+        return this._visible !== undefined ? this._visible : true;
+    }
+    set visible(value) {
+        this._visible = value;
+        if (this.slices) {
+            this.slices.forEach(s => s.setVisible(value));
+        }
+    }
+
+    setAlpha(value) {
+        super.setAlpha(value);
+        this.alpha = value;
+        return this;
+    }
+
+    setVisible(value) {
+        super.setVisible(value);
+        this.visible = value;
+        return this;
+    }
+
+    setDepth(d) {
+        super.setDepth(d);
+        if (this.slices) {
+            this.slices.forEach(s => s.setDepth(d));
+        }
+        return this;
+    }
+
+    setScrollFactor(sf) {
+        super.setScrollFactor(sf);
+        if (this.slices) {
+            this.slices.forEach(s => s.setScrollFactor(sf));
+        }
+        return this;
+    }
+
+    setPosition(x, y) {
+        super.setPosition(x, y);
+        if (this.slices) {
+            this.updateSlices();
+        }
+        return this;
     }
 
     setSize(width, height) {
         this._width = width;
         this._height = height;
-        this.updateSlices();
+        if (this.slices) {
+            this.updateSlices();
+        }
         return this;
     }
 
     setOrigin(x, y = x) {
         this._originX = x;
         this._originY = y;
-        this.updateSlices();
+        if (this.slices) {
+            this.updateSlices();
+        }
         return this;
     }
 
@@ -151,10 +215,9 @@ class CanvasNineSlice extends Phaser.GameObjects.Container {
             const scaleX = dw / cw;
             const scaleY = dh / ch;
 
-            // Set origin to the crop region's top-left within the full texture
-            slice.setOrigin(cx / fw, cy / fh);
+            slice.setOrigin(0, 0);
             slice.setScale(scaleX, scaleY);
-            slice.setPosition(dx, dy);
+            slice.setPosition(dx - cx * scaleX, dy - cy * scaleY);
         }
     }
 }

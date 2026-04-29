@@ -457,7 +457,9 @@ class Node {
             duoBoxTier: this.duoBoxTier
         });
 
-        this._playLocalPurchaseAnimations();
+        if (!this.isMaxed()) {
+            this._playLocalPurchaseAnimations();
+        }
 
         // System notifications
         messageBus.publish('upgradePurchased', {

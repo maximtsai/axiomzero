@@ -28,16 +28,31 @@ const nodeAnims = {
 
         const baseScaleX = node.btn.scaleX;
         const baseScaleY = node.btn.scaleY;
-        node.btn.setScale(baseScaleX * 0.9, baseScaleY * 0.9);
 
+        const targets = [node.btn, node.iconSprite, node.fadeoutSprite].filter(Boolean);
+
+        targets.forEach(t => t.setScale(baseScaleX * 1.28, baseScaleY * 1.28));
         PhaserScene.tweens.add({
-            targets: node.btn,
-            scaleX: baseScaleX,
-            scaleY: baseScaleY,
-            duration: 250,
-            easeParams: [2.5],
-            ease: 'Back.easeOut',
+            targets: targets,
+            scaleX: baseScaleX * 0.9,
+            scaleY: baseScaleY * 0.9,
+            duration: 180,
+            rotation: 0,
+            ease: 'Cubic.easeInOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: targets,
+                    scaleX: baseScaleX,
+                    scaleY: baseScaleY,
+                    duration: 350,
+                    rotation: 0,
+                    easeParams: [3.5],
+                    ease: 'Back.easeOut',
+                });
+            }
         });
+
+
     },
 
     /**

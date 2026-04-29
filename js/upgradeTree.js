@@ -1556,10 +1556,19 @@ const upgradeTree = (() => {
         if (!treeMaskContainer) return;
 
         // Un-ignore from treeNodeCamera so it gets rendered
+        function unignoreRecursive(obj) {
+            if (!obj) return;
+            if (obj.cameraFilter !== undefined) obj.cameraFilter &= ~treeNodeCamera.id;
+            if (obj.bgSprite && obj.bgSprite.cameraFilter !== undefined) obj.bgSprite.cameraFilter &= ~treeNodeCamera.id;
+            if (obj.text && obj.text.cameraFilter !== undefined) obj.text.cameraFilter &= ~treeNodeCamera.id;
+
+            if (obj.list && Array.isArray(obj.list)) {
+                obj.list.forEach(child => unignoreRecursive(child));
+            }
+        }
+
         if (treeNodeCamera) {
-            if (gameObject.cameraFilter !== undefined) gameObject.cameraFilter &= ~treeNodeCamera.id;
-            if (gameObject.bgSprite && gameObject.bgSprite.cameraFilter !== undefined) gameObject.bgSprite.cameraFilter &= ~treeNodeCamera.id;
-            if (gameObject.text && gameObject.text.cameraFilter !== undefined) gameObject.text.cameraFilter &= ~treeNodeCamera.id;
+            unignoreRecursive(gameObject);
         }
 
         if (gameObject instanceof Button) {

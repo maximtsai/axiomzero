@@ -37,12 +37,11 @@ const tooltipManager = (() => {
 
     function init() {
         // Background panel
-        bg = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png');
+        bg = PhaserScene.add.image(0, 0, 'buttons', 'dark_grey_pixel.png');
         bg.setOrigin(0, 0)
             .setAlpha(0)
             .setDepth(DEPTH)
             .setScrollFactor(0);
-        helper.setTint(bg, 0x111122);
 
         outline = helper.createNineSlice(0, 0, 'buttons', 'white_outline.png', 10, 10, 8, 8, 8, 8);
         outline.setOrigin(0, 0)
@@ -142,6 +141,7 @@ const tooltipManager = (() => {
         outline.setPosition(posX - 6, posY - 6);
         outline.setSize(bgW + 12, bgH + 12);
         outline.setAlpha(0.4);
+        outline.setScale(1);
 
         // Position text lines inside the panel
         for (let i = 0; i < textObjects.length; i++) {
@@ -156,6 +156,105 @@ const tooltipManager = (() => {
             const d = decorations[i];
             d.setPosition(posX + PADDING + (d.relX || 0), posY + PADDING + (d.relY || 0));
         }
+
+        const offsetX = bgW * 0.035;
+        const scaleMultStart = 1.07;
+        const DURATION_1 = 70;
+        const DURATION_2 = 200;
+        const offsetAmtHalf = offsetX * 0.3;
+        const firstScaleMult = 0.95;
+
+        // Tween bg
+        const bgFinalX = posX;
+        bg.x = bgFinalX - offsetX;
+        const bgFinalScaleX = bg.scaleX;
+        bg.scaleX = bgFinalScaleX * scaleMultStart;
+        PhaserScene.tweens.add({
+            targets: bg,
+            x: bgFinalX + offsetAmtHalf,
+            scaleX: bgFinalScaleX * firstScaleMult,
+            duration: DURATION_1,
+            ease: 'Quart.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: bg,
+                    x: bgFinalX,
+                    scaleX: bgFinalScaleX,
+                    duration: DURATION_2,
+                    ease: 'Back.easeOut'
+                });
+            }
+        });
+
+        // Tween outline
+        const outlineFinalX = posX - 6;
+        outline.x = outlineFinalX - offsetX;
+        const outlineFinalScaleX = outline.scaleX;
+        outline.scaleX = outlineFinalScaleX * scaleMultStart;
+        PhaserScene.tweens.add({
+            targets: outline,
+            x: outlineFinalX + offsetAmtHalf,
+            scaleX: outlineFinalScaleX * firstScaleMult,
+            duration: DURATION_1,
+            ease: 'Quart.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: outline,
+                    x: outlineFinalX,
+                    scaleX: outlineFinalScaleX,
+                    duration: DURATION_2,
+                    ease: 'Back.easeOut'
+                });
+            }
+        });
+
+        // Tween text objects
+        textObjects.forEach(t => {
+            const finalX = t.x;
+            t.x = finalX - offsetX;
+            const finalScaleX = t.scaleX;
+            t.scaleX = finalScaleX * scaleMultStart;
+            PhaserScene.tweens.add({
+                targets: t,
+                x: finalX + offsetAmtHalf,
+                scaleX: finalScaleX * firstScaleMult,
+                duration: DURATION_1,
+                ease: 'Quart.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: t,
+                        x: finalX,
+                        scaleX: finalScaleX,
+                        duration: DURATION_2,
+                        ease: 'Back.easeOut'
+                    });
+                }
+            });
+        });
+
+        // Tween decorations
+        decorations.forEach(d => {
+            const finalX = d.x;
+            d.x = finalX - offsetX;
+            const finalScaleX = d.scaleX;
+            d.scaleX = finalScaleX * scaleMultStart;
+            PhaserScene.tweens.add({
+                targets: d,
+                x: finalX + offsetAmtHalf,
+                scaleX: finalScaleX * firstScaleMult,
+                duration: DURATION_1,
+                ease: 'Quart.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: d,
+                        x: finalX,
+                        scaleX: finalScaleX,
+                        duration: DURATION_2,
+                        ease: 'Back.easeOut'
+                    });
+                }
+            });
+        });
 
         visible = true;
     }
