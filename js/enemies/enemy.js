@@ -242,7 +242,7 @@ class EnemyModel {
     takeDamage(amount) {
         if (this.invincible && (this.isBoss || this.isMiniboss)) {
             this.lastDamageAmount = 0;
-            return false;
+            return { died: false, actualApplied: 0 };
         }
 
         this.lastDamageWasProtected = false;
@@ -510,12 +510,19 @@ class EnemyView {
             flickerDuration = 80
         } = config;
 
-        PhaserScene.tweens.add({
-            targets: [this.img, this.hpImg, this.enemyGlow].filter(i => i && i.scene),
-            alpha: { from: flickerAlpha, to: 1 },
-            duration: flickerDuration,
-            ease: 'Linear'
-        });
+        const flashTargets = [];
+        if (this.img && this.img.scene) flashTargets.push(this.img);
+        if (this.hpImg && this.hpImg.scene) flashTargets.push(this.hpImg);
+        if (this.enemyGlow && this.enemyGlow.scene) flashTargets.push(this.enemyGlow);
+
+        if (flashTargets.length > 0) {
+            PhaserScene.tweens.add({
+                targets: flashTargets,
+                alpha: { from: flickerAlpha, to: 1 },
+                duration: flickerDuration,
+                ease: 'Linear'
+            });
+        }
     }
 
     setEnemyGlow(frame) {

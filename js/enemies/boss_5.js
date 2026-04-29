@@ -28,21 +28,21 @@ class Boss5Model extends BossModel {
 class Boss5View extends EnemyView {
     constructor() {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
-        super(Enemy.TEX_KEY, 'boss_5.png', 'boss5_hp.png', baseDepth);
+        super('bosses', 'boss_5.png', 'boss5_hp.png', baseDepth);
 
         // Scaled pink pulse effect (1.4x larger than current Boss 5)
         const startSize = 553;
-        this.pulse = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse2 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
 
-        this.pulse3 = PhaserScene.add.nineslice(0, 0, Enemy.TEX_KEY, 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
+        this.pulse3 = PhaserScene.add.nineslice(0, 0, 'bosses', 'pink_pulse.png', startSize, startSize, 65, 65, 65, 65);
         this.pulse3.setDepth(baseDepth - 1);
         this.pulse3.setVisible(false);
         this.pulse3.setAlpha(0);
@@ -144,16 +144,31 @@ class Boss5View extends EnemyView {
             this.pulseTimer = null;
         }
         if (this.pulse) {
-            this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.destroy();
+            this.pulse = null;
         }
         if (this.pulse2) {
-            this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
+            this.pulse2.destroy();
+            this.pulse2 = null;
         }
         if (this.pulse3) {
-            this.pulse3.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse3);
+            this.pulse3.destroy();
+            this.pulse3 = null;
+        }
+        if (this.img) {
+            this.img.destroy();
+            this.img = null;
+        }
+        if (this.hpImg) {
+            this.hpImg.destroy();
+            this.hpImg = null;
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.destroy();
+            this.enemyGlow = null;
         }
     }
 }
@@ -191,10 +206,10 @@ class Boss5 extends Boss {
 
     takeDamage(amount) {
         // Block all damage during stagger phase
-        if (this.model.staggering) return false;
+        if (this.model.staggering) return { died: false, actualApplied: 0 };
 
         const result = super.takeDamage(amount);
-        if (!result) return false;
+        if (!result) return { died: false, actualApplied: 0 };
 
         if (result.died && !this.model.staggerPhaseComplete) {
             // Intercept death — enter stagger instead
@@ -203,7 +218,7 @@ class Boss5 extends Boss {
             this.model.staggering = true;
             this.model.invincible = true;
             this._startStagger();
-            return false;
+            return { died: false, actualApplied: result.actualApplied };
         }
 
         return result;

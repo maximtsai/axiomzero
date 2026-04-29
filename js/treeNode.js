@@ -598,14 +598,14 @@ class Node {
 
         // Node icon
         if (this.icon) {
-            this.iconSprite = PhaserScene.add.sprite(iconX, y, 'buttons', this.icon)
+            this.iconSprite = PhaserScene.add.image(iconX, y, 'buttons', this.icon)
                 .setOrigin(0.5, 0.5)
                 .setDepth(nodeDepth + 1)
                 .setScrollFactor(0);
         }
 
         // Fadeout sprite — overlays button, starts invisible
-        this.fadeoutSprite = PhaserScene.add.sprite(x, y, 'buttons', 'node_ghost.png')
+        this.fadeoutSprite = PhaserScene.add.image(x, y, 'buttons', 'node_ghost.png')
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
             .setDepth(nodeDepth + 1)
@@ -621,7 +621,7 @@ class Node {
 
         // Reveal Glow sprite
         const startFrame = (this.costType === 'insight') ? 'insight_node_glow0.png' : 'node_glow0.png';
-        this.glowSprite = PhaserScene.add.sprite(x, y, 'buttons', startFrame)
+        this.glowSprite = PhaserScene.add.image(x, y, 'buttons', startFrame)
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
             .setVisible(false)

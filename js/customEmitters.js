@@ -18,7 +18,7 @@ const customEmitters = (() => {
     // ── Sprite pool for basicStrikeManual ─────────────────────────────────────
     const strikeSpritePool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
+            const sprite = PhaserScene.add.image(0, 0, 'player', 'blue_pixel.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -44,7 +44,7 @@ const customEmitters = (() => {
     // ── Explosion Rays (Boss Death) ──────────────────────────────────────────
     const explosionRayPool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'explosion_ray.png');
+            const sprite = PhaserScene.add.image(0, 0, 'bosses', 'explosion_ray.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -338,8 +338,8 @@ const customEmitters = (() => {
         emitting: false,
     }
 
-    const _towerDeath = _make('pixels', towerDeathParams, GAME_CONSTANTS.DEPTH_TOWER + 2);
-    const _towerDeathShrapnel = _make('pixels', towerDeathShrapnelParams, GAME_CONSTANTS.DEPTH_TOWER + 3);
+    const _towerDeath = _make('player', towerDeathParams, GAME_CONSTANTS.DEPTH_TOWER + 2);
+    const _towerDeathShrapnel = _make('player', towerDeathShrapnelParams, GAME_CONSTANTS.DEPTH_TOWER + 3);
 
     function towerDeath(x, y) {
         const isMinimal = gameState.settings.minimalParticles;
@@ -363,7 +363,7 @@ const customEmitters = (() => {
         emitting: false,
     }
 
-    const _towerHit = _make('pixels', towerHitParams, GAME_CONSTANTS.DEPTH_TOWER - 2);
+    const _towerHit = _make('player', towerHitParams, GAME_CONSTANTS.DEPTH_TOWER - 2);
 
     function towerHit(x, y, count = 2) {
         const e = _towerHit();

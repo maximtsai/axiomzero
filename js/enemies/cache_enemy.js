@@ -86,7 +86,7 @@ class CacheEnemyView extends EnemyView {
     playTeleportIndicator(x, y) {
         if (!PhaserScene) return;
 
-        const burst = PhaserScene.add.nineslice(x, y, Enemy.TEX_KEY, 'pink_pulse.png', 75, 75, 32, 32, 32, 32);
+        const burst = PhaserScene.add.nineslice(x, y, 'bosses', 'pink_pulse.png', 75, 75, 32, 32, 32, 32);
         burst.setTintFill(0xffffff);
         burst.setDepth(this.img.depth + 2);
 

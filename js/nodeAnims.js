@@ -164,7 +164,7 @@ const nodeAnims = {
         const pulseDepth = node.btn.depth + 1;
 
         const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
-        const pulse = PhaserScene.add.sprite(x, y, 'buttons', 'duo_node_pulse.png')
+        const pulse = PhaserScene.add.image(x, y, 'buttons', 'duo_node_pulse.png')
             .setOrigin(0.5, 0.5)
             .setDepth(pulseDepth)
             .setScrollFactor(0)
@@ -213,7 +213,7 @@ const nodeAnims = {
         const glowDepth = GAME_CONSTANTS.DEPTH_UPGRADE_TREE; // Behind nodes and lines
 
         // 1. Create the flickering glow sprite
-        const glow = scene.add.sprite(x, y, 'player', 'unlock_glow.png')
+        const glow = scene.add.image(x, y, 'player', 'unlock_glow.png')
             .setDepth(glowDepth)
             .setAlpha(0.4)
             .setScale(0.2);
@@ -248,7 +248,7 @@ const nodeAnims = {
                 });
 
                 // 2. Create the expansion explosion
-                const explosion = scene.add.sprite(x + 400, y, 'player', 'unlock_explosion.png')
+                const explosion = scene.add.image(x + 400, y, 'player', 'unlock_explosion.png')
                     .setDepth(nodeDepth + 10) // Render above the node
                     .setScale(0.5)
                     .setAlpha(1.2);

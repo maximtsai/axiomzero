@@ -20,7 +20,7 @@ const projectileManager = (() => {
     function init() {
         pool = new ObjectPool(
             () => {
-                const img = PhaserScene.add.image(0, 0, 'pixels', 'blue_pixel.png');
+                const img = PhaserScene.add.image(0, 0, 'player', 'blue_pixel.png');
                 img.setDepth(150); // Below tower (200) but above enemies (100)
                 img.setScale(12, 5);
                 img.setVisible(false);

@@ -51,15 +51,15 @@ class BossCircleModel extends BossModel {
 class BossCircleView extends EnemyView {
     constructor() {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
-        super(Enemy.TEX_KEY, 'bosscircle.png', 'bosscircle_hp.png', baseDepth);
+        super('bosses', 'bosscircle.png', 'bosscircle_hp.png', baseDepth);
 
         // Add pink pulse sprites
-        this.pulse = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'pink_circle_pulse.png');
+        this.pulse = PhaserScene.add.image(0, 0, 'bosses', 'pink_circle_pulse.png');
         this.pulse.setDepth(baseDepth - 1);
         this.pulse.setVisible(false);
         this.pulse.setAlpha(0);
 
-        this.pulse2 = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'pink_circle_pulse.png');
+        this.pulse2 = PhaserScene.add.image(0, 0, 'bosses', 'pink_circle_pulse.png');
         this.pulse2.setDepth(baseDepth - 1);
         this.pulse2.setVisible(false);
         this.pulse2.setAlpha(0);
@@ -162,20 +162,31 @@ class BossCircleView extends EnemyView {
 
     deactivate() {
         super.deactivate();
-        // Bug 5: kill any in-progress model tweens (rotation / visualOffset)
-        PhaserScene.tweens.killTweensOf(this.pulse);
-        PhaserScene.tweens.killTweensOf(this.pulse2);
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
         }
         if (this.pulse) {
-            this.pulse.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.destroy();
+            this.pulse = null;
         }
         if (this.pulse2) {
-            this.pulse2.setVisible(false);
             PhaserScene.tweens.killTweensOf(this.pulse2);
+            this.pulse2.destroy();
+            this.pulse2 = null;
+        }
+        if (this.img) {
+            this.img.destroy();
+            this.img = null;
+        }
+        if (this.hpImg) {
+            this.hpImg.destroy();
+            this.hpImg = null;
+        }
+        if (this.enemyGlow) {
+            this.enemyGlow.destroy();
+            this.enemyGlow = null;
         }
     }
 }

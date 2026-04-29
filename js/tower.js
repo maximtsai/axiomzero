@@ -223,7 +223,7 @@ class TowerView {
         this.warnShockwave.setDepth(-2).setAlpha(0);
 
         // Main tower sprite
-        this.sprite = PhaserScene.add.sprite(cx, cy, 'player', 'tower1.png');
+        this.sprite = PhaserScene.add.image(cx, cy, 'player', 'tower1.png');
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sprite.setAlpha(1);
         this.sprite.clearTint();
@@ -764,8 +764,8 @@ const tower = (() => {
             const hitPct = damageTaken / model.maxHealth;
             const particleCount = 2 + Math.floor(hitPct / 0.1);
             const pos = getPosition();
-            const px = (x !== undefined) ? x : pos.x;
-            const py = (y !== undefined) ? y : pos.y;
+            const px = (x !== 0) ? x : pos.x;
+            const py = (y !== 0) ? y : pos.y;
             customEmitters.towerHit(px, py, particleCount);
         }
 

@@ -191,7 +191,7 @@ class CombatShield {
         if (!this._particlePool && typeof PhaserScene !== 'undefined' && typeof ObjectPool !== 'undefined') {
             this._particlePool = new ObjectPool(
                 () => {
-                    const p = PhaserScene.add.image(0, 0, 'pixels', 'white_pixel.png');
+                    const p = PhaserScene.add.image(0, 0, 'player', 'white_pixel.png');
                     p.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2);
                     p.setVisible(false);
                     return p;
