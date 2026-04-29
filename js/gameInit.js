@@ -10,9 +10,32 @@
 //   5. Mute/SFX toggle buttons are created
 //   6. Game enters UPGRADE_PHASE to begin
 
-messageBus.subscribeOnce('assetsLoaded', () => {
+messageBus.subscribeOnce('assetsLoaded', async () => {
 
     // ── Restore or initialise game state ────────────────────────────────
+    if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
+        try {
+            const cloudSave = await sdk.getItem(SAVE_KEY);
+            if (cloudSave) {
+                localStorage.setItem(SAVE_KEY, cloudSave);
+                debugLog('Cloud save fetched and injected into localStorage.');
+            }
+        } catch (e) {
+            console.error('Failed to pre-fetch cloud save:', e);
+        }
+
+        try {
+            const cloudOptions = await sdk.getItem(OPTIONS_KEY);
+            if (cloudOptions && typeof gameOptions !== 'undefined') {
+                localStorage.setItem(OPTIONS_KEY, cloudOptions);
+                Object.assign(gameOptions, JSON.parse(cloudOptions));
+                debugLog('Cloud options fetched and updated.');
+            }
+        } catch (e) {
+            console.error('Failed to pre-fetch cloud options:', e);
+        }
+    }
+
     initGameState();
 
     if (typeof FLAGS !== 'undefined' && FLAGS.DEBUG) {

@@ -80,7 +80,14 @@ const gameOptions = (function () {
 /** Persist current gameOptions to localStorage. */
 function saveGameOptions() {
     try {
-        localStorage.setItem(OPTIONS_KEY, JSON.stringify(gameOptions));
+        const payload = JSON.stringify(gameOptions);
+        localStorage.setItem(OPTIONS_KEY, payload);
+
+        if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
+            sdk.setItem(OPTIONS_KEY, payload).catch(e => {
+                console.error('[Cloud] Cloud save options failed:', e);
+            });
+        }
     } catch (e) {
         console.error('saveGameOptions failed:', e);
     }

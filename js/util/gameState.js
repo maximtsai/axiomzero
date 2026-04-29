@@ -100,6 +100,12 @@ function saveGame() {
         const payload = JSON.stringify({ version: SAVE_VERSION, data: gameState });
         localStorage.setItem(SAVE_KEY, payload);
         debugLog('Game saved');
+
+        if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
+            sdk.setItem(SAVE_KEY, payload).catch(e => {
+                console.error('[Cloud] Cloud save failed:', e);
+            });
+        }
     } catch (e) {
         console.error('saveGame failed:', e);
     }
