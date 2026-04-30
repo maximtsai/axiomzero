@@ -1195,7 +1195,7 @@ const pulseAttack = (() => {
             detune = (Math.random() * 500 - 250);
         }
         _lastPulseDetune = detune;
-        const s = audio.play('cursor_pulse', 0.3);
+        const s = audio.play('cursor_pulse', 0.24);
         if (s) s.detune = detune;
 
         view.playFireAnimation(model, isResonanceHit);

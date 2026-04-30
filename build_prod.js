@@ -29,12 +29,14 @@ let headHtml = parts[0];
 let bodyHtml = parts[1];
 
 // 4. Extract local script paths from BOTH <head> and <body>
-const scriptRegex = /<script\s+src="([^"]+)"><\/script>/g;
+// Match any script tag with a src attribute, allowing for extra spaces or attributes
+const scriptRegex = /<script\s+[^>]*src="([^"]+)"[^>]*><\/script>/g;
 let match;
 // Scripts to intentionally exclude from bundling — kept as separate <script> tags.
 // Minified libraries (phaser, rex) must be excluded to prevent variable name collisions
 // that cause "t is not a function" type errors when concatenated with other code.
 const SKIP_BUNDLE = [
+    'flags.js',
     'phaser.min.js',
     'rexbbcodetextplugin.min.js',
 ];
@@ -46,10 +48,15 @@ const bodyScriptTagsToReplace = [];
 
 // Scan head
 while ((match = scriptRegex.exec(headHtml)) !== null) {
-    const src = match[1];
+    const src = match[1].trim();
     const fullTag = match[0];
     if (src.startsWith('http://') || src.startsWith('https://')) continue;
-    if (SKIP_BUNDLE.includes(src)) continue;
+    
+    // Check if filename is in SKIP_BUNDLE (allows for paths like ./flags.js)
+    if (SKIP_BUNDLE.some(s => src === s || src.endsWith('/' + s) || src.endsWith('./' + s))) {
+        console.log(`Skipping bundle for: ${src}`);
+        continue;
+    }
     headScripts.push(src);
     headScriptTagsToReplace.push(fullTag);
 }
@@ -57,10 +64,14 @@ while ((match = scriptRegex.exec(headHtml)) !== null) {
 // Scan body (skip intentionally excluded scripts)
 scriptRegex.lastIndex = 0;
 while ((match = scriptRegex.exec(bodyHtml)) !== null) {
-    const src = match[1];
+    const src = match[1].trim();
     const fullTag = match[0];
     if (src.startsWith('http://') || src.startsWith('https://')) continue;
-    if (SKIP_BUNDLE.includes(src)) continue;
+    
+    if (SKIP_BUNDLE.some(s => src === s || src.endsWith('/' + s) || src.endsWith('./' + s))) {
+        console.log(`Skipping bundle for: ${src}`);
+        continue;
+    }
     bodyScripts.push(src);
     bodyScriptTagsToReplace.push(fullTag);
 }
@@ -94,30 +105,13 @@ for (const tag of headScriptTagsToReplace) {
     headHtml = headHtml.replace(tag, '');
 }
 
-// Insert bundle.js AFTER the last SKIP_BUNDLE script tag so Phaser is defined first.
-// If no SKIP_BUNDLE tags exist in head, append bundle before end of head.
-let lastSkipTagEnd = -1;
-for (const src of SKIP_BUNDLE) {
-    const escaped = src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const tagRe = new RegExp(`<script\\s+src="${escaped}"><\/script>`);
-    const m = tagRe.exec(headHtml);
-    if (m && m.index + m[0].length > lastSkipTagEnd) {
-        lastSkipTagEnd = m.index + m[0].length;
-    }
-}
-
-if (lastSkipTagEnd !== -1) {
-    headHtml = headHtml.slice(0, lastSkipTagEnd) +
-        '\n  <script src="bundle.js"></script>' +
-        headHtml.slice(lastSkipTagEnd);
-} else {
-    headHtml += '\n  <script src="bundle.js"></script>';
-}
-
 // Remove all bundled body script tags from the body
 for (const tag of bodyScriptTagsToReplace) {
     bodyHtml = bodyHtml.replace(tag, '');
 }
+
+// Insert bundle.js at the end of the body (where main.js was) to ensure DOM is ready.
+bodyHtml = bodyHtml.replace('</body>', '\n  <script src="bundle.js"></script>\n</body>');
 
 // Re-glue HTML together
 let prodHtml = headHtml + '</head>' + bodyHtml;

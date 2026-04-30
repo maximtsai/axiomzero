@@ -20,6 +20,10 @@ const gameStateMachine = (() => {
         debugLog(`Phase: ${currentPhase} → ${phase}`);
         currentPhase = phase;
         messageBus.publish('phaseChanged', phase, data);
+
+        if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
+            messageBus.publish('waveComplete', data);
+        }
     }
 
     function getPhase() {

@@ -37,7 +37,7 @@ const milestoneTracker = (() => {
 
     function init() {
         messageBus.subscribe('enemyKilled', _onEnemyKilled);
-        messageBus.subscribe('waveCompleted', _onWaveCompleted);
+        messageBus.subscribe('waveComplete', _onWaveCompleted);
         messageBus.subscribe('upgradePurchased', _onUpgradePurchased);
         messageBus.subscribe('bossDefeated', _onBossDefeated);
         messageBus.subscribe('phaseChanged', _onPhaseChanged);

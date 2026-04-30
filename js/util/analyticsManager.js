@@ -42,7 +42,7 @@ const analyticsManager = (() => {
             });
 
             // Track wave completion
-            messageBus.subscribe('waveCompleted', () => {
+            messageBus.subscribe('waveComplete', () => {
                 const totalIterations = (gameState.stats && gameState.stats.iterEnd) || 0;
                 const dataEarned = (typeof resourceManager !== 'undefined') ? resourceManager.getSessionData() : 0;
                 

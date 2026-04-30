@@ -210,13 +210,28 @@
 
   <script>
     // BOOTSTRAP WATCHDOG
-    // Detects failures during the initial <script> loading phase (e.g. net::ERR_NETWORK_CHANGED)
     window.AXIOM_BOOTSTRAP_COMPLETE = false;
+
+    // Animate the "INITIALIZING SYSTEM..." text
+    (function () {
+      const notice = document.getElementById('preload-notice');
+      let dots = 0;
+      window.DOT_INTERVAL = setInterval(function () {
+        if (window.AXIOM_BOOTSTRAP_COMPLETE) {
+          clearInterval(window.DOT_INTERVAL);
+          return;
+        }
+        dots = (dots + 1) % 4;
+        notice.textContent = 'INITIALIZING SYSTEM' + '.'.repeat(dots);
+      }, 2000);
+    })();
+
     window.BOOT_TIMER = setTimeout(function () {
       if (!window.AXIOM_BOOTSTRAP_COMPLETE) {
+        if (window.DOT_INTERVAL) clearInterval(window.DOT_INTERVAL);
         console.error("Axiom Zero: Timeout Error - Critical files failed to load.");
 
-        // 1. Attempt one automatic retry (wrapped in try-catch for strict privacy modes)
+        // 1. Attempt one automatic retry
         try {
           const retryCount = parseInt(sessionStorage.getItem('axiom_boot_retry') || '0');
           if (retryCount < 1) {
@@ -228,14 +243,17 @@
           console.warn("Axiom Zero: Storage blocked, skipping auto-retry.");
         }
 
-        // 2. If retry failed or already retried, show manual error UI
+        // 2. Show manual error UI
         const errorDiv = document.getElementById('boot-error');
         if (errorDiv) errorDiv.style.display = 'block';
 
         const notice = document.getElementById('preload-notice');
-        if (notice) notice.style.color = '#ff3b3b';
+        if (notice) {
+          notice.style.color = '#ff3b3b';
+          notice.textContent = 'SYSTEM INITIALIZATION FAILED';
+        }
       }
-    }, 10000); // 10s grace period for all dependencies to load
+    }, 10000);
   </script>
 
   <div id="boot-error">

@@ -1,3 +1,5 @@
+node build_prod.js
+
 # Axiom Zero - Gameplay and Node Ideas
 
 ## 1. Incremental Economy & Flow
@@ -30,15 +32,12 @@
 - add boss icon to level.
 - Make level select buttons go up down instead
 - Add turbo button
-- Map node that when clicked, unlocks the ability to extend the node map to full screen. First plays a little animation that then reveals location of several duo nodes.
 - Chatgpt logo for boss but 5 wings instead
 
 love this design. I want to keep its attack pattern fairly simple, it spawns in, then goes to one of two locations depending on whether it spawns from the left or right. The location to head to is either position x:150, y:halfHeight, or x:width-150, y:halfHeight. Once it reaches that position, it begins slowly rotating itself to point towards the player. Once that's done, it plays a quick animation of the drill slightly extending then retracting before it begins shooting out projectiles behind it in a rocket like manner, and slowly accelerating towards the player. After 1.5 seconds, the projectile trail grows huge and the boss very quickly accelerates towards the player and strikes for 30 damage, dealing heavy screenshake. the projectile turns off and the boss remains immobile for 4 seconds. After 4 seconds, the boss begins playing its drilling animation and its rocket projectiles begin again though at low intensity. During this state, the boss deals damage every 2 seconds, and the damage starts at 1 and increaes by 1 every time. The boss remains in this state until the end. The boss is named BREACH.
 
 - leader boards
 - Node to add arc lightning on cursor hit.
-- Node to make killed enemies hve a moderate chance to spawn homing missiles.
-	- Recursion. enemies killed by homing missiles have a small chance to spawn more homing missiles
 - Make fast enemies have thinner outside stroke
 - For PC mode, animated background with new game, options, quit, credits at bottom left corner.
 
@@ -48,5 +47,3 @@ password123 still works on an alarming number of servers.
 Found an open port labeled "DO NOT ENTER". It was not locked.
 
 - Enemies coming out of a void.
-
-- Optimization: put pixels into buttons atlas

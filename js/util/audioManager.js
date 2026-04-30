@@ -108,10 +108,10 @@ const audio = {
 
     /** Initialize audio system — reads persisted volume/mute settings from gameState. */
     init: function (scene) {
-        globalVolume = gameState.settings.globalVolume;
-        globalMusicVol = gameState.settings.globalMusicVol;
-        isSFXMuted = gameState.settings.sfxMuted;
-        isMusicMuted = gameState.settings.musicMuted;
+        globalVolume = (gameState.settings.globalVolume !== undefined) ? gameState.settings.globalVolume : 0.85;
+        globalMusicVol = (gameState.settings.globalMusicVol !== undefined) ? gameState.settings.globalMusicVol : 0.85;
+        isSFXMuted = !!gameState.settings.sfxMuted;
+        isMusicMuted = !!gameState.settings.musicMuted;
 
         // Hook up SDK mute/unmute listeners
         if (typeof sdk !== 'undefined') {
@@ -148,19 +148,27 @@ const audio = {
         }
         const s = soundList[name];
         s.fullVolume = volume;
-        s.volume = s.fullVolume * (isMusic ? globalMusicVol : globalVolume);
         s.loop = loop;
         s.isMusic = isMusic;
+
+        // Calculate actual volume based on master settings
+        let targetVol = volume * (isMusic ? globalMusicVol : globalVolume);
+        
+        // Apply mute overrides
+        if (isMuted || (isMusic && isMusicMuted) || (!isMusic && isSFXMuted)) {
+            targetVol = 0;
+        }
 
         audio._clearActiveTween(s);
 
         if (isMusic) {
             if (globalMusic) audio.fadeAway(globalMusic);
             globalMusic = s;
-            globalMusic.volume = AUDIO_CONSTANTS.MUSIC_START_VOLUME * volume * globalMusicVol;
-            if (isMusicMuted || isMuted) {
+            if (targetVol <= 0.0001) {
                 globalMusic.volume = 0;
             } else {
+                // Start music at a lower point and fade in
+                globalMusic.volume = AUDIO_CONSTANTS.MUSIC_START_VOLUME * targetVol;
                 audio.fadeIn(globalMusic, volume);
             }
         }
@@ -174,11 +182,8 @@ const audio = {
             useSecondLongSound = !useSecondLongSound;
         }
 
-        if (isMuted || (!isMusic && isSFXMuted) || (isMusic && isMusicMuted)) {
-            s.volume = 0;
-        }
-
         s.pan = pan;
+        s.volume = targetVol;
 
         // Route music through the low-pass filter if active (Disabled for testing)
         /*
@@ -192,7 +197,7 @@ const audio = {
         }
         */
 
-        s.play({ volume: s.volume, loop: s.loop });
+        s.play();
         return s;
     },
 
