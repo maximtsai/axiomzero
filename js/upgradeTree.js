@@ -699,7 +699,7 @@ const upgradeTree = (() => {
             });
         }
         if (treeNodeCamera) {
-            PhaserScene.tweens.add({ targets: treeNodeCamera, width: GAME_CONSTANTS.WIDTH, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeNodeCamera, width: GAME_CONSTANTS.WIDTH - 28, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
             PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -1766,8 +1766,8 @@ const upgradeTree = (() => {
             PhaserScene.tweens.add({ targets: treeMaskContainer, x: maskTargetX, duration: duration * 0.88, ease: 'Cubic.easeOut' });
         }
         if (treeNodeCamera) {
-            const camTargetW = fullUpgradeView ? GAME_CONSTANTS.WIDTH : PANEL_W;
-            PhaserScene.tweens.add({ targets: treeNodeCamera, x: 0, width: camTargetW, duration, ease: 'Cubic.easeOut' });
+            const camTargetW = fullUpgradeView ? GAME_CONSTANTS.WIDTH - 28 : PANEL_W;
+            PhaserScene.tweens.add({ targets: treeNodeCamera, scrollX: 0, width: camTargetW, duration, ease: 'Cubic.easeOut' });
         }
 
         // Calculate x movement of panelOutline and width change too
@@ -1804,7 +1804,7 @@ const upgradeTree = (() => {
             PhaserScene.tweens.add({ targets: treeMaskContainer, x: treeGroupTargetX, duration, ease: 'Cubic.easeOut' });
         }
         if (treeNodeCamera) {
-            PhaserScene.tweens.add({ targets: treeNodeCamera, x: treeGroupTargetX, width: PANEL_W, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: treeNodeCamera, scrollX: treeGroupTargetX, width: 0, duration: duration, ease: 'Cubic.easeOut' });
         }
 
         if (panelOutline) {

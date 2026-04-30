@@ -63,7 +63,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
+        childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist', 'physical_anchor', 'coin_mine_unlock'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -571,27 +571,6 @@ const NODE_DEFS = [
         },
     },
 
-
-    {
-        id: 'base_hp_boost',
-        name: t('nodes', 'base_hp_boost.name'),
-        icon: 'Skillicon14_11.png',
-        description: t('nodes', 'base_hp_boost.desc'),
-        popupText: t('nodes', 'base_hp_boost.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 1,
-        baseCost: 150,
-        costType: 'data',
-        costScaling: 'static',
-        costStep: 0,
-        parents: ['security_test_2', 'clock_speed'],
-        childIds: ['gateway_discovery'],
-        treeX: gridX(-1.0),
-        treeY: gridY(8.5),
-        effect: function () {
-            // Stats recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
-        },
-    },
     {
         id: 'malware_siphon',
         name: t('nodes', 'malware_siphon.name'),
@@ -846,7 +825,7 @@ const NODE_DEFS = [
         costStep: 50,
         costStepScaling: 10,
         parents: ['root_access'],
-        childIds: ['base_hp_boost'],
+        childIds: [],
         treeX: gridX(-0.5),
         treeY: gridY(8.5),
         effect: function () {
@@ -1579,27 +1558,6 @@ const NODE_DEFS = [
         effect: function () { },
     },
     {
-        id: 'security_test_2',
-        name: t('nodes', 'security_test_2.name'),
-        label: t('nodes', 'label.gate'),
-        icon: 'Skillicon14_38.png',
-        description: t('nodes', 'security_test_2.desc'),
-        maxLevel: 1,
-        baseCost: 600,
-        costType: 'data',
-        costScaling: 'static',
-        parents: [],
-        childIds: ['base_hp_boost', 'gateway_discovery'],
-        treeX: gridX(0),
-        treeY: gridY(7),
-        tooltipExtraWidth: 25,
-        effect: function () {
-            if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(500);
-            }
-        },
-    },
-    {
         id: 'instability_mark',
         name: t('nodes', 'instability_mark.name'),
         icon: 'Skillicon14_09.png',
@@ -1790,21 +1748,6 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'gateway_discovery',
-        name: t('nodes', 'gateway_discovery.name'),
-        icon: 'Skillicon14_38.png',
-        description: t('nodes', 'gateway_discovery.desc'),
-        popupText: t('nodes', 'gateway_discovery.popup'),
-        maxLevel: 1,
-        baseCost: 10,
-        costType: 'data',
-        parents: ['security_test_2', 'base_hp_boost'],
-        childIds: ['physical_anchor', 'coin_mine_unlock'],
-        treeX: gridX(0.0),
-        treeY: gridY(8.0),
-        effect: function () { },
-    },
-    {
         id: 'security_test_3',
         name: t('nodes', 'security_test_3.name'),
         label: t('nodes', 'label.gate'),
@@ -1837,10 +1780,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
-        parents: ['gateway_discovery'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-1.5),
-        treeY: gridY(8.0),
+        treeX: gridX(-0.5),
+        treeY: gridY(-3.0),
         effect: function () {
             if (typeof upgradeTree !== 'undefined') {
                 upgradeTree._showCoinMineButton();
@@ -1856,10 +1799,10 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'coin',
         costScaling: 'static',
-        parents: ['gateway_discovery'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-1.0),
-        treeY: gridY(7.0),
+        treeX: gridX(0.5),
+        treeY: gridY(-3.0),
         popupText: t('nodes', 'physical_anchor.popup'),
         popupColor: COLORS.UTILITY,
         effect: function () {
