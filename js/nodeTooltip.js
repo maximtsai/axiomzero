@@ -15,6 +15,7 @@ const nodeTooltip = (() => {
     let goldBg = null;
     let costBg = null;
     let animValue = { val: 0 };
+    let isReady = false;
 
     let currentNode = null;
     let lastShowTime = 0;
@@ -113,6 +114,7 @@ const nodeTooltip = (() => {
     function show(node, isPurchaseRefresh = false, purchaseCost = 0) {
         if (!container) init();
         _clearTweens();
+        isReady = isPurchaseRefresh; // If refreshing, it's already ready. Otherwise, wait for tween.
 
         if (currentNode !== node) {
             lastShowTime = Date.now();
@@ -322,6 +324,7 @@ const nodeTooltip = (() => {
                 scaleX: 1.06, scaleY: 0.97, angle: -2, y: container.y,
                 duration: 80, ease: 'Quart.easeOut',
                 onComplete: () => {
+                    isReady = true;
                     PhaserScene.tweens.add({
                         targets: container,
                         scaleX: 1, scaleY: 1, angle: 0,
@@ -345,6 +348,8 @@ const nodeTooltip = (() => {
             container.setVisible(false);
         }
         currentNode = null;
+        console.log("Hihide");
+        isReady = false;
     }
 
     function shakeCost() {
@@ -360,8 +365,9 @@ const nodeTooltip = (() => {
     }
 
     function isVisible() { return container && container.visible; }
+    function isReadyForInput() { return isReady; }
     function getCurrentNode() { return currentNode; }
     function getShowAge() { return Date.now() - lastShowTime; }
 
-    return { init, show, hide, shakeCost, isVisible, getCurrentNode, getShowAge };
+    return { init, show, hide, shakeCost, isVisible, isReadyForInput, getCurrentNode, getShowAge };
 })();

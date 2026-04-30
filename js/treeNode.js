@@ -768,17 +768,30 @@ class Node {
     _handleMobileInteraction() {
         if (!GAME_VARS.wasTouch) return false;
 
-        console.log(`[Node] Touch detected on node: ${this.id}. Current touchedNode: ${Node.touchedNode}`);
+        // If tooltip is already showing this node and is ready, allow consecutive taps to purchase
+        if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible() && 
+            nodeTooltip.getCurrentNode() === this && nodeTooltip.isReadyForInput()) {
+            Node.touchedNode = null; // Reset flag but allow purchase
+            return false;
+        }
 
         if (Node.touchedNode !== this.id) {
             // First tap — show the tooltip and mark this as the globally touched node ID
             Node.touchedNode = this.id;
-            console.log(`[Node] Confirmation set for: ${this.id}`);
             this._showHover();
             return true;
         }
-        // Second tap on the same node — reset global flag and fall through to purchase
-        console.log(`[Node] Confirmation MATCHED for: ${this.id}. Proceeding to purchase...`);
+
+        // Second tap — check if tooltip is actually active/ready (fallback safety)
+        if (typeof nodeTooltip !== 'undefined') {
+            if (!nodeTooltip.isReadyForInput() || nodeTooltip.getCurrentNode() !== this) {
+                // If not ready or showing a different node, treat as a "first tap" refresh
+                this._showHover();
+                return true;
+            }
+        }
+
+        // Tooltip is ready and matches this node — reset flag and fall through to purchase
         Node.touchedNode = null;
         return false;
     }
