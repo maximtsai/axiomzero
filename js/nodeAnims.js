@@ -263,7 +263,7 @@ const nodeAnims = {
                 });
 
                 // 2. Create the expansion explosion
-                const explosion = scene.add.image(x + 400, y, 'player', 'unlock_explosion.png')
+                const explosion = scene.add.image(x, y, 'player', 'unlock_explosion.png')
                     .setDepth(nodeDepth + 10) // Render above the node
                     .setScale(0.5)
                     .setAlpha(1.2);
@@ -300,24 +300,20 @@ const nodeAnims = {
             node.hoverJiggleTween.stop();
         }
 
-        // Immediate scale jump to 1.05
-        // targets.forEach(t => {
-        //     t.setScale(1.14);
-        //     t.setRotation(0.03);
-        // });
+        const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
 
-        // Smoothly settle back to 1.0
+        // Smoothly settle back to treeScale
         PhaserScene.tweens.add({
             targets: targets,
-            scaleX: 1.13,
-            scaleY: 1.13,
+            scaleX: 1.13 * treeScale,
+            scaleY: 1.13 * treeScale,
             duration: 60,
             ease: 'Quart.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: targets,
-                    scaleX: 1,
-                    scaleY: 1,
+                    scaleX: treeScale,
+                    scaleY: treeScale,
                     duration: 280,
                     ease: 'Back.easeOut',
                     easeParams: [4]

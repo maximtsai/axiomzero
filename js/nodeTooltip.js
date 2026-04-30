@@ -348,7 +348,6 @@ const nodeTooltip = (() => {
             container.setVisible(false);
         }
         currentNode = null;
-        console.log("Hihide");
         isReady = false;
     }
 

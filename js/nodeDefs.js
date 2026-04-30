@@ -91,7 +91,7 @@ const NODE_DEFS = [
         parents: ['placeholder_duo_4', 'data_compression'],
         childIds: ['combat_shield_hp'],
         treeX: gridX(-5.5),
-        treeY: gridY(4.5),
+        treeY: gridY(5),
         effect: function () {
             combatShield.unlock();
             upgradeDispatcher.recalcCombatShield();
@@ -104,7 +104,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 4,
         childIds: ['combat_shield'],
         treeX: gridX(-5.5),
-        treeY: gridY(3.0),
+        treeY: gridY(3.5),
         effect: function () { },
     },
     {
@@ -147,7 +147,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-7.0),
-        treeY: gridY(2.5),
+        treeY: gridY(3.0),
         effect: function () {
             // Stub
         },
@@ -167,7 +167,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-7.0),
-        treeY: gridY(3.5),
+        treeY: gridY(4.0),
         effect: function () {
             // Stub
         },
@@ -211,7 +211,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-4.0),
-        treeY: gridY(2.5),
+        treeY: gridY(3.0),
         effect: function () {
             upgradeDispatcher.recalcScytheStats();
         },
@@ -231,7 +231,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(-4.0),
-        treeY: gridY(3.5),
+        treeY: gridY(4.0),
         effect: function () {
             upgradeDispatcher.recalcScytheStats();
         },
@@ -251,7 +251,7 @@ const NODE_DEFS = [
         parents: ['combat_shield'],
         childIds: [],
         treeX: gridX(-6.5),
-        treeY: gridY(4.5),
+        treeY: gridY(5),
         effect: function () {
             upgradeDispatcher.recalcCombatShield();
         },
@@ -270,7 +270,7 @@ const NODE_DEFS = [
         parents: ['bomb_2'],
         childIds: ['restore_point', 'placeholder_duo_4', 'sword', 'scythe'],
         treeX: gridX(-5.5),
-        treeY: gridY(1.5),
+        treeY: gridY(2),
         effect: function () { },
     },
     {
@@ -287,7 +287,7 @@ const NODE_DEFS = [
         parents: ['backup_server'],
         childIds: [],
         treeX: gridX(-6.5),
-        treeY: gridY(1.5),
+        treeY: gridY(2),
         effect: function () { },
     },
     {
@@ -1101,31 +1101,24 @@ const NODE_DEFS = [
                 const node = upgradeTree.getNode('reveal_map');
 
                 if (dragGroup && node && node.btn) {
-                    const refX = GAME_CONSTANTS.halfWidth * 0.5;
-                    const refY = GAME_CONSTANTS.halfHeight;
-
-                    const s0 = dragGroup.getScale();
-                    const groupX = dragGroup.x;
-                    const groupY = dragGroup.y;
-
-                    const nodeXAfterZoom = groupX + (node.btn.x - groupX) / s0;
-                    const nodeYAfterZoom = groupY + (node.btn.y - groupY) / s0;
-
-                    const panX = refX - nodeXAfterZoom;
-                    const panY = refY - nodeYAfterZoom;
-
-                    // 1. Pan and Zoom to the button
+                    // Slide panel away for full-screen map reveal
                     if (typeof upgradeTree !== 'undefined') {
                         upgradeTree._onSlideRightClicked(upgradeTree.SLIDE_DURATION * 3);
                     }
-                    dragGroup.tweenScale(1, { ease: 'Cubic.easeInOut', duration: 1400 });
-                    dragGroup.tweenBy(panX, panY, {
+
+                    const targetS = 1;
+                    const localX = node.treeX + 8;
+                    const localY = node.treeY;
+                    const targetX = GAME_CONSTANTS.halfWidth - (localX * targetS);
+                    const targetY = (GAME_CONSTANTS.halfHeight + 50) - (localY * targetS);
+
+                    dragGroup.tweenScale(targetS, { duration: 1500, ease: 'Cubic.easeInOut' });
+                    dragGroup.tweenTo(targetX, targetY, {
+                        duration: 1500,
                         ease: 'Cubic.easeInOut',
-                        duration: 1400,
                         onComplete: () => {
                             nodeAnims.playRevealMapActivationAnimation(node, () => {
-                                // 3. Sequential node revelation once explosion finishes
-                                // Stage 1: Immediate
+                                // Sequential node revelation once explosion finishes
                                 PhaserScene.time.delayedCall(350, () => {
                                     upgradeTree.revealNode('armor');
                                     PhaserScene.time.delayedCall(150, () => {
@@ -1135,7 +1128,6 @@ const NODE_DEFS = [
                                         upgradeTree.revealNode('repeat_exploit');
                                     });
 
-                                    // Stage 2: 0.4s later
                                     PhaserScene.time.delayedCall(450, () => {
                                         upgradeTree.revealNode('diagnostic_analytics');
                                         PhaserScene.time.delayedCall(1200, endCutscene);
@@ -1144,8 +1136,6 @@ const NODE_DEFS = [
                             });
                         }
                     });
-                } else {
-                    PhaserScene.time.delayedCall(3000, endCutscene);
                 }
             }
         },
@@ -1712,7 +1702,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(4.0),
-        treeY: gridY(7),
+        treeY: gridY(5),
         effect: function () {
             upgradeDispatcher.recalcPulseDamage();
         },
@@ -1732,7 +1722,7 @@ const NODE_DEFS = [
         childIds: [],
         isDuoChild: true,
         treeX: gridX(4.0),
-        treeY: gridY(5),
+        treeY: gridY(7),
         effect: function () {
             upgradeDispatcher.recalcPulseReload();
         },

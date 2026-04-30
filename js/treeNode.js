@@ -253,9 +253,9 @@ class Node {
             });
         }
 
-        // 1a. Check for event-based revelation/unlocking (ignored if node is already purchased, placeholders, or duo nodes)
-        this.revealed = !!(this.revealedManually || (gameState.revealedNodes && gameState.revealedNodes[this.id])) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
-        this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0 && !this.isDuoBox && !this.isPlaceholder;
+        // 1a. Check for event-based revelation/unlocking (ignored if node is already purchased)
+        this.revealed = !!(this.revealedManually || (gameState.revealedNodes && gameState.revealedNodes[this.id])) && this.level === 0;
+        this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0;
 
         let anyRevealed = false;
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN

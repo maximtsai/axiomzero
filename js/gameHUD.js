@@ -105,7 +105,7 @@ const gameHUD = (() => {
 
         // 1. Health Bar Component
         healthBar = new HealthBar({
-            x: groupX,
+            x: groupX + 2,
             y: LAYOUT.HUD_Y,
             width: LAYOUT.BAR_W,
             height: LAYOUT.BAR_H,
@@ -561,7 +561,7 @@ const gameHUD = (() => {
         let baseFontSize = 21;
         let baseFontSizeAction = 21;
         let baseFontSizeTimer = 24;
-        
+
         if (helper.isMobileDevice()) {
             baseFontSize += 3;
             baseFontSizeAction += 2;

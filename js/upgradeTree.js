@@ -470,6 +470,14 @@ const upgradeTree = (() => {
             if (savedLevel > 0) {
                 node.level = savedLevel;
             }
+
+            // Restore revelation/unlock flags
+            if (gameState.revealedNodes && gameState.revealedNodes[def.id]) {
+                node.revealedManually = true;
+            }
+            if (gameState.unlockedNodes && gameState.unlockedNodes[def.id]) {
+                node.forceUnlocked = true;
+            }
         }
 
         // Set initial states
@@ -924,7 +932,7 @@ const upgradeTree = (() => {
                 alpha: 1,
                 scaleX: finalScale,
                 scaleY: finalScale,
-                duration: 250 + Math.floor(Math.random() * 350),
+                duration: 175 + Math.floor(Math.random() * 275),
                 ease: 'Quart.easeOut',
                 onComplete: () => {
                     const performGlitch = (callback) => {
@@ -942,11 +950,12 @@ const upgradeTree = (() => {
                         const targetScale = p.scaleX * (1 - Math.random() * 0.25);
                         PhaserScene.tweens.add({
                             targets: p,
+                            delay: 50,
                             alpha: 0,
                             scaleX: targetScale,
                             scaleY: targetScale,
-                            duration: 600,
-                            ease: 'Quad.easeIn',
+                            duration: 400,
+                            ease: 'Cubic.easeIn',
                             onComplete: () => {
                                 if (p && p.active) maxParticlePool.release(p);
                             }

@@ -19,7 +19,6 @@ class InternalMouseManager {
 
         scene.input.on('pointerdown', (pointer) => {
             GAME_VARS.wasTouch = !!pointer.wasTouch || (pointer.pointerType === 'touch');
-            console.log(`[MouseManager] Pointer down! id: ${pointer.id}, type: ${pointer.pointerType}, wasTouch: ${GAME_VARS.wasTouch}`);
             GAME_VARS.mouseposx = pointer.x;
             GAME_VARS.mouseposy = pointer.y;
 
