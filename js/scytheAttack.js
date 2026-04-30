@@ -5,7 +5,7 @@
 class ScytheAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 2000;  // ms between swings
-        this.BASE_DAMAGE = 18;
+        this.BASE_DAMAGE = 20;
         this.SEARCH_RANGE = 400;    // max distance to search for targets
         this.INNER_RANGE = 190;     // inner radius of the sweep arc
         this.OUTER_RANGE = 330;     // outer radius of the sweep arc
@@ -63,7 +63,7 @@ class ScytheAttackView {
             targets: this.sprite,
             alpha: 0.75,
             duration: duration,
-            ease: 'Linear'
+            ease: 'Back.easeOut'
         });
     }
 
@@ -211,7 +211,10 @@ const scytheAttack = (() => {
                 for (let j = 0; j < validTargets.length; j++) {
                     const diff = Math.abs(Phaser.Math.Angle.ShortestBetween(centerAngle, validTargets[j].angle));
                     if (diff <= arcHalfRad) {
-                        hitCount++;
+                        // Count bosses and minibosses as 2 targets to prioritize them
+                        const targetEnemy = validTargets[j].enemy;
+                        const weight = (targetEnemy.model.isBoss || targetEnemy.model.isMiniboss) ? 2 : 1;
+                        hitCount += weight;
                     }
                 }
 
@@ -220,8 +223,8 @@ const scytheAttack = (() => {
                     bestAngle = centerAngle;
                 }
 
-                // Early Exit: If we found a cluster of 6+, that's good enough
-                if (maxHits >= 6) break;
+                // Early Exit: If we found a cluster of 7+, that's good enough
+                if (maxHits > 6) break;
             }
 
             model.fireTimer -= model.FIRE_INTERVAL;
@@ -271,8 +274,8 @@ const scytheAttack = (() => {
     }
 
     function _applyHit(centerAngle, pos) {
-        // Optimization: Only scan enemies within scythe reach using spatial grid
-        const enemies = enemyManager.getEnemiesInRange(pos.x, pos.y, model.OUTER_RANGE);
+        // Optimization: Only scan enemies within scythe reach (plus 10 unit buffer)
+        const enemies = enemyManager.getEnemiesInRange(pos.x, pos.y, model.OUTER_RANGE + 10);
 
         // Feedback
         if (typeof zoomShake !== 'undefined') zoomShake(1.006);
@@ -289,20 +292,23 @@ const scytheAttack = (() => {
             const dy = e.model.y - pos.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Accurate Hit Check: Radial (190-330) + Angular (110deg)
-            if (dist < model.INNER_RANGE || dist > model.OUTER_RANGE) continue;
+            // Accurate Hit Check: Radial (with 10 unit buffer) + Angular (110deg)
+            const innerBuffer = model.INNER_RANGE - 10;
+            const outerBuffer = model.OUTER_RANGE + 10;
+
+            if (dist < innerBuffer || dist > outerBuffer) continue;
 
             const angle = Math.atan2(dy, dx);
             const diff = Phaser.Math.Angle.ShortestBetween(Phaser.Math.RadToDeg(centerAngle), Phaser.Math.RadToDeg(angle));
 
-            // Include size leeway in hit detection for consistency with targeting
+            // Include size leeway in hit detection for consistency with targeting (plus 10 unit buffer)
             const sizeLeeway = e.model.size || 15;
-            const inRadialRange = (dist + sizeLeeway >= model.INNER_RANGE) && (dist - sizeLeeway <= model.OUTER_RANGE);
+            const inRadialRange = (dist + sizeLeeway >= innerBuffer) && (dist - sizeLeeway <= outerBuffer);
 
             if (inRadialRange && Math.abs(diff) <= model.ARC_ANGLE / 2) {
                 let finalDmg = model.damage;
                 if (model.lethalityLevel > 0 && e.model.health < e.model.maxHealth * 0.505) {
-                    finalDmg += 6 * model.lethalityLevel;
+                    finalDmg += 10 * model.lethalityLevel;
                 }
 
                 enemyManager.damageEnemy(e, finalDmg, 'scythe');

@@ -854,6 +854,7 @@ const upgradeTree = (() => {
             // Native image size assumed to be around 128x128
             _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.5, dur, startAlpha);
             _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.0, dur + 50, startAlpha - 0.35, 70);
+            _playMaxParticles(x, y, GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         } else if (isInsight && !isMaxed) {
             if (!insightBuyPulsePool) return;
             // Scaling proportionally matching the 64 -> 98 transition of the nine-slice (~1.53x)
@@ -865,7 +866,87 @@ const upgradeTree = (() => {
             // Secondary inner pulse (Max only)
             if (isMaxed) {
                 _animatePulse(x, y, maxPulsePool, 64, 130, dur + 50, startAlpha - 0.35, 70);
+
+                // NEW: Particle burst for maxed nodes
+                // The node button is at nodeDepth = DEPTH_UPGRADE_TREE + 2.
+                // We want particles at depth - 2, which is just DEPTH_UPGRADE_TREE.
+                _playMaxParticles(x, y, GAME_CONSTANTS.DEPTH_UPGRADE_TREE - 20);
             }
+        }
+    }
+
+    /** Creates 20 spread-out particles for a maxed node effect. */
+    function _playMaxParticles(cx, cy, depth) {
+        for (let i = 0; i < 20; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            let dist = Math.random() * 92;
+            let attempts = 0;
+            while (dist < 28 && attempts < 10) {
+                dist = Math.random() * 92;
+                attempts++;
+            }
+            const px = cx + Math.cos(angle) * dist;
+            const py = cy + Math.sin(angle) * dist;
+
+            const p = PhaserScene.add.image(px, py, 'buttons', 'max_particle.png');
+            p.setDepth(depth);
+            p.setScrollFactor(0);
+            p.setRotation(Phaser.Math.DegToRad(45));
+            p.setScale(Phaser.Math.FloatBetween(0.2, 0.5));
+            const finalScale = p.scaleX + Math.random() * 0.1;
+            p.setAlpha(1);
+
+            draggableGroup.add(p);
+
+            const moveDist = dist * 0.25;
+            const tx = px + Math.cos(angle) * moveDist;
+            const ty = py + Math.sin(angle) * moveDist;
+
+            PhaserScene.tweens.add({
+                targets: p,
+                x: tx,
+                y: ty,
+                scaleX: finalScale,
+                scaleY: finalScale,
+                duration: 260 + Math.floor(Math.random() * 350),
+                ease: 'Quart.easeOut',
+                onComplete: () => {
+                    const performGlitch = (callback) => {
+                        if (!p || !p.scene) return;
+                        p.setAlpha(Phaser.Math.FloatBetween(0.2, 0.5));
+                        PhaserScene.time.delayedCall(60, () => {
+                            if (!p || !p.scene) return;
+                            p.setAlpha(1);
+                            callback();
+                        });
+                    };
+
+                    const startFinalFade = () => {
+                        if (!p || !p.scene) return;
+                        const finalScale = p.scaleX * (1 - Math.random() * 0.25);
+                        PhaserScene.tweens.add({
+                            targets: p,
+                            alpha: 0,
+                            scaleX: finalScale,
+                            scaleY: finalScale,
+                            duration: 600,
+                            ease: 'Quad.easeIn',
+                            onComplete: () => { if (p && p.destroy) p.destroy(); }
+                        });
+                    };
+
+                    // Execute first glitch, then check for 40% chance of second glitch before final fade
+                    performGlitch(() => {
+                        if (Math.random() < 0.4) {
+                            PhaserScene.time.delayedCall(40, () => {
+                                performGlitch(startFinalFade);
+                            });
+                        } else {
+                            startFinalFade();
+                        }
+                    });
+                }
+            });
         }
     }
 

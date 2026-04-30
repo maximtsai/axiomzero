@@ -159,7 +159,7 @@ window.TRANSLATIONS.en = {
         sword: { name: 'SWORD', desc: 'Stabs in a long straight line every [color=#8FD9F8]2s[/color].', popup: 'SWORD SYSTEM ONLINE' },
         scythe: { name: 'SCYTHE', desc: 'Swings in a broad sweeping motion every [color=#8FD9F8]2s[/color].', popup: 'SCYTHE SYSTEM ONLINE' },
         scythe_harvest: { name: 'HARVEST', desc: 'Each enemy killed by the Scythe restores [color=#87FF02]1 HP[/color].', popup: 'HARVEST ACTIVE' },
-        scythe_lethality: { name: 'LETHALITY', desc: 'The Scythe deals [color=#8FD9F8]+6[/color] damage per level to enemies below [color=#8FD9F8]50%[/color] HP.', popup: 'LETHALITY ACTIVE' },
+        scythe_lethality: { name: 'LETHALITY', desc: 'The Scythe deals [color=#8FD9F8]+10[/color] damage per level to enemies below [color=#8FD9F8]50%[/color] HP.', popup: 'LETHALITY ACTIVE' },
         sword_lunge: { name: 'LUNGE', desc: 'Increases the length of the sword attack by [color=#8FD9F8]+25%[/color].', popup: 'LUNGE ACQUIRED' },
         sword_flurry: { name: 'FLURRY', desc: 'Sword makes two slightly angled attacks dealing [color=#8FD9F8]50%[/color] damage each.', popup: 'FLURRY ACQUIRED' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },

@@ -123,7 +123,7 @@ const upgradeDispatcher = (() => {
         const harvestLv = getLevel('scythe_harvest');
         const lethalityLv = getLevel('scythe_lethality');
 
-        scytheAttack.setDamage(18); 
+        scytheAttack.setDamage(20); 
         scytheAttack.setHarvestLevel(harvestLv);
         scytheAttack.setLethalityLevel(lethalityLv);
     }

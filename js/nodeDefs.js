@@ -223,7 +223,7 @@ const NODE_DEFS = [
         description: t('nodes', 'scythe_lethality.desc'),
         popupText: t('nodes', 'scythe_lethality.popup'),
         popupColor: COLORS.COMBAT,
-        maxLevel: 3,
+        maxLevel: 2,
         baseCost: 20,
         costType: 'data',
         costScaling: 'static',
