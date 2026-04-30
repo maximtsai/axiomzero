@@ -31,6 +31,7 @@ const upgradeTree = (() => {
     let maxPulsePool = null;
     let insightMaxPulsePool = null;
     let insightBuyPulsePool = null;
+    let maxParticlePool = null;
 
     let zoomInBtn = null;
     let zoomOutBtn = null;
@@ -841,6 +842,14 @@ const upgradeTree = (() => {
             draggableGroup.add(img);
             return img;
         }, resetFn, 10).preAllocate(4);
+
+        maxParticlePool = new ObjectPool(() => {
+            const p = PhaserScene.add.image(0, 0, 'buttons', 'max_particle.png');
+            p.setScrollFactor(0);
+            p.setRotation(Phaser.Math.DegToRad(45));
+            draggableGroup.add(p); // This wrapper call handles tree camera un-ignoring
+            return p;
+        }, resetFn, 100);
     }
 
     function playPurchasePulse(x, y, isMaxed, isInsight = false) {
@@ -875,8 +884,10 @@ const upgradeTree = (() => {
         }
     }
 
-    /** Creates 20 spread-out particles for a maxed node effect. */
+    /** Creates 20 spread-out particles for a maxed node effect using a mempool. */
     function _playMaxParticles(cx, cy, depth) {
+        if (!maxParticlePool) return;
+
         for (let i = 0; i < 20; i++) {
             const angle = Math.random() * Math.PI * 2;
             let dist = Math.random() * 92;
@@ -888,15 +899,19 @@ const upgradeTree = (() => {
             const px = cx + Math.cos(angle) * dist;
             const py = cy + Math.sin(angle) * dist;
 
-            const p = PhaserScene.add.image(px, py, 'buttons', 'max_particle.png');
-            p.setDepth(depth);
-            p.setScrollFactor(0);
-            p.setRotation(Phaser.Math.DegToRad(45));
-            p.setScale(Phaser.Math.FloatBetween(0.2, 0.5));
-            const finalScale = p.scaleX + Math.random() * 0.1;
-            p.setAlpha(1);
+            const p = maxParticlePool.get();
+            if (!p) continue;
 
-            draggableGroup.add(p);
+            p.setPosition(px, py);
+            p.setDepth(depth);
+            p.setVisible(true);
+            p.setActive(true);
+            p.setAlpha(Phaser.Math.FloatBetween(0.5, 1));
+
+            let baseScale = Phaser.Math.FloatBetween(0.36, 0.72);
+            baseScale *= baseScale;
+            p.setScale(baseScale);
+            const finalScale = baseScale + Math.random() * 0.1;
 
             const moveDist = dist * 0.25;
             const tx = px + Math.cos(angle) * moveDist;
@@ -906,36 +921,38 @@ const upgradeTree = (() => {
                 targets: p,
                 x: tx,
                 y: ty,
+                alpha: 1,
                 scaleX: finalScale,
                 scaleY: finalScale,
-                duration: 260 + Math.floor(Math.random() * 350),
+                duration: 250 + Math.floor(Math.random() * 350),
                 ease: 'Quart.easeOut',
                 onComplete: () => {
                     const performGlitch = (callback) => {
-                        if (!p || !p.scene) return;
+                        if (!p || !p.scene || !p.active) return;
                         p.setAlpha(Phaser.Math.FloatBetween(0.2, 0.5));
                         PhaserScene.time.delayedCall(60, () => {
-                            if (!p || !p.scene) return;
+                            if (!p || !p.scene || !p.active) return;
                             p.setAlpha(1);
                             callback();
                         });
                     };
 
                     const startFinalFade = () => {
-                        if (!p || !p.scene) return;
-                        const finalScale = p.scaleX * (1 - Math.random() * 0.25);
+                        if (!p || !p.scene || !p.active) return;
+                        const targetScale = p.scaleX * (1 - Math.random() * 0.25);
                         PhaserScene.tweens.add({
                             targets: p,
                             alpha: 0,
-                            scaleX: finalScale,
-                            scaleY: finalScale,
+                            scaleX: targetScale,
+                            scaleY: targetScale,
                             duration: 600,
                             ease: 'Quad.easeIn',
-                            onComplete: () => { if (p && p.destroy) p.destroy(); }
+                            onComplete: () => {
+                                if (p && p.active) maxParticlePool.release(p);
+                            }
                         });
                     };
 
-                    // Execute first glitch, then check for 40% chance of second glitch before final fade
                     performGlitch(() => {
                         if (Math.random() < 0.4) {
                             PhaserScene.time.delayedCall(40, () => {
@@ -948,6 +965,9 @@ const upgradeTree = (() => {
                 }
             });
         }
+
+        // Re-sync with draggableGroup offsets once after all particles are positioned
+        draggableGroup.recalculateOffsets();
     }
 
     function _startHintTimer() {
