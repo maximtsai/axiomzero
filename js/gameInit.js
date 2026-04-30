@@ -188,6 +188,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     shockwaveAttack.init();
     laserAttack.init();
     artilleryAttack.init();
+    scytheAttack.init();
     combatShield.init();
     if (gameState.upgrades && gameState.upgrades.combat_shield) {
         combatShield.unlock();
@@ -207,6 +208,14 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
             artilleryAttack.unlock();
         } else if (activeShard === 'laser') {
             laserAttack.unlock();
+        }
+    }
+    if (gameState.duoBoxPurchased && gameState.duoBoxPurchased[4]) {
+        const activeShard = gameState.activeShards && gameState.activeShards[4];
+        if (activeShard === 'scythe') {
+            scytheAttack.unlock();
+        } else if (activeShard === 'sword') {
+            if (typeof swordAttack !== 'undefined') swordAttack.unlock();
         }
     }
 

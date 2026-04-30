@@ -116,6 +116,18 @@ const upgradeDispatcher = (() => {
         });
     }
 
+    /** Recalculates scythe stats from upgrade nodes. */
+    function recalcScytheStats() {
+        if (typeof scytheAttack === 'undefined') return;
+        
+        const harvestLv = getLevel('scythe_harvest');
+        const lethalityLv = getLevel('scythe_lethality');
+
+        scytheAttack.setDamage(18); 
+        scytheAttack.setHarvestLevel(harvestLv);
+        scytheAttack.setLethalityLevel(lethalityLv);
+    }
+
     /** Recalculates threat response healing on boss spawn. */
     function recalcThreatResponse() {
         // Subscription handled in gameInit.js
@@ -170,6 +182,9 @@ const upgradeDispatcher = (() => {
         if (typeof artilleryAttack !== 'undefined') {
             recalcArtillery();
         }
+        if (typeof scytheAttack !== 'undefined') {
+            recalcScytheStats();
+        }
         recalcThreatResponse();
         if (typeof combatShield !== 'undefined') {
             recalcCombatShield();
@@ -197,6 +212,7 @@ const upgradeDispatcher = (() => {
         recalcResonance,
         recalcLaser,
         recalcArtillery,
+        recalcScytheStats,
         recalcBombUses,
         recalcCombatShield
     };

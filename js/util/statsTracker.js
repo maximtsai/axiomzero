@@ -15,6 +15,8 @@ const statsTracker = (function() {
             artillery: 0,
             shockwave: 0,
             laser: 0,
+            scythe: 0,
+            sword: 0,
             friendlyfire: 0,
             endgame: 0,
             other: 0
@@ -31,6 +33,8 @@ const statsTracker = (function() {
             artillery: 0,
             shockwave: 0,
             laser: 0,
+            scythe: 0,
+            sword: 0,
             friendlyfire: 0,
             endgame: 0,
             other: 0

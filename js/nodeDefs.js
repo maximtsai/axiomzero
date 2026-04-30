@@ -128,7 +128,8 @@ const NODE_DEFS = [
         treeX: gridX(-5.5) - DUO_OFFSET,
         treeY: gridY(3.0),
         effect: function () {
-            // Stub
+            if (typeof swordAttack !== 'undefined') swordAttack.unlock();
+            scytheAttack.lock();
         },
     },
     {
@@ -183,7 +184,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['backup_server'],
-        childIds: [],
+        childIds: ['scythe_harvest', 'scythe_lethality'],
         isDuoBox: true,
         duoBoxTier: 4,
         shardId: 'scythe',
@@ -191,7 +192,48 @@ const NODE_DEFS = [
         treeX: gridX(-5.5) + DUO_OFFSET,
         treeY: gridY(3.0),
         effect: function () {
-            // Stub
+            scytheAttack.unlock();
+            if (typeof swordAttack !== 'undefined') swordAttack.lock();
+        },
+    },
+    {
+        id: 'scythe_harvest',
+        name: t('nodes', 'scythe_harvest.name'),
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'scythe_harvest.desc'),
+        popupText: t('nodes', 'scythe_harvest.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 20,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['scythe'],
+        childIds: [],
+        isDuoChild: true,
+        treeX: gridX(-4.0),
+        treeY: gridY(2.5),
+        effect: function () {
+            upgradeDispatcher.recalcScytheStats();
+        },
+    },
+    {
+        id: 'scythe_lethality',
+        name: t('nodes', 'scythe_lethality.name'),
+        icon: 'Skillicon14_31.png',
+        description: t('nodes', 'scythe_lethality.desc'),
+        popupText: t('nodes', 'scythe_lethality.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 3,
+        baseCost: 20,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['scythe'],
+        childIds: [],
+        isDuoChild: true,
+        treeX: gridX(-4.0),
+        treeY: gridY(3.5),
+        effect: function () {
+            upgradeDispatcher.recalcScytheStats();
         },
     },
     {
