@@ -15,6 +15,8 @@ const gameHUD = (() => {
     let farmingTimerTxt = null;
     let bombBtn = null;
     let bombBtnTxt = null;
+    let endIterationBtnTxt = null;
+    let testDefensesBtnTxt = null;
     let bombIcon = null;
     let isFarming = false;
     let bombCanCancel = false;
@@ -90,6 +92,7 @@ const gameHUD = (() => {
             if (enabled) setBombPulse();
             else clearBombPulse();
         });
+        messageBus.subscribe('settingChanged_bigFont', _onBigFontChanged);
 
         // Wave Progress
         messageBus.subscribe('waveProgressChanged', _onWaveProgressChanged);
@@ -162,9 +165,13 @@ const gameHUD = (() => {
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
             onMouseUp: () => messageBus.publish('endIterationRequested'),
         });
-        endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
+        let baseFontSizeAction = 21;
+        if (helper.isMobileDevice()) baseFontSizeAction += 2;
+        if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeAction += 2;
+
+        endIterationBtnTxt = endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '19px',
+            fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         endIterationBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
@@ -189,14 +196,20 @@ const gameHUD = (() => {
             }
         });
         bombBtn.setScale(0.675);
+        let baseFontSize = 21;
+        if (helper.isMobileDevice()) baseFontSize += 3;
+        if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSize += 3;
+
         bombBtnTxt = bombBtn.addText('', {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '19px',
+            fontSize: `${baseFontSize}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
-            align: 'center'
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 2
         });
-        bombBtnTxt.setOrigin(0.5, 0.5);
-        bombBtn.setTextOffset(0, -44);
+        bombBtnTxt.setOrigin(0.5, 0.75);
+        bombBtn.setTextOffset(0, -38);
         bombBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
         bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 42, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
@@ -221,16 +234,20 @@ const gameHUD = (() => {
             }
         });
         testDefensesBtn.setScale(0.675);
-        testDefensesBtn.addText(t('ui', 'test_weapons'), {
+        testDefensesBtnTxt = testDefensesBtn.addText(t('ui', 'test_weapons'), {
             fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '19px',
+            fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         testDefensesBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0).setVisible(false);
 
+        let baseFontSizeTimer = 24;
+        if (helper.isMobileDevice()) baseFontSizeTimer += 3;
+        if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeTimer += 3;
+
         farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 22, '00:00', {
             fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '24px',
+            fontSize: `${baseFontSizeTimer}px`,
             color: '#00f5ff', // Cyan matching the progress bar
             stroke: '#000000',
             strokeThickness: 1
@@ -489,10 +506,10 @@ const gameHUD = (() => {
 
         // Hide if tree is in full view expansion
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
-        
+
         // Hide if in combat phase
         const isCombat = (typeof gameStateMachine !== 'undefined' && gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT);
-        
+
         const show = isUnlocked && !isFullView && !isCombat;
 
         testDefensesBtn.setVisible(show).setState(show ? NORMAL : DISABLE);
@@ -538,6 +555,28 @@ const gameHUD = (() => {
             bombPulseTimer.destroy();
             bombPulseTimer = null;
         }
+    }
+
+    function _onBigFontChanged() {
+        let baseFontSize = 21;
+        let baseFontSizeAction = 21;
+        let baseFontSizeTimer = 24;
+        
+        if (helper.isMobileDevice()) {
+            baseFontSize += 3;
+            baseFontSizeAction += 2;
+            baseFontSizeTimer += 3;
+        }
+        if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) {
+            baseFontSize += 3;
+            baseFontSizeAction += 2;
+            baseFontSizeTimer += 3;
+        }
+
+        if (bombBtnTxt) bombBtnTxt.setFontSize(`${baseFontSize}px`);
+        if (endIterationBtnTxt) endIterationBtnTxt.setFontSize(`${baseFontSizeAction}px`);
+        if (testDefensesBtnTxt) testDefensesBtnTxt.setFontSize(`${baseFontSizeAction}px`);
+        if (farmingTimerTxt) farmingTimerTxt.setFontSize(`${baseFontSizeTimer}px`);
     }
 
     function setTestButtonVisible(vis) {

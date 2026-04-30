@@ -787,10 +787,10 @@ const enemyManager = (() => {
                 let trueSpawnInterval = config.spawnInterval / spawnSpeedMultiplier;
 
                 if (bossManager.isBossAlive()) {
-                    trueSpawnInterval += 150;
+                    trueSpawnInterval += 225;
                 }
                 if (bossManager.isMinibossAlive()) {
-                    trueSpawnInterval += 125;
+                    trueSpawnInterval += 225;
                 }
 
                 // Early game slowdown: if only 1 node (AWAKEN) or fewer researched

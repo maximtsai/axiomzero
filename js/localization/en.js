@@ -11,7 +11,7 @@ window.TRANSLATIONS.en = {
         continue: 'CONTINUE',
         retry: 'RETRY',
         upgrades: 'UPGRADES',
-        end_iteration: 'END ITERATION',
+        end_iteration: 'END WAVE',
         neural_tree: 'UPGRADE TREE',
         deploy: 'DEPLOY',
         mine: 'MINE',

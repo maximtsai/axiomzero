@@ -398,8 +398,12 @@ class EnemyView {
             this.hpImg.setPosition(x, y);
             this.hpImg.setVisible(true);
             this.hpImg.setActive(true);
-            this.hpImg.setAlpha(1);
-            this.hpImg.setScale(1);
+            this.hpImg.setAlpha(1).setScale(1);
+            // if (PhaserScene.renderer && PhaserScene.renderer.type === Phaser.CANVAS) {
+            //     const val = (this.size || 15);
+            //     this.hpImg.setOrigin(0.5 - 0.3 / val, 0.5 - 0.3 / val);
+            // }
+
         }
         if (this.enemyGlow) {
             this.enemyGlow.setPosition(x, y);
@@ -549,6 +553,7 @@ class Enemy {
 
     activate(x, y, config = {}) {
         this.model.activate(x, y, config);
+        this.view.size = this.model.size;
         this.view.activate(x, y, this.model.baseRotation, this.model.cannotRotate);
         this.view.updateHPCrop(this.model.getHealthPct());
     }

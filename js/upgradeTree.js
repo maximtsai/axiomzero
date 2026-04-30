@@ -603,7 +603,7 @@ const upgradeTree = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         slideRightBtn = new Button({
-            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx + 5, y: cy, alpha: 1 },
+            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx - 2, y: cy, alpha: 1 },
             hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons' },
             press: { ref: 'slide_right_btn_press.png', atlas: 'buttons' },
             disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', alpha: 0 },
@@ -622,7 +622,7 @@ const upgradeTree = (() => {
         treeGroup.add(slideRightBtn);
 
         slideLeftBtn = new Button({
-            normal: { ref: 'slide_left_btn.png', atlas: 'buttons', x: cx - 23, y: cy, alpha: 1 },
+            normal: { ref: 'slide_left_btn.png', atlas: 'buttons', x: cx - 16, y: cy, alpha: 1 },
             hover: { ref: 'slide_left_btn_hover.png', atlas: 'buttons' },
             press: { ref: 'slide_left_btn_press.png', atlas: 'buttons' },
             disable: { ref: 'slide_left_btn_press.png', atlas: 'buttons', alpha: 0 },

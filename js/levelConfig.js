@@ -3,8 +3,8 @@
 
 const LEVEL_CONFIG = {
     1: {
-        spawnInterval: 1100, // ms between regular spawns (base)
-        lateSpawnInterval: 650,
+        spawnInterval: 1075, // ms between regular spawns (base)
+        lateSpawnInterval: 600,
         initialWeights: {
             basic: 1,
             fast: 0,
@@ -16,8 +16,8 @@ const LEVEL_CONFIG = {
             protector: 0
         },
         lateWeights: {
-            shooter: 0.1,
-            swarmer: 0.12,
+            shooter: 0.08,
+            swarmer: 0.11,
             heavy: 0,
             fast: 0,
             sniper: 0,
@@ -32,8 +32,8 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
     },
     2: {
-        spawnInterval: 600, // ms between regular spawns (base)
-        lateSpawnInterval: 525,
+        spawnInterval: 550, // ms between regular spawns (base)
+        lateSpawnInterval: 450,
         spawnPauseDuration: 1500,
         initialWeights: {
             basic: 1,
@@ -63,8 +63,8 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 1.5, // Scales up *base* stats of enemies before wave scaling applies
     },
     3: {
-        spawnInterval: 550, // ms between regular spawns (base)
-        lateSpawnInterval: 175,
+        spawnInterval: 475, // ms between regular spawns (base)
+        lateSpawnInterval: 125,
         spawnPauseDuration: 4000,
         initialWeights: {
             basic: 1,
@@ -93,8 +93,8 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 2,
     },
     4: {
-        spawnInterval: 550, // ms between regular spawns (base)
-        lateSpawnInterval: 600,
+        spawnInterval: 475, // ms between regular spawns (base)
+        lateSpawnInterval: 525,
         initialWeights: {
             basic: 1,
             exploder: 0,
@@ -125,7 +125,7 @@ const LEVEL_CONFIG = {
         levelScalingModifier: 3,
     },
     5: {
-        spawnInterval: 550,
+        spawnInterval: 475,
         initialWeights: {
             basic: 1,
             exploder: 0,

@@ -65,7 +65,7 @@ const NODE_DEFS = [
         parents: ['awaken'],
         childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist'],
         treeX: gridX(0),
-        treeY: gridY(-1.5),
+        treeY: gridY(-2.0),
         effect: function () {
             resourceManager.addData(5000);
             resourceManager.addInsight(3);

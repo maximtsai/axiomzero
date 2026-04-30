@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>6</int>
         <key>texturePackerVersion</key>
-        <string>7.2.0</string>
+        <string>7.0.3</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -553,6 +553,22 @@
                 <rect>33,33,67,67</rect>
                 <key>scale9Paddings</key>
                 <rect>33,33,67,67</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/sweep.png</key>
+            <key type="filename">player/sweep_black.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>158,158,315,315</rect>
+                <key>scale9Paddings</key>
+                <rect>158,158,315,315</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
