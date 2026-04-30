@@ -107,8 +107,10 @@ class Node {
         this.lastAffordStatus = null;
 
         // Mobile two-tap purchase guard
-        this._tapConfirmed = false;
+        this._tapConfirmed = false; 
     }
+
+    static touchedNode = null;
 
     // ── helpers ──────────────────────────────────────────────────────────
 
@@ -587,7 +589,14 @@ class Node {
                 depth: nodeDepth,
             },
             onMouseUp: () => { this._onClick(); },
-            onHover: () => { this._showHover(); },
+            onHover: () => { 
+                if (!GAME_VARS.wasTouch || this.state === NODE_STATE.MAXED) {
+                    this._showHover(); 
+                    if (GAME_VARS.wasTouch && this.state === NODE_STATE.MAXED) {
+                        Node.touchedNode = this.id;
+                    }
+                }
+            },
             onHoverOut: () => { this._hideHover(); },
             hoverWhileDisabled: !this.isPlaceholder,
         });
@@ -674,6 +683,12 @@ class Node {
     }
 
     _onClick() {
+        if (this.isPlaceholder) return;
+        if (this.state === NODE_STATE.LOCKED) return;
+
+        // Mobile interaction guard — handles showing tooltip on first tap
+        if (this._handleMobileInteraction()) return;
+
         if (this.state !== NODE_STATE.UNLOCKED) return;
 
         if (FLAGS.DEBUG) {
@@ -689,9 +704,6 @@ class Node {
 
         // 1. Duo-box swap logic
         if (this._handleDuoSwap()) return;
-
-        // 2. Mobile interaction guard
-        if (this._handleMobileInteraction()) return;
 
         // 3. Purchase logic
         if (this.canAfford()) {
@@ -756,13 +768,18 @@ class Node {
     _handleMobileInteraction() {
         if (!GAME_VARS.wasTouch) return false;
 
-        if (!this._tapConfirmed) {
-            // First tap — show the tooltip and mark as confirmed for next tap
-            this._tapConfirmed = true;
+        console.log(`[Node] Touch detected on node: ${this.id}. Current touchedNode: ${Node.touchedNode}`);
+
+        if (Node.touchedNode !== this.id) {
+            // First tap — show the tooltip and mark this as the globally touched node ID
+            Node.touchedNode = this.id;
+            console.log(`[Node] Confirmation set for: ${this.id}`);
             this._showHover();
             return true;
         }
-        // Second tap — fall through to purchase
+        // Second tap on the same node — reset global flag and fall through to purchase
+        console.log(`[Node] Confirmation MATCHED for: ${this.id}. Proceeding to purchase...`);
+        Node.touchedNode = null;
         return false;
     }
 

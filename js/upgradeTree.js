@@ -617,7 +617,8 @@ const upgradeTree = (() => {
 
         slideRightBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
         slideRightBtn.setScrollFactor(0);
-        slideRightBtn.setState(DISABLE);
+        const mapResearched = (gameState.upgrades && gameState.upgrades.reveal_map) > 0;
+        slideRightBtn.setState(mapResearched ? NORMAL : DISABLE);
         slideRightBtn.setOrigin(0, 0.5);
         treeGroup.add(slideRightBtn);
 
@@ -1128,7 +1129,8 @@ const upgradeTree = (() => {
         }
 
         if (slideRightBtn) {
-            slideRightBtn.setState(fullUpgradeView ? DISABLE : NORMAL);
+            const mapResearched = (gameState.upgrades && gameState.upgrades.reveal_map) > 0;
+            slideRightBtn.setState((fullUpgradeView || !mapResearched) ? DISABLE : NORMAL);
         }
         if (slideLeftBtn) {
             slideLeftBtn.setState(fullUpgradeView ? NORMAL : DISABLE);
@@ -1229,6 +1231,7 @@ const upgradeTree = (() => {
             if (draggableGroup) draggableGroup.activate();
             _startHintTimer();
         } else {
+            if (typeof Node !== 'undefined') Node.touchedNode = null;
             _stopHintTimer();
             if (draggableGroup) draggableGroup.deactivate();
             if (typeof transitionManager === 'undefined' || !transitionManager.isTransitioning()) {
