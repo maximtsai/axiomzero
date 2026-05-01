@@ -31,28 +31,38 @@ const nodeAnims = {
 
         const targets = [node.btn, node.iconSprite, node.fadeoutSprite].filter(Boolean);
 
-        targets.forEach(t => t.setScale(baseScaleX * 1.28, baseScaleY * 1.28));
+        targets.forEach(t => { t.setScale(baseScaleX, baseScaleY) });
         PhaserScene.tweens.add({
             targets: targets,
-            scaleX: baseScaleX * 0.9,
-            scaleY: baseScaleY * 0.9,
-            duration: 180,
-            rotation: 0,
-            ease: 'Cubic.easeInOut',
+            scaleX: baseScaleX * 1.28,
+            scaleY: baseScaleY * 1.28,
+            duration: 10,
+            ease: 'Linear',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: targets,
-                    scaleX: baseScaleX,
-                    scaleY: baseScaleY,
-                    duration: 350,
+                    scaleX: baseScaleX * 0.9,
+                    scaleY: baseScaleY * 0.9,
+                    duration: 180,
                     rotation: 0,
-                    easeParams: [3.5],
-                    ease: 'Back.easeOut',
+                    ease: 'Cubic.easeInOut',
+                    onComplete: () => {
+                        PhaserScene.tweens.add({
+                            targets: targets,
+                            scaleX: baseScaleX,
+                            scaleY: baseScaleY,
+                            duration: 350,
+                            rotation: 0,
+                            easeParams: [3.5],
+                            ease: 'Back.easeOut',
+                            onComplete: () => {
+
+                            }
+                        });
+                    }
                 });
             }
-        });
-
-
+        })
     },
 
     /**
@@ -70,7 +80,6 @@ const nodeAnims = {
 
         // Set starting state
         node.btn.setAlpha(endAlpha * 0.2);
-        node.btn.setScale(baseScaleX * 0.75, baseScaleY * 0.75);
 
         // Alpha fade — 400ms
         PhaserScene.tweens.add({
@@ -80,15 +89,28 @@ const nodeAnims = {
             ease: 'Linear'
         });
 
-        // Scale pop — 500ms
         PhaserScene.tweens.add({
             targets: node.btn,
-            scaleX: baseScaleX,
-            scaleY: baseScaleY,
-            duration: 500,
-            easeParams: [2.5],
-            ease: 'Back.easeOut'
-        });
+            scaleX: baseScaleX * 0.75,
+            scaleY: baseScaleY * 0.75,
+            duration: 10,
+            onComplete: () => {
+                // Scale pop — 500ms
+                PhaserScene.tweens.add({
+                    targets: node.btn,
+                    scaleX: baseScaleX,
+                    scaleY: baseScaleY,
+                    duration: 500,
+                    easeParams: [2.5],
+                    ease: 'Back.easeOut',
+                    onComplete: () => {
+                        const dragGroup = upgradeTree.getDraggableGroup();
+                        node.btn.setScale(dragGroup.getScale())
+                    }
+                });
+            }
+        })
+
     },
 
     /**
@@ -299,8 +321,8 @@ const nodeAnims = {
         if (node.hoverJiggleTween) {
             node.hoverJiggleTween.stop();
         }
-
-        const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
+        const dragGroup = upgradeTree.getDraggableGroup();
+        let treeScale = dragGroup.getScale() || 1;
 
         // Smoothly settle back to treeScale
         PhaserScene.tweens.add({
@@ -310,13 +332,19 @@ const nodeAnims = {
             duration: 60,
             ease: 'Quart.easeOut',
             onComplete: () => {
+                treeScale = dragGroup.getScale() || 1;
                 PhaserScene.tweens.add({
                     targets: targets,
                     scaleX: treeScale,
                     scaleY: treeScale,
-                    duration: 280,
+                    duration: 260,
                     ease: 'Back.easeOut',
-                    easeParams: [4]
+                    easeParams: [4],
+                    onComplete: () => {
+                        for (let i in targets) {
+                            targets[i].setScale(dragGroup.getScale());
+                        }
+                    }
                 });
             }
         });

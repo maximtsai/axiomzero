@@ -24,6 +24,8 @@ function createOptionsButton(x, y) {
             _showOptionsPopup();
         },
         onHover: () => {
+            let sfx = audio.play('click', 0.95);
+            if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
             if (icon) icon.setAlpha(1.0);
         },
         onHoverOut: () => {

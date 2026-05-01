@@ -161,7 +161,7 @@ window.TRANSLATIONS.en = {
         scythe_harvest: { name: 'HARVEST', desc: 'Each enemy killed by the Scythe restores [color=#87FF02]1 HP[/color].', popup: 'HARVEST ACTIVE' },
         scythe_lethality: { name: 'LETHALITY', desc: 'Scythe deals [color=#8FD9F8]+10[/color] damage per level to enemies below [color=#8FD9F8]50%[/color] HP.', popup: 'LETHALITY ACTIVE' },
         sword_lunge: { name: 'LUNGE', desc: 'Increases the length of the sword attack by [color=#8FD9F8]+25%[/color].', popup: 'LUNGE ACQUIRED' },
-        sword_flurry: { name: 'FLURRY', desc: 'Performs two extra strikes at [color=#8FD9F8]75%[/color] power each.', popup: 'FLURRY ACQUIRED' },
+        sword_flurry: { name: 'FLURRY', desc: 'Performs two extra strikes at [color=#8FD9F8]60%[/color] power each.', popup: 'FLURRY ACQUIRED' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network.', popup: 'GATEWAY FOUND' },
         security_test_3: { name: 'SECURITY TEST 3', desc: 'Verify your root authority. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'ROOT AUTHORITY GRANTED' },

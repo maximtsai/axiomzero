@@ -455,7 +455,7 @@ const customEmitters = (() => {
             const copy = pool.get();
             if (!copy) return null;
 
-            copy.setTexture(origSprite.texture.key, origSprite.frame.name);
+            copy.setFrame(origSprite.frame.name);
             copy.setPosition(origSprite.x, origSprite.y);
             copy.setRotation(origSprite.rotation + randRot);
             copy.setDepth(origSprite.depth + 5);

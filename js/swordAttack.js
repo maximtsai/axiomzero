@@ -4,7 +4,7 @@
 class SwordAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 2000;
-        this.BASE_DAMAGE = 20;
+        this.BASE_DAMAGE = 25;
         this.SEARCH_RANGE = 400;
         this.BASE_LENGTH = 200;
         this.START_OFFSET = 20;
@@ -297,7 +297,7 @@ const swordAttack = (() => {
 
         // --- Flurry Attacks ---
         if (currentFlurryLevel > 0) {
-            const flurryDamageMult = 0.75;
+            const flurryDamageMult = 0.6;
             const flurryLength = model.targetLength * 0.667;
 
             // First Flurry: 250ms delay, -0.375 radians

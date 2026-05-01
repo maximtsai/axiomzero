@@ -194,6 +194,8 @@ const gameHUD = (() => {
                 }
             },
             onHover: () => {
+                let sfx = audio.play('click', 0.95);
+                if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
                 if (bombIcon) bombIcon.setAlpha(1);
             },
             onHoverOut: () => {

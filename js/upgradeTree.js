@@ -910,9 +910,9 @@ const upgradeTree = (() => {
     function _playMaxParticles(cx, cy, depth) {
         if (!maxParticlePool) return;
 
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 18; i++) {
             const angle = Math.random() * Math.PI * 2;
-            let dist = Math.random() * 92;
+            let dist = Math.random() * 75;
             let attempts = 0;
             while (dist < 28 && attempts < 10) {
                 dist = Math.random() * 92;
@@ -930,12 +930,12 @@ const upgradeTree = (() => {
             p.setActive(true);
             p.setAlpha(Phaser.Math.FloatBetween(0.5, 1));
 
-            let baseScale = Phaser.Math.FloatBetween(0.36, 0.72);
+            let baseScale = Phaser.Math.FloatBetween(0.35, 0.72);
             baseScale *= baseScale;
             p.setScale(baseScale);
-            const finalScale = baseScale + Math.random() * 0.1;
+            const finalScale = baseScale * 1.7;
 
-            const moveDist = dist * 0.25;
+            const moveDist = dist * 0.4;
             const tx = px + Math.cos(angle) * moveDist;
             const ty = py + Math.sin(angle) * moveDist;
 
@@ -946,30 +946,29 @@ const upgradeTree = (() => {
                 alpha: 1,
                 scaleX: finalScale,
                 scaleY: finalScale,
-                duration: 175 + Math.floor(Math.random() * 275),
+                duration: 125 + Math.floor(Math.random() * 225),
                 ease: 'Quart.easeOut',
                 onComplete: () => {
                     const performGlitch = (callback) => {
                         if (!p || !p.scene || !p.active) return;
                         p.setAlpha(Phaser.Math.FloatBetween(0.2, 0.5));
-                        PhaserScene.time.delayedCall(60, () => {
+                        PhaserScene.time.delayedCall(50, () => {
                             if (!p || !p.scene || !p.active) return;
-                            p.setAlpha(1);
+                            p.setAlpha(Phaser.Math.FloatBetween(0.75, 0.9));
                             callback();
                         });
                     };
 
                     const startFinalFade = () => {
                         if (!p || !p.scene || !p.active) return;
-                        const targetScale = p.scaleX * (1 - Math.random() * 0.25);
+                        const targetScale = p.scaleX * (0.25 - Math.random() * 0.15);
                         PhaserScene.tweens.add({
                             targets: p,
-                            delay: 50,
                             alpha: 0,
                             scaleX: targetScale,
                             scaleY: targetScale,
-                            duration: 400,
-                            ease: 'Cubic.easeIn',
+                            duration: 275 + Math.floor(Math.random() * 125),
+                            ease: 'Cubic.easeOut',
                             onComplete: () => {
                                 if (p && p.active) maxParticlePool.release(p);
                             }
@@ -978,7 +977,7 @@ const upgradeTree = (() => {
 
                     performGlitch(() => {
                         if (Math.random() < 0.4) {
-                            PhaserScene.time.delayedCall(40, () => {
+                            PhaserScene.time.delayedCall(50, () => {
                                 performGlitch(startFinalFade);
                             });
                         } else {

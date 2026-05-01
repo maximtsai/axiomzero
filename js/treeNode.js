@@ -107,7 +107,7 @@ class Node {
         this.lastAffordStatus = null;
 
         // Mobile two-tap purchase guard
-        this._tapConfirmed = false; 
+        this._tapConfirmed = false;
     }
 
     static touchedNode = null;
@@ -589,9 +589,9 @@ class Node {
                 depth: nodeDepth,
             },
             onMouseUp: () => { this._onClick(); },
-            onHover: () => { 
+            onHover: () => {
                 if (!GAME_VARS.wasTouch || this.state === NODE_STATE.MAXED) {
-                    this._showHover(); 
+                    this._showHover();
                     if (GAME_VARS.wasTouch && this.state === NODE_STATE.MAXED) {
                         Node.touchedNode = this.id;
                     }
@@ -769,7 +769,7 @@ class Node {
         if (!GAME_VARS.wasTouch) return false;
 
         // If tooltip is already showing this node and is ready, allow consecutive taps to purchase
-        if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible() && 
+        if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible() &&
             nodeTooltip.getCurrentNode() === this && nodeTooltip.isReadyForInput()) {
             Node.touchedNode = null; // Reset flag but allow purchase
             return false;

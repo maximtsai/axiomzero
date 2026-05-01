@@ -128,7 +128,7 @@ const treeLineManager = (() => {
             let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
             // Exception: Always show lines between manually revealed nodes
             if (p.revealedManually && n.revealedManually) shouldHide = false;
-            
+
             // Exception: Duo box lines should ONLY be visible if the parent is Unlocked/Maxed or revealed manually
             const parentIsActiveOrManual = (p.state !== NODE_STATE.HIDDEN && (p.state !== NODE_STATE.GHOST || p.revealedManually));
             if ((n.isDuoBox || n.isPlaceholder) && !parentIsActiveOrManual) {
