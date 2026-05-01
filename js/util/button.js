@@ -897,7 +897,3 @@ class Button {
         }
     }
 }
-this.bgSprite.destroy();
-        }
-    }
-}
