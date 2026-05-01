@@ -15,6 +15,7 @@ const upgradeTree = (() => {
     let panelOutlineGlitch = null;
     let dragSurface = null;
     let deployBtn = null;
+    let deployBtnGlow = null;
     let deployBtnInitialX = 0;
     let coinMineBtn = null;
     let slideRightBtn = null;
@@ -534,8 +535,12 @@ const upgradeTree = (() => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
                 setHoverLabel("BEGIN WAVE");
+                if (deployBtnGlow) deployBtnGlow.setAlpha(1);
             },
-            onHoverOut: () => { setHoverLabel(null); }
+            onHoverOut: () => {
+                setHoverLabel(null);
+                if (deployBtnGlow) deployBtnGlow.setAlpha(0.6);
+            }
         });
         deployBtn.setScale(0.675);
         deployBtn.addText(t('ui', 'deploy'), {
@@ -550,6 +555,13 @@ const upgradeTree = (() => {
         deployBtn.setState(DISABLE);
         deployBtnInitialX = deployBtn.x;
         // Virtual group handles tracking positions relative to master
+        deployBtnGlow = PhaserScene.add.image(deployBtn.x, deployBtn.y, 'buttons', 'button_extraglow.png')
+            .setDepth(deployBtn.getDepth() - 1)
+            .setScrollFactor(0)
+            .setScale(deployBtn.scaleX)
+            .setAlpha(0.6)
+            .setVisible(false)
+        treeGroup.add(deployBtnGlow);
         treeGroup.add(deployBtn);
 
         // Cursor Coordinate display (Requirement §N.2)
@@ -709,6 +721,7 @@ const upgradeTree = (() => {
         }
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX + 782, duration: customDuration, ease: 'Cubic.easeOut' });
+            if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployBtnInitialX + 782, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
             PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -784,6 +797,7 @@ const upgradeTree = (() => {
         }
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
+            if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
             PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -1258,6 +1272,7 @@ const upgradeTree = (() => {
         panelOutline.setVisible(false);
         dragSurface.setVisible(false);
         deployBtn.setVisible(false);
+        if (deployBtnGlow) deployBtnGlow.setVisible(false);
         if (coordText) coordText.setVisible(false);
 
         _stopAwakenHint();
@@ -1587,6 +1602,7 @@ const upgradeTree = (() => {
             if (deployBtn.visible) return;
 
             deployBtn.setVisible(true);
+            if (deployBtnGlow) deployBtnGlow.setVisible(true);
             deployBtn.setState(NORMAL);
 
             // Only pulse if the only node purchased is Awaken and player has 0 data
@@ -1780,6 +1796,7 @@ const upgradeTree = (() => {
         }
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployX, duration, ease: 'Cubic.easeOut' });
+            if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployX, duration, ease: 'Cubic.easeOut' });
         }
 
         // Zoom buttons and Debug button
@@ -1817,6 +1834,7 @@ const upgradeTree = (() => {
         if (deployBtn) {
             let btnTargetX = -114;
             PhaserScene.tweens.add({ targets: deployBtn, x: btnTargetX, duration, ease: 'Cubic.easeOut' });
+            if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: btnTargetX, duration, ease: 'Cubic.easeOut' });
         }
 
         const buttonOffscreenX = -GAME_CONSTANTS.WIDTH - 4;

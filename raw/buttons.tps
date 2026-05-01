@@ -304,6 +304,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/button_extraglow.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.8</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>119,58,238,115</rect>
+                <key>scale9Paddings</key>
+                <rect>119,58,238,115</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/button_normal_mobile.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -676,15 +691,11 @@
             <key type="filename">buttons/music_on.png</key>
             <key type="filename">buttons/music_on_hover.png</key>
             <key type="filename">buttons/music_on_press.png</key>
-            <key type="filename">buttons/reset.png</key>
-            <key type="filename">buttons/sound_on.png</key>
-            <key type="filename">buttons/sound_on_hover.png</key>
-            <key type="filename">buttons/sound_on_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>spriteScale</key>
-                <double>0.6</double>
+                <double>0.05</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -803,6 +814,24 @@
                 <rect>5,5,11,11</rect>
                 <key>scale9Paddings</key>
                 <rect>5,5,11,11</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/reset.png</key>
+            <key type="filename">buttons/sound_on.png</key>
+            <key type="filename">buttons/sound_on_hover.png</key>
+            <key type="filename">buttons/sound_on_press.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.6</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>34,34,67,67</rect>
+                <key>scale9Paddings</key>
+                <rect>34,34,67,67</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
