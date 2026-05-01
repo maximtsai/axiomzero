@@ -338,6 +338,7 @@ const swordAttack = (() => {
         const endY = pos.y + Math.sin(angle) * length;
 
         const line = new Phaser.Geom.Line(startX, startY, endX, endY);
+        const hitEnemies = [];
 
         // Feedback
         if (typeof audio !== 'undefined') {
@@ -362,8 +363,33 @@ const swordAttack = (() => {
             view.hitCircle.setTo(e.model.x, e.model.y, (e.model.size || 15) + halfWidth);
             if (Phaser.Geom.Intersects.LineToCircle(line, view.hitCircle)) {
                 enemyManager.damageEnemy(e, model.damage * damageMult, 'sword');
+                hitEnemies.push(e);
             }
         }
+
+        // Particle logic: Spawn sparks at the edge of the sword closest to the hit enemy
+        if (hitEnemies.length > 0 && typeof customEmitters !== 'undefined') {
+            const countPerEnemy = hitEnemies.length > 5 ? 1 : 2;
+            const nearestPoint = { x: 0, y: 0 };
+
+            for (const e of hitEnemies) {
+                Phaser.Geom.Line.GetNearestPoint(line, e.model, nearestPoint);
+
+                const dx = e.model.x - nearestPoint.x;
+                const dy = e.model.y - nearestPoint.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+                // Offset by quarterWidth toward the enemy to find the contact point
+                const quarterWidth = halfWidth * 0.5;
+                const awayAngle = Math.atan2(dy, dx);
+                const px = nearestPoint.x + (dx / dist) * quarterWidth;
+                const py = nearestPoint.y + (dy / dist) * quarterWidth;
+
+                customEmitters.swordHit(px, py, awayAngle, countPerEnemy);
+            }
+        }
+
+        return hitEnemies;
     }
 
     function _onPhaseChanged(phase) {

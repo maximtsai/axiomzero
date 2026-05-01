@@ -227,16 +227,16 @@ const customEmitters = (() => {
 
     const enemyDamageParams = {
         frame: 'damage_particle.png',
-        speed: { start: 300, end: 0, ease: 'Cubic.easeOut' },
-        lifespan: { min: 180, max: 580 },
-        scaleX: { start: 1, end: 0, ease: 'Quart.easeIn' },
-        scaleY: { start: 0.6, end: 0.4, ease: 'Quart.easeIn' },
+        speed: { start: 300, end: 40, ease: 'Cubic.easeOut' },
+        lifespan: { min: 180, max: 475 },
+        scaleX: { start: 0.93, end: 0, ease: 'Quart.easeIn' },
+        scaleY: { start: 0.5, end: 0.25, ease: 'Quart.easeIn' },
         rotate: {
             onUpdate: (particle) => {
                 return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
             }
         },
-        gravityY: 500,
+        gravityY: 250,
         emitting: false,
     };
 
@@ -244,10 +244,10 @@ const customEmitters = (() => {
 
     const swarmerDamageParams = Object.assign({}, enemyDamageParams, {
         frame: 'swarmer_damage_particle.png',
-        speed: { start: 260, end: 0, ease: 'Cubic.easeOut' },
-        lifespan: { min: 190, max: 400 },
+        speed: { start: 260, end: 30, ease: 'Cubic.easeOut' },
+        lifespan: { min: 190, max: 380 },
         scaleX: { start: 1.1, end: 0, ease: 'Quart.easeIn' },
-        scaleY: { start: 0.75, end: 0.5, ease: 'Quart.easeIn' },
+        scaleY: { start: 0.7, end: 0.4, ease: 'Quart.easeIn' },
     });
 
     const _swarmerDamage = _make('enemies', swarmerDamageParams, GAME_CONSTANTS.DEPTH_ENEMIES + 2);
@@ -367,6 +367,36 @@ const customEmitters = (() => {
 
     function towerHit(x, y, count = 2) {
         const e = _towerHit();
+        e.explode(count, x, y);
+    }
+
+    // ── Sword Hit ──────────────────────────────────────────────────────────
+    const swordHitParams = {
+        frame: 'white_pixel.png',
+        lifespan: { min: 150, max: 480 },
+        speed: { start: 270, end: 0, ease: 'Cubic.easeOut' },
+        scaleX: { start: 16, end: 0, ease: 'Cubic.easeIn' },
+        scaleY: 2.5,
+        rotate: {
+            onUpdate: (particle) => {
+                return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
+            }
+        },
+        gravityY: 0,
+        emitting: false,
+    };
+
+    const _swordHit = _make('player', swordHitParams, GAME_CONSTANTS.DEPTH_ENEMIES + 12);
+
+    function swordHit(x, y, angle, count = 2) {
+        if (gameState.settings.minimalParticles) return;
+        const e = _swordHit();
+
+        const deg = Phaser.Math.RadToDeg(angle);
+        const newParams = Object.assign({}, swordHitParams);
+        newParams.angle = { min: deg - 80, max: deg + 80 };
+        e.setConfig(newParams);
+
         e.explode(count, x, y);
     }
 
@@ -984,6 +1014,7 @@ const customEmitters = (() => {
         createExploderExplosion,
         enemyDamage,
         swarmerDamage,
+        swordHit,
         malwareSiphonFX,
         cacheTrail,
         playShellDeath: (x, y, depth) => {
