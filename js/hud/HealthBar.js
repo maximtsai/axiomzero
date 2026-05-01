@@ -2,7 +2,7 @@
 // Manages the visual health bar: background, fill, flare, and numeric text.
 // Handles logarithmic scaling based on max health.
 
-const HEALTH_BAR_GAP = 13;
+const HEALTH_BAR_GAP = 14;
 
 class HealthBar {
     /**
@@ -29,22 +29,22 @@ class HealthBar {
 
     _createElements() {
         // ── Background ──
-        this.bg = helper.createNineSlice(this.baseX - 9, this.y - 9, 'buttons', 'health_nineslice.png', this.baseW, this.h, 12, 12, 12, 12);
+        this.bg = helper.createNineSlice(this.baseX - 11, this.y - 9, 'buttons', 'health_nineslice.png', this.baseW, this.h, 12, 12, 12, 12);
         this.bg.setOrigin(0, 0).setDepth(this.depth).setScrollFactor(0);
 
         // ── Damage Flare ──
-        this.flare = PhaserScene.add.image(this.baseX - 9, this.y + this.h / 2 - 9, 'buttons', 'white_vertical_line.png');
+        this.flare = PhaserScene.add.image(this.baseX - 11, this.y + this.h / 2 - 9, 'buttons', 'white_vertical_line.png');
         this.flare.setOrigin(0.5, 0.5).setScale(1, 0.75).setDepth(this.depth + 1).setScrollFactor(0);
         this.flare.setAlpha(0);
 
         // ── Fill ──
-        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP - 9, this.y + HEALTH_BAR_GAP - 9, 'buttons', 'green_pixel.png');
+        this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP - 11, this.y + HEALTH_BAR_GAP - 9, 'buttons', 'green_pixel.png');
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
         const baseFontSize = helper.isMobileDevice() ? 30 : 25;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
-        this.text = PhaserScene.add.text(this.baseX + this.baseW, this.y + 11, '', {
+        this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 11, '', {
             fontFamily: 'JetBrainsMono_Regular',
             fontSize: finalFontSize + 'px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
@@ -69,7 +69,7 @@ class HealthBar {
         this.fill.setDisplaySize((dynamicW - HEALTH_BAR_GAP * 2) * ratio, this.h - HEALTH_BAR_GAP * 2);
 
         // Reposition text to the right of the dynamic bar (compensated for background shift)
-        this.text.x = this.bg.x + dynamicW + 6;
+        this.text.x = this.bg.x + dynamicW + 4;
 
         // Color shift: change frames (green -> orange -> red) as health drops
         // NOTE: setFrame resets origin to 0.5, so we re-apply setOrigin(0,0)

@@ -287,7 +287,7 @@ const upgradeTree = (() => {
         draggableGroup.add(panelBg);
 
         // Static outline frame for the left half
-        panelOutline = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutline = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 830, 902, 230, 230, 230, 230);
         panelOutline.setOrigin(0, 0.5);
         panelOutline.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutline.setScrollFactor(0);
@@ -295,7 +295,7 @@ const upgradeTree = (() => {
         treeGroup.add(panelOutline);
 
         // Second copy of the outline frame for a glitch effect
-        panelOutlineGlitch = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 816, 902, 230, 230, 230, 230);
+        panelOutlineGlitch = helper.createNineSlice(TREE_CENTER_X - 414, GAME_CONSTANTS.halfHeight, 'backgrounds', 'upgrade_outline.png', 830, 902, 230, 230, 230, 230);
         panelOutlineGlitch.setOrigin(0, 0.5);
         panelOutlineGlitch.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 15);
         panelOutlineGlitch.setScrollFactor(0);
@@ -714,10 +714,10 @@ const upgradeTree = (() => {
             PhaserScene.tweens.add({ targets: treeNodeCamera, width: GAME_CONSTANTS.WIDTH - 28, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
-            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1612, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutlineGlitch) {
-            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 1598, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 1612, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX + 782, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -790,10 +790,10 @@ const upgradeTree = (() => {
             PhaserScene.tweens.add({ targets: treeNodeCamera, width: PANEL_W, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutline) {
-            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 816, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 830, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (panelOutlineGlitch) {
-            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 816, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: -6, width: 830, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -1749,7 +1749,7 @@ const upgradeTree = (() => {
         let treeTargetX = 0;
         let maskTargetX = 0;
         let maskScaleX = 1;
-        let panelW = 816;
+        let panelW = 830;
         let panelX = -6;
         let deployX = deployBtnInitialX;
 
@@ -1757,7 +1757,7 @@ const upgradeTree = (() => {
             treeTargetX = GAME_CONSTANTS.WIDTH * 0.5;
             maskTargetX = GAME_CONSTANTS.WIDTH * 0.25;
             maskScaleX = 1.98;
-            panelW = 1598;
+            panelW = 1612;
             deployX = deployBtnInitialX + 782;
             _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
 
