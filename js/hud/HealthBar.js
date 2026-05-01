@@ -17,7 +17,7 @@ class HealthBar {
         this.baseX = config.x;
         this.y = config.y;
         this.baseW = config.width + 18;
-        this.h = config.height + 18;
+        this.h = config.height + 17;
         this.depth = config.depth;
 
         this.lastHealth = -1;
@@ -42,7 +42,7 @@ class HealthBar {
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        const baseFontSize = helper.isMobileDevice() ? 30 : 25;
+        const baseFontSize = helper.isMobileDevice() ? 29 : 23;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
         this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 11, '', {
             fontFamily: 'JetBrainsMono_Regular',
@@ -99,7 +99,7 @@ class HealthBar {
 
     refreshFontSize() {
         if (!this.text) return;
-        const baseFontSize = helper.isMobileDevice() ? 30 : 25;
+        const baseFontSize = helper.isMobileDevice() ? 29 : 23;
         const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
         if (this.text.style.fontSize !== targetSize) {
             this.text.setFontSize(targetSize);
@@ -134,6 +134,19 @@ class HealthBar {
         this.bg.setAlpha(alpha);
         this.fill.setAlpha(alpha);
         this.text.setAlpha(alpha);
+    }
+
+    setOffset(ox, oy) {
+        this.offsetX = ox || 0;
+        this.offsetY = oy || 0;
+        const x = this.baseX + this.offsetX;
+        const y = this.y + this.offsetY;
+
+        this.bg.setPosition(x - 11, y - 9);
+        this.flare.setPosition(x - 11, y + this.h / 2 - 9);
+        this.fill.setPosition(x + HEALTH_BAR_GAP - 11, y + HEALTH_BAR_GAP - 9);
+        // text.x/y is updated in update() too, but we set it here for immediate feedback
+        this.text.setPosition(this.bg.x + this.bg.width + 4, y + 11);
     }
 
     addToGroup(group) {

@@ -529,6 +529,23 @@ class EnemyView {
         }
     }
 
+    playScaleFeedback() {
+        if (!this.img || !this.img.scene) return;
+
+        const targets = [this.img];
+        if (this.hpImg) targets.push(this.hpImg);
+
+        targets.forEach(t => t.setScale(1.25));
+
+        PhaserScene.tweens.add({
+            targets: targets,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 200,
+            ease: 'Cubic.easeOut'
+        });
+    }
+
     setEnemyGlow(frame) {
         if (this.enemyGlow) {
             this.enemyGlow.setFrame(frame);
@@ -614,6 +631,10 @@ class Enemy {
 
         this.view.updateHPCrop(this.model.getHealthPct());
         this.view.playHitFeedback(this.model.getHitFeedbackConfig());
+
+        if (!this.model.isBoss) {
+            this.view.playScaleFeedback();
+        }
 
         // Particle effect (Standard enemies and minibosses only)
         if ((!this.model.isBoss || this.model.isMiniboss) && typeof customEmitters !== 'undefined') {

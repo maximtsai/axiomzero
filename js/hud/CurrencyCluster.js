@@ -39,7 +39,7 @@ class CurrencyCluster {
     }
 
     _getFontSize() {
-        const base = helper.isMobileDevice() ? 30 : 25;
+        const base = helper.isMobileDevice() ? 29 : 23;
         const extra = (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) ? 3 : 0;
         return (base + extra) + 'px';
     }
@@ -201,7 +201,7 @@ class CurrencyCluster {
     refreshFontSize() {
         Object.values(this.resources).forEach(res => {
             if (!res.text) return;
-            const baseFontSize = helper.isMobileDevice() ? 30 : 25;
+            const baseFontSize = helper.isMobileDevice() ? 29 : 23;
             const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
             if (res.text.style.fontSize !== targetSize) {
                 res.text.setFontSize(targetSize);
@@ -245,6 +245,21 @@ class CurrencyCluster {
         } else {
             // this.updateLayout(true, true);
         }
+    }
+
+    setOffset(ox, oy) {
+        const dx = (ox || 0) - (this.offsetX || 0);
+        const dy = (oy || 0) - (this.offsetY || 0);
+        this.offsetX = ox || 0;
+        this.offsetY = oy || 0;
+
+        Object.values(this.resources).forEach(res => {
+            res.icon.x += dx;
+            res.icon.y += dy;
+            res.text.x += dx;
+            res.text.y += dy;
+            if (res.btn) res.btn.setPos(res.btn.x + dx, res.btn.y + dy);
+        });
     }
 
     setAlpha(alpha) {
