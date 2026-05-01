@@ -189,6 +189,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     laserAttack.init();
     artilleryAttack.init();
     scytheAttack.init();
+    swordAttack.init();
     combatShield.init();
     if (gameState.upgrades && gameState.upgrades.combat_shield) {
         combatShield.unlock();
@@ -226,7 +227,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
 
     // Options button (top-right corner, always visible)
     let optionsBtnOffset = helper.isMobileDevice() ? 3 : 0;
-    createOptionsButton(GAME_CONSTANTS.WIDTH - 42 + optionsBtnOffset, 42 + optionsBtnOffset);
+    createOptionsButton(GAME_CONSTANTS.WIDTH - 43 + optionsBtnOffset, 42 + optionsBtnOffset);
 
     // ── Set background color ────────────────────────────────────────────
     PhaserScene.cameras.main.setBackgroundColor(GAME_CONSTANTS.COLOR_BG);

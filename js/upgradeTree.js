@@ -1794,6 +1794,7 @@ const upgradeTree = (() => {
         if (panelOutlineGlitch) {
             PhaserScene.tweens.add({ targets: panelOutlineGlitch, x: panelX, width: panelW, duration, ease: 'Cubic.easeOut' });
         }
+
         if (deployBtn) {
             PhaserScene.tweens.add({ targets: deployBtn, x: deployX, duration, ease: 'Cubic.easeOut' });
             if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployX, duration, ease: 'Cubic.easeOut' });
@@ -1803,6 +1804,10 @@ const upgradeTree = (() => {
         if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+
+        if (typeof gameHUD !== 'undefined' && gameHUD.resetHUDPosition) {
+            gameHUD.resetHUDPosition(duration);
+        }
     }
 
     /** Specialized transition exit for the upgrade tree (Upgrade -> Combat) */
@@ -1841,6 +1846,10 @@ const upgradeTree = (() => {
         if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
         if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
+
+        if (typeof gameHUD !== 'undefined' && gameHUD.shiftHUDTo) {
+            gameHUD.shiftHUDTo(20, duration);
+        }
     }
 
     return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };

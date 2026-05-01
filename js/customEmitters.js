@@ -405,7 +405,7 @@ const customEmitters = (() => {
     // ── Enemy Death Animation ──────────────────────────────────────────────────
     const enemyDeathAnimPool = new ObjectPool(
         () => {
-            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'basic.png'); // Default frame, changed on use
+            const sprite = PhaserScene.add.image(0, 0, 'enemies', 'basic.png');
             sprite.setActive(false);
             sprite.setVisible(false);
             return sprite;
@@ -416,6 +416,21 @@ const customEmitters = (() => {
             helper.clearTint(sprite);
         },
         30
+    );
+
+    const bossDeathAnimPool = new ObjectPool(
+        () => {
+            const sprite = PhaserScene.add.image(0, 0, 'bosses', 'boss_1.png');
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            return sprite;
+        },
+        (sprite) => {
+            sprite.setActive(false);
+            sprite.setVisible(false);
+            helper.clearTint(sprite);
+        },
+        2
     );
 
     function createEnemyDeathAnim(enemy, isSlow = false, durationOverride = 0) {
@@ -433,9 +448,14 @@ const customEmitters = (() => {
         const baseScaleY = enemy.view.img.scaleY;
         const randRot = Math.random() * 0.3 - 0.15;
 
+        const isBoss = !!enemy.model.isBoss && !enemy.model.isMiniboss;
+        const pool = isBoss ? bossDeathAnimPool : enemyDeathAnimPool;
+
         const copies = spritesToAnimate.map(origSprite => {
-            const copy = enemyDeathAnimPool.get();
-            copy.setFrame(origSprite.frame.name);
+            const copy = pool.get();
+            if (!copy) return null;
+
+            copy.setTexture(origSprite.texture.key, origSprite.frame.name);
             copy.setPosition(origSprite.x, origSprite.y);
             copy.setRotation(origSprite.rotation + randRot);
             copy.setDepth(origSprite.depth + 5);
@@ -452,7 +472,7 @@ const customEmitters = (() => {
             copy.setVisible(true);
             copy.setActive(true);
             return copy;
-        });
+        }).filter(c => c !== null);
 
         let duration = isSlow ? 420 : 90;
         if (enemy && enemy.model.isBoss) duration = 800;
@@ -469,7 +489,7 @@ const customEmitters = (() => {
                 copies.forEach(c => {
                     helper.clearTint(c);
                     PhaserScene.time.delayedCall(50, () => {
-                        enemyDeathAnimPool.release(c);
+                        pool.release(c);
                     });
                 });
             }

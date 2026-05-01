@@ -27,16 +27,25 @@ class CurrencyCluster {
      * @param {number} config.spacing
      */
     constructor(config) {
-        this.x = config.x;
+        this.baseX = config.x;
         this.baseY = config.y;
         this.depth = config.depth;
         this.spacing = config.spacing;
+
+        this.offsetX = 0;
+        this.offsetY = 0;
 
         this.resources = {};
         this._createElements();
 
         messageBus.subscribe('settingChanged_bigFont', () => this.refreshFontSize());
     }
+
+    get x() { return this.baseX + this.offsetX; }
+    set x(val) { this.setOffset(val - this.baseX, this.offsetY); }
+
+    get y() { return this.baseY + this.offsetY; }
+    set y(val) { this.setOffset(this.offsetX, val - this.baseY); }
 
     _getFontSize() {
         const base = helper.isMobileDevice() ? 29 : 23;
@@ -109,7 +118,7 @@ class CurrencyCluster {
     updateLayout(isVisible, isUpgradePhase) {
         if (!isVisible) return;
 
-        let currentY = this.baseY;
+        let currentY = this.y;
 
         CURRENCY_ORDER.forEach(id => {
             const ui = this.resources[id];
@@ -130,7 +139,9 @@ class CurrencyCluster {
 
             if (shouldShow) {
                 const iconY = currentY + (helper.isMobileDevice() ? CONFIG.ICON_MOBILE_Y_OFFSET : 0);
+                ui.icon.x = this.x + CONFIG.ICON_X_OFFSET;
                 ui.icon.y = iconY;
+                ui.text.x = this.x + CONFIG.TEXT_X_OFFSET;
                 ui.text.y = currentY;
                 if (ui.btn) ui.btn.setPos(this.x + CONFIG.BG_X_OFFSET, currentY);
 
@@ -260,6 +271,13 @@ class CurrencyCluster {
             res.text.y += dy;
             if (res.btn) res.btn.setPos(res.btn.x + dx, res.btn.y + dy);
         });
+
+        // If we are in a virtual group, we MUST update its offsets immediately
+        // so that the next _syncChildren doesn't snap us back.
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
+            const treeGroup = upgradeTree.getGroup();
+            if (treeGroup && treeGroup.recalculateOffsets) treeGroup.recalculateOffsets();
+        }
     }
 
     setAlpha(alpha) {

@@ -15,17 +15,26 @@ class HealthBar {
      */
     constructor(config) {
         this.baseX = config.x;
-        this.y = config.y;
+        this.baseY = config.y;
         this.baseW = config.width + 18;
         this.h = config.height + 17;
         this.depth = config.depth;
 
         this.lastHealth = -1;
 
+        this.offsetX = 0;
+        this.offsetY = 0;
+
         this._createElements();
 
         messageBus.subscribe('settingChanged_bigFont', () => this.refreshFontSize());
     }
+
+    get x() { return this.baseX + this.offsetX; }
+    set x(val) { this.setOffset(val - this.baseX, this.offsetY); }
+
+    get y() { return this.baseY + this.offsetY; }
+    set y(val) { this.setOffset(this.offsetX, val - this.baseY); }
 
     _createElements() {
         // ── Background ──
@@ -140,13 +149,20 @@ class HealthBar {
         this.offsetX = ox || 0;
         this.offsetY = oy || 0;
         const x = this.baseX + this.offsetX;
-        const y = this.y + this.offsetY;
+        const y = this.baseY + this.offsetY;
 
         this.bg.setPosition(x - 11, y - 9);
         this.flare.setPosition(x - 11, y + this.h / 2 - 9);
         this.fill.setPosition(x + HEALTH_BAR_GAP - 11, y + HEALTH_BAR_GAP - 9);
         // text.x/y is updated in update() too, but we set it here for immediate feedback
         this.text.setPosition(this.bg.x + this.bg.width + 4, y + 11);
+
+        // If we are in a virtual group, we MUST update its offsets immediately
+        // so that the next _syncChildren doesn't snap us back.
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
+            const treeGroup = upgradeTree.getGroup();
+            if (treeGroup && treeGroup.recalculateOffsets) treeGroup.recalculateOffsets();
+        }
     }
 
     addToGroup(group) {
@@ -155,6 +171,14 @@ class HealthBar {
         group.add(this.fill);
         group.add(this.flare);
         group.add(this.text);
+    }
+
+    assignToUICamera() {
+        if (typeof upgradeTree === 'undefined' || !upgradeTree.assignToUICamera) return;
+        upgradeTree.assignToUICamera(this.bg);
+        upgradeTree.assignToUICamera(this.fill);
+        upgradeTree.assignToUICamera(this.flare);
+        upgradeTree.assignToUICamera(this.text);
     }
 
     destroy() {

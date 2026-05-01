@@ -11,6 +11,7 @@ const upgradeDispatcher = (() => {
         if (typeof upgradeTree !== 'undefined') {
             const node = upgradeTree.getNode(nodeId);
             if (node) {
+                // console.log(`getLevel(${nodeId}) branchActive:`, node.branchActive, "level:", node.level);
                 return node.branchActive ? node.level : 0;
             }
         }
@@ -128,6 +129,18 @@ const upgradeDispatcher = (() => {
         scytheAttack.setLethalityLevel(lethalityLv);
     }
 
+    /** Recalculates sword stats from upgrade nodes. */
+    function recalcSwordStats() {
+        if (typeof swordAttack === 'undefined') return;
+        
+        const lungeLv = getLevel('sword_lunge');
+        const flurryLv = getLevel('sword_flurry');
+        
+        if (swordAttack.setDamage) swordAttack.setDamage(20);
+        if (swordAttack.setLungeLevel) swordAttack.setLungeLevel(lungeLv);
+        if (swordAttack.setFlurryLevel) swordAttack.setFlurryLevel(flurryLv);
+    }
+
     /** Recalculates threat response healing on boss spawn. */
     function recalcThreatResponse() {
         // Subscription handled in gameInit.js
@@ -185,6 +198,9 @@ const upgradeDispatcher = (() => {
         if (typeof scytheAttack !== 'undefined') {
             recalcScytheStats();
         }
+        if (typeof swordAttack !== 'undefined') {
+            recalcSwordStats();
+        }
         recalcThreatResponse();
         if (typeof combatShield !== 'undefined') {
             recalcCombatShield();
@@ -213,6 +229,7 @@ const upgradeDispatcher = (() => {
         recalcLaser,
         recalcArtillery,
         recalcScytheStats,
+        recalcSwordStats,
         recalcBombUses,
         recalcCombatShield
     };

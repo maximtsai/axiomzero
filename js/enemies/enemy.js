@@ -245,6 +245,12 @@ class EnemyModel {
             return { died: false, actualApplied: 0 };
         }
 
+        // Minibosses become invincible if tower is dead
+        if (this.isMiniboss && typeof tower !== 'undefined' && !tower.isAlive()) {
+            this.lastDamageAmount = 0;
+            return { died: false, actualApplied: 0 };
+        }
+
         this.lastDamageWasProtected = false;
 
         // Protector aura logic

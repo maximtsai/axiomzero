@@ -104,7 +104,7 @@ const NODE_DEFS = [
         monitorsDuoTier: 4,
         childIds: ['combat_shield'],
         treeX: gridX(-5.5),
-        treeY: gridY(3.5),
+        treeY: gridY(4.0),
         effect: function () { },
     },
     {
@@ -126,9 +126,12 @@ const NODE_DEFS = [
         shardId: 'sword',
         duoSiblingId: 'scythe',
         treeX: gridX(-5.5) - DUO_OFFSET,
-        treeY: gridY(3.0),
+        treeY: gridY(3.5),
         effect: function () {
-            if (typeof swordAttack !== 'undefined') swordAttack.unlock();
+            if (typeof swordAttack !== 'undefined') {
+                swordAttack.unlock();
+                upgradeDispatcher.recalcSwordStats();
+            }
             scytheAttack.lock();
         },
     },
@@ -149,7 +152,7 @@ const NODE_DEFS = [
         treeX: gridX(-7.0),
         treeY: gridY(3.0),
         effect: function () {
-            // Stub
+            upgradeDispatcher.recalcSwordStats();
         },
     },
     {
@@ -169,7 +172,7 @@ const NODE_DEFS = [
         treeX: gridX(-7.0),
         treeY: gridY(4.0),
         effect: function () {
-            // Stub
+            upgradeDispatcher.recalcSwordStats();
         },
     },
     {
@@ -190,7 +193,7 @@ const NODE_DEFS = [
         shardId: 'scythe',
         duoSiblingId: 'sword',
         treeX: gridX(-5.5) + DUO_OFFSET,
-        treeY: gridY(3.0),
+        treeY: gridY(3.5),
         effect: function () {
             scytheAttack.unlock();
             if (typeof swordAttack !== 'undefined') swordAttack.lock();

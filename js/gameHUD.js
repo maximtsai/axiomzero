@@ -54,8 +54,16 @@ const gameHUD = (() => {
         _hideAll();
         _setupSubscriptions();
 
-        if (currencyCluster && typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            currencyCluster.assignToUICamera();
+        // Assign all HUD elements to the UI camera for standalone rendering
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            if (healthBar) healthBar.assignToUICamera();
+            if (healthBtn) upgradeTree.assignToUICamera(healthBtn);
+            if (currencyCluster) currencyCluster.assignToUICamera();
+            if (bombBtn) upgradeTree.assignToUICamera(bombBtn);
+            if (bombIcon) upgradeTree.assignToUICamera(bombIcon);
+            if (endIterationBtn) upgradeTree.assignToUICamera(endIterationBtn);
+            if (testDefensesBtn) upgradeTree.assignToUICamera(testDefensesBtn);
+            if (farmingTimerTxt) upgradeTree.assignToUICamera(farmingTimerTxt);
         }
 
         updateManager.addFunction(_update);
@@ -147,19 +155,16 @@ const gameHUD = (() => {
             spacing: LAYOUT.CURRENCY_SPACING
         });
 
-        // Add to upgrade tree group if needed
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.getGroup) {
-            const treeGroup = upgradeTree.getGroup();
-            if (treeGroup) {
-                healthBar.addToGroup(treeGroup);
-                if (healthBtn.getContainer) treeGroup.add(healthBtn.getContainer());
-                currencyCluster.addToGroup(treeGroup);
-            }
+        // Assigned to UI camera for standalone rendering (Requirement §N.3)
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            healthBar.assignToUICamera();
+            upgradeTree.assignToUICamera(healthBtn);
+            currencyCluster.assignToUICamera();
         }
 
         // 3. Action Buttons
         endIterationBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 107, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: 108, y: GAME_CONSTANTS.HEIGHT - 69, alpha: 1 },
             hover: { ref: 'button_hover.png', atlas: 'buttons', },
             press: { ref: 'button_press.png', atlas: 'buttons', },
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
@@ -177,7 +182,7 @@ const gameHUD = (() => {
         endIterationBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
         bombBtn = new Button({
-            normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 42, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
+            normal: { ref: 'sq_button_normal.png', atlas: 'buttons', x: GAME_CONSTANTS.WIDTH - 43, y: GAME_CONSTANTS.HEIGHT - 72, alpha: 1 },
             hover: { ref: 'sq_button_hover.png', atlas: 'buttons', alpha: 1 },
             press: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 1 },
             disable: { ref: 'sq_button_press.png', atlas: 'buttons', alpha: 0.5 },
@@ -212,7 +217,7 @@ const gameHUD = (() => {
         bombBtn.setTextOffset(0, -38);
         bombBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0);
 
-        bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 42, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
+        bombIcon = PhaserScene.add.image(GAME_CONSTANTS.WIDTH - 43, GAME_CONSTANTS.HEIGHT - 72, 'buttons', 'bomb_icon.png');
         bombIcon.setScale(0.675).setDepth(DEPTHS.ICONS).setScrollFactor(0).setAlpha(0.83);
 
         testDefensesBtn = new Button({
@@ -257,8 +262,8 @@ const gameHUD = (() => {
         // 4. Wave Progress Bar
         waveProgressBar = new ProgressBar(PhaserScene, {
             x: GAME_CONSTANTS.halfWidth,
-            y: GAME_CONSTANTS.HEIGHT - 26,
-            width: 1570,
+            y: GAME_CONSTANTS.HEIGHT - 25,
+            width: 1568,
             height: 18,
             padding: 6,
             bgColor: 0x1a1e2e,
@@ -404,10 +409,15 @@ const gameHUD = (() => {
     function _onPhaseChanged(phase) {
         bombCanCancel = false;
         clearBombPulse();
+
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) _showCombatHUD();
         else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) _showUpgradeHUD();
         else _hideAll();
     }
+
+    let _hudPosTween = null;
+    let _hudOffsetX = 0;
+    let _hudOffsetY = 0;
 
     function _onHealthChanged(current, max) {
         if (healthBar) healthBar.update(current, max);
@@ -515,6 +525,7 @@ const gameHUD = (() => {
         testDefensesBtn.setVisible(show).setState(show ? NORMAL : DISABLE);
     }
 
+
     function setAlpha(alpha) {
         if (healthBar) healthBar.setAlpha(alpha);
         if (healthBtn) healthBtn.setAlpha(alpha);
@@ -608,5 +619,28 @@ const gameHUD = (() => {
         // Reverted to standalone HUD: no longer shifts with tree
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBtnVisible, setCurrencyHUDShifted, setAlpha, setBombPulse, clearBombPulse };
+    function resetHUDPosition(duration = 600) {
+        if (!healthBar || !currencyCluster) return;
+        
+        PhaserScene.tweens.add({
+            targets: [healthBar, currencyCluster],
+            x: (target) => target.baseX,
+            y: (target) => target.baseY,
+            duration: duration,
+            ease: 'Cubic.easeOut'
+        });
+    }
+
+    function shiftHUDTo(targetX, duration = 600) {
+        if (!healthBar || !currencyCluster) return;
+
+        PhaserScene.tweens.add({
+            targets: [healthBar, currencyCluster],
+            x: targetX,
+            duration: duration,
+            ease: 'Cubic.easeOut'
+        });
+    }
+
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBtnVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
 })();

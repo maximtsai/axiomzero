@@ -40,6 +40,7 @@ class ScytheAttackModel {
 class ScytheAttackView {
     constructor() {
         this.sprite = null;
+        this.hitCircle = new Phaser.Geom.Circle(); // Shared object to reduce GC
     }
 
     init() {
@@ -106,6 +107,7 @@ class ScytheAttackView {
 const scytheAttack = (() => {
     const model = new ScytheAttackModel();
     const view = new ScytheAttackView();
+    let swingTimer = null;
 
     function init() {
         view.init();
@@ -128,6 +130,7 @@ const scytheAttack = (() => {
     function lock() {
         model.unlocked = false;
         model.active = false;
+        model.isSwinging = false;
         view.hide();
     }
 
@@ -209,9 +212,8 @@ const scytheAttack = (() => {
                 let hitCount = 0;
 
                 for (let j = 0; j < validTargets.length; j++) {
-                    const diff = Math.abs(Phaser.Math.Angle.ShortestBetween(centerAngle, validTargets[j].angle));
+                    const diff = Math.abs(Phaser.Math.Angle.Wrap(centerAngle - validTargets[j].angle));
                     if (diff <= arcHalfRad) {
-                        // Count bosses and minibosses as 2 targets to prioritize them
                         const targetEnemy = validTargets[j].enemy;
                         const weight = (targetEnemy.model.isBoss || targetEnemy.model.isMiniboss) ? 2 : 1;
                         hitCount += weight;
@@ -250,7 +252,8 @@ const scytheAttack = (() => {
         // Warning phase (transparent sprite gradually getting opaque)
         view.showWarning(angle, pos.x, pos.y, model.HIT_DELAY);
 
-        PhaserScene.time.delayedCall(model.HIT_DELAY, () => {
+        swingTimer = PhaserScene.time.delayedCall(model.HIT_DELAY, () => {
+            swingTimer = null;
             // Re-check game state after delay
             const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
             if (!model.active && !isTesting) {
@@ -299,13 +302,17 @@ const scytheAttack = (() => {
             if (dist < innerBuffer || dist > outerBuffer) continue;
 
             const angle = Math.atan2(dy, dx);
-            const diff = Phaser.Math.Angle.ShortestBetween(Phaser.Math.RadToDeg(centerAngle), Phaser.Math.RadToDeg(angle));
+            const diff = Math.abs(Phaser.Math.Angle.Wrap(angle - centerAngle));
+            const arcHalfRad = Phaser.Math.DegToRad(model.ARC_ANGLE / 2);
 
             // Include size leeway in hit detection for consistency with targeting (plus 10 unit buffer)
             const sizeLeeway = e.model.size || 15;
+            
+            // Capsule collision check using shared geometry
+            view.hitCircle.setTo(e.model.x, e.model.y, sizeLeeway + 10);
             const inRadialRange = (dist + sizeLeeway >= innerBuffer) && (dist - sizeLeeway <= outerBuffer);
 
-            if (inRadialRange && Math.abs(diff) <= model.ARC_ANGLE / 2) {
+            if (inRadialRange && diff <= arcHalfRad) {
                 let finalDmg = model.damage;
                 if (model.lethalityLevel > 0 && e.model.health < e.model.maxHealth * 0.505) {
                     finalDmg += 10 * model.lethalityLevel;

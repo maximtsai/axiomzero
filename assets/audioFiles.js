@@ -47,4 +47,6 @@ const audioFiles = [
     { name: 'switch', src: 'audio/switch.mp3' },
     { name: 'exploder_boom', src: 'audio/exploder_boom.mp3' },
     { name: 'exploder_boom_second', src: 'audio/exploder_boom_second.mp3' },
+    { name: 'sword_stab', src: 'audio/sword_stab.mp3' },
+    { name: 'sword_stab_lite', src: 'audio/sword_stab_lite.mp3' },
 ];

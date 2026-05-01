@@ -120,7 +120,7 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 const ref = children[i].ref;
                 if (ref.scene) activeChildren.push(ref);
             }
-            
+
             if (activeChildren.length > 0) {
                 scene.tweens.add({
                     targets: activeChildren,
