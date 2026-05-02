@@ -47,8 +47,9 @@
 }
 
 @font-face {
-    font-family: 'Rajdhani-Regular';
-    src: url('assets/fonts/Rajdhani-Regular.ttf') format('truetype');
+    font-family: 'Rajdhani-Bold';
+    src: url('assets/fonts/Rajdhani-Bold.ttf') format('truetype');
+    font-weight: bold;
 }
 
 @font-face {

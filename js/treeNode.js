@@ -75,6 +75,7 @@ class Node {
         this.duoBackingSprite = null;
         this.duoBackingOutline = null;
         this.duoOutlineTween = null;
+        this._duoBackingRevealed = false;
         // Determine ownership: lexicographically smaller ID in a pair owns the backing
         this._isDuoBackingOwner = this.isDuoBox && this.duoSiblingId && (this.id < this.duoSiblingId);
 
@@ -981,8 +982,15 @@ class Node {
 
         const wasVisible = this.duoBackingSprite.visible;
         this.duoBackingSprite.setVisible(true);
-        if (!wasVisible) {
+
+        // Only pulse if it's the very first time this backing is being revealed logically
+        // and we are actually looking at the tree (prevents pulse on game load/refresh)
+        if (!this._duoBackingRevealed && upgradeTree.isVisible()) {
+            this._duoBackingRevealed = true;
             this._playDuoPulse(1.0, 1350, 2.0);
+        } else if (isVisibleTier && anyParentActive) {
+            // Ensure the logical flag is set even if we aren't pulsing (e.g. during initial load)
+            this._duoBackingRevealed = true;
         }
 
         const sibling = upgradeTree.getNode(this.duoSiblingId);
