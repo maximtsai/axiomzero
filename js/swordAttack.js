@@ -13,6 +13,7 @@ class SwordAttackModel {
         this.FLURRY_WIDTH = 55;
         this.TIP_WIDTH = 30;
         this.LENGTH_SPRITE_WIDTH = 100;
+        this.FLURRY_DAMAGE_MULT = 0.6;
 
         this.active = false;
         this.unlocked = false;
@@ -158,13 +159,15 @@ class SwordAttackView {
         stem.tweens.push(alphaIn);
 
         // Rotation Tween
-        const rotTween = PhaserScene.tweens.add({
-            targets: container,
-            rotation: targetRotation,
-            duration: 210,
-            ease: 'Cubic.easeOut',
-        });
-        stem.tweens.push(rotTween);
+        if (startRotation !== targetRotation) {
+            const rotTween = PhaserScene.tweens.add({
+                targets: container,
+                rotation: targetRotation,
+                duration: 210,
+                ease: 'Cubic.easeOut',
+            });
+            stem.tweens.push(rotTween);
+        }
     }
 
     hide() {
@@ -297,7 +300,7 @@ const swordAttack = (() => {
 
         // --- Flurry Attacks ---
         if (currentFlurryLevel > 0) {
-            const flurryDamageMult = 0.6;
+            const flurryDamageMult = model.FLURRY_DAMAGE_MULT;
             const flurryLength = model.targetLength * 0.667;
 
             // First Flurry: 250ms delay, -0.375 radians

@@ -72,6 +72,9 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     }
 
     initGameState();
+    if (typeof restoreDynamicNodes === 'function') {
+        restoreDynamicNodes();
+    }
 
     if (typeof FLAGS !== 'undefined' && FLAGS.DEBUG) {
         console.group('%c [DEBUG] Purchased Upgrades ', 'background: #222; color: #00f5ff; font-weight: bold;');

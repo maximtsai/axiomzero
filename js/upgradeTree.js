@@ -54,8 +54,6 @@ const upgradeTree = (() => {
     let _currencyDirty = false;
     let _currencyFrameCount = 0;
 
-
-
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
     const TREE_X_OFFSET = 8;
@@ -454,7 +452,7 @@ const upgradeTree = (() => {
             draggableGroup.y = (viewportH / 2) - (centerLocal * scale);
         } else {
             const topLimit = -(contentBounds.minY * scale);
-            const bottomLimit = viewportH - (contentBounds.maxY * scale);
+            const bottomLimit = viewportH - (contentBounds.maxX * scale);
             draggableGroup.y = Phaser.Math.Clamp(draggableGroup.y, bottomLimit, topLimit);
         }
     }
@@ -483,6 +481,37 @@ const upgradeTree = (() => {
 
         // Set initial states
         _refreshAllNodes();
+    }
+
+    /**
+     * Live-instantiates a node that was added to definitions after the tree was initialized.
+     * @param {string} nodeId - The ID of the node to spawn.
+     * @returns {Node|null} The newly created Node instance.
+     */
+    function spawnNode(nodeId) {
+        if (nodes[nodeId]) return nodes[nodeId];
+
+        const def = getNodeDef ? getNodeDef(nodeId) : NODE_DEFS.find(d => d.id === nodeId);
+        if (!def) return null;
+
+        const node = def.isDuoBox ? new DuoNode(def) : new Node(def);
+        nodes[nodeId] = node;
+        node.create(TREE_X_OFFSET, 0);
+
+        // Restore state if available
+        const savedLevel = (gameState.upgrades && gameState.upgrades[nodeId]) || 0;
+        if (savedLevel > 0) node.level = savedLevel;
+
+        // Sync with current tree state
+        node.setVisible(visible);
+        node.refreshState();
+
+        // Ensure lines are redrawn to connect to the new node
+        if (typeof treeLineManager !== 'undefined') {
+            treeLineManager.updateLines();
+        }
+
+        return node;
     }
 
     function _refreshAllNodes() {
@@ -800,13 +829,13 @@ const upgradeTree = (() => {
             if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
-            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         }
         if (zoomOutBtn) {
-            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         }
         if (debugLogBtn) {
-            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         }
 
         // Retract drag surface to left panel
@@ -1851,5 +1880,5 @@ const upgradeTree = (() => {
         }
     }
 
-    return { init, show, hide, getNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

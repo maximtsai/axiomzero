@@ -34,6 +34,7 @@ window.TRANSLATIONS.en = {
     },
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
+        companion: { name: 'COMPANION', desc: 'Manifest a friendly sub-process dedicated to providing helpful support.', popup: 'COMPANION ONLINE' },
         cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], [color=white]+3 INSIGHT[/color], and [color=#00FF00]+1.0 COIN[/color].', popup: 'RESOURCES ACQUIRED' },
         peak_traffic: { name: 'PEAK TRAFFIC', desc: 'After [color=#8FD9F8]20s[/color] of combat, enemies drop [color=#8FD9F8]+50%[/color] more [color=cyan]DATA[/color].', popup: 'TRAFFIC PEAKING' },
         backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#8FD9F8]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },

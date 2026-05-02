@@ -229,6 +229,7 @@ const GAME_STATE_DEFAULTS = {
     levelsDefeated: 0,     // highest boss level defeated
     minibossLevelsDefeated: 0, // highest miniboss level defeated
     achievements: {},      // { achievementId: true }
+    dynamicNodes: {},      // { nodeId: { parents: [], treeX, treeY } } — dynamic tree persistence
 
     // Lifetime Stats
     stats: {

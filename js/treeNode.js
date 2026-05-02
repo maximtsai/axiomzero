@@ -1142,7 +1142,29 @@ class Node {
     }
 
     /**
-     * Culls the node if it's far outside the current viewport to save draw calls.
+     * Updates the node's position both in logic and visually.
+     * @param {number} x - The new treeX coordinate.
+     * @param {number} y - The new treeY coordinate.
+     */
+    setPosition(x, y) {
+        this.treeX = x;
+        this.treeY = y;
+
+        const offsetX = 8;
+        let visualX = x + offsetX;
+        let visualY = y;
+        let iconX = visualX;
+
+        if (this.btn) this.btn.setPosition(visualX, visualY);
+        if (this.iconSprite) this.iconSprite.setPosition(iconX, visualY);
+        if (this.fadeoutSprite) this.fadeoutSprite.setPosition(visualX, visualY);
+        if (this.glowSprite) this.glowSprite.setPosition(visualX, visualY);
+
+    }
+
+    /**
+     * Optimized visibility check for culling.
+de the current viewport to save draw calls.
      */
     updateVisibility() {
         if (!this.btn || this.state === NODE_STATE.HIDDEN) return;

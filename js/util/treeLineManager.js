@@ -70,50 +70,56 @@ const treeLineManager = (() => {
 
     /**
      * Updates the visibility and alpha of all lines based on node states.
-     * Creates lines if they haven't been generated yet.
+     * Creates lines if they haven't been generated yet or if new nodes were added.
      */
     function updateLines() {
         if (!nodesRef) return;
 
-        // Initialization: Create lines if empty
-        if (lines.length === 0) {
-            const isDuoLineDrawn = {};
+        // 1. Ensure all lines exist for current nodes
+        const isDuoLineDrawn = {};
+        // Pre-populate duo line map from existing lines
+        for (const line of lines) {
+            if (line.isDuoLine) {
+                isDuoLineDrawn[line.duoBoxTier + '_' + line.parentId] = true;
+            }
+        }
 
-            for (const id in nodesRef) {
-                const n = nodesRef[id];
-                if (n.parents && n.parents.length > 0) {
-                    for (let pid of n.parents) {
-                        const p = nodesRef[pid];
-                        if (!p) continue;
+        for (const id in nodesRef) {
+            const n = nodesRef[id];
+            if (n.parents && n.parents.length > 0) {
+                for (let pid of n.parents) {
+                    const p = nodesRef[pid];
+                    if (!p) continue;
 
-                        if (n.isDuoBox && n.duoBoxTier > 0) {
-                            const duoKey = n.duoBoxTier + '_' + pid;
-                            if (isDuoLineDrawn[duoKey]) continue;
-                            isDuoLineDrawn[duoKey] = true;
+                    // Check if a line already exists for this connection
+                    const lineExists = lines.some(l => l.parentId === pid && (l.childId === id || (l.isDuoLine && l.duoSiblingChildId === id)));
+                    if (lineExists) continue;
 
-                            const sibling = n.duoSiblingId ? nodesRef[n.duoSiblingId] : null;
-                            const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
-                            const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
+                    if (n.isDuoBox && n.duoBoxTier > 0) {
+                        const duoKey = n.duoBoxTier + '_' + pid;
+                        if (isDuoLineDrawn[duoKey]) continue;
+                        isDuoLineDrawn[duoKey] = true;
 
-                            createLine(p.treeX, p.treeY, targetX, targetY, {
-                                childId: id,
-                                duoSiblingChildId: n.duoSiblingId,
-                                parentId: pid,
-                                isDuoLine: true,
-                            });
-                        } else {
-                            createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
-                                childId: id,
-                                parentId: pid,
-                            });
-                        }
+                        const sibling = n.duoSiblingId ? nodesRef[n.duoSiblingId] : null;
+                        const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
+                        const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
+
+                        const newLine = createLine(p.treeX, p.treeY, targetX, targetY, {
+                            childId: id,
+                            duoSiblingChildId: n.duoSiblingId,
+                            parentId: pid,
+                            duoBoxTier: n.duoBoxTier,
+                            isDuoLine: true,
+                        });
+                        newLine.setScale(1.5, newLine.scaleY);
+                    } else {
+                        const newLine = createLine(p.treeX, p.treeY, n.treeX, n.treeY, {
+                            childId: id,
+                            parentId: pid,
+                        });
+                        newLine.setScale(1.5, newLine.scaleY);
                     }
                 }
-            }
-
-            // Standardize scaling
-            for (const line of lines) {
-                line.setScale(1.5, line.scaleY);
             }
         }
 

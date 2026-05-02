@@ -35,7 +35,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: [],
-        childIds: ['automated_defense', 'integrity', 'focus', 'cheat'],
+        childIds: ['automated_defense', 'integrity', 'focus', 'cheat', 'companion'],
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
@@ -74,6 +74,49 @@ const NODE_DEFS = [
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
                 tower.heal(10);
+            }
+        },
+    },
+    {
+        id: 'companion',
+        name: t('nodes', 'companion.name'),
+        icon: 'Skillicon14_06.png',
+        description: t('nodes', 'companion.desc'),
+        popupText: t('nodes', 'companion.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['awaken'],
+        childIds: ['spawn_hello_world'],
+        treeX: gridX(0),
+        treeY: gridY(-4.0),
+        effect: function () {
+            // Not implemented yet
+        },
+    },
+    {
+        id: 'spawn_hello_world',
+        name: 'Spawn Hello World',
+        icon: 'Skillicon14_07.png',
+        description: 'Test node: Attaches and positions the Hello World node.',
+        maxLevel: 1,
+        baseCost: 0,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['companion'],
+        childIds: [],
+        treeX: gridX(-1),
+        treeY: gridY(-5.0),
+        effect: function () {
+            // Attach hello_world (from disabledNodes.js) to companion
+            if (typeof attachNodeToParent === 'function') {
+                attachNodeToParent('hello_world', 'companion');
+            }
+            // Move it to 1 unit below companion
+            if (typeof updateNodePosition === 'function') {
+                updateNodePosition('hello_world', gridX(0), gridY(-5.0));
             }
         },
     },

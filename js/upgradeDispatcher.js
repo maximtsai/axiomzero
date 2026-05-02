@@ -136,7 +136,7 @@ const upgradeDispatcher = (() => {
         const lungeLv = getLevel('sword_lunge');
         const flurryLv = getLevel('sword_flurry');
         
-        if (swordAttack.setDamage) swordAttack.setDamage(20);
+        if (swordAttack.setDamage) swordAttack.setDamage(25);
         if (swordAttack.setLungeLevel) swordAttack.setLungeLevel(lungeLv);
         if (swordAttack.setFlurryLevel) swordAttack.setFlurryLevel(flurryLv);
     }
