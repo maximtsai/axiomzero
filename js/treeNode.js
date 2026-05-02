@@ -543,9 +543,13 @@ class Node {
     // ── rendering ────────────────────────────────────────────────────────
 
     create(offsetX, offsetY) {
+        const group = upgradeTree.getDraggableGroup();
+        const gx = group ? group.x : 0;
+        const gy = group ? group.y : 0;
+        const gs = group ? group.getScale() : 1;
 
-        let x = this.treeX + offsetX;
-        let y = this.treeY + offsetY;
+        let x = (this.treeX + offsetX) * gs + gx;
+        let y = (this.treeY + offsetY) * gs + gy;
 
         // Duo-box positioning tweaks: Move buttons 14px apart (7px each) and offset icons 16px
         let iconX = x;
@@ -569,24 +573,28 @@ class Node {
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
+                scaleX: gs, scaleY: gs,
             },
             hover: {
                 ref: this._getHoverSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
+                scaleX: gs, scaleY: gs,
             },
             press: {
                 ref: this._getPressSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
+                scaleX: gs, scaleY: gs,
             },
             disable: {
                 ref: this._getUnlockedDisabledSprite(),
                 atlas: 'buttons',
                 x: x, y: y,
                 depth: nodeDepth,
+                scaleX: gs, scaleY: gs,
             },
             onMouseUp: () => { this._onClick(); },
             onHover: () => {
@@ -612,7 +620,8 @@ class Node {
             this.iconSprite = PhaserScene.add.image(iconX, y, 'buttons', this.icon)
                 .setOrigin(0.5, 0.5)
                 .setDepth(nodeDepth + 1)
-                .setScrollFactor(0);
+                .setScrollFactor(0)
+                .setScale(gs);
         }
 
         // Fadeout sprite — overlays button, starts invisible
@@ -620,7 +629,8 @@ class Node {
             .setOrigin(0.5, 0.5)
             .setAlpha(0)
             .setDepth(nodeDepth + 1)
-            .setScrollFactor(0);
+            .setScrollFactor(0)
+            .setScale(gs);
 
         const draggableGroup = upgradeTree.getDraggableGroup();
         if (draggableGroup) {
@@ -638,9 +648,14 @@ class Node {
             .setVisible(false)
             .setDepth(nodeDepth + 5)
             .setScrollFactor(0)
-            .setScale(1.01);
+            .setScale(1.01 * gs);
 
-        if (draggableGroup) draggableGroup.add(this.glowSprite);
+        if (draggableGroup) {
+            draggableGroup.add(this.glowSprite);
+            // After adding all pieces, we need to ensure their local offsets match the tree coordinates
+            // because create() just set their screen positions factoring in the current scroll/zoom.
+            // draggableGroup.add() already records the offset, but let's be safe.
+        }
 
         // Placeholders shouldn't intercept clicks or be visible, but need the Button obj to exist
         if (this.isPlaceholder) {
@@ -1151,8 +1166,13 @@ class Node {
         this.treeY = y;
 
         const offsetX = 8;
-        let visualX = x + offsetX;
-        let visualY = y;
+        const group = upgradeTree.getDraggableGroup();
+        const gx = group ? group.x : 0;
+        const gy = group ? group.y : 0;
+        const gs = group ? group.getScale() : 1;
+
+        let visualX = (x + offsetX) * gs + gx;
+        let visualY = y * gs + gy;
         let iconX = visualX;
 
         if (this.btn) this.btn.setPosition(visualX, visualY);
@@ -1160,6 +1180,10 @@ class Node {
         if (this.fadeoutSprite) this.fadeoutSprite.setPosition(visualX, visualY);
         if (this.glowSprite) this.glowSprite.setPosition(visualX, visualY);
 
+        // Crucial: Update the VirtualGroup's recorded offsets so it doesn't snap back
+        if (group) {
+            group.recalculateOffsets();
+        }
     }
 
     /**

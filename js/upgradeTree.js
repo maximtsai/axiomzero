@@ -484,7 +484,9 @@ const upgradeTree = (() => {
     }
 
     /**
-     * Live-instantiates a node that was added to definitions after the tree was initialized.
+     * STRUCTURAL: Live-instantiates a node that was not in the UI display list at startup.
+     * Use this when activating a node from DISABLED_NODES or a dynamic source.
+     * It creates the Phaser sprites and adds them to the draggable group.
      * @param {string} nodeId - The ID of the node to spawn.
      * @returns {Node|null} The newly created Node instance.
      */
@@ -509,6 +511,11 @@ const upgradeTree = (() => {
         // Ensure lines are redrawn to connect to the new node
         if (typeof treeLineManager !== 'undefined') {
             treeLineManager.updateLines();
+        }
+
+        // Single sort after everything is added
+        if (treeMaskContainer) {
+            treeMaskContainer.sort('depth');
         }
 
         return node;
@@ -1726,6 +1733,11 @@ const upgradeTree = (() => {
 
         if (treeNodeCamera) {
             unignoreRecursive(gameObject);
+            // Ignore from main camera to prevent double-rendering and respect clipping
+            PhaserScene.cameras.main.ignore(gameObject);
+            if (gameObject.list) {
+                gameObject.list.forEach(child => PhaserScene.cameras.main.ignore(child));
+            }
         }
 
         if (gameObject instanceof Button) {
@@ -1761,6 +1773,11 @@ const upgradeTree = (() => {
         return true;
     }
 
+    /**
+     * VISUAL: Updates a node that ALREADY exists in the UI but is currently hidden.
+     * Moves the node's logical state to Ghost/Unlocked and triggers reveal animations.
+     * This does NOT create new Phaser objects; it just makes existing ones visible.
+     */
     function revealNode(id, revealedManually = true) {
         if (!nodes[id]) return false;
         if (!gameState.revealedNodes) gameState.revealedNodes = {};
@@ -1770,6 +1787,12 @@ const upgradeTree = (() => {
         nodes[id].playRevealAnimation();
         _refreshAllNodes();
         treeLineManager.updateLines();
+
+        // Sort after lines are potentially created
+        // if (treeMaskContainer) {
+        //     treeMaskContainer.sort('depth');
+        // }
+
         return true;
     }
 

@@ -35,8 +35,18 @@ const treeLineManager = (() => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         const angle = Math.atan2(dy, dx) + 1.57;
 
-        const line = PhaserScene.add.image(px + TREE_X_OFFSET, py, 'buttons', 'white_pixel.png');
-        line.setScale(1.5, distance / 2);
+        // Factor in group state so that VirtualGroup.add captures the correct local offset
+        const gx = draggableGroupRef ? draggableGroupRef.x : 0;
+        const gy = draggableGroupRef ? draggableGroupRef.y : 0;
+        const gs = draggableGroupRef ? draggableGroupRef.getScale() : 1;
+
+        const screenX = (px + TREE_X_OFFSET) * gs + gx;
+        const screenY = py * gs + gy;
+
+        const line = PhaserScene.add.image(screenX, screenY, 'buttons', 'white_pixel.png');
+        // Initial screen scale must factor in current group scale so that VirtualGroup.add() 
+        // correctly records the intended "local" base scale.
+        line.setScale(1.5 * gs, (distance / 2) * gs);
         line.setOrigin(0.5, 1);
         line.setRotation(angle);
         line.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 1);
@@ -123,13 +133,31 @@ const treeLineManager = (() => {
             }
         }
 
-        // Logic update: Alpha and visibility
+        // Logic update: Alpha, visibility, and Position
+        const gx = draggableGroupRef ? draggableGroupRef.x : 0;
+        const gy = draggableGroupRef ? draggableGroupRef.y : 0;
+        const gs = draggableGroupRef ? draggableGroupRef.getScale() : 1;
+
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const p = nodesRef[line.parentId];
             const n = nodesRef[line.childId];
 
             if (!p || !n) continue;
+
+            // Update line position and length to match current node coordinates
+            const targetX = line.isDuoLine && n.duoSiblingId ? (n.treeX + nodesRef[n.duoSiblingId].treeX) / 2 : n.treeX;
+            const targetY = line.isDuoLine && n.duoSiblingId ? (n.treeY + nodesRef[n.duoSiblingId].treeY) / 2 : n.treeY;
+
+            const dx = targetX - p.treeX;
+            const dy = targetY - p.treeY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) + 1.57;
+
+            // Update Screen Position
+            line.setPosition((p.treeX + TREE_X_OFFSET) * gs + gx, p.treeY * gs + gy);
+            line.setRotation(angle);
+            line.setScale(1.5 * gs, (distance / 2) * gs);
 
             let shouldHide = (p.state === NODE_STATE.HIDDEN || n.state === NODE_STATE.HIDDEN);
             // Exception: Always show lines between manually revealed nodes
@@ -165,6 +193,11 @@ const treeLineManager = (() => {
                     line.setAlpha((parentActive || isDuoBranch || revealedLine) ? 0.6 : 0);
                 }
             }
+        }
+
+        // Update offsets so the VirtualGroup doesn't snap objects back to old positions
+        if (draggableGroupRef && draggableGroupRef.recalculateOffsets) {
+            draggableGroupRef.recalculateOffsets();
         }
     }
 

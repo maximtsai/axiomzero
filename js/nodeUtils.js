@@ -82,7 +82,6 @@ function attachNodeToParent(nodeId, parentId) {
                 nodeDef.parents.push(parentId);
             }
             registerNode(nodeDef);
-            return;
         }
     }
 
