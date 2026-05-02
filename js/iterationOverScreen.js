@@ -80,10 +80,10 @@ const iterationOverScreen = (() => {
         overlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         overlay.setAlpha(0.75).setDepth(depth);
 
-        // Title — Rajdhani Medium
-        titleText = PhaserScene.add.text(cx, cy - 190, t('results', 'iteration_complete'), {
-            fontFamily: 'Rajdhani-Medium',
-            fontSize: '44px',
+        // Title — Michroma
+        titleText = PhaserScene.add.text(cx, cy - 218, t('results', 'iteration_complete'), {
+            fontFamily: 'Michroma',
+            fontSize: '36px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(depth + 1);
@@ -97,8 +97,8 @@ const iterationOverScreen = (() => {
         // ── Data display (two-line) ───────────────────────────────────
         // Line 1 (large): "◈ 2,847"
         dataNumberText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '42px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '46px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -106,44 +106,44 @@ const iterationOverScreen = (() => {
 
         // Line 2 (small label): "DATA COLLECTED"
         dataText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '23px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '26px', // Increased from 23px for Rajdhani proportions
             color: '#66aacc',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         // Line 3 (tiny delta): "+203 vs last run"
         dataDeltaText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '24px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '28px', // Increased from 24px
             color: '#aaaaaa',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         sniffedDataText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '18px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '22px', // Increased from 18px
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         insightText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '24px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '28px', // Increased from 24px
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         shardText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '24px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '28px', // Increased from 24px
             color: '#ff2d78',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         processorText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '24px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '28px', // Increased from 24px
             color: '#ff9500',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -166,8 +166,8 @@ const iterationOverScreen = (() => {
         helper.setTint(expBarFill, 0xffffff);
 
         expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: '23px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '26px', // Increased from 23px
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(depth + 2).setVisible(false);
@@ -206,8 +206,8 @@ const iterationOverScreen = (() => {
         });
         upgradesBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         upgradesBtn.addText(t('ui', 'upgrades'), {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '25px',
+            fontFamily: 'Rajdhani-Bold',
+            fontSize: '30px',
             color: '#ffffff',
         });
         upgradesBtn.setScrollFactor(0);
@@ -250,8 +250,8 @@ const iterationOverScreen = (() => {
         });
         retryBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         retryBtn.addText(t('ui', 'retry'), {
-            fontFamily: 'JetBrainsMono_Bold',
-            fontSize: '25px',
+            fontFamily: 'Rajdhani-Bold',
+            fontSize: '30px',
             color: '#ffffff',
         });
         retryBtn.setScrollFactor(0);
@@ -432,8 +432,8 @@ const iterationOverScreen = (() => {
         });
         const totalH = lineHeights.reduce((a, b) => a + b, 0);
 
-        // Resource block starts around the center, slightly offset up
-        const blockTopY = cy - 85 - totalH / 2;
+        // Resource block starts around the center, shifted up by 24px
+        const blockTopY = cy - 109 - totalH / 2;
         let currentY = blockTopY;
 
         for (let i = 0; i < activeTexts.length; i++) {
@@ -442,8 +442,8 @@ const iterationOverScreen = (() => {
             currentY += lineHeights[i];
         }
 
-        // Position title based on the block top - ensure at least 65px gap
-        titleText.setY(Math.min(cy - 200, blockTopY - 55));
+        // Position title based on the block top - shifted up by 24px
+        titleText.setY(Math.min(cy - 224, blockTopY - 55));
 
         // ── Count-up animation for DATA number ───────────────────────
         if (sessionData > 0) {
@@ -766,16 +766,16 @@ const iterationOverScreen = (() => {
         diagElements.push(panel);
 
         const reportTitle = PhaserScene.add.text(startX + 15, startY + 15, t('results', 'diagnostic_report'), {
-            fontFamily: 'Rajdhani-Medium',
-            fontSize: '24px', // Was 16
+            fontFamily: 'Michroma',
+            fontSize: '22px',
             color: '#00f5ff',
         }).setOrigin(0).setDepth(depth + 1).setAlpha(0.8);
         diagElements.push(reportTitle);
 
         if (totalDmg <= 0) {
             const noDataText = PhaserScene.add.text(startX + 15, startY + 55, t('results', 'no_damage_dealt'), {
-                fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '20px', // Was 14
+                fontFamily: 'Rajdhani-Medium',
+                fontSize: '22px', // Increased from 20px
                 color: '#aaaaaa',
             }).setOrigin(0).setDepth(depth + 1).setAlpha(0.9);
             diagElements.push(noDataText);
@@ -806,10 +806,10 @@ const iterationOverScreen = (() => {
 
             // Label
             const lbl = PhaserScene.add.text(startX + 15, y, s.label, {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '17px', // Was 11
+                fontFamily: 'Rajdhani-Bold',
+                fontSize: '18px', // Increased from 15px
                 color: '#ffffff',
-            }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
+            }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.9);
 
             // Bar BG
             const barOffset = 135; // Was 85
@@ -830,8 +830,8 @@ const iterationOverScreen = (() => {
 
             // Percentage
             const pText = PhaserScene.add.text(startX + barOffset + bgW + 12, y, `${Math.round(pct * 100)}%`, {
-                fontFamily: 'JetBrainsMono_Regular',
-                fontSize: '16px', // Was 10
+                fontFamily: 'Rajdhani-Medium',
+                fontSize: '20px', // Increased from 16px
                 color: '#ffffff',
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
 
@@ -841,14 +841,14 @@ const iterationOverScreen = (() => {
         if (stats.executions > 0) {
             const execY = listStartY + (activeSources.length * entryHeight) + 12;
             const lbl = PhaserScene.add.text(startX + 15, execY, 'EXECUTION COUNT:', {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '17px', // Was 11
+                fontFamily: 'Rajdhani-Bold',
+                fontSize: '19px', // Increased from 17px
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);
 
             const valText = PhaserScene.add.text(startX + 195, execY, stats.executions.toString(), {
-                fontFamily: 'JetBrainsMono_Bold',
-                fontSize: '17px', // Was 11
+                fontFamily: 'Rajdhani-Bold',
+                fontSize: '20px', // Increased from 17px
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);
 

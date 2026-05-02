@@ -46,6 +46,7 @@ class SwordAttackView {
         this.stems = []; // { container, length, tip, tweens[], inUse }
         this.config = { startOffset: 0, tipWidth: 0, lengthSpriteWidth: 0 };
         this.hitCircle = new Phaser.Geom.Circle(); // Shared object to reduce GC
+        this.slashPool = null;
     }
 
     init(config) {
@@ -199,6 +200,22 @@ const swordAttack = (() => {
             tipWidth: model.TIP_WIDTH,
             lengthSpriteWidth: model.LENGTH_SPRITE_WIDTH
         });
+
+        view.slashPool = new ObjectPool(
+            () => {
+                const s = PhaserScene.add.image(0, 0, 'player', 'slash.png');
+                s.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 12);
+                s.setAlpha(0);
+                s.setVisible(false);
+                return s;
+            },
+            (s) => {
+                s.setVisible(false);
+                s.setAlpha(0);
+            },
+            20
+        );
+
         messageBus.subscribe('phaseChanged', _onPhaseChanged);
         messageBus.subscribe('gamePaused', () => { model.paused = true; });
         messageBus.subscribe('gameResumed', () => { model.paused = false; });
@@ -290,7 +307,7 @@ const swordAttack = (() => {
             finalRotation,
             model.targetLength,
             () => {
-                _applyHit(targetAngle, model.targetLength, 1.0);
+                _applyHit(targetAngle, model.targetLength, 1.0, null, false);
                 model.rotation = Phaser.Math.Angle.Wrap(finalRotation);
             },
             () => { model.isAttacking = false; },
@@ -310,7 +327,7 @@ const swordAttack = (() => {
                     angle1,
                     angle1,
                     flurryLength,
-                    () => { _applyHit(angle1, flurryLength, flurryDamageMult, model.FLURRY_WIDTH); },
+                    () => { _applyHit(angle1, flurryLength, flurryDamageMult, model.FLURRY_WIDTH, true); },
                     () => { },
                     0.9,
                     50
@@ -324,7 +341,7 @@ const swordAttack = (() => {
                     angle2,
                     angle2,
                     flurryLength,
-                    () => { _applyHit(angle2, flurryLength, flurryDamageMult, model.FLURRY_WIDTH); },
+                    () => { _applyHit(angle2, flurryLength, flurryDamageMult, model.FLURRY_WIDTH, true); },
                     () => { },
                     0.9,
                     0
@@ -333,7 +350,7 @@ const swordAttack = (() => {
         }
     }
 
-    function _applyHit(angle, length, damageMult = 1.0, widthOverride = null) {
+    function _applyHit(angle, length, damageMult = 1.0, widthOverride = null, isFlurry = false) {
         const pos = tower.getPosition();
         const startX = pos.x + Math.cos(angle) * model.DAMAGE_START_OFFSET;
         const startY = pos.y + Math.sin(angle) * model.DAMAGE_START_OFFSET;
@@ -370,9 +387,8 @@ const swordAttack = (() => {
             }
         }
 
-        // Particle logic: Spawn sparks at the edge of the sword closest to the hit enemy
-        if (hitEnemies.length > 0 && typeof customEmitters !== 'undefined') {
-            const countPerEnemy = hitEnemies.length > 5 ? 1 : 2;
+        // Slash animation: Spawn slash sprites at the contact points
+        if (hitEnemies.length > 0 && view.slashPool) {
             const nearestPoint = { x: 0, y: 0 };
 
             for (const e of hitEnemies) {
@@ -382,13 +398,58 @@ const swordAttack = (() => {
                 const dy = e.model.y - nearestPoint.y;
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-                // Offset by quarterWidth toward the enemy to find the contact point
                 const quarterWidth = halfWidth * 0.5;
-                const awayAngle = Math.atan2(dy, dx);
                 const px = nearestPoint.x + (dx / dist) * quarterWidth;
                 const py = nearestPoint.y + (dy / dist) * quarterWidth;
 
-                customEmitters.swordHit(px, py, awayAngle, countPerEnemy);
+                const slash = view.slashPool.get();
+                if (slash) {
+                    slash.setPosition(px, py);
+                    slash.setRotation(Math.random() * Math.PI * 2);
+                    slash.setAlpha(1);
+                    if (isFlurry) {
+                        slash.setScale(0.6, 0.45);
+                    } else {
+                        slash.setScale(0.8, 0.6);
+                    }
+                    slash.setVisible(true);
+
+                    // Animation
+                    let randomScaleUp = Math.random();
+                    let endScaleX = isFlurry ? 1.4 + randomScaleUp * 0.4 : 2.2 + randomScaleUp * 0.8;
+                    let flurryDurationBonus = isFlurry ? -50 : 0;
+
+                    PhaserScene.tweens.add({
+                        targets: slash,
+                        scaleX: endScaleX,
+                        duration: 260 + flurryDurationBonus,
+                    });
+                    PhaserScene.tweens.add({
+                        targets: slash,
+                        scaleY: isFlurry ? 0.9 : 1.25,
+                        duration: 60,
+                        ease: 'Cubic.easeOut',
+                        onComplete: () => {
+                            PhaserScene.tweens.add({
+                                targets: slash,
+                                scaleY: 0,
+                                duration: 200 + flurryDurationBonus,
+                                ease: 'Cubic.easeIn',
+                            });
+                        }
+                    });
+
+                    PhaserScene.tweens.add({
+                        targets: slash,
+                        alpha: 0,
+                        duration: 100,
+                        delay: 160 + flurryDurationBonus,
+                        ease: 'Quad.easeIn',
+                        onComplete: () => {
+                            view.slashPool.release(slash);
+                        }
+                    });
+                }
             }
         }
 

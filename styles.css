@@ -56,11 +56,11 @@
     font-family: 'JetBrainsMono_Regular';
     src: url('assets/fonts/JetBrainsMono_Regular.ttf') format('truetype');
 }
-
 @font-face {
-    font-family: 'JetBrainsMono_Italic';
-    src: url('assets/fonts/JetBrainsMono_Italic.ttf') format('truetype');
+    font-family: 'Michroma';
+    src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
 }
+
 
 @font-face {
     font-family: 'JetBrainsMono_Bold';
@@ -68,10 +68,6 @@
     font-weight: bold;
 }
 
-@font-face {
-    font-family: 'VCR';
-    src: url('assets/fonts/VCR.ttf') format('truetype');
-}
 
 @font-face {
     font-family: 'MunroSmall';
@@ -117,6 +113,7 @@ canvas {
 
 #preload span {
     /* Helper to apply font families inside the hidden div */
+    font-family: 'Michroma';
     font-size: 1px;
 }
 

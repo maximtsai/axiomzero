@@ -960,6 +960,31 @@
 					}
 				},
 				{
+					"filename": "slash.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 98,
+						"h": 20
+					},
+					"frame": {
+						"x": 256,
+						"y": 1572,
+						"w": 98,
+						"h": 20
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "resrc_shard.png",
 					"rotated": false,
 					"trimmed": true,
@@ -1490,6 +1515,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:3eafd0f2171567fb69c87b3ef645e348:83c957ce5500f48c9a63e2658733dbe9:e2b4716e83edbfec9c3741f281601216$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a5e0a95b9b4411353d237b42862fd11f:40def1ffba18ee9198357bc59a113d9e:e2b4716e83edbfec9c3741f281601216$"
 	}
 }
