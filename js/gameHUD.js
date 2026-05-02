@@ -170,12 +170,12 @@ const gameHUD = (() => {
             disable: { ref: 'button_press.png', atlas: 'buttons', alpha: 0 },
             onMouseUp: () => messageBus.publish('endIterationRequested'),
         });
-        let baseFontSizeAction = 21;
+        let baseFontSizeAction = 25;
         if (helper.isMobileDevice()) baseFontSizeAction += 2;
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeAction += 2;
 
         endIterationBtnTxt = endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Rajdhani-Medium',
             fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
@@ -203,7 +203,7 @@ const gameHUD = (() => {
             }
         });
         bombBtn.setScale(0.675);
-        let baseFontSize = 21;
+        let baseFontSize = 25;
         if (helper.isMobileDevice()) baseFontSize += 3;
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSize += 3;
 
@@ -242,18 +242,18 @@ const gameHUD = (() => {
         });
         testDefensesBtn.setScale(0.675);
         testDefensesBtnTxt = testDefensesBtn.addText(t('ui', 'test_weapons'), {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Rajdhani-Medium',
             fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
         testDefensesBtn.setDepth(DEPTHS.BUTTONS).setScrollFactor(0).setVisible(false);
 
-        let baseFontSizeTimer = 24;
+        let baseFontSizeTimer = 28;
         if (helper.isMobileDevice()) baseFontSizeTimer += 3;
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeTimer += 3;
 
         farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 22, '00:00', {
-            fontFamily: 'JetBrainsMono_Regular',
+            fontFamily: 'Rajdhani-Medium',
             fontSize: `${baseFontSizeTimer}px`,
             color: '#00f5ff', // Cyan matching the progress bar
             stroke: '#000000',
@@ -571,9 +571,9 @@ const gameHUD = (() => {
     }
 
     function _onBigFontChanged() {
-        let baseFontSize = 21;
-        let baseFontSizeAction = 21;
-        let baseFontSizeTimer = 24;
+        let baseFontSize = 25;
+        let baseFontSizeAction = 25;
+        let baseFontSizeTimer = 28;
 
         if (helper.isMobileDevice()) {
             baseFontSize += 3;

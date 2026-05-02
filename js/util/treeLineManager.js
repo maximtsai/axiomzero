@@ -145,9 +145,20 @@ const treeLineManager = (() => {
 
             if (!p || !n) continue;
 
+            // BUG FIX: Check if this connection is still valid in the logic.
+            // If the node has been re-parented, the old line should be removed.
+            // const isConnectionValid = n.parents && n.parents.includes(line.parentId);
+            // if (!isConnectionValid) {
+            //     line.destroy();
+            //     lines.splice(i, 1);
+            //     i--;
+            //     continue;
+            // }
+
             // Update line position and length to match current node coordinates
-            const targetX = line.isDuoLine && n.duoSiblingId ? (n.treeX + nodesRef[n.duoSiblingId].treeX) / 2 : n.treeX;
-            const targetY = line.isDuoLine && n.duoSiblingId ? (n.treeY + nodesRef[n.duoSiblingId].treeY) / 2 : n.treeY;
+            const sibling = line.isDuoLine && n.duoSiblingId ? nodesRef[n.duoSiblingId] : null;
+            const targetX = sibling ? (n.treeX + sibling.treeX) / 2 : n.treeX;
+            const targetY = sibling ? (n.treeY + sibling.treeY) / 2 : n.treeY;
 
             const dx = targetX - p.treeX;
             const dy = targetY - p.treeY;

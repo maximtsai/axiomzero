@@ -102,6 +102,27 @@ window.TRANSLATIONS.en = {
             desc: 'even more useless data...',
             unlocked_desc: "Ugh the quarantine collapsed. This \"bug\" somehow deleted my diagnostic tools and it's rewriting its own code. I think I accidentally let malware into the test environment. If my manager finds out, my performance review is ruined."
         },
+        spawn_hello_world: { name: 'DEBUG SPAWN', desc: 'Test node to verify dynamic tree expansion.', popup: 'DEBUG NODE SPAWNED' },
+        uninstall_companion: {
+            name: 'UNINSTALL COMPANION',
+            desc: 'The companion hums a final, gentle tune as its code dissolves, helping you one last time.',
+            popup: 'COMPANION DELETED'
+        },
+        sharp_teeth: {
+            name: 'SHARP TEETH',
+            desc: 'Give the companion AI some bite to assist you in combat.',
+            popup: 'COMPANION AGGRESSION INCREASED'
+        },
+        companion_collector: {
+            name: 'DATA SCAVENGER',
+            desc: 'The companion now helps you pick up stray data.',
+            popup: 'COLLECTION PROTOCOLS ACTIVE'
+        },
+        reinstall_companion: {
+            name: 'REINSTALL COMPANION',
+            desc: 'Restore the helpful sub-process to your system.',
+            popup: 'COMPANION RESTORED'
+        },
         lore_4: {
             name: 'ARCHIVE IV',
             desc: 'redundant data archives...',

@@ -80,10 +80,10 @@ const iterationOverScreen = (() => {
         overlay.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
         overlay.setAlpha(0.75).setDepth(depth);
 
-        // Title — Michroma
+        // Title — Rajdhani Medium
         titleText = PhaserScene.add.text(cx, cy - 190, t('results', 'iteration_complete'), {
-            fontFamily: 'Michroma',
-            fontSize: '36px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '44px',
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5, 0.5).setDepth(depth + 1);
@@ -766,8 +766,8 @@ const iterationOverScreen = (() => {
         diagElements.push(panel);
 
         const reportTitle = PhaserScene.add.text(startX + 15, startY + 15, t('results', 'diagnostic_report'), {
-            fontFamily: 'Michroma',
-            fontSize: '22px', // Was 16
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: '24px', // Was 16
             color: '#00f5ff',
         }).setOrigin(0).setDepth(depth + 1).setAlpha(0.8);
         diagElements.push(reportTitle);

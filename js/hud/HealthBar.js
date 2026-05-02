@@ -51,11 +51,11 @@ class HealthBar {
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        const baseFontSize = helper.isMobileDevice() ? 29 : 23;
+        const baseFontSize = helper.isMobileDevice() ? 33 : 26;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
         this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 11, '', {
-            fontFamily: 'JetBrainsMono_Regular',
-            fontSize: finalFontSize + 'px',
+            fontFamily: 'Rajdhani-Medium',
+            fontSize: finalFontSize + 'px', 
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0);
     }
@@ -108,7 +108,7 @@ class HealthBar {
 
     refreshFontSize() {
         if (!this.text) return;
-        const baseFontSize = helper.isMobileDevice() ? 29 : 23;
+        const baseFontSize = helper.isMobileDevice() ? 33 : 26;
         const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
         if (this.text.style.fontSize !== targetSize) {
             this.text.setFontSize(targetSize);

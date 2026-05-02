@@ -389,10 +389,17 @@ const resourceManager = (() => {
             shardIsFlying = false;
         }
 
+        let missedDataCount = 0;
         for (let i = activeDrops.length - 1; i >= 0; i--) {
-            _deactivate(activeDrops[i]);
+            const d = activeDrops[i];
+            if (d.type === 'data') missedDataCount++;
+            _deactivate(d);
         }
         activeDrops.length = 0;
+
+        if (missedDataCount > 60) {
+            console.log(`[RESOURCE] Missed a lot of data: ${missedDataCount} units lost.`);
+        }
     }
 
     function _recalcPickupRadius() {

@@ -42,8 +42,13 @@
 /* --- FONTS --- */
 /* Defined here so they can be referenced immediately */
 @font-face {
-    font-family: 'Michroma';
-    src: url('assets/fonts/Michroma_Regular.ttf') format('truetype');
+    font-family: 'Rajdhani-Medium';
+    src: url('assets/fonts/Rajdhani-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Rajdhani-Regular';
+    src: url('assets/fonts/Rajdhani-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -117,9 +122,9 @@ canvas {
 /* --- UI ELEMENTS --- */
 #preload-notice {
     color: #888;
-    font-family: 'Michroma', sans-serif;
+    font-family: 'Rajdhani-Medium', sans-serif;
     /* Use your game font here */
-    font-size: 14px;
+    font-size: 17px;
     text-align: center;
 
     position: absolute;
