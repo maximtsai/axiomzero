@@ -137,13 +137,20 @@ const cameraManager = (() => {
             // 3. Ensure it's NOT ignored by the target camera
             if (obj.cameraFilter !== undefined) obj.cameraFilter &= ~targetCamera.id;
 
-            // 4. Handle common sub-properties (for complex components like Buttons)
-            if (obj.bgSprite) _apply(obj.bgSprite);
-            if (obj.text) _apply(obj.text);
 
-            // 5. Recursive handle for Containers
+            // 4. Handle custom Button class (if applicable)
+            if (obj.bgSprite) {
+                _apply(obj.bgSprite);
+                if (obj.text) _apply(obj.text);
+            }
+
+            // 5. Recursive handle for Containers or VirtualGroups
             if (obj.list && Array.isArray(obj.list)) {
                 obj.list.forEach(child => _apply(child));
+            } else if (obj.getChildren && typeof obj.getChildren === 'function') {
+                obj.getChildren().forEach(child => {
+                    if (child.ref) _apply(child.ref);
+                });
             }
         };
 

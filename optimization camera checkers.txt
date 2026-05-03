@@ -1,0 +1,36 @@
+(function() {
+    const mainCam = PhaserScene.cameras.main;
+    const report = {};
+    
+    PhaserScene.children.list.forEach(obj => {
+        // Only check objects that are NOT ignored by the main camera
+        const isIgnored = (obj.cameraFilter & mainCam.id);
+        if (!isIgnored && obj.visible && obj.active) {
+            const key = obj.texture ? `${obj.texture.key} [${obj.frame.name}]` : 'Other';
+            if (!report[key]) report[key] = { count: 0, depth: obj.depth, type: obj.type };
+            report[key].count++;
+        }
+    });
+    
+    console.table(report);
+})();
+
+
+(function() {
+    const mainCam = PhaserScene.cameras.main;
+    console.group("Main Camera - Container Deep Dive");
+    
+    PhaserScene.children.list.forEach(obj => {
+        const isIgnored = (obj.cameraFilter & mainCam.id);
+        if (!isIgnored && obj.type === 'Container') {
+            console.log(`%cContainer Found! Depth: ${obj.depth}, Children: ${obj.list.length}`, "color: #00f5ff; font-weight: bold;");
+            
+            // Check first 5 children to identify it
+            obj.list.slice(0, 5).forEach((child, i) => {
+                console.log(`  -> Child ${i}: ${child.type} | Texture: ${child.texture ? child.texture.key : 'None'} | Frame: ${child.frame ? child.frame.name : 'None'}`);
+            });
+        }
+    });
+    
+    console.groupEnd();
+})();

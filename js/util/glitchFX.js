@@ -45,15 +45,15 @@ const glitchFX = (() => {
         bgGridHigh.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1).setVisible(false);
 
         // Pre-allocate system scan assets (Pooling)
-        wave = PhaserScene.add.image(0, 0, 'player', 'deathwave.png').setVisible(false);
+        wave = PhaserScene.add.image(0, 0, 'backgrounds', 'deathwave.png').setVisible(false);
         helper.setBlendMode(wave, Phaser.BlendModes.ADD);
-        
-        blueLine = PhaserScene.add.image(0, 0, 'buttons', 'white_pixel.png').setVisible(false).setDepth(-2).setOrigin(0.5, 0.5);
+
+        blueLine = PhaserScene.add.image(0, 0, 'backgrounds', 'blue_pixel.png').setVisible(false).setDepth(-2).setOrigin(0.5, 0.5);
         helper.setBlendMode(blueLine, Phaser.BlendModes.ADD);
-        
+
         scanFade1 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setAngle(-45);
         helper.setBlendMode(scanFade1, Phaser.BlendModes.MULTIPLY);
-        
+
         scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setAngle(45);
         helper.setBlendMode(scanFade2, Phaser.BlendModes.ADD);
     }
@@ -407,7 +407,6 @@ const glitchFX = (() => {
             .setDepth(GAME_CONSTANTS.DEPTH_HUD + 11)
             .setAlpha(0.04)
             .setDisplaySize(GAME_CONSTANTS.WIDTH, startHeight);
-        helper.setTint(blueLine, 0x00f5ff);
         helper.setBlendMode(blueLine, Phaser.BlendModes.ADD);
 
         // expansion + fade in tween

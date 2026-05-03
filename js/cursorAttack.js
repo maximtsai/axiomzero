@@ -256,7 +256,7 @@ class PulseAttackView {
         // Wave effect pool
         this.wavePool = new ObjectPool(
             () => {
-                const slice = helper.createNineSlice(0, 0, 'player', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
+                const slice = helper.createNineSlice(0, 0, 'backgrounds', 'cursorwave.png', 110, 110, 50, 50, 50, 50);
                 slice.setOrigin(0.5, 0.5);
                 slice.setDepth(-2);
                 slice.setVisible(false);

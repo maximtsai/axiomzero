@@ -3,6 +3,13 @@
 
 const announcementManager = (() => {
 
+    function _route(obj) {
+        if (!obj) return;
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(obj);
+        }
+    }
+
     function init() {
         messageBus.subscribe('AnnounceText', showAnnounceMessage);
         messageBus.subscribe('BossAnnounceText', ({ msg1, msg2 }) => showBossAnnouncement(msg1, msg2));
@@ -40,6 +47,7 @@ const announcementManager = (() => {
             stroke: '#000000',
             strokeThickness: 3,
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 4, true, true);
+        _route(txt1);
 
         // Message 2 (Boss Name)
         const txt2 = PhaserScene.add.text(commonX, txt1.y + h1 - 5, '', {
@@ -50,10 +58,12 @@ const announcementManager = (() => {
             stroke: '#000000',
             strokeThickness: 6,
         }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 3, '#000000', 8, true, true);
+        _route(txt2);
 
         // Decorative Line (centered between them or below)
         const line = PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'buttons', 'white_line.png');
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
+        _route(line);
 
         // Line Animation
         PhaserScene.tweens.add({
@@ -142,9 +152,11 @@ const announcementManager = (() => {
             strokeThickness: 4,
             lineSpacing: -4
         }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
+        _route(txt);
 
         const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'buttons', 'white_line.png');
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
+        _route(line);
 
         PhaserScene.tweens.add({
             delay: 600,

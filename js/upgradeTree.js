@@ -327,6 +327,7 @@ const upgradeTree = (() => {
         dragSurface.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 0.1);
         dragSurface.setScrollFactor(0);
         dragSurface.setVisible(false);
+        assignToUICamera(dragSurface);
         dragSurface.setInteractive();
 
         let isDraggingTree = false;
@@ -1662,6 +1663,16 @@ const upgradeTree = (() => {
             if (gameObject.list) {
                 gameObject.list.forEach(child => PhaserScene.cameras.main.ignore(child));
             }
+        }
+
+        // Also ignore from uiCamera — nodes should ONLY render via treeNodeCamera
+        if (uiCamera) {
+            uiCamera.ignore(gameObject);
+            if (gameObject.list) {
+                gameObject.list.forEach(child => uiCamera.ignore(child));
+            }
+            if (gameObject.bgSprite) uiCamera.ignore(gameObject.bgSprite);
+            if (gameObject.text) uiCamera.ignore(gameObject.text);
         }
 
         if (gameObject instanceof Button) {

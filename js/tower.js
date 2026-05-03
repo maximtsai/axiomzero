@@ -216,10 +216,10 @@ class TowerView {
         helper.setBlendMode(this.glowSprite, Phaser.BlendModes.ADD);
 
         // Pre-create death shockwave (temp depth 0 for visibility)
-        this.deathShockwave = PhaserScene.add.image(cx, cy, 'player', 'deathwave.png');
+        this.deathShockwave = PhaserScene.add.image(cx, cy, 'backgrounds', 'deathwave.png');
         this.deathShockwave.setDepth(-2).setAlpha(0);
 
-        this.warnShockwave = PhaserScene.add.image(cx, cy, 'player', 'warnwave.png');
+        this.warnShockwave = PhaserScene.add.image(cx, cy, 'backgrounds', 'warnwave.png');
         this.warnShockwave.setDepth(-2).setAlpha(0);
 
         // Main tower sprite
@@ -335,7 +335,7 @@ class TowerView {
         if (this.sprite) {
             helper.setTintFill(this.sprite, 0xffffff);
             PhaserScene.time.delayedCall(80, () => {
-                    helper.clearTint(this.sprite);
+                helper.clearTint(this.sprite);
             });
         }
     }
@@ -535,7 +535,7 @@ class TowerView {
     playDeathShockwave(duration = 750) {
         if (!this.deathShockwave) {
             // Safety: create it if it doesn't exist for some reason
-            this.deathShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'deathwave.png');
+            this.deathShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'deathwave.png');
             this.deathShockwave.setDepth(-2).setScrollFactor(0).setAlpha(0);
             helper.setBlendMode(this.deathShockwave, Phaser.BlendModes.ADD);
         }
@@ -562,7 +562,7 @@ class TowerView {
 
     playWarnShockwave(duration = 750, startAlpha = 1.0, endScale = 3.0) {
         if (!this.warnShockwave) {
-            this.warnShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'player', 'warnwave.png');
+            this.warnShockwave = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'warnwave.png');
             this.warnShockwave.setDepth(-2).setAlpha(1);
             helper.setBlendMode(this.warnShockwave, Phaser.BlendModes.ADD);
         }
@@ -849,13 +849,13 @@ const tower = (() => {
     }
 
     function isAlive() { return model.alive; }
-    function getDamage() { 
+    function getDamage() {
         let dmg = model.damage;
         const ups = gameState.upgrades || {};
         if (ups.peak_performance && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
             dmg += 10;
         }
-        return dmg; 
+        return dmg;
     }
     function getArmor() { return model.armor; }
     function getRegen() { return model.healthRegen; }

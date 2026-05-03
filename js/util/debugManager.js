@@ -13,26 +13,23 @@
 function initDebug(scene) {
     if (!FLAGS.DEBUG) return;
 
-    // ── FPS counter ───────────────────────────────────────────────────────────
-    const fpsText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 70, '', {
-        fontFamily: 'monospace',
-        fontSize: 17,
-        color: '#00ff00',
-        backgroundColor: '#00000088',
-        padding: { x: 4, y: 2 },
-    }).setOrigin(1, 0).setDepth(9999).setScrollFactor(0);
-
-    // ── GAME_VARS inspector ───────────────────────────────────────────────────
-    const inspectorBg = scene.add.rectangle(GAME_CONSTANTS.WIDTH - 5, 70 + 25, 10, 10, 0x000000, 0.72)
-        .setOrigin(1, 0).setDepth(9998).setScrollFactor(0);
-
-    const inspectorText = scene.add.text(GAME_CONSTANTS.WIDTH - 10, 70 + 30, '', {
-        fontFamily: 'monospace',
-        fontSize: 13,
-        color: '#88ff88',
-        align: 'right',
-        lineSpacing: 2,
-    }).setOrigin(1, 0).setDepth(9999).setScrollFactor(0);
+    // ── HTML Debug Overlay ───────────────────────────────────────────────────
+    const debugDiv = document.createElement('div');
+    debugDiv.id = 'axiom-debug-overlay';
+    debugDiv.style.position = 'absolute';
+    debugDiv.style.top = '70px';
+    debugDiv.style.right = '10px';
+    debugDiv.style.padding = '8px';
+    debugDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.55)';
+    debugDiv.style.color = '#00ff00';
+    debugDiv.style.fontFamily = 'monospace';
+    debugDiv.style.fontSize = '13px';
+    debugDiv.style.pointerEvents = 'none';
+    debugDiv.style.zIndex = '99999';
+    debugDiv.style.textAlign = 'right';
+    debugDiv.style.whiteSpace = 'pre';
+    debugDiv.style.lineHeight = '1.4';
+    document.body.appendChild(debugDiv);
 
     let lastDrawCountUpdate = 0;
     let currentDrawCount = 'N/A';
@@ -46,7 +43,9 @@ function initDebug(scene) {
             currentDrawCount = (drawCount !== undefined) ? drawCount : 'N/A';
         }
 
-        fpsText.setText(`FPS ${Math.round(scene.game.loop.actualFps)} | DC ${currentDrawCount}`);
+        const fps = Math.round(scene.game.loop.actualFps);
+        let output = `FPS ${fps} | DC ${currentDrawCount}\n`;
+        output += '─'.repeat(20) + '\n';
 
         const lines = Object.entries(GAME_VARS).map(([k, v]) => {
             let val;
@@ -59,9 +58,8 @@ function initDebug(scene) {
             }
             return `${k}: ${val}`;
         });
-        inspectorText.setText(lines.join('\n'));
-        inspectorBg.width = inspectorText.width + 8;
-        inspectorBg.height = inspectorText.height + 8;
+
+        debugDiv.textContent = output + lines.join('\n');
     });
 
     debugLog('Debug mode enabled');

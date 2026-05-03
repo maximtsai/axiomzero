@@ -55,6 +55,9 @@ const treeLineManager = (() => {
 
         lines.push(line);
         if (draggableGroupRef) draggableGroupRef.add(line);
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(line);
+        }
         return line;
     }
 

@@ -258,7 +258,9 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 }
             }
             return group;
-        }
+        },
+
+        getChildren: () => children
     };
 
     return group;

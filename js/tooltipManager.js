@@ -35,6 +35,13 @@ const tooltipManager = (() => {
         ok: { fontFamily: 'Quantico-Regular', fontSize: bodySize, color: '#00ff88' },
     };
 
+    function _route(obj) {
+        if (!obj) return;
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(obj);
+        }
+    }
+
     function init() {
         // Background panel
         bg = PhaserScene.add.image(0, 0, 'buttons', 'dark_grey_pixel.png');
@@ -49,10 +56,8 @@ const tooltipManager = (() => {
             .setDepth(DEPTH + 0.5)
             .setScrollFactor(0);
 
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(bg);
-            upgradeTree.assignToUICamera(outline);
-        }
+        _route(bg);
+        _route(outline);
     }
 
     /**
@@ -88,10 +93,7 @@ const tooltipManager = (() => {
 
             if (line.color) t.setColor(line.color);
 
-            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-                upgradeTree.assignToUICamera(t);
-            }
-
+            _route(t);
             textObjects.push(t);
 
             if (line.underline) {
@@ -108,10 +110,7 @@ const tooltipManager = (() => {
                 lineObj.relX = t.x;
                 lineObj.relY = lineObj.y;
 
-                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-                    upgradeTree.assignToUICamera(lineObj);
-                }
-
+                _route(lineObj);
                 decorations.push(lineObj);
 
                 currentY += 10; // Extra spacing for the underline + gap
