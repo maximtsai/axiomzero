@@ -55,27 +55,29 @@ class SwordAttackView {
         // Clean up existing stems if re-initializing
         if (this.stems.length > 0) {
             this.hide();
-            this.stems.forEach(s => s.container.destroy());
+            this.stems.forEach(s => {
+                s.length.destroy();
+                s.tip.destroy();
+            });
             this.stems = [];
         }
 
         // Pre-allocate 3 stems (1 main + 2 flurries)
         for (let i = 0; i < 3; i++) {
-            const container = PhaserScene.add.container(0, 0);
-            container.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 11);
-            container.setAlpha(0);
-            container.setVisible(false);
-
-            const length = PhaserScene.add.image(config.startOffset, 0, 'player', 'sword_length.png');
+            const length = PhaserScene.add.image(0, 0, 'player', 'sword_length.png');
             length.setOrigin(0, 0.5);
+            length.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 11);
             length.scaleX = 0;
+            length.setAlpha(0);
+            length.setVisible(false);
 
-            const tip = PhaserScene.add.image(config.startOffset, 0, 'player', 'sword_tip.png');
+            const tip = PhaserScene.add.image(0, 0, 'player', 'sword_tip.png');
             tip.setOrigin(0, 0.5);
+            tip.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 11);
+            tip.setAlpha(0);
+            tip.setVisible(false);
 
-            container.add([length, tip]);
             this.stems.push({
-                container,
                 length,
                 tip,
                 tweens: [],
@@ -89,31 +91,51 @@ class SwordAttackView {
         const stem = this.stems.find(s => !s.inUse);
         if (!stem) return;
         stem.inUse = true;
-        const { container, length, tip } = stem;
+        const { length, tip } = stem;
 
         const pos = tower.getPosition();
-        container.setPosition(pos.x, pos.y);
-        container.setRotation(startRotation);
-        container.setScale(1, scaleY);
-        container.setAlpha(0);
-        container.setVisible(true);
+        // The start of the sword (startOffset away from center)
+        const startX = pos.x + Math.cos(startRotation) * this.config.startOffset;
+        const startY = pos.y + Math.sin(startRotation) * this.config.startOffset;
 
-        length.x = this.config.startOffset;
-        length.scaleX = 0;
-        tip.x = this.config.startOffset;
+        stem.currentRotation = startRotation;
+        stem.currentStartX = startX;
+        stem.currentStartY = startY;
+
+        length.setPosition(startX, startY);
+        length.setRotation(startRotation);
+        length.setScale(0, scaleY);
+        length.setAlpha(0);
+        length.setVisible(true);
+
+        tip.setPosition(startX, startY);
+        tip.setRotation(startRotation);
+        tip.setScale(1, scaleY);
+        tip.setAlpha(0);
+        tip.setVisible(true);
+
+        const updateTipPos = () => {
+            const rot = length.rotation;
+            const dist = length.scaleX * this.config.lengthSpriteWidth;
+            tip.x = length.x + Math.cos(rot) * dist;
+            tip.y = length.y + Math.sin(rot) * dist;
+            tip.rotation = rot;
+        };
 
         const releaseStem = () => {
             stem.tweens.forEach(t => t.stop());
             stem.tweens = [];
-            container.setVisible(false);
-            container.setAlpha(0);
+            length.setVisible(false);
+            tip.setVisible(false);
+            length.setAlpha(0);
+            tip.setAlpha(0);
             stem.inUse = false;
             if (onComplete) onComplete();
         };
 
         // Alpha Tween
         const alphaIn = PhaserScene.tweens.add({
-            targets: container,
+            targets: [length, tip],
             alpha: 1,
             duration: 170,
             ease: 'Linear',
@@ -126,14 +148,12 @@ class SwordAttackView {
                     scaleX: targetScaleX + 0.25,
                     duration: 100,
                     ease: 'Cubic.easeIn',
-                    onUpdate: () => {
-                        tip.x = this.config.startOffset + length.scaleX * this.config.lengthSpriteWidth;
-                    },
+                    onUpdate: updateTipPos,
                     onComplete: () => {
                         onDamage();
 
                         const alphaOut = PhaserScene.tweens.add({
-                            targets: container,
+                            targets: [length, tip],
                             alpha: 0,
                             duration: 500,
                             delay: alphaOutDelay,
@@ -147,9 +167,7 @@ class SwordAttackView {
                             scaleX: targetScaleX,
                             duration: 220,
                             ease: 'Back.easeOut',
-                            onUpdate: () => {
-                                tip.x = this.config.startOffset + length.scaleX * this.config.lengthSpriteWidth;
-                            },
+                            onUpdate: updateTipPos,
                         });
                         stem.tweens.push(lungeOut);
                     }
@@ -162,10 +180,14 @@ class SwordAttackView {
         // Rotation Tween
         if (startRotation !== targetRotation) {
             const rotTween = PhaserScene.tweens.add({
-                targets: container,
+                targets: length,
                 rotation: targetRotation,
                 duration: 210,
                 ease: 'Cubic.easeOut',
+                onUpdate: () => {
+                    stem.currentRotation = length.rotation;
+                    updateTipPos();
+                }
             });
             stem.tweens.push(rotTween);
         }
@@ -175,8 +197,10 @@ class SwordAttackView {
         this.stems.forEach(stem => {
             stem.tweens.forEach(t => t.stop());
             stem.tweens = [];
-            stem.container.setVisible(false);
-            stem.container.setAlpha(0);
+            stem.length.setVisible(false);
+            stem.tip.setVisible(false);
+            stem.length.setAlpha(0);
+            stem.tip.setAlpha(0);
             stem.inUse = false;
         });
     }
@@ -184,7 +208,19 @@ class SwordAttackView {
     updatePosition(x, y) {
         this.stems.forEach(stem => {
             if (stem.inUse) {
-                stem.container.setPosition(x, y);
+                const rot = stem.currentRotation;
+                const off = this.config.startOffset;
+                const startX = x + Math.cos(rot) * off;
+                const startY = y + Math.sin(rot) * off;
+                
+                stem.length.setPosition(startX, startY);
+                // Tip is updated by its own relative logic if it's currently tweening,
+                // but for a one-off frame sync:
+                const dist = stem.length.scaleX * this.config.lengthSpriteWidth;
+                stem.tip.setPosition(
+                    startX + Math.cos(rot) * dist,
+                    startY + Math.sin(rot) * dist
+                );
             }
         });
     }

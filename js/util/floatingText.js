@@ -108,10 +108,6 @@ const floatingText = (() => {
         t._color1 = color;
         t._color2 = opts.color2 || null;
 
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(t);
-        }
-
         _activeTexts.push(t);
     }
 

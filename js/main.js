@@ -20,6 +20,8 @@ class MainScene extends Phaser.Scene {
             // Signal bootstrap completion
             window.AXIOM_BOOTSTRAP_COMPLETE = true;
             if (window.BOOT_TIMER) clearTimeout(window.BOOT_TIMER);
+            const notice = document.getElementById('preload-notice');
+            if (notice) notice.innerHTML = '';
             try { sessionStorage.removeItem('axiom_boot_retry'); } catch (_) { /* storage blocked */ }
 
             window.PhaserScene = this;

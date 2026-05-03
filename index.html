@@ -37,7 +37,7 @@
   <script src="phaser.min.js"></script>
   <script src="lz-string.min.js"></script>
   <script src="rexbbcodetextplugin.min.js"></script>
-  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js" async></script>
   <script src="sdkManager.js"></script>
 
   <script src="assets/audioFiles.js"></script>
@@ -217,17 +217,32 @@
     // BOOTSTRAP WATCHDOG
     window.AXIOM_BOOTSTRAP_COMPLETE = false;
 
+    // Immediately clear notice when bootstrap completes (handles sub-2s boots)
+    Object.defineProperty(window, 'AXIOM_BOOTSTRAP_COMPLETE', {
+      get: function () { return this._bootstrapDone; },
+      set: function (val) {
+        this._bootstrapDone = val;
+        if (val) {
+          const n = document.getElementById('preload-notice');
+          if (n) n.innerHTML = '';
+        }
+      },
+      configurable: true
+    });
+    window.AXIOM_BOOTSTRAP_COMPLETE = false;
+
     // Animate the "INITIALIZING SYSTEM..." text
     (function () {
       const notice = document.getElementById('preload-notice');
       let dots = 0;
       window.DOT_INTERVAL = setInterval(function () {
         if (window.AXIOM_BOOTSTRAP_COMPLETE) {
+          if (notice) notice.innerHTML = '';
           clearInterval(window.DOT_INTERVAL);
           return;
         }
         dots = (dots + 1) % 4;
-        notice.textContent = 'INITIALIZING SYSTEM' + '.'.repeat(dots);
+        if (notice) notice.textContent = 'INITIALIZING SYSTEM' + '.'.repeat(dots);
       }, 2000);
     })();
 
