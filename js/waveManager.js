@@ -245,8 +245,8 @@ const waveManager = (() => {
         helper.hideGlobalClickBlocker();
         messageBus.publish('unfreezeEnemies');
 
-        // Added 650ms of extra air-time for the glitch and "SIGNAL LOST" visual to breathe
-        PhaserScene.time.delayedCall(650, () => {
+        // Added 550ms of extra air-time for the glitch and "SIGNAL LOST" visual to breathe
+        PhaserScene.time.delayedCall(550, () => {
             gameStateMachine.goTo(GAME_CONSTANTS.PHASE_WAVE_COMPLETE);
             debugLog('Death sequence complete — entering WAVE_COMPLETE');
         });
@@ -291,7 +291,7 @@ const waveManager = (() => {
                             PhaserScene.tweens.add({
                                 targets: signalText,
                                 alpha: 0,
-                                duration: 150,
+                                duration: 50,
                                 onComplete: () => signalText.destroy()
                             });
                         }

@@ -215,8 +215,6 @@
 
   <script>
     // BOOTSTRAP WATCHDOG
-    window.AXIOM_BOOTSTRAP_COMPLETE = false;
-
     // Immediately clear notice when bootstrap completes (handles sub-2s boots)
     Object.defineProperty(window, 'AXIOM_BOOTSTRAP_COMPLETE', {
       get: function () { return this._bootstrapDone; },
@@ -282,10 +280,10 @@
   </div>
 
   <script>
-    // Simple focus handler for CrazyGames/Portals
+    // Simple focus handler — fire once to unblock audio/input on portals
     window.addEventListener('mousedown', function () {
       window.focus();
-    });
+    }, { once: true });
 
     // Service Worker — dynamic asset caching for faster repeat loads.
     // Controlled by FLAGS.USE_SERVICE_WORKER in flags.js.

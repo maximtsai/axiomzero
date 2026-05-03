@@ -95,7 +95,6 @@ window.resumeGameFromAd = function () {
 
 function isAllowedRuntimeHost() {
     const host = (window.location.hostname || '').toLowerCase();
-    const referrer = (document.referrer || '').toLowerCase();
 
     const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
     const isCrazyGamesHost = host === 'crazygames.com' || host.endsWith('.crazygames.com');

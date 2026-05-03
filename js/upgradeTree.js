@@ -1723,11 +1723,6 @@ const upgradeTree = (() => {
         _refreshAllNodes();
         treeLineManager.updateLines();
 
-        // Sort after lines are potentially created
-        // if (treeMaskContainer) {
-        //     treeMaskContainer.sort('depth');
-        // }
-
         return true;
     }
 
