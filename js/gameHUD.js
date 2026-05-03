@@ -175,7 +175,7 @@ const gameHUD = (() => {
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeAction += 2;
 
         endIterationBtnTxt = endIterationBtn.setScale(0.675).addText(t('ui', 'end_iteration'), {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
@@ -242,7 +242,7 @@ const gameHUD = (() => {
         });
         testDefensesBtn.setScale(0.675);
         testDefensesBtnTxt = testDefensesBtn.addText(t('ui', 'test_weapons'), {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: `${baseFontSizeAction}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         });
@@ -253,7 +253,7 @@ const gameHUD = (() => {
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSizeTimer += 3;
 
         farmingTimerTxt = PhaserScene.add.text(20, GAME_CONSTANTS.HEIGHT - 22, '00:00', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: `${baseFontSizeTimer}px`,
             color: '#00f5ff', // Cyan matching the progress bar
             stroke: '#000000',

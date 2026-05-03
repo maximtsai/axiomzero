@@ -97,7 +97,7 @@ const iterationOverScreen = (() => {
         // ── Data display (two-line) ───────────────────────────────────
         // Line 1 (large): "◈ 2,847"
         dataNumberText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '46px',
             color: '#00f5ff',
             align: 'center',
@@ -106,7 +106,7 @@ const iterationOverScreen = (() => {
 
         // Line 2 (small label): "DATA COLLECTED"
         dataText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '26px', // Increased from 23px for Rajdhani proportions
             color: '#66aacc',
             align: 'center',
@@ -114,35 +114,35 @@ const iterationOverScreen = (() => {
 
         // Line 3 (tiny delta): "+203 vs last run"
         dataDeltaText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '28px', // Increased from 24px
             color: '#aaaaaa',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         sniffedDataText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '22px', // Increased from 18px
             color: '#00f5ff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         insightText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '28px', // Increased from 24px
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         shardText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '28px', // Increased from 24px
             color: '#ff2d78',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         processorText = PhaserScene.add.text(cx, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '28px', // Increased from 24px
             color: '#ff9500',
             align: 'center',
@@ -166,7 +166,7 @@ const iterationOverScreen = (() => {
         helper.setTint(expBarFill, 0xffffff);
 
         expBarLabel = PhaserScene.add.text(cx, barY - 30, t('results', 'insight_progress'), {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '26px', // Increased from 23px
             color: '#ffffff',
             align: 'center',
@@ -774,7 +774,7 @@ const iterationOverScreen = (() => {
 
         if (totalDmg <= 0) {
             const noDataText = PhaserScene.add.text(startX + 15, startY + 55, t('results', 'no_damage_dealt'), {
-                fontFamily: 'Rajdhani-Medium',
+                fontFamily: 'Quantico-Regular',
                 fontSize: '22px', // Increased from 20px
                 color: '#aaaaaa',
             }).setOrigin(0).setDepth(depth + 1).setAlpha(0.9);
@@ -806,7 +806,7 @@ const iterationOverScreen = (() => {
 
             // Label
             const lbl = PhaserScene.add.text(startX + 15, y, s.label, {
-                fontFamily: 'Rajdhani-Bold',
+                fontFamily: 'Quantico-Bold',
                 fontSize: '18px', // Increased from 15px
                 color: '#ffffff',
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.9);
@@ -830,7 +830,7 @@ const iterationOverScreen = (() => {
 
             // Percentage
             const pText = PhaserScene.add.text(startX + barOffset + bgW + 12, y, `${Math.round(pct * 100)}%`, {
-                fontFamily: 'Rajdhani-Medium',
+                fontFamily: 'Quantico-Regular',
                 fontSize: '20px', // Increased from 16px
                 color: '#ffffff',
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.8);
@@ -841,13 +841,13 @@ const iterationOverScreen = (() => {
         if (stats.executions > 0) {
             const execY = listStartY + (activeSources.length * entryHeight) + 12;
             const lbl = PhaserScene.add.text(startX + 15, execY, 'EXECUTION COUNT:', {
-                fontFamily: 'Rajdhani-Bold',
+                fontFamily: 'Quantico-Bold',
                 fontSize: '19px', // Increased from 17px
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);
 
             const valText = PhaserScene.add.text(startX + 195, execY, stats.executions.toString(), {
-                fontFamily: 'Rajdhani-Bold',
+                fontFamily: 'Quantico-Bold',
                 fontSize: '20px', // Increased from 17px
                 color: '#ff2d78',
             }).setOrigin(0, 0.5).setDepth(depth + 1);

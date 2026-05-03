@@ -557,8 +557,8 @@ const upgradeTree = (() => {
         });
         deployBtn.setScale(0.675);
         deployBtn.addText(t('ui', 'deploy'), {
-            fontFamily: 'Rajdhani-Bold',
-            fontSize: '33px',
+            fontFamily: 'Quantico-Bold',
+            fontSize: '30px',
             color: '#ffffff',
         });
         deployBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 16);

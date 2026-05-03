@@ -76,7 +76,7 @@ class CurrencyCluster {
 
             const initialVal = this._getResourceValue(id);
             const text = PhaserScene.add.text(this.x + CONFIG.TEXT_X_OFFSET, this.baseY + CONFIG.TEXT_Y_OFFSET, this._formatValue(id, initialVal), {
-                fontFamily: 'Rajdhani-Medium',
+                fontFamily: 'Quantico-Regular',
                 fontSize: this._getFontSize(),
                 color: def.color,
             }).setOrigin(0, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);

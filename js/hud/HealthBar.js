@@ -54,7 +54,7 @@ class HealthBar {
         const baseFontSize = helper.isMobileDevice() ? 33 : 26;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
         this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 11, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: finalFontSize + 'px', 
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
         }).setOrigin(0, 0.5).setDepth(this.depth + 2).setScrollFactor(0);

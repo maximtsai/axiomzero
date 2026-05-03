@@ -198,7 +198,7 @@ const nodeTooltip = (() => {
 
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 20);
-            maxT.setVisible(true).setPosition(0, currentY + 18); // was 15, moving up with others or keeping relative to background?
+            maxT.setVisible(true).setPosition(0, currentY + 19); // was 15, moving up with others or keeping relative to background?
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
@@ -208,7 +208,7 @@ const nodeTooltip = (() => {
             maxT.setVisible(false);
             costBg.setVisible(true).setPosition(0, currentY + 20);
             costBg.setTexture('buttons', 'dark_green_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 18);
+            costT.setVisible(true).setPosition(0, currentY + 19);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
             currentY += 39;
@@ -216,7 +216,7 @@ const nodeTooltip = (() => {
             goldBg.setVisible(false);
             maxT.setVisible(false);
             costBg.setVisible(true).setPosition(0, currentY + 20);
-            costT.setVisible(true).setPosition(0, currentY + 18);
+            costT.setVisible(true).setPosition(0, currentY + 19);
 
             const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
             costBg.setTexture('buttons', bgPixel);
