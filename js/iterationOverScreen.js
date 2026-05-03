@@ -206,7 +206,7 @@ const iterationOverScreen = (() => {
         });
         upgradesBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         upgradesBtn.addText(t('ui', 'upgrades'), {
-            fontFamily: 'Rajdhani-Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '30px',
             color: '#ffffff',
         });
@@ -250,7 +250,7 @@ const iterationOverScreen = (() => {
         });
         retryBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         retryBtn.addText(t('ui', 'retry'), {
-            fontFamily: 'Rajdhani-Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '30px',
             color: '#ffffff',
         });

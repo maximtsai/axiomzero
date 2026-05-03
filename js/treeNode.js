@@ -80,7 +80,7 @@ class Node {
         this._isDuoBackingOwner = this.isDuoBox && this.duoSiblingId && (this.id < this.duoSiblingId);
 
         this.state = NODE_STATE.HIDDEN;
-        this.level = 0;
+        this.level = (gameState.upgrades && gameState.upgrades[this.id] !== undefined) ? gameState.upgrades[this.id] : 0;
         this.branchActive = true; // Tracks if this specific Shard path is active
         this.revealed = false;    // Whether this node is force-revealed by an event
         this.revealedManually = false; // Whether this node was revealed via the revealNode API

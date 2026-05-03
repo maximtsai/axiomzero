@@ -293,34 +293,21 @@ class Boss3PieceView extends EnemyView {
     deactivate() {
         super.deactivate();
         if (this.lineSprite) {
-            this.lineSprite.destroy();
-            this.lineSprite = null;
+            this.lineSprite.setVisible(false).setActive(false);
         }
         if (this.pulse) {
             PhaserScene.tweens.killTweensOf(this.pulse);
-            this.pulse.destroy();
-            this.pulse = null;
+            this.pulse.setVisible(false).setActive(false);
+            this.pulse.setAlpha(0);
         }
         if (this.chargeSprite) {
             PhaserScene.tweens.killTweensOf(this.chargeSprite);
-            this.chargeSprite.destroy();
-            this.chargeSprite = null;
+            this.chargeSprite.setVisible(false).setActive(false);
+            this.chargeSprite.setAlpha(0);
         }
         if (this.pulseTimer) {
             this.pulseTimer.remove();
             this.pulseTimer = null;
-        }
-        if (this.img) {
-            this.img.destroy();
-            this.img = null;
-        }
-        if (this.hpImg) {
-            this.hpImg.destroy();
-            this.hpImg = null;
-        }
-        if (this.enemyGlow) {
-            this.enemyGlow.destroy();
-            this.enemyGlow = null;
         }
     }
 
@@ -349,7 +336,7 @@ class Boss3 extends Boss {
         this._isMaster = false;     // Reset master status on pool reuse
 
         super.activate(x, y, {
-            maxHealth: 310,
+            maxHealth: 333,
             damage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
             initialSpeedMult: this.model.initialSpeedMult,

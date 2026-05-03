@@ -45,7 +45,7 @@ const nodeTooltip = (() => {
         container.add([iconHolder, iconSpr]);
 
         nameT = PhaserScene.add.text(0, 0, '', {
-            fontFamily: 'Rajdhani-Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '26px', // Initial size doesn't matter much as it is now set in show()
             color: '#ffffff',
             align: 'left',
@@ -54,7 +54,7 @@ const nodeTooltip = (() => {
         container.add(nameT);
 
         descT = PhaserScene.add.rexBBCodeText(0, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '26px',
             color: '#ffffff',
             align: 'center',
@@ -65,7 +65,7 @@ const nodeTooltip = (() => {
         container.add(descT);
 
         lvT = PhaserScene.add.text(0, 0, '', {
-            fontFamily: 'Rajdhani-Medium',
+            fontFamily: 'Quantico-Regular',
             fontSize: '26px',
             color: '#ffffff',
             align: 'center',
@@ -75,7 +75,7 @@ const nodeTooltip = (() => {
 
         goldBg = PhaserScene.add.image(0, 0, 'buttons', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
-            fontFamily: 'Rajdhani-Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '26px',
             color: '#ffffff',
             align: 'center',
@@ -84,7 +84,7 @@ const nodeTooltip = (() => {
 
         costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
         costT = PhaserScene.add.text(0, 0, '', {
-            fontFamily: 'Rajdhani-Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '26px',
             color: '#ffffff',
             align: 'center',

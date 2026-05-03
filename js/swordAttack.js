@@ -404,9 +404,16 @@ const swordAttack = (() => {
 
                 const slash = view.slashPool.get();
                 if (slash) {
-                    slash.setPosition(px, py);
-                    slash.setRotation(Math.random() * Math.PI * 2);
+                    const rot = Math.random() * Math.PI * 2;
+                    slash.setRotation(rot);
+
+                    const dirX = Math.cos(rot);
+                    const dirY = Math.sin(rot);
+
+                    // Move back 30px
+                    slash.setPosition(px - dirX * 90, py - dirY * 90);
                     slash.setAlpha(1);
+
                     if (isFlurry) {
                         slash.setScale(0.6, 0.45);
                     } else {
@@ -416,25 +423,28 @@ const swordAttack = (() => {
 
                     // Animation
                     let randomScaleUp = Math.random();
-                    let endScaleX = isFlurry ? 1.4 + randomScaleUp * 0.4 : 2.2 + randomScaleUp * 0.8;
+                    let endScaleX = isFlurry ? 1.3 + randomScaleUp * 0.35 : 2 + randomScaleUp * 0.7;
                     let flurryDurationBonus = isFlurry ? -50 : 0;
 
                     PhaserScene.tweens.add({
                         targets: slash,
                         scaleX: endScaleX,
-                        duration: 260 + flurryDurationBonus,
+                        x: slash.x + dirX * 180,
+                        y: slash.y + dirY * 180,
+                        duration: 230 + flurryDurationBonus,
+                        ease: 'Quad.easeInOut'
                     });
                     PhaserScene.tweens.add({
                         targets: slash,
-                        scaleY: isFlurry ? 0.9 : 1.25,
-                        duration: 60,
-                        ease: 'Cubic.easeOut',
+                        scaleY: isFlurry ? 0.95 : 1.3,
+                        duration: 50,
+                        ease: 'Quad.easeIn',
                         onComplete: () => {
                             PhaserScene.tweens.add({
                                 targets: slash,
                                 scaleY: 0,
-                                duration: 200 + flurryDurationBonus,
-                                ease: 'Cubic.easeIn',
+                                duration: 180 + flurryDurationBonus,
+                                ease: 'Quad.easeOut',
                             });
                         }
                     });
@@ -442,8 +452,8 @@ const swordAttack = (() => {
                     PhaserScene.tweens.add({
                         targets: slash,
                         alpha: 0,
-                        duration: 100,
-                        delay: 160 + flurryDurationBonus,
+                        duration: 150,
+                        delay: 80 + flurryDurationBonus,
                         ease: 'Quad.easeIn',
                         onComplete: () => {
                             view.slashPool.release(slash);

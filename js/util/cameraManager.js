@@ -81,5 +81,74 @@ const cameraManager = (() => {
         return camera ? camera.scrollX : 0;
     }
 
-    return { init, slideTo, toUpgradeView, toCombatView, shake, flash, isSliding, getScrollX };
+    /**
+     * Creates and configures the secondary cameras used by the Upgrade Tree.
+     * @param {number} panelWidth - Width of the tree panel.
+     * @param {Phaser.GameObjects.Container} treeContainer - Container to exclude from main camera.
+     * @returns {{ treeNodeCamera: Phaser.Cameras.Scene2D.Camera, uiCamera: Phaser.Cameras.Scene2D.Camera }}
+     */
+    function setupTreeCameras(panelWidth, treeContainer) {
+        const treeNodeCamera = PhaserScene.cameras.add(0, 0, panelWidth, GAME_CONSTANTS.HEIGHT);
+        treeNodeCamera.setBackgroundColor('rgba(0,0,0,0)');
+
+        const uiCamera = PhaserScene.cameras.add(0, 0, GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
+        uiCamera.setBackgroundColor('rgba(0,0,0,0)');
+
+        // Cross-filtering: Hide tree from main camera, and world from tree cameras
+        PhaserScene.cameras.main.ignore(treeContainer);
+        treeNodeCamera.ignore(PhaserScene.children.list);
+        uiCamera.ignore(PhaserScene.children.list);
+
+        // Un-ignore the container itself for the node camera
+        treeContainer.cameraFilter &= ~treeNodeCamera.id;
+
+        // Global hook: newly spawned non-tree elements get ignored by tree cameras
+        PhaserScene.events.on('addedtoscene', (child) => {
+            if (!child.isTreeElement) {
+                if (treeNodeCamera && treeNodeCamera.scene) treeNodeCamera.ignore(child);
+                if (uiCamera && uiCamera.scene) uiCamera.ignore(child);
+            }
+        });
+
+        return { treeNodeCamera, uiCamera };
+    }
+
+    /**
+     * Assigns a game object to be rendered ONLY by a specific camera (e.g. the UI camera).
+     * Automatically handles recursive assignment for Containers and common component properties (bgSprite, text).
+     * @param {Phaser.GameObjects.GameObject} gameObject 
+     * @param {Phaser.Cameras.Scene2D.Camera} targetCamera 
+     * @param {Phaser.Cameras.Scene2D.Camera[]} ignoreCameras 
+     */
+    function assignToCamera(gameObject, targetCamera, ignoreCameras = []) {
+        if (!gameObject || !targetCamera) return;
+
+        const _apply = (obj) => {
+            if (!obj) return;
+
+            // 1. Hide from main camera by default
+            PhaserScene.cameras.main.ignore(obj);
+
+            // 2. Hide from other provided cameras
+            ignoreCameras.forEach(cam => {
+                if (cam && cam !== targetCamera) cam.ignore(obj);
+            });
+
+            // 3. Ensure it's NOT ignored by the target camera
+            if (obj.cameraFilter !== undefined) obj.cameraFilter &= ~targetCamera.id;
+
+            // 4. Handle common sub-properties (for complex components like Buttons)
+            if (obj.bgSprite) _apply(obj.bgSprite);
+            if (obj.text) _apply(obj.text);
+
+            // 5. Recursive handle for Containers
+            if (obj.list && Array.isArray(obj.list)) {
+                obj.list.forEach(child => _apply(child));
+            }
+        };
+
+        _apply(gameObject);
+    }
+
+    return { init, slideTo, toUpgradeView, toCombatView, shake, flash, isSliding, getScrollX, setupTreeCameras, assignToCamera };
 })();

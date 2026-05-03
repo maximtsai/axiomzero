@@ -28,11 +28,11 @@ const tooltipManager = (() => {
     const titleSize = helper.isMobileDevice() ? '32px' : '28px';
 
     const FONTS = {
-        normal: { fontFamily: 'Rajdhani-Medium', fontSize: bodySize, color: '#cccccc' },
-        bold: { fontFamily: 'Rajdhani-Medium', fontSize: bodySize, color: '#ffffff' },
-        title: { fontFamily: 'Rajdhani-Bold', fontSize: titleSize, color: '#00f5ff' },
-        warn: { fontFamily: 'Rajdhani-Medium', fontSize: bodySize, color: '#ff4444' },
-        ok: { fontFamily: 'Rajdhani-Medium', fontSize: bodySize, color: '#00ff88' },
+        normal: { fontFamily: 'Quantico-Regular', fontSize: bodySize, color: '#cccccc' },
+        bold: { fontFamily: 'Quantico-Bold', fontSize: bodySize, color: '#ffffff' },
+        title: { fontFamily: 'Quantico-Bold', fontSize: titleSize, color: '#00f5ff' },
+        warn: { fontFamily: 'Quantico-Regular', fontSize: bodySize, color: '#ff4444' },
+        ok: { fontFamily: 'Quantico-Regular', fontSize: bodySize, color: '#00ff88' },
     };
 
     function init() {

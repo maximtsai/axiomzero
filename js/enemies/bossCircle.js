@@ -361,7 +361,6 @@ class BossCircle extends Boss {
             visualOffset: -18,
             duration: 1200,
             ease: 'Quint.easeInOut',
-            completeDelay: 400,
             onComplete: () => {
                 this.model.behaviorState = BOSS_CIRCLE_STATE.ATTACKING;
 
@@ -378,6 +377,7 @@ class BossCircle extends Boss {
                     visualOffset: targetOffset,
                     duration: 650,
                     ease: 'Quint.easeIn',
+                    delay: 400,
                     onComplete: () => {
                         // Deal 25 damage
                         if (typeof tower !== 'undefined') {

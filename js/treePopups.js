@@ -33,7 +33,7 @@ const treePopups = (() => {
 
         // Title
         const title = PhaserScene.add.text(cx, cy - 140, t('ui', 'choose_level'), {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '34px',
             color: '#00f5ff',
             align: 'center',
@@ -41,7 +41,7 @@ const treePopups = (() => {
         levelSelectButtons.push(title);
 
         const levelDisplay = PhaserScene.add.text(cx, cy - 78, t('ui', 'level') + selectedLevel, {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '34px',
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center',
@@ -50,7 +50,7 @@ const treePopups = (() => {
 
         // DATA Bonus text
         const bonusDisplay = PhaserScene.add.text(cx, cy - 36, '', {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '22px',
             color: '#00f5ff',
             align: 'center',
@@ -59,7 +59,7 @@ const treePopups = (() => {
 
         // Best score text
         const bestScoreDisplay = PhaserScene.add.text(cx, cy - 10, '', {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '18px',
             color: '#00ff66',
             align: 'center',
@@ -125,7 +125,7 @@ const treePopups = (() => {
                 }
             }
         });
-        minusBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
+        minusBtn.addText("-", { fontFamily: 'Quantico-Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         minusBtn.setDepth(depth + 2);
         minusBtn.setScrollFactor(0);
         levelSelectButtons.push(minusBtn);
@@ -143,7 +143,7 @@ const treePopups = (() => {
                 }
             }
         });
-        plusBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
+        plusBtn.addText("+", { fontFamily: 'Quantico-Bold', fontSize: '48px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         plusBtn.setDepth(depth + 2);
         plusBtn.setScrollFactor(0);
         levelSelectButtons.push(plusBtn);
@@ -159,7 +159,7 @@ const treePopups = (() => {
                 transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
             }
         });
-        startBtn.setScale(0.675).addText(t('ui', 'start'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '28px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
+        startBtn.setScale(0.675).addText(t('ui', 'start'), { fontFamily: 'Quantico-Bold', fontSize: '28px', color: GAME_CONSTANTS.COLOR_NEUTRAL });
         startBtn.setDepth(depth + 2);
         startBtn.setScrollFactor(0);
         levelSelectButtons.push(startBtn);
@@ -171,7 +171,7 @@ const treePopups = (() => {
             press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
             onMouseUp: closeLevelSelect
         });
-        backBtn.setScale(0.675).addText(t('ui', 'back'), { fontFamily: 'JetBrainsMono_Bold', fontSize: '25px', color: '#aaaaaa' });
+        backBtn.setScale(0.675).addText(t('ui', 'back'), { fontFamily: 'Quantico-Bold', fontSize: '25px', color: '#aaaaaa' });
         backBtn.setDepth(depth + 2);
         backBtn.setScrollFactor(0);
         levelSelectButtons.push(backBtn);

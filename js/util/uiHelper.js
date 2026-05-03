@@ -340,7 +340,7 @@ Object.assign(helper, {
      */
     createHeader: function (x, y, width, label, depth) {
         const text = PhaserScene.add.text(x, y, label, {
-            fontFamily: 'JetBrainsMono_Bold', fontSize: '23px', color: '#000000',
+            fontFamily: 'Quantico-Bold', fontSize: '23px', color: '#000000',
         }).setOrigin(0, 0.8).setDepth(depth).setScrollFactor(0);
 
         const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'buttons', 'black_pixel.png');
@@ -370,7 +370,7 @@ Object.assign(helper, {
         btn.setDepth(depth).setScrollFactor(0);
 
         const text = PhaserScene.add.text(x, y, label, {
-            fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
+            fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
         }).setOrigin(0, 0.5).setDepth(depth).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
 
         return { btn, text, getState: () => state };
@@ -386,7 +386,7 @@ Object.assign(helper, {
         bg.setDepth(depth).setScrollFactor(0).setAlpha(0.75);
 
         const text = PhaserScene.add.text(x, y, label, {
-            fontFamily: 'JetBrainsMono_Bold', fontSize: '18px', color: textColor,
+            fontFamily: 'Quantico-Bold', fontSize: '18px', color: textColor,
         }).setOrigin(0.5).setDepth(depth).setScrollFactor(0);
 
         const btn = new Button({

@@ -36,7 +36,7 @@ const upgradeTree = (() => {
 
     let zoomInBtn = null;
     let zoomOutBtn = null;
-    let debugLogBtn = null;
+
     let zoomGoal = 1.0;
 
 
@@ -79,26 +79,9 @@ const upgradeTree = (() => {
         treeMaskContainer.isTreeElement = true;
 
         // Create Secondary Cameras for clipping and UI 
-        treeNodeCamera = PhaserScene.cameras.add(0, 0, PANEL_W, GAME_CONSTANTS.HEIGHT);
-        treeNodeCamera.setBackgroundColor('rgba(0,0,0,0)');
-
-        uiCamera = PhaserScene.cameras.add(0, 0, GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT);
-        uiCamera.setBackgroundColor('rgba(0,0,0,0)');
-
-        // Hide tree from main camera, and world from tree cameras
-        PhaserScene.cameras.main.ignore(treeMaskContainer);
-        treeNodeCamera.ignore(PhaserScene.children.list);
-        uiCamera.ignore(PhaserScene.children.list);
-
-        treeMaskContainer.cameraFilter &= ~treeNodeCamera.id; // Un-ignore the container itself
-
-        // Global hook: newly spawned enemies/bullets get ignored by tree cameras
-        PhaserScene.events.on('addedtoscene', (child) => {
-            if (!child.isTreeElement) {
-                if (treeNodeCamera) treeNodeCamera.ignore(child);
-                if (uiCamera) uiCamera.ignore(child);
-            }
-        });
+        const treeCameras = cameraManager.setupTreeCameras(PANEL_W, treeMaskContainer);
+        treeNodeCamera = treeCameras.treeNodeCamera;
+        uiCamera = treeCameras.uiCamera;
 
         // Wrap treeGroup.add to assign UI elements to uiCamera
         const _originalTreeGroupAdd = treeGroup.add;
@@ -464,12 +447,6 @@ const upgradeTree = (() => {
             nodes[def.id] = node;
             node.create(TREE_X_OFFSET, 0); // offset handled by treeX/treeY in defs
 
-            // Restore saved level
-            const savedLevel = (gameState.upgrades && gameState.upgrades[def.id]) || 0;
-            if (savedLevel > 0) {
-                node.level = savedLevel;
-            }
-
             // Restore revelation/unlock flags
             if (gameState.revealedNodes && gameState.revealedNodes[def.id]) {
                 node.revealedManually = true;
@@ -602,7 +579,7 @@ const upgradeTree = (() => {
 
         // Cursor Coordinate display (Requirement §N.2)
         coordText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth + 26, GAME_CONSTANTS.HEIGHT - 24, 'TEST', {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '24px',
             color: '#aaaaaa',
             align: 'left',
@@ -765,9 +742,7 @@ const upgradeTree = (() => {
         if (zoomOutBtn) {
             PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut', onComplete: onComplete });
         }
-        if (debugLogBtn) {
-            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
-        }
+
 
         // Expand drag surface to full screen
         if (dragSurface) {
@@ -841,9 +816,7 @@ const upgradeTree = (() => {
         if (zoomOutBtn) {
             PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         }
-        if (debugLogBtn) {
-            PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
-        }
+
 
         // Retract drag surface to left panel
         if (dragSurface) {
@@ -1003,7 +976,7 @@ const upgradeTree = (() => {
                             alpha: 0,
                             scaleX: targetScale,
                             scaleY: targetScale,
-                            duration: 275 + Math.floor(Math.random() * 125),
+                            duration: 200 + Math.floor(Math.random() * 375),
                             ease: 'Cubic.easeOut',
                             onComplete: () => {
                                 if (p && p.active) maxParticlePool.release(p);
@@ -1264,10 +1237,7 @@ const upgradeTree = (() => {
             zoomInBtn.setVisible(true);
             zoomInBtn.setState(NORMAL);
         }
-        if (debugLogBtn) {
-            debugLogBtn.setVisible(true);
-            debugLogBtn.setState(NORMAL);
-        }
+
         if (zoomOutBtn) {
             zoomOutBtn.setVisible(true);
             zoomOutBtn.setState(NORMAL);
@@ -1323,10 +1293,7 @@ const upgradeTree = (() => {
             zoomInBtn.setVisible(false);
             zoomInBtn.setState(DISABLE);
         }
-        if (debugLogBtn) {
-            debugLogBtn.setVisible(false);
-            debugLogBtn.setState(DISABLE);
-        }
+
         if (zoomOutBtn) {
             zoomOutBtn.setVisible(false);
             zoomOutBtn.setState(DISABLE);
@@ -1447,7 +1414,7 @@ const upgradeTree = (() => {
                 pos.x + (Math.random() - 0.5) * 100,
                 pos.y + (Math.random() - 0.5) * 100,
                 data.popupText,
-                { fontFamily: 'JetBrainsMono_Bold', color: data.popupColor, fontSize: 24, travel: 70, noScale: true }
+                { fontFamily: 'Quantico-Bold', color: data.popupColor, fontSize: 24, travel: 70, noScale: true }
             );
         }
 
@@ -1485,28 +1452,7 @@ const upgradeTree = (() => {
             });
         };
 
-        if (FLAGS.DEBUG) {
-            debugLogBtn = new Button({
-                normal: { ref: 'increment_dim.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
-                hover: { ref: 'increment_normal.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
-                press: { ref: 'increment_dim_press.png', atlas: 'buttons', x: x, y: baseY - spacing * 2 },
-                onMouseUp: () => {
-                    console.log("%c [DEBUG] Upgrade Tree Node Status: ", "background: #111; color: #ff00ff; border: 1px solid #ff00ff; font-weight: bold;");
-                    for (const id in nodes) {
-                        const n = nodes[id];
-                        const idStr = (n.id || "unknown").padEnd(25);
-                        const nameStr = (n.name || "[Placeholder]").padEnd(20);
-                        const stateStr = (n.state || "UNKNOWN").padEnd(10);
-                        console.log(`Node ID: ${idStr} | Name: ${nameStr} | State: ${stateStr} | Level: ${n.level}/${n.maxLevel}`);
-                    }
-                }
-            });
-            debugLogBtn.addText("?", { fontFamily: 'JetBrainsMono_Bold', fontSize: '26px', color: '#ff00ff' });
-            debugLogBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
-            debugLogBtn.setScrollFactor(0);
-            debugLogBtn.setVisible(false);
-            treeGroup.add(debugLogBtn);
-        }
+
 
         const isMobile = helper.isMobileDevice();
         const zoomNormalAsset = isMobile ? 'increment_dim_mobile.png' : 'increment_dim.png';
@@ -1525,7 +1471,7 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        let zoomInText = zoomInBtn.addText("+", { fontFamily: 'JetBrainsMono_Bold', fontSize: '34px', color: '#ffffff' });
+        let zoomInText = zoomInBtn.addText("+", { fontFamily: 'Quantico-Bold', fontSize: '34px', color: '#ffffff' });
         zoomInText.offsetX = 1;
         zoomInText.offsetY = -2;
         zoomInBtn.updateTextPosition();
@@ -1547,7 +1493,7 @@ const upgradeTree = (() => {
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
-        zoomOutBtn.addText("-", { fontFamily: 'JetBrainsMono_Bold', fontSize: '38px', color: '#ffffff' });
+        zoomOutBtn.addText("-", { fontFamily: 'Quantico-Bold', fontSize: '38px', color: '#ffffff' });
         zoomOutBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 20);
         zoomOutBtn.setScrollFactor(0);
         zoomOutBtn.setVisible(false);
@@ -1687,29 +1633,7 @@ const upgradeTree = (() => {
     }
 
     function assignToUICamera(gameObject) {
-        if (!uiCamera || !gameObject) return;
-
-        // Un-ignore from uiCamera so it gets rendered
-        if (gameObject.cameraFilter !== undefined) gameObject.cameraFilter &= ~uiCamera.id;
-        if (gameObject.bgSprite && gameObject.bgSprite.cameraFilter !== undefined) gameObject.bgSprite.cameraFilter &= ~uiCamera.id;
-        if (gameObject.text && gameObject.text.cameraFilter !== undefined) gameObject.text.cameraFilter &= ~uiCamera.id;
-
-        // Ignore from main camera so it doesn't render twice
-        PhaserScene.cameras.main.ignore(gameObject);
-        if (gameObject.bgSprite) PhaserScene.cameras.main.ignore(gameObject.bgSprite);
-        if (gameObject.text) PhaserScene.cameras.main.ignore(gameObject.text);
-
-        // Also ignore from treeNodeCamera
-        if (treeNodeCamera) {
-            treeNodeCamera.ignore(gameObject);
-            if (gameObject.bgSprite) treeNodeCamera.ignore(gameObject.bgSprite);
-            if (gameObject.text) treeNodeCamera.ignore(gameObject.text);
-        }
-
-        // Handle Container children recursively
-        if (gameObject.list && Array.isArray(gameObject.list)) {
-            gameObject.list.forEach(child => assignToUICamera(child));
-        }
+        cameraManager.assignToCamera(gameObject, uiCamera, [treeNodeCamera]);
     }
 
     /**
@@ -1755,7 +1679,7 @@ const upgradeTree = (() => {
         if (coordText) coordText.setAlpha(alpha);
         if (zoomInBtn) zoomInBtn.setAlpha(alpha);
         if (zoomOutBtn) zoomOutBtn.setAlpha(alpha);
-        if (debugLogBtn) debugLogBtn.setAlpha(alpha);
+
         if (deployBtn) deployBtn.setAlpha(alpha);
         if (coinMineBtn) coinMineBtn.setAlpha(alpha);
     }
@@ -1854,7 +1778,7 @@ const upgradeTree = (() => {
         // Zoom buttons and Debug button
         if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
-        if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+
 
         if (typeof gameHUD !== 'undefined' && gameHUD.resetHUDPosition) {
             gameHUD.resetHUDPosition(duration);
@@ -1896,7 +1820,7 @@ const upgradeTree = (() => {
         const buttonOffscreenX = -GAME_CONSTANTS.WIDTH - 4;
         if (zoomInBtn) PhaserScene.tweens.add({ targets: zoomInBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
-        if (debugLogBtn) PhaserScene.tweens.add({ targets: debugLogBtn, x: buttonOffscreenX, duration, ease: 'Cubic.easeOut' });
+
 
         if (typeof gameHUD !== 'undefined' && gameHUD.shiftHUDTo) {
             gameHUD.shiftHUDTo(20, duration);

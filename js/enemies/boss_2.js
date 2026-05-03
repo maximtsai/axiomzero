@@ -379,7 +379,10 @@ class Boss2View extends EnemyView {
                 spr.setVisible(false);
                 spr.setActive(false);
             },
-            2
+            {
+                maxSize: 4,
+                destroy: (spr) => { if (spr && spr.destroy) spr.destroy(); }
+            }
         ).preAllocate(2);
     }
 
@@ -577,6 +580,10 @@ class Boss2View extends EnemyView {
         if (this.enemyGlow) {
             this.enemyGlow.destroy();
             this.enemyGlow = null;
+        }
+        if (this._launchEffectPool) {
+            this._launchEffectPool.clear();
+            this._launchEffectPool = null;
         }
     }
 
