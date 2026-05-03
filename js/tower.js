@@ -184,7 +184,7 @@ class TowerView {
         if (this.sparkleSprite) return; // already spawned
 
         this.sparkleSprite = PhaserScene.add.image(cx, cy, 'player', 'sparkle.png');
-        this.sparkleSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
+        this.sparkleSprite.setDepth(1);
         this.sparkleSprite.setAlpha(0.8);
         helper.setTint(this.sparkleSprite, GAME_CONSTANTS.COLOR_FRIENDLY);
         helper.setBlendMode(this.sparkleSprite, Phaser.BlendModes.ADD);
@@ -236,8 +236,8 @@ class TowerView {
         // Range indicator — positioned below tower, scaled to represent attack range
         // Plays awakening animation via updateRangeSprite()
         const rangeScale = attackRange / 195;  // 195 = base range for 400x400 sprite
-        this.rangeSprite = PhaserScene.add.image(cx, cy, 'player', 'range.png');
-        this.rangeSprite.setDepth(1);  // Rendered behind almost everything
+        this.rangeSprite = PhaserScene.add.image(cx, cy, 'backgrounds', 'range.png');
+        this.rangeSprite.setDepth(0);  // Rendered behind almost everything
         helper.setBlendMode(this.rangeSprite, Phaser.BlendModes.ADD);
         if (rangeScale > 0.001) {
             this.rangeSprite.setAlpha(0.45 / 3);

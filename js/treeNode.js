@@ -611,9 +611,6 @@ class Node {
         });
         this.btn.setDepth(nodeDepth);
         this.btn.setScrollFactor(0);
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(this.btn);
-        }
 
         // Apply hit area constraint to match the upgrade panel viewport
         this.btn.setHitArea(0, 0, GAME_CONSTANTS.halfWidth - 10, GAME_CONSTANTS.HEIGHT);
@@ -626,9 +623,6 @@ class Node {
                 .setDepth(nodeDepth + 1)
                 .setScrollFactor(0)
                 .setScale(gs);
-            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-                upgradeTree.assignToUICamera(this.iconSprite);
-            }
         }
 
         // Fadeout sprite — overlays button, starts invisible
@@ -638,9 +632,6 @@ class Node {
             .setDepth(nodeDepth + 1)
             .setScrollFactor(0)
             .setScale(gs);
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(this.fadeoutSprite);
-        }
 
         const draggableGroup = upgradeTree.getDraggableGroup();
         if (draggableGroup) {
@@ -659,10 +650,6 @@ class Node {
             .setDepth(nodeDepth + 5)
             .setScrollFactor(0)
             .setScale(1.01 * gs);
-
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(this.glowSprite);
-        }
 
         if (draggableGroup) {
             draggableGroup.add(this.glowSprite);

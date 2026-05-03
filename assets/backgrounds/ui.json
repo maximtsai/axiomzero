@@ -40,7 +40,7 @@
 			"image": "ui-1.webp",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1680,
+				"w": 1790,
 				"h": 1864
 			},
 			"scale": 1,
@@ -96,6 +96,31 @@
 					}
 				},
 				{
+					"filename": "range.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 602,
+						"h": 602
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 24,
+						"w": 554,
+						"h": 554
+					},
+					"frame": {
+						"x": 833,
+						"y": 961,
+						"w": 554,
+						"h": 554
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
 					"filename": "deathwave.png",
 					"rotated": false,
 					"trimmed": false,
@@ -110,35 +135,10 @@
 						"h": 400
 					},
 					"frame": {
-						"x": 833,
+						"x": 1389,
 						"y": 961,
 						"w": 400,
 						"h": 400
-					},
-					"anchor": {
-						"x": 0.5,
-						"y": 0.5
-					}
-				},
-				{
-					"filename": "scan_line_fade.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 2,
-						"h": 350
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 3,
-						"w": 2,
-						"h": 279
-					},
-					"frame": {
-						"x": 1235,
-						"y": 961,
-						"w": 2,
-						"h": 279
 					},
 					"anchor": {
 						"x": 0.5,
@@ -160,10 +160,35 @@
 						"h": 250
 					},
 					"frame": {
-						"x": 1235,
-						"y": 1242,
+						"x": 1389,
+						"y": 1363,
 						"w": 250,
 						"h": 250
+					},
+					"anchor": {
+						"x": 0.5,
+						"y": 0.5
+					}
+				},
+				{
+					"filename": "scan_line_fade.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 2,
+						"h": 350
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 2,
+						"h": 279
+					},
+					"frame": {
+						"x": 1641,
+						"y": 1363,
+						"w": 2,
+						"h": 279
 					},
 					"anchor": {
 						"x": 0.5,
@@ -186,7 +211,7 @@
 					},
 					"frame": {
 						"x": 833,
-						"y": 1363,
+						"y": 1517,
 						"w": 110,
 						"h": 110
 					},
@@ -210,8 +235,8 @@
 						"h": 2
 					},
 					"frame": {
-						"x": 833,
-						"y": 1475,
+						"x": 945,
+						"y": 1517,
 						"w": 2,
 						"h": 2
 					},
@@ -226,6 +251,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:d033602b546393ac8da53ad21d6c1e1b:ec63bf09ab6e93913d8c04746827b03e:440d22268fb50c3f20563a1a226c8fda$"
+		"smartupdate": "$TexturePacker:SmartUpdate:7877e467dcb6faf5eb9802fc04672201:92a2a6a558174d0fb6d2a39929507dad:440d22268fb50c3f20563a1a226c8fda$"
 	}
 }
