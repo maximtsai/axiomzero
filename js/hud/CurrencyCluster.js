@@ -11,11 +11,13 @@ const RESOURCE_DEFS = {
 const CONFIG = {
     BG_X_OFFSET: 45,
     ICON_X_OFFSET: 11,
-    TEXT_X_OFFSET: 28,
-    TEXT_Y_OFFSET: 5,
+    TEXT_X_OFFSET: 30,
+    TEXT_Y_OFFSET: 6,
     TOOLTIP_WIDTH: 410,
     BTN_SCALE: helper.isMobileDevice() ? 1.14 : 1.09,
-    ICON_MOBILE_Y_OFFSET: 2
+    ICON_MOBILE_Y_OFFSET: 2,
+    FONT_SIZE_MOBILE: 32,
+    FONT_SIZE_DESKTOP: 25
 };
 
 class CurrencyCluster {
@@ -48,7 +50,7 @@ class CurrencyCluster {
     set y(val) { this.setOffset(this.offsetX, val - this.baseY); }
 
     _getFontSize() {
-        const base = helper.isMobileDevice() ? 33 : 26;
+        const base = helper.isMobileDevice() ? CONFIG.FONT_SIZE_MOBILE : CONFIG.FONT_SIZE_DESKTOP;
         const extra = (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) ? 3 : 0;
         return (base + extra) + 'px';
     }
@@ -212,7 +214,7 @@ class CurrencyCluster {
     refreshFontSize() {
         Object.values(this.resources).forEach(res => {
             if (!res.text) return;
-            const baseFontSize = helper.isMobileDevice() ? 33 : 26;
+            const baseFontSize = helper.isMobileDevice() ? CONFIG.FONT_SIZE_MOBILE : CONFIG.FONT_SIZE_DESKTOP;
             const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
             if (res.text.style.fontSize !== targetSize) {
                 res.text.setFontSize(targetSize);

@@ -3,6 +3,8 @@
 // Handles logarithmic scaling based on max health.
 
 const HEALTH_BAR_GAP = 14;
+const FONT_SIZE_MOBILE = 32;
+const FONT_SIZE_DESKTOP = 25;
 
 class HealthBar {
     /**
@@ -51,9 +53,9 @@ class HealthBar {
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
 
         // ── Text ──
-        const baseFontSize = helper.isMobileDevice() ? 33 : 26;
+        const baseFontSize = helper.isMobileDevice() ? FONT_SIZE_MOBILE : FONT_SIZE_DESKTOP;
         const finalFontSize = baseFontSize + (gameState.settings.bigFont ? 3 : 0);
-        this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 11, '', {
+        this.text = PhaserScene.add.text(this.baseX + this.baseW - 6, this.y + 12, '', {
             fontFamily: 'Quantico-Regular',
             fontSize: finalFontSize + 'px', 
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
@@ -108,7 +110,7 @@ class HealthBar {
 
     refreshFontSize() {
         if (!this.text) return;
-        const baseFontSize = helper.isMobileDevice() ? 33 : 26;
+        const baseFontSize = helper.isMobileDevice() ? FONT_SIZE_MOBILE : FONT_SIZE_DESKTOP;
         const targetSize = (baseFontSize + (gameState.settings.bigFont ? 3 : 0)) + 'px';
         if (this.text.style.fontSize !== targetSize) {
             this.text.setFontSize(targetSize);
@@ -155,7 +157,7 @@ class HealthBar {
         this.flare.setPosition(x - 11, y + this.h / 2 - 9);
         this.fill.setPosition(x + HEALTH_BAR_GAP - 11, y + HEALTH_BAR_GAP - 9);
         // text.x/y is updated in update() too, but we set it here for immediate feedback
-        this.text.setPosition(this.bg.x + this.bg.width + 4, y + 11);
+        this.text.setPosition(this.bg.x + this.bg.width + 4, y + 12);
 
         // If we are in a virtual group, we MUST update its offsets immediately
         // so that the next _syncChildren doesn't snap us back.

@@ -640,7 +640,7 @@ const upgradeTree = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
 
         slideRightBtn = new Button({
-            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx - 2, y: cy, alpha: 1 },
+            normal: { ref: 'slide_right_btn.png', atlas: 'buttons', x: cx - 3, y: cy, alpha: 1 },
             hover: { ref: 'slide_right_btn_hover.png', atlas: 'buttons' },
             press: { ref: 'slide_right_btn_press.png', atlas: 'buttons' },
             disable: { ref: 'slide_right_btn_press.png', atlas: 'buttons', alpha: 0 },

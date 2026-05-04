@@ -39,7 +39,7 @@ const gameHUD = (() => {
         BAR_W: 200,
         BAR_H: helper.isMobileDevice() ? 28 : 24,
         BAR_GAP: helper.isMobileDevice() ? 18 : 14,
-        CURRENCY_SPACING: helper.isMobileDevice() ? 40 : 36,
+        CURRENCY_SPACING: helper.isMobileDevice() ? 39 : 35,
         GROUP_X_OFFSET: 10
     };
 
@@ -147,7 +147,7 @@ const gameHUD = (() => {
         healthBtn.setOrigin(0.5, 0.5).setScale(1.05, helper.isMobileDevice() ? 1.1 : 1.05).setDepth(DEPTHS.BAR_OVERLAY).setScrollFactor(0).setVisible(false);
 
         // 2. Currency Cluster Component
-        const currY = LAYOUT.HUD_Y + LAYOUT.BAR_H + LAYOUT.BAR_GAP + 13;
+        const currY = LAYOUT.HUD_Y + LAYOUT.BAR_H + LAYOUT.BAR_GAP + 12;
         currencyCluster = new CurrencyCluster({
             x: groupX,
             y: currY,
