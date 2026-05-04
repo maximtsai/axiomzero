@@ -699,6 +699,7 @@ const upgradeTree = (() => {
             gameHUD.setBombButtonVisible(false);
             gameHUD.setHealthBarVisible(false);
             gameHUD.setCurrencyVisible(false);
+            gameHUD.shiftHUDTo(54, 0);
         }
         if (typeof towerStatsUI !== 'undefined') {
             towerStatsUI.setEnabled(false);
@@ -775,6 +776,7 @@ const upgradeTree = (() => {
 
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setCurrencyVisible(false);
+            gameHUD.resetHUDPosition(0);
         }
 
         if (treeGroup) {
