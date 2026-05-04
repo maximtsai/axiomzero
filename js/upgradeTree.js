@@ -1426,7 +1426,7 @@ const upgradeTree = (() => {
         // 2. Floating text popup
         if (data.popupText) {
             const pos = tower.getPosition();
-            floatingText.show(
+            messageBus.publish('showFloatingText', 
                 pos.x + (Math.random() - 0.5) * 100,
                 pos.y + (Math.random() - 0.5) * 100,
                 data.popupText,
@@ -1803,6 +1803,7 @@ const upgradeTree = (() => {
 
         if (typeof gameHUD !== 'undefined' && gameHUD.resetHUDPosition) {
             gameHUD.resetHUDPosition(duration);
+            gameHUD.setHealthHoverActive(!fullUpgradeView);
         }
     }
 
@@ -1845,6 +1846,7 @@ const upgradeTree = (() => {
 
         if (typeof gameHUD !== 'undefined' && gameHUD.shiftHUDTo) {
             gameHUD.setHealthBarVisible(true);
+            gameHUD.setHealthHoverActive(false);
             gameHUD.shiftHUDTo(20, duration);
         }
     }

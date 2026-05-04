@@ -322,17 +322,15 @@ const bossManager = (() => {
         PhaserScene.time.delayedCall(600, () => {
             if (p && p.model && p.model.alive && p.view) {
                 // 1. Floating Text
-                if (typeof floatingText !== 'undefined') {
-                    let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
-                    floatingText.show(p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
-                        fontFamily: 'MunroSmall',
-                        fontSize: healFontSize + 8,
-                        color: '#00ff66',
-                        stroke: '#330000',
-                        strokeThickness: 2,
-                        depth: GAME_CONSTANTS.DEPTH_ENEMIES + 99
-                    });
-                }
+                let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
+                messageBus.publish('showFloatingText', p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
+                    fontFamily: 'MunroSmall',
+                    fontSize: healFontSize + 8,
+                    color: '#00ff66',
+                    stroke: '#330000',
+                    strokeThickness: 2,
+                    depth: GAME_CONSTANTS.DEPTH_ENEMIES + 99
+                });
                 // 2. Health Bar 'Pump'
                 if (p.view.hpImg && p.view.hpImg.scene) {
                     PhaserScene.tweens.add({

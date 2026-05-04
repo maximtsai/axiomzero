@@ -51,5 +51,11 @@ const notificationManager = (() => {
         return t;
     }
 
-    return { notify };
+    function init() {
+        messageBus.subscribe('showNotification', (text, opts) => {
+            notify(text, opts);
+        });
+    }
+    
+    return { init, notify };
 })();

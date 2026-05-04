@@ -39,9 +39,9 @@ const hijackManager = (() => {
             }
         });
 
-        messageBus.subscribe('enemyKilled', (data) => {
+        messageBus.subscribe('enemyKilled', (x, y, drop, type, isBoss, isMiniboss, wasResonance, hijacksSpawned) => {
             const hijackLevel = (gameState.upgrades && gameState.upgrades.hijack) || 0;
-            if (hijackLevel > 0 && data.wasResonance && !data.isBoss) {
+            if (hijackLevel > 0 && wasResonance && !isBoss) {
                 // Resonance kill: Spawn missiles based on hijacksSpawned
                 const config = getCurrentLevelConfig();
                 const currentScale = (GAME_VARS.scaleFactor || 1) * (config.levelScalingModifier || 1);
@@ -50,14 +50,14 @@ const hijackManager = (() => {
                 const lifetime = 2500 + Math.random() * 750;
 
                 // For resonance, we spawn missiles based on the enemy's hijacksSpawned property (with overflow accumulation)
-                const baseSpawn = data.hijacksSpawned || 0;
+                const baseSpawn = hijacksSpawned || 0;
                 const total = baseSpawn + overflowCount;
                 const count = Math.floor(total);
                 overflowCount = total - count;
 
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * Math.PI * 2;
-                    spawn(data.x, data.y, dmg, angle, lifetime);
+                    spawn(x, y, dmg, angle, lifetime);
                 }
             }
         });

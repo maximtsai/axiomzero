@@ -35,9 +35,9 @@ const analyticsManager = (() => {
             });
 
             // Track boss and miniboss deaths
-            messageBus.subscribe('enemyKilled', (data) => {
-                if (data && (data.isBoss || data.isMiniboss)) {
-                    trackBossDefeat(data.id, gameState.wave, data.isMiniboss ? 'miniboss' : 'boss');
+            messageBus.subscribe('enemyKilled', (x, y, drop, type, isBoss, isMiniboss) => {
+                if (isBoss || isMiniboss) {
+                    trackBossDefeat(type, gameState.wave, isMiniboss ? 'miniboss' : 'boss');
                 }
             });
 

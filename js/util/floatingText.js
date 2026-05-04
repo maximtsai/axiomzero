@@ -10,6 +10,10 @@ const floatingText = (() => {
         _scene = scene;
         _pool = new ObjectPool(_factory, _reset, 200).preAllocate(50);
         updateManager.addFunction(_update);
+
+        messageBus.subscribe('showFloatingText', (x, y, text, opts) => {
+            show(x, y, text, opts);
+        });
     }
 
     function _factory() {

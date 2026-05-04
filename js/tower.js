@@ -26,6 +26,16 @@ class TowerModel {
         this.hasWarnedThisWave = false;
         this.backupUsed = false;
         this.iterativeGrowthUsed = false;
+        this._lastPublishedHealth = -1;
+    }
+
+    publishHealth(force = false) {
+        const delta = Math.abs(this.health - this._lastPublishedHealth);
+        // Throttle updates: only publish if change > 0.099, or if reaching critical values (0 or max)
+        if (force || delta > 0.099 || (this.health === 0 && this._lastPublishedHealth !== 0) || (this.health === this.maxHealth && this._lastPublishedHealth !== this.maxHealth)) {
+            this._lastPublishedHealth = this.health;
+            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        }
     }
 
     recalcStats() {
@@ -81,8 +91,8 @@ class TowerModel {
         this.hasWarnedThisWave = false;
         this.bugReportAccumulator = 0;
         this.backupUsed = false;
-        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
-        messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, this.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
+        this.publishHealth(true);
+        // messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, ...); // Already removed in previous step
     }
 
     takeDamage(amount, sourceX = null, sourceY = null) {
@@ -117,7 +127,7 @@ class TowerModel {
             this.die();
             return false; // Did not survive
         }
-        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        this.publishHealth();
         return true; // Survived and took damage
     }
 
@@ -127,7 +137,7 @@ class TowerModel {
         this.health = Math.min(this.health + amount, this.maxHealth);
         const actualHealed = this.health - oldHealth;
         if (actualHealed > 0) {
-            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+            this.publishHealth();
         }
         return actualHealed;
     }
@@ -136,7 +146,7 @@ class TowerModel {
         this.alive = false;
         this.active = false;
         this.isInvincible = false;
-        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        this.publishHealth(true);
         messageBus.publish(GAME_CONSTANTS.EVENTS.TOWER_DIED);
     }
 
@@ -151,7 +161,7 @@ class TowerModel {
         }
         this.backupUsed = true;
         this.isInvincible = false; // controller will set the timed one
-        messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, this.health, this.maxHealth);
+        this.publishHealth(true);
 
         // Apply repulsion wave to nearby enemies
         const pushbackRange = 350;
@@ -878,7 +888,7 @@ const tower = (() => {
             if (healAmountText === 0 && _healingAccumulator > 0) healAmountText = 1;
 
             if (healAmountText > 0) {
-                floatingText.show(pos.x, pos.y - 35, `+${healAmountText} HEAL`, {
+                messageBus.publish('showFloatingText', pos.x, pos.y - 35, `+${healAmountText} HEAL`, {
                     fontFamily: 'JetBrainsMono_Bold',
                     fontSize: 28,
                     color: '#00ff66',
@@ -902,7 +912,7 @@ const tower = (() => {
                 die();
                 return;
             }
-            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
+            model.publishHealth();
 
             // EXP accumulation
             let expBoost = 1.0;
@@ -923,7 +933,6 @@ const tower = (() => {
                 messageBus.publish(GAME_CONSTANTS.EVENTS.INSIGHT_GAINED);
             }
             gameState.exp = model.exp;
-            messageBus.publish(GAME_CONSTANTS.EVENTS.EXP_CHANGED, model.exp, GAME_CONSTANTS.EXP_TO_INSIGHT);
         }
 
         // Auto-attack
@@ -974,7 +983,7 @@ const tower = (() => {
         } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             model.active = false;
             model.health = model.maxHealth;
-            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
+            model.publishHealth(true);
             view.playUpgradePhaseAnimation(model.attackRange);
             if (view.sprite) {
                 view.sprite.setAlpha(1);
@@ -995,7 +1004,7 @@ const tower = (() => {
 
         if (!model.active) {
             model.health = model.maxHealth;
-            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
+            model.publishHealth(true);
         }
 
         if (view.sprite) {
@@ -1049,7 +1058,7 @@ const tower = (() => {
         },
         setHealth: (h) => {
             model.health = h;
-            messageBus.publish(GAME_CONSTANTS.EVENTS.HEALTH_CHANGED, model.health, model.maxHealth);
+            model.publishHealth(true);
         },
         setInvincible: (duration) => {
             model.isInvincible = true;

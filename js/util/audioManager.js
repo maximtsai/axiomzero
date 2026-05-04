@@ -115,10 +115,10 @@ const audio = {
 
         // Hook up SDK mute/unmute listeners
         if (typeof sdk !== 'undefined') {
-            sdk.onAudioMute(function() {
+            sdk.onAudioMute(function () {
                 audio.muteAll();
             });
-            sdk.onAudioUnmute(function() {
+            sdk.onAudioUnmute(function () {
                 audio.unmuteAll();
             });
         }
@@ -153,7 +153,7 @@ const audio = {
 
         // Calculate actual volume based on master settings
         let targetVol = volume * (isMusic ? globalMusicVol : globalVolume);
-        
+
         // Apply mute overrides
         if (isMuted || (isMusic && isMusicMuted) || (!isMusic && isSFXMuted)) {
             targetVol = 0;

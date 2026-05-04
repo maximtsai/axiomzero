@@ -50,6 +50,16 @@ const enemyManager = (() => {
     // boss3ShareTimer now managed by bossManager
 
     let testEnemyCount = 0;
+    const _damageTextOptions = {
+        fontFamily: 'MunroSmall',
+        fontSize: 40,
+        color: '#ffffff',
+        stroke: '#330000',
+        strokeThickness: 2,
+        depth: GAME_CONSTANTS.DEPTH_RESOURCES + 50,
+        duration: 1000,
+        scaleX: 1
+    };
 
     // Spawn Rules configuration
     const ENEMY_SPAWN_RULES = {
@@ -578,16 +588,15 @@ const enemyManager = (() => {
                 baseFontSize = 36;
             }
 
-            floatingText.show(enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', {
-                fontFamily: 'MunroSmall',
-                fontSize: baseFontSize,
-                color: textColor,
-                stroke: isExecuted ? '#1a0033' : '#330000',
-                strokeThickness: isExecuted ? 3 : 2,
-                depth: isExecuted ? GAME_CONSTANTS.DEPTH_HUD - 10 : GAME_CONSTANTS.DEPTH_RESOURCES + 50,
-                duration: isExecuted ? 1200 : 1000,
-                scaleX: isExecuted ? 0.92 : 1,
-            });
+            _damageTextOptions.fontSize = baseFontSize;
+            _damageTextOptions.color = textColor;
+            _damageTextOptions.stroke = isExecuted ? '#1a0033' : '#330000';
+            _damageTextOptions.strokeThickness = isExecuted ? 3 : 2;
+            _damageTextOptions.depth = isExecuted ? GAME_CONSTANTS.DEPTH_HUD - 10 : GAME_CONSTANTS.DEPTH_RESOURCES + 50;
+            _damageTextOptions.duration = isExecuted ? 1200 : 1000;
+            _damageTextOptions.scaleX = isExecuted ? 0.92 : 1;
+
+            messageBus.publish('showFloatingText', enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', _damageTextOptions);
         }
 
         if (died && !enemy.model.isGhosting) {
@@ -710,16 +719,16 @@ const enemyManager = (() => {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
-            messageBus.publish('enemyKilled', {
-                x: ex,
-                y: ey,
-                drop: enemy.model.baseResourceDrop,
-                type: enemy.model.type,
-                isBoss: wasBoss,
-                isMiniboss: wasMiniboss,
-                wasResonance: wasResonance,
-                hijacksSpawned: enemy.model.hijacksSpawned
-            });
+            messageBus.publish('enemyKilled', 
+                ex, 
+                ey, 
+                enemy.model.baseResourceDrop, 
+                enemy.model.type, 
+                wasBoss, 
+                wasMiniboss, 
+                wasResonance, 
+                enemy.model.hijacksSpawned
+            );
             if (enemy.model.type !== 'test') sessionKills++;
         }
     }

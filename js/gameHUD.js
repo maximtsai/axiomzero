@@ -622,6 +622,10 @@ const gameHUD = (() => {
         if (healthBtn) healthBtn.setVisible(vis).setState(vis ? NORMAL : DISABLE);
     }
 
+    function setHealthHoverActive(active) {
+        if (healthBtn) healthBtn.setState(active ? NORMAL : DISABLE);
+    }
+
     function setCurrencyVisible(vis) {
         if (!currencyCluster) return;
         if (vis) {
@@ -677,5 +681,5 @@ const gameHUD = (() => {
         });
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBarVisible, setCurrencyVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBarVisible, setHealthHoverActive, setCurrencyVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
 })();

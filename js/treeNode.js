@@ -477,7 +477,7 @@ class Node {
             resourceManager.addData(20);
             if (typeof floatingText !== 'undefined' && typeof tower !== 'undefined') {
                 const pos = tower.getPosition();
-                floatingText.show(
+                messageBus.publish('showFloatingText', 
                     pos.x + (Math.random() - 0.5) * 100,
                     pos.y + (Math.random() - 0.5) * 100,
                     '+20 DATA',

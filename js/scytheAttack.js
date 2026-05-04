@@ -108,6 +108,12 @@ const scytheAttack = (() => {
     const model = new ScytheAttackModel();
     const view = new ScytheAttackView();
     let swingTimer = null;
+    const _targetPool = new ObjectPool(
+        () => ({ enemy: null, angle: 0 }),
+        (obj) => { obj.enemy = null; obj.angle = 0; },
+        40
+    );
+    const _validTargets = [];
 
     function init() {
         view.init();
@@ -158,7 +164,10 @@ const scytheAttack = (() => {
             return;
         }
 
-        const validTargets = [];
+        for (let i = 0; i < _validTargets.length; i++) {
+            _targetPool.release(_validTargets[i]);
+        }
+        _validTargets.length = 0;
         let nearestMissEnemy = null;
         let minMissDist = Infinity;
         let nearestMissAngle = 0;
@@ -186,8 +195,11 @@ const scytheAttack = (() => {
             const angle = Math.atan2(dy, dx);
 
             if (inRadialRange) {
-                validTargets.push({ enemy: e, angle: angle });
-            } else if (validTargets.length === 0) {
+                const t = _targetPool.get();
+                t.enemy = e;
+                t.angle = angle;
+                _validTargets.push(t);
+            } else if (_validTargets.length === 0) {
                 // Only track nearest miss if no valid targets found so far
                 let missDist = 0;
                 if (dist < model.INNER_RANGE) missDist = model.INNER_RANGE - (dist + sizeLeeway);
@@ -201,20 +213,20 @@ const scytheAttack = (() => {
             }
         }
 
-        if (validTargets.length > 0) {
+        if (_validTargets.length > 0) {
             // SMARTER TARGETING: Find the angle that hits the MOST enemies
             let bestAngle = 0;
             let maxHits = -1;
             const arcHalfRad = Phaser.Math.DegToRad(model.ARC_ANGLE / 2);
 
-            for (let i = 0; i < validTargets.length; i++) {
-                const centerAngle = validTargets[i].angle;
+            for (let i = 0; i < _validTargets.length; i++) {
+                const centerAngle = _validTargets[i].angle;
                 let hitCount = 0;
 
-                for (let j = 0; j < validTargets.length; j++) {
-                    const diff = Math.abs(Phaser.Math.Angle.Wrap(centerAngle - validTargets[j].angle));
+                for (let j = 0; j < _validTargets.length; j++) {
+                    const diff = Math.abs(Phaser.Math.Angle.Wrap(centerAngle - _validTargets[j].angle));
                     if (diff <= arcHalfRad) {
-                        const targetEnemy = validTargets[j].enemy;
+                        const targetEnemy = _validTargets[j].enemy;
                         const weight = (targetEnemy.model.isBoss || targetEnemy.model.isMiniboss) ? 2 : 1;
                         hitCount += weight;
                     }
@@ -307,7 +319,7 @@ const scytheAttack = (() => {
 
             // Include size leeway in hit detection for consistency with targeting (plus 10 unit buffer)
             const sizeLeeway = e.model.size || 15;
-            
+
             // Capsule collision check using shared geometry
             view.hitCircle.setTo(e.model.x, e.model.y, sizeLeeway + 10);
             const inRadialRange = (dist + sizeLeeway >= innerBuffer) && (dist - sizeLeeway <= outerBuffer);

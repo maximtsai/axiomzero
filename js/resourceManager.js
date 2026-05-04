@@ -329,7 +329,7 @@ const resourceManager = (() => {
 
         if (amount > 0) {
             if (typeof audio !== 'undefined') audio.play('levelup', 0.64);
-            floatingText.show(GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
+            messageBus.publish('showFloatingText', GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
                 fontFamily: 'JetBrainsMono_Bold',
                 fontSize: 36,
                 color: '#ff5555',
@@ -552,33 +552,38 @@ const resourceManager = (() => {
             const dx = cx - d.x;
             const dy = cy - d.y;
 
-            // Collect check — Manhattan distance, no sqrt needed
-            // More inertia = bigger collection radius, added to base distance
+            const distSq = dx * dx + dy * dy;
+
+            // Collect check — Circular radius check (squared to avoid sqrt)
             const collectionRadius = FLY_COLLECT_DIST + (25 * Math.max(0, d.inertia));
-            if (Math.abs(dx) + Math.abs(dy) <= collectionRadius) {
+            if (distSq <= collectionRadius * collectionRadius) {
                 d.readyToCollect = true;
             }
 
-            // Move: normalize with sqrt (small array, fine here) then step
-            const len = Math.sqrt(dx * dx + dy * dy);
-            const move = Math.min(flyStep * d.inertia, len);  // don't overshoot cursor
+            if (distSq < 1) {
+                // Extremely close, just snap or wait for collection
+                d.x = cx;
+                d.y = cy;
+            } else {
+                // Move: normalize with sqrt then step
+                const len = Math.sqrt(distSq);
+                const move = Math.min(flyStep * d.inertia, len);
 
-            const predictDx = dx - d.dx * 1.5;
-            const predictDy = dy - d.dy * 1.5;
+                const predictDx = dx - d.dx * 1.5;
+                const predictDy = dy - d.dy * 1.5;
 
-            const moveAmtX = (predictDx / len) * move;
-            const moveAmtY = (predictDy / len) * move;
-            d.dx += moveAmtX;
-            d.dy += moveAmtY;
-            d.x += moveAmtX + d.dx;
-            d.y += moveAmtY + d.dy;
-            d.dx *= 0.95 - 0.05 * d.inertia;
-            d.dy *= 0.95 - 0.05 * d.inertia;
+                const moveAmtX = (predictDx / len) * move;
+                const moveAmtY = (predictDy / len) * move;
+                d.dx += moveAmtX;
+                d.dy += moveAmtY;
+                d.x += moveAmtX + d.dx;
+                d.y += moveAmtY + d.dy;
+                d.dx *= 0.95 - 0.05 * d.inertia;
+                d.dy *= 0.95 - 0.05 * d.inertia;
+            }
 
             if (d.inertia < 1) {
-                if (d.inertia < 0) {
-                    d.inertia *= 0.95;
-                }
+                if (d.inertia < 0) d.inertia *= 0.95;
                 d.inertia = Math.min(1, d.inertia + 0.75 * dt);
             }
             const oldImgXPos = d.img.x;
@@ -594,7 +599,7 @@ const resourceManager = (() => {
 
     let dropAccumulator = 0;
 
-    function _onEnemyKilled({ x, y, drop: baseResourceDrop, type: enemyType }) {
+    function _onEnemyKilled(x, y, baseResourceDrop, enemyType) {
         const config = getCurrentLevelConfig();
         let dataDropMult = config.dataDropMultiplier || 1;
 

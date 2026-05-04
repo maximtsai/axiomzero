@@ -18,7 +18,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
             const cloudSave = await sdk.getItem(SAVE_KEY);
             if (cloudSave) {
                 let finalSave = cloudSave;
-                
+
                 if (typeof cloudSave === 'string') {
                     const trimmed = cloudSave.trim();
                     if (trimmed && trimmed[0] !== '{') {
@@ -35,7 +35,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
                     // SDK returned parsed object directly
                     finalSave = JSON.stringify(cloudSave);
                 }
-                
+
                 localStorage.setItem(SAVE_KEY, finalSave);
                 debugLog('Cloud save fetched, unpacked, and injected into localStorage.');
             }
@@ -165,6 +165,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     iterationOverScreen.init();
     coinMine.init();
     tutorialManager.init();
+    notificationManager.init();
 
     // Camera & transition — cameraManager before transitionManager
     cameraManager.init();

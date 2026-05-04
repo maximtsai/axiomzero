@@ -93,6 +93,7 @@ class LaserAttackView {
         this._jitterValue = 1.0;
         this._jitterTimer = 0;
         this._initialized = false;
+        this._allBeamSprites = [];
     }
 
     init() {
@@ -162,6 +163,13 @@ class LaserAttackView {
         this._turret2.setVisible(false);
         this._turret2.setOrigin(0.5, 0.5);
         this._turret2.setScale(0.4);
+        
+        this._allBeamSprites = [
+            this._glow1, this._body1, this._core1,
+            this._glow2, this._body2, this._core2,
+            this._hGlow1, this._hInner1, this._hWhite1,
+            this._hGlow2, this._hInner2, this._hWhite2
+        ].filter(s => !!s);
 
         this._initialized = true;
     }
@@ -181,13 +189,7 @@ class LaserAttackView {
         this._turret.setVisible(false);
         this._turret2.setVisible(false);
 
-        const allSprites = [
-            this._glow1, this._body1, this._core1,
-            this._glow2, this._body2, this._core2,
-            this._hGlow1, this._hInner1, this._hWhite1,
-            this._hGlow2, this._hInner2, this._hWhite2
-        ];
-        allSprites.forEach(s => s && s.setVisible(false));
+        this._allBeamSprites.forEach(s => s.setVisible(false));
     }
 
     update(model, towerX, towerY, delta = 0) {
@@ -211,13 +213,7 @@ class LaserAttackView {
         }
 
         if (!model.firing && !model.tapering && !model.charging) {
-            const allBeamDots = [
-                this._glow1, this._body1, this._core1,
-                this._glow2, this._body2, this._core2,
-                this._hGlow1, this._hInner1, this._hWhite1,
-                this._hGlow2, this._hInner2, this._hWhite2
-            ];
-            allBeamDots.forEach(s => s && s.setVisible(false));
+            this._allBeamSprites.forEach(s => s.setVisible(false));
             this._jitterTimer = 0;
             return;
         }
