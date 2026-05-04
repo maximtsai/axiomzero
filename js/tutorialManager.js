@@ -363,5 +363,14 @@ const tutorialManager = (() => {
         _activeDelayedCalls = [];
     }
 
-    return { init, showDuoSwapTutorial };
+    function hideAll() {
+        if (typeof gameState !== 'undefined') {
+            gameState.tutorialsDisabled = true;
+        }
+        _clearTutorial();
+        _cancelActiveDelayedCalls();
+        messageBus.publish('hideTutorials');
+    }
+
+    return { init, showDuoSwapTutorial, hideAll };
 })();

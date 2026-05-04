@@ -1119,6 +1119,9 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {
+            if (typeof tutorialManager !== 'undefined') {
+                tutorialManager.hideAll();
+            }
             if (typeof cinematicManager !== 'undefined') {
                 const endCutscene = await cinematicManager.playCutscene();
 

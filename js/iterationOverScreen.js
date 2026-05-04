@@ -324,6 +324,11 @@ const iterationOverScreen = (() => {
     function show() {
         visible = true;
 
+        // Safety: Ensure time scale is restored to 1.0 when showing results
+        if (typeof timeManager !== 'undefined') {
+            timeManager.applyTimeScale(1.0);
+        }
+
         const sessionData = resourceManager.getSessionData();
         const sessionInsight = resourceManager.getSessionInsight();
         const sessionShards = resourceManager.getSessionShards();

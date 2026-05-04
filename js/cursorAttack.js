@@ -349,6 +349,11 @@ class PulseAttackView {
     setDetonateReminderVisibility(visible) {
         if (!this.detonateReminderText) return;
 
+        // Respect global tutorial disable flag
+        if (visible && typeof gameState !== 'undefined' && gameState.tutorialsDisabled) {
+            visible = false;
+        }
+
         const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
         const targetX = GAME_CONSTANTS.halfWidth + (isUpgrade ? 400 : 0);
         const targetY = GAME_CONSTANTS.halfHeight + (isUpgrade ? 325 : 375);
@@ -885,17 +890,35 @@ class PulseAttackView {
         this.armTweens.push(tw1);
     }
 
-    playBombCancelAnimation(baseSize) {
-        // Stop any expansion tweens
+    stopAllArtilleryAnimations() {
         if (this.armTweens) {
             this.armTweens.forEach(t => t.stop());
             this.armTweens = [];
         }
-        // Bug 3 fix: cancel the phase2 delayedCall if it's still pending
         if (this.phase2Timer) {
             this.phase2Timer.remove();
             this.phase2Timer = null;
         }
+        // Stop any global tweens targeting artillery layers
+        if (this.artillerySprite) {
+            PhaserScene.tweens.killTweensOf([
+                this.artillerySprite, 
+                this.artilleryBright, 
+                this.artilleryBrightGlow, 
+                this.artilleryBlack, 
+                this.artilleryRed
+            ]);
+            
+            this.artillerySprite.setVisible(false);
+            this.artilleryBright.setVisible(false);
+            this.artilleryBrightGlow.setVisible(false);
+            this.artilleryBlack.setVisible(false);
+            this.artilleryRed.setVisible(false);
+        }
+    }
+
+    playBombCancelAnimation(baseSize) {
+        this.stopAllArtilleryAnimations();
 
         const targetSize = baseSize + 20;
 
@@ -944,85 +967,111 @@ class PulseAttackView {
 
                     this.artilleryBlack.setVisible(false);
                     this.artilleryBrightGlow.setVisible(true);
+                    this.artilleryBrightGlow.setScale(0.9);
 
-                    PhaserScene.time.delayedCall(14, () => {
-                        if (onDetonate) onDetonate();
-                        cameraManager.shake(200, 0.02);
-                        // 1. Show artilleryBlack for 0.075s
-                        this.artilleryBlack.setVisible(true).setAlpha(1);
-                        this.artilleryBlack.setSize(finalSize, finalSize);
-                        this.artilleryBlack.setScale(1.04);
-                        this.artilleryBlack.setRotation(this.artillerySprite.rotation);
+                    PhaserScene.tweens.add({
+                        targets: [this.artilleryBrightGlow],
+                        scaleX: 1.17,
+                        scaleY: 1.17,
+                        duration: 3,
+                        ease: 'Cubic.easeIn',
+                        onComplete: () => {
+                            PhaserScene.tweens.add({
+                                targets: [this.artilleryBrightGlow],
+                                scaleX: 1,
+                                scaleY: 1,
+                                delay: 2,
+                                duration: 10,
+                                ease: 'Back.easeOut',
+                                onComplete: () => {
+                                    if (onDetonate) onDetonate();
+                                    cameraManager.shake(200, 0.02);
+                                    // 1. Show artilleryBlack for 0.075s
+                                    this.artilleryBlack.setVisible(true).setAlpha(1);
+                                    this.artilleryBlack.setSize(finalSize, finalSize);
+                                    this.artilleryBlack.setScale(1.04);
+                                    this.artilleryBlack.setRotation(this.artillerySprite.rotation);
 
-                        this.artillerySprite.setVisible(false);
-                        this.artilleryBrightGlow.setVisible(false);
+                                    this.artillerySprite.setVisible(false);
+                                    this.artilleryBrightGlow.setVisible(false);
 
-                        this.artilleryRed.setVisible(true).setAlpha(0.80);
-                        this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
+                                    this.artilleryRed.setVisible(true).setAlpha(0.80);
+                                    this.artilleryRed.setSize(finalSize + 30, finalSize + 30);
 
+                                    this.artilleryRed.setScale(0.88);
 
-                        PhaserScene.time.delayedCall(9, () => {
-                            PhaserScene.cameras.main.setZoom(1.0);
-                            this.artilleryBlack.setVisible(false);
-                            this.artillerySprite.setVisible(true);
-                            this.artilleryBright.setVisible(true).setAlpha(1);
-                            PhaserScene.time.delayedCall(20, () => {
-                                PhaserScene.time.delayedCall(13, () => {
-                                    // Always restore game speed to 1.0 to prevent capture bugs
-                                    timeManager.applyTimeScale(1.0);
-                                });
-                                // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
+                                    PhaserScene.tweens.add({
+                                        targets: this.artilleryRed,
+                                        scaleX: 1,
+                                        scaleY: 1,
+                                        duration: 9,
+                                        ease: 'Cubic.easeOut',
+                                        onComplete: () => {
+                                            PhaserScene.cameras.main.setZoom(1.0);
+                                            this.artilleryBlack.setVisible(false);
+                                            this.artillerySprite.setVisible(true);
+                                            this.artilleryBright.setVisible(true).setAlpha(1);
+                                            PhaserScene.time.delayedCall(20, () => {
+                                                PhaserScene.time.delayedCall(13, () => {
+                                                    // Always restore game speed to 1.0 to prevent capture bugs
+                                                    timeManager.applyTimeScale(1.0);
+                                                });
+                                                // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
 
-                                // 3. Show others and start animation
-                                this.artillerySprite.setVisible(true).setAlpha(1);
+                                                // 3. Show others and start animation
+                                                this.artillerySprite.setVisible(true).setAlpha(1);
 
-                                this.artillerySprite.setScale(1.15);
-                                this.artilleryBright.setScale(1.17).setAlpha(1);
-                                this.artilleryRed.setScale(1.2);
+                                                this.artillerySprite.setScale(1.15);
+                                                this.artilleryBright.setScale(1.17).setAlpha(1);
+                                                this.artilleryRed.setScale(1.2);
 
-                                const randRot = Math.random() < 0.5 ? -0.12 : 0.12;
-                                this.artillerySprite.setRotation(randRot);
-                                this.artilleryBright.setRotation(randRot);
-                                this.artilleryRed.setRotation(randRot * 0.25);
+                                                const randRot = Math.random() < 0.5 ? -0.12 : 0.12;
+                                                this.artillerySprite.setRotation(randRot);
+                                                this.artilleryBright.setRotation(randRot);
+                                                this.artilleryRed.setRotation(randRot * 0.25);
 
-                                // Tween them back
-                                PhaserScene.tweens.add({
-                                    targets: [this.artillerySprite, this.artilleryBright, this.artilleryRed],
-                                    scaleX: 1,
-                                    scaleY: 1,
-                                    duration: 400,
-                                    ease: 'Quart.easeOut'
-                                });
+                                                // Tween them back
+                                                PhaserScene.tweens.add({
+                                                    targets: [this.artillerySprite, this.artilleryBright, this.artilleryRed],
+                                                    scaleX: 1,
+                                                    scaleY: 1,
+                                                    duration: 400,
+                                                    ease: 'Quart.easeOut'
+                                                });
 
-                                this.artilleryBright.setAlpha(1);
+                                                this.artilleryBright.setAlpha(1);
 
-                                PhaserScene.tweens.add({
-                                    targets: [this.artilleryBright, this.artilleryRed],
-                                    delay: 70,
-                                    alpha: 0,
-                                    duration: 200,
-                                    ease: 'Quad.easeOut',
-                                });
+                                                PhaserScene.tweens.add({
+                                                    targets: [this.artilleryBright, this.artilleryRed],
+                                                    delay: 70,
+                                                    alpha: 0,
+                                                    duration: 200,
+                                                    ease: 'Quad.easeOut',
+                                                });
 
-                                PhaserScene.tweens.add({
-                                    targets: [this.artilleryBright],
-                                    alpha: 0,
-                                    duration: 450,
-                                    ease: 'Quad.easeIn',
-                                    onComplete: () => {
-                                        this.artillerySprite.setVisible(false);
-                                        this.artilleryBright.setVisible(false);
-                                        this.artilleryBrightGlow.setVisible(false);
-                                        this.artilleryBlack.setVisible(false);
-                                        this.artilleryRed.setVisible(false);
-                                        if (onComplete) onComplete();
-                                    }
-                                });
+                                                PhaserScene.tweens.add({
+                                                    targets: [this.artilleryBright],
+                                                    alpha: 0,
+                                                    duration: 450,
+                                                    ease: 'Quad.easeIn',
+                                                    onComplete: () => {
+                                                        this.artillerySprite.setVisible(false);
+                                                        this.artilleryBright.setVisible(false);
+                                                        this.artilleryBrightGlow.setVisible(false);
+                                                        this.artilleryBlack.setVisible(false);
+                                                        this.artilleryRed.setVisible(false);
+                                                        if (onComplete) onComplete();
+                                                    }
+                                                });
 
-                                // Shake for impact
-                                zoomShake(1.02);
+                                                // Shake for impact
+                                                zoomShake(1.02);
+                                            });
+                                        }
+                                    });
+                                }
                             });
-                        });
+                        }
                     });
                 });
             }
@@ -1064,11 +1113,19 @@ const pulseAttack = (() => {
             view.setVisibility(false);
             view.setPointerVisibility(false);
         });
+        messageBus.subscribe('hideTutorials', () => {
+            view.setDetonateReminderVisibility(false);
+        });
         updateManager.addFunction(_update);
 
         // Global click listener for manual firing
         PhaserScene.input.on('pointerdown', (pointer, currentlyOver) => {
-            if (currentlyOver && currentlyOver.length > 0) return;
+            if (currentlyOver && currentlyOver.length > 0) {
+                // Only block if we hit something at popup/cinematic depth or higher.
+                // Lower depth objects (like the tree drag surface) shouldn't block combat clicks.
+                const blocking = currentlyOver.filter(obj => obj.depth >= (GAME_CONSTANTS.DEPTH_POPUPS || 10000));
+                if (blocking.length > 0) return;
+            }
             if (typeof buttonManager !== 'undefined' && (buttonManager.lastHovered || buttonManager.isAnyButtonHovered(pointer.x, pointer.y))) return;
 
             const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
@@ -1153,8 +1210,8 @@ const pulseAttack = (() => {
         const isVisible = (phase === GAME_CONSTANTS.PHASE_COMBAT || isTesting) && tower.isAlive();
         view.setVisibility(isVisible, true, model.manualMode, model.charges, model.bombArmed, model.bombFired);
 
-        // Manage detonation reminder text
-        view.setDetonateReminderVisibility(model.bombReadyToFire);
+        // Manage detonation reminder text (Now handled by state changes)
+        // view.setDetonateReminderVisibility(model.bombReadyToFire);
 
         if (!model.active || !tower.isAlive() || model.bombArmed || model.bombFired) {
             return;
@@ -1302,17 +1359,28 @@ const pulseAttack = (() => {
             model.active = true;
             model.resetTimer();
             view.setVisibility(true, true, model.manualMode, model.charges);
+            // Ensure reminder position is correct for the current phase if bomb is armed
+            if (model.bombReadyToFire) view.setDetonateReminderVisibility(true);
         } else {
             _resetState();
             model.active = false;
             view.setVisibility(false);
+            view.setDetonateReminderVisibility(false);
         }
     }
 
     function _resetState() {
+        // Safety: Always restore time scale on reset to prevent slow-mo sticking
+        if (typeof timeManager !== 'undefined') {
+            timeManager.applyTimeScale(1.0);
+        }
+
         model.bombArmed = false;
         model.bombAnimating = false;
         model.bombReadyToFire = false;
+        view.setDetonateReminderVisibility(false);
+        view.stopAllArtilleryAnimations();
+        
         model.bombQueued = false;
         model.bombFired = false;
         model.canQueueBomb = false;
@@ -1382,6 +1450,7 @@ const pulseAttack = (() => {
         model.bombArmed = false;
         model.bombAnimating = false;
         model.bombReadyToFire = false;
+        view.setDetonateReminderVisibility(false);
         model.bombQueued = false;
         model.canQueueBomb = false;
 
@@ -1439,6 +1508,7 @@ const pulseAttack = (() => {
                 // Phase 2 (0.5s total) Complete
                 model.bombAnimating = false;
                 model.bombReadyToFire = true;
+                view.setDetonateReminderVisibility(true);
                 if (model.bombQueued) {
                     _fireBomb();
                 }
@@ -1448,6 +1518,7 @@ const pulseAttack = (() => {
 
     function _fireBomb() {
         model.bombReadyToFire = false;
+        view.setDetonateReminderVisibility(false);
         model.bombAnimating = false;
         model.bombQueued = false;
         model.bombFired = true;

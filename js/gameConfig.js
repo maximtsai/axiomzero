@@ -255,6 +255,7 @@ const GAME_STATE_DEFAULTS = {
     tutorialsSeen: {
         bomb: false
     },
+    tutorialsDisabled: false,
 
     // Local best scores per farming level { levelId: { bestTime, kills, date } }
     localBestScores: {},

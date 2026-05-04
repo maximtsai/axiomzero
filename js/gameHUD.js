@@ -335,7 +335,7 @@ const gameHUD = (() => {
 
         visible = isCombat || isUpgrade;
 
-        if (healthBar) healthBar.setVisible(visible);
+        if (healthBar) healthBar.setVisible(isCombat || (isUpgrade && !isFullView));
         if (healthBtn) healthBtn.setVisible(isUpgrade && !isFullView).setState(isUpgrade && !isFullView ? NORMAL : DISABLE);
         if (currencyCluster) {
             currencyCluster.setVisible(visible);
@@ -604,6 +604,44 @@ const gameHUD = (() => {
         else refreshTestDefensesButton();
     }
 
+    function setHealthBarVisible(vis) {
+        if (healthBar) {
+            healthBar.setVisible(vis);
+            if (vis) {
+                const steps = [
+                    { alpha: 0.75, delay: 10 },
+                    { alpha: 0.85, delay: 5 },
+                    { alpha: 0.7, delay: 75 },
+                    { alpha: 1.0, delay: 15 },
+                    { alpha: 0.75, delay: 130 },
+                    { alpha: 1.0, delay: 0 },
+                ];
+                _flickerElement(healthBar, steps);
+            }
+        }
+        if (healthBtn) healthBtn.setVisible(vis).setState(vis ? NORMAL : DISABLE);
+    }
+
+    function setCurrencyVisible(vis) {
+        if (!currencyCluster) return;
+        if (vis) {
+            const phase = gameStateMachine.getPhase();
+            const isUpgrade = phase === GAME_CONSTANTS.PHASE_UPGRADE;
+            currencyCluster.updateLayout(true, isUpgrade);
+            const steps = [
+                { alpha: 0.75, delay: 10 },
+                { alpha: 0.85, delay: 5 },
+                { alpha: 0.65, delay: 80 },
+                { alpha: 1.0, delay: 15 },
+                { alpha: 0.7, delay: 140 },
+                { alpha: 1.0, delay: 0 },
+            ];
+            _flickerElement(currencyCluster, steps);
+        } else {
+            currencyCluster.setVisible(false);
+        }
+    }
+
     function setBombButtonVisible(vis) {
         if (!bombBtn) return;
         bombBtn.setVisible(vis);
@@ -612,18 +650,13 @@ const gameHUD = (() => {
         else _updateBombUI();
     }
 
-    function setHealthBtnVisible(vis) {
-        if (!healthBtn) return;
-        healthBtn.setVisible(vis).setState(vis ? NORMAL : DISABLE);
-    }
-
     function setCurrencyHUDShifted(shifted) {
         // Reverted to standalone HUD: no longer shifts with tree
     }
 
     function resetHUDPosition(duration = 600) {
         if (!healthBar || !currencyCluster) return;
-        
+
         PhaserScene.tweens.add({
             targets: [healthBar, currencyCluster],
             x: (target) => target.baseX,
@@ -644,5 +677,5 @@ const gameHUD = (() => {
         });
     }
 
-    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBtnVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
+    return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBarVisible, setCurrencyVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
 })();

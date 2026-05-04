@@ -330,6 +330,8 @@ const upgradeTree = (() => {
         assignToUICamera(dragSurface);
         dragSurface.setInteractive();
 
+
+
         let isDraggingTree = false;
         let dragDistanceTotal = 0;
 
@@ -695,7 +697,8 @@ const upgradeTree = (() => {
         if (typeof gameHUD !== 'undefined') {
             gameHUD.setTestButtonVisible(false);
             gameHUD.setBombButtonVisible(false);
-            gameHUD.setHealthBtnVisible(false);
+            gameHUD.setHealthBarVisible(false);
+            gameHUD.setCurrencyVisible(false);
         }
         if (typeof towerStatsUI !== 'undefined') {
             towerStatsUI.setEnabled(false);
@@ -722,6 +725,9 @@ const upgradeTree = (() => {
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
                 helper.hideGlobalClickBlocker();
                 if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+                if (typeof gameHUD !== 'undefined') {
+                    gameHUD.setCurrencyVisible(true);
+                }
             });
         }
         if (treeNodeCamera) {
@@ -767,6 +773,10 @@ const upgradeTree = (() => {
 
         cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.25, customDuration, 'Cubic.easeOut');
 
+        if (typeof gameHUD !== 'undefined') {
+            gameHUD.setCurrencyVisible(false);
+        }
+
         if (treeGroup) {
             treeGroup.tweenTo(targetX, 0, {
                 duration: customDuration,
@@ -776,7 +786,6 @@ const upgradeTree = (() => {
                     if (typeof gameHUD !== 'undefined') {
                         gameHUD.setTestButtonVisible(true);
                         gameHUD.setBombButtonVisible(true);
-                        gameHUD.setHealthBtnVisible(true);
                         gameHUD.setCurrencyHUDShifted(false);
                     }
                     if (typeof towerStatsUI !== 'undefined') {
@@ -796,6 +805,10 @@ const upgradeTree = (() => {
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
                 helper.hideGlobalClickBlocker();
                 if (slideRightBtn) slideRightBtn.setState(NORMAL);
+                if (typeof gameHUD !== 'undefined') {
+                    gameHUD.setHealthBarVisible(true);
+                    gameHUD.setCurrencyVisible(true);
+                }
             });
         }
         if (treeNodeCamera) {
@@ -1829,6 +1842,7 @@ const upgradeTree = (() => {
 
 
         if (typeof gameHUD !== 'undefined' && gameHUD.shiftHUDTo) {
+            gameHUD.setHealthBarVisible(true);
             gameHUD.shiftHUDTo(20, duration);
         }
     }
