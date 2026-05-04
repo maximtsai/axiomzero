@@ -1145,24 +1145,34 @@ const NODE_DEFS = [
                         duration: 1500,
                         ease: 'Cubic.easeInOut',
                         onComplete: () => {
-                            nodeAnims.playRevealMapActivationAnimation(node, () => {
-                                // Sequential node revelation once explosion finishes
-                                PhaserScene.time.delayedCall(350, () => {
-                                    upgradeTree.revealNode('armor');
-                                    PhaserScene.time.delayedCall(150, () => {
-                                        upgradeTree.revealNode('emergency_overclock');
-                                    });
-                                    PhaserScene.time.delayedCall(300, () => {
-                                        upgradeTree.revealNode('repeat_exploit');
-                                    });
 
-                                    PhaserScene.time.delayedCall(450, () => {
-                                        upgradeTree.revealNode('diagnostic_analytics');
-                                        PhaserScene.time.delayedCall(1200, endCutscene);
+                        }
+                    });
+                    nodeAnims.playRevealMapActivationAnimation(node, () => {
+                        // Sequential node revelation once explosion finishes
+                        PhaserScene.time.delayedCall(350, () => {
+                            upgradeTree.revealNode('armor');
+                            PhaserScene.time.delayedCall(150, () => {
+                                upgradeTree.revealNode('emergency_overclock');
+                            });
+                            PhaserScene.time.delayedCall(300, () => {
+                                upgradeTree.revealNode('repeat_exploit');
+                            });
+
+                            PhaserScene.time.delayedCall(450, () => {
+                                upgradeTree.revealNode('diagnostic_analytics');
+                                PhaserScene.time.delayedCall(1200, () => {
+                                    endCutscene(() => {
+                                        if (typeof gameHUD !== 'undefined') {
+                                            gameHUD.setCurrencyVisible(true);
+                                        }
+                                        if (typeof upgradeTree !== 'undefined') {
+                                            upgradeTree.setNavigationEnabled(true);
+                                        }
                                     });
                                 });
                             });
-                        }
+                        });
                     });
                 }
             }

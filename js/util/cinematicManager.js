@@ -56,9 +56,13 @@ const cinematicManager = (() => {
 
     /**
      * Ends the cinematic sequence, slides bars out, restores UI, and cleans up.
+     * @param {Function} [onComplete] - Optional callback called after the exit animation and cleanup are finished.
      */
-    function endCutscene() {
-        if (!active || isEnding) return;
+    function endCutscene(onComplete) {
+        if (!active || isEnding) {
+            if (onComplete) onComplete();
+            return;
+        }
         isEnding = true;
 
         console.log('[Cinematic] Cutscene ending');
@@ -72,6 +76,7 @@ const cinematicManager = (() => {
             active = false;
             isEnding = false;
             console.log('[Cinematic] Cutscene finished');
+            if (onComplete) onComplete();
         });
     }
 
@@ -145,5 +150,10 @@ const cinematicManager = (() => {
         if (bottomBar) { bottomBar.destroy(); bottomBar = null; }
     }
 
-    return { playCutscene, endCutscene };
+    /** @returns {boolean} Whether a cinematic is currently active. */
+    function isActive() {
+        return active;
+    }
+
+    return { playCutscene, endCutscene, isActive };
 })();

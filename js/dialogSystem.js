@@ -13,27 +13,25 @@
  */
 
 const dialogSystem = (() => {
-    let currentPhase = '';
+    let currentPhase = ''; // Tracks the current game phase via MessageBus
+    let _clickBlocker = null; // Full-screen click blocker for modal dialogs
 
     /**
      * Initializes the dialog system and sets up MessageBus subscribers.
      */
     function init() {
-        console.log("[DIALOG SYSTEM] Initializing...");
+        debugLog("[DIALOG SYSTEM] Initializing...");
 
         if (typeof messageBus !== 'undefined') {
             messageBus.subscribe('phaseChanged', (phase) => {
                 currentPhase = phase;
             });
-
-            // Stub for future dialog triggers
-            // messageBus.subscribe('nodePurchased', _onNodePurchased);
-            // messageBus.subscribe('iterationEnded', _onIterationEnded);
         }
     }
 
     /**
      * Checks if dialog can currently be displayed.
+     * Narrative interactions are restricted to the UPGRADE phase.
      * @returns {boolean} True if in the upgrade phase.
      */
     function _canShowDialog() {
@@ -51,22 +49,68 @@ const dialogSystem = (() => {
             console.warn(`[DIALOG SYSTEM] playDialog('${id}') ignored: Not in Upgrade Phase.`);
             return;
         }
-        console.log(`[DIALOG SYSTEM] Playing dialog sequence: ${id}`);
-        // UI logic for displaying the dialog box and typewriter effect goes here
+        debugLog(`[DIALOG SYSTEM] Playing dialog sequence: ${id}`);
+        // TODO: UI logic for displaying the dialog box and typewriter effect
+    }
+
+    /**
+     * Creates and activates a fresh click blocker to capture screen-wide inputs.
+     * This prevents the player from interacting with the upgrade tree during dialog.
+     * The blocker is destroyed automatically once clicked.
+     */
+    function createDialogClickBlocker() {
+        // Clear any existing blocker first
+        if (_clickBlocker) {
+            _clickBlocker.destroy();
+            _clickBlocker = null;
+        }
+
+        _clickBlocker = new Button({
+            normal: {
+                atlas: 'buttons',
+                ref: 'black_pixel.png',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.halfHeight,
+                alpha: 0.35 // Semi-transparent black overlay
+            },
+            onMouseUp: () => {
+                console.log("test");
+                if (_clickBlocker) {
+                    _clickBlocker.destroy();
+                    _clickBlocker = null;
+                }
+            }
+        });
+
+        // Scale to fit screen with 100px padding (Requirement: black_pixel is 2x2)
+        const targetW = GAME_CONSTANTS.WIDTH + 100;
+        const targetH = GAME_CONSTANTS.HEIGHT + 100;
+        _clickBlocker.setScale(targetW / 2, targetH / 2);
+        _clickBlocker.setDepth(GAME_CONSTANTS.DEPTH_HUD + 1000);
+
+        // Ensure the click blocker renders on the UI camera (Requirement §N.3)
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(_clickBlocker);
+        }
     }
 
     /**
      * Immediately dismisses any active dialog and clears the queue.
-     * Useful for phase transitions or emergency interrupts.
+     * Useful for phase transitions to ensure clean UI state.
      */
     function forceClearDialog() {
-        console.log("[DIALOG SYSTEM] Force clearing active dialog.");
-        // UI logic for hiding the dialog box goes here
+        debugLog("[DIALOG SYSTEM] Force clearing active dialog.");
+        if (_clickBlocker) {
+            _clickBlocker.destroy();
+            _clickBlocker = null;
+        }
+        // TODO: UI logic for hiding the dialog box
     }
 
     return {
         init,
         playDialog,
+        createDialogClickBlocker,
         forceClearDialog
     };
 })();

@@ -259,12 +259,12 @@ const nodeAnims = {
         const dragGroup = upgradeTree.getDraggableGroup();
         if (dragGroup) dragGroup.add(glow);
 
-        const duration = 1800;
-        const avgValues = { scale: 0.2, alpha: 0.4 };
+        const duration = 2100;
+        const avgValues = { scale: 0.15, alpha: 0.3 };
 
         // Main tween for average growth
         scene.tweens.add({
-            delay: 300,
+            delay: 400,
             targets: avgValues,
             scale: 2.0,
             alpha: 1.0,
@@ -285,7 +285,7 @@ const nodeAnims = {
                 });
 
                 // 2. Create the expansion explosion
-                const explosion = scene.add.image(x, y, 'player', 'unlock_explosion.png')
+                const explosion = scene.add.image(glow.x, glow.y, 'buttons', 'unlock_explosion.png')
                     .setDepth(nodeDepth + 10) // Render above the node
                     .setScale(0.5)
                     .setAlpha(1.2);

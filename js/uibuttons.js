@@ -27,9 +27,11 @@ function createOptionsButton(x, y) {
             let sfx = audio.play('click', 0.95);
             if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
             if (icon) icon.setAlpha(1.0);
+            if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel('OPTIONS');
         },
         onHoverOut: () => {
             if (icon) icon.setAlpha(0.83);
+            if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(null);
         }
     });
 

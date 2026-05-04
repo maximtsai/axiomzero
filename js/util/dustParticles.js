@@ -78,7 +78,7 @@ const dustParticles = (() => {
 
     const _alphaOpsBig = {
         onEmit: (particle) => {
-            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.04, 0.08);
+            particle.data.maxAlpha = Phaser.Math.FloatBetween(0.035, 0.06);
             return particle.data.maxAlpha;
         },
         onUpdate: (particle, key, t) => {

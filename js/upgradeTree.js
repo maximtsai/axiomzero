@@ -725,9 +725,13 @@ const upgradeTree = (() => {
             // Enable navigation button slightly before tween ends for better feel
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
                 helper.hideGlobalClickBlocker();
-                if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
-                if (typeof gameHUD !== 'undefined') {
-                    gameHUD.setCurrencyVisible(true);
+
+                const isCinematic = typeof cinematicManager !== 'undefined' && cinematicManager.isActive();
+                if (!isCinematic) {
+                    if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+                    if (typeof gameHUD !== 'undefined') {
+                        gameHUD.setCurrencyVisible(true);
+                    }
                 }
             });
         }
@@ -806,10 +810,14 @@ const upgradeTree = (() => {
             // Enable navigation button slightly before tween ends for better feel
             PhaserScene.time.delayedCall(customDuration - SLIDE_DURATION * 0.3, () => {
                 helper.hideGlobalClickBlocker();
-                if (slideRightBtn) slideRightBtn.setState(NORMAL);
-                if (typeof gameHUD !== 'undefined') {
-                    gameHUD.setHealthBarVisible(true);
-                    gameHUD.setCurrencyVisible(true);
+
+                const isCinematic = typeof cinematicManager !== 'undefined' && cinematicManager.isActive();
+                if (!isCinematic) {
+                    if (slideRightBtn) slideRightBtn.setState(NORMAL);
+                    if (typeof gameHUD !== 'undefined') {
+                        gameHUD.setHealthBarVisible(true);
+                        gameHUD.setCurrencyVisible(true);
+                    }
                 }
             });
         }
@@ -827,10 +835,10 @@ const upgradeTree = (() => {
             if (deployBtnGlow) PhaserScene.tweens.add({ targets: deployBtnGlow, x: deployBtnInitialX, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomInBtn) {
-            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomInBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
         if (zoomOutBtn) {
-            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration: customDuration, ease: 'Cubic.easeOut' });
         }
 
 
@@ -1426,7 +1434,7 @@ const upgradeTree = (() => {
         // 2. Floating text popup
         if (data.popupText) {
             const pos = tower.getPosition();
-            messageBus.publish('showFloatingText', 
+            messageBus.publish('showFloatingText',
                 pos.x + (Math.random() - 0.5) * 100,
                 pos.y + (Math.random() - 0.5) * 100,
                 data.popupText,
@@ -1851,5 +1859,23 @@ const upgradeTree = (() => {
         }
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    /**
+     * Manually enables or disables the tree navigation (slide) buttons.
+     * @param {boolean} enabled - Whether navigation should be interactive.
+     */
+    function setNavigationEnabled(enabled) {
+        if (enabled) {
+            if (fullUpgradeView) {
+                if (slideLeftBtn) slideLeftBtn.setState(NORMAL);
+            } else {
+                const mapResearched = (gameState.upgrades && gameState.upgrades.reveal_map) > 0;
+                if (slideRightBtn && mapResearched) slideRightBtn.setState(NORMAL);
+            }
+        } else {
+            if (slideLeftBtn) slideLeftBtn.setState(DISABLE);
+            if (slideRightBtn) slideRightBtn.setState(DISABLE);
+        }
+    }
+
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();
