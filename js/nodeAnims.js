@@ -309,6 +309,64 @@ const nodeAnims = {
     },
 
     /**
+     * Plays a dramatic buildup and explosion effect at a specific location.
+     * Used for the root Awaken activation on the tower.
+     * @param {number} x - The x coordinate.
+     * @param {number} y - The y coordinate.
+     * @param {number} depth - The depth for the explosion.
+     * @param {Function} onSequenceComplete - Callback triggered when the explosion starts.
+     */
+    playAwakenActivationAnimation: (x, y, depth, onSequenceComplete) => {
+        const scene = PhaserScene;
+
+        // 1. Create the flickering glow sprite (on main camera, no groups)
+        const glow = scene.add.image(x, y, 'player', 'unlock_glow.png')
+            .setDepth(depth - 5) // Slightly behind the target depth
+            .setAlpha(0.4)
+            .setScale(0.2);
+
+        const duration = 2000;
+        const avgValues = { scale: 0.5, alpha: 0.45 };
+
+        scene.tweens.add({
+            delay: 400,
+            targets: avgValues,
+            scale: 3,
+            alpha: 1.0,
+            duration: duration,
+            ease: 'Linear',
+            onUpdate: () => {
+                const flickerScale = (Math.random() - 0.5) * 0.45;
+                const flickerAlpha = (Math.random() - 0.5) * 0.5;
+                glow.setScale(avgValues.scale + flickerScale);
+                glow.setAlpha(Phaser.Math.Clamp(avgValues.alpha + flickerAlpha, 0.4, 1.0));
+            },
+            onComplete: () => {
+                scene.time.delayedCall(50, () => {
+                    if (glow.active) glow.destroy();
+                });
+
+                // 2. Create the expansion explosion (on main camera, no groups)
+                const explosion = scene.add.image(x, y, 'buttons', 'unlock_explosion.png')
+                    .setDepth(depth + 10) // Render above the target depth
+                    .setScale(0.5)
+                    .setAlpha(1.2);
+
+                scene.tweens.add({
+                    targets: explosion,
+                    alpha: 0.5,
+                    scale: 20,
+                    duration: 500,
+                    onComplete: () => {
+                        explosion.destroy();
+                    }
+                });
+                if (onSequenceComplete) onSequenceComplete();
+            }
+        });
+    },
+
+    /**
      * Plays a repeating "jiggle" scale animation when hovering over an interactable node.
      * @param {Node} node 
      */

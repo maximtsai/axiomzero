@@ -258,6 +258,40 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                 }
             }
             return group;
+        },
+
+        /**
+         * setChildLocalPosition: Directly update a child's local coordinates relative to the group.
+         * This is useful for pooled objects that are repositioned after being added to the group.
+         */
+        setChildLocalPosition: (gameObject, lx, ly) => {
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
+                if (c.ref === gameObject) {
+                    c.offsetX = lx;
+                    c.offsetY = ly;
+                    c.baseScaleX = gameObject.scaleX / _scale;
+                    c.baseScaleY = gameObject.scaleY / _scale;
+                    gameObject.setPosition(_x + lx * _scale, _y + ly * _scale);
+                    return;
+                }
+            }
+        },
+
+        /**
+         * setChildLocalScale: Directly update a child's local scale relative to the group.
+         */
+        setChildLocalScale: (gameObject, lsx, lsy) => {
+            if (lsy === undefined) lsy = lsx;
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
+                if (c.ref === gameObject) {
+                    c.baseScaleX = lsx;
+                    c.baseScaleY = lsy;
+                    gameObject.setScale(lsx * _scale, lsy * _scale);
+                    return;
+                }
+            }
         }
     };
 

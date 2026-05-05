@@ -107,7 +107,7 @@ const iterationOverScreen = (() => {
         // Line 2 (small label): "DATA COLLECTED"
         dataText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '26px',
+            fontSize: '27px', // Matched to other resource labels
             color: '#66aacc',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -115,7 +115,7 @@ const iterationOverScreen = (() => {
         // Line 3 (tiny delta): "+203 vs last run"
         dataDeltaText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '28px', // Increased from 24px
+            fontSize: '27px', // Increased from 24px
             color: '#aaaaaa',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -129,21 +129,21 @@ const iterationOverScreen = (() => {
 
         insightText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '28px', // Increased from 24px
+            fontSize: '27px', // Increased from 24px
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         shardText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '28px', // Increased from 24px
+            fontSize: '27px', // Increased from 24px
             color: '#ff2d78',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
 
         processorText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '28px', // Increased from 24px
+            fontSize: '27px', // Increased from 24px
             color: '#ff9500',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);
@@ -292,7 +292,7 @@ const iterationOverScreen = (() => {
             lifespan: 1800,
             scale: { start: 1.0, end: 0, ease: 'Quart.easeIn' },
             alpha: 1,
-            rotate: { start: 0, end: 5400 },
+            rotate: { start: 0, end: 400 },
             gravityY: 5,
             frequency: 75,
             emitting: false,
@@ -377,7 +377,7 @@ const iterationOverScreen = (() => {
         } else {
             if (sessionData > 0) {
                 // Ensure default label style
-                dataText.setFontSize(23); // Was 13
+                dataText.setFontSize(25);
                 dataText.setColor('#66aacc');
                 // ── Number line (large, with ◈ prefix) ──
                 dataNumberText.setText('◈ 0');

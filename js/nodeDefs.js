@@ -38,17 +38,35 @@ const NODE_DEFS = [
         childIds: ['automated_defense', 'integrity', 'focus', 'cheat', 'companion'],
         treeX: gridX(0),
         treeY: gridY(0),
-        effect: function () {
-            tower.awaken();
-            pulseAttack.unlock();
-            // Show the deploy button immediately
-            if (upgradeTree.isVisible()) {
-                upgradeTree._showDeployButton();
+        effect: async function () {
+            if (typeof tutorialManager !== 'undefined') {
+                tutorialManager.hideAll();
             }
-            if (typeof glitchFX !== 'undefined') {
-                glitchFX.triggerSystemScan();
+            if (typeof cinematicManager !== 'undefined') {
+                const endCutscene = await cinematicManager.playCutsceneMinimal();
+                const node = upgradeTree.getNode('awaken');
+
+                nodeAnims.playAwakenActivationAnimation(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, GAME_CONSTANTS.DEPTH_TOWER, () => {
+                    tower.awaken();
+                    pulseAttack.unlock();
+                    // Show the deploy button immediately
+                    if (upgradeTree.isVisible()) {
+                        upgradeTree._showDeployButton(true);
+                    }
+                    if (typeof glitchFX !== 'undefined') {
+                        glitchFX.triggerSystemScan();
+                    }
+                    endCutscene(() => {
+                        upgradeTree._refreshAllNodes();
+                        if (node) node.finalizePurchase();
+                    });
+                });
             }
         },
+
+
+
+        delayActualPurchase: true,
     },
     {
         id: 'cheat',
@@ -490,7 +508,7 @@ const NODE_DEFS = [
         parents: ['integrity'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: gridX(-1),
+        treeX: gridX(-1.5),
         treeY: gridY(-1),
         effect: function () { },
     },
@@ -726,7 +744,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'lightning_chain.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 30,
+        baseCost: 35,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -747,7 +765,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'lightning_static_charge.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 3,
-        baseCost: 30,
+        baseCost: 25,
         costType: 'data',
         costScaling: 'linear',
         costStep: 10,
@@ -768,7 +786,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'shockwave_amplifier.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 40,
+        baseCost: 35,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -789,7 +807,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'shockwave_seismic_crush.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 2,
-        baseCost: 40,
+        baseCost: 35,
         costType: 'data',
         costScaling: 'linear',
         costStep: 20,
@@ -1172,6 +1190,7 @@ const NODE_DEFS = [
                                             if (typeof upgradeTree !== 'undefined') {
                                                 upgradeTree.setNavigationEnabled(true);
                                             }
+                                            if (node) node.finalizePurchase();
                                         });
                                     });
                                 });

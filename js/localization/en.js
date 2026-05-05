@@ -40,7 +40,7 @@ window.TRANSLATIONS.en = {
         backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#8FD9F8]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },
         restore_point: { name: 'RESTORE POINT', desc: 'When [b]BACKUP SERVER[/b] triggers, restore [color=#8FD9F8]40%[/color] health.', popup: 'RESTORE POINT LOADED' },
         completionist: { name: 'COMPLETIONIST', desc: 'Gain [color=cyan]+20 DATA[/color] whenever you max out a node.', popup: '+20 DATA' },
-        bug_report: { name: 'ERROR HANDLING', desc: 'Your core drops [color=cyan]DATA[/color] every time it takes damage.', popup: 'DATA RECOVERED' },
+        bug_report: { name: 'ERROR HANDLING', desc: 'Your core drops [color=cyan]DATA[/color] every time it takes damage.', popup: 'ERROR HANDLING' },
         emergency_depot: { name: 'EMERGENCY DEPOT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#8FD9F8]+3 SHARDS[/color], and [color=white]+3 INSIGHT[/color].', popup: 'RESOURCES ACQUIRED' },
         automated_defense: { name: 'AUTO DEFENSE', desc: 'Core automatically attacks enemies.', popup: 'TOWER ATTACK UNLOCKED' },
         focus: { name: 'FOCUS', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },

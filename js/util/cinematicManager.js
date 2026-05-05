@@ -18,6 +18,7 @@ const cinematicManager = (() => {
     // --- State ---
     let active = false;
     let isEnding = false;
+    let isMinimal = false;
     let blocker = null;
     let topBar = null;
     let bottomBar = null;
@@ -35,6 +36,7 @@ const cinematicManager = (() => {
         if (active) return Promise.resolve(() => { });
         active = true;
         isEnding = false;
+        isMinimal = false;
 
         console.log('[Cinematic] Cutscene started');
 
@@ -55,6 +57,29 @@ const cinematicManager = (() => {
     }
 
     /**
+     * Plays a minimal cinematic sequence (blocks input and fades UI, but no black bars).
+     */
+    function playCutsceneMinimal() {
+        if (active) return Promise.resolve(() => { });
+        active = true;
+        isEnding = false;
+        isMinimal = true;
+
+        console.log('[Cinematic] Minimal cutscene started');
+
+        if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(true);
+
+        _createBlocker();
+        _fadeUI(0, FADE_IN_DUR);
+
+        return new Promise(resolve => {
+            PhaserScene.time.delayedCall(IN_DURATION * RESOLVE_PCT, () => {
+                resolve(endCutscene);
+            });
+        });
+    }
+
+    /**
      * Ends the cinematic sequence, slides bars out, restores UI, and cleans up.
      * @param {Function} [onComplete] - Optional callback called after the exit animation and cleanup are finished.
      */
@@ -68,16 +93,24 @@ const cinematicManager = (() => {
         console.log('[Cinematic] Cutscene ending');
 
         _fadeUI(1, FADE_OUT_DUR);
-        _slideBarsOut(() => {
-            // Unblock custom buttons
+
+        const onFinish = () => {
             if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(false);
 
             _cleanup();
             active = false;
             isEnding = false;
+            isMinimal = false;
             console.log('[Cinematic] Cutscene finished');
             if (onComplete) onComplete();
-        });
+        };
+
+        if (isMinimal) {
+            // Wait for UI fade-in to finish before cleaning up
+            PhaserScene.time.delayedCall(FADE_OUT_DUR, onFinish);
+        } else {
+            _slideBarsOut(onFinish);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -115,11 +148,16 @@ const cinematicManager = (() => {
     }
 
     function _slideBarsIn() {
+        if (!topBar || !bottomBar) return;
         PhaserScene.tweens.add({ targets: topBar, y: BAR_HEIGHT / 2, duration: IN_DURATION, ease: 'Cubic.easeInOut' });
         PhaserScene.tweens.add({ targets: bottomBar, y: GAME_CONSTANTS.HEIGHT - BAR_HEIGHT / 2, duration: IN_DURATION, ease: 'Cubic.easeInOut' });
     }
 
     function _slideBarsOut(onComplete) {
+        if (!topBar || !bottomBar) {
+            if (onComplete) onComplete();
+            return;
+        }
         PhaserScene.tweens.add({ targets: topBar, y: -BAR_HEIGHT / 2, duration: OUT_DURATION, ease: 'Cubic.easeInOut' });
         PhaserScene.tweens.add({ targets: bottomBar, y: GAME_CONSTANTS.HEIGHT + BAR_HEIGHT / 2, duration: OUT_DURATION, ease: 'Cubic.easeInOut', onComplete });
     }
@@ -155,5 +193,5 @@ const cinematicManager = (() => {
         return active;
     }
 
-    return { playCutscene, endCutscene, isActive };
+    return { playCutscene, playCutsceneMinimal, endCutscene, isActive };
 })();

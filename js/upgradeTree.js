@@ -1610,10 +1610,8 @@ const upgradeTree = (() => {
         }
     }
 
-    function _showDeployButton() {
+    function _showDeployButton(forceFlash = false) {
         if (deployBtn) {
-            if (deployBtn.visible) return;
-
             deployBtn.setVisible(true);
             if (deployBtnGlow) deployBtnGlow.setVisible(true);
             deployBtn.setState(NORMAL);
@@ -1624,29 +1622,35 @@ const upgradeTree = (() => {
             const onlyAwaken = keys.length === 1 && keys[0] === 'awaken';
             const hasNoData = resourceManager.getData() <= 0;
 
-            if (onlyAwaken && hasNoData) {
-                const playFlash = () => {
-                    if (!deployBtn) return;
-                    const flash = PhaserScene.add.sprite(deployBtn.x, deployBtn.y, 'attacks', 'button_flash1.png');
-                    flash.setDepth(deployBtn.getDepth() + 1);
-                    flash.setScrollFactor(0);
-                    helper.setBlendMode(flash, Phaser.BlendModes.ADD);
-                    flash.play('button_flash');
-                    flash.on('animationcomplete', () => { if (flash && flash.destroy) flash.destroy(); });
-
-                    if (typeof assignToUICamera === 'function') {
-                        assignToUICamera(flash);
-                    }
-                };
-
-                playFlash();
-                deployBtn.hiTimer = PhaserScene.time.addEvent({
-                    delay: 4000,
-                    callback: playFlash,
-                    loop: true
-                });
+            if (forceFlash || (onlyAwaken && hasNoData)) {
+                PhaserScene.time.delayedCall(1000, _startDeployFlash, [], this);
             }
         }
+    }
+
+    function _startDeployFlash() {
+        if (!deployBtn || deployBtn.hiTimer) return;
+        if (typeof gameStateMachine !== 'undefined' && !gameStateMachine.is(GAME_CONSTANTS.PHASE_UPGRADE)) return;
+        const playFlash = () => {
+            if (!deployBtn) return;
+            const flash = PhaserScene.add.sprite(deployBtn.x, deployBtn.y, 'attacks', 'button_flash1.png');
+            flash.setDepth(deployBtn.getDepth() + 1);
+            flash.setScrollFactor(0);
+            helper.setBlendMode(flash, Phaser.BlendModes.ADD);
+            flash.play('button_flash');
+            flash.on('animationcomplete', () => { if (flash && flash.destroy) flash.destroy(); });
+
+            if (treeGroup) {
+                treeGroup.add(flash);
+            }
+        };
+
+        playFlash();
+        deployBtn.hiTimer = PhaserScene.time.addEvent({
+            delay: 4000,
+            callback: playFlash,
+            loop: true
+        });
     }
 
     function _showCoinMineButton() {

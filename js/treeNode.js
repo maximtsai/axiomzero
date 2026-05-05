@@ -445,7 +445,8 @@ class Node {
         this.effect(this.level);
 
         // Reveal logic - refresh the whole tree to ensure cascades work (e.g. grandchildren becoming ghosts)
-        upgradeTree._refreshAllNodes();
+        // Might not be needed
+        // upgradeTree._refreshAllNodes();
 
         // Feedback via messageBus (Decoupled §5)
         messageBus.publish('node_purchase_feedback', {
@@ -514,16 +515,11 @@ class Node {
     playPurchaseAnimationOnly() {
         if (this.state !== NODE_STATE.UNLOCKED) return false;
         if (this.isMaxed()) return false;
-        const cost = this.getCost();
         if (!this.canAfford()) return false;
-        // passed all our checks
-        // Persist
-        // Set state and level
+
+        // Set state and level locally (visuals follow state change)
         this.level++;
         this.setState(NODE_STATE.MAXED);
-
-        if (!gameState.upgrades) gameState.upgrades = {};
-        gameState.upgrades[this.id] = this.level;
 
         // Pulses and particles
         if (typeof upgradeTree !== 'undefined' && upgradeTree.playPurchasePulse) {
@@ -532,6 +528,23 @@ class Node {
 
         console.log(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
         return true;
+    }
+
+    finalizePurchase() {
+        const cost = this.getCost();
+        this._deductCost(cost);
+
+        // Persist to global state
+        if (!gameState.upgrades) gameState.upgrades = {};
+        gameState.upgrades[this.id] = this.level;
+        // saveGameState();
+        messageBus.publish('upgradePurchased', { id: this.id, level: this.level });
+        console.log(`[NODE] finalizePurchase completed for ${this.id}`);
+
+        // Redraw all lines to match new node states
+        if (typeof treeLineManager !== 'undefined') {
+            treeLineManager.updateLines();
+        }
     }
 
     _playLocalPurchaseAnimations() {
