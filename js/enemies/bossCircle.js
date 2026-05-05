@@ -205,7 +205,7 @@ class BossCircle extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        const bossHealth = 255;
+        const bossHealth = 260;
 
         super.activate(x, y, {
             maxHealth: bossHealth,

@@ -107,7 +107,7 @@ const iterationOverScreen = (() => {
         // Line 2 (small label): "DATA COLLECTED"
         dataText = PhaserScene.add.text(cx, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '26px', // Increased from 23px for Rajdhani proportions
+            fontSize: '26px',
             color: '#66aacc',
             align: 'center',
         }).setOrigin(0.5).setDepth(depth + 1);

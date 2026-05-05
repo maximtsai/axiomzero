@@ -43,8 +43,8 @@ class ExploderEnemy extends Enemy {
     onDeath(isFinal = true) {
         const ups = gameState.upgrades || {};
         const payloadLv = ups.volatile_payload || 0;
-        // Base range is 240. Volatile Payload adds +75% total.
-        const explosionRange = 240 * (1 + 0.75 * payloadLv);
+        // Base range is 250. Volatile Payload adds +65% total.
+        const explosionRange = 250 * (1 + 0.65 * payloadLv);
         const explosionDamage = this.model.maxHealth * 1.25;
         const bx = this.model.x;
         const by = this.model.y;

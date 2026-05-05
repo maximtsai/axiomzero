@@ -59,7 +59,7 @@ function _showOptionsPopup() {
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
     const width = 800;
-    const height = 644;
+    const height = 646;
     const elements = [];
     const textObjects = [];
 
@@ -88,7 +88,7 @@ function _showOptionsPopup() {
     elements.push(popupBG);
 
     const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 20, t('options', 'title'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '27px', color: '#ffffff',
+        fontFamily: 'Quantico-Bold', fontSize: '27px', color: '#ffffff',
     }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(titleObj);
     textObjects.push({ obj: titleObj, size: 27 });
@@ -100,7 +100,7 @@ function _showOptionsPopup() {
     textObjects.push({ obj: audioHeader.text, size: 23 });
 
     const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 51, t('options', 'music_vol'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
+        fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(musicLabel);
     textObjects.push({ obj: musicLabel, size: 21 });
@@ -115,7 +115,7 @@ function _showOptionsPopup() {
     elements.push(musicSlider);
 
     const sfxLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 89, t('options', 'sfx_vol'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
+        fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(sfxLabel);
     textObjects.push({ obj: sfxLabel, size: 21 });
@@ -181,12 +181,12 @@ function _showOptionsPopup() {
     textObjects.push({ obj: fullscreen.text, size: 21 });
 
     const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 130, t('options', 'particles'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '21px', color: '#ffffff',
+        fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(particlesLabel);
     textObjects.push({ obj: particlesLabel, size: 21 });
 
-    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
     fullBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(fullBg);
 
@@ -217,12 +217,12 @@ function _showOptionsPopup() {
     elements.push(fullBtn);
 
     const fullText = PhaserScene.add.text(W - width / 2 + 244, visualHeaderY + 130, t('options', 'particles_full'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '19px', color: '#ffffff'
+        fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff'
     }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0);
     elements.push(fullText);
-    textObjects.push({ obj: fullText, size: 19 });
+    textObjects.push({ obj: fullText, size: 21 });
 
-    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 56, 20, 20, 20, 20);
+    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
     minBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(minBg);
 
@@ -253,10 +253,10 @@ function _showOptionsPopup() {
     elements.push(minBtn);
 
     const minText = PhaserScene.add.text(W - width / 2 + 386, visualHeaderY + 130, t('options', 'particles_minimal'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '19px', color: '#ffffff'
+        fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff'
     }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0);
     elements.push(minText);
-    textObjects.push({ obj: minText, size: 19 });
+    textObjects.push({ obj: minText, size: 21 });
 
     const updateParticleButtons = () => {
         const isMinimal = gameState.settings.minimalParticles;
@@ -284,13 +284,13 @@ function _showOptionsPopup() {
     elements.push(dataHeader.text, dataHeader.line);
     textObjects.push({ obj: dataHeader.text, size: 23 });
 
-    const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 82, 'buttons', 'black_pixel.png');
+    const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 86, 'buttons', 'black_pixel.png');
     resetUnderlay.setDisplaySize(width - 477, 31);
     resetUnderlay.setDepth(depth + 3).setAlpha(0.5);
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
-    const resetGlow = helper.createGlowButton(W + 190, dataHeaderY + 83, width - 450, 56, t('options', 'reset_progress'), depth + 3, () => {
+    const resetGlow = helper.createGlowButton(W + 190, dataHeaderY + 87, width - 450, 60, t('options', 'reset_progress'), depth + 3, () => {
         _showResetConfirmPopup();
     }, true);
     elements.push(resetGlow.bg, resetGlow.text, resetGlow.btn);
@@ -313,7 +313,7 @@ function _showOptionsPopup() {
     updateAllTextSizes();
 
     // --- EXPORT BUTTON ---
-    const exportGlow = helper.createGlowButton(W - 240, dataHeaderY + 35, 240, 56, t('options', 'export_data'), depth + 3, () => {
+    const exportGlow = helper.createGlowButton(W - 240, dataHeaderY + 37, 240, 60, t('options', 'export_data'), depth + 3, () => {
         const str = exportSaveToString();
         if (str) {
             navigator.clipboard.writeText(str).then(() => {
@@ -325,11 +325,12 @@ function _showOptionsPopup() {
             alert(t('options', 'export_fail'));
         }
     });
+    exportGlow.text.setFontSize('21px');
     elements.push(exportGlow.bg, exportGlow.text, exportGlow.btn);
-    textObjects.push({ obj: exportGlow.text, size: 18 });
+    textObjects.push({ obj: exportGlow.text, size: 21 });
 
     // --- IMPORT BUTTON ---
-    const importGlow = helper.createGlowButton(W - 240, dataHeaderY + 83, 240, 56, t('options', 'import_data'), depth + 3, () => {
+    const importGlow = helper.createGlowButton(W - 240, dataHeaderY + 87, 240, 60, t('options', 'import_data'), depth + 3, () => {
         const str = prompt(t('options', 'import_prompt'));
         if (str) {
             const result = importSaveFromString(str);
@@ -342,8 +343,9 @@ function _showOptionsPopup() {
             }
         }
     });
+    importGlow.text.setFontSize('21px');
     elements.push(importGlow.bg, importGlow.text, importGlow.btn);
-    textObjects.push({ obj: importGlow.text, size: 18 });
+    textObjects.push({ obj: importGlow.text, size: 21 });
 
     // (resetBtn removed as it is now part of resetGlow)
 
@@ -537,22 +539,34 @@ function _showResetConfirmPopup() {
     elements.push(popupBG);
 
     const warningText = PhaserScene.add.text(W, H - 40, t('options', 'reset_confirm_text'), {
-        fontFamily: 'JetBrainsMono_Bold', fontSize: '22px', color: '#ff3366', align: 'center', stroke: '#000000', strokeThickness: 4
+        fontFamily: 'Quantico-Bold', fontSize: '22px', color: '#ff3366', align: 'center', stroke: '#440000', strokeThickness: 4
     }).setOrigin(0.5).setDepth(depth + 3).setScrollFactor(0);
     elements.push(warningText);
 
     // YES Button
-    const yesGlow = helper.createGlowButton(W - 110, H + 70, 160, 56, t('ui', 'yes'), depth + 3, () => {
+    const yesGlow = helper.createGlowButton(W - 110, H + 70, 160, 66, t('ui', 'yes'), depth + 3, () => {
         clearSave();
         window.location.reload();
     }, true);
+    yesGlow.text.setFontSize('26px');
+    yesGlow.bg.setAlpha(0.35);
+    yesGlow.text.setAlpha(0.5);
+    yesGlow.btn.setOnHoverFunc(() => {
+        yesGlow.bg.setAlpha(1);
+        yesGlow.text.setAlpha(1);
+    });
+    yesGlow.btn.setOnHoverOutFunc(() => {
+        yesGlow.bg.setAlpha(0.35);
+        yesGlow.text.setAlpha(0.5);
+    });
     elements.push(yesGlow.bg, yesGlow.text, yesGlow.btn);
 
     // NO Button
-    const noGlow = helper.createGlowButton(W + 110, H + 70, 160, 56, t('ui', 'no'), depth + 3, () => {
+    const noGlow = helper.createGlowButton(W + 110, H + 70, 160, 66, t('ui', 'no'), depth + 3, () => {
         helper.hideGlobalClickBlocker();
         elements.forEach(el => { if (el && el.destroy) el.destroy(); });
     });
+    noGlow.text.setFontSize('26px');
     elements.push(noGlow.bg, noGlow.text, noGlow.btn);
 
     const closeBtn = new Button({

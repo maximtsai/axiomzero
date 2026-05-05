@@ -69,6 +69,7 @@ const config = {
     }
 };
 
+
 // ─── Global Ad Hooks ──────────────────────────────────────────────────────────
 
 window.pauseGameForAd = function () {

@@ -161,12 +161,101 @@
 
 <body>
 
+  <!-- Mobile Gate Overlay -->
+  <div id="mobile-gate">
+    <div class="gate-title">AXIOM ZERO</div>
+    <button class="gate-btn" id="gate-play-btn">TAP TO PLAY</button>
+    <div class="gate-subtitle">Best experienced in landscape</div>
+  </div>
+
+  <script>
+    // Mobile gate: detect mobile and show overlay before game loads.
+    // Tapping the button enters fullscreen, locks orientation, then hides the gate.
+    // Includes retry logic for browsers that block fullscreen after a page refresh.
+    (function () {
+      var isMobile = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) return;
+
+      var gate = document.getElementById('mobile-gate');
+      var btn = document.getElementById('gate-play-btn');
+      if (!gate || !btn) return;
+
+      gate.style.display = 'flex';
+
+      function lockOrientation() {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(function () { });
+        }
+      }
+
+      function enterFullscreen() {
+        var elem = document.documentElement;
+        if (elem.requestFullscreen) return elem.requestFullscreen();
+        if (elem.webkitRequestFullscreen) return elem.webkitRequestFullscreen();
+        if (elem.msRequestFullscreen) return elem.msRequestFullscreen();
+        return Promise.reject();
+      }
+
+      // Persistent listener: whenever fullscreen is gained, lock orientation.
+      // This handles cases where the browser briefly exits/re-enters fullscreen.
+      document.addEventListener('fullscreenchange', function () {
+        if (document.fullscreenElement) lockOrientation();
+      });
+      document.addEventListener('webkitfullscreenchange', function () {
+        if (document.webkitFullscreenElement) lockOrientation();
+      });
+
+      // If fullscreen was denied (common after refresh), retry on subsequent
+      // user interactions until it succeeds.
+      var needsRetry = false;
+
+      function retryFullscreen() {
+        if (!needsRetry) return;
+        try {
+          var p = enterFullscreen();
+          if (p && typeof p.then === 'function') {
+            p.then(function () {
+              needsRetry = false;
+              document.removeEventListener('pointerup', retryFullscreen);
+            }).catch(function () { });
+          }
+        } catch (e) { }
+      }
+
+      btn.addEventListener('click', function () {
+        // Hide the gate immediately so the user isn't stuck
+        gate.style.display = 'none';
+
+        // Attempt fullscreen + orientation lock
+        try {
+          var fsPromise = enterFullscreen();
+          if (fsPromise && typeof fsPromise.then === 'function') {
+            fsPromise.then(function () {
+              lockOrientation();
+            }).catch(function () {
+              // Fullscreen denied — try orientation lock anyway, and set up retry
+              lockOrientation();
+              needsRetry = true;
+              document.addEventListener('pointerup', retryFullscreen);
+            });
+          } else {
+            setTimeout(lockOrientation, 300);
+          }
+        } catch (e) {
+          lockOrientation();
+          needsRetry = true;
+          document.addEventListener('pointerup', retryFullscreen);
+        }
+      });
+    })();
+  </script>
+
   <div id="preload">
     <span style="font-family: 'Michroma'">.</span>
     <span style="font-family: 'Quantico-Bold'">.</span>
     <span style="font-family: 'Quantico-Regular'">.</span>
-    <span style="font-family: 'JetBrainsMono_Regular'">.</span>
-    <span style="font-family: 'JetBrainsMono_Bold'">.</span>
+
+
 
     <span style="font-family: 'MunroSmall'">.</span>
   </div>
@@ -306,6 +395,7 @@
       }
     });
   </script>
+
 </body>
 
 </html>

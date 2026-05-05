@@ -482,6 +482,7 @@ class Node {
                     pos.y + (Math.random() - 0.5) * 100,
                     '+20 DATA',
                     {
+                        fontFamily: 'Quantico-Bold',
                         color: '#00ccff', // Matching cyan DATA color
                         fontSize: 24,
                         travel: 60,

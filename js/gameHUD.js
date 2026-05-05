@@ -210,7 +210,7 @@ const gameHUD = (() => {
         if (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont) baseFontSize += 3;
 
         bombBtnTxt = bombBtn.addText('', {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: `${baseFontSize}px`,
             color: GAME_CONSTANTS.COLOR_NEUTRAL,
             align: 'center',
@@ -306,7 +306,8 @@ const gameHUD = (() => {
         if (!bombBtn || typeof pulseAttack === 'undefined') return;
         const model = pulseAttack.getModel();
         const hasBombs = model.maxBombUses > 0;
-        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        const isUpgradePhase = (typeof gameStateMachine !== 'undefined' && gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE);
+        const isFullView = isUpgradePhase && (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
         const shouldShow = hasBombs && !isFullView;
 
         bombBtn.setVisible(shouldShow);

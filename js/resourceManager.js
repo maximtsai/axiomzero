@@ -330,7 +330,7 @@ const resourceManager = (() => {
         if (amount > 0) {
             if (typeof audio !== 'undefined') audio.play('levelup', 0.64);
             messageBus.publish('showFloatingText', GAME_VARS.mouseposx, GAME_VARS.mouseposy - 25, t('popup', 'shard_acquired'), {
-                fontFamily: 'JetBrainsMono_Bold',
+                fontFamily: 'Quantico-Bold',
                 fontSize: 36,
                 color: '#ff5555',
                 color2: '#ffaa00',
@@ -406,7 +406,7 @@ const resourceManager = (() => {
         const ups = gameState.upgrades || {};
         const magnetLv = ups.magnet || 0;
         const base = GAME_CONSTANTS.DATA_PICKUP_RADIUS;
-        const mult = 1 + (0.25 * magnetLv);
+        const mult = 1 + (0.40 * magnetLv);
         let finalR = base * mult;
 
         // Mobile bonus: +20px range (unscaled)

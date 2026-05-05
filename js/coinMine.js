@@ -28,7 +28,7 @@ const coinMine = (() => {
         popupBg.setScrollFactor(0);
 
         titleText = PhaserScene.add.text(cx - width / 2 + 30, cy - height / 2 + 20, t('ui', 'coin_mine'), {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '26px',
             color: '#ff9500',
         }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);

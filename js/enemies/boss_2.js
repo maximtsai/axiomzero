@@ -1,7 +1,7 @@
 // js/enemies/boss_2.js — Phase 2 boss (MVC).
 // Spawns when wave progress reaches 100% on Level 2.
 // Moves 3.0x as fast as a basic enemy and has a similar starting speed boost to Boss 1.
-// 200 base health.
+// 280 base health.
 
 const BOSS_2_STATES = {
     TRAVEL: 'travel',
@@ -612,7 +612,7 @@ class Boss2 extends Boss {
     activate(x, y, scaleFactor = 1.0) {
         this._isCharging = false;
         // Intended: Minibosses/Bosses do not scale with level progression
-        const bossHealth = 270;
+        const bossHealth = 280;
 
         super.activate(x, y, {
             maxHealth: bossHealth,

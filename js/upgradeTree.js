@@ -622,7 +622,7 @@ const upgradeTree = (() => {
         });
         coinMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
         coinMineBtn.addText(t('ui', 'mine'), {
-            fontFamily: 'JetBrainsMono_Bold',
+            fontFamily: 'Quantico-Bold',
             fontSize: '21px',
             color: '#ff9500',
         });
@@ -1809,8 +1809,12 @@ const upgradeTree = (() => {
         if (zoomOutBtn) PhaserScene.tweens.add({ targets: zoomOutBtn, x: 62, duration, ease: 'Cubic.easeOut' });
 
 
-        if (typeof gameHUD !== 'undefined' && gameHUD.resetHUDPosition) {
-            gameHUD.resetHUDPosition(duration);
+        if (typeof gameHUD !== 'undefined') {
+            if (fullUpgradeView && gameHUD.shiftHUDTo) {
+                gameHUD.shiftHUDTo(54, 0);
+            } else if (gameHUD.resetHUDPosition) {
+                gameHUD.resetHUDPosition(duration);
+            }
             gameHUD.setHealthHoverActive(!fullUpgradeView);
         }
     }
@@ -1855,6 +1859,7 @@ const upgradeTree = (() => {
         if (typeof gameHUD !== 'undefined' && gameHUD.shiftHUDTo) {
             gameHUD.setHealthBarVisible(true);
             gameHUD.setHealthHoverActive(false);
+            gameHUD.setBombButtonVisible(true);
             gameHUD.shiftHUDTo(20, duration);
         }
     }

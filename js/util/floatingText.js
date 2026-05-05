@@ -18,7 +18,7 @@ const floatingText = (() => {
 
     function _factory() {
         const t = _scene.add.text(0, 0, '', {
-            fontFamily: 'JetBrainsMono_Regular',
+            fontFamily: 'Quantico-Bold',
             fontSize: '22px',
             color: '#ffffff',
         });
@@ -28,7 +28,7 @@ const floatingText = (() => {
         t.setScale(1, 1);
         // Cache current styles on the object to avoid redundant setStyle calls
         t._cachedStyles = {
-            fontFamily: 'JetBrainsMono_Regular',
+            fontFamily: 'Quantico-Bold',
             fontSize: '22px',
             color: '#ffffff',
             stroke: '#000000',
@@ -52,7 +52,7 @@ const floatingText = (() => {
 
         opts = opts || {};
         let fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
-        const fontFamily = opts.fontFamily || 'JetBrainsMono_Regular';
+        const fontFamily = opts.fontFamily || 'Quantico-Bold';
 
         // Dynamic scaling based on numerical value (Skip if noScale is set)
         const numVal = parseFloat(text.trim());

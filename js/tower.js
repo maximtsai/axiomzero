@@ -74,7 +74,7 @@ class TowerModel {
         const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.4 * regenLv; // baseDecay commented out per request
-        this.armor = armorLv * 2; // 2 flat damage reduction per level
+        this.armor = armorLv; // 1 flat damage reduction per level
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
 
         // Root Access damage reduction
@@ -889,7 +889,7 @@ const tower = (() => {
 
             if (healAmountText > 0) {
                 messageBus.publish('showFloatingText', pos.x, pos.y - 35, `+${healAmountText} HEAL`, {
-                    fontFamily: 'JetBrainsMono_Bold',
+                    fontFamily: 'Quantico-Bold',
                     fontSize: 28,
                     color: '#00ff66',
                     depth: GAME_CONSTANTS.DEPTH_TOWER,

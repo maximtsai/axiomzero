@@ -8,12 +8,12 @@
 //   • SLAM ATTACK: 10 damage after a wind-up and lunge animation.
 
 const MB3 = {
-    HEALTH: 520,
+    HEALTH: 530,
     SPEED_MULT: 0.85,
     INITIAL_SPEED_MULT: 7,
     RAMP_DURATION: 2.5,
     ATTACK_COOLDOWN: 2500,
-    ATTACK_DAMAGE: 6,
+    SLAM_DAMAGE: 6,
 };
 
 class Miniboss3Model extends MinibossModel {
@@ -22,7 +22,7 @@ class Miniboss3Model extends MinibossModel {
         this.isMiniboss = true;
         this.initialSpeedMult = MB3.INITIAL_SPEED_MULT;
         this.rampDuration = MB3.RAMP_DURATION;
-        this.attackCooldown = 0;
+        this.slamTimer = 0;
         this.isSlamming = false;
     }
 }
@@ -48,12 +48,13 @@ class Miniboss3 extends Miniboss {
         // Intended: Minibosses/Bosses do not scale health or damage with level progression
         m.maxHealth = MB3.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
-        m.damage = MB3.ATTACK_DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY); // Intended static damage
+        m.slamDamage = MB3.SLAM_DAMAGE * (1 + ((m.multiplier || 1) - 1) * GAME_CONSTANTS.ENEMY_DAMAGE_SCALING_EFFICIENCY);
+        m.damage = 0; // DISABLE CONTACT DAMAGE (Handled by slam attack)
         m.speed = GAME_CONSTANTS.ENEMY_BASE_SPEED * MB3.SPEED_MULT;
         m.knockBackModifier = 0; // Immune to knockback
         m.size = 98;
 
-        m.attackCooldown = 0; // Ready immediately
+        m.slamTimer = 0; // Ready immediately
         m.isSlamming = false;
 
         this.setEnemyGlow('heavy_glow.png');
@@ -93,8 +94,8 @@ class Miniboss3 extends Miniboss {
         // Sync position to model only when not slamming
         this.view.syncPosition(m.x, m.y);
 
-        if (m.attackCooldown > 0) {
-            m.attackCooldown -= dt * 1000;
+        if (m.slamTimer > 0) {
+            m.slamTimer -= dt * 1000;
         }
 
         const tPos = tower.getPosition();
@@ -111,7 +112,7 @@ class Miniboss3 extends Miniboss {
             m.vx = 0;
             m.vy = 0;
 
-            if (m.attackCooldown <= 0) {
+            if (m.slamTimer <= 0) {
                 this._performSlam(dx, dy);
             }
         } else {
@@ -158,7 +159,7 @@ class Miniboss3 extends Miniboss {
                         if (!m.alive) return;
 
                         // Deal damage at the collision point using model's damage value
-                        tower.takeDamage(m.damage, m.x, m.y);
+                        tower.takeDamage(m.slamDamage, m.x, m.y);
 
                         if (typeof cameraManager !== 'undefined') {
                             cameraManager.shake(300, 0.02);
@@ -178,7 +179,7 @@ class Miniboss3 extends Miniboss {
                             onComplete: () => {
                                 if (!m.alive) return;
                                 m.isSlamming = false;
-                                m.attackCooldown = MB3.ATTACK_COOLDOWN;
+                                m.slamTimer = MB3.ATTACK_COOLDOWN;
                             }
                         });
                     }

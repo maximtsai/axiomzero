@@ -51,8 +51,8 @@ const enemyManager = (() => {
 
     let testEnemyCount = 0;
     const _damageTextOptions = {
-        fontFamily: 'MunroSmall',
-        fontSize: 40,
+        fontFamily: 'Quantico-Bold',
+        fontSize: 38,
         color: '#ffffff',
         stroke: '#330000',
         strokeThickness: 2,
@@ -578,14 +578,14 @@ const enemyManager = (() => {
                 displayText = `★${displayText}★`;
             }
 
-            let baseFontSize = 40;
+            let baseFontSize = 38;
             if (!isExecuted) {
                 // Square root scaling: normalized for better readability at high damage
-                baseFontSize = 25 + Math.floor(Math.sqrt(finalAmount) * 2);
+                baseFontSize = 24 + Math.floor(Math.sqrt(finalAmount) * 1.9);
                 if (wasResonance) baseFontSize += 4;
                 baseFontSize = Math.min(115, baseFontSize);
             } else {
-                baseFontSize = 36;
+                baseFontSize = 34;
             }
 
             _damageTextOptions.fontSize = baseFontSize;
@@ -719,14 +719,14 @@ const enemyManager = (() => {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
-            messageBus.publish('enemyKilled', 
-                ex, 
-                ey, 
-                enemy.model.baseResourceDrop, 
-                enemy.model.type, 
-                wasBoss, 
-                wasMiniboss, 
-                wasResonance, 
+            messageBus.publish('enemyKilled',
+                ex,
+                ey,
+                enemy.model.baseResourceDrop,
+                enemy.model.type,
+                wasBoss,
+                wasMiniboss,
+                wasResonance,
                 enemy.model.hijacksSpawned
             );
             if (enemy.model.type !== 'test') sessionKills++;

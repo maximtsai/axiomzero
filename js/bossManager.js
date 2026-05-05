@@ -324,7 +324,7 @@ const bossManager = (() => {
                 // 1. Floating Text
                 let healFontSize = 20 + Math.floor(Math.sqrt(healAmount) * 4);
                 messageBus.publish('showFloatingText', p.model.x, p.model.y - 10, "+" + Math.floor(healAmount), {
-                    fontFamily: 'MunroSmall',
+                    fontFamily: 'Quantico-Bold',
                     fontSize: healFontSize + 8,
                     color: '#00ff66',
                     stroke: '#330000',

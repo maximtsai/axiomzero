@@ -210,7 +210,7 @@ class Miniboss1 extends Miniboss {
                 m.isAttacking = true;
                 m.vx = 0;
                 m.vy = 0;
-                m.fireCooldown = 2500; // Intended: faster first shot delay upon entering range
+                m.fireCooldown = 2100; // Intended: faster first shot delay upon entering range
             }
         } else if (m.state === MINIBOSS_STATE.ATTACKING) {
             m.baseRotation = Math.atan2(dy, dx);
@@ -238,7 +238,7 @@ class Miniboss1 extends Miniboss {
             m.fireCooldown -= dtMs;
 
             // Trigger charge up at 2.25s
-            if (m.fireCooldown <= 2250 && !m.isCharging && m.fireCooldown > 0) {
+            if (m.fireCooldown <= 2000 && !m.isCharging && m.fireCooldown > 0) {
                 m.isCharging = true;
                 v.startCharge(() => {
                     m._isRampingUp = true;
