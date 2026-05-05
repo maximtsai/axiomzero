@@ -1149,6 +1149,13 @@ const NODE_DEFS = [
                         }
                     });
                     nodeAnims.playRevealMapActivationAnimation(node, () => {
+                        // Unlock children now — right as the reveal sequence begins visually.
+                        // onPurchaseComplete stored this callback on the node before effect() ran.
+                        if (node._pendingUnlockChildren) {
+                            node._pendingUnlockChildren();
+                            node._pendingUnlockChildren = null;
+                        }
+
                         // Sequential node revelation once explosion finishes
                         PhaserScene.time.delayedCall(350, () => {
                             upgradeTree.revealNode('armor');
@@ -1176,6 +1183,12 @@ const NODE_DEFS = [
                     });
                 }
             }
+        },
+        // Called by _onUpgradePurchased instead of _refreshAllNodes.
+        // Stores the unlockChildren callback on the node instance so effect()'s
+        // async timeline can invoke it at precisely the right cinematic moment.
+        onPurchaseComplete: function (node, unlockChildren) {
+            node._pendingUnlockChildren = unlockChildren;
         },
     },
     {

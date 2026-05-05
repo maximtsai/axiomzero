@@ -52,7 +52,7 @@ const upgradeTree = (() => {
     let lastCoordY = -1;
     let lastHoverLabel = "";
     let _currencyDirty = false;
-    let _currencyFrameCount = 0;
+    let _currencyCooldown = 0;
 
     // Tree layout constants (within the 800px left-half panel)
     const PANEL_W = GAME_CONSTANTS.halfWidth;
@@ -502,6 +502,7 @@ const upgradeTree = (() => {
     }
 
     function _refreshAllNodes() {
+        console.log("refresh all nodes");
         // Refresh every node in the tree. refreshState() is recursive, which handles
         // downstream propagation, but iterating through all nodes ensures that isolated 
         // branches or nodes with custom revelation logic are always caught.
@@ -1404,9 +1405,8 @@ const upgradeTree = (() => {
     }
 
     function _onUpgradePurchased(data) {
-        _refreshAllNodes();
-        treeLineManager.updateLines();
-
+        // Hook: if a node def provides onPurchaseComplete, let it control
+        // when children are unlocked instead of doing so immediately.
         if (data && data.id !== 'awaken') {
             _stopAwakenHint();
             _stopDeployHint();
@@ -1527,14 +1527,16 @@ const upgradeTree = (() => {
     function _update(delta) {
         if (!visible) return;
 
-        // Throttled currency refresh: once every 10 frames
+
         if (_currencyDirty) {
-            _currencyFrameCount++;
-            if (_currencyFrameCount >= 10) {
-                _currencyFrameCount = 0;
+            // Throttled currency refresh logic
+            if (_currencyCooldown <= 0) {
                 _currencyDirty = false;
                 _refreshAllNodes();
                 treeLineManager.updateLines();
+                _currencyCooldown = 12; // Restart cooldown after the pending refresh
+            } else {
+                _currencyCooldown--;
             }
         }
 

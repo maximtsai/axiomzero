@@ -750,6 +750,36 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/node_line.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,1,50,1</rect>
+                <key>scale9Paddings</key>
+                <rect>25,1,50,1</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/node_line_gold.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,1,50,2</rect>
+                <key>scale9Paddings</key>
+                <rect>25,1,50,2</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">buttons/popup.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
