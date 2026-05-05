@@ -903,7 +903,7 @@ const upgradeTree = (() => {
             const p = PhaserScene.add.image(0, 0, 'buttons', 'max_particle.png');
             p.setScrollFactor(0);
             p.setRotation(Phaser.Math.DegToRad(45));
-            draggableGroup.add(p); // This wrapper call handles tree camera un-ignoring
+            assignToUICamera(p); // Put in uiCamera directly without virtual group attachment
             return p;
         }, resetFn, 100);
     }
@@ -941,8 +941,16 @@ const upgradeTree = (() => {
     }
 
     /** Creates 20 spread-out particles for a maxed node effect using a mempool. */
-    function _playMaxParticles(cx, cy, depth) {
+    /** Creates spread-out particles for a maxed node effect using a mempool. 
+     *  These particles are spawned in screen-space (uiCamera) to prevent shrinking during transitions.
+     */
+    function _playMaxParticles(lcx, lcy, depth) {
         if (!maxParticlePool) return;
+
+        const scale = draggableGroup.getScale() || 1;
+        // Convert local center to screen space relative to treeGroup
+        const baseSX = lcx;
+        const baseSY = lcy;
 
         for (let i = 0; i < 18; i++) {
             const angle = Math.random() * Math.PI * 2;
@@ -952,11 +960,13 @@ const upgradeTree = (() => {
                 dist = Math.random() * 92;
                 attempts++;
             }
-            const px = cx + Math.cos(angle) * dist;
-            const py = cy + Math.sin(angle) * dist;
 
             const p = maxParticlePool.get();
             if (!p) continue;
+
+            // Scale distance by current tree zoom
+            const px = baseSX + Math.cos(angle) * dist * scale;
+            const py = baseSY + Math.sin(angle) * dist * scale;
 
             p.setPosition(px, py);
             p.setDepth(depth);
@@ -966,10 +976,11 @@ const upgradeTree = (() => {
 
             let baseScale = Phaser.Math.FloatBetween(0.35, 0.72);
             baseScale *= baseScale;
-            p.setScale(baseScale);
-            const finalScale = baseScale * 1.7;
+            // Apply current tree scale to particle base size
+            p.setScale(baseScale * scale);
+            const finalScale = (baseScale * 1.7) * scale;
 
-            const moveDist = dist * 0.4;
+            const moveDist = dist * 0.4 * scale;
             const tx = px + Math.cos(angle) * moveDist;
             const ty = py + Math.sin(angle) * moveDist;
 
@@ -1021,9 +1032,6 @@ const upgradeTree = (() => {
                 }
             });
         }
-
-        // Re-sync with draggableGroup offsets once after all particles are positioned
-        draggableGroup.recalculateOffsets();
     }
 
     function _startHintTimer() {
@@ -1405,8 +1413,6 @@ const upgradeTree = (() => {
     }
 
     function _onUpgradePurchased(data) {
-        // Hook: if a node def provides onPurchaseComplete, let it control
-        // when children are unlocked instead of doing so immediately.
         if (data && data.id !== 'awaken') {
             _stopAwakenHint();
             _stopDeployHint();

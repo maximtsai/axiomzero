@@ -68,6 +68,7 @@ class Node {
         this.monitorsDuoTier = def.monitorsDuoTier || 0;
         this.tooltipExtraWidth = def.tooltipExtraWidth || 0;
         this.labelCategory = def.label || "UPGRADE";
+        this.delayActualPurchase = def.delayActualPurchase || null;
 
         // Asset prefixing based on cost type
         this.prefix = (this.costType === 'insight') ? 'insight_node' : 'node';
@@ -422,6 +423,7 @@ class Node {
         if (this.isMaxed()) return false;
         const cost = this.getCost();
         if (!this.canAfford()) return false;
+        // passed all our checks
 
         // Deduct cost and increment level
         this._deductCost(cost);
@@ -506,7 +508,29 @@ class Node {
         }
 
         if (nodeTooltip.getCurrentNode() === this) this._showHover(true, cost);
+        return true;
+    }
 
+    playPurchaseAnimationOnly() {
+        if (this.state !== NODE_STATE.UNLOCKED) return false;
+        if (this.isMaxed()) return false;
+        const cost = this.getCost();
+        if (!this.canAfford()) return false;
+        // passed all our checks
+        // Persist
+        // Set state and level
+        this.level++;
+        this.setState(NODE_STATE.MAXED);
+
+        if (!gameState.upgrades) gameState.upgrades = {};
+        gameState.upgrades[this.id] = this.level;
+
+        // Pulses and particles
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.playPurchasePulse) {
+            upgradeTree.playPurchasePulse(this.btn.x, this.btn.y + 1, true, this.costType === 'insight');
+        }
+
+        console.log(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
         return true;
     }
 
@@ -724,7 +748,12 @@ class Node {
 
         // 3. Purchase logic
         if (this.canAfford()) {
-            this.purchase();
+            if (this.delayActualPurchase) {
+                this.playPurchaseAnimationOnly();
+                this.effect();
+            } else {
+                this.purchase();
+            }
         } else {
             // Can't afford — show hover and shake the cost text
             audio.play('retro1', 0.82);

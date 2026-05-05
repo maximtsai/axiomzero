@@ -217,19 +217,6 @@ const treeLineManager = (() => {
             }
             const isGold = (p.state === NODE_STATE.MAXED && nMaxed);
 
-            if (isGold) {
-                const screenDist = distance * gs;
-                const visualWidth = line.displayWidth;
-                // Periodic logging for gold lines
-                if (Math.random() < 0.01) {
-                    console.log(`Gold Line | Parent: ${pId} (${p.treeX}, ${p.treeY}) | Child: ${cId} (${targetX}, ${targetY}) | Distance: ${distance.toFixed(2)} | Scale: ${line.scaleX.toFixed(4)} | Width: ${visualWidth.toFixed(2)} | Origin: (${line.originX}, ${line.originY})`);
-                }
-
-                if (Math.abs(screenDist - visualWidth) > 1.0) {
-                    console.warn(`Line Length Mismatch! Calculated Screen Dist: ${screenDist.toFixed(2)}, Actual Width: ${visualWidth.toFixed(2)}`);
-                }
-            }
-
             const tex = isGold ? 'node_line_gold.png' : 'node_line.png';
             if (line.frame.name !== tex) {
                 line.setFrame(tex, false, false);

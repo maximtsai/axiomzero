@@ -1148,34 +1148,31 @@ const NODE_DEFS = [
 
                         }
                     });
+
                     nodeAnims.playRevealMapActivationAnimation(node, () => {
-                        // Unlock children now — right as the reveal sequence begins visually.
-                        // onPurchaseComplete stored this callback on the node before effect() ran.
-                        if (node._pendingUnlockChildren) {
-                            node._pendingUnlockChildren();
-                            node._pendingUnlockChildren = null;
-                        }
-
                         // Sequential node revelation once explosion finishes
-                        PhaserScene.time.delayedCall(350, () => {
-                            upgradeTree.revealNode('armor');
-                            PhaserScene.time.delayedCall(150, () => {
-                                upgradeTree.revealNode('emergency_overclock');
-                            });
-                            PhaserScene.time.delayedCall(300, () => {
+                        PhaserScene.time.delayedCall(250, () => {
+                            upgradeTree._refreshAllNodes();
+                            PhaserScene.time.delayedCall(250, () => {
                                 upgradeTree.revealNode('repeat_exploit');
-                            });
+                                PhaserScene.time.delayedCall(250, () => {
+                                    upgradeTree.revealNode('emergency_overclock');
+                                });
+                                PhaserScene.time.delayedCall(500, () => {
+                                    upgradeTree.revealNode('armor');
+                                });
 
-                            PhaserScene.time.delayedCall(450, () => {
-                                upgradeTree.revealNode('diagnostic_analytics');
-                                PhaserScene.time.delayedCall(1200, () => {
-                                    endCutscene(() => {
-                                        if (typeof gameHUD !== 'undefined') {
-                                            gameHUD.setCurrencyVisible(true);
-                                        }
-                                        if (typeof upgradeTree !== 'undefined') {
-                                            upgradeTree.setNavigationEnabled(true);
-                                        }
+                                PhaserScene.time.delayedCall(750, () => {
+                                    upgradeTree.revealNode('diagnostic_analytics');
+                                    PhaserScene.time.delayedCall(1000, () => {
+                                        endCutscene(() => {
+                                            if (typeof gameHUD !== 'undefined') {
+                                                gameHUD.setCurrencyVisible(true);
+                                            }
+                                            if (typeof upgradeTree !== 'undefined') {
+                                                upgradeTree.setNavigationEnabled(true);
+                                            }
+                                        });
                                     });
                                 });
                             });
@@ -1184,12 +1181,7 @@ const NODE_DEFS = [
                 }
             }
         },
-        // Called by _onUpgradePurchased instead of _refreshAllNodes.
-        // Stores the unlockChildren callback on the node instance so effect()'s
-        // async timeline can invoke it at precisely the right cinematic moment.
-        onPurchaseComplete: function (node, unlockChildren) {
-            node._pendingUnlockChildren = unlockChildren;
-        },
+        delayActualPurchase: true,
     },
     {
         id: 'test_defenses',
