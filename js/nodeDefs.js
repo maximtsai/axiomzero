@@ -943,7 +943,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'volatile_payload.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 2,
+        baseCost: 3,
         costType: 'coin',
         costScaling: 'static',
         costStep: 0,

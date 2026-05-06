@@ -358,6 +358,9 @@ const upgradeTree = (() => {
             const dy = y - lastDragY;
 
             dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
+            if (dragDistanceTotal > 20 && typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) {
+                nodeTooltip.hide();
+            }
 
             if (dx !== 0 || dy !== 0) {
                 draggableGroup.moveBy(dx, dy);
@@ -918,7 +921,7 @@ const upgradeTree = (() => {
             if (!insightMaxPulsePool) return;
             // Native image size assumed to be around 128x128
             _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.5, dur, startAlpha);
-            _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 2.0, dur + 50, startAlpha - 0.35, 70);
+            _animatePulseScale(x, y, insightMaxPulsePool, 1.0, 1.9, dur + 50, startAlpha - 0.35, 70);
             _playMaxParticles(x, y, GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         } else if (isInsight && !isMaxed) {
             if (!insightBuyPulsePool) return;
@@ -930,7 +933,7 @@ const upgradeTree = (() => {
 
             // Secondary inner pulse (Max only)
             if (isMaxed) {
-                _animatePulse(x, y, maxPulsePool, 64, 130, dur + 50, startAlpha - 0.35, 70);
+                _animatePulse(x, y, maxPulsePool, 64, 120, dur + 50, startAlpha - 0.35, 70);
 
                 // NEW: Particle burst for maxed nodes
                 // The node button is at nodeDepth = DEPTH_UPGRADE_TREE + 2.

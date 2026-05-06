@@ -120,7 +120,7 @@ const LEVEL_CONFIG = {
         swarmerGroupSize: { min: 4, max: 8 },
         miniboss: 'Miniboss4',
 
-        mainBoss: 'Boss5',
+        mainBoss: 'Boss4',
         dataDropMultiplier: 2,
         levelScalingModifier: 3,
     },

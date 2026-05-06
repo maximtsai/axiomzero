@@ -49,4 +49,5 @@ const audioFiles = [
     { name: 'exploder_boom_second', src: 'audio/exploder_boom_second.mp3' },
     { name: 'sword_stab', src: 'audio/sword_stab.mp3' },
     { name: 'sword_stab_lite', src: 'audio/sword_stab_lite.mp3' },
+    { name: 'quitebeat', src: 'audio/quitebeat.mp3' },
 ];

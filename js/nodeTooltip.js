@@ -277,10 +277,11 @@ const nodeTooltip = (() => {
         const centerX = btnBounds.centerX;
         const centerY = btnBounds.centerY;
 
-        // Position above the node (Duo nodes appear 56px higher)
+        const zoom = (typeof upgradeTree !== 'undefined' && upgradeTree.getDraggableGroup) ? (upgradeTree.getDraggableGroup().getScale() || 1) : 1;
+
+        // Position above the node (Duo nodes appear 52px higher)
         // Check for top-of-screen intersection to flip position if needed
-        const nodeHeight = node.size || 80;
-        const verticalOffset = node.isDuoBox ? 52 : 26;
+        const verticalOffset = (node.isDuoBox ? 52 : 27) * zoom;
         const topSafeMargin = 15;
 
         let showAbove = true;
@@ -291,8 +292,8 @@ const nodeTooltip = (() => {
         let horizontalOffset = 0;
         if (node.isDuoBox) {
             const side = node._getDuoSide();
-            if (side === 'left') horizontalOffset = 16;
-            else if (side === 'right') horizontalOffset = -16;
+            if (side === 'left') horizontalOffset = 16 * zoom;
+            else if (side === 'right') horizontalOffset = -16 * zoom;
         }
 
         // Clamp X position to stay within the leftpanel bounds
