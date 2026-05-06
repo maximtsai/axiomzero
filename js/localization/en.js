@@ -29,6 +29,7 @@ window.TRANSLATIONS.en = {
         bossCircle_name: 'OVERWRITE',
         boss_2_name: 'DEFENDER',
         boss_3_name: 'LEGI0N',
+        boss_4_name: 'EXECUTE',
         boss_5_name: 'OVERLORD',
         cancel: 'CANCEL'
     },

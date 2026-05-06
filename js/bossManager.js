@@ -369,6 +369,7 @@ const bossManager = (() => {
             'BossCircle': typeof BossCircle !== 'undefined' ? BossCircle : null,
             'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
             'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
+            'Boss4': typeof Boss4 !== 'undefined' ? Boss4 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
         };
         return registry[className];
