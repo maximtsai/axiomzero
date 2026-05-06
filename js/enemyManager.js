@@ -596,7 +596,9 @@ const enemyManager = (() => {
             _damageTextOptions.duration = isExecuted ? 1200 : 1000;
             _damageTextOptions.scaleX = isExecuted ? 0.92 : 1;
 
-            messageBus.publish('showFloatingText', enemy.model.x, enemy.model.y - 14, '\n ' + displayText + ' \n ', _damageTextOptions);
+            const rx = (Math.random() - 0.5) * 12;
+            const ry = (Math.random() - 0.5) * 4;
+            messageBus.publish('showFloatingText', enemy.model.x + rx, enemy.model.y - 14 + ry, '\n ' + displayText + ' \n ', _damageTextOptions);
         }
 
         if (died && !enemy.model.isGhosting) {

@@ -265,6 +265,7 @@ const nodeTooltip = (() => {
             else if (node.costType === 'shard') costColor = '#ff2d78';
             else if (node.costType === 'coin') costColor = '#00ff66';
             costT.setColor(costColor);
+            costT.setShadow(0, 0, costColor, 4, false, true);
 
             currentY += 39;
         }

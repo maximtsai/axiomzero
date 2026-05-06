@@ -81,6 +81,7 @@ class CurrencyCluster {
                 fontFamily: 'Quantico-Regular',
                 fontSize: this._getFontSize(),
                 color: def.color,
+                shadow: { offsetX: 0, offsetY: 0, color: def.color, blur: 4, fill: true }
             }).setOrigin(0, 0.5).setDepth(this.depth).setScrollFactor(0).setVisible(false);
 
             const btn = new Button({

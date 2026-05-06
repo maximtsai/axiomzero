@@ -369,6 +369,22 @@ class Node {
             }
         }
     }
+    
+    /**
+     * Specialized refresh that forces a recursive update down a fixed number of generations.
+     * This is used during Duo-Box swaps to ensure that even if a node's state doesn't 
+     * technically change (e.g. Ghost -> Ghost), its descendants correctly inherit 
+     * the new branchActive status and update their visuals/lines.
+     */
+    refreshBranch(generations = 2) {
+        this.refreshState();
+        if (generations > 0) {
+            for (let i = 0; i < this.childIds.length; i++) {
+                const child = upgradeTree.getNode(this.childIds[i]);
+                if (child) child.refreshBranch(generations - 1);
+            }
+        }
+    }
 
     setState(newState) {
         if (this.state === newState) return;
@@ -795,10 +811,10 @@ class Node {
                 gameState.upgrades[this.id] = this.level;
             }
 
-            // Refresh both siblings and their entire sub-trees BEFORE calling effect
-            this.refreshState();
+            // Refresh both siblings and their sub-trees (2 generations) BEFORE calling effect
+            this.refreshBranch(2);
             const sibling = upgradeTree.getNode(this.duoSiblingId);
-            if (sibling) sibling.refreshState();
+            if (sibling) sibling.refreshBranch(2);
 
             // Apply this node's effect, deactivate sibling's (now with correct branchActive states)
             this.effect(this.level);
@@ -809,6 +825,8 @@ class Node {
             // Explicitly update visuals for both siblings
             this._updateVisual();
             if (sibling) sibling._updateVisual();
+
+            treeLineManager.updateLines();
 
             // Refresh tooltip
             if (nodeTooltip.getCurrentNode() === this) {
@@ -923,6 +941,9 @@ class Node {
         // Manually revealed nodes have full alpha but use ghost sprite
         const alpha = this.revealedManually ? 1.0 : this.getGhostAlpha();
         this.btn.setAlpha(alpha);
+
+        // Ghost nodes should not show icons
+        if (this.iconSprite) this.iconSprite.setVisible(false);
 
         return sprite;
     }
