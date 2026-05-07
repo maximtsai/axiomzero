@@ -1423,6 +1423,13 @@ const upgradeTree = (() => {
             _stopAwakenHint();
             _stopDeployHint();
         }
+
+        // Immediate refresh to ensure child nodes unlock without the 12-frame throttled delay
+        _currencyDirty = false;
+        _refreshAllNodes();
+        if (typeof treeLineManager !== 'undefined') {
+            treeLineManager.updateLines();
+        }
     }
 
     function _onNodePurchaseFeedback(data) {
@@ -1767,6 +1774,23 @@ const upgradeTree = (() => {
         return true;
     }
 
+    /**
+     * VISUAL: Reveals a node specifically as a GHOST.
+     * Unlike revealNode, this state persists and blocks the node from being UNLOCKED
+     * even if requirements are met, until unlockNode() is called.
+     */
+    function showGhostNode(id) {
+        if (!nodes[id]) return false;
+        if (!gameState.ghostNodes) gameState.ghostNodes = {};
+        gameState.ghostNodes[id] = true;
+        nodes[id].refreshState();
+        nodes[id].playRevealAnimation();
+        _refreshAllNodes();
+        treeLineManager.updateLines();
+
+        return true;
+    }
+
     function onEnterUpgradePhase(duration) {
         let treeTargetX = 0;
         let maskTargetX = 0;
@@ -1902,5 +1926,5 @@ const upgradeTree = (() => {
         }
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

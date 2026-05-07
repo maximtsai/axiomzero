@@ -86,6 +86,7 @@ class Node {
         this.revealed = false;    // Whether this node is force-revealed by an event
         this.revealedManually = false; // Whether this node was revealed via the revealNode API
         this.forceUnlocked = false; // Whether this node is force-unlocked by an event
+        this.forceGhost = false;    // Whether this node is force-revealed as a ghost by an event
 
         // Cached recursive lookups (updated in refreshState)
         this._cachedIsDuoDescendant = this.isDuoBox;
@@ -257,8 +258,9 @@ class Node {
         }
 
         // 1a. Check for event-based revelation/unlocking (ignored if node is already purchased)
-        this.revealed = !!(this.revealedManually || (gameState.revealedNodes && gameState.revealedNodes[this.id])) && this.level === 0;
+        this.revealed = !!(this.revealedManually || (gameState.revealedNodes && gameState.revealedNodes[this.id]) || (gameState.ghostNodes && gameState.ghostNodes[this.id])) && this.level === 0;
         this.forceUnlocked = !!(gameState.unlockedNodes && gameState.unlockedNodes[this.id]) && this.level === 0;
+        this.forceGhost = !!(gameState.ghostNodes && gameState.ghostNodes[this.id]) && this.level === 0;
 
         let anyRevealed = false;
         // 1b. Strict visibility inheritance: HIDDEN if parent is HIDDEN
@@ -330,7 +332,7 @@ class Node {
             this.setState(NODE_STATE.GHOST); // Purchased but currently deactivated
         } else if (this.level >= this.maxLevel) {
             this.setState(NODE_STATE.MAXED);
-        } else if (this.isRequirementsMet() || this.forceUnlocked) {
+        } else if (this.forceUnlocked || (this.isRequirementsMet() && !this.forceGhost)) {
             if (FLAGS.DEBUG && this.state !== NODE_STATE.UNLOCKED) {
                 console.log(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
             }

@@ -874,6 +874,9 @@ const tower = (() => {
         if (ups.peak_performance && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
             dmg += 10;
         }
+        if (ups.parallel_processing) {
+            dmg += 4;
+        }
 
         if (isBoss && ups.kernel_breaker) {
             dmg *= (1 + 0.25 * ups.kernel_breaker);

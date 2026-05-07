@@ -986,7 +986,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['farsight'],
         childIds: [],
-        treeX: gridX(5.5),
+        treeX: gridX(6.5),
         treeY: gridY(8.0),
         effect: function () {
             // Recalculated via normal gameplay checks
@@ -1064,10 +1064,69 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['crescendo', 'amplitude'],
         requiresMaxParent: true,
-        childIds: ['recursion'],
+        childIds: ['recursion', 'memory_leak'],
         treeX: gridX(4.0),
         treeY: gridY(3),
         effect: function () { },
+    },
+    {
+        id: 'memory_leak',
+        name: t('nodes', 'memory_leak.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'memory_leak.desc'),
+        popupText: t('nodes', 'memory_leak.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['hijack'],
+        childIds: ['bypass_2'],
+        treeX: gridX(4.5),
+        treeY: gridY(4),
+        effect: function () { },
+    },
+    {
+        id: 'bypass_2',
+        name: t('nodes', 'bypass_2.name'),
+        icon: 'Skillicon14_07.png',
+        description: t('nodes', 'bypass_2.desc'),
+        popupText: t('nodes', 'bypass_2.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 200,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['memory_leak'],
+        childIds: ['parallel_processing'],
+        treeX: gridX(5.0),
+        treeY: gridY(5),
+        effect: function () {
+            if (typeof resourceManager !== 'undefined') {
+                resourceManager.addData(400);
+            }
+        },
+    },
+    {
+        id: 'parallel_processing',
+        name: t('nodes', 'parallel_processing.name'),
+        icon: 'Skillicon14_23.png',
+        description: t('nodes', 'parallel_processing.desc'),
+        popupText: t('nodes', 'parallel_processing.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 250,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['bypass_2'],
+        childIds: ['data_mining'],
+        treeX: gridX(5.0),
+        treeY: gridY(7.0),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+            if (typeof upgradeDispatcher !== 'undefined') upgradeDispatcher.recalcPulseDamage();
+            if (typeof upgradeTree !== 'undefined') upgradeTree.showGhostNode('peak_performance');
+        },
     },
     {
         id: 'recursion',
@@ -1077,14 +1136,14 @@ const NODE_DEFS = [
         popupText: t('nodes', 'recursion.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 3,
+        baseCost: 2,
         costType: 'coin',
         costScaling: 'static',
         parents: ['hijack'],
         requiresMaxParent: true,
         childIds: [],
-        treeX: gridX(4.5),
-        treeY: gridY(4),
+        treeX: gridX(5.0),
+        treeY: gridY(3),
         effect: function () { },
     },
     {
@@ -1887,13 +1946,32 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['instability_mark'],
-        childIds: ['farsight'],
+        childIds: ['data_mining'],
         treeX: gridX(3.5),
         treeY: gridY(8.0),
         effect: function () {
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
             }
+        },
+    },
+    {
+        id: 'data_mining',
+        name: t('nodes', 'data_mining.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'data_mining.desc'),
+        popupText: t('nodes', 'data_mining.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['peak_performance', 'parallel_processing'],
+        childIds: ['farsight'],
+        treeX: gridX(4.5),
+        treeY: gridY(8.0),
+        effect: function () {
+            if (typeof upgradeTree !== 'undefined') upgradeTree.unlockNode('peak_performance');
         },
     },
     {
@@ -1907,9 +1985,9 @@ const NODE_DEFS = [
         baseCost: 150,
         costType: 'data',
         costScaling: 'static',
-        parents: ['peak_performance'],
+        parents: ['data_mining'],
         childIds: ['prismatic_array'],
-        treeX: gridX(4.5),
+        treeX: gridX(5.5),
         treeY: gridY(8.0),
         effect: function () {
             if (typeof tower !== 'undefined') {

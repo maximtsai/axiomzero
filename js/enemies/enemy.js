@@ -629,6 +629,35 @@ class Enemy {
     takeDamage(amount, source = 'other') {
         const result = this.model.takeDamage(amount);
 
+        // MEMORY LEAK logic: Bosses drop data on cursor hit
+        if (source === 'cursor' && this.model.isBoss) {
+            const memoryLeakLevel = (gameState.upgrades && gameState.upgrades.memory_leak) || 0;
+            if (memoryLeakLevel > 0) {
+                const dataToDrop = 1 + Math.floor(amount * 0.1);
+                for (let i = 0; i < dataToDrop; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 5 + Math.random() * 45;
+                    resourceManager.spawnDataDrop(this.model.x, this.model.y, dist, angle);
+                }
+            }
+        }
+
+        // DATA MINING logic: Bosses drop data on tower basic hit
+        if (source === 'tower' && this.model.isBoss) {
+            const dataMiningLevel = (gameState.upgrades && gameState.upgrades.data_mining) || 0;
+            if (dataMiningLevel > 0) {
+                const total = (amount * 0.2) + (this.model.dataMiningAccumulator || 0);
+                const dataToDrop = Math.floor(total);
+                this.model.dataMiningAccumulator = total - dataToDrop;
+
+                for (let i = 0; i < dataToDrop; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 15 + Math.random() * 65;
+                    resourceManager.spawnDataDrop(this.model.x, this.model.y, dist, angle);
+                }
+            }
+        }
+
         // Visual feedback
         this.view.playHitFlash();
         PhaserScene.time.delayedCall(135, () => {
