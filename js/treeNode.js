@@ -112,6 +112,7 @@ class Node {
         this._tapConfirmed = false;
     }
 
+    static selectIndicator = null;
     static touchedNode = null;
 
     // ── helpers ──────────────────────────────────────────────────────────
@@ -520,6 +521,7 @@ class Node {
             this._updateVisual();
         } else if (this.isMaxed()) {
             this.setState(NODE_STATE.MAXED);
+            Node._updateSelectIndicator(this);
         } else {
             this._updateVisual();
         }
@@ -857,6 +859,7 @@ class Node {
             // First tap — show the tooltip and mark this as the globally touched node ID
             Node.touchedNode = this.id;
             this._showHover();
+            Node._updateSelectIndicator(this);
             return true;
         }
 
@@ -871,6 +874,7 @@ class Node {
 
         // Tooltip is ready and matches this node — reset flag and fall through to purchase
         Node.touchedNode = null;
+        Node._updateSelectIndicator(null);
         return false;
     }
 
@@ -1161,6 +1165,8 @@ class Node {
         this._tapConfirmed = false;
         if (nodeTooltip.getCurrentNode() === this) {
             nodeTooltip.hide();
+            Node.touchedNode = null;
+            Node._updateSelectIndicator(null);
         }
 
         if (typeof upgradeTree !== 'undefined') {
@@ -1308,6 +1314,64 @@ de the current viewport to save draw calls.
                 });
             }
         });
+    }
+
+    /**
+     * Manages the global selection indicator (NineSlice) for mobile touch states.
+     * @param {Node|null} node - The node to highlight, or null to hide.
+     */
+    static _updateSelectIndicator(node) {
+        if (!PhaserScene) return;
+
+        if (!Node.selectIndicator) {
+            // Updated: select_indicator.png is now a standard image asset
+            Node.selectIndicator = PhaserScene.add.image(0, 0, 'buttons', 'select_indicator.png');
+            Node.selectIndicator.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 10);
+            Node.selectIndicator.setScrollFactor(0);
+            Node.selectIndicator.setVisible(false);
+
+            // Add to draggableGroup to ensure it respects the tree mask and moves with the tree
+            if (typeof upgradeTree !== 'undefined') {
+                const group = upgradeTree.getDraggableGroup();
+                if (group) group.add(Node.selectIndicator);
+            }
+        }
+
+        if (!node || !node.btn || node.isDuoBox || node.isMaxed()) {
+            if (Node.selectIndicator) Node.selectIndicator.setVisible(false);
+            return;
+        }
+
+        // Snap to node button position
+        Node.selectIndicator.setPosition(node.btn.x, node.btn.y);
+        
+        // Update frame based on cost type
+        const frame = (node.costType === 'insight') ? 'select_indicator_insight.png' : 'select_indicator.png';
+        Node.selectIndicator.setFrame(frame);
+
+        Node.selectIndicator.setScale(1.09);
+        PhaserScene.tweens.add({
+            targets: Node.selectIndicator,
+            scale: 0.975,
+            duration: 80,
+            ease: 'Quart.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: Node.selectIndicator,
+                    scale: 1,
+                    duration: 200,
+                    ease: 'Back.easeOut',
+                });
+            }
+        });
+        Node.selectIndicator.setVisible(true);
+
+        // Sync scale with tree zoom level
+        const gs = (group && group.getScale()) || 1;
+        Node.selectIndicator.setScale(gs);
+
+        // Update the stored offset in the VirtualGroup so it stays attached during dragging
+        if (group) group.recalculateOffsets();
     }
 }
 

@@ -141,7 +141,7 @@ const upgradeTree = (() => {
 
             const zoomStep = 0.08;
             const minScale = 0.5;
-            const maxScale = 1.0;
+            const maxScale = 1.5;
             const currentScale = draggableGroup.getScale();
 
             let newScale = currentScale;
@@ -1475,7 +1475,7 @@ const upgradeTree = (() => {
         const spacing = 62;
 
         const zoomHelper = (delta) => {
-            zoomGoal = Phaser.Math.Clamp(zoomGoal + delta, 0.5, 1.0);
+            zoomGoal = Phaser.Math.Clamp(zoomGoal + delta, 0.5, 1.5);
             draggableGroup.tweenScale(zoomGoal, {
                 duration: 250,
                 ease: 'Cubic.easeOut',
