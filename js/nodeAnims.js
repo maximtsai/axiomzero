@@ -24,7 +24,7 @@ const nodeAnims = {
      * @param {Node} node 
      */
     playMaxedAnimation: (node) => {
-        if (!node.btn) return;
+        if (!node.btn || node.isDuoBox) return;
 
         const baseScaleX = node.btn.scaleX;
         const baseScaleY = node.btn.scaleY;
@@ -143,6 +143,44 @@ const nodeAnims = {
                 });
             }
         });
+    },
+
+    /**
+     * Plays a quick punchy scale/rotate animation specifically for Duo-Box swaps.
+     * @param {Node} node 
+     */
+    playDuoSwapAnimation: (node) => {
+        if (!node.btn) return;
+
+        const treeScale = upgradeTree.getDraggableGroup().getScale() || 1;
+
+        const animatePart = (target) => {
+            if (!target) return;
+
+            // Immediate punch (Squish)
+            target.setScale(0.8 * treeScale);
+
+            PhaserScene.tweens.add({
+                targets: target,
+                scaleX: treeScale * 1.2,
+                scaleY: treeScale * 1.2,
+                duration: 130,
+                ease: 'Quart.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: target,
+                        scaleX: treeScale,
+                        scaleY: treeScale,
+                        duration: 350,
+                        easeParams: [3.5],
+                        ease: 'Back.easeOut'
+                    });
+                }
+            });
+        };
+
+        animatePart(node.btn);
+        animatePart(node.iconSprite);
     },
 
     /**

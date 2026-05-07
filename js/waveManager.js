@@ -206,7 +206,7 @@ const waveManager = (() => {
         // 1. Freeze all enemies — stop movement and spawning
         messageBus.publish('freezeEnemies');
         if (typeof timeManager !== 'undefined') {
-            timeManager.setTempPause(150, 0.05);
+            timeManager.setTempPause(350, 0.001);
         }
 
         // 1.5. Subliminal Black Flash (75ms)
@@ -228,13 +228,15 @@ const waveManager = (() => {
         }
 
         // 4. Play explosion sound
-        audio.play('retro_explosion', 1.0, false);
+        setTimeout(() => {
+            audio.play('retro_explosion', 1.0, false);
+            _triggerDeathGlitchBurst();
+        }, 200)
 
         customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
         PhaserScene.cameras.main.shake(550, 0.012);
 
         // 5.5 High-intensity failure visuals
-        _triggerDeathGlitchBurst();
 
         // 6. Request tower shake — _onTowerShakeComplete fires when done
         messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);

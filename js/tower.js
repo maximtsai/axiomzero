@@ -774,8 +774,17 @@ const tower = (() => {
             const hitPct = damageTaken / model.maxHealth;
             const particleCount = 2 + Math.floor(hitPct / 0.1);
             const pos = getPosition();
-            const px = (x !== 0) ? x : pos.x;
-            const py = (y !== 0) ? y : pos.y;
+            let px = pos.x;
+            let py = pos.y;
+
+            if (x !== 0 || y !== 0) {
+                const dx = x - pos.x;
+                const dy = y - pos.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                px = pos.x + (dx / dist) * 15;
+                py = pos.y + (dy / dist) * 15;
+            }
+
             customEmitters.towerHit(px, py, particleCount);
         }
 

@@ -369,7 +369,7 @@ class Node {
             }
         }
     }
-    
+
     /**
      * Specialized refresh that forces a recursive update down a fixed number of generations.
      * This is used during Duo-Box swaps to ensure that even if a node's state doesn't 
@@ -836,6 +836,7 @@ class Node {
             // Notify systems of state change
             messageBus.publish('upgradePurchased', { id: this.id });
             this._playDuoPulse();
+            nodeAnims.playDuoSwapAnimation(this);
 
             return true;
         }
