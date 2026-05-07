@@ -37,6 +37,7 @@ window.TRANSLATIONS.en = {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         companion: { name: 'COMPANION', desc: 'Manifest a friendly sub-process dedicated to providing helpful support.', popup: 'COMPANION ONLINE' },
         cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#ff5555]+2 SHARDS[/color], [color=white]+3 INSIGHT[/color], and [color=#00FF00]+1.0 COIN[/color].', popup: 'RESOURCES ACQUIRED' },
+        kernel_breaker: { name: 'KERNEL BREAKER', desc: 'Basic attack damage is increased by [color=#8FD9F8]+25%[/color] against bosses per level.', popup: 'BOSS TARGETING OPTIMIZED' },
         peak_traffic: { name: 'PEAK TRAFFIC', desc: 'After [color=#8FD9F8]20s[/color] of combat, enemies drop [color=#8FD9F8]+50%[/color] more [color=cyan]DATA[/color].', popup: 'TRAFFIC PEAKING' },
         backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#8FD9F8]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },
         restore_point: { name: 'RESTORE POINT', desc: 'When [b]BACKUP SERVER[/b] triggers, restore [color=#8FD9F8]40%[/color] health.', popup: 'RESTORE POINT LOADED' },
@@ -170,10 +171,8 @@ window.TRANSLATIONS.en = {
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Repeated cursor attacks on same enemy deal [color=#8FD9F8]+4[/color] bonus dmg.', popup: 'REPEAT EXPLOIT ACTIVE' },
         impulse: { name: 'IMPULSE', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width.', popup: 'BEAM AMPLIFIED' },
-        laser_disintegration: { name: 'DISINTEGRATION', desc: '[color=#8FD9F8]+1[/color] starting laser damage.', popup: '+1 LASER DAMAGE' },
         laser_twin_beams: { name: 'TWIN BEAMS', desc: 'You now fire two lasers.', popup: 'TWIN BEAMS ACTIVE' },
         artillery_volley: { name: 'TRIPLE VOLLEY', desc: 'Fire [color=#8FD9F8]+2[/color] additional artillery strikes.', popup: 'TRIPLE VOLLEY' },
-        artillery_shells: { name: 'HIGH EXPLOSIVE', desc: '[color=#8FD9F8]+25%[/color] artillery blast radius.', popup: '+25% RADIUS' },
         artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP.', popup: 'FIRST STRIKE' },
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP.', popup: 'ZERO-DAY ACTIVE' },

@@ -6,7 +6,7 @@ class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
         this.BASE_DAMAGE = 30;
-        this.BASE_SIZE = 360; // px — damage area side length (square)
+        this.BASE_SIZE = 432; // px — damage area side length (square) (Increased by 20% from 360)
 
         this.active = false;  // true when combat phase AND node purchased
         this.unlocked = false; // true after artillery node purchased

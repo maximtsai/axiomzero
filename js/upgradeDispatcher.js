@@ -110,7 +110,6 @@ const upgradeDispatcher = (() => {
     function recalcArtillery() {
         if (typeof artilleryAttack === 'undefined') return;
         artilleryAttack.setLevels({
-            radius: getLevel('artillery_shells'),
             volley: getLevel('artillery_volley'),
             firstStrike: getLevel('artillery_first_strike'),
             stun: getLevel('artillery_stun')

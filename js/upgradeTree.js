@@ -38,6 +38,7 @@ const upgradeTree = (() => {
     let zoomOutBtn = null;
 
     let zoomGoal = 1.0;
+    let _fullViewReturnOffset = 0;
 
 
     let lastDragX = 0;
@@ -773,6 +774,7 @@ const upgradeTree = (() => {
         // Force fallback to SLIDE_DURATION if it's not a number.
         if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;
         fullUpgradeView = false;
+        // _fullViewReturnOffset = 0;
         slideLeftBtn.setState(DISABLE);
         const targetX = 0;
         const targetXHalf = 0;
@@ -952,7 +954,8 @@ const upgradeTree = (() => {
 
         const scale = draggableGroup.getScale() || 1;
         // Convert local center to screen space relative to treeGroup
-        const baseSX = lcx;
+        let baseSX = lcx;
+        baseSX += _fullViewReturnOffset;
         const baseSY = lcy;
 
         for (let i = 0; i < 18; i++) {
@@ -1779,6 +1782,7 @@ const upgradeTree = (() => {
             panelW = 1612;
             deployX = deployBtnInitialX + 782;
             _updateNodesHitArea(GAME_CONSTANTS.WIDTH);
+            _fullViewReturnOffset = 400;
 
             if (dragSurface) {
                 dragSurface.setX(GAME_CONSTANTS.WIDTH / 2);
@@ -1786,6 +1790,7 @@ const upgradeTree = (() => {
             }
         } else {
             _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
+            _fullViewReturnOffset = 0;
 
             if (dragSurface) {
                 dragSurface.setX(TREE_CENTER_X);

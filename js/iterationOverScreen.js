@@ -801,7 +801,7 @@ const iterationOverScreen = (() => {
         dmg.friendlyfire += (dmg.endgame || 0);
 
         const activeSources = sources.filter(s => dmg[s.id] > 0);
-        const listStartY = startY + 55;
+        const listStartY = startY + 56;
         const barMaxWidth = 200; // Was 120
         const entryHeight = 26; // Was 18
 
@@ -817,7 +817,7 @@ const iterationOverScreen = (() => {
             }).setOrigin(0, 0.5).setDepth(depth + 1).setAlpha(0.9);
 
             // Bar BG
-            const barOffset = 135; // Was 85
+            const barOffset = 141; // Was 135
             const bgW = barMaxWidth;
             const bg = PhaserScene.add.image(startX + barOffset, y, 'buttons', 'white_pixel.png')
                 .setDepth(depth + 1)

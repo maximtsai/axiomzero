@@ -868,12 +868,17 @@ const tower = (() => {
     }
 
     function isAlive() { return model.alive; }
-    function getDamage() {
+    function getDamage(isBoss = false) {
         let dmg = model.damage;
         const ups = gameState.upgrades || {};
         if (ups.peak_performance && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
             dmg += 10;
         }
+
+        if (isBoss && ups.kernel_breaker) {
+            dmg *= (1 + 0.25 * ups.kernel_breaker);
+        }
+
         return dmg;
     }
     function getArmor() { return model.armor; }
@@ -963,7 +968,7 @@ const tower = (() => {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
-        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, getDamage());
+        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, getDamage(target.model.isBoss));
         view.playRecoil(target.model.x, target.model.y);
 
         // PRISMATIC ARRAY effect
@@ -978,7 +983,7 @@ const tower = (() => {
                     const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
                     if (newTarget) {
                         const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);
-                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, getDamage());
+                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, getDamage(newTarget.model.isBoss));
                     }
                 });
             }

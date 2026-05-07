@@ -7,9 +7,9 @@ class LaserAttackModel {
         this.ORBIT_RADIUS = 40;          // px from tower center
         this.ORBIT_SPEED = 0.385;        // radians/second
         this.BEAM_LENGTH = 1000;         // px
-        this.BEAM_VISUAL_HALF_WIDTH = 25;// visual beam half-width (50px total)
-        this.BEAM_DAMAGE_HALF_WIDTH = 35;// damage half-width (70px total)
-        this.BASE_DAMAGE_PER_TICK = 3;
+        this.BEAM_VISUAL_HALF_WIDTH = 30;// visual beam half-width (Increased by 5 from 25)
+        this.BEAM_DAMAGE_HALF_WIDTH = 40;// damage half-width (Increased by 5 from 35)
+        this.BASE_DAMAGE_PER_TICK = 4;   // (Increased by 1 from 3)
         this.TICK_INTERVAL = 200;        // ms between damage ticks
         this.FIRE_DURATION = 4500;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires
@@ -39,11 +39,11 @@ class LaserAttackModel {
     }
 
     getVisualHalfWidth() {
-        return this.BEAM_VISUAL_HALF_WIDTH + this.apertureLevel * 30;
+        return this.BEAM_VISUAL_HALF_WIDTH + this.apertureLevel * 15; // Reduced from 20
     }
 
     getDamageHalfWidth() {
-        return this.BEAM_DAMAGE_HALF_WIDTH + this.apertureLevel * 30;
+        return this.BEAM_DAMAGE_HALF_WIDTH + this.apertureLevel * 15; // Reduced from 20
     }
 
     getFireDuration() {
