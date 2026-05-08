@@ -19,7 +19,7 @@ const nodeTooltip = (() => {
 
     let currentNode = null;
     let lastShowTime = 0;
-    const bgWidth = helper.isMobileDevice() ? 400 : 380;
+    const bgWidth = helper.isMobileDevice() ? 398 : 378;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function _formatValue(node, val) {
@@ -36,7 +36,7 @@ const nodeTooltip = (() => {
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
         container.isTreeElement = true; // Allow treeCamera to render it so it appears on top of nodes
 
-        bg = PhaserScene.add.image(0, 0, 'buttons', 'navy_pixel.png').setOrigin(0.5, 0).setAlpha(0.86);
+        bg = PhaserScene.add.image(0, 0, 'buttons', 'navy_pixel.png').setOrigin(0.5, 0).setAlpha(0.93);
         container.add(bg);
 
         // Icon holder
@@ -128,7 +128,7 @@ const nodeTooltip = (() => {
         container.setVisible(true);
 
         const isBigValue = gameState.settings.bigFont;
-        const baseW = helper.isMobileDevice() ? 400 : 380;
+        const baseW = helper.isMobileDevice() ? 398 : 378;
         const currentBgWidth = (isBigValue ? baseW + 50 : baseW) + (node.tooltipExtraWidth || 0);
         const currentWordWrap = currentBgWidth - 25;
         const baseFontSize = isBigValue ? 30 : 26;
@@ -149,8 +149,8 @@ const nodeTooltip = (() => {
 
         // Update background elements display sizes
         const barHeight = isBigValue ? 37 : 35;
-        goldBg.setDisplaySize(currentBgWidth - 6, barHeight);
-        costBg.setDisplaySize(currentBgWidth - 6, barHeight);
+        goldBg.setDisplaySize(currentBgWidth - 10, barHeight);
+        costBg.setDisplaySize(currentBgWidth - 10, barHeight);
 
         const rowSpacing = isBigValue ? 10 : 7;
         const lineSpacingValue = isBigValue ? 7 : 4;
@@ -269,7 +269,7 @@ const nodeTooltip = (() => {
             currentY += 39;
         }
 
-        const totalHeight = currentY + 3;
+        const totalHeight = currentY + 4;
         bg.setDisplaySize(currentBgWidth, totalHeight);
 
         // Use getBounds() to account for parent container transforms (e.g. treeMaskContainer shifts)

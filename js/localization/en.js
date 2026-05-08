@@ -73,7 +73,7 @@ window.TRANSLATIONS.en = {
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "COMBAT TEST" button for practice', popup: 'SANDBOX UNLOCKED' },
         bypass: { name: 'BYPASS', desc: 'A shortcut through the system. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'BYPASS ENABLED' },
         bypass_2: { name: 'BYPASS 2', desc: 'A shortcut through the system. Fully refunds [color=cyan]DATA[/color] cost upon purchase.', popup: 'BYPASS 2 ENABLED' },
-        memory_leak: { name: 'MEMORY LEAK', desc: 'Bosses drop [color=cyan]DATA[/color] when hit by your cursor. Amount based on damage dealt.', popup: 'MEMORY LEAK DETECTED' },
+        memory_leak: { name: 'MEMORY LEAK', desc: 'Cursor attacks cause bosses to drop [color=cyan]DATA[/color] based on damage dealt', popup: 'MEMORY LEAK DETECTED' },
         bomb: { name: 'BOMB', desc: 'Acquire a [color=#ff5555]BOMB[/color]. Makes your cursor deal massive damage for one attack.', popup: '+1 BOMB' },
         bomb_2: { name: 'EXTRA BOMB', desc: 'Acquire another [color=#ff5555]BOMB[/color]. Total max uses increased.', popup: '+1 BOMB' },
         data_compression: { name: 'DATA COMPRESSION', desc: '[color=#8FD9F8]+25%[/color] chance to double [color=cyan]DATA[/color] drops', popup: 'DATA COMPRESSION' },
@@ -299,7 +299,7 @@ window.TRANSLATIONS.en = {
     tooltips: {
         max: 'MAX',
         active: 'ACTIVE',
-        swap: 'CLICK TO SWAP'
+        swap: '⇄ SWAP MODULES'
     },
     hud: {
         data_title: '[color=cyan]DATA[/color]',
@@ -331,7 +331,7 @@ window.TRANSLATIONS.en = {
         armor: 'ARMOR: {0}',
         range: 'RANGE: {0}',
         shield: 'SHIELD: {0}',
-        equipped: 'EQUIPPED SYSTEMS',
+        equipped: 'EQUIPPED MODULES',
         none: 'NONE'
     }
 };
