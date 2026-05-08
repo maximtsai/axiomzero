@@ -117,6 +117,103 @@ const cinematicManager = (() => {
     // Private helpers
     // -------------------------------------------------------------------------
 
+    /**
+     * Plays a brief "System Scan" interruption effect.
+     * Simulates a hostile system scan with text and a visual stutter.
+     */
+    function playSystemScanInterruption() {
+        if (active) return Promise.resolve();
+        active = true;
+
+        console.log('[Cinematic] System Scan Interruption triggered');
+
+        // Slow down game speed by 70% (timeScale 0.3)
+        // We set applyToTweens to false so the cinematic tweens themselves aren't slowed
+        if (typeof timeManager !== 'undefined') {
+            timeManager.applyTimeScale(0.3, false);
+        }
+
+        // Block input
+        if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(true);
+
+        const overlay = _createInterruptionOverlay();
+
+        // Play glitch sound if available
+        if (typeof audio !== 'undefined') {
+            audio.play('glitch_heavy', 0.7);
+        }
+
+        return new Promise(resolve => {
+            // Brief "freeze" simulation - just wait a tiny bit before starting animations
+            PhaserScene.time.delayedCall(50, () => {
+                // Flash the text and scanline
+                PhaserScene.tweens.add({
+                    targets: overlay.container,
+                    alpha: 1,
+                    duration: 30,
+                    yoyo: true,
+                    repeat: 3,
+                    onComplete: () => {
+                        // Restore time scale
+                        if (typeof timeManager !== 'undefined') {
+                            timeManager.applyTimeScale(1, true);
+                        }
+                        // Keep it visible for a moment
+                        PhaserScene.time.delayedCall(100, () => {
+                            _cleanupInterruption(overlay);
+                            active = false;
+                            if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(false);
+                            resolve();
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Private helpers
+    // -------------------------------------------------------------------------
+
+    function _createInterruptionOverlay() {
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const container = PhaserScene.add.container(0, 0).setDepth(BLOCKER_DEPTH + 50).setScrollFactor(0);
+
+        // Dark red vignette/flash
+        const flash = PhaserScene.add.image(cx, cy, 'buttons', 'white_pixel.png');
+        flash.setDisplaySize(GAME_CONSTANTS.WIDTH, GAME_CONSTANTS.HEIGHT)
+            .setTint(0xff0000)
+            .setAlpha(0.2);
+
+        const text = PhaserScene.add.text(cx, cy, 'CRITICAL_PROCESS_INTERRUPTION', {
+            fontFamily: 'Michroma',
+            fontSize: '42px',
+            color: '#ff0000',
+            backgroundColor: '#000000',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5);
+
+        const subtext = PhaserScene.add.text(cx, cy + 60, 'SYSTEM_SCAN_IN_PROGRESS...', {
+            fontFamily: 'Quantico-Bold',
+            fontSize: '24px',
+            color: '#ff0000'
+        }).setOrigin(0.5);
+
+        container.add([flash, text, subtext]);
+        container.setAlpha(0);
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(container);
+        }
+
+        return { container, flash, text, subtext };
+    }
+
+    function _cleanupInterruption(overlay) {
+        if (overlay.container) overlay.container.destroy();
+    }
+
     function _createBlocker() {
         blocker = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'buttons', 'white_pixel.png');
         blocker.isTreeElement = true; // Prevent automatic ignore from tree cameras
@@ -193,5 +290,85 @@ const cinematicManager = (() => {
         return active;
     }
 
-    return { playCutscene, playCutsceneMinimal, endCutscene, isActive };
+    // --- Glitch Pooling ---
+    let glitchPool = null;
+
+    function _getGlitchFromPool(x, y, frame) {
+        if (!glitchPool) {
+            glitchPool = PhaserScene.add.group({
+                classType: Phaser.GameObjects.Image,
+                maxSize: 60
+            });
+        }
+        
+        let sprite = glitchPool.get(x, y, 'glitch', frame);
+        if (!sprite) {
+            // If pool is full, recycle the oldest one or just skip
+            sprite = glitchPool.getFirstDead(false);
+            if (!sprite) return null;
+            sprite.setPosition(x, y).setFrame(frame);
+        }
+
+        const alpha = Phaser.Math.FloatBetween(0.2, 0.9);
+        sprite.setActive(true).setVisible(true).setAlpha(alpha);
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(sprite);
+        }
+        return sprite;
+    }
+
+    /**
+     * Punchy glitch effect for boss spawns. 
+     * Scatters jittery glitch sprites across the screen over time.
+     * @param {number} intensity - multiplier for glitch frequency
+     * @param {number} duration - total time the effect runs in ms
+     */
+    function playBossSpawnGlitch(intensity = 1.0, duration = 400) {
+        const frames = ['glitch_large.png', 'glitch_medium.png', 'glitch_small.png'];
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const minDistSq = 240 * 240;
+
+        // Calculate count based on intensity/duration
+        const baseCount = 10;
+        const count = Math.floor(baseCount * intensity * (duration / 400));
+        
+        for (let i = 0; i < count; i++) {
+            const delay = (duration / count) * i;
+
+            PhaserScene.time.delayedCall(delay, () => {
+                const frame = frames[Math.floor(Math.random() * frames.length)];
+                let x = Math.random() * GAME_CONSTANTS.WIDTH;
+                let y = Math.random() * GAME_CONSTANTS.HEIGHT;
+                
+                // One retry if too close to tower
+                if ((x - cx) ** 2 + (y - cy) ** 2 < minDistSq) {
+                    x = Math.random() * GAME_CONSTANTS.WIDTH;
+                    y = Math.random() * GAME_CONSTANTS.HEIGHT;
+                }
+
+                const sprite = _getGlitchFromPool(x, y, frame);
+                if (!sprite) return;
+
+                sprite.setDepth(BLOCKER_DEPTH + 100)
+                      .setScrollFactor(0)
+                      .setFlip(Math.random() < 0.5, Math.random() < 0.5)
+                      .setTint(0xff0000);
+
+                PhaserScene.tweens.add({
+                    targets: sprite,
+                    x: x + (Math.random() - 0.5) * 40,
+                    y: y + (Math.random() - 0.5) * 40,
+                    alpha: 0,
+                    duration: Phaser.Math.Between(150, 400),
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        sprite.setActive(false).setVisible(false);
+                    }
+                });
+            });
+        }
+    }
+
+    return { playCutscene, playCutsceneMinimal, playSystemScanInterruption, playBossSpawnGlitch, endCutscene, isActive };
 })();

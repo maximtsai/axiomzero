@@ -65,11 +65,24 @@ class Boss extends Enemy {
 
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
 
-            if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
-                PhaserScene.time.delayedCall(800, () => {
-                    enemyManager.killAllNonBossEnemies();
-                    PhaserScene.cameras.main.shake(1500, 0.028);
+            // Post-death "System log" cinematic before final clear
+            if (typeof cinematicManager !== 'undefined') {
+                PhaserScene.time.delayedCall(50, () => {
+                    cinematicManager.playSystemScanInterruption().then(() => {
+                        if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
+                            enemyManager.killAllNonBossEnemies();
+                            PhaserScene.cameras.main.shake(1500, 0.028);
+                        }
+                    });
                 });
+            } else {
+                // Fallback if cinematicManager is missing
+                if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
+                    PhaserScene.time.delayedCall(800, () => {
+                        enemyManager.killAllNonBossEnemies();
+                        PhaserScene.cameras.main.shake(1500, 0.028);
+                    });
+                }
             }
         }
     }

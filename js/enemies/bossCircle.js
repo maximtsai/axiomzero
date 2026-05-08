@@ -225,7 +225,7 @@ class BossCircle extends Boss {
         this.model.rotationFinished = false;
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossCircle_name') });
+            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_1_name') });
         });
     }
 
@@ -257,7 +257,7 @@ class BossCircle extends Boss {
                 if (!this.model.rotationStarted) {
                     this.model.rotationStarted = true;
                     if (typeof audio !== 'undefined') {
-                        audio.play('creak_turn_bosscircle', 1.1);
+                        audio.play('creak_turn_bosscircle', 1.45);
                     }
                     PhaserScene.tweens.add({
                         targets: this.model,

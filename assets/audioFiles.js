@@ -52,4 +52,6 @@ const audioFiles = [
     { name: 'quitebeat', src: 'audio/quitebeat.mp3' },
     { name: 'pc_boot', src: 'audio/pc_boot.mp3' },
     { name: 'chime_pc', src: 'audio/chime_pc.mp3' },
+    { name: 'pc_beep', src: 'audio/pc_beep.mp3' },
+    { name: 'glitch_heavy', src: 'audio/glitch_heavy.mp3' },
 ];

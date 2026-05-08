@@ -366,10 +366,23 @@ class Boss5 extends Boss {
             }
         });
 
-        if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
-            PhaserScene.time.delayedCall(150, () => {
-                enemyManager.killAllNonBossEnemies();
+        // Final cinematic sequence before total purge
+        if (typeof cinematicManager !== 'undefined') {
+            PhaserScene.time.delayedCall(DEATH_DURATION + 100, () => {
+                cinematicManager.playSystemScanInterruption().then(() => {
+                    if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
+                        enemyManager.killAllNonBossEnemies();
+                        if (typeof cameraManager !== 'undefined') cameraManager.shake(1500, 0.045);
+                    }
+                });
             });
+        } else {
+            // Fallback for enemy clear
+            if (typeof enemyManager !== 'undefined' && enemyManager.killAllNonBossEnemies) {
+                PhaserScene.time.delayedCall(150, () => {
+                    enemyManager.killAllNonBossEnemies();
+                });
+            }
         }
 
         messageBus.publish('bossDefeated', ex, ey);

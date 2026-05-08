@@ -199,6 +199,10 @@ const waveManager = (() => {
 
         sessionTerminalEventStarted = true;
         debugLog('Tower died — playing death sequence');
+        if (typeof audio !== 'undefined') {
+            audio.play('pc_beep', 0.4, false);
+        }
+        helper.createGlobalClickBlocker(false);
 
         // Unsubscribe immediately to prevent re-entry
         if (towerDiedSub) { towerDiedSub.unsubscribe(); towerDiedSub = null; }
@@ -206,7 +210,7 @@ const waveManager = (() => {
         // 1. Freeze all enemies — stop movement and spawning
         messageBus.publish('freezeEnemies');
         if (typeof timeManager !== 'undefined') {
-            timeManager.setTempPause(350, 0.001);
+            timeManager.setTempPause(400, 0.001);
         }
 
         // 1.5. Subliminal Black Flash (75ms)
@@ -215,32 +219,28 @@ const waveManager = (() => {
         darkFlash.setAlpha(0.65).setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1);
         setTimeout(() => { if (darkFlash) darkFlash.destroy(); }, 75);
 
-        // 2. Block all cursor input
-        helper.createGlobalClickBlocker(false);
-
-        // 3. Signal HUD to hide the END ITERATION button immediately
-        messageBus.publish('towerDeathStarted');
-
-        // ── Iterative Growth Perk ──
-        if ((gameState.upgrades || {}).iterative_growth && !sessionGrowthAwardedOnDeath) {
-            sessionGrowthAwardedOnDeath = true;
-            _awardIterativeGrowth();
-        }
-
-        // 4. Play explosion sound
+        // Is it safe to delay after this point? -> Yes!
         setTimeout(() => {
+            // 3. Signal HUD to hide the END ITERATION button immediately
+            messageBus.publish('towerDeathStarted');
+
+            // ── Iterative Growth Perk ──
+            if ((gameState.upgrades || {}).iterative_growth && !sessionGrowthAwardedOnDeath) {
+                sessionGrowthAwardedOnDeath = true;
+                _awardIterativeGrowth();
+            }
+
+            // 4. Play explosion sound
             audio.play('retro_explosion', 1.0, false);
             _triggerDeathGlitchBurst();
-        }, 200)
 
-        customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
-        PhaserScene.cameras.main.shake(550, 0.012);
+            customEmitters.towerDeath(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
+            PhaserScene.cameras.main.shake(550, 0.012);
 
-        // 5.5 High-intensity failure visuals
-
-        // 6. Request tower shake — _onTowerShakeComplete fires when done
-        messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
-        messageBus.publish('towerShakeRequested', 700);
+            // 6. Request tower shake — _onTowerShakeComplete fires when done
+            messageBus.subscribeOnce('towerShakeComplete', _onTowerShakeComplete);
+            messageBus.publish('towerShakeRequested', 700);
+        }, 260);
     }
 
     function _onTowerShakeComplete() {

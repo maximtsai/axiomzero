@@ -152,16 +152,24 @@ const bossManager = (() => {
 
     function spawnBoss(lastWaveProgress) {
         if (bossSpawned) return;
+        bossSpawned = true;
+        bossAlive = true;
 
+        // Trigger a punchy glitch effect on spawn
+        if (typeof cinematicManager !== 'undefined') {
+            cinematicManager.playBossSpawnGlitch(1.5, 800);
+        }
+        
+        _executeBossSpawn(lastWaveProgress);
+    }
+
+    function _executeBossSpawn(lastWaveProgress) {
         const config = _enemyManager.getCurrentLevelConfig(lastWaveProgress);
         let Class = _resolveEnemyClass(config.mainBoss);
         if (!Class) {
             console.warn(`[BossManager] Boss class '${config.mainBoss}' not found. Defaulting to BossSquare.`);
             Class = BossSquare;
         }
-
-        bossSpawned = true;
-        bossAlive = true;
 
         // Temporary instance to check for class-specific distance offsets/angles
         const tempB = new Class(1);

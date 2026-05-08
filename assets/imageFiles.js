@@ -12,5 +12,6 @@ const imageAtlases = [
     { name: 'bosses', src: 'sprites/bosses.json' },
     { name: 'attacks', src: 'sprites/attacks.json' },
     { name: 'backgrounds', src: 'backgrounds/ui.json' },
+    { name: 'glitch', src: 'sprites/glitch.json' },
 ];
 

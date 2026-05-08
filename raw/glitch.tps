@@ -34,7 +34,7 @@
         <key>dataFormat</key>
         <string>phaser-maxim</string>
         <key>textureFileName</key>
-        <filename>../assets/backgrounds/ui-{n}.webp</filename>
+        <filename>../assets/sprites/glitch-{n}.webp</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrQualityLevel</key>
@@ -70,7 +70,7 @@
         <key>pngOptimizationLevel</key>
         <uint>1</uint>
         <key>webpQualityLevel</key>
-        <uint>79</uint>
+        <uint>54</uint>
         <key>textureSubPath</key>
         <string></string>
         <key>textureFormat</key>
@@ -124,7 +124,7 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../assets/backgrounds/ui.json</filename>
+                <filename>../assets/sprites/glitch.json</filename>
             </struct>
         </map>
         <key>multiPackMode</key>
@@ -132,7 +132,7 @@
         <key>forceIdenticalLayout</key>
         <false/>
         <key>outputFormat</key>
-        <enum type="SettingsBase::OutputFormat">RGBA8888</enum>
+        <enum type="SettingsBase::OutputFormat">RGBA4444</enum>
         <key>alphaHandling</key>
         <enum type="SettingsBase::AlphaHandling">ClearTransparentPixels</enum>
         <key>contentProtection</key>
@@ -159,7 +159,7 @@
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>0</uint>
+            <uint>1</uint>
             <key>trimMode</key>
             <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>tracerTolerance</key>
@@ -173,37 +173,8 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">backgrounds/black_grid - Copy.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>410,230,820,460</rect>
-                <key>scale9Paddings</key>
-                <rect>410,230,820,460</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/black_grid.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>420,240,840,480</rect>
-                <key>scale9Paddings</key>
-                <rect>420,240,840,480</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/blue_pixel.png</key>
+            <key type="filename">glitch/black_pixel.png</key>
+            <key type="filename">glitch/red_pixel.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -218,7 +189,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">backgrounds/cursorwave.png</key>
+            <key type="filename">glitch/glitch_large.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -227,13 +198,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>28,28,55,55</rect>
+                <rect>90,45,180,90</rect>
                 <key>scale9Paddings</key>
-                <rect>28,28,55,55</rect>
+                <rect>90,45,180,90</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">backgrounds/deathwave.png</key>
+            <key type="filename">glitch/glitch_medium.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -242,13 +213,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>100,100,200,200</rect>
+                <rect>60,30,120,60</rect>
                 <key>scale9Paddings</key>
-                <rect>100,100,200,200</rect>
+                <rect>60,30,120,60</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">backgrounds/range.png</key>
+            <key type="filename">glitch/glitch_small.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -257,69 +228,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>151,151,301,301</rect>
+                <rect>20,10,40,20</rect>
                 <key>scale9Paddings</key>
-                <rect>151,151,301,301</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/scan_line_fade.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>1,88,1,175</rect>
-                <key>scale9Paddings</key>
-                <rect>1,88,1,175</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/upgrade_background.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.858</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>182,256,364,512</rect>
-                <key>scale9Paddings</key>
-                <rect>182,256,364,512</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/upgrade_outline.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>200,225,400,450</rect>
-                <key>scale9Paddings</key>
-                <rect>200,225,400,450</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">backgrounds/warnwave.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>63,63,125,125</rect>
-                <key>scale9Paddings</key>
-                <rect>63,63,125,125</rect>
+                <rect>20,10,40,20</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -330,7 +241,7 @@
             <struct type="SpriteSheet">
                 <key>files</key>
                 <array>
-                    <filename>backgrounds</filename>
+                    <filename>glitch</filename>
                 </array>
             </struct>
         </map>

@@ -9,15 +9,15 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB1 = {
-    HEALTH: 80,
+    HEALTH: 70,
     SPEED_MULT: 1.5,
-    ATTACK_RANGE: 200,
+    ATTACK_RANGE: 205,
     RETREAT_RANGE: 235,
     FIRE_INTERVAL: 4000,
     BULLET_DAMAGE: 5,
     KNOCKBACK_MOD: 0,
-    INITIAL_SPEED_MULT: 7,
-    RAMP_DURATION: 2,
+    INITIAL_SPEED_MULT: 8.5,
+    RAMP_DURATION: 2.75,
 };
 
 const MINIBOSS_STATE = {

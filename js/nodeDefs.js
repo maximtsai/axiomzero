@@ -52,6 +52,11 @@ const NODE_DEFS = [
                 if (!gameState.settings.musicMuted && !audio.getMusicName()) {
                     audio.playMusic('bg_music1');
                 }
+                setTimeout(() => {
+                    if (typeof cinematicManager !== 'undefined') {
+                        cinematicManager.playBossSpawnGlitch(1.0, 1500);
+                    }
+                }, 1000);
                 nodeAnims.playAwakenActivationAnimation(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, GAME_CONSTANTS.DEPTH_TOWER, () => {
 
                     setTimeout(() => {
@@ -70,6 +75,7 @@ const NODE_DEFS = [
                     if (typeof glitchFX !== 'undefined') {
                         glitchFX.triggerSystemScan();
                     }
+
                     endCutscene(() => {
                         upgradeTree._refreshAllNodes();
                         if (node) node.finalizePurchase();
