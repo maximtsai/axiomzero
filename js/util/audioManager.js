@@ -206,6 +206,20 @@ const audio = {
         return audio.play(name, volume, loop, true);
     },
 
+    /** Stop a sound by name. */
+    stop: function (name) {
+        if (soundList[name]) {
+            soundList[name].stop();
+        }
+    },
+
+    /** Fade a sound by name. */
+    fade: function (name, duration = 500) {
+        if (soundList[name]) {
+            audio.fadeAway(soundList[name], duration);
+        }
+    },
+
     /** Play a temporary background track (not tracked as globalMusic). */
     playFakeBGMusic: function (name, volume = 1, loop = false) {
         if (!soundList[name]) {

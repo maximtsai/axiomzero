@@ -93,9 +93,10 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
 
     // Browser autoplay policy: play music on the first interaction
     messageBus.subscribeOnce('pointerDown', () => {
-        debugLog('First interaction detected, starting music...');
-        // Only start if not muted in settings
-        if (!gameState.settings.musicMuted && !audio.getMusicName()) {
+        debugLog('First interaction detected, checking music start condition...');
+        // Only start if not muted in settings AND awaken is researched
+        const isAwakenResearched = (gameState.upgrades && gameState.upgrades.awaken) >= 1;
+        if (!gameState.settings.musicMuted && !audio.getMusicName() && isAwakenResearched) {
             audio.playMusic('bg_music1');
         }
     });

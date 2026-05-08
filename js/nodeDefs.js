@@ -42,11 +42,25 @@ const NODE_DEFS = [
             if (typeof tutorialManager !== 'undefined') {
                 tutorialManager.hideAll();
             }
+            if (typeof audio !== 'undefined') {
+                audio.play('pc_boot', 1);
+            }
             if (typeof cinematicManager !== 'undefined') {
                 const endCutscene = await cinematicManager.playCutsceneMinimal();
                 const node = upgradeTree.getNode('awaken');
 
+                if (!gameState.settings.musicMuted && !audio.getMusicName()) {
+                    audio.playMusic('bg_music1');
+                }
                 nodeAnims.playAwakenActivationAnimation(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, GAME_CONSTANTS.DEPTH_TOWER, () => {
+
+                    setTimeout(() => {
+                        if (typeof audio !== 'undefined') {
+                            audio.play('chime_pc', 1);
+                            audio.fade('pc_boot', 300);
+
+                        }
+                    }, 50);
                     tower.awaken();
                     pulseAttack.unlock();
                     // Show the deploy button immediately
