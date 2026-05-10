@@ -155,7 +155,7 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>1</uint>
+            <uint>2</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
@@ -235,6 +235,7 @@
             <key type="filename">buttons/gold_pixel.png</key>
             <key type="filename">buttons/green_pixel.png</key>
             <key type="filename">buttons/hostile_pixel.png</key>
+            <key type="filename">buttons/light_red_pixel.png</key>
             <key type="filename">buttons/navy_pixel.png</key>
             <key type="filename">buttons/orange_pixel.png</key>
             <key type="filename">buttons/red_pixel.png</key>

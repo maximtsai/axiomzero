@@ -14,6 +14,7 @@ const nodeTooltip = (() => {
     let iconSpr = null;
     let goldBg = null;
     let costBg = null;
+    let bgEdges = null;
     let animValue = { val: 0 };
     let isReady = false;
 
@@ -35,6 +36,10 @@ const nodeTooltip = (() => {
 
         container = PhaserScene.add.container(0, 0).setDepth(depth).setScrollFactor(0).setVisible(false);
         container.isTreeElement = true; // Allow treeCamera to render it so it appears on top of nodes
+
+        // Edges sit below the backing
+        bgEdges = PhaserScene.add.nineslice(0, 0, 'buttons', 'duo_hover_popup_edges.png', 100, 100, 52, 52, 52, 52).setOrigin(0.5, 0).setAlpha(0);
+        container.add(bgEdges);
 
         bg = PhaserScene.add.image(0, 0, 'buttons', 'navy_pixel.png').setOrigin(0.5, 0).setAlpha(0.93);
         container.add(bg);
@@ -152,9 +157,11 @@ const nodeTooltip = (() => {
         goldBg.setDisplaySize(currentBgWidth - 10, barHeight);
         costBg.setDisplaySize(currentBgWidth - 10, barHeight);
 
-        const bgTexture = node.isDuoBox ? 'scarlet_pixel.png' : 'navy_pixel.png';
+        const bgTexture = node.isDuoBox ? 'black_pixel.png' : 'navy_pixel.png';
         bg.setFrame(bgTexture);
         bg.setOrigin(0.5, 0);
+
+        bgEdges.setAlpha(node.isDuoBox ? 0.6 : 0);
 
         const rowSpacing = isBigValue ? 10 : 7;
         const lineSpacingValue = isBigValue ? 7 : 4;
@@ -211,7 +218,7 @@ const nodeTooltip = (() => {
             goldBg.setVisible(false);
             maxT.setVisible(false);
             costBg.setVisible(true).setPosition(0, currentY + 20);
-            costBg.setTexture('buttons', 'dark_green_pixel.png');
+            costBg.setTexture('buttons', 'light_red_pixel.png');
             costT.setVisible(true).setPosition(0, currentY + 19);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
@@ -275,6 +282,7 @@ const nodeTooltip = (() => {
 
         const totalHeight = currentY + 4;
         bg.setDisplaySize(currentBgWidth, totalHeight);
+        bgEdges.setSize(currentBgWidth + 38, totalHeight + 38);
 
         // Use getBounds() to account for parent container transforms (e.g. treeMaskContainer shifts)
         const btnBounds = node.btn.getBounds();
@@ -310,14 +318,16 @@ const nodeTooltip = (() => {
         if (showAbove) {
             container.setPosition(targetX, centerY - verticalOffset);
             bg.y = -totalHeight;
+            bgEdges.y = -totalHeight - 20;
             container.iterate(child => {
-                if (child === bg) return;
+                if (child === bg || child === bgEdges) return;
                 child.y -= totalHeight;
             });
         } else {
             // Position below the node
             container.setPosition(targetX, centerY + verticalOffset + 1);
             bg.y = 0;
+            bgEdges.y = -20;
             // Children are already relative to container top (Y=3), so no further shift needed
         }
 

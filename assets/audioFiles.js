@@ -54,6 +54,7 @@ const audioFiles = [
     { name: 'chime_pc', src: 'audio/chime_pc.mp3' },
     { name: 'pc_beep', src: 'audio/pc_beep.mp3' },
     { name: 'glitch_heavy', src: 'audio/glitch_heavy.mp3' },
+    { name: 'glitch_medium', src: 'audio/glitch_medium.mp3' },
     { name: 'click2', src: 'audio/click2.mp3' },
     { name: 'sizzle', src: 'audio/sizzle.mp3' },
 ];

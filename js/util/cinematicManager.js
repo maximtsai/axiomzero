@@ -140,7 +140,7 @@ const cinematicManager = (() => {
 
         // Play glitch sound if available
         if (typeof audio !== 'undefined') {
-            audio.play('glitch_heavy', 0.7);
+            audio.play('glitch_medium', 0.7);
         }
 
         return new Promise(resolve => {
