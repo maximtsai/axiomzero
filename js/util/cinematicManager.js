@@ -349,13 +349,13 @@ const cinematicManager = (() => {
 
                 sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 3)
                     .setScrollFactor(1)
-                    .setScale(Phaser.Math.FloatBetween(0.75, 2.5))
+                    .setScale(Phaser.Math.FloatBetween(0.6, 2.5))
                     .setFlip(Math.random() < 0.5, Math.random() < 0.5)
                     .setTint(0xff0000);
 
-                const lifeDur = Phaser.Math.Between(25, 120);
-                if (lifeDur > 30) {
-                    const jumpDelay = Phaser.Math.Between(30, 50);
+                const lifeDur = Phaser.Math.Between(15, 65);
+                if (lifeDur > 20) {
+                    const jumpDelay = Phaser.Math.Between(20, 30);
                     if (jumpDelay < lifeDur) {
                         PhaserScene.time.delayedCall(jumpDelay, () => {
                             if (sprite.active) {
@@ -365,8 +365,8 @@ const cinematicManager = (() => {
                         });
                     }
                 }
-                if (lifeDur > 75) {
-                    PhaserScene.time.delayedCall(75, () => {
+                if (lifeDur > 45) {
+                    PhaserScene.time.delayedCall(45, () => {
                         if (sprite.active) {
                             sprite.x += (Math.random() - 0.5) * 160;
                             sprite.y += (Math.random() - 0.5) * 160;

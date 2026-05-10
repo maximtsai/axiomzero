@@ -12,7 +12,7 @@ class Boss4Model extends BossModel {
         super(levelScalingModifier);
         this.bossId = 'boss4';
         this.type = 'boss4';
-        this.size = 100;
+        this.size = 115;
         this.initialSpeedMult = 6.5;
         this.rampDuration = 2.0;
 
@@ -182,7 +182,7 @@ class Boss4 extends Boss {
     }
 
     activate(x, y, scale = 1.0, config = {}) {
-        const bossHealth = 750;
+        const bossHealth = 800;
 
         super.activate(x, y, {
             maxHealth: bossHealth,

@@ -139,4 +139,16 @@ function createAnimations(scene) {
         frameRate: 15,
         repeat: 0,
     });
+    scene.anims.create({
+        key: 'slide_btn_anim',
+        frames: scene.anims.generateFrameNames('buttons', {
+            prefix: 'slide_btn_anim_',
+            suffix: '.png',
+            start: 1,
+            end: 15,
+            zeroPad: 0,
+        }),
+        frameRate: 12,
+        repeat: 0,
+    });
 }

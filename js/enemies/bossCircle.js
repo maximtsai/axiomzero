@@ -225,7 +225,7 @@ class BossCircle extends Boss {
         this.model.rotationFinished = false;
 
         PhaserScene.time.delayedCall(1000, () => {
-            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_1_name') });
+            messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossCircle_name') });
         });
     }
 

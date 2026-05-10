@@ -161,13 +161,13 @@ const nodeTooltip = (() => {
         bg.setFrame(bgTexture);
         bg.setOrigin(0.5, 0);
 
-        bgEdges.setAlpha(node.isDuoBox ? 0.6 : 0);
+        bgEdges.setAlpha(node.isDuoBox ? 0.95 : 0);
 
         const rowSpacing = isBigValue ? 10 : 7;
         const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);
 
-        let currentY = 3;
+        let currentY = 4;
 
         // Row 1: Icon & Name
         const iconOffset = node.icon ? 56 : 0;
@@ -229,13 +229,13 @@ const nodeTooltip = (() => {
             costBg.setVisible(true).setPosition(0, currentY + 20);
             costT.setVisible(true).setPosition(0, currentY + 19);
 
-            const bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
-            costBg.setTexture('buttons', bgPixel);
+            let bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
 
             let iconStr, currentRes;
             if (node.costType === 'shard') {
                 iconStr = '◆';
                 currentRes = resourceManager.getShards();
+                bgPixel = 'light_red_pixel.png';
             } else if (node.costType === 'insight') {
                 iconStr = '◐';
                 currentRes = resourceManager.getInsight();
@@ -269,11 +269,12 @@ const nodeTooltip = (() => {
             } else {
                 costT.setText('\n' + iconStr + ' ' + _formatValue(node, currentRes) + ' / ' + _formatValue(node, node.getCost()) + '\n');
             }
+            costBg.setFrame(bgPixel);
 
             let costColor = '#30ffff';
             if (node.costType === 'insight') costColor = '#f0f0f0';
             else if (node.costType === 'processor') costColor = '#ffe600';
-            else if (node.costType === 'shard') costColor = '#ff2d78';
+            else if (node.costType === 'shard') costColor = '#f4f4f4';
             else if (node.costType === 'coin') costColor = '#00ff66';
             costT.setColor(costColor);
 
@@ -282,7 +283,7 @@ const nodeTooltip = (() => {
 
         const totalHeight = currentY + 4;
         bg.setDisplaySize(currentBgWidth, totalHeight);
-        bgEdges.setSize(currentBgWidth + 38, totalHeight + 38);
+        bgEdges.setSize(currentBgWidth + 42, totalHeight + 42);
 
         // Use getBounds() to account for parent container transforms (e.g. treeMaskContainer shifts)
         const btnBounds = node.btn.getBounds();
@@ -318,7 +319,7 @@ const nodeTooltip = (() => {
         if (showAbove) {
             container.setPosition(targetX, centerY - verticalOffset);
             bg.y = -totalHeight;
-            bgEdges.y = -totalHeight - 20;
+            bgEdges.y = -totalHeight - 21;
             container.iterate(child => {
                 if (child === bg || child === bgEdges) return;
                 child.y -= totalHeight;
@@ -327,7 +328,7 @@ const nodeTooltip = (() => {
             // Position below the node
             container.setPosition(targetX, centerY + verticalOffset + 1);
             bg.y = 0;
-            bgEdges.y = -20;
+            bgEdges.y = -21;
             // Children are already relative to container top (Y=3), so no further shift needed
         }
 

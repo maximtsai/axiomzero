@@ -286,7 +286,7 @@ const announcementManager = (() => {
                             }
                         });
 
-                        PhaserScene.time.delayedCall(35, () => {
+                        PhaserScene.time.delayedCall(25, () => {
                             targets.forEach(t => {
                                 if (t.ref.scene) t.ref.destroy();
                             });

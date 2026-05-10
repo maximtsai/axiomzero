@@ -612,14 +612,14 @@ const resourceManager = (() => {
 
         const compressionLv = (gameState.upgrades || {}).data_compression || 0;
         let compressionMult = 1;
-        if (compressionLv > 0 && Math.random() < (0.25 * compressionLv)) {
+        if (compressionLv > 0 && Math.random() < (0.2 * compressionLv)) {
             compressionMult = 2;
         }
 
         let timeMult = 1;
         if ((gameState.upgrades || {}).peak_traffic > 0) {
             if (waveManager.getWaveElapsedTime() >= 20) {
-                timeMult = 1.5;
+                timeMult = 1.4;
             }
         }
 

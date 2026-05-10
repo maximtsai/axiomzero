@@ -7,8 +7,8 @@
 //   • Long charge time (3.75s) and slow attack cooldown (6s).
 
 const MB4 = {
-    HEALTH: 260,
-    SPEED_MULT: 0.9,
+    HEALTH: 275,
+    SPEED_MULT: 0.92,
     ATTACK_RANGE: 425,
     FIRE_INTERVAL: 6000,
     CHARGE_DURATION: 3750,
@@ -26,7 +26,7 @@ class Miniboss4Model extends MinibossModel {
         this._isRampingUp = false;
         this._chargeWobbleTime = 0;
         this.cannotRotate = true; // Intended: does not rotate to face tower (Sniper style)
-        
+
         // Use standard initial speed boost for minibosses
         this.initialSpeedMult = 7;
         this.rampDuration = 2;
@@ -37,7 +37,7 @@ class Miniboss4View extends EnemyView {
     constructor() {
         // High depth for minibosses
         super(Enemy.TEX_KEY, 'miniboss_sniper.png', 'miniboss_sniper_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
-        
+
         // HP bar rotated 90 deg CCW like original sniper
         this.hpImg.setRotation(-Math.PI / 2);
 
@@ -109,7 +109,7 @@ class Miniboss4View extends EnemyView {
         const wx = Math.sin(wobbleTime * 25) * 0.08;
         const wy = Math.cos(wobbleTime * 21) * 0.08;
         const baseScale = this.chargeSprite.scaleX;
-        
+
         // Intended: wobble is cumulative for a more frantic, unstable visual feel
         this.chargeSprite.scaleX = baseScale + wx;
         this.chargeSprite.scaleY = baseScale + wy;
@@ -132,7 +132,7 @@ class Miniboss4 extends Miniboss {
     activate(x, y) {
         const m = this.model;
         const v = this.view;
-        
+
         // Intended: Minibosses/Bosses do not scale with level progression
         m.maxHealth = MB4.HEALTH * (m.multiplier || 1);
         m.health = m.maxHealth;
@@ -222,7 +222,7 @@ class Miniboss4 extends Miniboss {
                 0.012, // Extra screenshake on hit
                 'sniper_bullet'
             );
-            
+
             if (typeof audio !== 'undefined') {
                 const pan = (this.model.x < GAME_CONSTANTS.halfWidth) ? -0.2 : 0.2;
                 audio.play('gunshot', 1.0, false, false, pan).detune = -400; // Deep boom

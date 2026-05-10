@@ -6,7 +6,7 @@ class SwordAttackModel {
         this.FIRE_INTERVAL = 2000;
         this.BASE_DAMAGE = 25;
         this.SEARCH_RANGE = 400;
-        this.BASE_LENGTH = 200;
+        this.BASE_LENGTH = 225;
         this.START_OFFSET = 20;
         this.DAMAGE_START_OFFSET = 25;
         this.ATTACK_WIDTH = 60;
@@ -212,7 +212,7 @@ class SwordAttackView {
                 const off = this.config.startOffset;
                 const startX = x + Math.cos(rot) * off;
                 const startY = y + Math.sin(rot) * off;
-                
+
                 stem.length.setPosition(startX, startY);
                 // Tip is updated by its own relative logic if it's currently tweening,
                 // but for a one-off frame sync:
@@ -354,7 +354,7 @@ const swordAttack = (() => {
         // --- Flurry Attacks ---
         if (currentFlurryLevel > 0) {
             const flurryDamageMult = model.FLURRY_DAMAGE_MULT;
-            const flurryLength = model.targetLength * 0.667;
+            const flurryLength = model.targetLength * 0.65;
 
             // First Flurry: 250ms delay, -0.375 radians
             PhaserScene.time.delayedCall(250, () => {

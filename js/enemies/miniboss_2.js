@@ -11,7 +11,7 @@
 
 /** Local config — owned by this class, not exposed to globals. */
 const MB2 = {
-    HEALTH: 240,
+    HEALTH: 250,
     DAMAGE: 8,
     SELF_DAMAGE: 15,
     SPEED_MULT: 2.4,

@@ -716,26 +716,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">buttons/music_off.png</key>
-            <key type="filename">buttons/music_off_hover.png</key>
-            <key type="filename">buttons/music_off_press.png</key>
-            <key type="filename">buttons/music_on.png</key>
-            <key type="filename">buttons/music_on_hover.png</key>
-            <key type="filename">buttons/music_on_press.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.05</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>34,34,67,67</rect>
-                <key>scale9Paddings</key>
-                <rect>34,34,67,67</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">buttons/node_ghost.png</key>
             <key type="filename">buttons/node_maxed.png</key>
             <key type="filename">buttons/node_unlocked.png</key>
@@ -859,9 +839,6 @@
                 <false/>
             </struct>
             <key type="filename">buttons/reset.png</key>
-            <key type="filename">buttons/sound_on.png</key>
-            <key type="filename">buttons/sound_on_hover.png</key>
-            <key type="filename">buttons/sound_on_press.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -888,6 +865,35 @@
                 <rect>28,18,55,36</rect>
                 <key>scale9Paddings</key>
                 <rect>28,18,55,36</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/slide_btn_anim_1.png</key>
+            <key type="filename">buttons/slide_btn_anim_10.png</key>
+            <key type="filename">buttons/slide_btn_anim_11.png</key>
+            <key type="filename">buttons/slide_btn_anim_12.png</key>
+            <key type="filename">buttons/slide_btn_anim_13.png</key>
+            <key type="filename">buttons/slide_btn_anim_14.png</key>
+            <key type="filename">buttons/slide_btn_anim_15.png</key>
+            <key type="filename">buttons/slide_btn_anim_2.png</key>
+            <key type="filename">buttons/slide_btn_anim_3.png</key>
+            <key type="filename">buttons/slide_btn_anim_4.png</key>
+            <key type="filename">buttons/slide_btn_anim_5.png</key>
+            <key type="filename">buttons/slide_btn_anim_6.png</key>
+            <key type="filename">buttons/slide_btn_anim_7.png</key>
+            <key type="filename">buttons/slide_btn_anim_8.png</key>
+            <key type="filename">buttons/slide_btn_anim_9.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>14,43,29,85</rect>
+                <key>scale9Paddings</key>
+                <rect>14,43,29,85</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

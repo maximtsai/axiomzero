@@ -612,7 +612,7 @@ class Boss2 extends Boss {
     activate(x, y, scaleFactor = 1.0) {
         this._isCharging = false;
         // Intended: Minibosses/Bosses do not scale with level progression
-        const bossHealth = 280;
+        const bossHealth = 295;
 
         super.activate(x, y, {
             maxHealth: bossHealth,

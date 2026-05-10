@@ -36,6 +36,7 @@ class PulseAttackModel {
         this.crescendoLevel = 0;
         this.amplitudeLevel = 0;
         this.instabilityLevel = 0;
+        this.impulseLevel = 0;
         this.currentAttackCount = 0;
     }
 
@@ -902,13 +903,13 @@ class PulseAttackView {
         // Stop any global tweens targeting artillery layers
         if (this.artillerySprite) {
             PhaserScene.tweens.killTweensOf([
-                this.artillerySprite, 
-                this.artilleryBright, 
-                this.artilleryBrightGlow, 
-                this.artilleryBlack, 
+                this.artillerySprite,
+                this.artilleryBright,
+                this.artilleryBrightGlow,
+                this.artilleryBlack,
                 this.artilleryRed
             ]);
-            
+
             this.artillerySprite.setVisible(false);
             this.artilleryBright.setVisible(false);
             this.artilleryBrightGlow.setVisible(false);
@@ -1156,8 +1157,9 @@ const pulseAttack = (() => {
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
+            const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
             const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
-            if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive() || isFullView) return;
+            if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive() || (isFullView && !isCombat)) return;
 
             if (model.bombArmed) {
                 if (model.bombReadyToFire) {
@@ -1298,10 +1300,23 @@ const pulseAttack = (() => {
 
             // REPEAT EXPLOIT logic
             if (model.persistentExploitLevel > 0 && enemy.model.hitByPulse) {
-                damageToApply += (4 * model.persistentExploitLevel);
+                let exploitBonus = 4 * model.persistentExploitLevel;
+                if (hits.length === 1 && model.isolationLevel > 0) {
+                    exploitBonus *= (1 + 0.50 * model.isolationLevel);
+                }
+                damageToApply += exploitBonus;
             }
 
-            // RESONANCE bonus — applies to base damage AND all bonuses (Isolation, Saturation, Repeat Exploit)
+            // IMPULSE logic
+            if (model.impulseLevel > 0 && enemy.model.health > enemy.model.maxHealth * 0.99) {
+                let impulseBonus = 4 * model.impulseLevel;
+                if (hits.length === 1 && model.isolationLevel > 0) {
+                    impulseBonus *= (1 + 0.50 * model.isolationLevel);
+                }
+                damageToApply += impulseBonus;
+            }
+
+            // RESONANCE bonus — applies to base damage AND all bonuses (Isolation, Saturation, Repeat Exploit, Impulse)
             if (isResonanceHit) {
                 const multiplier = model.amplitudeLevel > 0 ? 3 : 2;
                 damageToApply *= multiplier;
@@ -1380,7 +1395,7 @@ const pulseAttack = (() => {
         model.bombReadyToFire = false;
         view.setDetonateReminderVisibility(false);
         view.stopAllArtilleryAnimations();
-        
+
         model.bombQueued = false;
         model.bombFired = false;
         model.canQueueBomb = false;
@@ -1591,5 +1606,9 @@ const pulseAttack = (() => {
         messageBus.publish('bombUsesChanged', { uses: model.bombUses, max: model.maxBombUses });
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, setAmplitudeLevel, setInstabilityLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
+    function setImpulseLevel(level) {
+        model.impulseLevel = level;
+    }
+
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, setAmplitudeLevel, setInstabilityLevel, setImpulseLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
 })();

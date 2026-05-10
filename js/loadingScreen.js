@@ -58,6 +58,21 @@ class LoadingScreen {
             () => { this._onSlowWarning(); },
             () => { this._onTimeoutReached(forceFinish); }
         );
+
+        // Dot animation timer (1 -> 2 -> 3)
+        let dots = 1;
+        this._dotTimer = scene.time.addEvent({
+            delay: 1000,
+            loop: true,
+            callback: () => {
+                dots++;
+                if (dots > 3) dots = 1;
+                if (this._text) {
+                    const baseText = t('ui', 'loading').replace(/\.+$/, '');
+                    this._text.setText(baseText + '.'.repeat(dots));
+                }
+            }
+        });
     }
 
     // ─── Private ──────────────────────────────────────────────────────────────
@@ -139,6 +154,11 @@ class LoadingScreen {
     }
 
     _onComplete() {
+        if (this._dotTimer) {
+            this._dotTimer.remove();
+            this._dotTimer = null;
+        }
+
         if (this._bg) { this._bg.destroy(); this._bg = null; }
         if (this._barText) { this._barText.destroy(); this._barText = null; }
         if (this._runBtnBg) { this._runBtnBg.destroy(); this._runBtnBg = null; }

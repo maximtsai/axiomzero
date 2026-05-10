@@ -1,6 +1,6 @@
 // nodeDefs.js â€” Upgrade Tree upgrade definitions.
 // Centralized node data for the upgrade tree.
-
+// cinematicManager
 // Tree Layout Constants
 const TREE_CENTER_X = 400; // Half of 800px panel width
 const TREE_START_Y = 740;
@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'impact', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker'],
+        childIds: ['lore_3', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -399,8 +399,8 @@ const NODE_DEFS = [
         popupText: t('nodes', 'restore_point.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 1,
-        costType: 'insight',
+        baseCost: 250,
+        costType: 'data',
         costScaling: 'static',
         parents: ['backup_server'],
         childIds: [],
@@ -420,7 +420,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['bomb_2'],
-        childIds: ['junk_data_2'],
+        childIds: [],
         treeX: gridX(-4.0),
         treeY: gridY(1.0),
         effect: function () { },
@@ -507,27 +507,8 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcPulseSize();
         },
     },
-    {
-        id: 'impact',
-        name: t('nodes', 'impact.name'),
-        icon: 'Skillicon14_02.png',
-        description: t('nodes', 'impact.desc'),
-        popupText: t('nodes', 'impact.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 2,
-        baseCost: 100,
-        costType: 'data',
-        costScaling: 'linear',
-        costStep: 100,
-        parents: ['cheat'],
-        childIds: ['root_access'],
 
-        treeX: gridX(-2.5),
-        treeY: gridY(-2.0),
-        effect: function () {
-            upgradeDispatcher.recalcPulseDamage();
-        },
-    },
+
     {
         id: 'integrity',
         name: t('nodes', 'integrity.name'),
@@ -1281,6 +1262,7 @@ const NODE_DEFS = [
                     });
 
                     nodeAnims.playRevealMapActivationAnimation(node, () => {
+
                         // Sequential node revelation once explosion finishes
                         PhaserScene.time.delayedCall(250, () => {
                             upgradeTree._refreshAllNodes();
@@ -1303,6 +1285,29 @@ const NODE_DEFS = [
                                             if (typeof upgradeTree !== 'undefined') {
                                                 upgradeTree.setNavigationEnabled(true);
                                             }
+                                            // Play slide button hint animation at the location of the slide left button
+                                            const cx = GAME_CONSTANTS.halfWidth * 2;
+                                            const cy = GAME_CONSTANTS.halfHeight;
+                                            const slideHint = PhaserScene.add.sprite(cx - 45, cy, 'buttons', 'slide_btn_anim_1.png');
+                                            slideHint.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 30);
+                                            slideHint.setScrollFactor(0);
+                                            slideHint.setOrigin(1, 0.5);
+                                            slideHint.play('slide_btn_anim');
+                                            setTimeout(() => {
+                                                // make slideHint only play if fullUpgradeView is true
+                                                if (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView()) {
+                                                    slideHint.play('slide_btn_anim');
+                                                } else {
+                                                    slideHint.setVisible(false);
+                                                }
+                                                setTimeout(() => {
+                                                    slideHint.destroy();
+                                                }, 2000)
+                                            }, 2500)
+                                            if (typeof upgradeTree !== 'undefined') {
+                                                upgradeTree.assignToUICamera(slideHint);
+                                            }
+
                                             if (node) node.finalizePurchase();
                                         });
                                     });
@@ -1437,10 +1442,10 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,
-        parents: ['peak_traffic'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-4.5),
-        treeY: gridY(0.0),
+        treeX: gridX(1.5),
+        treeY: gridY(-3.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -1634,7 +1639,7 @@ const NODE_DEFS = [
         description: t('nodes', 'artillery_volley.desc'),
         popupText: t('nodes', 'artillery_volley.popup'),
         maxLevel: 1,
-        baseCost: 200,
+        baseCost: 250,
         costType: 'data',
         costScaling: 'static',
         parents: ['artillery'],

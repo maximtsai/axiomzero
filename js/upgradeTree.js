@@ -43,6 +43,8 @@ const upgradeTree = (() => {
 
     let lastDragX = 0;
     let lastDragY = 0;
+    let dragDistanceTotal = 0;
+    let isDraggingTree = false;
 
     let visible = false;
     let hasShownThisSession = false;
@@ -333,8 +335,7 @@ const upgradeTree = (() => {
 
 
 
-        let isDraggingTree = false;
-        let dragDistanceTotal = 0;
+
 
         dragSurface.on('pointerdown', (pointer) => {
             const hoveredBtn = buttonManager.getHoveredButton(pointer.x, pointer.y);
@@ -359,8 +360,9 @@ const upgradeTree = (() => {
             const dy = y - lastDragY;
 
             dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
-            if (dragDistanceTotal > 20 && typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) {
-                nodeTooltip.hide();
+            if (dragDistanceTotal > 30) {
+                if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) nodeTooltip.hide();
+                if (typeof buttonManager !== 'undefined') buttonManager.cancelClick();
             }
 
             if (dx !== 0 || dy !== 0) {
@@ -1926,5 +1928,9 @@ const upgradeTree = (() => {
         }
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    function isDraggingSignificant() {
+        return dragDistanceTotal > 30;
+    }
+
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

@@ -114,6 +114,10 @@ class InternalButtonManager {
         }
     }
 
+    cancelClick() {
+        this.lastClickedButton = null;
+    }
+
     bringButtonToTop(button) {
         this.removeButton(button);
         this.addToButtonList(button);
