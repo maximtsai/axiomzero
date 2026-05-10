@@ -169,7 +169,7 @@ window.TRANSLATIONS.en = {
         malware_siphon: { name: 'MALWARE SIPHON', desc: 'Heal [color=#87FF02]+0.5[/color] HP from enemies that die near the tower', popup: 'MALWARE SIPHON ACTIVE' },
         data_chest_unlock: { name: 'DATA HUNTER', desc: 'High-value [color=cyan]DATA CACHES[/color] now appear during combat', popup: 'DATA CHESTS ENABLED' },
         trojan_access: { name: 'TROJAN PAYLOAD', desc: 'Enemies have [color=#8FD9F8]8%[/color] chance to spawn as an [color=#E13500]EXPLODER[/color] that hurts other enemies', popup: 'TROJAN ACTIVE' },
-        volatile_payload: { name: 'VOLATILE PAYLOAD', desc: '[color=#8FD9F8]+65%[/color] [color=#E13500]EXPLODER[/color] blast radius', popup: '+65% EXPLOSION RADIUS' },
+        volatile_payload: { name: 'VOLATILE PAYLOAD', desc: '[color=#8FD9F8]+50%[/color] [color=#E13500]EXPLODER[/color] blast radius', popup: '+50% EXPLOSION RADIUS' },
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Repeated cursor attacks on same enemy deal [color=#8FD9F8]+4[/color] bonus dmg', popup: 'REPEAT EXPLOIT ACTIVE' },
         impulse: { name: 'IMPULSE', desc: '[color=#8FD9F8]+2[/color] cursor damage', popup: '+2 CURSOR DMG' },
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width', popup: 'BEAM AMPLIFIED' },

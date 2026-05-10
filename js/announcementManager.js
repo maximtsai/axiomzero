@@ -13,7 +13,7 @@ const announcementManager = (() => {
      * @param {string} msg2
      */
     function showBossAnnouncement(msg1, msg2) {
-        const baseSize = (gameState.settings.bigFont ? 56 : 50);
+        const baseSize = (gameState.settings.bigFont ? 60 : 54);
         const fSize1 = Math.floor(baseSize * 0.8) + 'px';
         const fSize2 = Math.floor(baseSize * 1.5) + 'px';
 
@@ -27,7 +27,7 @@ const announcementManager = (() => {
         tempTxt1.destroy();
         tempTxt2.destroy();
 
-        const baseYPos = GAME_CONSTANTS.halfHeight - 320;
+        const baseYPos = GAME_CONSTANTS.halfHeight - 305;
         const commonX = GAME_CONSTANTS.halfWidth;
 
         // Message 1 (Status)
@@ -121,7 +121,7 @@ const announcementManager = (() => {
     }
 
     function showAnnounceMessage(msg) {
-        const fSize = (gameState.settings.bigFont ? 56 : 50) + 'px';
+        const fSize = (gameState.settings.bigFont ? 60 : 54) + 'px';
         const measureMsg = msg.replaceAll('#', '');
         const tempTxt = PhaserScene.add.text(0, 0, measureMsg, {
             fontFamily: 'MunroSmall',
@@ -131,7 +131,7 @@ const announcementManager = (() => {
         const fullHeight = tempTxt.height;
         tempTxt.destroy();
 
-        const baseYPos = GAME_CONSTANTS.halfHeight - 310;
+        const baseYPos = GAME_CONSTANTS.halfHeight - 300;
         const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
             fontFamily: 'MunroSmall',
             fontSize: fSize,

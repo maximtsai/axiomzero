@@ -128,8 +128,8 @@ class Boss4Model extends BossModel {
 class Boss4View extends EnemyView {
     constructor() {
         const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
-        // Using boss_1.png as a placeholder if boss_4.png is not yet available in the atlas
-        super('bosses', 'boss_1.png', 'boss_hp.png', baseDepth);
+        // High-precision EXECUTE assets
+        super('bosses', 'boss_4.png', 'boss_4_hp.png', baseDepth);
 
         // Placeholder for core glow (could use a pixel or existing frame)
         this.coreGlow = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_charge.png');

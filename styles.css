@@ -60,6 +60,12 @@
     font-weight: bold;
 }
 
+@font-face {
+    font-family: 'Quantico-Italic';
+    src: url('assets/fonts/Quantico-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+
 
 
 

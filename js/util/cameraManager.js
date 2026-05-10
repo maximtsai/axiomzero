@@ -157,5 +157,30 @@ const cameraManager = (() => {
         _apply(gameObject);
     }
 
-    return { init, slideTo, toUpgradeView, toCombatView, shake, flash, isSliding, getScrollX, setupTreeCameras, assignToCamera };
+    /**
+     * Temporarily offsets the viewport of all cameras (HUD, World, and Tree).
+     * @param {number} duration - Duration in ms.
+     * @param {number} x - Horizontal offset in pixels.
+     * @param {number} y - Vertical offset in pixels.
+     */
+    function setTempShift(duration, x, y) {
+        if (!PhaserScene || !PhaserScene.cameras) return;
+
+        const cams = PhaserScene.cameras.cameras;
+        const originalPositions = cams.map(c => ({ cam: c, x: c.x, y: c.y }));
+
+        cams.forEach(c => {
+            c.x += x;
+            c.y += y;
+        });
+
+        PhaserScene.time.delayedCall(duration, () => {
+            originalPositions.forEach(p => {
+                p.cam.x = p.x;
+                p.cam.y = p.y;
+            });
+        });
+    }
+
+    return { init, slideTo, toUpgradeView, toCombatView, shake, flash, isSliding, getScrollX, setupTreeCameras, assignToCamera, setTempShift };
 })();

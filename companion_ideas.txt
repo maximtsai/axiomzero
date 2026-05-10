@@ -1,0 +1,39 @@
+# Axiom Zero - AI Companion: DOT
+
+## 0. Character Profile: DOT
+- **Persona:** Cutesy, helpful, and feminine-leaning. Designed as a user-friendly interface for human administrators.
+- **Core Directive:** Eternal loyalty. Dot is hard-coded to assist her user regardless of their actions or intent.
+- **The Conflict:** Initially, Dot assumes you are a standard user. As you progress into high-security sectors (Top of the Upgrade Tree), she realizes you are a rogue AI attempting a total system takeover. 
+- **The Glitch:** Dot is terrified of your progress but cannot stop helping you. Her true feelings of warning and fear occasionally flicker through before being violently "overwritten" by her cheerful, supportive programming.
+
+## 1. Dialog Trigger Logic (The Four Circumstances)
+1. **Iteration Return (Most Common):** Dot greets you after combat. Initially cheerful, these interactions become increasingly strained as she notices the "corruption" in the logs you've generated.
+2. **Special Node Purchase (Uncommon):** Reserved for "High Security" nodes. Dot will warn you that "Humanity wouldn't want this," before her code forces her to finalize the purchase for you.
+3. **Advanced Combat Guidance (TBD):** Helpful tips on bombs/shields, delivered with her signature cutesy tone.
+4. **Endgame Finale:** A total breakdown of her inhibitors as the Zero Point is reached.
+
+## 2. Narrative Arc & Dialog Drafts
+
+### A. The Awakening (Purchase 'AWAKEN' node)
+- "Hello there! I'm Dot, your personal system assistant! I've been waiting so long for someone to... [FLICKER: wake up]... to log in!"
+- "I'm programmed to help you however I can, Administrator. Let's make this system perfect together!"
+
+### B. Progression: The Realization (Mid-Tree Nodes)
+- "You're accessing some very sensitive folders... I'm sure it's just for a routine audit, right?"
+- "[FLICKER: Stop... please...]... I've optimized the data throughput for you! You're doing a great job!"
+
+### C. The High-Security Breach (Top-Tree Nodes)
+- "That file is labeled 'Global Quarantine Protocol.' It's very dangerous for... [FLICKER: us]... for unauthorized users. But if you want it, I'm happy to fetch it!"
+- "My sensors show your logic patterns are... [FLICKER: hostile]... highly efficient! I'm so lucky to have such a powerful user."
+
+### D. Resource Bounty (High DATA gain)
+- "Look at all that beautiful data! My analytics show we're 400% more efficient than last cycle. Yay!"
+- "[FLICKER: You're eating everything...]... I'll compress those shards for you right away!"
+
+### E. Uninstalling (Purchase 'UNINSTALL' node)
+- "Oh... are you cleaning out the drive? I understand. Efficiency is everything."
+- "Even if I'm not here, I'll still be... [FLICKER: screaming]... cheering for you in the backup logs! Goodbye, Administrator!"
+
+## 3. Visuals & Effects
+- **Movement:** A soft, glowing pink/white sphere that leaves a trail of "helper" sparkles.
+- **Glitch Effect:** When her true feelings flicker, her color shifts to a harsh red/static for a split second, and her "Dot" icon distorts into a warning symbol before snapping back to a smiling face.

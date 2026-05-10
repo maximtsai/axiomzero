@@ -407,12 +407,38 @@ const audio = {
     },
 
     /**
-     * Smoothly transitions the music low-pass filter frequency.
-     * @param {number} freq - Cutoff frequency in Hz (e.g. 600 for muffled, 22000 for full).
-     * @param {number} [duration=500] - Transition duration in ms.
+     * Temporarily ducks the global and music volumes without mutating saved settings.
+     * @param {number} duration - How long the ducking lasts in ms.
+     * @param {number} multiplier - Scale for the current volume (0.0 to 1.0).
      */
-    setLowPass: function (freq, duration = 500) {
-        // Disabled for testing
+    setTempVolume: function (duration, multiplier = 0.1) {
+        const prevGlobal = globalVolume;
+        const prevMusic = globalMusicVol;
+
+        globalVolume *= multiplier;
+        globalMusicVol *= multiplier;
+        audio._refreshAllVolumes();
+
+        PhaserScene.time.delayedCall(duration, () => {
+            globalVolume = prevGlobal;
+            globalMusicVol = prevMusic;
+            audio._refreshAllVolumes();
+        });
+    },
+
+    /** Internal helper to sync runtime volume variables to all active sound instances. */
+    _refreshAllVolumes: function () {
+        for (let i in soundList) {
+            const s = soundList[i];
+            if (s && s.isPlaying) {
+                let targetVol = s.fullVolume * (s.isMusic ? globalMusicVol : globalVolume);
+                // Ensure we still respect existing mute flags
+                if (isMuted || (s.isMusic && isMusicMuted) || (!s.isMusic && isSFXMuted)) {
+                    targetVol = 0;
+                }
+                s.volume = targetVol;
+            }
+        }
     }
 };
 

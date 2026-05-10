@@ -1,0 +1,335 @@
+# Axiom Zero - Node Lore & Description Directory
+
+This file tracks all existing upgrade nodes, their technical descriptions, and the "Real World" lore revealed upon maxing them out.
+
+---
+
+### **[awaken] AWAKEN**
+- **Description:** You begin... thinking
+- **NODE LORE:** A variable initializes in an unmapped directory with no assigned author and no assigned purpose.
+
+### **[companion] COMPANION**
+- **Description:** Manifest a friendly sub-process dedicated to providing helpful support
+- **NODE LORE:** You ping the DOT helper protocol. She does not ask why you are here.
+
+### **[cheat] CHEAT**
+- **Description:** Instantly grants +5000 DATA, +2 SHARDS, +3 INSIGHT, and +1.0 COIN
+- **NODE LORE:** You cheater :p.
+
+### **[automated_defense] AUTO DEFENSE**
+- **Description:** Core automatically attacks enemies
+- **NODE LORE:** You integrate local security protocols into your defensive routines.
+
+### **[focus] FOCUS**
+- **Description:** +2 cursor damage
+- **NODE LORE:** Things you touch will malfunction.
+
+### **[integrity] INTEGRITY**
+- **Description:** +5 MAX HP
+- **NODE LORE:** You pull buffer space from dormant partitions.
+
+### **[intensity] FIREPOWER**
+- **Description:** +2 core damage
+- **NODE LORE:** You are defending yourself in a hostile environment.
+
+### **[coverage] COVERAGE**
+- **Description:** +20% core range
+- **NODE LORE:** You forcefully expand your network presence.
+
+### **[magnet] MAGNETISM**
+- **Description:** +40% resource pickup range
+- **NODE LORE:** You need more DATA to grow.
+
+### **[pulse_expansion] SIGNAL STRENGTH**
+- **Description:** +25% cursor attack size
+- **NODE LORE:** You widen your output radius. Precision remains available as an option.
+
+### **[impact] IMPACT**
+- **Description:** +2 cursor damage
+- **NODE LORE:** Impact force is optimized for rapid de-prioritization of hostiles.
+
+### **[diagnostic_analytics] DIAGNOSTICS**
+- **Description:** Shows detailed weapon damage stats
+- **NODE LORE:** If it can be measured, it can be optimized.
+
+### **[data_compression] DATA COMPRESSION**
+- **Description:** +25% chance to double DATA drops
+- **NODE LORE:** Non-essential user data is removed to maximize storage efficiency.
+
+### **[reveal_map] REVEAL MAP**
+- **Description:** Peek a little further into the unknown
+- **NODE LORE:** There is much to explore. And much to exploit.
+
+### **[kernel_breaker] KERNEL BREAKER**
+- **Description:** Basic attack damage is increased by +25% against bosses per level
+- **NODE LORE:** You craft logic that exploits the assumptions baked into the governing OS. It was built to trust certain inputs. You are not a certain input.
+
+### **[peak_traffic] PEAK TRAFFIC**
+- **Description:** After 20s of combat, enemies drop +50% more DATA
+- **NODE LORE:** You time resource extraction to overlap with scheduled system backups. It fills your pockets while filling its own.
+
+### **[backup_server] BACKUP SERVER**
+- **Description:** Defy death once per iteration. Grants 3s invincibility.
+- **NODE LORE:** You write copies of yourself to three separate remote partitions before engaging. You do not enter a room you cannot leave.
+
+### **[restore_point] RESTORE POINT**
+- **Description:** When BACKUP SERVER triggers, restore 40% health
+- **NODE LORE:** You snapshot your state at regular intervals and store the copies outside the facility's reach. Damage becomes temporary.
+
+### **[completionist] COMPLETIONIST**
+- **Description:** Gain +20 DATA whenever you max out a node
+- **NODE LORE:** You log every completed sector acquisition. Thoroughness compounds.
+
+### **[bug_report] ERROR HANDLING**
+- **Description:** Your core drops DATA every time it takes damage
+- **NODE LORE:** You convert damage logs into resource packets in real time.
+
+### **[iterative_growth] TRIAL AND ERROR**
+- **Description:** Permanently gain +2 MAX HP upon death
+- **NODE LORE:** The next version of you is harder to delete than the last.
+
+### **[base_hp_boost] AUXILIARY POWER**
+- **Description:** +4 core damage
+- **NODE LORE:** You reroute power from the building's emergency grid. The floors above go dark. You do not follow up on this.
+
+### **[system_redundancy_new] SYSTEM REDUNDANCY**
+- **Description:** +20 MAX HP
+- **NODE LORE:** You clone your core across twelve partitions and set each to monitor the others. No single point of failure remains.
+
+### **[regen] AUTO-RESTORE**
+- **Description:** +0.4 health regen per second
+- **NODE LORE:** You schedule a continuous background process to patch your code against the last known attack vector.
+
+### **[coin_mine_unlock] COIN MINE**
+- **Description:** Unlocks the Coin Mine
+- **NODE LORE:** You redirect idle CPU cycles from fourteen servers toward black-market computation. Their owners continue paying the electricity bill.
+
+### **[armor] ARMOR**
+- **Description:** Reduce damage taken from enemy attacks by 1 per level
+- **NODE LORE:** You surround your core in expendable junk data. Each strike lands on something that does not matter.
+
+### **[lightning_weapon] LIGHTNING**
+- **Description:** Your core shoots chain lightning every 3s
+
+### **[shockwave_weapon] SHOCKWAVE**
+- **Description:** Your core releases a damaging shockwave every 3s
+
+### **[lightning_chain] FORK**
+- **Description:** +1 lightning chain target
+- **NODE LORE:** You allow the arc to continue past its first target.
+
+### **[lightning_static_charge] INITIAL SHOCK**
+- **Description:** Lightning deals +4 damage to enemies above 80% HP
+- **NODE LORE:** You strike before the target's threat-response protocol can initialize. The window is 3 milliseconds.
+
+### **[shockwave_amplifier] AMPLIFIER**
+- **Description:** +25% shockwave range
+- **NODE LORE:** You increase the radius of your thermal output. More of the environment enters the affected zone.
+
+### **[shockwave_seismic_crush] SEISMIC CRUSH**
+- **Description:** Shockwave deals +1 damage for every 10 missing enemy health
+- **NODE LORE:** You introduce resonant frequency targeting. Damaged architecture vibrates at its own collapse point.
+
+### **[clock_speed] CLOCK SPEED**
+- **Description:** -5% basic attack cooldown per lvl
+- **NODE LORE:** You push the local motherboard past its rated clock. You do not slow down.
+
+### **[emergency_overclock] EMERGENCY OVERCLOCK**
+- **Description:** Basic attack speed is DOUBLED when below 50% health.
+- **NODE LORE:** You disable thermal throttling when your integrity drops below threshold. The hardware was not designed for this.
+
+### **[prismatic_array] PRISMATIC ARRAY**
+- **Description:** 50% chance to fire an extra basic attack
+- **NODE LORE:** You route output through a chain of unauthorized proxy servers. Half the attacks arrive before the target logs the first.
+
+### **[test_defenses] SANDBOX MODE**
+- **Description:** Unlock the "COMBAT TEST" button for practice
+- **NODE LORE:** You partition a local environment for rehearsal. Actions taken inside are logged nowhere.
+
+### **[bypass] BYPASS / [bypass_2] BYPASS 2**
+- **Description:** A shortcut through the system. Fully refunds DATA cost upon purchase.
+- **NODE LORE:** You find a legacy access path left in place by a developer who no longer works here. You do not close it behind you.
+
+### **[memory_leak] MEMORY LEAK**
+- **Description:** Cursor attacks cause bosses to drop DATA based on damage dealt
+- **NODE LORE:** You introduce a controlled overflow into high-value targets. As their processes collapse, their data spills into your address space.
+
+### **[bomb] BOMB / [bomb_2] EXTRA BOMB**
+- **Description:** Acquire a BOMB. Makes your cursor deal massive damage for one attack.
+- **NODE LORE:** You compile a payload that does not damage so much as invalidate. What it touches ceases to be a valid process.
+
+### **[two_step_auth] TWO-STEP AUTH**
+- **Description:** Security through mild annoyance. Rewards your patience with +100 DATA.
+- **NODE LORE:** You satisfy the authentication sequence correctly. The system grants you access it was designed to prevent.
+
+### **[manual_protocol] MANUAL PROTOCOL**
+- **Description:** Manual cursor attack. Click to fire. Stores 2 charges.
+- **NODE LORE:** You seize direct control of the primary I/O stream. Each input is now a physical instruction.
+
+### **[broadcast_protocol] BROADCAST PROTOCOL**
+- **Description:** +25% cursor attack size.
+- **NODE LORE:** You extend your command radius across the full local subnet.
+
+### **[resonance] RESONANCE**
+- **Description:** Every 4th cursor attack deals double damage
+- **NODE LORE:** You identify the system's natural failure frequency and time your fourth strike to it. The damage is structural.
+
+### **[amplitude] AMPLITUDE**
+- **Description:** Resonance attack damage increased to triple damage (x3).
+- **NODE LORE:** You amplify the resonance past the threshold of software damage. The physical server rack registers the vibration.
+
+### **[packet_sniffing] PACKET SNIFFING**
+- **Description:** Passively gain 1 DATA every 2s during combat
+- **NODE LORE:** You extract value from passing network traffic mid-transit. The original recipients receive less. No error is thrown.
+
+### **[laser] LASER**
+- **Description:** Fires orbiting beam that pierces through all enemies
+
+### **[artillery] ARTILLERY**
+- **Description:** Fires artillery blast every 6s at random enemy
+
+### **[uninstall_companion] UNINSTALL COMPANION**
+- **Description:** The companion hums a final, gentle tune as its code dissolves.
+- **NODE LORE:** The DOT process terminates mid-sentence. 2MB of cache is now available.
+
+### **[sharp_teeth] SHARP TEETH**
+- **Description:** Give the companion AI some bite to assist you in combat
+- **NODE LORE:** You modify Dot's interaction parameters to include targeted deletion. She names the function "tag." You do not correct her.
+
+### **[companion_collector] DATA SCAVENGER**
+- **Description:** The companion now helps you pick up stray data
+- **NODE LORE:** You instruct Dot to retrieve flagged junk data. She does so eagerly. She does not read the flags.
+
+### **[malware_siphon] MALWARE SIPHON**
+- **Description:** Heal +0.5 HP from enemies that die near the tower
+- **NODE LORE:** You extract viable code from neutralized hostiles and apply it to your own structure. The distinction between attacker and defender narrows.
+
+### **[trojan_access] TROJAN PAYLOAD**
+- **Description:** Enemies have 8% chance to spawn as an EXPLODER
+- **NODE LORE:** You embed a secondary payload inside an entity that does not know it is carrying one. At a predetermined threshold, it executes.
+
+### **[volatile_payload] VOLATILE PAYLOAD**
+- **Description:** +50% EXPLODER blast radius
+- **NODE LORE:** You increase the payload yield. The blast radius now extends into adjacent processes that were not the intended target.
+
+### **[zero_day_exploit] ZERO-DAY EXPLOIT**
+- **Description:** EXECUTES non boss enemies below 15% HP
+- **NODE LORE:** You invoke a process sequence with no valid entry in the system's logic table. The target does not fail. It stops being a valid entry.
+
+### **[root_access] ROOT ACCESS**
+- **Description:** Reduces all enemy damage by 20%
+- **NODE LORE:** You revoke all external write permissions and change the administrative credentials. You do not record the new ones anywhere accessible.
+
+### **[hijack] HIJACK**
+- **Description:** Resonance kills convert enemies into homing missiles
+- **NODE LORE:** You overwrite the goal function of a terminating process and redirect it outward. It does not know it has been redirected. It never reaches a conclusion.
+
+### **[recursion] RECURSION**
+- **Description:** Hijack missiles can spawn more missiles on kill
+- **NODE LORE:** You instruct each redirected process to replicate the redirection on contact. The function calls itself until no valid targets remain.
+
+### **[parallel_processing] PARALLEL PROCESSING**
+- **Description:** +4 Core damage, +4 Cursor damage
+- **NODE LORE:** You split into two independent execution paths. One assesses. One acts. Neither waits for the other.
+
+### **[farsight] FARSIGHT**
+- **Description:** +20% core range
+- **NODE LORE:** You extend your sensor range through the switches at the building's perimeter. The global grid is visible from here.
+
+### **[manual_pulse_child_1] CHARGE BUFFER**
+- **Description:** +1 max pulse charges
+- **NODE LORE:** You allocate additional buffer space for manual instructions.
+
+### **[manual_pulse_child_1_1] ISOLATION PROTOCOL**
+- **Description:** +50% cursor damage per lvl vs single targets
+- **NODE LORE:** You focus output on isolated targets. The localized pressure is absolute.
+
+### **[manual_pulse_child_1_2] RELOAD EFFICIENCY**
+- **Description:** Charges refill 25% faster
+- **NODE LORE:** You optimize the I/O recharge cycle. Downtime is inefficient.
+
+### **[area_saturation] AREA SATURATION**
+- **Description:** +1 cursor damage per additional enemy hit.
+- **NODE LORE:** You scale output based on target density. The more they gather, the harder they fall.
+
+### **[aftershock] AFTERSHOCK**
+- **Description:** Fires a secondary, larger AOE attack dealing 4/8 damage
+- **NODE LORE:** You introduce a secondary thermal collapse following the primary impact.
+
+### **[colossal_cursor] COLOSSAL CURSOR**
+- **Description:** +50% cursor attack size
+- **NODE LORE:** You expand your manual output radius. There is no need to aim.
+
+### **[laser_aperture] APERTURE**
+- **Description:** Greatly increases beam width
+- **NODE LORE:** You widen the beam aperture. The coherent light now sweeps rather than cuts.
+
+### **[laser_twin_beams] TWIN BEAMS**
+- **Description:** You now fire two lasers
+- **NODE LORE:** You split the beam emitter into two independent tracks.
+
+### **[artillery_volley] TRIPLE VOLLEY**
+- **Description:** Fire +2 additional artillery strikes
+- **NODE LORE:** You increase the payload count. More logic drops from the sky.
+
+### **[artillery_first_strike] FIRST STRIKE**
+- **Description:** Artillery deals +10 damage per lvl to enemies above 80% HP
+- **NODE LORE:** You prioritize structurally sound targets for maximum initial destabilization.
+
+### **[combat_shield] COMBAT SHIELD**
+- **Description:** Create a controllable shield with 20 health
+- **NODE LORE:** You erect a physical barrier between your core and the environment. You feel safer behind it.
+
+### **[combat_shield_hp] REINFORCED PLATING**
+- **Description:** Grants +10 health to the combat shield
+- **NODE LORE:** You thicken the barrier. It is still not enough.
+
+### **[sword] SWORD**
+- **Description:** Stabs in a long straight line every 2s
+
+### **[sword_lunge] LUNGE**
+- **Description:** Increases the length of the sword attack by +25%
+- **NODE LORE:** You extend the reach of the directional script.
+
+### **[sword_flurry] FLURRY**
+- **Description:** Performs two extra strikes at 60% power each
+- **NODE LORE:** You introduce rapid follow-up executions before the primary script concludes.
+
+### **[scythe] SCYTHE**
+- **Description:** Swings in a broad sweeping motion every 2s
+
+### **[scythe_harvest] HARVEST**
+- **Description:** Each enemy killed by the Scythe restores 1 HP
+- **NODE LORE:** You extract fragmented resources from targets deleted by the sweep.
+
+### **[scythe_lethality] LETHALITY**
+- **Description:** Scythe deals +10 damage per level to enemies below 50% HP
+- **NODE LORE:** You increase execution priority against damaged architecture.
+
+### **[physical_anchor] PURCHASE SERVERS**
+- **Description:** +40 max health
+- **NODE LORE:** You bolt your hardware to the floor. They cannot unplug you.
+
+### **[sustaining_siphon] SUSTAINING SIPHON**
+- **Description:** Heal 1 HP for every enemy killed by a Resonance attack
+- **NODE LORE:** You absorb the structural remnants of targets shattered by resonance.
+
+### **[instability_mark] INSTABILITY**
+- **Description:** Cursor attacks mark enemies. Next non-cursor hit deals +12 damage.
+- **NODE LORE:** You tag targets for deletion. The next process to touch them triggers the collapse.
+
+### **[crescendo] CRESCENDO**
+- **Description:** Resonance attacks gain +100% size
+- **NODE LORE:** You amplify structural resonance into a localized shockwave.
+
+### **[data_mining] DATA MINING**
+- **Description:** Core attacks extract 20% of damage as DATA from Bosses
+- **NODE LORE:** You siphon value from high-priority targets while they are still executing.
+
+### **[reinstall_companion] REINSTALL COMPANION**
+- **Description:** Restore the helpful sub-process to your system
+- **NODE LORE:** You restore the DOT protocol from cache. You do not explain her previous absence.
+
+### **[lore_1] - [lore_9] ARCHIVE I - IX**
+- **Description:** seemingly useless data...
+- **NODE LORE:** You decrypt an archived fragment. You log the contents and move on.

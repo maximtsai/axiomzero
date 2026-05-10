@@ -42,6 +42,9 @@ const NODE_DEFS = [
             if (typeof tutorialManager !== 'undefined') {
                 tutorialManager.hideAll();
             }
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(200, 0.007);
+            }
             if (typeof audio !== 'undefined') {
                 audio.play('pc_boot', 1);
             }
@@ -54,9 +57,17 @@ const NODE_DEFS = [
                 }
                 setTimeout(() => {
                     if (typeof cinematicManager !== 'undefined') {
-                        cinematicManager.playBossSpawnGlitch(1.0, 1500);
+                        // Stage 1: Low-intensity pre-shock
+                        cinematicManager.playLocalGlitch(GAME_CONSTANTS.halfWidth + 400, GAME_CONSTANTS.halfHeight, 150, 1, 300);
+
+                        // Stage 2: High-intensity main surge (starts as Stage 1 peaks)
+                        setTimeout(() => {
+                            if (typeof cinematicManager !== 'undefined') {
+                                cinematicManager.playLocalGlitch(GAME_CONSTANTS.halfWidth + 400, GAME_CONSTANTS.halfHeight, 200, 1.6, 1100);
+                            }
+                        }, 1300);
                     }
-                }, 1000);
+                }, 200);
                 nodeAnims.playAwakenActivationAnimation(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, GAME_CONSTANTS.DEPTH_TOWER, () => {
 
                     setTimeout(() => {
@@ -65,7 +76,10 @@ const NODE_DEFS = [
                             audio.fade('pc_boot', 300);
 
                         }
-                    }, 50);
+                        setTimeout(() => {
+                            cinematicManager.playLocalGlitch(GAME_CONSTANTS.halfWidth + 400, GAME_CONSTANTS.halfHeight, 110, 0.8, 300);
+                        }, 1500);
+                    }, 200);
                     tower.awaken();
                     pulseAttack.unlock();
                     // Show the deploy button immediately

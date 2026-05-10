@@ -152,6 +152,10 @@ const nodeTooltip = (() => {
         goldBg.setDisplaySize(currentBgWidth - 10, barHeight);
         costBg.setDisplaySize(currentBgWidth - 10, barHeight);
 
+        const bgTexture = node.isDuoBox ? 'scarlet_pixel.png' : 'navy_pixel.png';
+        bg.setFrame(bgTexture);
+        bg.setOrigin(0.5, 0);
+
         const rowSpacing = isBigValue ? 10 : 7;
         const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);

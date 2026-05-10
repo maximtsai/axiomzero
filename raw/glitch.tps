@@ -204,6 +204,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">glitch/glitch_line.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>200,1,400,3</rect>
+                <key>scale9Paddings</key>
+                <rect>200,1,400,3</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">glitch/glitch_medium.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -231,6 +246,21 @@
                 <rect>20,10,40,20</rect>
                 <key>scale9Paddings</key>
                 <rect>20,10,40,20</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">glitch/glitch_wide.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>38,4,75,7</rect>
+                <key>scale9Paddings</key>
+                <rect>38,4,75,7</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

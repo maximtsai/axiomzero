@@ -363,21 +363,30 @@ const nodeAnims = {
             .setAlpha(0.4)
             .setScale(0.2);
 
-        const duration = 2000;
+        const duration = 2750;
         const avgValues = { scale: 0.5, alpha: 0.45 };
 
         scene.tweens.add({
-            delay: 400,
+            delay: 100,
             targets: avgValues,
-            scale: 3,
+            scale: 3.8,
             alpha: 1.0,
             duration: duration,
             ease: 'Linear',
             onUpdate: () => {
-                const flickerScale = (Math.random() - 0.5) * 0.45;
-                const flickerAlpha = (Math.random() - 0.5) * 0.5;
+                const flickerScale = (Math.random() - 0.5) * 0.75;
+                const flickerAlpha = (Math.random() - 0.5) * 0.7;
+
+                // Aggressive position jitter
+                const jitterX = (Math.random() - 0.5) * 2;
+                const jitterY = (Math.random() - 0.5) * 2;
+                glow.setPosition(x + jitterX, y + jitterY);
+
+                // Random rotation snapping
+                glow.setRotation(Phaser.Math.Between(0, 3) * (Math.PI / 2));
+
                 glow.setScale(avgValues.scale + flickerScale);
-                glow.setAlpha(Phaser.Math.Clamp(avgValues.alpha + flickerAlpha, 0.4, 1.0));
+                glow.setAlpha(Phaser.Math.Clamp(avgValues.alpha + flickerAlpha, 0.3, 1.0));
             },
             onComplete: () => {
                 scene.time.delayedCall(50, () => {

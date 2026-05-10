@@ -300,7 +300,7 @@ const cinematicManager = (() => {
                 maxSize: 60
             });
         }
-        
+
         let sprite = glitchPool.get(x, y, 'glitch', frame);
         if (!sprite) {
             // If pool is full, recycle the oldest one or just skip
@@ -311,9 +311,6 @@ const cinematicManager = (() => {
 
         const alpha = Phaser.Math.FloatBetween(0.2, 0.9);
         sprite.setActive(true).setVisible(true).setAlpha(alpha);
-        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-            upgradeTree.assignToUICamera(sprite);
-        }
         return sprite;
     }
 
@@ -332,7 +329,7 @@ const cinematicManager = (() => {
         // Calculate count based on intensity/duration
         const baseCount = 10;
         const count = Math.floor(baseCount * intensity * (duration / 400));
-        
+
         for (let i = 0; i < count; i++) {
             const delay = (duration / count) * i;
 
@@ -340,7 +337,7 @@ const cinematicManager = (() => {
                 const frame = frames[Math.floor(Math.random() * frames.length)];
                 let x = Math.random() * GAME_CONSTANTS.WIDTH;
                 let y = Math.random() * GAME_CONSTANTS.HEIGHT;
-                
+
                 // One retry if too close to tower
                 if ((x - cx) ** 2 + (y - cy) ** 2 < minDistSq) {
                     x = Math.random() * GAME_CONSTANTS.WIDTH;
@@ -350,25 +347,133 @@ const cinematicManager = (() => {
                 const sprite = _getGlitchFromPool(x, y, frame);
                 if (!sprite) return;
 
-                sprite.setDepth(BLOCKER_DEPTH + 100)
-                      .setScrollFactor(0)
-                      .setFlip(Math.random() < 0.5, Math.random() < 0.5)
-                      .setTint(0xff0000);
+                sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 3)
+                    .setScrollFactor(1)
+                    .setScale(Phaser.Math.FloatBetween(0.75, 2.5))
+                    .setFlip(Math.random() < 0.5, Math.random() < 0.5)
+                    .setTint(0xff0000);
 
-                PhaserScene.tweens.add({
-                    targets: sprite,
-                    x: x + (Math.random() - 0.5) * 40,
-                    y: y + (Math.random() - 0.5) * 40,
-                    alpha: 0,
-                    duration: Phaser.Math.Between(150, 400),
-                    ease: 'Cubic.easeOut',
-                    onComplete: () => {
-                        sprite.setActive(false).setVisible(false);
+                const lifeDur = Phaser.Math.Between(25, 120);
+                if (lifeDur > 30) {
+                    const jumpDelay = Phaser.Math.Between(30, 50);
+                    if (jumpDelay < lifeDur) {
+                        PhaserScene.time.delayedCall(jumpDelay, () => {
+                            if (sprite.active) {
+                                sprite.x += (Math.random() - 0.5) * 50;
+                                sprite.y += (Math.random() - 0.5) * 50;
+                            }
+                        });
                     }
+                }
+                if (lifeDur > 75) {
+                    PhaserScene.time.delayedCall(75, () => {
+                        if (sprite.active) {
+                            sprite.x += (Math.random() - 0.5) * 160;
+                            sprite.y += (Math.random() - 0.5) * 160;
+                        }
+                    });
+                }
+                PhaserScene.time.delayedCall(lifeDur, () => {
+                    sprite.setActive(false).setVisible(false);
                 });
             });
         }
     }
 
-    return { playCutscene, playCutsceneMinimal, playSystemScanInterruption, playBossSpawnGlitch, endCutscene, isActive };
+    /**
+     * Localized glitch effect around a specific point.
+     * Uses wide/line frames and clusters them near the target.
+     * @param {number} tx - target center x
+     * @param {number} ty - target center y
+     * @param {number} radius - maximum distance from center
+     * @param {number} intensity - frequency multiplier
+     * @param {number} duration - effect time in ms
+     */
+    function playLocalGlitch(tx, ty, radius = 100, intensity = 1.0, duration = 400) {
+        const frames = ['glitch_wide.png', 'glitch_line.png'];
+        const baseCount = 8;
+        const count = Math.floor(baseCount * intensity * (duration / 400));
+
+        // Cinematic hit: heavy slowdown after 100ms
+        PhaserScene.time.delayedCall(100, () => {
+            if (typeof timeManager !== 'undefined') {
+                timeManager.setTempPause(70, 0.01);
+            }
+            if (typeof audio !== 'undefined') {
+                const pan = Phaser.Math.FloatBetween(-0.8, 0.8);
+                audio.play('click2', 1, false, false, pan);
+                audio.setTempVolume(70, 0.4);
+            }
+        });
+
+        // Optional second hit for long effects
+        if (duration > 500) {
+            PhaserScene.time.delayedCall(500, () => {
+                if (typeof timeManager !== 'undefined') {
+                    timeManager.setTempPause(150, 0.01);
+                }
+                if (typeof audio !== 'undefined') {
+                    audio.play('sizzle', 1);
+                    audio.setTempVolume(150, 0.15);
+                }
+                if (typeof cameraManager !== 'undefined') {
+                    cameraManager.setTempShift(40, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 1);
+                }
+            });
+        }
+
+        for (let i = 0; i < count; i++) {
+            const delay = (duration / count) * i;
+
+            PhaserScene.time.delayedCall(delay, () => {
+                const frame = frames[Math.floor(Math.random() * frames.length)];
+
+                // Random position within radius
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * radius;
+                const x = tx + Math.cos(angle) * dist;
+                const y = ty + Math.sin(angle) * dist;
+
+                const sprite = _getGlitchFromPool(x, y, frame);
+                if (!sprite) return;
+
+                if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                    upgradeTree.assignToUICamera(sprite);
+                }
+
+                sprite.setDepth(BLOCKER_DEPTH + 100)
+                    .setScrollFactor(0)
+                    .setScale(Phaser.Math.FloatBetween(0.75, 2))
+                    .setFlip(Math.random() < 0.5, Math.random() < 0.5)
+                    .setAlpha(Phaser.Math.Between(Math.min(1, 0.2 * intensity), Math.min(1, 0.7 * intensity)))
+                    .setTint(0xff0000);
+
+                const lifeDur = Phaser.Math.Between(21, 85);
+                if (lifeDur > 26) {
+                    const jumpDelay = Phaser.Math.Between(26, 43);
+                    if (jumpDelay < lifeDur) {
+                        PhaserScene.time.delayedCall(jumpDelay, () => {
+                            if (sprite.active) {
+                                sprite.x += (Math.random() - 0.5) * 50;
+                                sprite.y += (Math.random() - 0.5) * 50;
+                            }
+                        });
+                    }
+                }
+                if (lifeDur > 51) {
+                    PhaserScene.time.delayedCall(51, () => {
+                        if (sprite.active) {
+                            sprite.x += (Math.random() - 0.5) * 160;
+                            sprite.y += (Math.random() - 0.5) * 160;
+                        }
+                    });
+                }
+                PhaserScene.time.delayedCall(lifeDur, () => {
+                    sprite.setActive(false).setVisible(false);
+                });
+            });
+        }
+    }
+
+    return { playCutscene, playCutsceneMinimal, playSystemScanInterruption, playBossSpawnGlitch, playLocalGlitch, endCutscene, isActive };
 })();

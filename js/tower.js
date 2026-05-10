@@ -240,7 +240,7 @@ class TowerView {
 
         this.artilleryCallSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_artillery_call.png');
         this.artilleryCallSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
-        this.artilleryCallSprite.setAlpha(0);
+        this.artilleryCallSprite.setAlpha(0).setScale(1.075);
         helper.setBlendMode(this.artilleryCallSprite, Phaser.BlendModes.ADD);
 
         // Range indicator — positioned below tower, scaled to represent attack range
