@@ -986,6 +986,9 @@ const upgradeTree = (() => {
             const py = baseSY + Math.sin(angle) * dist * scale;
 
             p.setPosition(px, py);
+            if (draggableGroup && draggableGroup.syncChildPosition) {
+                draggableGroup.syncChildPosition(p);
+            }
             p.setDepth(depth);
             p.setVisible(true);
             p.setActive(true);
@@ -1201,6 +1204,9 @@ const upgradeTree = (() => {
     function _animatePulse(x, y, pool, startSize, targetSize, duration, alpha, delay = 0) {
         const pulse = pool.get();
         pulse.setPosition(x, y);
+        if (draggableGroup && draggableGroup.syncChildPosition) {
+            draggableGroup.syncChildPosition(pulse);
+        }
         pulse.setVisible(true);
         pulse.setActive(true);
         pulse.setAlpha(alpha);
@@ -1232,6 +1238,9 @@ const upgradeTree = (() => {
     function _animatePulseScale(x, y, pool, startScale, targetScale, duration, alpha, delay = 0) {
         const pulse = pool.get();
         pulse.setPosition(x, y);
+        if (draggableGroup && draggableGroup.syncChildPosition) {
+            draggableGroup.syncChildPosition(pulse);
+        }
         pulse.setVisible(true);
         pulse.setActive(true);
         pulse.setAlpha(alpha);

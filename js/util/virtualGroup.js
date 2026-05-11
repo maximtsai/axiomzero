@@ -292,6 +292,22 @@ const createVirtualGroup = (scene, x = 0, y = 0) => {
                     return;
                 }
             }
+        },
+
+        /**
+         * syncChildPosition: Updates the recorded offset for a child based on its current world position.
+         * Call this after manually setting a child's position (e.g. when reusing from a pool).
+         */
+        syncChildPosition: (gameObject) => {
+            if (!_active) return;
+            for (let i = 0, len = children.length; i < len; i++) {
+                const c = children[i];
+                if (c.ref === gameObject) {
+                    c.offsetX = (c.ref.x - _x) / _scale;
+                    c.offsetY = (c.ref.y - _y) / _scale;
+                    return;
+                }
+            }
         }
     };
 

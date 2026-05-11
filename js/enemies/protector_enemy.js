@@ -62,6 +62,7 @@ class ProtectorEnemyView extends EnemyView {
             this.auraImg.setAlpha(0);
             PhaserScene.tweens.killTweensOf(this.auraImg);
         }
+        this.setEnemyGlow('protector_glow.png');
     }
 
     deactivate() {

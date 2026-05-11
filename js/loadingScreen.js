@@ -82,7 +82,7 @@ class LoadingScreen {
         const cy = GAME_CONSTANTS.halfHeight;
 
         this._bg = scene.add.image(cx, cy, 'bg').setDepth(0);
-        
+
         // Ensure aspect ratio is maintained while scaling to screen width
         const targetScale = GAME_CONSTANTS.WIDTH / this._bg.width;
         this._bg.setScale(targetScale);
