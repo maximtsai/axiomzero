@@ -11,8 +11,8 @@
 const MB1 = {
     HEALTH: 70,
     SPEED_MULT: 1.5,
-    ATTACK_RANGE: 205,
-    RETREAT_RANGE: 235,
+    ATTACK_RANGE: 230,
+    RETREAT_RANGE: 242,
     FIRE_INTERVAL: 4000,
     BULLET_DAMAGE: 5,
     KNOCKBACK_MOD: 0,
@@ -208,14 +208,13 @@ class Miniboss1 extends Miniboss {
             if (distToTower <= MB1.ATTACK_RANGE) {
                 m.state = MINIBOSS_STATE.ATTACKING;
                 m.isAttacking = true;
-                m.vx = 0;
-                m.vy = 0;
                 m.fireCooldown = 2100; // Intended: faster first shot delay upon entering range
             }
         } else if (m.state === MINIBOSS_STATE.ATTACKING) {
             m.baseRotation = Math.atan2(dy, dx);
             v.setRotation(m.baseRotation);
-
+            m.vx *= 1 - (Math.min(0.2, 2 * dt));
+            m.vy *= 1 - (Math.min(0.2, 2 * dt));
             // Sync charge sprite position
             v.syncChargePosition(m.x, m.y, dx, dy, distToTower);
 

@@ -59,8 +59,7 @@ class EnemyModel {
         this.forceSlowTimer = 0;
         this.isGhosting = false;
         this.invincible = false;
-        this.hitByPulse = false;
-        this.hitByShockwave = false;
+        this.pulseHitCount = 0;
         this.laserDmgBonus = 0;
         this.pushback = 0;
         this.pushbackScale = 1.0;
@@ -117,8 +116,7 @@ class EnemyModel {
 
         this.forceSlowMult = 1.0;
         this.forceSlowTimer = 0;
-        this.hitByPulse = false;
-        this.hitByShockwave = false;
+        this.pulseHitCount = 0;
         this.laserDmgBonus = 0;
         this.wasIsolatedHit = false;
         this.wasResonanceHit = false;
@@ -240,6 +238,8 @@ class EnemyModel {
      * Pure math — no visuals.
      */
     takeDamage(amount) {
+        amount = Math.round(amount);
+
         if (this.invincible && (this.isBoss || this.isMiniboss)) {
             this.lastDamageAmount = 0;
             return { died: false, actualApplied: 0 };

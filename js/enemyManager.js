@@ -202,6 +202,13 @@ const enemyManager = (() => {
             }
         }
 
+        // Data Hunter logic: 10% chance for basic to become cache if flag is active
+        if (GAME_VARS.highChanceDataCacheSpawn && chosenType === 'basic' && combatTime > 11) {
+            if (Math.random() < 0.1) {
+                chosenType = 'cache';
+            }
+        }
+
         // Trojan Access conversion logic
         const trojanLevel = (gameState.upgrades && gameState.upgrades.trojan_access) || 0;
         if (trojanLevel > 0) {
@@ -395,6 +402,11 @@ const enemyManager = (() => {
             e.aimAt(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight);
 
             activeEnemies.push(e);
+        }
+
+        // Reset the high-chance flag once a cache enemy successfully spawns
+        if (chosenType === 'cache') {
+            GAME_VARS.highChanceDataCacheSpawn = false;
         }
     }
 
@@ -596,8 +608,19 @@ const enemyManager = (() => {
             _damageTextOptions.duration = isExecuted ? 1200 : 1000;
             _damageTextOptions.scaleX = isExecuted ? 0.92 : 1;
 
-            const rx = (Math.random() - 0.5) * 12;
-            const ry = (Math.random() - 0.5) * 4;
+            let xRandMult = 18;
+            let yRandMult = 6;
+
+            if (enemy.model.isBoss) {
+                xRandMult = 50;
+                yRandMult = 36;
+            } else if (enemy.model.isMiniboss) {
+                xRandMult = 34;
+                yRandMult = 22;
+            }
+
+            const rx = (Math.random() - 0.5) * xRandMult;
+            const ry = (Math.random() - 0.5) * yRandMult;
             messageBus.publish('showFloatingText', enemy.model.x + rx, enemy.model.y - 14 + ry, '\n ' + displayText + ' \n ', _damageTextOptions);
         }
 

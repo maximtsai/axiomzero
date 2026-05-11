@@ -132,7 +132,7 @@ class Miniboss3 extends Miniboss {
         const angle = Math.atan2(dy, dx);
 
         // Tween "back" (away from tower)
-        const backDist = 25;
+        const backDist = 28;
         const backX = -Math.cos(angle) * backDist;
         const backY = -Math.sin(angle) * backDist;
 

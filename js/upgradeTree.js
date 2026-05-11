@@ -49,6 +49,7 @@ const upgradeTree = (() => {
     let visible = false;
     let hasShownThisSession = false;
     let fullUpgradeView = false;
+    let isTransitioning = false;
     let hintPulseTimer = null;
     let awakenHintTimer = null;
     let lastCoordX = -1;
@@ -133,7 +134,6 @@ const upgradeTree = (() => {
         messageBus.subscribe('node_purchase_feedback', _onNodePurchaseFeedback);
 
         updateManager.addFunction(_update);
-
 
         // Zoom Input Logic (Scroll Wheel)
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
@@ -693,6 +693,7 @@ const upgradeTree = (() => {
         // Force fallback to SLIDE_DURATION if it's not a number.
         if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;
 
+        isTransitioning = true;
         fullUpgradeView = true;
         slideRightBtn.setState(DISABLE);
         const targetX = GAME_CONSTANTS.WIDTH * 0.5;
@@ -743,7 +744,15 @@ const upgradeTree = (() => {
             });
         }
         if (treeNodeCamera) {
-            PhaserScene.tweens.add({ targets: treeNodeCamera, width: GAME_CONSTANTS.WIDTH - 28, duration: customDuration, ease: 'Cubic.easeOut' });
+            PhaserScene.tweens.add({
+                targets: treeNodeCamera,
+                width: GAME_CONSTANTS.WIDTH - 28,
+                duration: customDuration,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    isTransitioning = false;
+                }
+            });
         }
         if (panelOutline) {
             PhaserScene.tweens.add({ targets: panelOutline, x: -6, width: 1612, duration: customDuration, ease: 'Cubic.easeOut' });
@@ -771,7 +780,7 @@ const upgradeTree = (() => {
     }
 
     function _onSlideLeftClicked(customDuration = SLIDE_DURATION) {
-        if (typeof cameraManager === 'undefined' || !slideLeftBtn) return;
+        if (typeof cameraManager === 'undefined' || !slideLeftBtn || isTransitioning) return;
 
         // Force fallback to SLIDE_DURATION if it's not a number.
         if (typeof customDuration !== 'number') customDuration = SLIDE_DURATION;

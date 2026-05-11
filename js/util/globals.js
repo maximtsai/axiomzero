@@ -57,6 +57,7 @@ const GAME_VARS = {
     lastmousedown: { x: 0, y: 0 },
     scaleFactor: 1,
     roundTimeElapsed: 0,
+    highChanceDataCacheSpawn: false,
 };
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────

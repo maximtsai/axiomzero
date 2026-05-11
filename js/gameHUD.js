@@ -543,33 +543,84 @@ const gameHUD = (() => {
     }
 
     function setBombPulse() {
-        if (!bombBtn || bombPulseIndicator || bombPulseTimer) return;
-        function playPulse() {
-            if (!bombBtn || !bombBtn.visible) return;
-            const bx = bombBtn.x;
-            const by = bombBtn.y;
-            const bw = bombBtn.displayWidth;
-            const bh = bombBtn.displayHeight;
-            bombPulseIndicator = helper.ninesliceIndicatorShort(bx, by, 'buttons', 'button_normal.png', bw + 60, bh + 60, bw, bh, 24);
-            bombPulseIndicator.setDepth(bombBtn.depth - 1);
-            bombPulseTimer = PhaserScene.time.delayedCall(5000, () => {
-                if (bombPulseIndicator) bombPulseIndicator.destroy();
-                bombPulseIndicator = null;
-                bombPulseTimer = null;
-                playPulse();
-            });
+        if (!bombBtn) return;
+
+        const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+        if (isFullView) return;
+
+        const bx = bombBtn.x;
+        const by = bombBtn.y;
+        const bw = bombBtn.getWidth();
+        const bh = bombBtn.getHeight();
+
+        if (bombPulseIndicator) {
+            bombPulseIndicator.setVisible(true);
+            bombPulseIndicator.x = bx;
+            bombPulseIndicator.y = by;
+        } else {
+            bombPulseIndicator = helper.createNineSlice(
+                bx, by,
+                'buttons',
+                'empty_square.png',
+                bw + 92, bh + 92,
+                32, 32, 32, 32
+            );
+            bombPulseIndicator.isTreeElement = true; // Required for camera visibility
+            bombPulseIndicator.setDepth(bombBtn.depth + 1).setScrollFactor(0);
         }
-        playPulse();
+
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(bombPulseIndicator);
+        }
+
+        playBombPulseTween(bombPulseIndicator, bw, bh);
+    }
+
+    function playBombPulseTween(target, bw, bh, isFirst = true) {
+        if (!target) return;
+
+        target.setDisplaySize(bw + 92, bh + 92);
+        target.setAlpha(0);
+
+        PhaserScene.tweens.add({
+            targets: target,
+            width: bw + 12,
+            height: bh + 12,
+            duration: 1400,
+            ease: 'Cubic.easeIn',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: target,
+                    width: bw + 92,
+                    height: bh + 92,
+                    duration: 1400,
+                    ease: 'Cubic.easeOut',
+                    onComplete: () => {
+                        if (isFirst) {
+                            playBombPulseTween(target, bw, bh, false)
+                        } else {
+                            target.setVisible(false);
+                        }
+                    }
+                });
+                PhaserScene.tweens.add({
+                    targets: target,
+                    alpha: 0,
+                    duration: 1400,
+                });
+            }
+        });
+        PhaserScene.tweens.add({
+            targets: target,
+            alpha: 1,
+            ease: 'Quad.easeIn',
+            duration: 1400,
+        });
     }
 
     function clearBombPulse() {
         if (bombPulseIndicator) {
-            bombPulseIndicator.destroy();
-            bombPulseIndicator = null;
-        }
-        if (bombPulseTimer) {
-            bombPulseTimer.destroy();
-            bombPulseTimer = null;
+            bombPulseIndicator.setVisible(false);
         }
     }
 

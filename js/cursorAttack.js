@@ -1158,7 +1158,14 @@ const pulseAttack = (() => {
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
             const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
-            const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+            let isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+
+            // Handle Upgrade Tree navigation (Space to go back to tower)
+            if (isFullView && !isCombat && isUpgrade && !cinematicManager.isActive()) {
+                upgradeTree._onSlideLeftClicked();
+                isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
+            }
+
             if ((!model.active && !isUpgrade) || model.paused || !tower.isAlive() || (isFullView && !isCombat)) return;
 
             if (model.bombArmed) {
@@ -1299,8 +1306,8 @@ const pulseAttack = (() => {
             }
 
             // REPEAT EXPLOIT logic
-            if (model.persistentExploitLevel > 0 && enemy.model.hitByPulse) {
-                let exploitBonus = 4 * model.persistentExploitLevel;
+            if (model.persistentExploitLevel > 0 && enemy.model.pulseHitCount > 0) {
+                let exploitBonus = enemy.model.pulseHitCount * model.persistentExploitLevel;
                 if (hits.length === 1 && model.isolationLevel > 0) {
                     exploitBonus *= (1 + 0.50 * model.isolationLevel);
                 }
@@ -1309,11 +1316,7 @@ const pulseAttack = (() => {
 
             // IMPULSE logic
             if (model.impulseLevel > 0 && enemy.model.health > enemy.model.maxHealth * 0.99) {
-                let impulseBonus = 4 * model.impulseLevel;
-                if (hits.length === 1 && model.isolationLevel > 0) {
-                    impulseBonus *= (1 + 0.50 * model.isolationLevel);
-                }
-                damageToApply += impulseBonus;
+                damageToApply *= (1 + 0.50 * model.impulseLevel);
             }
 
             // RESONANCE bonus — applies to base damage AND all bonuses (Isolation, Saturation, Repeat Exploit, Impulse)
@@ -1324,7 +1327,7 @@ const pulseAttack = (() => {
             }
 
             enemyManager.damageEnemy(enemy, damageToApply, 'cursor');
-            enemy.model.hitByPulse = true;
+            enemy.model.pulseHitCount++;
 
             // Apply Instability Mark
             if (model.instabilityLevel > 0) {

@@ -10,7 +10,7 @@ class BasicEnemyModel extends EnemyModel {
         super();
         this.size = GAME_CONSTANTS.ENEMY_SIZE_BASIC;
         this.type = 'basic';
-        this.baseResourceDrop = 1;
+        this.baseResourceDrop = 0.8;
         this.hijacksSpawned = 1.25;
     }
 }

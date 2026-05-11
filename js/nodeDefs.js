@@ -597,7 +597,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'diagnostic_analytics.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 20,
+        baseCost: 25,
         costType: 'data',
         costScaling: 'static',
         parents: ['armor'],
@@ -679,7 +679,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'malware_siphon.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 200,
         costType: 'data',
         costScaling: 'static',
         parents: ['instability_mark'],
@@ -863,7 +863,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'armor.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 2,
-        baseCost: 50,
+        baseCost: 75,
         costType: 'data',
         costScaling: 'linear',
         costStep: 50,
@@ -891,7 +891,11 @@ const NODE_DEFS = [
         childIds: [],
         treeX: gridX(-0.5),
         treeY: gridY(5),
-        effect: function () { },
+        effect: function () {
+            if (typeof GAME_VARS !== 'undefined') {
+                GAME_VARS.highChanceDataCacheSpawn = true;
+            }
+        },
     },
     {
         id: 'system_redundancy_new',
@@ -1222,7 +1226,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'reveal_map.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 50,
+        baseCost: 40,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -1231,6 +1235,7 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {
+            if (typeof audio !== 'undefined') audio.play('pc_beep');
             if (typeof tutorialManager !== 'undefined') {
                 tutorialManager.hideAll();
             }
@@ -1288,7 +1293,7 @@ const NODE_DEFS = [
                                             // Play slide button hint animation at the location of the slide left button
                                             const cx = GAME_CONSTANTS.halfWidth * 2;
                                             const cy = GAME_CONSTANTS.halfHeight;
-                                            const slideHint = PhaserScene.add.sprite(cx - 45, cy, 'buttons', 'slide_btn_anim_1.png');
+                                            const slideHint = PhaserScene.add.sprite(cx - 50, cy, 'buttons', 'slide_btn_anim_1.png');
                                             slideHint.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 30);
                                             slideHint.setScrollFactor(0);
                                             slideHint.setOrigin(1, 0.5);
@@ -1506,7 +1511,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'impulse.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 40,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
         parents: ['reveal_map'],

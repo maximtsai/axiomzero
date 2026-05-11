@@ -59,7 +59,7 @@ const LEVEL_CONFIG = {
         miniboss: 'Miniboss2', // String identifier for the miniboss type
 
         mainBoss: 'Boss2',        // Identifier for the main boss
-        dataDropMultiplier: 1.3, // Multiplies the base DATA drop value or chance
+        dataDropMultiplier: 1.25, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.5, // Scales up *base* stats of enemies before wave scaling applies
     },
     3: {
@@ -89,7 +89,7 @@ const LEVEL_CONFIG = {
         miniboss: 'Miniboss3',
 
         mainBoss: 'Boss3',
-        dataDropMultiplier: 1.6,
+        dataDropMultiplier: 1.5,
         levelScalingModifier: 2,
     },
     4: {
@@ -121,7 +121,7 @@ const LEVEL_CONFIG = {
         miniboss: 'Miniboss4',
 
         mainBoss: 'Boss4',
-        dataDropMultiplier: 2,
+        dataDropMultiplier: 1.8,
         levelScalingModifier: 3,
     },
     5: {
@@ -152,7 +152,7 @@ const LEVEL_CONFIG = {
         miniboss: 'Miniboss4',
 
         mainBoss: 'Boss5',
-        dataDropMultiplier: 2.5,
+        dataDropMultiplier: 2.2,
         levelScalingModifier: 4.2,
     }
 };
