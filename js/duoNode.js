@@ -28,7 +28,7 @@ class DuoNode extends Node {
         this.btn.setAlpha(1);
         if (this.iconSprite) {
             this.iconSprite.setVisible(true);
-            this.iconSprite.setAlpha(0.85);
+            this.iconSprite.setAlpha(0.9);
         }
         return sprite;
     }

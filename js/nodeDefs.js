@@ -1300,6 +1300,10 @@ const NODE_DEFS = [
 
                                 PhaserScene.time.delayedCall(750, () => {
                                     upgradeTree.revealNode('diagnostic_analytics');
+                                    PhaserScene.time.delayedCall(500, () => {
+                                        upgradeTree.revealNode('access_internet');
+                                    });
+
                                     PhaserScene.time.delayedCall(1000, () => {
                                         endCutscene(() => {
                                             if (typeof gameHUD !== 'undefined') {

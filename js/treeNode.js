@@ -995,7 +995,7 @@ class Node {
         this.btn.setAlpha(1);
         if (this.iconSprite) {
             this.iconSprite.setVisible(true);
-            this.iconSprite.setAlpha(0.85);
+            this.iconSprite.setAlpha(0.8);
         }
         return sprite;
     }
@@ -1346,7 +1346,7 @@ de the current viewport to save draw calls.
 
         // Snap to node button position
         Node.selectIndicator.setPosition(node.btn.x, node.btn.y);
-        
+
         // Update frame based on cost type
         const frame = (node.costType === 'insight') ? 'select_indicator_insight.png' : 'select_indicator.png';
         Node.selectIndicator.setFrame(frame);
