@@ -6,7 +6,7 @@
 const analyticsManager = (() => {
     // Automatically disable tracking on localhost to prevent skewed data
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const IS_ENABLED = !isLocal;
+    const IS_ENABLED = !isLocal && (typeof FLAGS !== 'undefined' && FLAGS.ANALYTICS_ENABLED);
 
     /**
      * Sends an event to Google Analytics.

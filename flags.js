@@ -11,11 +11,14 @@ const FLAGS = {
 
     // Set true locally to enable the FPS overlay and verbose console logging.
     // Always leave false in production builds.
-    DEBUG: false,
+    DEBUG: true,
 
     // Set true to enable the Service Worker for dynamic asset caching.
     // On repeat visits, all previously loaded files are served from local cache
     // instead of the network — making load times significantly faster.
     // Leave false during active development to avoid stale-cache issues.
     USE_SERVICE_WORKER: false,
+
+    // Set true to enable Google Analytics (gtag) tracking for game events.
+    ANALYTICS_ENABLED: false,
 };

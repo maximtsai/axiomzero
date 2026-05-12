@@ -168,7 +168,7 @@ window.TRANSLATIONS.en = {
 
         malware_siphon: { name: 'MALWARE SIPHON', desc: 'Heal [color=#87FF02]+0.5[/color] HP from enemies that die near the tower', popup: 'MALWARE SIPHON ACTIVE' },
         data_chest_unlock: { name: 'DATA HUNTER', desc: 'High-value [color=cyan]DATA CACHES[/color] now appear during combat', popup: 'DATA CHESTS ENABLED' },
-        trojan_access: { name: 'TROJAN PAYLOAD', desc: 'Enemies have [color=#8FD9F8]8%[/color] chance to spawn as an [color=#E13500]EXPLODER[/color] that hurts other enemies', popup: 'TROJAN ACTIVE' },
+        trojan_access: { name: 'TROJAN PAYLOAD', desc: 'Enemies have [color=#8FD9F8]7%[/color] chance to spawn as an [color=#E13500]EXPLODER[/color] that hurts other enemies', popup: 'TROJAN ACTIVE' },
         volatile_payload: { name: 'VOLATILE PAYLOAD', desc: '[color=#8FD9F8]+50%[/color] [color=#E13500]EXPLODER[/color] blast radius', popup: '+50% EXPLOSION RADIUS' },
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Successive cursor hits deal [color=#8FD9F8]+1[/color] accumulating damage', popup: 'REPEAT EXPLOIT ACTIVE' },
         impulse: { name: 'IMPULSE', desc: 'Cursor deals [color=#8FD9F8]+50%[/color] damage against [color=#8FD9F8]FULL HEALTH[/color] enemies', popup: 'IMPULSE' },
@@ -178,6 +178,7 @@ window.TRANSLATIONS.en = {
         artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'FIRST STRIKE' },
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP', popup: 'ZERO-DAY ACTIVE' },
+        direct_extraction: { name: 'DIRECT EXTRACTION', desc: 'Cursor kills grant [color=cyan]+1 extra DATA[/color]', popup: 'DIRECT EXTRACTION' },
         access_internet: { name: 'ACCESS INTERNET', desc: 'Establish a global uplink. Many things will begin to change.', popup: 'INTERNET CONNECTED' },
         black_market: { name: 'BLACK MARKET', desc: 'The trade algorithm promises the [color=#00FF00]+0.1 COIN[/color] is worth its cost.', popup: '+0.1 COIN' },
         combat_shield: { name: 'COMBAT SHIELD', desc: 'Create a controllable shield with [color=#8FD9F8]20[/color] health', popup: 'SHIELD DEPLOYED' },

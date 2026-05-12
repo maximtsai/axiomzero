@@ -104,8 +104,7 @@ class Miniboss3 extends Miniboss {
         const distSq = dx * dx + dy * dy;
 
         // Melee range check (similar to enemyManager)
-        const contactR = 10 + m.size * 1.1;
-        const contactR2 = contactR * contactR;
+        const contactR2 = m.contactR2;
 
         if (distSq <= contactR2) {
             m.isAttacking = true;
@@ -127,6 +126,7 @@ class Miniboss3 extends Miniboss {
         const m = this.model;
         const v = this.view;
         if (!m.alive) return;
+
 
         m.isSlamming = true;
         const angle = Math.atan2(dy, dx);
@@ -159,6 +159,7 @@ class Miniboss3 extends Miniboss {
                         if (!m.alive) return;
 
                         // Deal damage at the collision point using model's damage value
+
                         tower.takeDamage(m.slamDamage, m.x, m.y);
 
                         if (typeof cameraManager !== 'undefined') {

@@ -134,12 +134,24 @@ const nodeTooltip = (() => {
 
         const isBigValue = gameState.settings.bigFont;
         const baseW = helper.isMobileDevice() ? 398 : 378;
-        const currentBgWidth = (isBigValue ? baseW + 50 : baseW) + (node.tooltipExtraWidth || 0);
-        const currentWordWrap = currentBgWidth - 25;
+        let currentBgWidth = (isBigValue ? baseW + 50 : baseW) + (node.tooltipExtraWidth || 0);
+
         const baseFontSize = isBigValue ? 30 : 26;
         const nameFontSize = isBigValue ? 36 : 32;
 
         nameT.setFontSize(nameFontSize + 'px');
+        nameT.setText(node.name.toUpperCase());
+
+        const iconOffset = node.icon ? 53 : 0;
+        const titleWidth = nameT.width + iconOffset;
+
+        // Auto-expand if title (+ buffer) exceeds default width
+        if (titleWidth + 8 > currentBgWidth) {
+            currentBgWidth = titleWidth + 8;
+        }
+
+        const currentWordWrap = currentBgWidth - 25;
+
         descT.setFontSize(baseFontSize + 'px');
         lvT.setFontSize(baseFontSize + 'px');
         maxT.setFontSize(baseFontSize + 'px');
@@ -170,12 +182,7 @@ const nodeTooltip = (() => {
         let currentY = 4;
 
         // Row 1: Icon & Name
-        const iconOffset = node.icon ? 56 : 0;
-        const nameTextStr = node.name.toUpperCase();
-        nameT.setText(nameTextStr);
-
-        const titleWidth = nameT.width + iconOffset;
-        const titleStartX = -titleWidth / 2;
+        const titleStartX = -titleWidth / 2 - 2;
         const centerTitleY = currentY + 19;
 
         if (node.icon) {

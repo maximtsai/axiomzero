@@ -599,7 +599,9 @@ const resourceManager = (() => {
 
     let dropAccumulator = 0;
 
-    function _onEnemyKilled(x, y, baseResourceDrop, enemyType) {
+    function _onEnemyKilled(x, y, baseResourceDrop, enemyType, wasBoss, wasMiniboss, wasResonance, hijacksSpawned, source) {
+        if (enemyType === 'test') return;
+
         const config = getCurrentLevelConfig();
         let dataDropMult = config.dataDropMultiplier || 1;
 
@@ -610,20 +612,26 @@ const resourceManager = (() => {
             dataDropMult = 1 + (bonus * 1.5);
         }
 
-        const compressionLv = (gameState.upgrades || {}).data_compression || 0;
+        const ups = gameState.upgrades || {};
+        const compressionLv = ups.data_compression || 0;
         let compressionMult = 1;
         if (compressionLv > 0 && Math.random() < (0.2 * compressionLv)) {
             compressionMult = 2;
         }
 
         let timeMult = 1;
-        if ((gameState.upgrades || {}).peak_traffic > 0) {
+        if (ups.peak_traffic > 0) {
             if (waveManager.getWaveElapsedTime() >= 20) {
                 timeMult = 1.4;
             }
         }
 
-        const totalDrop = baseResourceDrop * dataDropMult * compressionMult * timeMult;
+        let bonusData = 0;
+        if (source === 'cursor' && ups.direct_extraction > 0) {
+            bonusData = 1;
+        }
+
+        const totalDrop = (baseResourceDrop * dataDropMult * compressionMult * timeMult) + bonusData;
 
         // Add to the fractional drop accumulator
         dropAccumulator += totalDrop;

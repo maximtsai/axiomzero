@@ -15,10 +15,10 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['bug_report'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-3),
-        treeY: gridY(0),
+        treeX: gridX(1.5),
+        treeY: gridY(-2.0),
         requiresMaxParent: true,
         tooltipExtraWidth: 200,
         effect: function () {

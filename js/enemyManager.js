@@ -9,6 +9,7 @@
 const enemyManager = (() => {
     const POOL_SIZE = 80;
     const MINIBOSS_POOL_SIZE = 2;
+    const CLUMP_AVOIDANCE_RADIUS = 0.6;
 
     let pools = {};         // key: type, value: ObjectPool
     let activeEnemies = []; // currently alive Enemy references (includes minibosses)
@@ -44,7 +45,8 @@ const enemyManager = (() => {
     // Trojan Access tracking
     let nextSpawnIsExploder = false;
     let spawnCountSinceLastExploder = 0;
-    let sessionKills = 0; // Kills in the current iteration/wave
+    let sessionKills = 0;
+    let clumpFocusAngles = [];
 
     // Boss 3 specifically
     // boss3ShareTimer now managed by bossManager
@@ -138,6 +140,7 @@ const enemyManager = (() => {
         recentSpawnIndex = 0;
         recentSpawnCount = 0;
         sessionKills = 0;
+        _pickClumpFocusAngles();
         fastPackActive = false;
         fastPackCount = 0;
         fastPackCooldown = 0;
@@ -156,6 +159,22 @@ const enemyManager = (() => {
     /** Resume normal update behaviour (called when death sequence ends). */
     function unfreeze() {
         frozen = false;
+    }
+
+    function _pickClumpFocusAngles() {
+        for (let i = 0; i < 5; i++) {
+            const a1 = Math.random() * Math.PI * 2;
+            const a2 = Math.random() * Math.PI * 2;
+
+            // Shortest distance between two angles in radians
+            const diff = Math.abs(Phaser.Math.Angle.ShortestBetween(a1, a2));
+            if (diff >= 1.1) {
+                clumpFocusAngles = [a1, a2];
+                return;
+            }
+        }
+        // Fallback
+        clumpFocusAngles = [Math.random() * Math.PI * 2, Math.random() * Math.PI * 2];
     }
 
     function clearAllEnemies() {
@@ -213,8 +232,8 @@ const enemyManager = (() => {
         const trojanLevel = (gameState.upgrades && gameState.upgrades.trojan_access) || 0;
         if (trojanLevel > 0) {
             // Roll for next spawn to be an exploder if cooldown is over
-            if (!nextSpawnIsExploder && spawnCountSinceLastExploder >= 3) {
-                if (Math.random() < 0.1) {
+            if (!nextSpawnIsExploder && spawnCountSinceLastExploder >= 4) {
+                if (Math.random() < 0.092) {
                     nextSpawnIsExploder = true;
                 }
             }
@@ -299,6 +318,17 @@ const enemyManager = (() => {
             angle = Phaser.Math.Angle.Wrap(angle);
         } else {
             angle = findValidAngle(() => Math.random() * Math.PI * 2, ENEMY_SPAWN_RULES[chosenType] || {});
+        }
+
+        // Clumped spawning: re-roll once if within 0.35 radians of focus angles (avoidance zones)
+        // Snipers and Shooters ignore this to maintain their tactical spread
+        if (clumpFocusAngles.length > 0 && chosenType !== 'sniper' && chosenType !== 'shooter') {
+            const isNearFocus = clumpFocusAngles.some(fa => {
+                return Math.abs(Phaser.Math.Angle.ShortestBetween(angle, fa)) < CLUMP_AVOIDANCE_RADIUS;
+            });
+            if (isNearFocus) {
+                angle = Math.random() * Math.PI * 2;
+            }
         }
 
         // Track pack state for 'fast'
@@ -636,7 +666,7 @@ const enemyManager = (() => {
                     }
                 }
                 if (aliveBoss3Count > 1) {
-                    _killEnemy(enemy, true, wasResonance);
+                    _killEnemy(enemy, true, wasResonance, source);
                     return;
                 }
             }
@@ -644,14 +674,14 @@ const enemyManager = (() => {
             if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
-                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy, false, wasResonance));
+                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy, false, wasResonance, source));
             } else {
-                _killEnemy(enemy, false, wasResonance);
+                _killEnemy(enemy, false, wasResonance, source);
             }
         }
     }
 
-    function _killEnemy(enemy, skipBossEffects = false, wasResonance = false) {
+    function _killEnemy(enemy, skipBossEffects = false, wasResonance = false, source = 'other') {
         // Trigger unit-specific death logic (resources, explosions, sounds)
         // Shards/Staged deaths pass skipBossEffects=true, so they get onDeath(false)
         enemy.onDeath(!skipBossEffects);
@@ -752,7 +782,8 @@ const enemyManager = (() => {
                 wasBoss,
                 wasMiniboss,
                 wasResonance,
-                enemy.model.hijacksSpawned
+                enemy.model.hijacksSpawned,
+                source
             );
             if (enemy.model.type !== 'test') sessionKills++;
         }
@@ -780,6 +811,7 @@ const enemyManager = (() => {
             if (currentScaleLevel > lastScaleLevel) {
                 lastScaleLevel = currentScaleLevel;
                 subWaveIndex++;
+                _pickClumpFocusAngles();
 
                 // Only pause every other scale interval (~12s)
                 if (currentScaleLevel % 1 === 0) {
