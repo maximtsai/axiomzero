@@ -411,7 +411,7 @@ const upgradeTree = (() => {
         contentBounds = {
             minX: minX - 700, // Increased by 300px (was -400)
             maxX: maxX + 300, // Increased by 300px
-            minY: minY - 400,
+            minY: minY - 1000,
             maxY: maxY
         };
     }
@@ -431,10 +431,18 @@ const upgradeTree = (() => {
         // --- Horizontal Constraints ---
         if (contentW <= viewportW) {
             const centerLocal = (contentBounds.minX + contentBounds.maxX) / 2;
-            draggableGroup.x = (viewportW / 2) - (centerLocal * scale);
+            let targetX = (viewportW / 2) - (centerLocal * scale);
+            if (fullUpgradeView) targetX += GAME_CONSTANTS.halfWidth * 0.5;
+            draggableGroup.x = targetX;
         } else {
-            const leftLimit = -(contentBounds.minX * scale);
-            const rightLimit = viewportW - (contentBounds.maxX * scale);
+            let leftLimit = -(contentBounds.minX * scale);
+            let rightLimit = viewportW - (contentBounds.maxX * scale);
+
+            if (fullUpgradeView) {
+                leftLimit += GAME_CONSTANTS.halfWidth * 0.5;
+                rightLimit += GAME_CONSTANTS.halfWidth * 0.5;
+            }
+
             draggableGroup.x = Phaser.Math.Clamp(draggableGroup.x, rightLimit, leftLimit);
         }
 
@@ -444,7 +452,7 @@ const upgradeTree = (() => {
             draggableGroup.y = (viewportH / 2) - (centerLocal * scale);
         } else {
             const topLimit = -(contentBounds.minY * scale);
-            const bottomLimit = viewportH - (contentBounds.maxX * scale);
+            const bottomLimit = viewportH - (contentBounds.maxY * scale);
             draggableGroup.y = Phaser.Math.Clamp(draggableGroup.y, bottomLimit, topLimit);
         }
     }

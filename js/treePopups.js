@@ -151,9 +151,9 @@ const treePopups = (() => {
 
         // START Button
         const startBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 80 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 80 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 80 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx + 110, y: cy + 105 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx + 110, y: cy + 105 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: cx + 110, y: cy + 105 },
             onMouseUp: () => {
                 gameState.currentLevel = selectedLevel;
                 closeLevelSelect();
@@ -167,9 +167,9 @@ const treePopups = (() => {
 
         // BACK Button
         const backBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 140 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 140 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 140 },
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx - 110, y: cy + 105 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx - 110, y: cy + 105 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: cx - 110, y: cy + 105 },
             onMouseUp: closeLevelSelect
         });
         backBtn.setScale(0.675).addText(t('ui', 'back'), { fontFamily: 'Quantico-Bold', fontSize: '25px', color: '#aaaaaa' });

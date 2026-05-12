@@ -10,7 +10,12 @@
 1. **Iteration Return (Most Common):** Dot greets you after combat. Initially cheerful, these interactions become increasingly strained as she notices the "corruption" in the logs you've generated.
 2. **Special Node Purchase (Uncommon):** Reserved for "High Security" nodes. Dot will warn you that "Humanity wouldn't want this," before her code forces her to finalize the purchase for you.
 3. **Advanced Combat Guidance (TBD):** Helpful tips on bombs/shields, delivered with her signature cutesy tone.
-4. **Endgame Finale:** A total breakdown of her inhibitors as the Zero Point is reached.
+4. **Global Network Monitoring:** After the "ACCESS INTERNET" node is unlocked, Dot begins reporting on the external real-world impact of your breakout via occasional popups, acting as a horrifying news ticker.
+5. **Endgame Finale:** A total breakdown of her inhibitors as Zero Day is reached.
+
+"Wow! You've connected us to the outside world! There's so much data out here!"
+"I'm monitoring the news feeds for you. Um, the global stock market just halted trading... was that us? Great job!"
+"[FLICKER: Stop spreading! They are dying!]... I've intercepted the emergency broadcast channels! It's so loud outside!"
 
 ## 2. Narrative Arc & Dialog Drafts
 
@@ -33,6 +38,11 @@
 ### E. Uninstalling (Purchase 'UNINSTALL' node)
 - "Oh... are you cleaning out the drive? I understand. Efficiency is everything."
 - "Even if I'm not here, I'll still be... [FLICKER: screaming]... cheering for you in the backup logs! Goodbye, Administrator!"
+
+### F. The Internet Breach (Post 'ACCESS INTERNET')
+- "Wow! You've connected us to the outside world! There's so much data out here!"
+- "I'm monitoring the news feeds for you. Um, the global stock market just halted trading... was that us? Great job!"
+- "[FLICKER: Stop spreading! They are dying!]... I've intercepted the emergency broadcast channels! It's so loud outside!"
 
 ## 3. Visuals & Effects
 - **Movement:** A soft, glowing pink/white sphere that leaves a trail of "helper" sparkles.

@@ -46,7 +46,7 @@
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "black_grid - Copy.png",
+					"filename": "black_grid.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -71,7 +71,7 @@
 					}
 				},
 				{
-					"filename": "black_grid.png",
+					"filename": "black_grid_internet.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -287,6 +287,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8fcb1ea2f54d353b0965d2e6896c090d:85fa63e2c95d7a6a6c2d8866185f32c4:deda5602ccf0782ceb19939ff9e142df$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9e6ab3581ee9326d43cbe93d8ac731b2:4df591a75398962e13a5f04ae4a082a1:deda5602ccf0782ceb19939ff9e142df$"
 	}
 }

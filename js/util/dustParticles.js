@@ -130,6 +130,15 @@ const dustParticles = (() => {
                     particle.x = Phaser.Math.Between(0, W);
                     particle.y = Phaser.Math.Between(0, H);
                 }
+
+                // Orthogonal movement if ACCESS INTERNET is bought
+                if (gameState.upgrades && gameState.upgrades.access_internet) {
+                    if (Math.random() > 0.5) {
+                        particle.velocityY = 0;
+                    } else {
+                        particle.velocityX = 0;
+                    }
+                }
             }
         }).setDepth(DUST_DEPTH).setScrollFactor(0.6);
 
@@ -155,6 +164,15 @@ const dustParticles = (() => {
                 if (dx * dx + dy * dy < 250 * 250) {
                     particle.x = Phaser.Math.Between(0, W);
                     particle.y = Phaser.Math.Between(0, H);
+                }
+
+                // Orthogonal movement if ACCESS INTERNET is bought
+                if (gameState.upgrades && gameState.upgrades.access_internet) {
+                    if (Math.random() > 0.5) {
+                        particle.velocityY = 0;
+                    } else {
+                        particle.velocityX = 0;
+                    }
                 }
             }
         }).setDepth(DUST_DEPTH - 1).setScrollFactor(0.4);

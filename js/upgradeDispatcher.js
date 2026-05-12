@@ -167,6 +167,13 @@ const upgradeDispatcher = (() => {
         }
     }
 
+    /** Recalculates background grid frame. */
+    function recalcBackground() {
+        if (typeof glitchFX !== 'undefined' && glitchFX.refreshBackground) {
+            glitchFX.refreshBackground();
+        }
+    }
+
     /** Recalculates all systems based on current upgrades. */
     function recalcEverything() {
         if (typeof pulseAttack !== 'undefined') {
@@ -205,6 +212,7 @@ const upgradeDispatcher = (() => {
         if (typeof combatShield !== 'undefined') {
             recalcCombatShield();
         }
+        recalcBackground();
 
         // Notify any global listeners that a bulk update occurred
         messageBus.publish('statsRecalculated');
@@ -231,6 +239,7 @@ const upgradeDispatcher = (() => {
         recalcScytheStats,
         recalcSwordStats,
         recalcBombUses,
-        recalcCombatShield
+        recalcCombatShield,
+        recalcBackground
     };
 })();

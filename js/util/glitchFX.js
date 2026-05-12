@@ -56,6 +56,17 @@ const glitchFX = (() => {
 
         scanFade2 = PhaserScene.add.image(0, 0, 'backgrounds', 'scan_line_fade.png').setVisible(false).setAngle(45);
         helper.setBlendMode(scanFade2, Phaser.BlendModes.ADD);
+
+        refreshBackground();
+    }
+
+    /** Updates the frame of the background grid based on the access_internet upgrade status. */
+    function refreshBackground() {
+        if (!bgGrid) return;
+        const hasInternet = gameState && gameState.upgrades && gameState.upgrades.access_internet;
+        const frame = hasInternet ? 'black_grid_internet.png' : 'black_grid.png';
+        bgGrid.setFrame(frame);
+        if (bgGridHigh) bgGridHigh.setFrame(frame);
     }
 
     /**
@@ -456,5 +467,5 @@ const glitchFX = (() => {
         bgGrid.setScale(1);
     }
 
-    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid };
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid, refreshBackground };
 })();

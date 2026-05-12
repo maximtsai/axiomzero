@@ -888,7 +888,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['reveal_map'],
-        childIds: [],
+        childIds: ['access_internet'],
         treeX: gridX(-0.5),
         treeY: gridY(5),
         effect: function () {
@@ -1491,14 +1491,60 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['reveal_map'],
-        childIds: [],
+        childIds: ['access_internet'],
         tooltipExtraWidth: 140,
         treeX: gridX(0.5),
         treeY: gridY(5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                // Internally give 5 coins, which displays as 0.5 (0.1x scale)
-                resourceManager.addCoin(5);
+                // Internally give 3 coins, which displays as 0.3 (0.1x scale)
+                resourceManager.addCoin(3);
+            }
+        },
+    },
+
+    {
+        id: 'access_internet',
+        name: t('nodes', 'access_internet.name'),
+        icon: 'Skillicon14_31.png',
+        description: t('nodes', 'access_internet.desc'),
+        popupText: t('nodes', 'access_internet.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        requiresMaxParent: true,
+        parents: ['data_chest_unlock', 'unsecured_wallet'],
+        childIds: ['black_market'],
+        treeX: gridX(0),
+        treeY: gridY(6),
+        effect: function () {
+            if (typeof upgradeDispatcher !== 'undefined') {
+                upgradeDispatcher.recalcBackground();
+            }
+        },
+    },
+
+    {
+        id: 'black_market',
+        name: t('nodes', 'black_market.name'),
+        icon: 'Skillicon14_03.png',
+        description: t('nodes', 'black_market.desc'),
+        popupText: t('nodes', 'black_market.popup'),
+        popupColor: COLORS.COIN,
+        maxLevel: 5,
+        baseCost: 150,
+        costType: 'data',
+        costScaling: 'linear',
+        costStep: 50,
+        parents: ['access_internet'],
+        childIds: [],
+        treeX: gridX(-1),
+        treeY: gridY(6),
+        effect: function () {
+            if (typeof resourceManager !== 'undefined') {
+                resourceManager.addCoin(1); // Actually gives 1.0 coin
             }
         },
     },
