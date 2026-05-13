@@ -46,7 +46,7 @@ class Node {
         this.costStepScaling = def.costStepScaling || 0;
         this.customCost = def.customCost || [];
         this.costType = def.costType || 'data';
-        this.leaky = def.leaky || false;
+        this.leaky = def.leaky || 0;
         this.effect = def.effect || function () { };
         this.popupText = def.popupText || null;
         this.popupColor = def.popupColor || '#ffffff';
@@ -143,7 +143,7 @@ class Node {
             cost = this.customCost[idx];
         }
 
-        if (this.leaky && gameState.leakPenalty) {
+        if (this.leaky > 0 && gameState.leakPenalty) {
             cost += gameState.leakPenalty;
         }
         return cost;
@@ -458,8 +458,8 @@ class Node {
         gameState.upgrades[this.id] = this.level;
 
         // Leaky node global modifier
-        if (this.leaky && this.level === 1) {
-            gameState.leakPenalty = (gameState.leakPenalty || 0) + 25;
+        if (this.leaky > 0 && this.level === 1) {
+            gameState.leakPenalty = (gameState.leakPenalty || 0) + this.leaky;
         }
 
         // Effect and Metadata logic

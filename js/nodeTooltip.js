@@ -19,6 +19,7 @@ const nodeTooltip = (() => {
     let bgEdges = null;
     let animValue = { val: 0 };
     let isReady = false;
+    let costGlitchTimers = [];
 
     let currentNode = null;
     let lastShowTime = 0;
@@ -34,6 +35,87 @@ const nodeTooltip = (() => {
         return Math.floor(val).toString();
     }
 
+    function _getCostColor(type) {
+        if (type === 'insight') return '#f0f0f0';
+        if (type === 'processor') return '#ffe600';
+        if (type === 'shard') return '#f4f4f4';
+        if (type === 'coin') return '#00ff66';
+        return '#30ffff'; // data
+    }
+
+    function _updateCostText(node, value) {
+        if (!node || !costT) return null;
+
+        let iconStr = '◈';
+        if (node.costType === 'shard') iconStr = '◆';
+        else if (node.costType === 'insight') iconStr = '◐';
+        else if (node.costType === 'coin') iconStr = 'ⓒ';
+        else if (node.costType === 'processor') iconStr = '■';
+
+        let currentRes = 0;
+        if (resourceManager) {
+            if (node.costType === 'shard') currentRes = resourceManager.getShards();
+            else if (node.costType === 'insight') currentRes = resourceManager.getInsight();
+            else if (node.costType === 'coin') currentRes = resourceManager.getCoins();
+            else if (node.costType === 'processor') currentRes = resourceManager.getProcessors();
+            else currentRes = resourceManager.getData();
+        }
+
+        const formattedRes = _formatValue(node, value !== undefined ? value : currentRes);
+        const formattedCost = _formatValue(node, node.getCost());
+
+        costT.setText(`${iconStr} ${formattedRes} / ${formattedCost}`);
+        costT.setColor(_getCostColor(node.costType));
+
+        return { iconStr, formattedRes, formattedCost };
+    }
+
+    function _getRandomChar() {
+        const chars = '123456789!@#$%^&*()=+?';
+        return chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    function _startCostGlitch(parts) {
+        if (!parts || !costT) return;
+        _clearGlitchTimers();
+
+        const { iconStr, formattedRes, formattedCost } = parts;
+        const len = formattedCost.length;
+
+        const setGlitchText = (glitchedPart) => {
+            if (costT && currentNode) costT.setText(`${iconStr} ${formattedRes} / ${glitchedPart}`);
+        };
+
+        // Phase 1: All random (0ms)
+        let p1 = "";
+        for (let i = 0; i < len; i++) p1 += _getRandomChar();
+        setGlitchText(p1);
+
+        // Phase 2: Randomize again after 25ms
+        costGlitchTimers.push(setTimeout(() => {
+            let p2 = "";
+            for (let i = 0; i < len; i++) p2 += _getRandomChar();
+            setGlitchText(p2);
+        }, 90));
+
+        // Phase 3: Leftmost correct, others random after 50ms
+        costGlitchTimers.push(setTimeout(() => {
+            let p3 = formattedCost.charAt(0);
+            for (let i = 1; i < len; i++) p3 += _getRandomChar();
+            setGlitchText(p3);
+        }, 140));
+
+        // Phase 4: All correct after 75ms
+        costGlitchTimers.push(setTimeout(() => {
+            setGlitchText(formattedCost);
+        }, 200));
+    }
+
+    function _clearGlitchTimers() {
+        costGlitchTimers.forEach(t => clearTimeout(t));
+        costGlitchTimers = [];
+    }
+
     function init() {
         if (container) return;
 
@@ -41,7 +123,7 @@ const nodeTooltip = (() => {
         container.isTreeElement = true; // Allow treeCamera to render it so it appears on top of nodes
 
         // Edges sit below the backing
-        bgEdges = PhaserScene.add.nineslice(0, 0, 'buttons', 'duo_hover_popup_edges.png', 100, 100, 52, 52, 52, 52).setOrigin(0.5, 0).setAlpha(0);
+        bgEdges = PhaserScene.add.nineslice(0, 0, 'buttons', 'duo_hover_popup_edges.png', 100, 100, 52, 52, 52, 52).setOrigin(0.5, 0).setAlpha(1);
         container.add(bgEdges);
 
         bg = PhaserScene.add.image(0, 0, 'buttons', 'navy_pixel.png').setOrigin(0.5, 0).setAlpha(0.93);
@@ -75,7 +157,7 @@ const nodeTooltip = (() => {
         lvT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Regular',
             fontSize: '26px',
-            color: '#ffffff',
+            color: '#d0d0d0',
             align: 'center',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -96,6 +178,7 @@ const nodeTooltip = (() => {
             fontSize: '26px',
             color: '#ffffff',
             align: 'center',
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0.5);
         container.add([costBg, costT]);
 
@@ -120,6 +203,7 @@ const nodeTooltip = (() => {
 
     function _clearTweens() {
         if (!container) return;
+        _clearGlitchTimers();
         PhaserScene.tweens.killTweensOf([container, lvT, maxT, costT, animValue]);
         // Reset scale/angle but NOT Y (Y is handled by layout)
         container.setScale(1).setAngle(0);
@@ -187,11 +271,10 @@ const nodeTooltip = (() => {
 
         if (node.isDuoBox) {
             bgEdges.setFrame('duo_hover_popup_edges.png');
-            bgEdges.setAlpha(0.95);
         } else {
             bgEdges.setFrame('normal_hover_popup_edges.png');
-            bgEdges.setAlpha(0.9);
         }
+        bgEdges.setAlpha(1);
         bg.setOrigin(0.5, 0);
         bgEdges.setOrigin(0.5, 0);
 
@@ -230,9 +313,14 @@ const nodeTooltip = (() => {
         }
 
         // Row 3.5: Memory Leak Warning
-        if (node.leaky) {
+        if (node.leaky > 0) {
             leakBg.setVisible(true).setPosition(0, currentY + 16);
             leakT.setVisible(true).setPosition(0, currentY + 16);
+
+            let leakStr = 'DATA LEAK';
+            leakStr = `+${_formatValue(node, node.leaky)} ${leakStr}`;
+            leakT.setText(leakStr);
+
             currentY += 39;
         } else {
             leakBg.setVisible(false);
@@ -289,9 +377,7 @@ const nodeTooltip = (() => {
             if (isPurchaseRefresh && purchaseCost > 0) {
                 const targetRes = currentRes;
                 animValue.val = targetRes + purchaseCost;
-                const leakIcon = '';
-                const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
-                costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
+                _updateCostText(node, animValue.val);
                 let calcDur = 250 + Math.floor(Math.sqrt(purchaseCost) * 5);
                 PhaserScene.tweens.add({
                     targets: animValue,
@@ -299,25 +385,18 @@ const nodeTooltip = (() => {
                     duration: calcDur,
                     ease: 'Quad.easeOut',
                     onUpdate: () => {
-                        // Check if node is still the current one to avoid updating stale tooltips
-                        const leakIcon = '';
-                        const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
-                        costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
+                        if (currentNode === node && costT.visible) {
+                            _updateCostText(node, animValue.val);
+                        }
                     }
                 });
             } else {
-                const leakIcon = '';
-                const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
-                costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, currentRes) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
+                const parts = _updateCostText(node);
+                if (node.leaky > 0 && !isPurchaseRefresh && (gameState.leakPenalty || 0) > 0) {
+                    _startCostGlitch(parts);
+                }
             }
             costBg.setFrame(bgPixel);
-
-            let costColor = '#30ffff';
-            if (node.costType === 'insight') costColor = '#f0f0f0';
-            else if (node.costType === 'processor') costColor = '#ffe600';
-            else if (node.costType === 'shard') costColor = '#f4f4f4';
-            else if (node.costType === 'coin') costColor = '#00ff66';
-            costT.setColor(costColor);
 
             currentY += 39;
         }
@@ -411,6 +490,22 @@ const nodeTooltip = (() => {
                 PhaserScene.tweens.add({ targets: t, scaleX: 1, duration: 440, easeParams: [3], ease: 'Back.easeOut' });
             });
         }
+
+        // Secondary Tooltip for Leaky nodes
+        if (node.leaky > 0 && typeof secondaryTooltip !== 'undefined') {
+            const side = targetX > GAME_CONSTANTS.halfWidth ? 'left' : 'right';
+            const leakYOffset = (currentY - 120); // currentY was incremented by 39 after leakT
+            const secondaryY = container.y + (showAbove ? -totalHeight : 0) + leakYOffset;
+
+            const title = "DATA LEAK";
+            const body = `Increases global cost of all DATA LEAK nodes.\nPENALTY: +${_formatValue(node, gameState.leakPenalty || 0)}`;
+
+            // Offset the X based on the main tooltip's width
+            const secondaryX = targetX + (side === 'right' ? halfW : -halfW);
+            secondaryTooltip.show(secondaryX, secondaryY, title, body, side);
+        } else if (typeof secondaryTooltip !== 'undefined') {
+            secondaryTooltip.hide();
+        }
     }
 
     function hide() {
@@ -418,6 +513,7 @@ const nodeTooltip = (() => {
             _clearTweens();
             container.setVisible(false);
         }
+        if (typeof secondaryTooltip !== 'undefined') secondaryTooltip.hide();
         currentNode = null;
         isReady = false;
     }

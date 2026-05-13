@@ -537,9 +537,10 @@ const NODE_DEFS = [
         popupText: t('nodes', 'iterative_growth.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 1,
-        costType: 'coin',
+        baseCost: 20,
+        costType: 'data',
         costScaling: 'static',
+        leaky: 20,
         parents: ['bug_report'],
         requiresMaxParent: true,
         childIds: [],
@@ -651,7 +652,6 @@ const NODE_DEFS = [
     {
         id: 'bomb',
         name: t('nodes', 'bomb.name'),
-        leaky: true,
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'bomb.desc'),
         popupText: t('nodes', 'bomb.popup'),
@@ -919,7 +919,7 @@ const NODE_DEFS = [
     {
         id: 'system_redundancy_new',
         name: t('nodes', 'system_redundancy_new.name'),
-        leaky: true,
+        leaky: 5,
         icon: 'Skillicon14_18.png',
         description: t('nodes', 'system_redundancy_new.desc'),
         popupText: t('nodes', 'system_redundancy_new.popup'),
@@ -1058,9 +1058,10 @@ const NODE_DEFS = [
         popupText: t('nodes', 'crescendo.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 120,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
+        leaky: 20,
         parents: ['resonance'],
         requiresMaxParent: true,
         childIds: ['hijack'],
@@ -1102,7 +1103,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['crescendo', 'amplitude'],
-        requiresMaxParent: true,
+        requiresMaxParent: false,
         childIds: ['recursion', 'memory_leak'],
         treeX: gridX(4.0),
         treeY: gridY(3),
@@ -1129,7 +1130,7 @@ const NODE_DEFS = [
         id: 'bypass_2',
         name: t('nodes', 'bypass_2.name'),
         icon: 'Skillicon14_07.png',
-        description: 'Refunds 400 DATA upon purchase',
+        description: 'Refunds 200 DATA upon purchase',
         popupText: t('nodes', 'bypass_2.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
@@ -1142,10 +1143,10 @@ const NODE_DEFS = [
         treeY: gridY(5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(400);
+                resourceManager.addData(200);
             }
         },
-        leaky: true,
+        leaky: 10,
     },
     {
         id: 'parallel_processing',
@@ -1378,11 +1379,11 @@ const NODE_DEFS = [
         id: 'bypass',
         name: t('nodes', 'bypass.name'),
         icon: 'Skillicon14_07.png',
-        description: 'Refunds 150 DATA upon purchase',
+        description: 'Refunds 75 DATA upon purchase',
         popupText: t('nodes', 'bypass.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 75,
         costType: 'data',
         costScaling: 'static',
         parents: ['test_defenses'],
@@ -1391,10 +1392,10 @@ const NODE_DEFS = [
         treeY: gridY(1.5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(150);
+                resourceManager.addData(75);
             }
         },
-        leaky: true,
+        leaky: 10,
     },
     {
         id: 'data_compression',
@@ -1503,6 +1504,7 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcRepeatExploit();
             if (typeof upgradeTree !== 'undefined') upgradeTree.unlockNode('trojan_access');
         },
+        leaky: 5,
     },
     {
         id: 'unsecured_wallet',
@@ -1540,6 +1542,7 @@ const NODE_DEFS = [
         baseCost: 100,
         costType: 'data',
         costScaling: 'static',
+        leaky: 10,
         requiresMaxParent: true,
         parents: ['data_chest_unlock', 'unsecured_wallet'],
         childIds: ['black_market', 'peak_traffic'],
@@ -1594,7 +1597,6 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcPulseDamage();
             if (typeof upgradeTree !== 'undefined') upgradeTree.revealNode('trojan_access', false);
         },
-        leaky: true,
     },
 
     {

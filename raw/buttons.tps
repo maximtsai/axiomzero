@@ -406,8 +406,10 @@
                 <false/>
             </struct>
             <key type="filename">buttons/duo_hover_popup_edges.png</key>
+            <key type="filename">buttons/normal_hover_popup_edges - Copy (3).png</key>
             <key type="filename">buttons/normal_hover_popup_edges - Copy.png</key>
             <key type="filename">buttons/normal_hover_popup_edges.png</key>
+            <key type="filename">buttons/popup_edge_light.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
