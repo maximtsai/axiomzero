@@ -406,6 +406,8 @@
                 <false/>
             </struct>
             <key type="filename">buttons/duo_hover_popup_edges.png</key>
+            <key type="filename">buttons/normal_hover_popup_edges - Copy.png</key>
+            <key type="filename">buttons/normal_hover_popup_edges.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -713,6 +715,21 @@
                 <rect>10,10,20,20</rect>
                 <key>scale9Paddings</key>
                 <rect>10,10,20,20</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/memory_leak_bg.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>43,9,85,17</rect>
+                <key>scale9Paddings</key>
+                <rect>43,9,85,17</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

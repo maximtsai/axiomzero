@@ -14,12 +14,15 @@ const nodeTooltip = (() => {
     let iconSpr = null;
     let goldBg = null;
     let costBg = null;
+    let leakBg = null;
+    let leakT = null;
     let bgEdges = null;
     let animValue = { val: 0 };
     let isReady = false;
 
     let currentNode = null;
     let lastShowTime = 0;
+    let lastGlitchTime = 0;
     const bgWidth = helper.isMobileDevice() ? 398 : 378;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
@@ -96,6 +99,15 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([costBg, costT]);
 
+        leakBg = PhaserScene.add.image(0, 0, 'buttons', 'memory_leak_bg.png');
+        leakT = PhaserScene.add.text(0, 0, 'MEMORY LEAK', {
+            fontFamily: 'Quantico-Bold',
+            fontSize: '26px',
+            color: '#000000',
+            align: 'center',
+        }).setOrigin(0.5, 0.5);
+        container.add([leakBg, leakT]);
+
         // Tooltip is a global UI element; it should NOT be added to tree groups
         // to avoid being clipped by the tree mask.
 
@@ -114,6 +126,7 @@ const nodeTooltip = (() => {
         lvT.setScale(1);
         maxT.setScale(1);
         costT.setScale(1).setAlpha(1);
+        leakT.setScale(1).setAlpha(1);
     }
 
     function show(node, isPurchaseRefresh = false, purchaseCost = 0) {
@@ -171,15 +184,22 @@ const nodeTooltip = (() => {
 
         const bgTexture = node.isDuoBox ? 'black_pixel.png' : 'navy_pixel.png';
         bg.setFrame(bgTexture);
-        bg.setOrigin(0.5, 0);
 
-        bgEdges.setAlpha(node.isDuoBox ? 0.95 : 0);
+        if (node.isDuoBox) {
+            bgEdges.setFrame('duo_hover_popup_edges.png');
+            bgEdges.setAlpha(0.95);
+        } else {
+            bgEdges.setFrame('normal_hover_popup_edges.png');
+            bgEdges.setAlpha(0.9);
+        }
+        bg.setOrigin(0.5, 0);
+        bgEdges.setOrigin(0.5, 0);
 
         const rowSpacing = isBigValue ? 10 : 7;
         const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);
 
-        let currentY = 4;
+        let currentY = 6;
 
         // Row 1: Icon & Name
         const titleStartX = -titleWidth / 2 - 2;
@@ -207,6 +227,16 @@ const nodeTooltip = (() => {
             lvT.setVisible(true);
             lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 2);
             currentY += lvT.height + 7;
+        }
+
+        // Row 3.5: Memory Leak Warning
+        if (node.leaky) {
+            leakBg.setVisible(true).setPosition(0, currentY + 16);
+            leakT.setVisible(true).setPosition(0, currentY + 16);
+            currentY += 39;
+        } else {
+            leakBg.setVisible(false);
+            leakT.setVisible(false);
         }
 
         // Row 4: Cost, MAX, ACTIVE, or SWAP
@@ -259,7 +289,9 @@ const nodeTooltip = (() => {
             if (isPurchaseRefresh && purchaseCost > 0) {
                 const targetRes = currentRes;
                 animValue.val = targetRes + purchaseCost;
-                costT.setText('\n' + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + '\n');
+                const leakIcon = '';
+                const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
+                costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
                 let calcDur = 250 + Math.floor(Math.sqrt(purchaseCost) * 5);
                 PhaserScene.tweens.add({
                     targets: animValue,
@@ -268,13 +300,15 @@ const nodeTooltip = (() => {
                     ease: 'Quad.easeOut',
                     onUpdate: () => {
                         // Check if node is still the current one to avoid updating stale tooltips
-                        if (currentNode === node && costT.visible) {
-                            costT.setText('\n' + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + '\n');
-                        }
+                        const leakIcon = '';
+                        const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
+                        costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, animValue.val) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
                     }
                 });
             } else {
-                costT.setText('\n' + iconStr + ' ' + _formatValue(node, currentRes) + ' / ' + _formatValue(node, node.getCost()) + '\n');
+                const leakIcon = '';
+                const leakText = (node.leaky && gameState.leakPenalty > 0) ? ` (+${gameState.leakPenalty} LEAK)` : '';
+                costT.setText('\n' + leakIcon + iconStr + ' ' + _formatValue(node, currentRes) + ' / ' + _formatValue(node, node.getCost()) + leakText + '\n');
             }
             costBg.setFrame(bgPixel);
 
@@ -290,7 +324,8 @@ const nodeTooltip = (() => {
 
         const totalHeight = currentY + 4;
         bg.setDisplaySize(currentBgWidth, totalHeight);
-        bgEdges.setSize(currentBgWidth + 42, totalHeight + 42);
+        const edgePadding = 42;
+        bgEdges.setSize(currentBgWidth + edgePadding, totalHeight + edgePadding);
 
         // Use getBounds() to account for parent container transforms (e.g. treeMaskContainer shifts)
         const btnBounds = node.btn.getBounds();
@@ -321,12 +356,13 @@ const nodeTooltip = (() => {
         const halfW = currentBgWidth / 2;
         const margin = 10;
         targetX = Math.max(targetX, halfW + margin);
+        const edgeOffset = 21;
 
         // Final container position and child alignment
         if (showAbove) {
             container.setPosition(targetX, centerY - verticalOffset);
             bg.y = -totalHeight;
-            bgEdges.y = -totalHeight - 21;
+            bgEdges.y = -totalHeight - edgeOffset;
             container.iterate(child => {
                 if (child === bg || child === bgEdges) return;
                 child.y -= totalHeight;
@@ -335,8 +371,20 @@ const nodeTooltip = (() => {
             // Position below the node
             container.setPosition(targetX, centerY + verticalOffset + 1);
             bg.y = 0;
-            bgEdges.y = -21;
+            bgEdges.y = -edgeOffset;
             // Children are already relative to container top (Y=3), so no further shift needed
+        }
+
+        // Leaky node glitch effect (6s cooldown)
+        if (node.leaky) {
+            const now = Date.now();
+            if (now - lastGlitchTime > 6000) {
+                lastGlitchTime = now;
+                const glitchY = showAbove ? (centerY - verticalOffset - totalHeight / 2) : (centerY + verticalOffset + totalHeight / 2);
+                if (typeof cinematicManager !== 'undefined') {
+                    cinematicManager.playLocalGlitch(targetX, glitchY, currentBgWidth * 0.45, 0.85, 350, true);
+                }
+            }
         }
 
         // Animations

@@ -46,6 +46,7 @@ class Node {
         this.costStepScaling = def.costStepScaling || 0;
         this.customCost = def.customCost || [];
         this.costType = def.costType || 'data';
+        this.leaky = def.leaky || false;
         this.effect = def.effect || function () { };
         this.popupText = def.popupText || null;
         this.popupColor = def.popupColor || '#ffffff';
@@ -133,15 +134,19 @@ class Node {
 
     getCost() {
         if (this.level >= this.maxLevel) return Infinity;
-        if (this.costScaling === 'custom' && this.customCost.length > 0) {
-            const idx = Math.min(this.level, this.customCost.length - 1);
-            return this.customCost[idx];
-        }
+        let cost = this.baseCost;
         if (this.costScaling === 'linear') {
             const scalingBonus = (this.level * (this.level + 1)) / 2 * this.costStepScaling;
-            return this.baseCost + (this.costStep * this.level) + scalingBonus;
+            cost = this.baseCost + (this.costStep * this.level) + scalingBonus;
+        } else if (this.costScaling === 'custom' && this.customCost.length > 0) {
+            const idx = Math.min(this.level, this.customCost.length - 1);
+            cost = this.customCost[idx];
         }
-        return this.baseCost; // static
+
+        if (this.leaky && gameState.leakPenalty) {
+            cost += gameState.leakPenalty;
+        }
+        return cost;
     }
 
     getCostType() {
@@ -451,6 +456,11 @@ class Node {
         // Persist
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
+
+        // Leaky node global modifier
+        if (this.leaky && this.level === 1) {
+            gameState.leakPenalty = (gameState.leakPenalty || 0) + 25;
+        }
 
         // Effect and Metadata logic
         if (this.isDuoBox) {

@@ -389,14 +389,14 @@ const cinematicManager = (() => {
      * @param {number} intensity - frequency multiplier
      * @param {number} duration - effect time in ms
      */
-    function playLocalGlitch(tx, ty, radius = 100, intensity = 1.0, duration = 400) {
+    function playLocalGlitch(tx, ty, radius = 100, intensity = 1.0, duration = 400, noPause = false) {
         const frames = ['glitch_wide.png', 'glitch_line.png'];
         const baseCount = 8;
         const count = Math.floor(baseCount * intensity * (duration / 400));
 
         // Cinematic hit: heavy slowdown after 100ms
         PhaserScene.time.delayedCall(100, () => {
-            if (typeof timeManager !== 'undefined') {
+            if (!noPause && typeof timeManager !== 'undefined') {
                 timeManager.setTempPause(70, 0.01);
             }
             if (typeof audio !== 'undefined') {
@@ -409,7 +409,7 @@ const cinematicManager = (() => {
         // Optional second hit for long effects
         if (duration > 500) {
             PhaserScene.time.delayedCall(500, () => {
-                if (typeof timeManager !== 'undefined') {
+                if (!noPause && typeof timeManager !== 'undefined') {
                     timeManager.setTempPause(150, 0.01);
                 }
                 if (typeof audio !== 'undefined') {

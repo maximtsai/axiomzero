@@ -651,6 +651,7 @@ const NODE_DEFS = [
     {
         id: 'bomb',
         name: t('nodes', 'bomb.name'),
+        leaky: true,
         icon: 'Skillicon14_02.png',
         description: t('nodes', 'bomb.desc'),
         popupText: t('nodes', 'bomb.popup'),
@@ -918,6 +919,7 @@ const NODE_DEFS = [
     {
         id: 'system_redundancy_new',
         name: t('nodes', 'system_redundancy_new.name'),
+        leaky: true,
         icon: 'Skillicon14_18.png',
         description: t('nodes', 'system_redundancy_new.desc'),
         popupText: t('nodes', 'system_redundancy_new.popup'),
@@ -1127,7 +1129,7 @@ const NODE_DEFS = [
         id: 'bypass_2',
         name: t('nodes', 'bypass_2.name'),
         icon: 'Skillicon14_07.png',
-        description: t('nodes', 'bypass_2.desc'),
+        description: 'Refunds 400 DATA upon purchase',
         popupText: t('nodes', 'bypass_2.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
@@ -1143,6 +1145,7 @@ const NODE_DEFS = [
                 resourceManager.addData(400);
             }
         },
+        leaky: true,
     },
     {
         id: 'parallel_processing',
@@ -1375,7 +1378,7 @@ const NODE_DEFS = [
         id: 'bypass',
         name: t('nodes', 'bypass.name'),
         icon: 'Skillicon14_07.png',
-        description: t('nodes', 'bypass.desc'),
+        description: 'Refunds 150 DATA upon purchase',
         popupText: t('nodes', 'bypass.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
@@ -1391,6 +1394,7 @@ const NODE_DEFS = [
                 resourceManager.addData(150);
             }
         },
+        leaky: true,
     },
     {
         id: 'data_compression',
@@ -1590,6 +1594,7 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcPulseDamage();
             if (typeof upgradeTree !== 'undefined') upgradeTree.revealNode('trojan_access', false);
         },
+        leaky: true,
     },
 
     {

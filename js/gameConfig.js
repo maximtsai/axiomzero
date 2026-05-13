@@ -206,6 +206,7 @@ const GAME_STATE_DEFAULTS = {
     processor: 0,
     coin: 0,
     permanentHpBonus: 0,
+    leakPenalty: 0,
 
     // EXP (0–100, awards INSIGHT at 100)
     exp: 0,
