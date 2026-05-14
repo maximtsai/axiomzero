@@ -80,7 +80,7 @@ const customEmitters = (() => {
             sprite.setAlpha(1);
             sprite.setRotation(0);
         },
-        5
+        40
     );
 
     const exploderExplosionMainPool = new ObjectPool(

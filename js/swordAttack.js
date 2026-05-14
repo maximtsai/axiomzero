@@ -27,6 +27,10 @@ class SwordAttackModel {
         this.rotation = 0;
     }
 
+    setFireInterval(ms) {
+        this.FIRE_INTERVAL = ms;
+    }
+
     resetTimer() {
         this.fireTimer = 1000;
         this.isAttacking = false;
@@ -524,5 +528,5 @@ const swordAttack = (() => {
         model.flurryLevel = lv;
     }
 
-    return { init, unlock, lock, setDamage, setLength, setLungeLevel, setFlurryLevel };
+    return { init, unlock, lock, setDamage, setLength, setLungeLevel, setFlurryLevel, setFireInterval: (ms) => model.setFireInterval(ms) };
 })();

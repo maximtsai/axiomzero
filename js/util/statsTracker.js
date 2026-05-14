@@ -52,7 +52,10 @@ const statsTracker = (function() {
         if (amount <= 0 || source === 'notrecorded') return;
 
         // Map sources per design request
-        const s = (source === 'burn') ? 'laser' : (source || 'other');
+        let s = source || 'other';
+        if (s === 'burn') s = 'laser';
+        if (s === 'rocket_explosion') s = 'tower';
+        
         const target = currentRun.damage.hasOwnProperty(s) ? s : 'other';
 
         currentRun.damage[target] += amount;

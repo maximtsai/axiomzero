@@ -187,16 +187,12 @@ const projectileManager = (() => {
                     }
 
                     if (p.isRocket) {
-                        const hasKinetic = upgradeDispatcher.getLevel('rocket_kinetic_payload') > 0;
-                        if (hasKinetic) {
-                            enemyManager.damageEnemy(e, p.damage, 'tower', p.isCrit);
-                        }
                         const hasHE = upgradeDispatcher.getLevel('rocket_he_compound') > 0;
                         const explosionRadius = hasHE ? 130 : 100;
                         const explosionScale = hasHE ? 0.65 : 0.5;
 
                         customEmitters.playExplosionPulse(p.x, p.y, p.img.depth + 1, explosionScale);
-                        enemyManager.damageEnemiesInRange(p.x, p.y, explosionRadius, p.damage, 'tower', p.isCrit);
+                        enemyManager.damageEnemiesInRange(p.x, p.y, explosionRadius, p.damage, 'rocket_explosion', p.isCrit);
                         if (typeof audio !== 'undefined') {
                             audio.play('8_bit_explosion', 0.6);
                         }

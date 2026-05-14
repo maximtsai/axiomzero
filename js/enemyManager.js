@@ -105,7 +105,10 @@ const enemyManager = (() => {
 
     function _buildPools() {
         // Shared reset function for all enemies
-        const resetFn = (e) => { e.deactivate(); };
+        const resetFn = (e) => { 
+            e.deactivate(); 
+            e._hasChained = false;
+        };
 
         pools.basic = new ObjectPool(() => new BasicEnemy(), resetFn, POOL_SIZE).preAllocate(POOL_SIZE);
         pools.shooter = new ObjectPool(() => new ShooterEnemy(), resetFn, POOL_SIZE).preAllocate(20);
@@ -555,7 +558,7 @@ const enemyManager = (() => {
 
     // ── damage ───────────────────────────────────────────────────────────────
 
-    function damageEnemy(enemy, amount, source = 'other', isCrit = false) {
+    function damageEnemy(enemy, amount, source = 'other', isCrit = false, chainDepth = 0) {
         if (!enemy || !enemy.model.alive) return;
 
         let finalDamage = amount;
@@ -676,17 +679,32 @@ const enemyManager = (() => {
             if (enemy.model.type === 'protector') {
                 enemy.model.isGhosting = true;
                 if (enemy.view && enemy.view.img) enemy.view.img.setAlpha(0.6);
-                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy, false, wasResonance, source));
+                PhaserScene.time.delayedCall(10, () => _killEnemy(enemy, false, wasResonance, source, chainDepth));
             } else {
-                _killEnemy(enemy, false, wasResonance, source);
+                _killEnemy(enemy, false, wasResonance, source, chainDepth);
             }
         }
     }
 
-    function _killEnemy(enemy, skipBossEffects = false, wasResonance = false, source = 'other') {
+    function _killEnemy(enemy, skipBossEffects = false, wasResonance = false, source = 'other', chainDepth = 0) {
         // Trigger unit-specific death logic (resources, explosions, sounds)
         // Shards/Staged deaths pass skipBossEffects=true, so they get onDeath(false)
         enemy.onDeath(!skipBossEffects);
+
+        // Chain Reaction
+        if (source === 'rocket_explosion' && upgradeDispatcher.getLevel('rocket_chain_reaction') > 0 && !enemy._hasChained && chainDepth < 15) {
+            enemy._hasChained = true; // Prevent double-trigger from same death
+            const ex = enemy.model.x;
+            const ey = enemy.model.y;
+            const nextDepth = chainDepth + 1;
+            const delay = 120 + Math.random() * 50;
+            PhaserScene.time.delayedCall(delay, () => {
+                if (typeof customEmitters !== 'undefined') {
+                    customEmitters.playExplosionPulse(ex, ey, 151, 0.35); // smaller pulse
+                }
+                damageEnemiesInRange(ex, ey, 65, 16, 'rocket_explosion', false, nextDepth);
+            });
+        }
 
         if (typeof customEmitters !== 'undefined') {
             if (enemy.model.type === 'shell') {
@@ -1125,11 +1143,12 @@ const enemyManager = (() => {
         if (e.model.type === 'protector') activeProtectors.push(e);
     }
 
-    function damageEnemiesInRange(x, y, radius, damage, source = 'other', isCrit = false) {
-        _queryResults.length = 0;
-        getEnemiesInRange(x, y, radius, _queryResults);
+    function damageEnemiesInRange(cx, cy, radius, amount, source = 'other', isCrit = false, chainDepth = 0) {
+        if (chainDepth >= 15) return;
+        getEnemiesInRange(cx, cy, radius, _queryResults);
         for (let i = 0; i < _queryResults.length; i++) {
-            damageEnemy(_queryResults[i], damage, source, isCrit);
+            const e = _queryResults[i];
+            damageEnemy(e, amount, source, isCrit, chainDepth);
         }
     }
 

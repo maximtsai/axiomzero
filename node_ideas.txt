@@ -38,12 +38,18 @@ love this design. I want to keep its attack pattern fairly simple, it spawns in,
 
 - leader boards
 - Node to add arc lightning on cursor hit.
-- Make fast enemies have thinner outside stroke
 - For PC mode, animated background with new game, options, quit, credits at bottom left corner.
-
 
 - Found a hidden entry point in a forgotten server.
 password123 still works on an alarming number of servers.
 Found an open port labeled "DO NOT ENTER". It was not locked.
-
 - Enemies coming out of a void.
+
+achievement to kill 2 enemies with one attack.
+achievement to kill 50 enemies in one level
+achievement to earn 1000 data in one session.
+achievement to unlock 50 upgrades.
+
+Node tree grows from beginning every time you return to upgrade.
+When you buy a node, the line connecting the unlocked node to ghost node should first play an extending animation, then the ghost node appears.
+have really expensive alt path node early on.

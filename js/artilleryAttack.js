@@ -22,6 +22,10 @@ class ArtilleryAttackModel {
         this.stunLevel = 0;        // artillery_stun
     }
 
+    setFireInterval(ms) {
+        this.FIRE_INTERVAL = ms;
+    }
+
     updateTimer(delta) {
         const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
         if ((!this.active && !isTesting) || this.paused) return false;
@@ -484,6 +488,10 @@ const artilleryAttack = (() => {
         model.volleyLevel = levels.volley || 0;
         model.firstStrikeLevel = levels.firstStrike || 0;
         model.stunLevel = levels.stun || 0;
+
+        if (levels.cooldownMultiplier !== undefined) {
+            model.setFireInterval(6000 * levels.cooldownMultiplier);
+        }
 
         // Auto-update margins based on AOE change
         let marginBase = model.getDamageArea();

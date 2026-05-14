@@ -798,7 +798,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'lightning_chain.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 35,
+        baseCost: 60,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -1131,11 +1131,11 @@ const NODE_DEFS = [
         id: 'bypass_2',
         name: t('nodes', 'bypass_2.name'),
         icon: 'Skillicon14_07.png',
-        description: 'Refunds 200 DATA upon purchase',
+        description: 'Refunds 150 DATA upon purchase',
         popupText: t('nodes', 'bypass_2.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 200,
+        baseCost: 150,
         costType: 'data',
         costScaling: 'static',
         parents: ['memory_leak'],
@@ -1144,7 +1144,7 @@ const NODE_DEFS = [
         treeY: gridY(5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(200);
+                resourceManager.addData(150);
             }
         },
         leaky: 10,
@@ -1531,6 +1531,28 @@ const NODE_DEFS = [
             }
         },
     },
+    {
+        id: 'fiber_optics',
+        name: t('nodes', 'fiber_optics.name'),
+        icon: 'Skillicon14_30.png',
+        description: t('nodes', 'fiber_optics.desc'),
+        popupText: t('nodes', 'fiber_optics.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 200,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['access_internet'],
+        childIds: [],
+        treeX: gridX(-0.5),
+        treeY: gridY(7),
+        effect: function () {
+            if (typeof upgradeDispatcher !== 'undefined') {
+                upgradeDispatcher.recalcEverything();
+                if (typeof tower !== 'undefined') tower.recalcStats();
+            }
+        },
+    },
 
     {
         id: 'access_internet',
@@ -1546,7 +1568,7 @@ const NODE_DEFS = [
         leaky: 10,
         requiresMaxParent: true,
         parents: ['data_chest_unlock', 'unsecured_wallet'],
-        childIds: ['black_market', 'peak_traffic'],
+        childIds: ['black_market', 'peak_traffic', 'fiber_optics'],
         treeX: gridX(0),
         treeY: gridY(6),
         effect: function () {
@@ -2165,7 +2187,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['peak_performance'],
-        childIds: ['rocket_kinetic_payload', 'rocket_he_compound'],
+        childIds: ['rocket_he_compound', 'rocket_chain_reaction'],
         isDuoBox: true,
         isLeftDuo: false,
         duoBoxTier: 5,
@@ -2217,25 +2239,6 @@ const NODE_DEFS = [
         },
     },
     {
-        id: 'rocket_kinetic_payload',
-        name: t('nodes', 'rocket_kinetic_payload.name'),
-        icon: 'Skillicon14_08.png',
-        description: t('nodes', 'rocket_kinetic_payload.desc'),
-        popupText: t('nodes', 'rocket_kinetic_payload.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 1,
-        baseCost: 100,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['rocket'],
-        childIds: [],
-        treeX: gridX(5),
-        treeY: gridY(10),
-        effect: function () {
-            if (typeof tower !== 'undefined') tower.recalcStats();
-        },
-    },
-    {
         id: 'rocket_he_compound',
         name: t('nodes', 'rocket_he_compound.name'),
         icon: 'Skillicon14_11.png',
@@ -2250,6 +2253,25 @@ const NODE_DEFS = [
         childIds: [],
         treeX: gridX(5),
         treeY: gridY(9),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
+        id: 'rocket_chain_reaction',
+        name: t('nodes', 'rocket_chain_reaction.name'),
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'rocket_chain_reaction.desc'),
+        popupText: t('nodes', 'rocket_chain_reaction.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 120,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['rocket'],
+        childIds: [],
+        treeX: gridX(5),
+        treeY: gridY(10),
         effect: function () {
             if (typeof tower !== 'undefined') tower.recalcStats();
         },

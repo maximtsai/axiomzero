@@ -17,6 +17,10 @@ class ShockwaveAttackModel {
         this.seismicCrushLevel = 0;
     }
 
+    setFireInterval(ms) {
+        this.FIRE_INTERVAL = ms;
+    }
+
     resetTimer() {
         this.fireTimer = 0;
     }
@@ -214,5 +218,5 @@ const shockwaveAttack = (() => {
         }
     }
 
-    return { init, unlock, lock, setAmplifierLevel, setSeismicCrushLevel, setDamage };
+    return { init, unlock, lock, setAmplifierLevel, setSeismicCrushLevel, setDamage, setFireInterval: (ms) => model.setFireInterval(ms) };
 })();

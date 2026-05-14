@@ -36,6 +36,15 @@ class LaserAttackModel {
         this.tapering = false;    // true during taper-down phase
         this.taperProgress = 0;   // 0-1, how far through taper-down
         this.TAPER_DURATION = 200; // ms to taper beam down
+        this.cooldownMultiplier = 1.0;
+    }
+
+    setCooldownMultiplier(mult) {
+        this.cooldownMultiplier = mult;
+    }
+
+    getCooldownDuration() {
+        return this.COOLDOWN_DURATION * this.cooldownMultiplier;
     }
 
     getVisualHalfWidth() {
@@ -347,10 +356,11 @@ const laserAttack = (() => {
         view.hide();
     }
 
-    function setLevels({ aperture = 0, disintegration = 0, twin = 0 } = {}) {
+    function setLevels({ aperture = 0, disintegration = 0, twin = 0, cooldownMultiplier = 1.0 } = {}) {
         model.apertureLevel = aperture;
         model.disintegrationLevel = disintegration;
         model.twinLevel = twin;
+        model.setCooldownMultiplier(cooldownMultiplier);
     }
 
     function _onPhaseChanged(phase) {
@@ -458,9 +468,9 @@ const laserAttack = (() => {
             model.cooldownTimer += delta;
 
             // Pre-fire visuals (0.35s before firing)
-            model.charging = model.cooldownTimer >= model.COOLDOWN_DURATION - 350;
+            model.charging = model.cooldownTimer >= model.getCooldownDuration() - 350;
 
-            if (model.cooldownTimer >= model.COOLDOWN_DURATION) {
+            if (model.cooldownTimer >= model.getCooldownDuration()) {
                 model.charging = false;
                 _startFiring();
             }

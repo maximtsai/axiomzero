@@ -343,11 +343,11 @@ class Node {
             }
             this.setState(NODE_STATE.UNLOCKED);
         } else {
-            // If we reached here, the node is either force-revealed or has a purchasable parent.
-            // Default to GHOST state (preview).
-            if (FLAGS.DEBUG && this.state !== NODE_STATE.GHOST) {
-                console.log(`[NODE] ${this.id} -> GHOST (anyRevealed: ${anyRevealed})`);
-            }
+            // // If we reached here, the node is either force-revealed or has a purchasable parent.
+            // // Default to GHOST state (preview).
+            // if (FLAGS.DEBUG && this.state !== NODE_STATE.GHOST) {
+            //     console.log(`[NODE] ${this.id} -> GHOST (anyRevealed: ${anyRevealed})`);
+            // }
             this.setState(NODE_STATE.GHOST);
         }
 

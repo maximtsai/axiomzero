@@ -18,6 +18,10 @@ class LightningAttackModel {
         this.fireTimer = 0;
     }
 
+    setFireInterval(ms) {
+        this.FIRE_INTERVAL = ms;
+    }
+
     resetTimer() {
         this.fireTimer = 0;
     }
@@ -313,5 +317,5 @@ const lightningAttack = (() => {
     function getBaseDamage() { return model.BASE_DAMAGE; }
     function getBaseChainCount() { return model.BASE_CHAIN_COUNT; }
 
-    return { init, unlock, lock, setChainCount, setDamage, setStaticChargeLevel, getBaseDamage, getBaseChainCount };
+    return { init, unlock, lock, setChainCount, setDamage, setStaticChargeLevel, getBaseDamage, getBaseChainCount, setFireInterval: (ms) => model.setFireInterval(ms) };
 })();

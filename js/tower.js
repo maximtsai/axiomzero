@@ -74,7 +74,8 @@ class TowerModel {
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.4 * regenLv; // baseDecay commented out per request
         this.armor = armorLv; // 1 flat damage reduction per level
-        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
+        const fiberBonus = upgradeDispatcher.getLevel('fiber_optics') > 0 ? 0.9 : 1.0;
+        this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv) * fiberBonus;
 
         // Root Access damage reduction
         this.damageReceivedMultiplier = upgradeDispatcher.getLevel('root_access') >= 1 ? 0.9 : 1.0;
@@ -106,10 +107,7 @@ class TowerModel {
             }
         }
 
-        let reducedAmount = Math.max(0, amount - this.armor);
-
-        // Apply percentage reduction from Root Access
-        reducedAmount *= this.damageReceivedMultiplier;
+        let reducedAmount = Math.max(0, amount - this.armor) * this.damageReceivedMultiplier;
 
         this.health -= reducedAmount;
         if (this.health <= 0) {
@@ -123,8 +121,7 @@ class TowerModel {
                 return true; // Survived via backup
             }
 
-            this.die();
-            return false; // Did not survive
+            return false; // Fatal damage
         }
         this.publishHealth();
         return true; // Survived and took damage
@@ -187,6 +184,7 @@ class TowerView {
         this.deathShockwave = null;
         this.warnShockwave = null;
         this.artilleryCallTween = null;
+        this.deathVisualsTimer = null;
     }
 
     spawn(cx, cy) {
@@ -592,13 +590,16 @@ class TowerView {
             ease: 'Cubic.easeOut',
         });
     }
-
     playDeathVisuals() {
         if (!this.sprite || !this.sprite.scene) return;
-        console.log("playDeathVisuals");
+
+        if (this.deathVisualsTimer) {
+            this.deathVisualsTimer.remove();
+            this.deathVisualsTimer = null;
+        }
 
         // 0.25 seconds after death sequence begins
-        PhaserScene.time.delayedCall(250, () => {
+        this.deathVisualsTimer = PhaserScene.time.delayedCall(250, () => {
             if (!this.sprite || !this.sprite.scene) return;
 
             // Set to broken sprite
@@ -613,11 +614,17 @@ class TowerView {
                 duration: 100,
                 ease: 'Cubic.easeOut'
             });
+            this.deathVisualsTimer = null;
         });
     }
 
     playResetVisuals() {
         if (!this.sprite || !this.sprite.scene) return;
+
+        if (this.deathVisualsTimer) {
+            this.deathVisualsTimer.remove();
+            this.deathVisualsTimer = null;
+        }
 
         // Sequence: 1.3 @ 500ms → 0.9 @ 150ms → Swap → 1.0 @ 250ms
         PhaserScene.tweens.add({
@@ -651,6 +658,16 @@ class TowerView {
                 });
             }
         });
+    }
+
+    restoreHealthySprite() {
+        if (this.deathVisualsTimer) {
+            this.deathVisualsTimer.remove();
+            this.deathVisualsTimer = null;
+        }
+        if (this.sprite) {
+            this.sprite.setFrame('tower1.png');
+        }
     }
 }
 
@@ -742,11 +759,11 @@ const tower = (() => {
         }
     }
 
-    function takeDamage(amount, x = 0, y = 0) {
+    function takeDamage(amount, x = undefined, y = undefined) {
         if (!model.alive || model.isInvincible) return true; // Successfully 'survived' because we are invincible/dead
 
-        const damageTaken = Math.max(0, amount - model.armor);
-        const survived = model.takeDamage(amount, (x !== 0 ? x : null), (y !== 0 ? y : null));
+        const survived = model.takeDamage(amount, x, y);
+        const damageTaken = Math.max(0, amount - model.armor) * (model.damageReceivedMultiplier || 1);
 
         if (damageTaken > 0.5) {
             let volume = 0.9;
@@ -776,7 +793,7 @@ const tower = (() => {
             let px = pos.x;
             let py = pos.y;
 
-            if (x !== 0 || y !== 0) {
+            if (x !== undefined || y !== undefined) {
                 const dx = x - pos.x;
                 const dy = y - pos.y;
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -791,9 +808,8 @@ const tower = (() => {
             view.playHitFlash();
             zoomShake(1.007);
             // BUG REPORT: Drop 1 DATA on hit + 1 extra per 5 cumulative damage
-            const actualDamage = damageTaken * (model.damageReceivedMultiplier || 1);
-            if ((gameState.upgrades || {}).bug_report && actualDamage > 0) {
-                model.bugReportAccumulator += actualDamage;
+            if ((gameState.upgrades || {}).bug_report && damageTaken > 0) {
+                model.bugReportAccumulator += damageTaken;
                 const bonusDrops = Math.floor(model.bugReportAccumulator / 5);
                 model.bugReportAccumulator %= 5;
 
@@ -1113,7 +1129,7 @@ const tower = (() => {
         getHealth: () => model.health,
         resurrect: () => {
             model.resurrect();
-            // controller level invincibility is better handled by waveManager or a helper here
+            view.restoreHealthySprite();
         },
         setHealth: (h) => {
             model.health = h;

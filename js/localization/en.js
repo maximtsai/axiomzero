@@ -90,11 +90,12 @@ window.TRANSLATIONS.en = {
         assault: { name: 'ASSAULT', desc: 'Core now fires a burst of projectiles', popup: 'ASSAULT UNLOCKED' },
         assault_clip_size: { name: 'CLIP SIZE', desc: '+1 bullet fired per burst', popup: 'CAPACITY INCREASED' },
         assault_crit: { name: 'CRITICAL', desc: '33% chance to critically hit for x2 damage', popup: 'CRITICAL HIT ENABLED' },
-        rocket_kinetic_payload: { name: 'KINETIC PAYLOAD', desc: 'Direct hits deal [color=#8FD9F8]impact damage[/color] in addition to the explosion', popup: 'DIRECT HIT BONUS' },
         rocket_he_compound: { name: 'HE COMPOUND', desc: '[color=#8FD9F8]+30%[/color] rocket explosion radius', popup: 'EXPLOSION RADIUS INCREASED' },
+        rocket_chain_reaction: { name: 'CHAIN REACTION', desc: 'Enemies killed by explosions trigger a [color=#8FD9F8]secondary blast[/color] after 0.1s', popup: 'CHAIN REACTION ENABLED' },
         resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack gains RESONANCE, dealing [color=#8FD9F8]double damage[/color]', popup: 'RESONANCE ACTIVE' },
         amplitude: { name: 'AMPLITUDE', desc: 'Resonance attack damage increased to [color=#8FD9F8]triple damage[/color] (x3).', popup: 'AMPLITUDE INCREASED' },
         packet_sniffing: { name: 'PACKET SNIFFING', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#8FD9F8]2s[/color] during combat', popup: 'SNIFFER ACTIVE' },
+        fiber_optics: { name: 'FIBER OPTICS', desc: '[color=#8FD9F8]-10%[/color] to all player attack cooldowns.', popup: '-10% COOLDOWN' },
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through enemies', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy', popup: 'ARTILLERY ACTIVE' },
         lore_1: {
