@@ -39,26 +39,25 @@ class TowerModel {
     }
 
     recalcStats() {
-        const ups = gameState.upgrades || {};
-        const integrityLv = ups.integrity || 0;
-        const intensityLv = ups.intensity || 0;
-        const regenLv = ups.regen || 0;
-        const coverageLv = ups.coverage || 0;
-        const focus2Lv = ups.focus_range_2 || 0;
-        const focus3Lv = ups.focus_range_3 || 0;
-        const armorLv = ups.armor || 0;
-        const baseHpLv = ups.base_hp_boost || 0;
-        const clockSpeedLv = ups.clock_speed || 0;
-        const anchorHp = (ups.physical_anchor || 0) * 40;
-        const farsightLv = ups.farsight || 0;
-        this.emergencyOverclockLv = ups.emergency_overclock || 0;
+        const integrityLv = upgradeDispatcher.getLevel('integrity');
+        const intensityLv = upgradeDispatcher.getLevel('intensity');
+        const regenLv = upgradeDispatcher.getLevel('regen');
+        const coverageLv = upgradeDispatcher.getLevel('coverage');
+        const focus2Lv = upgradeDispatcher.getLevel('focus_range_2');
+        const focus3Lv = upgradeDispatcher.getLevel('focus_range_3');
+        const armorLv = upgradeDispatcher.getLevel('armor');
+        const baseHpLv = upgradeDispatcher.getLevel('base_hp_boost');
+        const clockSpeedLv = upgradeDispatcher.getLevel('clock_speed');
+        const anchorHp = upgradeDispatcher.getLevel('physical_anchor') * 40;
+        const farsightLv = upgradeDispatcher.getLevel('farsight');
+        this.emergencyOverclockLv = upgradeDispatcher.getLevel('emergency_overclock');
 
-        const systemRedundancyLv = ups.system_redundancy_new || 0;
+        const systemRedundancyLv = upgradeDispatcher.getLevel('system_redundancy_new');
         const permanentHp = gameState.permanentHpBonus || 0;
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 20 * systemRedundancyLv + anchorHp + permanentHp;
         const shellDamage = baseHpLv * 4;
 
-        const autoDefLv = ups.automated_defense || 0;
+        const autoDefLv = upgradeDispatcher.getLevel('automated_defense');
         if (autoDefLv > 0) {
             this.damage = 5 + 2 * intensityLv + shellDamage;
         } else {
@@ -78,7 +77,7 @@ class TowerModel {
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv);
 
         // Root Access damage reduction
-        this.damageReceivedMultiplier = (ups.root_access || 0) >= 1 ? 0.9 : 1.0;
+        this.damageReceivedMultiplier = upgradeDispatcher.getLevel('root_access') >= 1 ? 0.9 : 1.0;
     }
 
     reset() {
@@ -870,16 +869,16 @@ const tower = (() => {
     function isAlive() { return model.alive; }
     function getDamage(isBoss = false) {
         let dmg = model.damage;
-        const ups = gameState.upgrades || {};
-        if (ups.peak_performance && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
-            dmg += 10;
+        if (upgradeDispatcher.getLevel('peak_performance') > 0 && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
+            dmg += 5;
         }
-        if (ups.parallel_processing) {
+        if (upgradeDispatcher.getLevel('parallel_processing') > 0) {
             dmg += 4;
         }
 
-        if (isBoss && ups.kernel_breaker) {
-            dmg *= (1 + 0.25 * ups.kernel_breaker);
+        const kbLv = upgradeDispatcher.getLevel('kernel_breaker');
+        if (isBoss && kbLv > 0) {
+            dmg *= (1 + 0.25 * kbLv);
         }
 
         return dmg;
@@ -971,12 +970,19 @@ const tower = (() => {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
-        projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, getDamage(target.model.isBoss));
-        view.playRecoil(target.model.x, target.model.y);
+
+        const isAssault = upgradeDispatcher.getLevel('assault') > 0;
+        const isRocket = upgradeDispatcher.getLevel('rocket') > 0;
+
+        if (isAssault) {
+            _fireAssaultBurst(pos);
+        } else {
+            projectileManager.fire(pos.x, pos.y, target.model.x, target.model.y, getDamage(target.model.isBoss), false, isRocket);
+            view.playRecoil(target.model.x, target.model.y);
+        }
 
         // PRISMATIC ARRAY effect
-        const ups = gameState.upgrades || {};
-        const prismaticLv = ups.prismatic_array || 0;
+        const prismaticLv = upgradeDispatcher.getLevel('prismatic_array');
         if (prismaticLv > 0) {
             const chance = 0.50 * prismaticLv;
             if (Math.random() < chance) {
@@ -990,6 +996,42 @@ const tower = (() => {
                     }
                 });
             }
+        }
+    }
+
+    function _fireAssaultBurst(pos) {
+        const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
+        if (!target) return;
+
+        const baseAngle = Math.atan2(target.model.y - pos.y, target.model.x - pos.x);
+
+        const extraShots = upgradeDispatcher.getLevel('assault_clip_size');
+        const totalShots = 3 + extraShots;
+        const delay = 70; // 0.07s
+
+        const critLv = upgradeDispatcher.getLevel('assault_crit');
+        const critChance = critLv > 0 ? 0.33 : 0;
+
+        for (let i = 0; i < totalShots; i++) {
+            PhaserScene.time.delayedCall(i * delay, () => {
+                const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+                if (!model.alive || (!model.active && !isTesting)) return;
+
+                const spreadStep = 0.2;
+                const startOffset = spreadStep * -0.5 * (totalShots - 1);
+                const angleOffset = startOffset + (i * spreadStep);
+                const finalAngle = baseAngle + angleOffset;
+
+                let damage = getDamage(target.model.isBoss);
+                let isCrit = false;
+                if (critChance > 0 && Math.random() < critChance) {
+                    damage *= 2;
+                    isCrit = true;
+                }
+
+                projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100, damage, isCrit);
+                view.playRecoil(pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100);
+            });
         }
     }
 

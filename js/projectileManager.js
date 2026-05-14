@@ -33,6 +33,8 @@ const projectileManager = (() => {
                     x: 0, y: 0,
                     vx: 0, vy: 0,
                     damage: 0,
+                    isCrit: false,
+                    isRocket: false,
                     life: 0,
                 };
             },
@@ -77,7 +79,7 @@ const projectileManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg) {
+    function fire(fromX, fromY, toX, toY, dmg, isCrit = false, isRocket = false) {
         if (!pool) return;
         const p = pool.get();
         if (!p) return;
@@ -93,6 +95,8 @@ const projectileManager = (() => {
         p.x = fromX + p.vx * leadTime;
         p.y = fromY + p.vy * leadTime;
         p.damage = dmg;
+        p.isCrit = isCrit;
+        p.isRocket = isRocket;
         p.alive = true;
         p.life = 3000; // auto-expire after 3s
 
@@ -100,6 +104,9 @@ const projectileManager = (() => {
         p.img.setRotation(Math.atan2(dy, dx));
         p.img.setVisible(true);
         p.img.setActive(true);
+
+        helper.setTint(p.img, GAME_CONSTANTS.COLOR_FRIENDLY);
+        p.img.setScale(12, 5);
 
         activeProjectiles.push(p);
 
@@ -179,7 +186,23 @@ const projectileManager = (() => {
                         hitSpr.play('hit_circle');
                     }
 
-                    enemyManager.damageEnemy(e, p.damage, 'tower');
+                    if (p.isRocket) {
+                        const hasKinetic = upgradeDispatcher.getLevel('rocket_kinetic_payload') > 0;
+                        if (hasKinetic) {
+                            enemyManager.damageEnemy(e, p.damage, 'tower', p.isCrit);
+                        }
+                        const hasHE = upgradeDispatcher.getLevel('rocket_he_compound') > 0;
+                        const explosionRadius = hasHE ? 130 : 100;
+                        const explosionScale = hasHE ? 0.65 : 0.5;
+
+                        customEmitters.playExplosionPulse(p.x, p.y, p.img.depth + 1, explosionScale);
+                        enemyManager.damageEnemiesInRange(p.x, p.y, explosionRadius, p.damage, 'tower', p.isCrit);
+                        if (typeof audio !== 'undefined') {
+                            audio.play('8_bit_explosion', 0.6);
+                        }
+                    } else {
+                        enemyManager.damageEnemy(e, p.damage, 'tower', p.isCrit);
+                    }
                     hit = true;
                     break;
                 }

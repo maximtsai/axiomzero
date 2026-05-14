@@ -47,6 +47,7 @@ const enemyManager = (() => {
     let spawnCountSinceLastExploder = 0;
     let sessionKills = 0;
     let clumpFocusAngles = [];
+    const _queryResults = []; // Shared array for AOE queries
 
     // Boss 3 specifically
     // boss3ShareTimer now managed by bossManager
@@ -554,7 +555,7 @@ const enemyManager = (() => {
 
     // ── damage ───────────────────────────────────────────────────────────────
 
-    function damageEnemy(enemy, amount, source = 'other') {
+    function damageEnemy(enemy, amount, source = 'other', isCrit = false) {
         if (!enemy || !enemy.model.alive) return;
 
         let finalDamage = amount;
@@ -632,6 +633,7 @@ const enemyManager = (() => {
 
             _damageTextOptions.fontSize = baseFontSize;
             _damageTextOptions.color = textColor;
+            _damageTextOptions.color2 = null; // Clear prev crit state
             _damageTextOptions.stroke = isExecuted ? '#1a0033' : '#330000';
             _damageTextOptions.strokeThickness = isExecuted ? 3 : 2;
             _damageTextOptions.depth = isExecuted ? GAME_CONSTANTS.DEPTH_HUD - 10 : GAME_CONSTANTS.DEPTH_RESOURCES + 50;
@@ -1123,6 +1125,14 @@ const enemyManager = (() => {
         if (e.model.type === 'protector') activeProtectors.push(e);
     }
 
+    function damageEnemiesInRange(x, y, radius, damage, source = 'other', isCrit = false) {
+        _queryResults.length = 0;
+        getEnemiesInRange(x, y, radius, _queryResults);
+        for (let i = 0; i < _queryResults.length; i++) {
+            damageEnemy(_queryResults[i], damage, source, isCrit);
+        }
+    }
+
     updateManager.addFunction(_update);
 
     return {
@@ -1142,6 +1152,7 @@ const enemyManager = (() => {
         getEnemiesInSquareRange,
         getEnemiesByType,
         damageEnemy,
+        damageEnemiesInRange,
         getCombatTime: () => combatTime,
         getRoundTimeElapsed: () => roundTimeElapsed,
         getScaleFactor: () => GAME_VARS.scaleFactor || 1,

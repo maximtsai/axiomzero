@@ -2067,7 +2067,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['instability_mark'],
-        childIds: ['data_mining'],
+        childIds: ['data_mining', 'placeholder_duo_5', 'assault', 'rocket'],
         treeX: gridX(3.5),
         treeY: gridY(8.0),
         effect: function () {
@@ -2115,5 +2115,143 @@ const NODE_DEFS = [
                 tower.recalcStats();
             }
         },
-    }
+    },
+
+    {
+        id: 'placeholder_duo_5',
+        isPlaceholder: true,
+        parents: ['peak_performance'],
+        monitorsDuoTier: 5,
+        childIds: [],
+
+        treeX: gridX(3.5),
+        treeY: gridY(9.5), // Mid-point adjustment
+        effect: function () { },
+    },
+    // â”€â”€ Tier 5 Duo-Box: Assault & Rocket â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    {
+        id: 'assault',
+        name: t('nodes', 'assault.name'),
+        icon: 'Skillicon14_04.png',
+        description: t('nodes', 'assault.desc'),
+        popupText: t('nodes', 'assault.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        parents: ['peak_performance'],
+        childIds: ['assault_clip_size', 'assault_crit'],
+        isDuoBox: true,
+        isLeftDuo: true,
+        duoBoxTier: 5,
+        shardId: 'assault',
+        duoSiblingId: 'rocket',
+        treeX: gridX(3.5) - DUO_OFFSET,
+        treeY: gridY(9.5),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
+        id: 'rocket',
+        name: t('nodes', 'rocket.name'),
+        icon: 'Skillicon14_10.png',
+        description: t('nodes', 'rocket.desc'),
+        popupText: t('nodes', 'rocket.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        parents: ['peak_performance'],
+        childIds: ['rocket_kinetic_payload', 'rocket_he_compound'],
+        isDuoBox: true,
+        isLeftDuo: false,
+        duoBoxTier: 5,
+        shardId: 'rocket',
+        duoSiblingId: 'assault',
+        treeX: gridX(3.5) + DUO_OFFSET,
+        treeY: gridY(9.5),
+        effect: function () {
+            // Stub: Core now fires powerful explosive
+        },
+    },
+    {
+        id: 'assault_clip_size',
+        name: t('nodes', 'assault_clip_size.name'),
+        icon: 'Skillicon14_06.png',
+        description: t('nodes', 'assault_clip_size.desc'),
+        popupText: t('nodes', 'assault_clip_size.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 3,
+        baseCost: 50,
+        costStep: 50,
+        costType: 'data',
+        costScaling: 'linear',
+        parents: ['assault'],
+        childIds: [],
+        treeX: gridX(2),
+        treeY: gridY(10),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
+        id: 'assault_crit',
+        name: t('nodes', 'assault_crit.name'),
+        icon: 'Skillicon14_11.png',
+        description: t('nodes', 'assault_crit.desc'),
+        popupText: t('nodes', 'assault_crit.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 75,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['assault'],
+        childIds: [],
+        treeX: gridX(2),
+        treeY: gridY(9.0),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
+        id: 'rocket_kinetic_payload',
+        name: t('nodes', 'rocket_kinetic_payload.name'),
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'rocket_kinetic_payload.desc'),
+        popupText: t('nodes', 'rocket_kinetic_payload.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 100,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['rocket'],
+        childIds: [],
+        treeX: gridX(5),
+        treeY: gridY(10),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
+        id: 'rocket_he_compound',
+        name: t('nodes', 'rocket_he_compound.name'),
+        icon: 'Skillicon14_11.png',
+        description: t('nodes', 'rocket_he_compound.desc'),
+        popupText: t('nodes', 'rocket_he_compound.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 80,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['rocket'],
+        childIds: [],
+        treeX: gridX(5),
+        treeY: gridY(9),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
 ];
