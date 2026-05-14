@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -662,7 +662,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['coverage', 'pulse_expansion'],
         requiresMaxParent: true,
-        childIds: ['resonance', 'lore_2'],
+        childIds: ['resonance'],
         treeX: gridX(3),
         treeY: gridY(0.5),
         effect: function () {
@@ -992,6 +992,7 @@ const NODE_DEFS = [
         treeX: gridX(2.5),
         treeY: gridY(3.5),
         effect: function () { },
+        leaky: 10,
     },
     {
         id: 'volatile_payload',
@@ -1504,7 +1505,7 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcRepeatExploit();
             if (typeof upgradeTree !== 'undefined') upgradeTree.unlockNode('trojan_access');
         },
-        leaky: 5,
+        leaky: 0,
     },
     {
         id: 'unsecured_wallet',
@@ -1539,7 +1540,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'access_internet.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
-        baseCost: 100,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
         leaky: 10,
@@ -1597,6 +1598,7 @@ const NODE_DEFS = [
             upgradeDispatcher.recalcPulseDamage();
             if (typeof upgradeTree !== 'undefined') upgradeTree.revealNode('trojan_access', false);
         },
+        leaky: 5,
     },
 
     {

@@ -39,7 +39,7 @@ const LORE_DEFS = [
         baseCost: 1,
         costType: 'data',
         costScaling: 'static',
-        parents: ['bomb'],
+        parents: ['cheat'],
         childIds: [],
         treeX: gridX(3),
         treeY: gridY(-0.5),
