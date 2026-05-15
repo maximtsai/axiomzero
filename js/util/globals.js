@@ -58,6 +58,8 @@ const GAME_VARS = {
     scaleFactor: 1,
     roundTimeElapsed: 0,
     highChanceDataCacheSpawn: false,
+    enemySpeedMultiplier: 1,
+    levelSpeedMultiplier: 1,
 };
 
 // ─── User options (persisted to localStorage) ─────────────────────────────────

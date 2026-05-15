@@ -272,8 +272,11 @@ class Miniboss2 extends Miniboss {
                 const rx = dx / (distToTower || 1);
                 const ry = dy / (distToTower || 1);
 
-                m.x += rx * m.speed * dt;
-                m.y += ry * m.speed * dt;
+                const globalSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.enemySpeedMultiplier : 1;
+                const levelSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.levelSpeedMultiplier : 1;
+
+                m.x += rx * m.speed * dt * globalSpeed * levelSpeed;
+                m.y += ry * m.speed * dt * globalSpeed * levelSpeed;
 
                 if (distToTower > MB2.RETREAT_PAST_RANGE) {
                     this._transitionTo(MINIBOSS2_STATE.CHARGE);

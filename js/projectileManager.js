@@ -79,7 +79,7 @@ const projectileManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg, isCrit = false, isRocket = false) {
+    function fire(fromX, fromY, toX, toY, dmg, isCrit = false, isRocket = false, vol = null, detune = null) {
         if (!pool) return;
         const p = pool.get();
         if (!p) return;
@@ -113,8 +113,12 @@ const projectileManager = (() => {
         if (typeof audio !== 'undefined') {
             const key = (shootSoundIndex === 0) ? 'basic_shoot' : 'basic_shoot2';
             shootSoundIndex = (shootSoundIndex + 1) % 2;
-            const s = audio.play(key, 0.85);
-            if (s) s.detune = (Math.random() * 200 - 100);
+            const finalVol = (vol !== null) ? vol : 0.85;
+            const s = audio.play(key, finalVol);
+            if (s) {
+                if (detune !== null) s.detune = detune;
+                else s.detune = (Math.random() * 200 - 100);
+            }
         }
     }
 

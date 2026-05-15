@@ -30,6 +30,7 @@ const LEVEL_CONFIG = {
         mainBoss: 'BossCircle',        // Identifier for the main boss
         dataDropMultiplier: 1, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1, // Scales up *base* stats of enemies before wave scaling applies
+        speedMultiplier: 1,
     },
     2: {
         spawnInterval: 550, // ms between regular spawns (base)
@@ -61,6 +62,7 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss2',        // Identifier for the main boss
         dataDropMultiplier: 1.25, // Multiplies the base DATA drop value or chance
         levelScalingModifier: 1.5, // Scales up *base* stats of enemies before wave scaling applies
+        speedMultiplier: 1,
     },
     3: {
         spawnInterval: 475, // ms between regular spawns (base)
@@ -91,6 +93,7 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss3',
         dataDropMultiplier: 1.5,
         levelScalingModifier: 2,
+        speedMultiplier: 1,
     },
     4: {
         spawnInterval: 475, // ms between regular spawns (base)
@@ -123,6 +126,7 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss4',
         dataDropMultiplier: 1.8,
         levelScalingModifier: 3,
+        speedMultiplier: 1,
     },
     5: {
         spawnInterval: 475,
@@ -154,6 +158,7 @@ const LEVEL_CONFIG = {
         mainBoss: 'Boss5',
         dataDropMultiplier: 2.2,
         levelScalingModifier: 4.2,
+        speedMultiplier: 1.1,
     }
 };
 

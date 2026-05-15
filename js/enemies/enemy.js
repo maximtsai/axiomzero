@@ -199,8 +199,10 @@ class EnemyModel {
             // Force slow applies separately and stacks with hit-stop
             moveMult *= this.forceSlowMult;
 
-            this.x += this.vx * dt * moveMult;
-            this.y += this.vy * dt * moveMult;
+            const globalSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.enemySpeedMultiplier : 1;
+            const levelSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.levelSpeedMultiplier : 1;
+            this.x += this.vx * dt * moveMult * globalSpeed * levelSpeed;
+            this.y += this.vy * dt * moveMult * globalSpeed * levelSpeed;
         }
 
         if (this.forceSlowTimer > 0) {

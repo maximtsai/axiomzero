@@ -2206,7 +2206,7 @@ const NODE_DEFS = [
         description: t('nodes', 'assault_clip_size.desc'),
         popupText: t('nodes', 'assault_clip_size.popup'),
         popupColor: COLORS.UTILITY,
-        maxLevel: 3,
+        maxLevel: 2,
         baseCost: 50,
         costStep: 50,
         costType: 'data',

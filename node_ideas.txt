@@ -53,3 +53,4 @@ achievement to unlock 50 upgrades.
 Node tree grows from beginning every time you return to upgrade.
 When you buy a node, the line connecting the unlocked node to ghost node should first play an extending animation, then the ghost node appears.
 have really expensive alt path node early on.
+faint gasping sounds.

@@ -86,8 +86,10 @@ class Boss4Model extends BossModel {
                     moveMult *= 0.1;
                     this.hitStopTimer -= dt;
                 }
-                this.x += this.vx * dt * moveMult;
-                this.y += this.vy * dt * moveMult;
+                const globalSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.enemySpeedMultiplier : 1;
+                const levelSpeed = (typeof GAME_VARS !== 'undefined') ? GAME_VARS.levelSpeedMultiplier : 1;
+                this.x += this.vx * dt * moveMult * globalSpeed * levelSpeed;
+                this.y += this.vy * dt * moveMult * globalSpeed * levelSpeed;
             }
 
             // Burn logic etc.

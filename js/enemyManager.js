@@ -148,6 +148,11 @@ const enemyManager = (() => {
         fastPackActive = false;
         fastPackCount = 0;
         fastPackCooldown = 0;
+
+        const config = getCurrentLevelConfig();
+        if (typeof GAME_VARS !== 'undefined') {
+            GAME_VARS.levelSpeedMultiplier = (config && config.speedMultiplier !== undefined) ? config.speedMultiplier : 1;
+        }
     }
 
     function _stopSpawning() {
@@ -1105,7 +1110,11 @@ const enemyManager = (() => {
 
         let scaleFactor = 1;
         if (typeof LEVEL_CONFIG !== 'undefined' && LEVEL_CONFIG[maxLevelUnlocked]) {
-            scaleFactor = LEVEL_CONFIG[maxLevelUnlocked].levelScalingModifier || 1;
+            const config = LEVEL_CONFIG[maxLevelUnlocked];
+            scaleFactor = config.levelScalingModifier || 1;
+            if (typeof GAME_VARS !== 'undefined') {
+                GAME_VARS.levelSpeedMultiplier = config.speedMultiplier !== undefined ? config.speedMultiplier : 1;
+            }
         }
 
         testEnemyCount += count;

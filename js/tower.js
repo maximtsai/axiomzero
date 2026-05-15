@@ -1045,7 +1045,14 @@ const tower = (() => {
                     isCrit = true;
                 }
 
-                projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100, damage, isCrit);
+                let vol = null;
+                let detune = null;
+                if (i > 0 && i < totalShots - 1) {
+                    vol = 0.85 * 0.55; // 65% of default
+                    detune = -350;
+                }
+
+                projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100, damage, isCrit, false, vol, detune);
                 view.playRecoil(pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100);
             });
         }
