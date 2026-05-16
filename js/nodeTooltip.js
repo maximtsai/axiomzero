@@ -29,8 +29,9 @@ const nodeTooltip = (() => {
 
     function _formatValue(node, val) {
         if (node.costType === 'coin') {
-            // Coins are stored as integers (e.g. 10) but displayed at 0.1x (e.g. 1.0)
-            return (val * 0.1).toFixed(1);
+            // Coins are stored as integers but displayed at 0.01x (e.g. 100 = 1.0)
+            // to make them feel more valuable/dense while keeping math simple.
+            return parseFloat((val * 0.01).toFixed(2)).toString();
         }
         return Math.floor(val).toString();
     }
@@ -498,7 +499,7 @@ const nodeTooltip = (() => {
             const secondaryY = container.y + (showAbove ? -totalHeight : 0) + leakYOffset;
 
             const title = "DATA LEAK";
-            const body = `Increases global cost of all DATA LEAK nodes.\nPENALTY: +${_formatValue(node, gameState.leakPenalty || 0)}`;
+            const body = `Increases global cost of all DATA LEAK nodes.\nCURRENT PENALTY: [b][color=#ff5d5d]+${_formatValue(node, gameState.leakPenalty || 0)}[/color][/b]`;
 
             // Offset the X based on the main tooltip's width
             const secondaryX = targetX + (side === 'right' ? halfW : -halfW);

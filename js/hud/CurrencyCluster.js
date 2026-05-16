@@ -61,10 +61,11 @@ class CurrencyCluster {
 
     _formatValue(id, val) {
         if (id === 'coin') {
-            // Coins are stored as integers (e.g. 10) but displayed at 0.1x (e.g. 1.0)
+            // Coins are stored as integers but displayed at 0.01x (e.g. 100 = 1.0)
             // to make them feel more valuable/dense while keeping math simple.
-            const displayVal = val * 0.1;
-            return displayVal.toFixed(1);
+            const displayVal = val * 0.01;
+            // Remove trailing zeros: 0.30 -> 0.3, 1.00 -> 1
+            return parseFloat(displayVal.toFixed(2)).toString();
         }
         return Math.floor(val).toString();
     }

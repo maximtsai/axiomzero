@@ -30,8 +30,8 @@ function initGameState() {
             gameState.insight = 5;
             gameState.shard = 5;
             gameState.processor = 5;
-            gameState.coin = 5;
-            gameState.levelsDefeated = 5;
+            gameState.coin = 50;
+            gameState.levelsDefeated = 3;
             debugLog('Debug start: Resources and progression granted');
         }
     }

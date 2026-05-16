@@ -172,6 +172,13 @@ const upgradeDispatcher = (() => {
         }
     }
 
+    /** Recalculates total bomb damage bonus. */
+    function recalcBombDamage() {
+        if (typeof pulseAttack !== 'undefined' && pulseAttack.setLethalExplosiveLevel) {
+            pulseAttack.setLethalExplosiveLevel(getLevel('lethal_explosive'));
+        }
+    }
+
     /** Recalculates total bomb uses. */
     function recalcBombUses() {
         if (typeof pulseAttack !== 'undefined' && pulseAttack.setMaxBombUses) {
@@ -197,6 +204,7 @@ const upgradeDispatcher = (() => {
             recalcRepeatExploit();
             recalcResonance();
             recalcBombUses();
+            recalcBombDamage();
         }
         if (typeof lightningAttack !== 'undefined') {
             recalcLightningChains();
@@ -254,6 +262,7 @@ const upgradeDispatcher = (() => {
         recalcScytheStats,
         recalcSwordStats,
         recalcBombUses,
+        recalcBombDamage,
         recalcCombatShield,
         recalcBackground
     };

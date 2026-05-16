@@ -115,14 +115,14 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker', 'clock_speed'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
             resourceManager.addData(5000);
             resourceManager.addInsight(3);
             resourceManager.addShard(2);
-            resourceManager.addCoin(10);
+            resourceManager.addCoin(50);
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
                 tower.heal(10);
@@ -362,7 +362,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'combat_shield_hp.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 5,
-        baseCost: 2,
+        baseCost: 20,
         costType: 'coin',
         costScaling: 'linear',
         costStep: 1,
@@ -399,7 +399,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'restore_point.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 3,
+        baseCost: 30,
         costType: 'coin',
         costScaling: 'static',
         parents: ['backup_server'],
@@ -637,7 +637,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'regen.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 2,
+        baseCost: 20,
         costType: 'coin',
         costScaling: 'static',
         costStep: 20,
@@ -681,11 +681,30 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['threat_response', 'bypass'],
-        childIds: ['backup_server', 'packet_sniffing'],
+        childIds: ['backup_server', 'packet_sniffing', 'lethal_explosive'],
         treeX: gridX(-4),
         treeY: gridY(2.0),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
+        },
+    },
+    {
+        id: 'lethal_explosive',
+        name: t('nodes', 'lethal_explosive.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'lethal_explosive.desc'),
+        popupText: t('nodes', 'lethal_explosive.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 10, // 0.1 coin is represented as 10 in resourceManager (0.01x scale)
+        costType: 'coin',
+        costScaling: 'static',
+        parents: ['bomb_2'],
+        childIds: [],
+        treeX: gridX(-5),
+        treeY: gridY(1.0),
+        effect: function () {
+            upgradeDispatcher.recalcBombDamage();
         },
     },
 
@@ -947,12 +966,12 @@ const NODE_DEFS = [
         costScaling: 'linear',
         costStep: 50,
         costStepScaling: 10,
-        parents: ['root_access'],
+        parents: ['cheat'],
         childIds: [],
-        treeX: gridX(-0.5),
-        treeY: gridY(8.5),
+        treeX: gridX(1.5),
+        treeY: gridY(-3.0),
         effect: function () {
-            // Recalculated via messageBus 'upgradePurchased' â†’ tower._onUpgradePurchased
+            // Recalculated via messageBus 'upgradePurchased' -> tower._onUpgradePurchased
         },
     },
     {
@@ -1003,7 +1022,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'volatile_payload.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 3,
+        baseCost: 30,
         costType: 'coin',
         costScaling: 'static',
         costStep: 0,
@@ -1021,7 +1040,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'prismatic_array.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 4,
+        baseCost: 40,
         costType: 'coin',
         costScaling: 'static',
         parents: ['farsight'],
@@ -1059,7 +1078,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'crescendo.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 50,
+        baseCost: 40,
         costType: 'data',
         costScaling: 'static',
         leaky: 20,
@@ -1178,7 +1197,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'recursion.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 2,
+        baseCost: 20,
         costType: 'coin',
         costScaling: 'static',
         parents: ['hijack'],
@@ -1196,7 +1215,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'sustaining_siphon.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 2,
+        baseCost: 15,
         costType: 'coin',
         costScaling: 'static',
         parents: ['resonance'],
@@ -1526,8 +1545,8 @@ const NODE_DEFS = [
         treeY: gridY(5),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                // Internally give 3 coins, which displays as 0.3 (0.1x scale)
-                resourceManager.addCoin(3);
+                // Internally give 30 coins, which displays as 0.3 (0.01x scale)
+                resourceManager.addCoin(30);
             }
         },
     },
@@ -1539,8 +1558,8 @@ const NODE_DEFS = [
         popupText: t('nodes', 'fiber_optics.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 200,
-        costType: 'data',
+        baseCost: 15,
+        costType: 'coin',
         costScaling: 'static',
         parents: ['access_internet'],
         childIds: [],
@@ -1596,7 +1615,8 @@ const NODE_DEFS = [
         treeY: gridY(6),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addCoin(1); // Actually gives 1.0 coin
+                // Internally give 10 coins, which displays as 0.1 (0.01x scale)
+                resourceManager.addCoin(10);
             }
         },
     },
@@ -1633,7 +1653,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['malware_siphon'],
-        childIds: ['clock_speed'],
+        childIds: [],
         treeX: gridX(0.5),
         treeY: gridY(8.0),
         effect: function () { },
@@ -2064,7 +2084,7 @@ const NODE_DEFS = [
         icon: 'Skillicon14_16.png',
         description: t('nodes', 'physical_anchor.desc'),
         maxLevel: 1,
-        baseCost: 1,
+        baseCost: 10,
         costType: 'coin',
         costScaling: 'static',
         parents: ['cheat'],

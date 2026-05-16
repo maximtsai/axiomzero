@@ -467,5 +467,68 @@ const glitchFX = (() => {
         bgGrid.setScale(1);
     }
 
-    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid, refreshBackground };
+    /**
+     * Spawns flashing red warning text at random locations on the UI camera.
+     * @param {number} [count=2] - Number of texts visible at once.
+     * @param {number} [intensityVal=1] - Base alpha multiplier (0 to 1).
+     * @param {number} [duration=1000] - Total effect duration in ms.
+     */
+    function triggerWarningGlitch(count = 2, intensityVal = 1, duration = 1000) {
+        if (intensity <= 0 || intensityVal <= 0) return;
+
+        const warningWords = ["WARNING", "ERROR", "MALFORMED", "CRITICAL", "BREACH", "ACCESS DENIED", "SYSTEM FAILURE"];
+        const texts = [];
+        const combinedIntensity = intensity * intensityVal;
+
+        // Create the pool of texts
+        for (let i = 0; i < count; i++) {
+            const txt = PhaserScene.add.rexBBCodeText(0, 0, "", {
+                fontFamily: 'Quantico-Bold',
+                fontSize: '48px',
+                color: '#ff0000',
+                align: 'center',
+            });
+            txt.setScrollFactor(0).setDepth(GAME_CONSTANTS.DEPTH_POPUPS + 10).setVisible(false);
+
+            // Assign to UI camera if available
+            if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+                upgradeTree.assignToUICamera(txt);
+            }
+
+            texts.push(txt);
+        }
+
+        const startTime = Date.now();
+        const cycleTimer = PhaserScene.time.addEvent({
+            delay: 40,
+            loop: true,
+            callback: () => {
+                const elapsed = Date.now() - startTime;
+                if (elapsed >= duration) {
+                    cycleTimer.remove();
+                    texts.forEach(t => t.destroy());
+                    return;
+                }
+
+                // Randomize each text in the pool
+                texts.forEach(t => {
+                    const word = warningWords[Math.floor(Math.random() * warningWords.length)];
+                    const rx = Math.random() * GAME_CONSTANTS.WIDTH;
+                    const ry = Math.random() * GAME_CONSTANTS.HEIGHT;
+                    const ra = (0.3 + Math.random() * 0.7) * combinedIntensity;
+
+                    t.setText(`[b]${word}[/b]`)
+                        .setOrigin(0.5)
+                        .setPosition(rx, ry)
+                        .setAlpha(ra)
+                        .setVisible(true);
+
+                    // Large randomness in scale
+                    t.setScale(0.8 + Math.random() * 1.5);
+                });
+            }
+        });
+    }
+
+    return { init, setColors, setIntensity, triggerScanline, triggerFlicker, triggerGhost, triggerChromaticAberration, triggerSystemScan, triggerAnnounceGlow, triggerDeathGrid, triggerWarningGlitch, refreshBackground };
 })();

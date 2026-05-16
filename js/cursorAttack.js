@@ -38,6 +38,7 @@ class PulseAttackModel {
         this.instabilityLevel = 0;
         this.impulseLevel = 0;
         this.currentAttackCount = 0;
+        this.lethalExplosiveLevel = 0;
     }
 
     getEffectiveSize() {
@@ -1456,6 +1457,10 @@ const pulseAttack = (() => {
         model.instabilityLevel = level;
     }
 
+    function setLethalExplosiveLevel(level) {
+        model.lethalExplosiveLevel = level;
+    }
+
     function getBombFinalSize() {
         // Base bomb visual scale bonus is 500 units larger than base pulse.
         // This can be extended to include node-specific multipliers later.
@@ -1558,7 +1563,8 @@ const pulseAttack = (() => {
 
                 // Slow down hit enemies too
                 const damageSize = finalSize / 2;
-                const damage = model.damage + 40;
+                const bombBonus = 40 + (model.lethalExplosiveLevel * 30);
+                const damage = model.damage + bombBonus;
 
                 const damageX = _getDamageCoordX(cx);
                 const hits = enemyManager.getEnemiesInSquareRange(damageX, cy, damageSize, _hitBuffer);
@@ -1613,5 +1619,5 @@ const pulseAttack = (() => {
         model.impulseLevel = level;
     }
 
-    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, setAmplitudeLevel, setInstabilityLevel, setImpulseLevel, armBomb, cancelBomb, setMaxBombUses, getModel: () => model };
+    return { init, unlock, setSize, setDamage, setManualMode, setMaxCharges, setFireInterval, setIsolationLevel, setSaturationLevel, setAftershockLevel, setPersistentExploitLevel, setResonanceLevel, setCrescendoLevel, setAmplitudeLevel, setInstabilityLevel, setImpulseLevel, armBomb, cancelBomb, setMaxBombUses, setLethalExplosiveLevel, getModel: () => model };
 })();

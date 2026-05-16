@@ -460,6 +460,14 @@ class Node {
         // Leaky node global modifier
         if (this.leaky > 0 && this.level === 1) {
             gameState.leakPenalty = (gameState.leakPenalty || 0) + this.leaky;
+
+            // Brief "System Shock" interruption
+            if (typeof glitchFX !== 'undefined') glitchFX.triggerWarningGlitch(3, 0.4, 400);
+
+            setTimeout(() => {
+                if (typeof timeManager !== 'undefined') timeManager.setTempPause(160, 0.1);
+                if (typeof audio !== 'undefined') audio.setTempVolume(100, 0.6);
+            }, 100);
         }
 
         // Effect and Metadata logic
