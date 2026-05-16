@@ -615,8 +615,8 @@ const resourceManager = (() => {
         const ups = gameState.upgrades || {};
         const compressionLv = ups.data_compression || 0;
         let compressionMult = 1;
-        if (compressionLv > 0 && Math.random() < (0.2 * compressionLv)) {
-            compressionMult = 2;
+        if (compressionLv > 0) {
+            compressionMult = 1.2;
         }
 
         let timeMult = 1;

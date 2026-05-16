@@ -164,7 +164,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     announcementManager.init();
     gameHUD.init();
     iterationOverScreen.init();
-    coinMine.init();
+
     tutorialManager.init();
     notificationManager.init();
 

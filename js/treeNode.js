@@ -146,6 +146,12 @@ class Node {
         if (this.leaky > 0 && gameState.leakPenalty) {
             cost += gameState.leakPenalty;
         }
+
+        // Global Backdoor cost reduction
+        if (this.costType === 'data' && gameState.upgrades && gameState.upgrades.global_backdoor) {
+            cost = Math.max(1, cost - 30);
+        }
+
         return cost;
     }
 

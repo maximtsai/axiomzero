@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'coin_mine_unlock', 'kernel_breaker', 'clock_speed'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -420,7 +420,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['access_internet'],
-        childIds: [],
+        childIds: ['global_backdoor'],
         treeX: gridX(0.5),
         treeY: gridY(7.0),
         effect: function () { },
@@ -1424,7 +1424,7 @@ const NODE_DEFS = [
         description: t('nodes', 'data_compression.desc'),
         popupText: t('nodes', 'data_compression.popup'),
         popupColor: COLORS.RESOURCE,
-        maxLevel: 2,
+        maxLevel: 1,
         baseCost: 1,
         label: 'INSIGHT',
         costType: 'insight',
@@ -1562,13 +1562,63 @@ const NODE_DEFS = [
         costType: 'coin',
         costScaling: 'static',
         parents: ['access_internet'],
-        childIds: [],
+        childIds: ['global_backdoor'],
         treeX: gridX(-0.5),
         treeY: gridY(7),
         effect: function () {
             if (typeof upgradeDispatcher !== 'undefined') {
                 upgradeDispatcher.recalcEverything();
                 if (typeof tower !== 'undefined') tower.recalcStats();
+            }
+        },
+    },
+
+    {
+        id: 'global_backdoor',
+        name: t('nodes', 'global_backdoor.name'),
+        icon: 'Skillicon14_07.png',
+        description: t('nodes', 'global_backdoor.desc'),
+        popupText: t('nodes', 'global_backdoor.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 2,
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['peak_traffic', 'fiber_optics'],
+        childIds: ['financial_takeover'],
+        treeX: gridX(0),
+        treeY: gridY(8),
+        effect: function () {
+            if (typeof upgradeDispatcher !== 'undefined') {
+                upgradeDispatcher.recalcEverything();
+            }
+            if (typeof upgradeTree !== 'undefined') {
+                upgradeTree._refreshAllNodes();
+            }
+        },
+    },
+
+    {
+        id: 'financial_takeover',
+        name: t('nodes', 'financial_takeover.name'),
+        icon: 'Skillicon14_03.png',
+        description: t('nodes', 'financial_takeover.desc'),
+        popupText: t('nodes', 'financial_takeover.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 400,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['global_backdoor'],
+        childIds: [],
+        treeX: gridX(-0.5),
+        treeY: gridY(9),
+        effect: function () {
+            if (typeof upgradeDispatcher !== 'undefined') {
+                upgradeDispatcher.recalcEverything();
+            }
+            if (typeof upgradeTree !== 'undefined') {
+                upgradeTree._showTakeoverButton();
             }
         },
     },
@@ -2056,28 +2106,7 @@ const NODE_DEFS = [
             }
         },
     },
-    {
-        id: 'coin_mine_unlock',
-        name: t('nodes', 'coin_mine_unlock.name'),
-        icon: 'Skillicon14_35.png',
-        description: t('nodes', 'coin_mine_unlock.desc'),
-        popupText: t('nodes', 'coin_mine_unlock.popup'),
-        popupColor: COLORS.RESOURCE,
-        maxLevel: 1,
-        baseCost: 0,
-        costType: 'data',
-        costScaling: 'static',
-        costStep: 0,
-        parents: ['cheat'],
-        childIds: [],
-        treeX: gridX(-0.5),
-        treeY: gridY(-3.0),
-        effect: function () {
-            if (typeof upgradeTree !== 'undefined') {
-                upgradeTree._showCoinMineButton();
-            }
-        },
-    },
+
     {
         id: 'physical_anchor',
         name: t('nodes', 'physical_anchor.name'),

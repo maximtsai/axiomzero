@@ -17,9 +17,9 @@ const upgradeTree = (() => {
     let deployBtn = null;
     let deployBtnGlow = null;
     let deployBtnInitialX = 0;
-    let coinMineBtn = null;
     let slideRightBtn = null;
     let slideLeftBtn = null;
+    let takeoverBtn = null;
 
     let treeGroup = null;
     let draggableGroup = null;
@@ -105,7 +105,8 @@ const upgradeTree = (() => {
         _createNodes();
         _calculateContentBounds(); // Measure the tree after nodes are created
         _createDeployButton();
-        _createCoinMineButton();
+        _createTakeoverButton();
+
         _createSlideButton();
         _createZoomButtons();
         _initPools();
@@ -609,46 +610,7 @@ const upgradeTree = (() => {
         revealCoordText();
     }
 
-    function _createCoinMineButton() {
-        coinMineBtn = new Button({
-            normal: {
-                ref: 'button_normal.png',
-                atlas: 'buttons',
-                x: TREE_CENTER_X + 220, // Beside the 'UPGRADE TREE' text
-                y: 48,
-            },
-            hover: {
-                ref: 'button_hover.png',
-                atlas: 'buttons',
-                x: TREE_CENTER_X + 220,
-                y: 48,
-            },
-            press: {
-                ref: 'button_press.png',
-                atlas: 'buttons',
-                x: TREE_CENTER_X + 220,
-                y: 48,
-            },
-            onMouseUp: () => {
-                if (typeof coinMine !== 'undefined') {
-                    coinMine.show();
-                }
-            },
-        });
-        coinMineBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
-        coinMineBtn.addText(t('ui', 'mine'), {
-            fontFamily: 'Quantico-Bold',
-            fontSize: '21px',
-            color: '#ff9500',
-        });
-        coinMineBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
-        coinMineBtn.setScrollFactor(0);
 
-        coinMineBtn.setVisible(false);
-        coinMineBtn.setState(DISABLE);
-
-        treeGroup.add(coinMineBtn);
-    }
 
     function _createSlideButton() {
         const cx = GAME_CONSTANTS.halfWidth;
@@ -1318,11 +1280,12 @@ const upgradeTree = (() => {
             _showDeployButton();
         }
 
-        const mineLevel = (gameState.upgrades && gameState.upgrades.coin_mine_unlock) || 0;
-        if (mineLevel > 0) {
-            coinMineBtn.setVisible(true);
-            coinMineBtn.setState(NORMAL);
+        const takeoverLevel = (gameState.upgrades && gameState.upgrades.financial_takeover) || 0;
+        if (takeoverLevel > 0) {
+            _showTakeoverButton();
         }
+
+
 
         if (slideRightBtn) {
             const mapResearched = (gameState.upgrades && gameState.upgrades.reveal_map) > 0;
@@ -1344,6 +1307,7 @@ const upgradeTree = (() => {
         panelOutline.setVisible(false);
         dragSurface.setVisible(false);
         deployBtn.setVisible(false);
+        if (takeoverBtn) takeoverBtn.setVisible(false);
         if (deployBtnGlow) deployBtnGlow.setVisible(false);
         if (coordText) coordText.setVisible(false);
 
@@ -1351,10 +1315,7 @@ const upgradeTree = (() => {
 
         deployBtn.setState(DISABLE);
 
-        if (coinMineBtn) {
-            coinMineBtn.setVisible(false);
-            coinMineBtn.setState(DISABLE);
-        }
+
 
         if (zoomInBtn) {
             zoomInBtn.setVisible(false);
@@ -1694,10 +1655,53 @@ const upgradeTree = (() => {
         });
     }
 
-    function _showCoinMineButton() {
-        if (coinMineBtn) {
-            coinMineBtn.setVisible(true);
-            coinMineBtn.setState(NORMAL);
+
+
+    function _createTakeoverButton() {
+        takeoverBtn = new Button({
+            normal: {
+                ref: 'button_normal.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X - 220, // Left side
+                y: 48,
+            },
+            hover: {
+                ref: 'button_hover.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X - 220,
+                y: 48,
+            },
+            press: {
+                ref: 'button_press.png',
+                atlas: 'buttons',
+                x: TREE_CENTER_X - 220,
+                y: 48,
+            },
+            onMouseUp: () => {
+                if (typeof takeoverPopup !== 'undefined') {
+                    takeoverPopup.show();
+                }
+            },
+        });
+        takeoverBtn.setScale(helper.isMobileDevice() ? 1.0 : 0.9);
+        takeoverBtn.addText(t('ui', 'takeover'), {
+            fontFamily: 'Quantico-Bold',
+            fontSize: '21px',
+            color: '#FFD700',
+        });
+        takeoverBtn.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 25);
+        takeoverBtn.setScrollFactor(0);
+
+        takeoverBtn.setVisible(false);
+        takeoverBtn.setState(DISABLE);
+
+        treeGroup.add(takeoverBtn);
+    }
+
+    function _showTakeoverButton() {
+        if (takeoverBtn) {
+            takeoverBtn.setVisible(true);
+            takeoverBtn.setState(NORMAL);
         }
     }
 
@@ -1768,7 +1772,8 @@ const upgradeTree = (() => {
         if (zoomOutBtn) zoomOutBtn.setAlpha(alpha);
 
         if (deployBtn) deployBtn.setAlpha(alpha);
-        if (coinMineBtn) coinMineBtn.setAlpha(alpha);
+        if (takeoverBtn) takeoverBtn.setAlpha(alpha);
+
     }
 
     /**
@@ -1958,5 +1963,5 @@ const upgradeTree = (() => {
         return dragDistanceTotal > 30;
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showCoinMineButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showTakeoverButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

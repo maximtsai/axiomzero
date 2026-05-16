@@ -433,6 +433,8 @@ const enemyManager = (() => {
             // Activate (sets stats and resets visuals inside Enemy subclass)
             e.activate(sx, sy, currentScale);
 
+
+
             // Maintain type counts and protector lists
             typeCounts[e.model.type] = (typeCounts[e.model.type] || 0) + 1;
             if (e.model.type === 'protector') activeProtectors.push(e);
@@ -581,6 +583,8 @@ const enemyManager = (() => {
 
         // Use the actual damage applied to health for statistics
         statsTracker.recordDamage(result.actualApplied, source);
+
+
 
         // Track lifetime max damage in one hit
         if (result.actualApplied > gameState.stats.maxDmg) {
