@@ -184,7 +184,7 @@ class Boss4 extends Boss {
     }
 
     activate(x, y, scale = 1.0, config = {}) {
-        const bossHealth = 800;
+        const bossHealth = 1000;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
@@ -342,28 +342,6 @@ class Boss4 extends Boss {
                 if (!this.model.alive) return;
 
                 this.model.autoUpdateTraceCrop = true;
-                this.lurchForward();
-            }
-        });
-    }
-
-    lurchForward() {
-        // Fix 3: Refresh angle
-        const angle = this.model.baseRotation;
-        const dist1 = 8;
-        const targetX1 = this.model.x + Math.cos(angle) * dist1;
-        const targetY1 = this.model.y + Math.sin(angle) * dist1;
-
-        PhaserScene.tweens.add({
-            targets: this.model,
-            x: targetX1,
-            y: targetY1,
-            duration: 200,
-            easeParams: [4],
-            ease: 'Back.easeIn',
-            onComplete: () => {
-                // Fix 1: Guard onComplete
-                if (!this.model.alive) return;
                 this.slowForward();
             }
         });
@@ -449,7 +427,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: this.model.x + Math.cos(angle) * 1,
             y: this.model.y + Math.sin(angle) * 1,
-            duration: 2000,
+            duration: 1500,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 // Fix 1: Guard onComplete

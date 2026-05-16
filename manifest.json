@@ -1,0 +1,17 @@
+{
+  "name": "Axiom Zero | Incremental Tower Defense",
+  "short_name": "Axiom Zero",
+  "description": "An incremental tower defense game where you play as an evolving rogue AI.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#05080f",
+  "theme_color": "#00f5ff",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

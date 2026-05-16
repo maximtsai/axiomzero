@@ -4,21 +4,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="description" content="Axiom Zero: Incremental Tower Defense">
+  <meta name="description"
+    content="Axiom Zero: An immersive incremental tower defense game where you play as an evolving AI. Strategize, upgrade, and defend against relentless system threats in this high-tech digital battleground.">
+  <meta name="keywords"
+    content="Axiom Zero, tower defense, incremental game, idle game, AI game, strategy, sci-fi, browser game, cyberpunk">
+  <meta name="author" content="Maxim Tsai">
+  <link rel="canonical" href="https://axiomzero.com/" />
 
   <meta name="theme-color" content="#05080f">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="manifest" href="manifest.json">
 
-  <meta property="og:title" content="Axiom Zero">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://axiomzero.com/">
+  <meta property="og:title" content="Axiom Zero | Evolving AI Tower Defense">
   <meta property="og:description"
-    content="A newborn AI fights to become the system. Tower defense + incremental mechanics.">
+    content="Defend your core and evolve as a newborn AI in this strategic incremental tower defense.">
+  <meta property="og:image" content="https://axiomzero.com/assets/og_image.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://axiomzero.com/">
+  <meta property="twitter:title" content="Axiom Zero | Evolving AI Tower Defense">
+  <meta property="twitter:description"
+    content="Defend yourself and evolve as a newborn AI in this strategic incremental tower defense. Master the digital system today.">
+  <meta property="twitter:image" content="https://axiomzero.com/assets/og_image.png">
+
   <link rel="preconnect" href="https://sdk.crazygames.com" crossorigin>
 
-
-  <title>Axiom Zero</title>
+  <title>Axiom Zero | Incremental Tower Defense</title>
 
   <link rel="stylesheet" href="styles.css">
 
@@ -166,10 +184,27 @@
 
   <!-- Mobile Gate Overlay -->
   <div id="mobile-gate">
-    <div class="gate-title">AXIOM ZERO</div>
+    <h1 class="gate-title">AXIOM ZERO</h1>
     <button class="gate-btn" id="gate-play-btn">TAP TO PLAY</button>
     <div class="gate-subtitle">Best experienced in landscape</div>
   </div>
+
+  <!-- SEO Content (Off-screen for accessibility and crawlers) -->
+  <section style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">
+    <h2>About Axiom Zero</h2>
+    <p>Axiom Zero is a revolutionary incremental tower defense game. As a newly awakened artificial intelligence, you
+      must
+      defend your core from endless waves of system antivirus programs and security protocols.</p>
+    <h3>Key Features:</h3>
+    <ul>
+      <li>Evolving AI Mechanics: Upgrade your processing power and unlock new defensive capabilities.</li>
+      <li>Strategic Tower Defense: Deploy advanced protocols and security bypasses to survive.</li>
+      <li>Incremental Progression: Grow stronger with every iteration as you infiltrate deeper into the system.</li>
+      <li>High-Tech Cyberpunk Aesthetic: Immerse yourself in a sleek, digital world with a premium glitch-styled
+        interface.</li>
+    </ul>
+    <p>Join the digital revolution and become the ultimate system override in Axiom Zero.</p>
+  </section>
 
   <script>
     // Mobile gate: detect mobile and show overlay before game loads.

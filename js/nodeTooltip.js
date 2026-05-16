@@ -416,7 +416,7 @@ const nodeTooltip = (() => {
 
         // Position above the node (Duo nodes appear 52px higher)
         // Check for top-of-screen intersection to flip position if needed
-        const verticalOffset = (node.isDuoBox ? 52 : 27) * zoom;
+        const verticalOffset = (node.isDuoBox ? 54 : 29) * zoom;
         const topSafeMargin = 15;
 
         let showAbove = true;

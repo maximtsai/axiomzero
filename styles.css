@@ -190,3 +190,26 @@ canvas {
     0%, 100% { box-shadow: 0 0 10px rgba(0, 245, 255, 0.3); }
     50% { box-shadow: 0 0 25px rgba(0, 245, 255, 0.6); }
 }
+
+.gate-social {
+    display: flex;
+    gap: 32px;
+    margin-top: 16px;
+}
+
+.social-link {
+    font-family: 'Quantico-Bold', sans-serif;
+    font-size: 14px;
+    color: #00f5ff;
+    text-decoration: none;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.social-link:hover {
+    opacity: 1;
+    border-bottom: 1px solid #00f5ff;
+    text-shadow: 0 0 8px rgba(0, 245, 255, 0.5);
+}

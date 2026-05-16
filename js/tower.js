@@ -1000,22 +1000,28 @@ const tower = (() => {
         // PRISMATIC ARRAY effect
         const prismaticLv = upgradeDispatcher.getLevel('prismatic_array');
         if (prismaticLv > 0) {
-            const chance = 0.50 * prismaticLv;
+            const chance = 0.40 * prismaticLv;
             if (Math.random() < chance) {
-                PhaserScene.time.delayedCall(100, () => {
-                    const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
-                    if (!model.alive || (!model.active && !isTesting)) return;
-                    const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
-                    if (newTarget) {
-                        const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);
-                        projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, getDamage(newTarget.model.isBoss));
-                    }
-                });
+                if (isAssault) {
+                    // Special interaction: fire a second burst with inversed angles
+                    _fireAssaultBurst(pos, true, 150);
+                } else {
+                    // Standard behavior: fire one extra projectile after delay
+                    PhaserScene.time.delayedCall(100, () => {
+                        const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
+                        if (!model.alive || (!model.active && !isTesting)) return;
+                        const newTarget = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
+                        if (newTarget) {
+                            const angle = Math.atan2(newTarget.model.y - pos.y, newTarget.model.x - pos.x) + (Math.random() * 0.06 - 0.03);
+                            projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(angle) * 100, pos.y + Math.sin(angle) * 100, getDamage(newTarget.model.isBoss));
+                        }
+                    });
+                }
             }
         }
     }
 
-    function _fireAssaultBurst(pos) {
+    function _fireAssaultBurst(pos, isInversed = false, startDelay = 0) {
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
         if (!target) return;
 
@@ -1023,19 +1029,24 @@ const tower = (() => {
 
         const extraShots = upgradeDispatcher.getLevel('assault_clip_size');
         const totalShots = 3 + extraShots;
-        const delay = 70; // 0.07s
+        const shotDelay = 70; // 0.07s
 
         const critLv = upgradeDispatcher.getLevel('assault_crit');
         const critChance = critLv > 0 ? 0.33 : 0;
 
         for (let i = 0; i < totalShots; i++) {
-            PhaserScene.time.delayedCall(i * delay, () => {
+            PhaserScene.time.delayedCall(startDelay + (i * shotDelay), () => {
                 const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
                 if (!model.alive || (!model.active && !isTesting)) return;
 
                 const spreadStep = 0.2;
                 const startOffset = spreadStep * -0.5 * (totalShots - 1);
-                const angleOffset = startOffset + (i * spreadStep);
+
+                // Inversed logic: start from positive offset and go down, or negative and go up
+                const angleOffset = isInversed ?
+                    (startOffset + (totalShots - 1 - i) * spreadStep) :
+                    (startOffset + (i * spreadStep));
+
                 const finalAngle = baseAngle + angleOffset;
 
                 let damage = getDamage(target.model.isBoss);
