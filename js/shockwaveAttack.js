@@ -5,7 +5,7 @@
 class ShockwaveAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 3000;  // ms between pulses
-        this.BASE_DAMAGE = 10;
+        this.BASE_DAMAGE = 12;
         this.BASE_RADIUS = 135;     // px — damage radius
 
         this.active = false;
@@ -184,10 +184,10 @@ const shockwaveAttack = (() => {
             const e = validHits[i];
             let actualDamage = totalDamage;
 
-            // Seismic Crush: +1 damage for every 10 missing health * level
+            // Seismic Crush: +1 damage for every 12 missing health * level
             if (model.seismicCrushLevel > 0) {
                 const missingHealth = Math.max(0, e.model.maxHealth - e.model.health);
-                actualDamage += Math.floor(missingHealth / 10) * model.seismicCrushLevel;
+                actualDamage += Math.floor(missingHealth / 12) * model.seismicCrushLevel;
             }
 
             enemyManager.damageEnemy(e, actualDamage, 'shockwave');

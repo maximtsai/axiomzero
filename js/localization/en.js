@@ -61,11 +61,11 @@ window.TRANSLATIONS.en = {
 
         armor: { name: 'ARMOR', desc: 'Reduce damage taken from enemy attacks by [color=#8FD9F8]1 per level[/color]', popup: '+1 ARMOR' },
         lightning_weapon: { name: 'LIGHTNING', desc: 'Your core shoots lightning dealing [color=#8FD9F8]12[/color] damage every [color=#8FD9F8]3s[/color]', popup: 'LIGHTNING WEAPON' },
-        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Your core releases a shockwave dealing [color=#8FD9F8]10[/color] AOE damage every [color=#8FD9F8]3s[/color]', popup: 'SHOCKWAVE WEAPON' },
+        shockwave_weapon: { name: 'SHOCKWAVE', desc: 'Your core releases a shockwave dealing [color=#8FD9F8]12[/color] AOE damage every [color=#8FD9F8]3s[/color]', popup: 'SHOCKWAVE WEAPON' },
         lightning_chain: { name: 'FORK', desc: '[color=#8FD9F8]+2[/color] lightning chain targets', popup: '+2 CHAINS' },
         lightning_static_charge: { name: 'INITIAL SHOCK', desc: 'Lightning deals [color=#8FD9F8]+4[/color] damage to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'INITIAL SHOCK' },
         shockwave_amplifier: { name: 'AMPLIFIER', desc: '[color=#8FD9F8]+25%[/color] shockwave range', popup: '+25% RANGE' },
-        shockwave_seismic_crush: { name: 'DESTABILIZE', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]10[/color] missing enemy health', popup: 'SEISMIC CRUSH' },
+        shockwave_seismic_crush: { name: 'DESTABILIZE', desc: 'Shockwave deals [color=#8FD9F8]+1[/color] damage for every [color=#8FD9F8]12[/color] missing enemy health', popup: 'SEISMIC CRUSH' },
 
         clock_speed: { name: 'CLOCK SPEED', desc: '[color=#8FD9F8]-5%[/color] core attack cooldown per level', popup: '-5% COOLDOWN' },
         emergency_overclock: { name: 'EMERGENCY OVERCLOCK', desc: 'Core attack speed is [color=#8FD9F8]DOUBLED[/color] when below [color=#ff5555]50%[/color] health.', popup: 'EMERGENCY OVERCLOCK' },
@@ -200,7 +200,7 @@ window.TRANSLATIONS.en = {
         scythe: { name: 'SCYTHE', desc: 'Swings in a broad sweeping motion every [color=#8FD9F8]2s[/color]', popup: 'SCYTHE SYSTEM ONLINE' },
         scythe_harvest: { name: 'HARVEST', desc: 'Each enemy killed by the Scythe restores [color=#87FF02]1 HP[/color]', popup: 'HARVEST ACTIVE' },
         scythe_lethality: { name: 'LETHALITY', desc: 'Scythe deals [color=#8FD9F8]+10[/color] damage per level to enemies below [color=#8FD9F8]50%[/color] HP', popup: 'LETHALITY ACTIVE' },
-        sword_lunge: { name: 'LUNGE', desc: 'Increases the length of the sword attack by [color=#8FD9F8]+25%[/color]', popup: 'LUNGE ACQUIRED' },
+        sword_lunge: { name: 'LUNGE', desc: 'Increases the length and range of the sword attack by [color=#8FD9F8]+25%[/color]', popup: 'LUNGE ACQUIRED' },
         sword_flurry: { name: 'FLURRY', desc: 'Performs two extra strikes at [color=#8FD9F8]60%[/color] power each', popup: 'FLURRY ACQUIRED' },
         system_redundancy_placeholder: { name: 'STRAY LOGS I', desc: 'A fragmented memory sector. Needs manual cleanup.', popup: 'LOGS CLEANED' },
         gateway_discovery: { name: 'GATEWAY DISCOVERY', desc: 'Beyond this local server lies the vast, unsecured network', popup: 'GATEWAY FOUND' },

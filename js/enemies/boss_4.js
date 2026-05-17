@@ -406,21 +406,28 @@ class Boss4 extends Boss {
 
     impactAttack() {
         if (typeof tower !== 'undefined' && tower.isAlive()) {
-            tower.takeDamage(20);
+            if (typeof tower.takeBigDamageVisual === 'function') {
+                tower.takeBigDamageVisual(this.model.x, this.model.y);
+            }
         }
 
         // Briefly slow down time using built-in timeManager
         if (typeof timeManager !== 'undefined') {
-            timeManager.setTempPause(200, 0.05);
+            timeManager.setTempPause(350, 0.2);
         }
 
-        // Add a lot of screen shake and a zoom pulse
-        if (typeof cameraManager !== 'undefined') {
-            cameraManager.shake(600, 0.02);
-        }
         if (typeof zoomShake !== 'undefined') {
-            zoomShake(1.02);
+            zoomShake(1.05);
         }
+
+        setTimeout(() => {
+            if (typeof tower !== 'undefined' && tower.isAlive()) {
+                tower.takeDamage(20);
+            }
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(800, 0.02);
+            }
+        }, 200);
 
         // Slow grinding movement forward (10px over 1000ms)
         const angle = this.model.baseRotation;
@@ -442,9 +449,9 @@ class Boss4 extends Boss {
         // Fix 3: Refresh angle
         const angle = this.model.baseRotation;
 
-        // Stage 1: Move back 15 units over 1000ms (unsticking phase)
-        const targetX1 = this.model.x - Math.cos(angle) * 15;
-        const targetY1 = this.model.y - Math.sin(angle) * 15;
+        // Stage 1: Move back 14 units over 1000ms (unsticking phase)
+        const targetX1 = this.model.x - Math.cos(angle) * 14;
+        const targetY1 = this.model.y - Math.sin(angle) * 14;
 
         PhaserScene.tweens.add({
             targets: this.model,

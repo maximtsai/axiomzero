@@ -205,7 +205,7 @@ const projectileManager = (() => {
                         if (p.isAssault && upgradeDispatcher.getLevel('suppressive_fire') > 0) {
                             if (!e.model.isBoss && !e.model.isMiniboss) {
                                 if (Math.random() < 0.30) {
-                                    e.forceSlow(0.1, 1500); // 90% slow for 1.5s
+                                    e.forceSlow(0.05, 3000); // 90% slow for 2.5s
                                 }
                             }
                         }

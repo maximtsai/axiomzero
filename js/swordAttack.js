@@ -5,7 +5,8 @@ class SwordAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 2000;
         this.BASE_DAMAGE = 25;
-        this.SEARCH_RANGE = 400;
+        this.BASE_SEARCH_RANGE = 320;
+        this.SEARCH_RANGE = 320;
         this.BASE_LENGTH = 225;
         this.START_OFFSET = 20;
         this.DAMAGE_START_OFFSET = 25;
@@ -523,6 +524,7 @@ const swordAttack = (() => {
     function setLungeLevel(lv) {
         model.lungeLevel = lv;
         model.targetLength = model.BASE_LENGTH * (1 + lv * 0.25);
+        model.SEARCH_RANGE = model.BASE_SEARCH_RANGE * (1 + lv * 0.25);
     }
     function setFlurryLevel(lv) {
         model.flurryLevel = lv;

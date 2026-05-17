@@ -193,6 +193,7 @@ class TowerView {
 
         this.sprite = null;
         this.glowSprite = null;
+        this.flashGlowSprite = null;
         this.artilleryCallSprite = null;
         this.rangeSprite = null;  // Range indicator circle below tower
         this.breatheTween = null;
@@ -249,6 +250,11 @@ class TowerView {
         this.sprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.sprite.setAlpha(1);
         helper.clearTint(this.sprite);
+
+        // Flash glow layer — underneath the main tower sprite (main is DEPTH_TOWER)
+        this.flashGlowSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_flash_glow.png');
+        this.flashGlowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1);
+        this.flashGlowSprite.setAlpha(1).setVisible(false);
 
         this.artilleryCallSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_artillery_call.png');
         this.artilleryCallSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);
@@ -362,6 +368,108 @@ class TowerView {
         }
     }
 
+    takeBigDamageVisual(x, y) {
+        if (!this.sprite || !this.sprite.scene) return;
+
+        this.sprite.setFrame('tower_dark.png');
+        if (this.flashGlowSprite) {
+            this.flashGlowSprite.setVisible(true);
+        }
+
+        PhaserScene.time.delayedCall(350, () => {
+            if (this.sprite && this.sprite.scene) {
+                this.sprite.setFrame('tower1.png');
+            }
+            if (this.flashGlowSprite && this.flashGlowSprite.scene) {
+                this.flashGlowSprite.setVisible(false);
+            }
+        });
+
+        const cx = this.sprite.x;
+        const cy = this.sprite.y;
+        const chosenAngles = [];
+
+        for (let i = 0; i < 6; i++) {
+            const startScale = 0.75 + Math.random() * 0.75;
+
+            let oppositeAngle;
+            if (x !== undefined && y !== undefined && x !== null && y !== null) {
+                oppositeAngle = Math.atan2(cy - y, cx - x);
+            } else {
+                oppositeAngle = Math.random() * Math.PI * 2;
+            }
+
+            const spread = (160 * Math.PI) / 180;
+            let angle = oppositeAngle + (Math.random() - 0.5) * spread;
+
+            // Check if too close to existing angles
+            let tooClose = false;
+            for (let j = 0; j < chosenAngles.length; j++) {
+                let diff = Math.abs(angle - chosenAngles[j]) % (Math.PI * 2);
+                if (diff > Math.PI) diff = Math.PI * 2 - diff;
+                if (diff < 0.2) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            // Retry once if too close
+            if (tooClose) {
+                angle = oppositeAngle + (Math.random() - 0.5) * spread;
+            }
+
+            chosenAngles.push(angle);
+
+            const duration = 300 + ((startScale - 0.6) / 0.6) * 350;
+
+            const distance = (duration - 150) * 0.3;
+            const startX = cx + Math.cos(angle) * distance * 0.2;
+            const startY = cy + Math.sin(angle) * distance * 0.2;
+            const targetX = cx + Math.cos(angle) * distance;
+            const targetY = cy + Math.sin(angle) * distance;
+
+            const particle = PhaserScene.add.image(startX, startY, 'player', 'big_damage_particle.png');
+            const glowParticle = PhaserScene.add.image(startX, startY, 'player', 'big_damage_particle_glow.png');
+
+            particle.setDepth(this.sprite.depth - 1);
+            glowParticle.setDepth(this.sprite.depth - 2);
+            helper.setBlendMode(glowParticle, Phaser.BlendModes.ADD);
+
+            particle.setScale(startScale * 0.65);
+            glowParticle.setScale(startScale * 0.65);
+
+
+            PhaserScene.tweens.add({
+                targets: [particle, glowParticle],
+                x: targetX,
+                y: targetY,
+                duration: duration,
+                ease: 'Quint.easeOut',
+            });
+
+            PhaserScene.tweens.add({
+                targets: [particle, glowParticle],
+                scaleX: startScale,
+                scaleY: startScale,
+                duration: duration * 0.15,
+                ease: 'Quint.easeOut',
+                onComplete: () => {
+                    PhaserScene.tweens.add({
+                        targets: [particle, glowParticle],
+                        scaleX: 0,
+                        scaleY: 0,
+                        duration: duration * 0.85,
+                        ease: 'Cubic.easeIn',
+                        onComplete: () => {
+                            particle.destroy();
+                            glowParticle.destroy();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     playHitEffect(x, y) {
         if (!this._hitAnimPool) return;
         const fx = this._hitAnimPool.get();
@@ -470,6 +578,7 @@ class TowerView {
         if (this.rangeSprite) this.rangeSprite.setVisible(vis);
         if (this.sparkleSprite) this.sparkleSprite.setVisible(vis);
         if (this.artilleryCallSprite) this.artilleryCallSprite.setVisible(vis);
+        if (this.flashGlowSprite && !vis) this.flashGlowSprite.setVisible(false);
     }
 
     setPosition(x, y) {
@@ -478,6 +587,7 @@ class TowerView {
         if (this.rangeSprite) this.rangeSprite.setPosition(x, y);  // 80px below tower
         if (this.sparkleSprite) this.sparkleSprite.setPosition(x, y);
         if (this.artilleryCallSprite) this.artilleryCallSprite.setPosition(x, y);
+        if (this.flashGlowSprite) this.flashGlowSprite.setPosition(x, y);
     }
 
     playArtilleryCallAnimation(fast = false) {
@@ -1180,5 +1290,6 @@ const tower = (() => {
         }),
         setVisible, setPosition,
         playArtilleryCall: (fast) => view.playArtilleryCallAnimation(fast),
+        takeBigDamageVisual: (x, y) => view.takeBigDamageVisual(x, y),
     };
 })();

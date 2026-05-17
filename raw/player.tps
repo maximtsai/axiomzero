@@ -222,7 +222,6 @@
                 <false/>
             </struct>
             <key type="filename">player/artillery_flash.png</key>
-            <key type="filename">player/unlock_explosion.png</key>
             <key type="filename">player/unlock_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -235,6 +234,41 @@
                 <rect>50,50,100,100</rect>
                 <key>scale9Paddings</key>
                 <rect>50,50,100,100</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/big_damage_particle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>0.9</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>37,37,75,75</rect>
+                <key>scale9Paddings</key>
+                <rect>37,37,75,75</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/big_damage_particle_glow.png</key>
+            <key type="filename">player/laser_turret.png</key>
+            <key type="filename">player/tower1 - Copy.png</key>
+            <key type="filename">player/tower1_broke.png</key>
+            <key type="filename">player/tower1_glow.png</key>
+            <key type="filename">player/tower_dark.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>37,37,75,75</rect>
+                <key>scale9Paddings</key>
+                <rect>37,37,75,75</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -254,21 +288,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">player/cursorwave.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>28,28,55,55</rect>
-                <key>scale9Paddings</key>
-                <rect>28,28,55,55</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">player/data_collect.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -281,23 +300,6 @@
                 <rect>13,13,25,25</rect>
                 <key>scale9Paddings</key>
                 <rect>13,13,25,25</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/deathwave.png</key>
-            <key type="filename">player/range.png</key>
-            <key type="filename">player/shockwave.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>100,100,200,200</rect>
-                <key>scale9Paddings</key>
-                <rect>100,100,200,200</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -347,24 +349,6 @@
                 <rect>3,3,5,5</rect>
                 <key>scale9Paddings</key>
                 <rect>3,3,5,5</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/laser_turret.png</key>
-            <key type="filename">player/tower1 - Copy.png</key>
-            <key type="filename">player/tower1_broke.png</key>
-            <key type="filename">player/tower1_glow.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>37,37,75,75</rect>
-                <key>scale9Paddings</key>
-                <rect>37,37,75,75</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -541,6 +525,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">player/shockwave.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>100,100,200,200</rect>
+                <key>scale9Paddings</key>
+                <rect>100,100,200,200</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">player/slash.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -568,6 +567,21 @@
                 <rect>33,33,67,67</rect>
                 <key>scale9Paddings</key>
                 <rect>33,33,67,67</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">player/strike.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>58,34,117,67</rect>
+                <key>scale9Paddings</key>
+                <rect>58,34,117,67</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -632,38 +646,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">player/tower2.png</key>
-            <key type="filename">player/tower3.png</key>
-            <key type="filename">player/tower4.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>30,30,59,59</rect>
-                <key>scale9Paddings</key>
-                <rect>30,30,59,59</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">player/tower5.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>0.1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>37,37,75,75</rect>
-                <key>scale9Paddings</key>
-                <rect>37,37,75,75</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">player/tower_artillery_call.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -679,7 +661,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">player/warnwave.png</key>
+            <key type="filename">player/tower_flash_glow.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -688,9 +670,9 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>63,63,125,125</rect>
+                <rect>62,62,125,125</rect>
                 <key>scale9Paddings</key>
-                <rect>63,63,125,125</rect>
+                <rect>62,62,125,125</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
