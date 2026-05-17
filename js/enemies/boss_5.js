@@ -27,7 +27,7 @@ class Boss5Model extends BossModel {
 
 class Boss5View extends EnemyView {
     constructor() {
-        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
+        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 2;
         super('bosses', 'boss_5.png', 'boss5_hp.png', baseDepth);
 
         // Scaled pink pulse effect (1.4x larger than current Boss 5)

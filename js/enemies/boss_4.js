@@ -129,7 +129,7 @@ class Boss4Model extends BossModel {
 
 class Boss4View extends EnemyView {
     constructor() {
-        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
+        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 2;
         // High-precision EXECUTE assets
         super('bosses', 'boss_4.png', 'boss_4_hp.png', baseDepth);
 
@@ -352,7 +352,7 @@ class Boss4 extends Boss {
 
         // Fix 3: Refresh angle for the second stage of lurch
         const angle2 = this.model.baseRotation;
-        const dist2 = 40;
+        const dist2 = 32;
         const targetX2 = this.model.x + Math.cos(angle2) * dist2;
         const targetY2 = this.model.y + Math.sin(angle2) * dist2;
 
@@ -360,8 +360,9 @@ class Boss4 extends Boss {
             targets: this.model,
             x: targetX2,
             y: targetY2,
-            duration: 1500,
-            ease: 'Quad.easeIn',
+            duration: 1600,
+            ease: 'Back.easeIn',
+            easeParams: [3],
             onComplete: () => {
                 // Fix 1: Guard onComplete
                 if (!this.model.alive) return;
@@ -382,9 +383,9 @@ class Boss4 extends Boss {
             return;
         }
 
-        // Target is 75 units away from the tower along the line between boss and tower
-        const targetX = tPos.x + (dx / dist) * 75;
-        const targetY = tPos.y + (dy / dist) * 75;
+        // Target is 100 units away from the tower along the line between boss and tower
+        const targetX = tPos.x + (dx / dist) * 125;
+        const targetY = tPos.y + (dy / dist) * 125;
 
         this.model.flashLine = true;
 
@@ -392,7 +393,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: targetX,
             y: targetY,
-            duration: 900,
+            duration: 600,
             ease: 'Quart.easeIn',
             onComplete: () => {
                 // Fix 1: Guard onComplete
@@ -410,25 +411,25 @@ class Boss4 extends Boss {
 
         // Briefly slow down time using built-in timeManager
         if (typeof timeManager !== 'undefined') {
-            timeManager.setTempPause(120, 0.15);
+            timeManager.setTempPause(200, 0.05);
         }
 
         // Add a lot of screen shake and a zoom pulse
         if (typeof cameraManager !== 'undefined') {
-            cameraManager.shake(400, 0.015);
+            cameraManager.shake(600, 0.02);
         }
         if (typeof zoomShake !== 'undefined') {
             zoomShake(1.02);
         }
 
-        // Slow grinding movement forward (1px over 2000ms)
+        // Slow grinding movement forward (10px over 1000ms)
         const angle = this.model.baseRotation;
         PhaserScene.tweens.add({
             targets: this.model,
-            x: this.model.x + Math.cos(angle) * 1,
-            y: this.model.y + Math.sin(angle) * 1,
-            duration: 1500,
-            ease: 'Cubic.easeOut',
+            x: this.model.x + Math.cos(angle) * 10,
+            y: this.model.y + Math.sin(angle) * 10,
+            duration: 1000,
+            ease: 'Quad.easeOut',
             onComplete: () => {
                 // Fix 1: Guard onComplete
                 if (!this.model.alive) return;
@@ -441,23 +442,23 @@ class Boss4 extends Boss {
         // Fix 3: Refresh angle
         const angle = this.model.baseRotation;
 
-        // Stage 1: Move back 7 units over 700ms
-        const targetX1 = this.model.x - Math.cos(angle) * 7;
-        const targetY1 = this.model.y - Math.sin(angle) * 7;
+        // Stage 1: Move back 15 units over 1000ms (unsticking phase)
+        const targetX1 = this.model.x - Math.cos(angle) * 15;
+        const targetY1 = this.model.y - Math.sin(angle) * 15;
 
         PhaserScene.tweens.add({
             targets: this.model,
             x: targetX1,
             y: targetY1,
-            duration: 700,
-            ease: 'Linear',
+            duration: 1000,
+            ease: 'Quad.easeIn',
             onComplete: () => {
                 // Fix 1: Guard onComplete
                 if (!this.model.alive) return;
 
                 // Fix 3: Refresh angle
                 const angle2 = this.model.baseRotation;
-                // Stage 2: Move back another 20 units over 400ms with Back.easeOut
+                // Stage 2: Move back another 20 units over 300ms with Back.easeOut
                 const targetX2 = this.model.x - Math.cos(angle2) * 20;
                 const targetY2 = this.model.y - Math.sin(angle2) * 20;
 
@@ -465,7 +466,7 @@ class Boss4 extends Boss {
                     targets: this.model,
                     x: targetX2,
                     y: targetY2,
-                    duration: 400,
+                    duration: 300,
                     ease: 'Back.easeOut',
                     onComplete: () => {
                         // Fix 1: Guard onComplete
@@ -482,7 +483,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: this.model.arrivalTargetX,
             y: this.model.arrivalTargetY,
-            duration: 6500,
+            duration: 7500,
             ease: 'Cubic.easeInOut',
             onComplete: () => {
                 // Fix 1: Guard onComplete
@@ -502,7 +503,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: targetX,
             y: targetY,
-            duration: 1500,
+            duration: 100,
             ease: 'Linear',
             onComplete: () => {
                 // Fix 1: Guard onComplete

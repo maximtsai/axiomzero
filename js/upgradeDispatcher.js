@@ -22,7 +22,7 @@ const upgradeDispatcher = (() => {
 
     /** Recalculates total cursor damage from all pulse upgrade nodes. */
     function recalcPulseDamage() {
-        let base = 4 + 2 * getLevel('focus') + 4 * getLevel('parallel_processing');
+        let base = 4 + 2 * getLevel('focus') + 2 * getLevel('parallel_processing');
         pulseAttack.setDamage(base);
 
         pulseAttack.setImpulseLevel(getLevel('impulse'));

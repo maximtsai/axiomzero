@@ -36,14 +36,14 @@ class Miniboss4Model extends MinibossModel {
 class Miniboss4View extends EnemyView {
     constructor() {
         // High depth for minibosses
-        super(Enemy.TEX_KEY, 'miniboss_sniper.png', 'miniboss_sniper_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
+        super(Enemy.TEX_KEY, 'miniboss_sniper.png', 'miniboss_sniper_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
 
         // HP bar rotated 90 deg CCW like original sniper
         this.hpImg.setRotation(-Math.PI / 2);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
-        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 6);
+        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         this.chargeSprite.setVisible(false);
     }
 

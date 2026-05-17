@@ -79,6 +79,21 @@ class TowerModel {
 
         // Root Access damage reduction
         this.damageReceivedMultiplier = upgradeDispatcher.getLevel('root_access') >= 1 ? 0.9 : 1.0;
+
+        // Volatile Cache synergy: +5% damage per active Memory Leak node
+        if (upgradeDispatcher.getLevel('volatile_cache') > 0) {
+            let leakCount = 0;
+            const ups = gameState.upgrades || {};
+            for (const id in ups) {
+                if (ups[id] > 0) {
+                    const def = NODE_DEFS.find(n => n.id === id);
+                    if (def && def.leaky !== undefined) {
+                        leakCount++;
+                    }
+                }
+            }
+            this.damage *= (1 + 0.05 * leakCount);
+        }
     }
 
     reset() {
@@ -889,7 +904,7 @@ const tower = (() => {
             dmg += 5;
         }
         if (upgradeDispatcher.getLevel('parallel_processing') > 0) {
-            dmg += 4;
+            dmg += 2;
         }
 
         const kbLv = upgradeDispatcher.getLevel('kernel_breaker');
@@ -1031,8 +1046,7 @@ const tower = (() => {
         const totalShots = 3 + extraShots;
         const shotDelay = 70; // 0.07s
 
-        const critLv = upgradeDispatcher.getLevel('assault_crit');
-        const critChance = critLv > 0 ? 0.33 : 0;
+
 
         for (let i = 0; i < totalShots; i++) {
             PhaserScene.time.delayedCall(startDelay + (i * shotDelay), () => {
@@ -1049,12 +1063,7 @@ const tower = (() => {
 
                 const finalAngle = baseAngle + angleOffset;
 
-                let damage = getDamage(target.model.isBoss);
-                let isCrit = false;
-                if (critChance > 0 && Math.random() < critChance) {
-                    damage *= 2;
-                    isCrit = true;
-                }
+                let damage = Math.max(1, getDamage(target.model.isBoss) - 2);
 
                 let vol = null;
                 let detune = null;
@@ -1063,7 +1072,7 @@ const tower = (() => {
                     detune = -350;
                 }
 
-                projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100, damage, isCrit, false, vol, detune);
+                projectileManager.fire(pos.x, pos.y, pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100, damage, false, false, vol, detune, true);
                 view.playRecoil(pos.x + Math.cos(finalAngle) * 100, pos.y + Math.sin(finalAngle) * 100);
             });
         }

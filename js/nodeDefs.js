@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed', 'volatile_cache'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -127,6 +127,24 @@ const NODE_DEFS = [
                 tower.recalcStats();
                 tower.heal(10);
             }
+        },
+    },
+    {
+        id: 'volatile_cache',
+        name: t('nodes', 'volatile_cache.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'volatile_cache.desc'),
+        popupText: t('nodes', 'volatile_cache.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 200,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['cheat'],
+        treeX: gridX(1.0),
+        treeY: gridY(-2.5),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
         },
     },
     {
@@ -2213,7 +2231,7 @@ const NODE_DEFS = [
         costType: 'shard',
         costScaling: 'static',
         parents: ['peak_performance'],
-        childIds: ['assault_clip_size', 'assault_crit'],
+        childIds: ['assault_clip_size', 'suppressive_fire'],
         isDuoBox: true,
         isLeftDuo: true,
         duoBoxTier: 5,
@@ -2250,6 +2268,25 @@ const NODE_DEFS = [
         },
     },
     {
+        id: 'suppressive_fire',
+        name: t('nodes', 'suppressive_fire.name'),
+        icon: 'Skillicon14_11.png',
+        description: t('nodes', 'suppressive_fire.desc'),
+        popupText: t('nodes', 'suppressive_fire.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 75,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['assault'],
+        childIds: [],
+        treeX: gridX(2),
+        treeY: gridY(9.0),
+        effect: function () {
+            if (typeof tower !== 'undefined') tower.recalcStats();
+        },
+    },
+    {
         id: 'assault_clip_size',
         name: t('nodes', 'assault_clip_size.name'),
         icon: 'Skillicon14_06.png',
@@ -2264,26 +2301,7 @@ const NODE_DEFS = [
         parents: ['assault'],
         childIds: [],
         treeX: gridX(2),
-        treeY: gridY(10),
-        effect: function () {
-            if (typeof tower !== 'undefined') tower.recalcStats();
-        },
-    },
-    {
-        id: 'assault_crit',
-        name: t('nodes', 'assault_crit.name'),
-        icon: 'Skillicon14_11.png',
-        description: t('nodes', 'assault_crit.desc'),
-        popupText: t('nodes', 'assault_crit.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 1,
-        baseCost: 75,
-        costType: 'data',
-        costScaling: 'static',
-        parents: ['assault'],
-        childIds: [],
-        treeX: gridX(2),
-        treeY: gridY(9.0),
+        treeY: gridY(10.0),
         effect: function () {
             if (typeof tower !== 'undefined') tower.recalcStats();
         },

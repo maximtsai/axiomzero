@@ -89,9 +89,9 @@ window.TRANSLATIONS.en = {
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]4/8[/color] damage', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size', popup: 'COLOSSAL CURSOR' },
         rocket: { name: 'ROCKET', desc: 'Core now fires a powerful [color=#8FD9F8]AOE[/color] explosive', popup: 'ROCKET UNLOCKED' },
-        assault: { name: 'ASSAULT', desc: 'Core now fires a burst of [color=#8FD9F8]3[/color] projectiles', popup: 'ASSAULT UNLOCKED' },
+        assault: { name: 'ASSAULT', desc: 'Core now fires a burst of [color=#8FD9F8]3[/color] projectiles [color=#ff5555](-2 damage per shot)[/color]', popup: 'ASSAULT UNLOCKED' },
         assault_clip_size: { name: 'CLIP SIZE', desc: '[color=#8FD9F8]+1[/color] projectile fired per burst', popup: 'CAPACITY INCREASED' },
-        assault_crit: { name: 'CRITICAL', desc: '[color=#8FD9F8]33%[/color] chance to critically hit for x2 damage', popup: 'CRITICAL HIT ENABLED' },
+        suppressive_fire: { name: 'SUPPRESSIVE FIRE', desc: '[color=#8FD9F8]30%[/color] chance to heavily [color=#8FD9F8]slow[/color] non-boss enemies', popup: 'SUPPRESSIVE FIRE ENABLED' },
         rocket_he_compound: { name: 'HE COMPOUND', desc: '[color=#8FD9F8]+30%[/color] rocket explosion radius', popup: 'EXPLOSION RADIUS INCREASED' },
         rocket_chain_reaction: { name: 'CHAIN REACTION', desc: 'Enemies killed by explosions trigger a [color=#8FD9F8]secondary blast[/color] after 0.1s', popup: 'CHAIN REACTION ENABLED' },
         resonance: { name: 'RESONANCE', desc: 'Every 4th cursor attack gains RESONANCE, dealing [color=#8FD9F8]double damage[/color]', popup: 'RESONANCE ACTIVE' },
@@ -100,6 +100,7 @@ window.TRANSLATIONS.en = {
         fiber_optics: { name: 'FIBER OPTICS', desc: '[color=#8FD9F8]-10%[/color] to all core attack cooldowns.', popup: '-10% COOLDOWN' },
         global_backdoor: { name: 'GLOBAL BACKDOOR', desc: 'Reduce [color=cyan]DATA[/color] cost of ALL nodes by [color=#8FD9F8]30[/color].', popup: 'UNAUTHORIZED ACCESS' },
         financial_takeover: { name: 'FINANCIAL TAKEOVER', desc: 'Gain access to the global financial override interface.', popup: 'TAKEOVER INTERFACE ENABLED' },
+        volatile_cache: { name: 'VOLATILE CACHE', desc: 'Deal [color=#8FD9F8]+5% Damage[/color] for every [color=red]Memory Leak[/color] node owned.', popup: 'SYSTEM VOLATILITY INCREASED' },
 
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through enemies', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy', popup: 'ARTILLERY ACTIVE' },
@@ -215,7 +216,7 @@ window.TRANSLATIONS.en = {
         root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color]', popup: 'ROOT ACCESS GRANTED' },
         peak_performance: { name: 'PEAK PERFORMANCE', desc: '[color=#8FD9F8]+5[/color] core damage while above [color=#8FD9F8]90%[/color] health', popup: '+5 CORE DAMAGE' },
         data_mining: { name: 'DATA MINING', desc: 'Core attacks extract [color=#8FD9F8]20%[/color] of damage as [color=cyan]DATA[/color] from Bosses', popup: 'DATA MINING INITIALIZED' },
-        parallel_processing: { name: 'PARALLEL PROCESSING', desc: '[color=#8FD9F8]+4[/color] Core damage\n[color=#8FD9F8]+4[/color] Cursor damage', popup: 'PROCESSING CAPABILITIES SYNCED' },
+        parallel_processing: { name: 'PARALLEL PROCESSING', desc: '[color=#8FD9F8]+2[/color] Core damage\n[color=#8FD9F8]+2[/color] Cursor damage', popup: 'PROCESSING CAPABILITIES SYNCED' },
         farsight: { name: 'FARSIGHT', desc: '[color=#8FD9F8]+20%[/color] core range', popup: '+20% ATTACK RANGE' },
         label: {
             lore: 'LORE',

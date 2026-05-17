@@ -336,7 +336,7 @@ const nodeTooltip = (() => {
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 20);
             maxT.setVisible(true).setPosition(0, currentY + 19); // was 15, moving up with others or keeping relative to background?
-            maxT.setText(isThisNodeActive ? t('tooltips', 'active') : t('tooltips', 'max'));
+            maxT.setText(isThisNodeActive ? t('tooltips', 'active') : '🗹 ' + t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
             currentY += 39;

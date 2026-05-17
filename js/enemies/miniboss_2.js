@@ -56,7 +56,7 @@ class Miniboss2Model extends MinibossModel {
 
 class Miniboss2View extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'miniboss_2.png', 'miniboss_2_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 2);
+        super(Enemy.TEX_KEY, 'miniboss_2.png', 'miniboss_2_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
 
         // Particle trail (spinning, scaling down)
         // Ensure the texture 'shooter_enemy_hp.png' exists in 'enemies' atlas

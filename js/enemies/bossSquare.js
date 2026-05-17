@@ -15,7 +15,7 @@ class BossSquareModel extends BossModel {
 
 class BossSquareView extends EnemyView {
     constructor() {
-        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
+        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 2;
         super('bosses', 'boss_1.png', 'boss_hp.png', baseDepth);
 
         // Add pink pulse nineslice — corner size 65px

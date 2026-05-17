@@ -42,11 +42,11 @@ class Miniboss1Model extends MinibossModel {
 
 class Miniboss1View extends EnemyView {
     constructor() {
-        super(Enemy.TEX_KEY, 'miniboss_1.png', 'miniboss_1_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES + 5);
+        super(Enemy.TEX_KEY, 'miniboss_1.png', 'miniboss_1_enemy_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
 
         // Charge-up visual indicator
         this.chargeSprite = PhaserScene.add.image(0, 0, Enemy.TEX_KEY, 'chargeup.png');
-        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES + 6);
+        this.chargeSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 1);
         this.chargeSprite.setVisible(false);
     }
 

@@ -69,7 +69,7 @@ const floatingText = (() => {
         const strokeThickness = opts.strokeThickness !== undefined ? opts.strokeThickness : 0;
         const depth = opts.depth !== undefined ? opts.depth : 9999;
         const duration = opts.duration !== undefined ? opts.duration : 1200;
-        const travel = opts.travel !== undefined ? opts.travel : 85;
+        const travel = opts.travel !== undefined ? opts.travel : 72;
         const scaleX = opts.scaleX !== undefined ? opts.scaleX : 1;
         const scaleY = opts.scaleY !== undefined ? opts.scaleY : 1;
 
@@ -125,8 +125,8 @@ const floatingText = (() => {
 
             const progress = Math.min(1, t._elapsed / t._totalDuration);
 
-            // Movement: Cubic.easeOut
-            const movementProgress = 1 - Math.pow(1 - progress, 3);
+            // Movement: Quart.easeOut
+            const movementProgress = 1 - Math.pow(1 - progress, 5);
             t.y = t._startY - (t._targetTravel * movementProgress);
 
             // Fade out: starts after 60% of duration, Quad.easeIn

@@ -201,6 +201,15 @@ const projectileManager = (() => {
                             audio.play('8_bit_explosion', 0.6);
                         }
                     } else {
+                        // SUPPRESSIVE FIRE logic
+                        if (p.isAssault && upgradeDispatcher.getLevel('suppressive_fire') > 0) {
+                            if (!e.model.isBoss && !e.model.isMiniboss) {
+                                if (Math.random() < 0.30) {
+                                    e.forceSlow(0.1, 1500); // 90% slow for 1.5s
+                                }
+                            }
+                        }
+
                         enemyManager.damageEnemy(e, p.damage, 'tower', p.isCrit);
                     }
                     hit = true;

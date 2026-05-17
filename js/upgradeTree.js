@@ -32,6 +32,7 @@ const upgradeTree = (() => {
     let maxPulsePool = null;
     let insightMaxPulsePool = null;
     let insightBuyPulsePool = null;
+    let discoveryPulsePool = null;
     let maxParticlePool = null;
 
     let zoomInBtn = null;
@@ -885,6 +886,14 @@ const upgradeTree = (() => {
             return img;
         }, resetFn, 10).preAllocate(4);
 
+        discoveryPulsePool = new ObjectPool(() => {
+            const slice = helper.createNineSlice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
+            slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
+            slice.setScrollFactor(0);
+            draggableGroup.add(slice);
+            return slice;
+        }, resetFn, 10).preAllocate(2);
+
         maxParticlePool = new ObjectPool(() => {
             const p = PhaserScene.add.image(0, 0, 'buttons', 'max_particle.png');
             p.setScrollFactor(0);
@@ -923,6 +932,15 @@ const upgradeTree = (() => {
                 // We want particles at depth - 2, which is just DEPTH_UPGRADE_TREE.
                 _playMaxParticles(x, y, GAME_CONSTANTS.DEPTH_UPGRADE_TREE - 20);
             }
+        }
+    }
+
+    function playDiscoveryPulse(x, y) {
+        if (!discoveryPulsePool) return;
+        // Sonar effect: Large, slow, cyan pulse
+        const pulse = _animatePulse(x, y, discoveryPulsePool, 60, 480, 1400, 0.8);
+        if (pulse) {
+            // helper.setTint(pulse, 0x00ffff);
         }
     }
 
@@ -1169,6 +1187,7 @@ const upgradeTree = (() => {
             }
         });
 
+        return pulse;
     }
 
     function _animatePulse(x, y, pool, startSize, targetSize, duration, alpha, delay = 0) {
@@ -1203,6 +1222,8 @@ const upgradeTree = (() => {
                 pool.release(pulse);
             }
         });
+
+        return pulse;
     }
 
     function _animatePulseScale(x, y, pool, startScale, targetScale, duration, alpha, delay = 0) {
@@ -1235,6 +1256,7 @@ const upgradeTree = (() => {
                 pool.release(pulse);
             }
         });
+        return pulse;
     }
 
     // ── show / hide ──────────────────────────────────────────────────────
@@ -1801,6 +1823,7 @@ const upgradeTree = (() => {
         nodes[id].revealedManually = revealedManually;
         nodes[id].refreshState();
         nodes[id].playRevealAnimation();
+        playDiscoveryPulse(nodes[id].x, nodes[id].y);
         _refreshAllNodes();
         treeLineManager.updateLines();
 
@@ -1963,5 +1986,5 @@ const upgradeTree = (() => {
         return dragDistanceTotal > 30;
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showTakeoverButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showTakeoverButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, playDiscoveryPulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
 })();

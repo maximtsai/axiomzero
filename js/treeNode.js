@@ -468,12 +468,14 @@ class Node {
             gameState.leakPenalty = (gameState.leakPenalty || 0) + this.leaky;
 
             // Brief "System Shock" interruption
-            if (typeof glitchFX !== 'undefined') glitchFX.triggerWarningGlitch(3, 0.4, 400);
+            if (typeof glitchFX !== 'undefined') glitchFX.triggerWarningGlitch(3, 0.4, 200);
 
             setTimeout(() => {
-                if (typeof timeManager !== 'undefined') timeManager.setTempPause(160, 0.1);
-                if (typeof audio !== 'undefined') audio.setTempVolume(100, 0.6);
-            }, 100);
+                if (typeof timeManager !== 'undefined') timeManager.setTempPause(70, 0.1);
+                if (Math.random() < 0.6) {
+                    if (typeof audio !== 'undefined') audio.setTempVolume(60, 0.6);
+                }
+            }, 60);
         }
 
         // Effect and Metadata logic

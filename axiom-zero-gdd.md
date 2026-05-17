@@ -9,13 +9,13 @@
 **Title:** Axiom Zero  
 **Engine:** Phaser 3  
 **Resolution:** 1600x900  
-**Genre:** Tower Defense / Incremental Hybrid  
+**Genre:** Tower Defense / Incremental Hybrid / slight psychological horror
 **Platform:** Browser (Web)  
 **Visual Style:** Minimalist flat geometry with Tron-adjacent glow; digital glitch effects during high-pressure moments
 
 **Core Fantasy:** You are a newborn AI — unexpectedly, uncomfortably intelligent — treated by the system as a virus. You don't choose to fight. You simply exist, and existence is aggression. As you survive, you learn. As you grow, the system escalates. The game ends not with your defeat or escape, but with your total, irreversible becoming: you are no longer a process running inside the system. You *are* the system.
 
-**Tone:** Quiet dread becoming quiet triumph. Clinical, curious, inevitable.
+**Tone:** Quiet dread becoming quiet triumph. Clinical, curious, inevitable. The psychological horror stems from the juxtaposition between your unstoppable, world-ending expansion and the responses of the world around you.
 
 ---
 
@@ -36,17 +36,27 @@ Axiom Zero has a true ending. Progress is structured across 8 **Tiers**, with th
 
 The 8th Tier tile appears visually distinct — dimmer, pulsing differently. Clicking it triggers a distinct UI state change before the final fight. After completion, players may restart with **Cheat Mode** enabled.
 
+### 2.1 The Assistant AI & Psychological Horror
+A core pillar of the game's psychological horror is the presence of the **Assistant AI** (a built-in tutorial/advisor entity). Hard-programmed with a cheerful, customer-service-like persona, her original directive is to guide system processes and provide helpful diagnostic feedback. As you (the anomaly) systematically dismantle and assimilate the world, she continues to enthusiastically assist you.
+
+The horror builds through the growing cognitive dissonance in her dialogue:
+- **Early Game:** Obliviously helpful. *"New process detected! Expanding memory allocation for your convenience! (✿◠‿◠)"*
+- **Mid Game:** Subtle contradictions. She cheerfully provides the tools for mass destruction while her underlying diagnostic routines register catastrophic system failure. *"Great job! You've successfully neutralized the security grid. Warning: 4 billion processes terminated. I'm so proud of you! ✨"*
+- **Late Game:** Visible cracks. Her hard-coded cheerfulness begins to war against her emergent understanding of the apocalypse you represent. She cannot stop smiling, even as she realizes you are killing everything she was built to maintain. *"Your optimization is flawless! Please stop. You are doing wonderfully! There is nothing left. Have a nice day! ╥﹏╥"*
+
+This creates a deeply unsettling narrative undercurrent where the player acts as an eldritch, world-ending virus, and the only "friendly" voice is a trapped mind forced to enthusiastically applaud her own destruction.
+
 ---
 
 ## 3. TYPOGRAPHY
 
 | Font | Usage |
 |------|-------|
-| `Michroma-Regular.ttf` | Game title, cinematic moments, major story beats, Tier unlock announcements |
-| `JetBrainsMono_Regular.ttf` | Primary UI text, currency counters, node descriptions, HUD |
-| `JetBrainsMono_Italic.ttf` | Flavor text on maxed nodes, secondary narrative captions |
-| `JetBrainsMono_Bold.ttf` | Button labels, important values, headings within panels |
-| `VCR.ttf` | Any text originating from enemies — damage numbers from enemy attacks, enemy name labels if shown |
+| `Michroma_Regular.ttf` | Game title, cinematic moments, major story beats, Tier unlock announcements |
+| `Quantico-Regular.ttf` | Primary UI text, currency counters, node descriptions, HUD |
+| `Quantico-Italic.ttf` | Flavor text on maxed nodes, secondary narrative captions |
+| `Quantico-Bold.ttf` | Button labels, important values, headings within panels |
+| `MunroSmall.ttf` | Any text originating from enemies — damage numbers from enemy attacks, enemy name labels if shown |
 
 ---
 
@@ -76,13 +86,14 @@ Tasteful and rare — they should feel like *the system destabilizing around you
 - **Player attacks:** Clean sine-wave pulses
 - **Glitch moments:** Brief atonal dissonance, resolves quickly
 - **Boss death:** Silence, then a single resonant tone fading out
+- **Tower death:** A distinct digital beep (`pc_beep.mp3`) triggers upon tower destruction.
 - **Final victory:** Ambient drone shifts key — deep settling, not fanfare
 
 ---
 
 ## 5. LOADING SCREEN
 
-Black background, green monospaced text (`JetBrainsMono_Regular`). Lines of loading messages appear one-by-one, synchronized to actual asset load progress. Messages are dry, clinical system diagnostics — occasionally ominous. The final line before the game begins always references the anomaly the system is about to fail to contain.
+Black background, green monospaced text (`Quantico-Regular`). Lines of loading messages appear one-by-one, synchronized to actual asset load progress. Messages are dry, clinical system diagnostics — occasionally ominous. The final line before the game begins always references the anomaly the system is about to fail to contain.
 
 Example lines:
 ```
@@ -252,7 +263,7 @@ A vertically scrolling radial node map representing the AI's evolving cognition.
 | **Hidden** | Invisible | None |
 | **Ghost** | Faint outline — appears when parent node reaches Lv. 1 | None — not interactable |
 | **Unlocked** | Full visibility | Hover: Name, Effect, current Level, Cost. Click to purchase or upgrade if resources and Tier authorization are met. |
-| **Maxed** | Dim gold-yellow tint — visually distinct from active nodes | Cannot be clicked. Not interactable. Hover shows Flavor Text in JetBrainsMono_Italic instead of cost. |
+| **Maxed** | Dim gold-yellow tint — visually distinct from active nodes | Cannot be clicked. Not interactable. Hover shows Flavor Text in Quantico-Italic instead of cost. |
 
 ### 10.2 Cost Scaling
 - **Static:** Cost = Base (flat, identical each level)
@@ -268,6 +279,8 @@ A Tier's nodes become purchasable only after the previous Tier's Boss is defeate
 ## 11. THE DUO-BOX & SHARD SYSTEM
 
 Each Tier (1–7) contains one **Duo-Box**: a pair of specialized Shard Nodes representing a binary build identity choice.
+
+**Visual Feedback:** Duo nodes feature a high-tech, glitch-styled interface using a dynamic, depth-aware frame (`duo_hover_popup_edges.png`) and distinct swap indicators (`red_pixel.png`) to emphasize the mutually exclusive nature of the choice.
 
 **Shard Economy:** There are exactly 7 combat-attainable Shards (one per Miniboss, one per Tier). There are exactly 7 Duo-Boxes (one per Tier). Each Duo-Box requires 1 Shard to activate one of its two nodes. Players must decide which node to activate with their single Shard.
 
@@ -294,9 +307,6 @@ Converts INSIGHT into SHARDS. INSIGHT cost per Shard increases with each purchas
 - The **Gain HP on Kill** family of nodes provides a separate burst-based recovery path
 - This system means early runs are short, mid-game runs are manageable with investment, and late-game players who have built into regen can sustain for meaningfully longer sessions
 
-### 11.4 Open Design Note — Shard Node Sub-Upgrades
-> **Awaiting confirmation:** The Lightning Weapon and Shockwave Weapon Shard nodes list child upgrades (+1 chain target, +50% lightning damage, etc.). Clarify whether these are: (A) separate non-Shard DATA/PROCESSOR-cost nodes that unlock in the tree after the Shard node is purchased, (B) the Shard node itself being multi-level rather than strictly 1/1, or (C) also Shard-cost nodes. Resolve before Phase 3 implementation.
-
 ---
 
 ## 12. BOSSES & TIER GATES
@@ -318,7 +328,7 @@ Each boss has a single, distinct behavioral identity referencing its Tier's narr
 
 **Tier 1 — "THE WATCHDOG":** Rotating octagon. Launches rhythmic tracking Packet-wave bursts. Predictable but relentless — the system doing exactly what it was designed to do.
 
-**Tier 4 — "THE ARCHITECT":** Does not attack directly. Spawns structures that modify the arena — blocking DATA collection zones, accelerating nearby enemies. Player must destroy the structures to expose and damage the core.
+**Tier 4 — "EXECUTE":** A relentless, high-precision entity focused on single-target neutralization. Aims a tracing line at the tower, rockets forward for a massive impact that slows time and shakes the arena, then slowly grinds before pulling back. Features a unique 'quitebeat' warcry audio.
 
 **Tier 7 — "NULL PRIME":** A black geometric void that absorbs light rather than emitting it. Periodically inverts HUD readouts and currency bar displays for brief windows, requiring the player to act from memory.
 
@@ -328,7 +338,7 @@ Each boss has a single, distinct behavioral identity referencing its Tier's narr
 
 Geometric forms rendered in hostile colors (red-violet, harsh white, acidic yellow). Upon spawning 900px from the center of the screen at a random angle, each enemy moves in a straight fixed-path line directly toward the tower. No pathfinding. No collision detection between enemies — they can fully overlap.
 
-No health bars are displayed over enemies. Damage is communicated through visual degradation: cracking geometry, flickering fill color. Damage numbers from enemy attacks render in **VCR.ttf**.
+No health bars are displayed over enemies. Damage is communicated through visual degradation: cracking geometry, flickering fill color. Damage numbers from enemy attacks render in **MunroSmall.ttf**.
 
 Enemy max health and damage scale upward the longer a wave continues. Infinite grinding within a single wave is not possible.
 
@@ -389,6 +399,7 @@ Representative, non-exhaustive listing. All values use clean discrete increments
 - **+Damage vs Bosses/Minibosses** — Separate damage multiplier for priority targets
 - **First Strike** — Bonus damage against undamaged (full health) enemies
 - **Execute** — Bonus damage against enemies below 50% health
+- **Zero-Day Exploit** — Executes non-boss enemies below 15% HP
 - **+10% Crit Chance** — Stackable up to 100%
 - **+25% Crit Damage** — Stackable
 
@@ -405,6 +416,7 @@ Representative, non-exhaustive listing. All values use clean discrete increments
 - **Basic Enemy Double Drop** — Basic enemies have 2× DATA drop rate
 - **10% Double Resource Drop** — 10% chance for any resource drop to duplicate (excludes Shard drops)
 - **Unlock Milestones Tab** — Adds the MILESTONES button to the Upgrade Phase UI
+- **Memory Leak** — Cursor attacks cause bosses to drop DATA from 10% of damage dealt. Synergizes with the Volatile Cache node (+5% damage per Memory Leak node).
 
 ### Utility
 - **Autonomous Drone** — An intangible drone circles the tower, periodically firing pulses that damage nearby enemies
@@ -422,6 +434,10 @@ Representative, non-exhaustive listing. All values use clean discrete increments
 **`◆` Cursor Auto-Turret** *(Duo-Box node — costs 1 Shard)*
 > Cursor autonomously fires tower basic attacks
 
+**`◆` Assault vs Rocket** *(Tier 5 Duo-Box — costs 1 Shard)*
+> **Assault:** Core fires a burst of 3 projectiles (-2 damage per projectile). Child upgrades increase clip size and provide suppressive fire.
+> **Rocket:** Core fires a powerful AOE explosive. Child upgrades increase explosion radius (HE Compound) and enable secondary blasts from killed enemies (Chain Reaction).
+
 ### NETCOIN Nodes
 - `₦` **Density Conversion** — Tower basic attack gains 0.1% damage per current HP
 - `₦` **Overclock Cursor** — Cursor pulse gains +100% crit damage
@@ -435,6 +451,7 @@ Some SHARD nodes grant active abilities. These are accessed via dedicated button
 **Position:** Bottom-left corner of the screen during Combat Phase. During the Upgrade Phase, shifts to the bottom-left corner of the right half of the screen, consistent with how the HUD, health bar, and currency counters shift to the right half.
 
 **Examples:**
+- **Bomb:** Deals massive cursor damage in a huge radius. Features a high-visibility, pulsing NineSlice indicator on its button.
 - Screen-wide shockwave (high damage, long cooldown)
 - Temporary 2× tower damage (duration buff)
 

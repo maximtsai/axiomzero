@@ -50,7 +50,7 @@ class BossCircleModel extends BossModel {
 
 class BossCircleView extends EnemyView {
     constructor() {
-        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 1;
+        const baseDepth = GAME_CONSTANTS.DEPTH_ENEMIES - 2;
         super('bosses', 'bosscircle.png', 'bosscircle_hp.png', baseDepth);
 
         // Add pink pulse sprites
