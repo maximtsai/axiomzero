@@ -420,9 +420,12 @@ class Boss4 extends Boss {
             zoomShake(1.05);
         }
 
+        const sourceX = this.model.x;
+        const sourceY = this.model.y;
+
         setTimeout(() => {
             if (typeof tower !== 'undefined' && tower.isAlive()) {
-                tower.takeDamage(20);
+                tower.takeDamage(20, sourceX, sourceY);
             }
             if (typeof cameraManager !== 'undefined') {
                 cameraManager.shake(800, 0.02);

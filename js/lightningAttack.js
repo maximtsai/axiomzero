@@ -243,64 +243,91 @@ const lightningAttack = (() => {
         }
         enemyManager.damageEnemy(first, actualDamage, 'lightning');
 
-        // Chain to additional enemies
-        let lastHit = first;
-        for (let c = 1; c < model.chainCount; c++) {
-            let bestDist = model.CHAIN_RANGE;
-            let bestEnemy = null;
-
-            // Fast lookup in range
-            _queryResults.length = 0;
-            enemyManager.getEnemiesInSquareRange(lastHit.model.x, lastHit.model.y, model.CHAIN_RANGE, _queryResults);
-
-            for (let i = 0; i < _queryResults.length; i++) {
-                const e = _queryResults[i];
-                if (!e.model.alive) continue;
-                // Skip already hit enemies
-                let alreadyHit = false;
-                for (let j = 0; j < hitEnemies.length; j++) {
-                    if (hitEnemies[j] === e) { alreadyHit = true; break; }
-                }
-                if (alreadyHit) continue;
-
-                const dx = e.model.x - lastHit.model.x;
-                const dy = e.model.y - lastHit.model.y;
-                const d2 = dx * dx + dy * dy;
-
-                // Pre-check with squared distance to avoid sqrt in 99% of cases
-                const maxDR = bestDist + (e.model.size || 0) + (lastHit.model.size || 0);
-                if (d2 < maxDR * maxDR) {
-                    const dist = Math.sqrt(d2);
-                    const effectiveDist = dist - (e.model.size || 0) - (lastHit.model.size || 0);
-
-                    if (effectiveDist < bestDist) {
-                        bestDist = effectiveDist;
-                        bestEnemy = e;
-                    }
-                }
-            }
-
-            if (!bestEnemy) break;
-
-            view.drawBolt(lastHit.model.x, lastHit.model.y, bestEnemy.model.x, bestEnemy.model.y);
-
-            let chainDamage = model.damage;
-            if (model.staticChargeBonus > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
-                chainDamage += model.staticChargeBonus;
-            }
-            enemyManager.damageEnemy(bestEnemy, chainDamage, 'lightning');
-
-            hitEnemies.push(bestEnemy);
-            lastHit = bestEnemy;
-        }
-
-        // Micro camera shake
+        // Micro camera shake at t=0
         zoomShake(1.003);
 
-        // Play random shock sound with subtle detune
+        // Play initial shock sound
         const soundName = `shock${Phaser.Math.Between(1, 3)}`;
         const sound = audio.play(soundName, 0.6);
-        sound.detune = Phaser.Math.Between(-150, 80);
+        if (sound) {
+            sound.detune = Phaser.Math.Between(-150, 80);
+        }
+
+        // Start dynamic chain sequence
+        if (model.chainCount > 1) {
+            PhaserScene.time.delayedCall(100, () => {
+                _chainStep(first, first.model.x, first.model.y, hitEnemies, 1);
+            });
+        }
+    }
+
+    function _chainStep(lastHit, fromX, fromY, hitEnemies, currentChain) {
+        if (!tower.isAlive()) return;
+
+        // Track the enemy if still alive/active, otherwise gracefully jump from its death coordinates
+        const originX = (lastHit && lastHit.model && lastHit.model.alive) ? lastHit.model.x : fromX;
+        const originY = (lastHit && lastHit.model && lastHit.model.alive) ? lastHit.model.y : fromY;
+        const lastHitSize = (lastHit && lastHit.model) ? (lastHit.model.size || 15) : 15;
+
+        let bestDist = model.CHAIN_RANGE;
+        let bestEnemy = null;
+
+        // Fast lookup in range around the resolved origin at the current time
+        _queryResults.length = 0;
+        enemyManager.getEnemiesInSquareRange(originX, originY, model.CHAIN_RANGE, _queryResults);
+
+        for (let i = 0; i < _queryResults.length; i++) {
+            const e = _queryResults[i];
+            if (!e.model.alive) continue;
+            // Skip already hit enemies to ensure we don't double-chain
+            let alreadyHit = false;
+            for (let j = 0; j < hitEnemies.length; j++) {
+                if (hitEnemies[j] === e) { alreadyHit = true; break; }
+            }
+            if (alreadyHit) continue;
+
+            const dx = e.model.x - originX;
+            const dy = e.model.y - originY;
+            const d2 = dx * dx + dy * dy;
+
+            // Pre-check with squared distance to avoid sqrt in 99% of cases
+            const maxDR = bestDist + (e.model.size || 0) + lastHitSize;
+            if (d2 < maxDR * maxDR) {
+                const dist = Math.sqrt(d2);
+                const effectiveDist = dist - (e.model.size || 0) - lastHitSize;
+
+                if (effectiveDist < bestDist) {
+                    bestDist = effectiveDist;
+                    bestEnemy = e;
+                }
+            }
+        }
+
+        if (!bestEnemy) return;
+
+        view.drawBolt(originX, originY, bestEnemy.model.x, bestEnemy.model.y);
+
+        let chainDamage = model.damage;
+        if (model.staticChargeBonus > 0 && bestEnemy.model.health >= bestEnemy.model.maxHealth * 0.8) {
+            chainDamage += model.staticChargeBonus;
+        }
+        enemyManager.damageEnemy(bestEnemy, chainDamage, 'lightning');
+
+        // Play chain shock sound matching the visual bounce
+        const soundName = `shock${Phaser.Math.Between(1, 3)}`;
+        const sound = audio.play(soundName, 0.4);
+        if (sound) {
+            sound.detune = Phaser.Math.Between(-150, 80);
+        }
+
+        hitEnemies.push(bestEnemy);
+
+        // Schedule next chain step dynamically
+        if (currentChain + 1 < model.chainCount) {
+            PhaserScene.time.delayedCall(85, () => {
+                _chainStep(bestEnemy, bestEnemy.model.x, bestEnemy.model.y, hitEnemies, currentChain + 1);
+            });
+        }
     }
 
     function _onPhaseChanged(phase) {

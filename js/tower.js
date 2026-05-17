@@ -422,7 +422,7 @@ class TowerView {
 
             const duration = 300 + ((startScale - 0.6) / 0.6) * 350;
 
-            const distance = (duration - 150) * 0.3;
+            const distance = (duration - 185) * 0.3;
             const startX = cx + Math.cos(angle) * distance * 0.2;
             const startY = cy + Math.sin(angle) * distance * 0.2;
             const targetX = cx + Math.cos(angle) * distance;
@@ -433,7 +433,6 @@ class TowerView {
 
             particle.setDepth(this.sprite.depth - 1);
             glowParticle.setDepth(this.sprite.depth - 2);
-            helper.setBlendMode(glowParticle, Phaser.BlendModes.ADD);
 
             particle.setScale(startScale * 0.65);
             glowParticle.setScale(startScale * 0.65);
@@ -451,15 +450,15 @@ class TowerView {
                 targets: [particle, glowParticle],
                 scaleX: startScale,
                 scaleY: startScale,
-                duration: duration * 0.15,
+                duration: duration * 0.2,
                 ease: 'Quint.easeOut',
                 onComplete: () => {
                     PhaserScene.tweens.add({
                         targets: [particle, glowParticle],
                         scaleX: 0,
                         scaleY: 0,
-                        duration: duration * 0.85,
-                        ease: 'Cubic.easeIn',
+                        duration: duration * 0.8,
+                        ease: 'Quart.easeIn',
                         onComplete: () => {
                             particle.destroy();
                             glowParticle.destroy();

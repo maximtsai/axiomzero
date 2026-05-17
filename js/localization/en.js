@@ -89,7 +89,7 @@ window.TRANSLATIONS.en = {
         aftershock: { name: 'AFTERSHOCK', desc: 'Fires a secondary, larger AOE attack dealing [color=#8FD9F8]4/8[/color] damage', popup: 'AFTERSHOCK' },
         colossal_cursor: { name: 'COLOSSAL CURSOR', desc: '[color=#8FD9F8]+50%[/color] cursor attack size', popup: 'COLOSSAL CURSOR' },
         rocket: { name: 'ROCKET', desc: 'Core now fires a powerful [color=#8FD9F8]AOE[/color] explosive', popup: 'ROCKET UNLOCKED' },
-        assault: { name: 'ASSAULT', desc: 'Core now fires a burst of [color=#8FD9F8]3[/color] projectiles [color=#ff5555](-2 damage per shot)[/color]', popup: 'ASSAULT UNLOCKED' },
+        assault: { name: 'ASSAULT', desc: 'Core now fires a burst of [color=#8FD9F8]3[/color] weaker projectiles [color=#ff5555](-2 damage)[/color]', popup: 'ASSAULT UNLOCKED' },
         assault_clip_size: { name: 'CLIP SIZE', desc: '[color=#8FD9F8]+1[/color] projectile fired per burst', popup: 'CAPACITY INCREASED' },
         suppressive_fire: { name: 'SUPPRESSIVE FIRE', desc: '[color=#8FD9F8]30%[/color] chance to heavily [color=#8FD9F8]slow[/color] non-boss enemies', popup: 'SUPPRESSIVE FIRE ENABLED' },
         rocket_he_compound: { name: 'HE COMPOUND', desc: '[color=#8FD9F8]+30%[/color] rocket explosion radius', popup: 'EXPLOSION RADIUS INCREASED' },
