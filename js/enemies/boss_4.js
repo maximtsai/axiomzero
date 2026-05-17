@@ -522,4 +522,19 @@ class Boss4 extends Boss {
             }
         });
     }
+
+    checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 15) {
+        const baseR = (this.model.size !== undefined ? this.model.size : sizeFallback);
+        
+        // Short side (X axis) is 70% of size
+        const reachX = (baseR * 0.7) * radiusRatio + extraRadius;
+        // Long side (Y axis) is 100% of size (tall perfectly straight rectangle)
+        const reachY = baseR * radiusRatio + extraRadius;
+
+        return (Math.abs(px - this.model.x) <= reachX && Math.abs(py - this.model.y) <= reachY);
+    }
+
+    checkSquareCollision(px, py, halfSize, sizeFallback = 15) {
+        return this.checkCollision(px, py, 1.0, halfSize, sizeFallback);
+    }
 }

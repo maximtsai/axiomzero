@@ -216,7 +216,7 @@ This file tracks all existing upgrade nodes, their technical descriptions, and t
 - **Description:** EXECUTES non boss enemies below 15% HP
 - **NODE LORE:** You invoke a process sequence with no valid entry in the system's logic table. The target does not fail. It stops being a valid entry.
 
-### **[root_access] ROOT ACCESS**
+### **[proxy_routing] PROXY ROUTING**
 - **Description:** Reduces all enemy damage by 20%
 - **NODE LORE:** You revoke all external write permissions and change the administrative credentials. You do not record the new ones anywhere accessible.
 
