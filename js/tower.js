@@ -290,7 +290,7 @@ class TowerView {
     refreshRangeSprite(attackRange, pos, isIntense = false) {
         const rangeScale = attackRange / 202;
         if (!this.rangeSprite) {
-            this.rangeSprite = PhaserScene.add.image(pos.x, pos.y, 'player', 'range.png');
+            this.rangeSprite = PhaserScene.add.image(pos.x, pos.y, 'backgrounds', 'range.png');
             this.rangeSprite.setDepth(1);
             this.rangeSprite.setAlpha(0);
             this.rangeSprite.setScale(rangeScale * 0.2);
@@ -390,7 +390,7 @@ class TowerView {
         const chosenAngles = [];
 
         for (let i = 0; i < 6; i++) {
-            const startScale = 0.75 + Math.random() * 0.75;
+            const startScale = 0.3 + Math.random() * 1.3;
 
             let oppositeAngle;
             if (x !== undefined && y !== undefined && x !== null && y !== null) {
@@ -420,7 +420,7 @@ class TowerView {
 
             chosenAngles.push(angle);
 
-            const duration = 300 + ((startScale - 0.6) / 0.6) * 350;
+            const duration = 300 + ((startScale - 0.3) / 1.3) * 350;
 
             const distance = (duration - 185) * 0.3;
             const startX = cx + Math.cos(angle) * distance * 0.2;

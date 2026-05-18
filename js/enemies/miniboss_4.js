@@ -7,7 +7,7 @@
 //   • Long charge time (3.75s) and slow attack cooldown (6s).
 
 const MB4 = {
-    HEALTH: 275,
+    HEALTH: 260,
     SPEED_MULT: 0.92,
     ATTACK_RANGE: 425,
     FIRE_INTERVAL: 6000,

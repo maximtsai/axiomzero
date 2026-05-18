@@ -103,7 +103,7 @@ window.TRANSLATIONS.en = {
         volatile_cache: { name: 'VOLATILE CACHE', desc: 'Deal [color=#8FD9F8]+5% Damage[/color] for every [color=red]Memory Leak[/color] node owned.', popup: 'SYSTEM VOLATILITY INCREASED' },
 
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through enemies', popup: 'LASER ACTIVE' },
-        artillery: { name: 'ARTILLERY', desc: 'Fires artillery blast every [color=#8FD9F8]6s[/color] at random enemy', popup: 'ARTILLERY ACTIVE' },
+        artillery: { name: 'ARTILLERY', desc: 'Fires large AOE artillery blast every [color=#8FD9F8]6s[/color] at random enemy', popup: 'ARTILLERY ACTIVE' },
         lore_1: {
             name: 'ARCHIVE',
             desc: 'seemingly useless data...',

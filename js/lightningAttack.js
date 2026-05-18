@@ -313,11 +313,13 @@ const lightningAttack = (() => {
         }
         enemyManager.damageEnemy(bestEnemy, chainDamage, 'lightning');
 
-        // Play chain shock sound matching the visual bounce
-        const soundName = `shock${Phaser.Math.Between(1, 3)}`;
-        const sound = audio.play(soundName, 0.4);
-        if (sound) {
-            sound.detune = Phaser.Math.Between(-150, 80);
+        // Play chain shock sound matching the visual bounce only on the second chain (third enemy hit)
+        if (currentChain === 2) {
+            const soundName = `shock${Phaser.Math.Between(1, 3)}`;
+            const sound = audio.play(soundName, 0.4);
+            if (sound) {
+                sound.detune = Phaser.Math.Between(-50, 180);
+            }
         }
 
         hitEnemies.push(bestEnemy);

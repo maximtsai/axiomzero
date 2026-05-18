@@ -1117,7 +1117,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'amplitude.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 150,
+        baseCost: 200,
         costType: 'data',
         costScaling: 'static',
         parents: ['resonance'],
