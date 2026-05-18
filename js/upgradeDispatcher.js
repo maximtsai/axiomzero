@@ -53,6 +53,21 @@ const upgradeDispatcher = (() => {
         return getLevel('fiber_optics') > 0 ? 0.9 : 1.0;
     }
 
+    /** Calculates the final cooldown in ms for a shard ability with a given baseCooldown in ms. */
+    function getShardCooldown(baseCooldown) {
+        let cooldown = baseCooldown;
+        if (getLevel('stress_calibration') > 0 && typeof tower !== 'undefined') {
+            if (tower.getHealth() <= tower.getMaxHealth() * 0.501) {
+                cooldown -= 500; // Reduce base cooldown by 0.5 seconds (500 ms)
+            }
+        }
+        // Apply Fiber Optics (10% cooldown reduction / 0.9x multiplier) on the resulting base cooldown
+        if (getLevel('fiber_optics') > 0) {
+            cooldown *= 0.9;
+        }
+        return cooldown;
+    }
+
     /** Recalculates pulse reload interval. */
     function recalcPulseReload() {
         const intervalBonus = getLevel('manual_pulse_child_1_2') > 0 ? 0.75 : 1.0;
@@ -90,6 +105,16 @@ const upgradeDispatcher = (() => {
         lightningAttack.setStaticChargeLevel(getLevel('lightning_static_charge'));
     }
 
+    /** Recalculates all lightning stats from upgrade nodes. */
+    function recalcLightningStats() {
+        if (typeof lightningAttack === 'undefined') return;
+        recalcLightningChains();
+        recalcLightningDamage();
+        if (lightningAttack.setFireInterval) {
+            lightningAttack.setFireInterval(getShardCooldown(3000));
+        }
+    }
+
     /** Recalculates packet sniffing state. */
     function recalcPacketSniffing() {
         resourceManager.setPacketSniffing(getLevel('packet_sniffing') > 0);
@@ -101,7 +126,7 @@ const upgradeDispatcher = (() => {
         shockwaveAttack.setAmplifierLevel(getLevel('shockwave_amplifier'));
         shockwaveAttack.setSeismicCrushLevel(getLevel('shockwave_seismic_crush'));
         if (shockwaveAttack.setFireInterval) {
-            shockwaveAttack.setFireInterval(3000 * getGlobalCooldownMultiplier());
+            shockwaveAttack.setFireInterval(getShardCooldown(3000));
         }
     }
 
@@ -112,7 +137,7 @@ const upgradeDispatcher = (() => {
             aperture: getLevel('laser_aperture'),
             disintegration: getLevel('laser_disintegration'),
             twin: getLevel('laser_twin_beams'),
-            cooldownMultiplier: getGlobalCooldownMultiplier()
+            cooldownMultiplier: getShardCooldown(4000) / 4000
         });
     }
 
@@ -123,34 +148,34 @@ const upgradeDispatcher = (() => {
             volley: getLevel('artillery_volley'),
             firstStrike: getLevel('artillery_first_strike'),
             stun: getLevel('artillery_stun'),
-            cooldownMultiplier: getGlobalCooldownMultiplier()
+            cooldownMultiplier: getShardCooldown(6000) / 6000
         });
     }
 
     /** Recalculates scythe stats from upgrade nodes. */
     function recalcScytheStats() {
         if (typeof scytheAttack === 'undefined') return;
-        
+
         const harvestLv = getLevel('scythe_harvest');
         const lethalityLv = getLevel('scythe_lethality');
 
-        scytheAttack.setDamage(20); 
+        scytheAttack.setDamage(20);
         scytheAttack.setHarvestLevel(harvestLv);
         scytheAttack.setLethalityLevel(lethalityLv);
-        scytheAttack.setFireInterval(2000 * getGlobalCooldownMultiplier());
+        scytheAttack.setFireInterval(getShardCooldown(2000));
     }
 
     /** Recalculates sword stats from upgrade nodes. */
     function recalcSwordStats() {
         if (typeof swordAttack === 'undefined') return;
-        
+
         const lungeLv = getLevel('sword_lunge');
         const flurryLv = getLevel('sword_flurry');
-        
+
         if (swordAttack.setDamage) swordAttack.setDamage(25);
         if (swordAttack.setLungeLevel) swordAttack.setLungeLevel(lungeLv);
         if (swordAttack.setFlurryLevel) swordAttack.setFlurryLevel(flurryLv);
-        if (swordAttack.setFireInterval) swordAttack.setFireInterval(2000 * getGlobalCooldownMultiplier());
+        if (swordAttack.setFireInterval) swordAttack.setFireInterval(getShardCooldown(2000));
     }
 
     /** Recalculates threat response healing on boss spawn. */
@@ -207,11 +232,7 @@ const upgradeDispatcher = (() => {
             recalcBombDamage();
         }
         if (typeof lightningAttack !== 'undefined') {
-            recalcLightningChains();
-            recalcLightningDamage();
-            if (lightningAttack.setFireInterval) {
-                lightningAttack.setFireInterval(3000 * getGlobalCooldownMultiplier());
-            }
+            recalcLightningStats();
         }
         if (typeof shockwaveAttack !== 'undefined') {
             recalcShockwaveStats();
@@ -241,6 +262,19 @@ const upgradeDispatcher = (() => {
         messageBus.publish('statsRecalculated');
     }
 
+    if (typeof messageBus !== 'undefined') {
+        messageBus.subscribe('healthChanged', () => {
+            if (getLevel('stress_calibration') > 0) {
+                recalcLaser();
+                recalcArtillery();
+                recalcScytheStats();
+                recalcSwordStats();
+                recalcShockwaveStats();
+                recalcLightningStats();
+            }
+        });
+    }
+
     return {
         getLevel,
         recalcEverything,
@@ -251,6 +285,7 @@ const upgradeDispatcher = (() => {
         recalcPulseCharges,
         recalcLightningChains,
         recalcLightningDamage,
+        recalcLightningStats,
         recalcPacketSniffing,
         recalcShockwaveStats,
         recalcThreatResponse,

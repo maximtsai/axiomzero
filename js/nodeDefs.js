@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed', 'volatile_cache', 'peak_traffic'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed', 'volatile_cache', 'peak_traffic', 'emergency_overclock'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -406,7 +406,7 @@ const NODE_DEFS = [
         parents: ['bomb_2'],
         childIds: ['restore_point', 'placeholder_duo_4', 'sword', 'scythe'],
         treeX: gridX(-5.5),
-        treeY: gridY(2),
+        treeY: gridY(2.0),
         effect: function () { },
     },
     {
@@ -423,7 +423,7 @@ const NODE_DEFS = [
         parents: ['backup_server'],
         childIds: [],
         treeX: gridX(-6.5),
-        treeY: gridY(2),
+        treeY: gridY(2.5),
         effect: function () { },
     },
     {
@@ -700,8 +700,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['threat_response', 'bypass'],
         childIds: ['backup_server', 'packet_sniffing', 'lethal_explosive'],
-        treeX: gridX(-4),
-        treeY: gridY(2.0),
+        treeX: gridX(-3.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcBombUses();
         },
@@ -719,8 +719,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['bomb_2'],
         childIds: [],
-        treeX: gridX(-5),
-        treeY: gridY(1.0),
+        treeX: gridX(-4),
+        treeY: gridY(1),
         effect: function () {
             upgradeDispatcher.recalcBombDamage();
         },
@@ -756,9 +756,9 @@ const NODE_DEFS = [
         baseCost: 200,
         costType: 'data',
         costScaling: 'static',
-        parents: ['emergency_overclock'],
+        parents: ['failsafe'],
         childIds: ['bomb_2'],
-        treeX: gridX(-3.0),
+        treeX: gridX(-2.5),
         treeY: gridY(2.5),
         effect: function () {
             // Logic integrated into gameInit.js listeners
@@ -966,7 +966,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['reveal_map'],
-        childIds: ['emergency_overclock', 'armor'],
+        childIds: ['failsafe', 'armor'],
         treeX: gridX(-1.5),
         treeY: gridY(4),
         effect: function () { },
@@ -993,6 +993,23 @@ const NODE_DEFS = [
         },
     },
     {
+        id: 'failsafe',
+        name: t('nodes', 'failsafe.name'),
+        icon: 'Skillicon14_05.png',
+        description: t('nodes', 'failsafe.desc'),
+        popupText: t('nodes', 'failsafe.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 50,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['system_redundancy_new'],
+        childIds: ['threat_response'],
+        treeX: gridX(-2.5),
+        treeY: gridY(3.5),
+        effect: function () { },
+    },
+    {
         id: 'emergency_overclock',
         name: t('nodes', 'emergency_overclock.name'),
         icon: 'Skillicon14_05.png',
@@ -1003,10 +1020,10 @@ const NODE_DEFS = [
         baseCost: 200,
         costType: 'data',
         costScaling: 'static',
-        parents: ['system_redundancy_new'],
-        childIds: ['threat_response'],
-        treeX: gridX(-2.5),
-        treeY: gridY(3.5),
+        parents: ['cheat'],
+        childIds: [],
+        treeX: gridX(2.5),
+        treeY: gridY(-3.0),
         effect: function () {
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
@@ -1425,15 +1442,34 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['test_defenses'],
-        childIds: ['bomb_2'],
+        childIds: ['bomb_2', 'stress_calibration'],
         treeX: gridX(-3),
-        treeY: gridY(1.5),
+        treeY: gridY(1.0),
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(75);
             }
         },
         leaky: 10,
+    },
+    {
+        id: 'stress_calibration',
+        name: t('nodes', 'stress_calibration.name'),
+        icon: 'Skillicon14_08.png',
+        description: t('nodes', 'stress_calibration.desc'),
+        popupText: t('nodes', 'stress_calibration.popup'),
+        popupColor: COLORS.UTILITY,
+        maxLevel: 1,
+        baseCost: 125,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['bypass'],
+        childIds: [],
+        treeX: gridX(-2.5),
+        treeY: gridY(2),
+        effect: function () {
+            upgradeDispatcher.recalcEverything();
+        },
     },
     {
         id: 'data_compression',
@@ -1491,8 +1527,8 @@ const NODE_DEFS = [
         costScaling: 'static',
         parents: ['bomb_2'],
         childIds: [],
-        treeX: gridX(-4),
-        treeY: gridY(1),
+        treeX: gridX(-4.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcPacketSniffing();
         },

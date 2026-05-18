@@ -51,6 +51,7 @@ class TowerModel {
         const anchorHp = upgradeDispatcher.getLevel('physical_anchor') * 40;
         const farsightLv = upgradeDispatcher.getLevel('farsight');
         this.emergencyOverclockLv = upgradeDispatcher.getLevel('emergency_overclock');
+        this.failsafeLv = upgradeDispatcher.getLevel('failsafe');
 
         const systemRedundancyLv = upgradeDispatcher.getLevel('system_redundancy_new');
         const permanentHp = gameState.permanentHpBonus || 0;
@@ -104,6 +105,7 @@ class TowerModel {
         // EXP no longer resets between waves, but we capture the starting point for summary screens
         this.isInvincible = false;
         this.hasWarnedThisWave = false;
+        this.failsafeTriggered = false;
         this.bugReportAccumulator = 0;
         this.backupUsed = false;
         this.publishHealth(true);
@@ -199,6 +201,7 @@ class TowerView {
         this.breatheTween = null;
         this.deathShockwave = null;
         this.warnShockwave = null;
+        this.warnShockwave2 = null;
         this.artilleryCallTween = null;
         this.deathVisualsTimer = null;
     }
@@ -244,6 +247,10 @@ class TowerView {
 
         this.warnShockwave = PhaserScene.add.image(cx, cy, 'backgrounds', 'warnwave.png');
         this.warnShockwave.setDepth(-2).setAlpha(0);
+
+        this.warnShockwave2 = PhaserScene.add.image(cx, cy, 'backgrounds', 'warnwave.png');
+        this.warnShockwave2.setDepth(0).setAlpha(0);
+        helper.setBlendMode(this.warnShockwave2, Phaser.BlendModes.ADD);
 
         // Main tower sprite
         this.sprite = PhaserScene.add.image(cx, cy, 'player', 'tower1.png');
@@ -697,11 +704,17 @@ class TowerView {
             this.warnShockwave.setDepth(-2).setAlpha(1);
             helper.setBlendMode(this.warnShockwave, Phaser.BlendModes.ADD);
         }
+        if (!this.warnShockwave2) {
+            this.warnShockwave2 = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'backgrounds', 'warnwave.png');
+            this.warnShockwave2.setDepth(0).setAlpha(1);
+            helper.setBlendMode(this.warnShockwave2, Phaser.BlendModes.ADD);
+        }
         // Reset and trigger
         this.warnShockwave.setVisible(true).setAlpha(startAlpha).setScale(0.25);
+        this.warnShockwave2.setVisible(true).setAlpha(startAlpha * 0.2).setScale(0.25);
 
         PhaserScene.tweens.add({
-            targets: this.warnShockwave,
+            targets: [this.warnShockwave, this.warnShockwave2],
             scale: endScale,
             duration: duration,
             ease: 'Cubic.easeOut'
@@ -709,6 +722,13 @@ class TowerView {
 
         PhaserScene.tweens.add({
             targets: this.warnShockwave,
+            alpha: 0,
+            duration: duration,
+            ease: 'Cubic.easeOut',
+        });
+
+        PhaserScene.tweens.add({
+            targets: this.warnShockwave2,
             alpha: 0,
             duration: duration,
             ease: 'Cubic.easeOut',
@@ -947,16 +967,43 @@ const tower = (() => {
 
             // Critical Health Warning Check
             const overclockLv = model.emergencyOverclockLv || 0;
-            const threshold = overclockLv > 0 ? 0.50 : 0.20;
+            const repulsionLv = model.failsafeLv || 0;
+            const threshold = (overclockLv > 0 || repulsionLv > 0) ? 0.50 : 0.20;
             const thresholdValue = (model.maxHealth * threshold) + 0.1;
 
             if (!model.hasWarnedThisWave && model.health <= thresholdValue) {
                 model.hasWarnedThisWave = true;
-                if (overclockLv > 0) {
-                    view.playWarnShockwave(750, 1.2, 3.3);
+                if (overclockLv > 0 || repulsionLv > 0) {
+                    view.playWarnShockwave(750, 1.5, 7);
                 } else {
                     view.playWarnShockwave();
                 }
+
+                if (repulsionLv > 0 && !model.failsafeTriggered) {
+                    model.failsafeTriggered = true;
+                    if (typeof enemyManager !== 'undefined') {
+                        const pushbackRange = 800;
+                        const pushbackAmount = 125;
+                        if (typeof timeManager !== 'undefined') {
+                            setTimeout(() => {
+                                timeManager.setTempPause(175, 0.5);
+                            }, 75)
+                        }
+                        const nearby = enemyManager.getEnemiesInRange(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, pushbackRange);
+                        for (let i = 0; i < nearby.length; i++) {
+                            const enemy = nearby[i];
+                            if (enemy) {
+                                if (enemy.model) {
+                                    enemy.model.pushback = pushbackAmount;
+                                }
+                                if (typeof enemy.forceSlow === 'function') {
+                                    enemy.forceSlow(0.2, 0.2);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Optional: slow down zoom shake slightly to emphasize core hit
                 zoomShake(1.015);
 

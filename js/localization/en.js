@@ -69,6 +69,7 @@ window.TRANSLATIONS.en = {
 
         clock_speed: { name: 'CLOCK SPEED', desc: '[color=#8FD9F8]-5%[/color] core attack cooldown per level', popup: '-5% COOLDOWN' },
         emergency_overclock: { name: 'EMERGENCY OVERCLOCK', desc: 'Core attack speed is [color=#8FD9F8]DOUBLED[/color] when below [color=#ff5555]50%[/color] health.', popup: 'EMERGENCY OVERCLOCK' },
+        failsafe: { name: 'FAILSAFE', desc: 'When health falls below [color=#ff5555]50%[/color], release an EMP that pushes back nearby enemies.', popup: 'FAILSAFE TRIGGERED' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]40%[/color] chance to fire an extra core attack', popup: 'PRISMATIC ARRAY' },
         reveal_map: { name: 'REVEAL MAP', desc: 'Peek a little further into the unknown', popup: ' ' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "COMBAT TEST" button for practice', popup: 'SANDBOX UNLOCKED' },
@@ -101,6 +102,7 @@ window.TRANSLATIONS.en = {
         global_backdoor: { name: 'GLOBAL BACKDOOR', desc: 'Reduce [color=cyan]DATA[/color] cost of ALL nodes by [color=#8FD9F8]30[/color].', popup: 'UNAUTHORIZED ACCESS' },
         financial_takeover: { name: 'FINANCIAL TAKEOVER', desc: 'Gain access to the global financial override interface.', popup: 'TAKEOVER INTERFACE ENABLED' },
         volatile_cache: { name: 'VOLATILE CACHE', desc: 'Deal [color=#8FD9F8]+5% Damage[/color] for every [color=red]Memory Leak[/color] node owned.', popup: 'SYSTEM VOLATILITY INCREASED' },
+        stress_calibration: { name: 'STRESS CALIBRATION', desc: 'Shard abilities have their cooldowns decreased by [color=#8FD9F8]50%[/color] when below [color=#ff5555]50%[/color] health.', popup: 'STRESS CALIBRATION ACTIVE' },
 
         laser: { name: 'LASER', desc: 'Fires orbiting beam that pierces through enemies', popup: 'LASER ACTIVE' },
         artillery: { name: 'ARTILLERY', desc: 'Fires large AOE artillery blast every [color=#8FD9F8]6s[/color] at random enemy', popup: 'ARTILLERY ACTIVE' },

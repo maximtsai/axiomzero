@@ -1296,8 +1296,6 @@ class Node {
 
         const draggableGroup = upgradeTree.getDraggableGroup();
 
-        console.log(parentsLeft);
-        console.log(this);
         if (shouldShowIndicators && parentsLeft > 1) {
             // Show ghost 2
             if (!this.ghost2Sprite) {
