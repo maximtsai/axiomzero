@@ -188,7 +188,7 @@ window.TRANSLATIONS.en = {
         laser_aperture: { name: 'APERTURE', desc: 'Greatly increases beam width', popup: 'BEAM AMPLIFIED' },
         laser_twin_beams: { name: 'TWIN BEAMS', desc: 'You now fire two lasers', popup: 'TWIN BEAMS ACTIVE' },
         artillery_volley: { name: 'TRIPLE VOLLEY', desc: 'Fire [color=#8FD9F8]+2[/color] additional artillery strikes', popup: 'TRIPLE VOLLEY' },
-        artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+10[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'FIRST STRIKE' },
+        artillery_first_strike: { name: 'FIRST STRIKE', desc: 'Artillery deals [color=#8FD9F8]+20[/color] damage per lvl to enemies above [color=#8FD9F8]80%[/color] HP', popup: 'FIRST STRIKE' },
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#8FD9F8]15%[/color] HP', popup: 'ZERO-DAY ACTIVE' },
         direct_extraction: { name: 'DIRECT EXTRACTION', desc: 'Cursor kills grant [color=cyan]+1 extra DATA[/color]', popup: 'DIRECT EXTRACTION' },

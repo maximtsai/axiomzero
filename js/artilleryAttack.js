@@ -5,7 +5,7 @@
 class ArtilleryAttackModel {
     constructor() {
         this.FIRE_INTERVAL = 6000; // 6 seconds
-        this.BASE_DAMAGE = 30;
+        this.BASE_DAMAGE = 20;
         this.BASE_SIZE = 432; // px — damage area side length (square) (Increased by 20% from 360)
 
         this.active = false;  // true when combat phase AND node purchased
@@ -390,11 +390,11 @@ const artilleryAttack = (() => {
                 const enemy = hits[i];
                 let damage = model.BASE_DAMAGE;
 
-                // FIRST STRIKE logic: +10 damage per level to enemies above 80% HP
+                // FIRST STRIKE logic: +20 damage per level to enemies above 80% HP
                 if (model.firstStrikeLevel > 0) {
                     const healthPct = enemy.model.health / enemy.model.maxHealth;
                     if (healthPct > 0.8) {
-                        damage += 10 * model.firstStrikeLevel;
+                        damage += 20 * model.firstStrikeLevel;
                     }
                 }
 
