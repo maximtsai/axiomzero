@@ -775,33 +775,7 @@ const NODE_DEFS = [
         treeY: gridY(2.125), // Mid-point adjustment (non-clean)
         effect: function () { },
     },
-    // â”€â”€ Tier 1 Duo-Box: Lightning Weapon & Shockwave Weapon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    {
-        id: 'lightning_weapon',
-        name: t('nodes', 'lightning_weapon.name'),
-        icon: 'Skillicon14_33.png',
-        description: t('nodes', 'lightning_weapon.desc'),
-        popupText: t('nodes', 'lightning_weapon.popup'),
-        popupColor: COLORS.COMBAT,
-        maxLevel: 1,
-        baseCost: 1,
-        costType: 'shard',
-        costScaling: 'static',
-        costStep: 0,
-        parents: ['automated_defense'],
-        childIds: ['lightning_chain', 'lightning_static_charge'],
-        isDuoBox: true,
-        isLeftDuo: true,
-        duoBoxTier: 1,
-        shardId: 'lightning_weapon',
-        duoSiblingId: 'shockwave_weapon',
-        treeX: gridX(0) - DUO_OFFSET, // Symmetric Duo offset (standardized)
-        treeY: gridY(2.5),
-        effect: function () {
-            lightningAttack.unlock();
-            shockwaveAttack.lock();
-        },
-    },
+    // ── Tier 1 Duo-Box: Shockwave Weapon & Lightning Weapon ──────────────
     {
         id: 'shockwave_weapon',
         name: t('nodes', 'shockwave_weapon.name'),
@@ -817,14 +791,40 @@ const NODE_DEFS = [
         parents: ['automated_defense'],
         childIds: ['shockwave_amplifier', 'shockwave_seismic_crush'],
         isDuoBox: true,
+        isLeftDuo: true,
         duoBoxTier: 1,
         shardId: 'shockwave_weapon',
         duoSiblingId: 'lightning_weapon',
-        treeX: gridX(0) + DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeX: gridX(0) - DUO_OFFSET, // Symmetric Duo offset (standardized)
         treeY: gridY(2.5),
         effect: function () {
             shockwaveAttack.unlock();
             lightningAttack.lock();
+        },
+    },
+    {
+        id: 'lightning_weapon',
+        name: t('nodes', 'lightning_weapon.name'),
+        icon: 'Skillicon14_33.png',
+        description: t('nodes', 'lightning_weapon.desc'),
+        popupText: t('nodes', 'lightning_weapon.popup'),
+        popupColor: COLORS.COMBAT,
+        maxLevel: 1,
+        baseCost: 1,
+        costType: 'shard',
+        costScaling: 'static',
+        costStep: 0,
+        parents: ['automated_defense'],
+        childIds: ['lightning_chain', 'lightning_static_charge'],
+        isDuoBox: true,
+        duoBoxTier: 1,
+        shardId: 'lightning_weapon',
+        duoSiblingId: 'shockwave_weapon',
+        treeX: gridX(0) + DUO_OFFSET, // Symmetric Duo offset (standardized)
+        treeY: gridY(2.5),
+        effect: function () {
+            lightningAttack.unlock();
+            shockwaveAttack.lock();
         },
     },
     {
@@ -842,7 +842,7 @@ const NODE_DEFS = [
         parents: ['lightning_weapon'],
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(-1.5),
+        treeX: gridX(1.5),
         treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcLightningChains();
@@ -863,7 +863,7 @@ const NODE_DEFS = [
         parents: ['lightning_weapon'],
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(-1.5),
+        treeX: gridX(1.5),
         treeY: gridY(3),
         effect: function () {
             upgradeDispatcher.recalcLightningDamage();
@@ -884,7 +884,7 @@ const NODE_DEFS = [
         parents: ['shockwave_weapon'],
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(1.5),
+        treeX: gridX(-1.5),
         treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();
@@ -905,7 +905,7 @@ const NODE_DEFS = [
         parents: ['shockwave_weapon'],
         childIds: [],
         isDuoChild: true,
-        treeX: gridX(1.5),
+        treeX: gridX(-1.5),
         treeY: gridY(3),
         effect: function () {
             upgradeDispatcher.recalcShockwaveStats();

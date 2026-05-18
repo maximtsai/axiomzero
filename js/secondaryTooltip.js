@@ -66,17 +66,42 @@ const secondaryTooltip = (() => {
         if (!container) init();
         _clearTweens();
 
+        const isBig = (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont);
+        const titleSize = isBig ? 27 : 24;
+        const bodySize = isBig ? 25 : 22;
+
+        const currWidth = isBig ? 325 : 285;
+        const padding = 10;
+
+        // Dynamically update word wrapping on body text
+        const wrapW = currWidth - (padding * 2);
+        if (bodyT.setWrapWidth) {
+            bodyT.setWrapWidth(wrapW);
+        } else if (bodyT.setWordWrapWidth) {
+            bodyT.setWordWrapWidth(wrapW);
+        }
+
+        titleT.setFontSize(titleSize + 'px');
+        bodyT.setFontSize(bodySize + 'px');
+
         titleT.setText(title.toUpperCase());
         bodyT.setText(body);
 
+        // Dynamically align text elements to the new width
+        titleT.x = -currWidth / 2 + padding;
+        bodyT.x = -currWidth / 2 + padding;
+
+        // Dynamically adjust body Y offset based on title height
+        bodyT.y = titleT.y + titleT.height + 4;
+
         // Calculate total height based on body text
         const totalHeight = bodyT.y + bodyT.height + 10;
-        bg.setDisplaySize(width, totalHeight);
-        bgEdges.setSize(width + 42, totalHeight + 42); // Match edge offset scaling
+        bg.setDisplaySize(currWidth, totalHeight);
+        bgEdges.setSize(currWidth + 42, totalHeight + 42); // Match edge offset scaling
         bgEdges.y = -21;
 
         // Position relative to main tooltip
-        const offsetX = (side === 'right' ? 1 : -1) * (width / 2 + 10);
+        const offsetX = (side === 'right' ? 1 : -1) * (currWidth / 2 + 10);
         container.setPosition(x + offsetX, y);
         container.setVisible(true);
 

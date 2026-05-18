@@ -69,7 +69,7 @@ window.TRANSLATIONS.en = {
 
         clock_speed: { name: 'CLOCK SPEED', desc: '[color=#8FD9F8]-5%[/color] core attack cooldown per level', popup: '-5% COOLDOWN' },
         emergency_overclock: { name: 'EMERGENCY OVERCLOCK', desc: 'Core attack speed is [color=#8FD9F8]DOUBLED[/color] when below [color=#ff5555]50%[/color] health.', popup: 'EMERGENCY OVERCLOCK' },
-        failsafe: { name: 'FAILSAFE', desc: 'When health falls below [color=#ff5555]50%[/color], release an EMP that pushes back nearby enemies.', popup: 'FAILSAFE TRIGGERED' },
+        failsafe: { name: 'FAILSAFE', desc: 'When health falls below [color=#ff5555]50%[/color], release an EMP that pushes back enemies.', popup: 'FAILSAFE TRIGGERED' },
         prismatic_array: { name: 'PRISMATIC ARRAY', desc: '[color=#8FD9F8]40%[/color] chance to fire an extra core attack', popup: 'PRISMATIC ARRAY' },
         reveal_map: { name: 'REVEAL MAP', desc: 'Peek a little further into the unknown', popup: ' ' },
         test_defenses: { name: 'SANDBOX MODE', desc: 'Unlock the "COMBAT TEST" button for practice', popup: 'SANDBOX UNLOCKED' },
