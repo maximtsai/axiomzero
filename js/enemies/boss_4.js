@@ -184,7 +184,7 @@ class Boss4 extends Boss {
     }
 
     activate(x, y, scale = 1.0, config = {}) {
-        const bossHealth = 1000;
+        const bossHealth = 1050;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
@@ -360,7 +360,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: targetX2,
             y: targetY2,
-            duration: 1600,
+            duration: 1000,
             ease: 'Back.easeIn',
             easeParams: [3],
             onComplete: () => {
@@ -422,10 +422,12 @@ class Boss4 extends Boss {
 
         const sourceX = this.model.x;
         const sourceY = this.model.y;
-
+        if (typeof audio !== 'undefined') {
+            audio.play('deep_crush', 1.0);
+        }
         setTimeout(() => {
             if (typeof tower !== 'undefined' && tower.isAlive()) {
-                tower.takeDamage(20, sourceX, sourceY);
+                tower.takeDamage(24, sourceX, sourceY);
             }
             if (typeof cameraManager !== 'undefined') {
                 cameraManager.shake(800, 0.02);
@@ -493,7 +495,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: this.model.arrivalTargetX,
             y: this.model.arrivalTargetY,
-            duration: 7500,
+            duration: 7200,
             ease: 'Cubic.easeInOut',
             onComplete: () => {
                 // Fix 1: Guard onComplete
@@ -513,7 +515,7 @@ class Boss4 extends Boss {
             targets: this.model,
             x: targetX,
             y: targetY,
-            duration: 100,
+            duration: 10,
             ease: 'Linear',
             onComplete: () => {
                 // Fix 1: Guard onComplete
@@ -525,7 +527,7 @@ class Boss4 extends Boss {
 
     checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 15) {
         const baseR = (this.model.size !== undefined ? this.model.size : sizeFallback);
-        
+
         // Short side (X axis) is 70% of size
         const reachX = (baseR * 0.7) * radiusRatio + extraRadius;
         // Long side (Y axis) is 100% of size (tall perfectly straight rectangle)

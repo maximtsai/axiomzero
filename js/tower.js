@@ -1010,7 +1010,7 @@ const tower = (() => {
     function getDamage(isBoss = false) {
         let dmg = model.damage;
         if (upgradeDispatcher.getLevel('peak_performance') > 0 && model.maxHealth > 0 && (model.health / model.maxHealth) > 0.895) {
-            dmg += 5;
+            dmg += 4;
         }
         if (upgradeDispatcher.getLevel('parallel_processing') > 0) {
             dmg += 2;

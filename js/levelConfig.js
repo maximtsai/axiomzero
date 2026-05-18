@@ -96,8 +96,8 @@ const LEVEL_CONFIG = {
         speedMultiplier: 1,
     },
     4: {
-        spawnInterval: 475, // ms between regular spawns (base)
-        lateSpawnInterval: 525,
+        spawnInterval: 450, // ms between regular spawns (base)
+        lateSpawnInterval: 475,
         initialWeights: {
             basic: 1,
             exploder: 0,
@@ -111,8 +111,8 @@ const LEVEL_CONFIG = {
             protector: 0.05
         },
         lateWeights: {
-            shooter: 0.1,
-            swarmer: 0.12,
+            shooter: 0.12,
+            swarmer: 0.05,
             exploder: 0,
             heavy: 0.25,
             fast: 0,

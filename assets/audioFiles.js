@@ -57,4 +57,5 @@ const audioFiles = [
     { name: 'glitch_medium', src: 'audio/glitch_medium.mp3' },
     { name: 'click2', src: 'audio/click2.mp3' },
     { name: 'sizzle', src: 'audio/sizzle.mp3' },
+    { name: 'deep_crush', src: 'audio/deep_crush.mp3' },
 ];
