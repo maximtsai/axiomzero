@@ -213,7 +213,7 @@ window.TRANSLATIONS.en = {
         crescendo: { name: 'CRESCENDO', desc: 'Resonance attacks gain [color=#8FD9F8]+100%[/color] size', popup: 'AMPLIFIED' },
         hijack: { name: 'HIJACK', desc: 'Resonance kills convert enemies into homing missiles', popup: 'SYSTEM HIJACKED' },
         recursion: { name: 'RECURSION', desc: 'Hijack missiles can spawn more missiles on kill', popup: 'RECURSIVE LOOP' },
-        root_access: { name: 'ROOT ACCESS', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color]', popup: 'ROOT ACCESS GRANTED' },
+        proxy_routing: { name: 'PROXY ROUTING', desc: 'Reduces all enemy damage by [color=#8FD9F8]20%[/color]', popup: 'PROXY ROUTING ENABLED' },
         peak_performance: { name: 'PEAK PERFORMANCE', desc: '[color=#8FD9F8]+5[/color] core damage while above [color=#8FD9F8]90%[/color] health', popup: '+5 CORE DAMAGE' },
         data_mining: { name: 'DATA MINING', desc: 'Core attacks extract [color=#8FD9F8]20%[/color] of damage as [color=cyan]DATA[/color] from Bosses', popup: 'DATA MINING INITIALIZED' },
         parallel_processing: { name: 'PARALLEL PROCESSING', desc: '[color=#8FD9F8]+2[/color] Core damage\n[color=#8FD9F8]+2[/color] Cursor damage', popup: 'PROCESSING CAPABILITIES SYNCED' },

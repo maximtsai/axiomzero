@@ -11,6 +11,9 @@ class Boss5Model extends BossModel {
         this.bossId = 'boss5';
         this.staggering = false;
         this.staggerPhaseComplete = false;
+        this.slamTimer = 0;
+        this.isSlamming = false;
+        this.slamDamage = 0;
     }
 
     getSpawnDistanceOffset() {
@@ -181,12 +184,12 @@ class Boss5 extends Boss {
     }
 
     activate(x, y, scaleFactor = 1.0) {
-        // Base boss health for Boss 5 is 900 (5x Boss 1's 180)
-        const bossHealth = 1000;
+        // Base boss health for Boss 5 is 1500 (modified per request)
+        const bossHealth = 1500;
 
         super.activate(x, y, {
             maxHealth: bossHealth,
-            damage: GAME_CONSTANTS.ENEMY_BASE_DAMAGE * 4,
+            damage: 0, // 0 contact damage
             selfDamage: 0,
             speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.66,
             initialSpeedMult: this.model.initialSpeedMult,
@@ -196,10 +199,165 @@ class Boss5 extends Boss {
 
         this.model.staggering = false;
         this.model.staggerPhaseComplete = false;
+        this.model.slamTimer = 0;
+        this.model.isSlamming = false;
+        this.model.slamDamage = 15;
 
         PhaserScene.time.delayedCall(1000, () => {
             messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'boss_5_name') });
         });
+    }
+
+    deactivate() {
+        super.deactivate();
+        this._stopSlamAnimation();
+    }
+
+    update(dt) {
+        const m = this.model;
+        if (!m.alive) return;
+
+        // Process model updates (burn ticks, stun timers, hitstop, speed ramp)
+        const tickAmt = m.update(dt);
+        if (tickAmt > 0 && typeof enemyManager !== 'undefined') {
+            enemyManager.damageEnemy(this, tickAmt, 'burn');
+        }
+
+        this.view.updateHPCrop(m.getHealthPct());
+        this.view.update(dt, m);
+
+        if (m.isSlamming) {
+            // Sync all body, glow, and pulse elements to the tweened body position
+            this.view.syncPosition(this.view.img.x, this.view.img.y);
+            this.view.setRotation(m.baseRotation);
+            return;
+        }
+
+        // Sync position and face the tower only when not slamming
+        this.view.syncPosition(m.x, m.y);
+        this.view.setRotation(m.baseRotation);
+
+        if (m.slamTimer > 0) {
+            m.slamTimer -= dt * 1000;
+        }
+
+        const tPos = tower.getPosition();
+        if (!tPos) return;
+
+        const dx = tPos.x - m.x;
+        const dy = tPos.y - m.y;
+        const distSq = dx * dx + dy * dy;
+
+        const contactR2 = m.contactR2;
+
+        if (distSq <= contactR2) {
+            m.isAttacking = true;
+            m.vx = 0;
+            m.vy = 0;
+
+            if (m.slamTimer <= 0 && !m.staggering) {
+                this._performSlam(dx, dy);
+            }
+        } else {
+            m.isAttacking = false;
+            if (!m.stunned && !m.staggering) {
+                m.aimAt(tPos.x, tPos.y);
+            }
+        }
+    }
+
+    _performSlam(dx, dy) {
+        const m = this.model;
+        const v = this.view;
+        if (!m.alive || m.staggering) return;
+
+        m.isSlamming = true;
+        const angle = Math.atan2(dy, dx);
+
+        // Wind-up: pull back 36 pixels over 750ms
+        const backDist = 36;
+        const backX = -Math.cos(angle) * backDist;
+        const backY = -Math.sin(angle) * backDist;
+
+        v.syncPosition(m.x, m.y);
+
+        PhaserScene.tweens.add({
+            targets: [v.img, v.hpImg],
+            x: m.x + backX,
+            y: m.y + backY,
+            duration: 750,
+            ease: 'Cubic.easeOut',
+            onComplete: () => {
+                if (!m.alive || m.staggering) {
+                    m.isSlamming = false;
+                    return;
+                }
+
+                // Slam forward: lunge duration 150ms
+                PhaserScene.tweens.add({
+                    targets: [v.img, v.hpImg],
+                    x: m.x,
+                    y: m.y,
+                    duration: 150,
+                    ease: 'Quart.easeIn',
+                    onComplete: () => {
+                        if (!m.alive || m.staggering) {
+                            m.isSlamming = false;
+                            return;
+                        }
+
+                        // Deal damage
+                        tower.takeDamage(m.slamDamage, m.x, m.y);
+
+                        if (typeof cameraManager !== 'undefined') {
+                            cameraManager.shake(400, 0.03);
+                        }
+
+                        // Hit stop: pause at peak lunge for 200ms before bounce back
+                        PhaserScene.time.delayedCall(200, () => {
+                            if (!m.alive || m.staggering) {
+                                m.isSlamming = false;
+                                return;
+                            }
+
+                            // Bounce back: bounce distance 8 pixels over 250ms
+                            const bounceDist = 8;
+                            const bx = -Math.cos(angle) * bounceDist;
+                            const by = -Math.sin(angle) * bounceDist;
+
+                            PhaserScene.tweens.add({
+                                targets: [v.img, v.hpImg],
+                                x: m.x + bx,
+                                y: m.y + by,
+                                duration: 250,
+                                ease: 'Cubic.easeOut',
+                                onComplete: () => {
+                                    if (!m.alive || m.staggering) {
+                                        m.isSlamming = false;
+                                        return;
+                                    }
+                                    m.isSlamming = false;
+                                    m.slamTimer = 3000; // 3s cooldown
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    _stopSlamAnimation() {
+        const v = this.view;
+        if (typeof PhaserScene !== 'undefined' && v) {
+            PhaserScene.tweens.killTweensOf([v.img, v.hpImg]);
+        }
+    }
+
+    checkCollision(px, py, radiusRatio = 1.0, extraRadius = 0, sizeFallback = 15) {
+        const baseR = (this.model.size !== undefined ? this.model.size : sizeFallback);
+        const reach = baseR * radiusRatio + extraRadius;
+        return (Math.abs(px - this.model.x) <= reach && Math.abs(py - this.model.y) <= reach);
     }
 
     // ── Option C: Pre-death stagger ──────────────────────────────────────────
@@ -227,6 +385,9 @@ class Boss5 extends Boss {
     _startStagger() {
         const v = this.view;
         const m = this.model;
+
+        this._stopSlamAnimation();
+        m.isSlamming = false;
 
         // Stop pulse effects immediately
         if (v.pulseTimer) {

@@ -77,8 +77,8 @@ class TowerModel {
         const fiberBonus = upgradeDispatcher.getLevel('fiber_optics') > 0 ? 0.9 : 1.0;
         this.attackCooldown = GAME_CONSTANTS.TOWER_ATTACK_COOLDOWN * (1 - 0.05 * clockSpeedLv) * fiberBonus;
 
-        // Root Access damage reduction
-        this.damageReceivedMultiplier = upgradeDispatcher.getLevel('root_access') >= 1 ? 0.9 : 1.0;
+        // Proxy Routing damage reduction
+        this.damageReceivedMultiplier = upgradeDispatcher.getLevel('proxy_routing') >= 1 ? 0.9 : 1.0;
 
         // Volatile Cache synergy: +5% damage per active Memory Leak node
         if (upgradeDispatcher.getLevel('volatile_cache') > 0) {
