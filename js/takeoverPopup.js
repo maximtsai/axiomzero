@@ -27,13 +27,16 @@ const takeoverPopup = (() => {
             upgradeTree.assignToUICamera(blocker);
         }
 
-        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', 650, 450, 64, 64, 64, 64);
+        const width = 950;
+        const height = 600;
+
+        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
         bg.setDepth(depth + 1).setScrollFactor(0);
         elements.push(bg);
 
         // Title
         const titleText = t('ui', 'takeover') || 'TAKEOVER';
-        const title = PhaserScene.add.text(cx, cy - 180, titleText, {
+        const title = PhaserScene.add.text(cx, cy - height / 2 + 45, titleText, {
             fontFamily: 'Quantico-Bold',
             fontSize: '42px',
             color: '#FFD700',
@@ -50,18 +53,29 @@ const takeoverPopup = (() => {
         }).setOrigin(0.5).setDepth(depth + 2).setScrollFactor(0);
         elements.push(body);
 
-        // CLOSE Button
-        const backText = t('ui', 'back') || 'BACK';
-        const closeBtn = new Button({
-            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + 160 },
-            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + 160 },
-            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + 160 },
+        // TOP-RIGHT Close Button (similar to Options Popup)
+        const topCloseBtn = new Button({
+            normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: cx + width / 2 - 35, y: cy - height / 2 + 36 },
+            hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
+            press: { ref: 'close_button_press.png', atlas: 'buttons' },
             onMouseUp: hide
         });
-        closeBtn.setScale(0.75).addText(backText, { fontFamily: 'Quantico-Bold', fontSize: '28px', color: '#ffffff' });
-        closeBtn.setDepth(depth + 2);
-        closeBtn.setScrollFactor(0);
-        elements.push(closeBtn);
+        topCloseBtn.setDepth(depth + 3);
+        topCloseBtn.setScrollFactor(0);
+        elements.push(topCloseBtn);
+
+        // BOTTOM BACK Button
+        const backText = t('ui', 'back') || 'BACK';
+        const backBtn = new Button({
+            normal: { ref: helper.isMobileDevice() ? 'button_normal_mobile.png' : 'button_normal.png', atlas: 'buttons', x: cx, y: cy + height / 2 - 65 },
+            hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx, y: cy + height / 2 - 65 },
+            press: { ref: 'button_press.png', atlas: 'buttons', x: cx, y: cy + height / 2 - 65 },
+            onMouseUp: hide
+        });
+        backBtn.setScale(0.75).addText(backText, { fontFamily: 'Quantico-Bold', fontSize: '28px', color: '#ffffff' });
+        backBtn.setDepth(depth + 2);
+        backBtn.setScrollFactor(0);
+        elements.push(backBtn);
 
         if (typeof upgradeTree !== 'undefined' && upgradeTree.getUICamera()) {
             upgradeTree.assignToUICamera(overlay);

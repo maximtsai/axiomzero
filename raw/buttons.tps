@@ -619,6 +619,7 @@
                 <false/>
             </struct>
             <key type="filename">buttons/increment_press.png</key>
+            <key type="filename">buttons/node_ghost_2.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

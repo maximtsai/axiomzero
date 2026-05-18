@@ -32,8 +32,8 @@ const upgradeTree = (() => {
     let maxPulsePool = null;
     let insightMaxPulsePool = null;
     let insightBuyPulsePool = null;
-    let discoveryPulsePool = null;
     let maxParticlePool = null;
+    let indicatorPulsePool = null;
 
     let zoomInBtn = null;
     let zoomOutBtn = null;
@@ -886,13 +886,7 @@ const upgradeTree = (() => {
             return img;
         }, resetFn, 10).preAllocate(4);
 
-        discoveryPulsePool = new ObjectPool(() => {
-            const slice = helper.createNineSlice(0, 0, 'buttons', 'buy_pulse.png', 80, 80, 25, 25, 25, 25);
-            slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
-            slice.setScrollFactor(0);
-            draggableGroup.add(slice);
-            return slice;
-        }, resetFn, 10).preAllocate(2);
+
 
         maxParticlePool = new ObjectPool(() => {
             const p = PhaserScene.add.image(0, 0, 'buttons', 'max_particle.png');
@@ -901,6 +895,20 @@ const upgradeTree = (() => {
             assignToUICamera(p); // Put in uiCamera directly without virtual group attachment
             return p;
         }, resetFn, 100);
+
+        indicatorPulsePool = new ObjectPool(() => {
+            const slice = helper.createNineSlice(0, 0, 'buttons', 'indicator_pulse_thin.png', 80, 80, 16, 16, 16, 16);
+            slice.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 3);
+            slice.setScrollFactor(0);
+            draggableGroup.add(slice);
+            return slice;
+        }, resetFn, {
+            maxSize: 10,
+            destroy: (slice) => {
+                if (draggableGroup) draggableGroup.removeChild(slice);
+                slice.destroy();
+            }
+        }).preAllocate(1);
     }
 
     function playPurchasePulse(x, y, isMaxed, isInsight = false) {
@@ -935,14 +943,7 @@ const upgradeTree = (() => {
         }
     }
 
-    function playDiscoveryPulse(x, y) {
-        if (!discoveryPulsePool) return;
-        // Sonar effect: Large, slow, cyan pulse
-        const pulse = _animatePulse(x, y, discoveryPulsePool, 60, 480, 1400, 0.8);
-        if (pulse) {
-            // helper.setTint(pulse, 0x00ffff);
-        }
-    }
+
 
     /** Creates 20 spread-out particles for a maxed node effect using a mempool. */
     /** Creates spread-out particles for a maxed node effect using a mempool. 
@@ -1823,7 +1824,7 @@ const upgradeTree = (() => {
         nodes[id].revealedManually = revealedManually;
         nodes[id].refreshState();
         nodes[id].playRevealAnimation();
-        playDiscoveryPulse(nodes[id].x, nodes[id].y);
+        playIndicatorPulse(nodes[id].btn.x, nodes[id].btn.y);
         _refreshAllNodes();
         treeLineManager.updateLines();
 
@@ -1986,5 +1987,15 @@ const upgradeTree = (() => {
         return dragDistanceTotal > 30;
     }
 
-    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showTakeoverButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, playDiscoveryPulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera };
+    function playIndicatorPulse(x, y) {
+        if (!indicatorPulsePool) return;
+        const treeScale = draggableGroup ? draggableGroup.getScale() : 1;
+        _animatePulse(x, y, indicatorPulsePool, 65 * treeScale, 115 * treeScale, 1100, 0.8);
+    }
+
+    function getIndicatorPulsePool() {
+        return indicatorPulsePool;
+    }
+
+    return { init, show, hide, getNode, spawnNode, unlockNode, revealNode, showGhostNode, isVisible, isFullView, isDraggingSignificant, onEnterUpgradePhase, onExitUpgradePhase, _revealChildren, _refreshAllNodes, _calculateContentBounds, _showDeployButton, _showTakeoverButton, _onSlideRightClicked, _onSlideLeftClicked, setNavigationEnabled, SLIDE_DURATION, playPurchasePulse, getGroup, getDraggableGroup, getTreeNodeCamera, getUICamera, getTreeMaskContainer, setHoverLabel, preTransitionHide, revealCoordText, setUIAlpha, assignToUICamera, playIndicatorPulse, getIndicatorPulsePool };
 })();

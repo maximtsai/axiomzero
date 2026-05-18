@@ -112,6 +112,11 @@ class Node {
 
         // Mobile two-tap purchase guard
         this._tapConfirmed = false;
+
+        // Ghost indicators
+        this.ghost2Sprite = null;
+        this.ghost2Visible = false;
+        this.ghost2Tween = null;
     }
 
     static selectIndicator = null;
@@ -370,6 +375,10 @@ class Node {
             this.lastGhostAlpha = currentGhostAlpha;
             this.lastRevealedManually = this.revealedManually;
             this._updateVisual();
+        }
+
+        if (this.state === NODE_STATE.GHOST) {
+            this._updateGhostIndicators();
         }
 
         // 4. Recursively refresh children ONLY if something meaningful changed that could affect them.
@@ -952,6 +961,7 @@ class Node {
         }
 
         this._applyVisualDepth();
+        this._updateGhostIndicators();
 
         // Store current sprite for next state change
         this.lastSpriteRef = currentSpriteRef;
@@ -1220,6 +1230,9 @@ class Node {
         if (this.label) {
             this.label.setVisible(vis && !isHidden);
         }
+        if (this.ghost2Sprite) {
+            this.ghost2Sprite.setVisible(vis && !isHidden && isGhost && this.requiresMaxParent);
+        }
 
         // Duo backing visibility is managed by its own logic
         if (this.duoBackingSprite && this._isDuoBackingOwner) {
@@ -1237,6 +1250,7 @@ class Node {
 
     destroy() {
         this._hideHover();
+        this._cleanupGhostIndicators();
         if (this.fadeoutTween) {
             this.fadeoutTween.stop();
             this.fadeoutTween = null;
@@ -1257,6 +1271,107 @@ class Node {
         if (this.btn) { this.btn.destroy(); this.btn = null; }
         if (this.iconSprite) { this.iconSprite.destroy(); this.iconSprite = null; }
         if (this.glowSprite) { this.glowSprite.destroy(); this.glowSprite = null; }
+    }
+
+    _updateGhostIndicators() {
+        if (!this.requiresMaxParent) {
+            return;
+        }
+        const wasGhost2Visible = this.ghost2Visible;
+
+        // If not in a GHOST state or doesn't require max parents, clean up everything and exit
+        const isGhost = this.state === NODE_STATE.GHOST;
+        const shouldShowIndicators = isGhost && this.requiresMaxParent && !this.isPlaceholder;
+
+        let parentsLeft = 0;
+        if (shouldShowIndicators) {
+            for (let pid of this.parents) {
+                const p = upgradeTree.getNode(pid);
+                const satisfied = p && p.branchActive && (p.isDuoBox ? this._isDuoTierPurchased(p.duoBoxTier) : (p.level >= p.maxLevel));
+                if (!satisfied) {
+                    parentsLeft++;
+                }
+            }
+        }
+
+        const draggableGroup = upgradeTree.getDraggableGroup();
+
+        console.log(parentsLeft);
+        console.log(this);
+        if (shouldShowIndicators && parentsLeft > 1) {
+            // Show ghost 2
+            if (!this.ghost2Sprite) {
+                const treeScale = draggableGroup ? draggableGroup.getScale() : 1;
+                this.ghost2Sprite = PhaserScene.add.image(this.btn.x, this.btn.y, 'buttons', 'node_ghost_2.png')
+                    .setOrigin(0.5, 0.5)
+                    .setDepth(this.btn.depth - 1)
+                    .setScrollFactor(0)
+                    .setScale(0.6 * treeScale);
+
+                if (draggableGroup) {
+                    draggableGroup.add(this.ghost2Sprite);
+                }
+
+                if (this.ghost2Tween) {
+                    this.ghost2Tween.stop();
+                }
+
+                const scaleObj = { scale: 0.6 };
+                this.ghost2Tween = PhaserScene.tweens.add({
+                    targets: scaleObj,
+                    scale: 1.0,
+                    duration: 350,
+                    ease: 'Cubic.easeOut',
+                    onUpdate: () => {
+                        if (this.ghost2Sprite && this.ghost2Sprite.scene && draggableGroup) {
+                            draggableGroup.setChildLocalScale(this.ghost2Sprite, scaleObj.scale);
+                        }
+                    }
+                });
+            }
+
+            // Set alpha based on node ghost alpha
+            const alpha = this.revealedManually ? 1.0 : this.getGhostAlpha();
+            this.ghost2Sprite.setAlpha(alpha);
+            this.ghost2Visible = true;
+
+        } else {
+            console.log("ghost 2");
+            // Hide ghost 2
+            if (this.ghost2Sprite) {
+                if (draggableGroup) draggableGroup.removeChild(this.ghost2Sprite);
+                this.ghost2Sprite.destroy();
+                this.ghost2Sprite = null;
+            }
+            if (this.ghost2Tween) {
+                this.ghost2Tween.stop();
+                this.ghost2Tween = null;
+            }
+            this.ghost2Visible = false;
+
+            // Trigger single pulse ONLY if it was previously visible and now turned invisible
+            if (wasGhost2Visible) {
+                if (upgradeTree && upgradeTree.playIndicatorPulse) {
+                    upgradeTree.playIndicatorPulse(this.btn.x, this.btn.y);
+                }
+            }
+        }
+    }
+
+    _cleanupGhostIndicators() {
+        if (this.ghost2Sprite) {
+            const draggableGroup = upgradeTree.getDraggableGroup();
+            if (draggableGroup) {
+                draggableGroup.removeChild(this.ghost2Sprite);
+            }
+            this.ghost2Sprite.destroy();
+            this.ghost2Sprite = null;
+        }
+        if (this.ghost2Tween) {
+            this.ghost2Tween.stop();
+            this.ghost2Tween = null;
+        }
+        this.ghost2Visible = false;
     }
 
     _playDuoPulse(scaleMult = 1.0, durationOverride = 1100, scaleOverride = 1.6) {
@@ -1286,6 +1401,7 @@ class Node {
         if (this.iconSprite) this.iconSprite.setPosition(iconX, visualY);
         if (this.fadeoutSprite) this.fadeoutSprite.setPosition(visualX, visualY);
         if (this.glowSprite) this.glowSprite.setPosition(visualX, visualY);
+        if (this.ghost2Sprite) this.ghost2Sprite.setPosition(visualX, visualY);
 
         // Crucial: Update the VirtualGroup's recorded offsets so it doesn't snap back
         if (group) {

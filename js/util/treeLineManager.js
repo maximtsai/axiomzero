@@ -86,7 +86,7 @@ const treeLineManager = (() => {
         // node_line is 100px wide, so scale X by distance/100 and Y by 1.5 for thickness.
         line.setScale((distance / 100) * gs, 1.5 * gs);
         line.setRotation(angle);
-        line.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 1);
+        line.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE);
         line.setScrollFactor(0);
 
         // Use setData for metadata to prevent collision with Phaser properties
