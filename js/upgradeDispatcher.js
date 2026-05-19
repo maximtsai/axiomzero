@@ -193,7 +193,7 @@ const upgradeDispatcher = (() => {
     /** Recalculates combat shield stats. */
     function recalcCombatShield() {
         if (typeof combatShield !== 'undefined') {
-            combatShield.maxHealth = 20 + getLevel('combat_shield_hp') * 10;
+            combatShield.maxHealth = 10 + getLevel('combat_shield_hp') * 10;
         }
     }
 

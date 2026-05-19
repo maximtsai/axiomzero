@@ -10,8 +10,8 @@ const bossManager = (() => {
     let minibossAlive = false;    // is the current miniboss still alive?
     let bossSpawned = false;
     let bossAlive = false;
-    let boss3ShareTimer = 1.0;    // countdown for Phalanx HP sharing
-    let boss3Shards = [];         // Track shards to avoid daily activeEnemies.filter call
+    let bosslegionShareTimer = 1.0;    // countdown for Phalanx HP sharing
+    let bosslegionShards = [];         // Track shards to avoid daily activeEnemies.filter call
 
     function init(manager) {
         _enemyManager = manager;
@@ -23,8 +23,8 @@ const bossManager = (() => {
         minibossAlive = false;
         bossSpawned = false;
         bossAlive = false;
-        boss3ShareTimer = 1.0;
-        boss3Shards = [];
+        bosslegionShareTimer = 1.0;
+        bosslegionShards = [];
     }
 
     // ── spawning ─────────────────────────────────────────────────────────────
@@ -179,7 +179,7 @@ const bossManager = (() => {
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 
-        if (config.mainBoss === 'Boss3') {
+        if (config.mainBoss === 'BossLegion') {
             const layout = Class.getSpawnLayout(sx, sy, angle, distance);
             layout.forEach(item => {
                 let wx = item.x;
@@ -219,9 +219,9 @@ const bossManager = (() => {
             warningImg.setOrigin(0, 0.5);
 
             const isBoss5 = config.mainBoss === 'Boss5';
-            const isBoss3 = config.mainBoss === 'Boss3';
+            const isBossLegion = config.mainBoss === 'BossLegion';
             let wScale = isBoss5 ? 1.4 : 1.0;
-            wScale = isBoss3 ? 0.75 : 1.0;
+            wScale = isBossLegion ? 0.75 : 1.0;
             warningImg.setScale(1.5 * wScale, 1.4 * wScale);
             warningImg.setRotation(Math.atan2(GAME_CONSTANTS.halfHeight - sy, GAME_CONSTANTS.halfWidth - sx));
             warningImg.setAlpha(0);
@@ -251,7 +251,7 @@ const bossManager = (() => {
 
             _enemyManager.registerEnemy(b);
             spawnedUnits.push(b);
-            if (config.mainBoss === 'Boss3') boss3Shards.push(b);
+            if (config.mainBoss === 'BossLegion') bosslegionShards.push(b);
         });
 
         if (Class.postSpawn) Class.postSpawn(spawnedUnits);
@@ -280,18 +280,18 @@ const bossManager = (() => {
                 debugLog('Miniboss defeated');
             }
         } else if (wasBoss && !skipBossEffects) {
-            // Support for multi-sharded bosses like Boss 3
-            if (enemy.model.type === 'boss3') {
-                const bIdx = boss3Shards.indexOf(enemy);
+            // Support for multi-sharded bosses like Boss Legion
+            if (enemy.model.type === 'bosslegion') {
+                const bIdx = bosslegionShards.indexOf(enemy);
                 if (bIdx !== -1) {
-                    boss3Shards.splice(bIdx, 1);
+                    bosslegionShards.splice(bIdx, 1);
                 }
             }
 
             const remaining = _enemyManager.getActiveEnemies().filter(e => e.model.isBoss && e !== enemy && e.model.alive);
             if (remaining.length === 0) {
                 bossAlive = false;
-                boss3Shards = [];
+                bosslegionShards = [];
                 messageBus.publish('bossDefeated', ex, ey);
                 debugLog('Boss defeated');
             }
@@ -310,13 +310,13 @@ const bossManager = (() => {
     // ── per-frame update ─────────────────────────────────────────────────────
 
     function update(dt, activeEnemies) {
-        // Boss 3 (Phalanx) HP sharing logic
-        if (bossAlive && boss3Shards.length > 0) {
-            boss3ShareTimer -= dt;
-            if (boss3ShareTimer <= 0) {
-                boss3ShareTimer = 3.0;
-                boss3Shards.forEach(p => p.model.calculateSiphon());
-                boss3Shards.forEach(p => {
+        // Boss Legion (Phalanx) HP sharing logic
+        if (bossAlive && bosslegionShards.length > 0) {
+            bosslegionShareTimer -= dt;
+            if (bosslegionShareTimer <= 0) {
+                bosslegionShareTimer = 3.0;
+                bosslegionShards.forEach(p => p.model.calculateSiphon());
+                bosslegionShards.forEach(p => {
                     const healAmount = p.model.applySiphon();
                     if (healAmount >= 7) {
                         _triggerHealVisuals(p, healAmount);
@@ -375,8 +375,8 @@ const bossManager = (() => {
             'Miniboss4': typeof Miniboss4 !== 'undefined' ? Miniboss4 : null,
             'BossSquare': typeof BossSquare !== 'undefined' ? BossSquare : null,
             'BossCircle': typeof BossCircle !== 'undefined' ? BossCircle : null,
-            'Boss2': typeof Boss2 !== 'undefined' ? Boss2 : null,
-            'Boss3': typeof Boss3 !== 'undefined' ? Boss3 : null,
+            'BossDefender': typeof BossDefender !== 'undefined' ? BossDefender : null,
+            'BossLegion': typeof BossLegion !== 'undefined' ? BossLegion : null,
             'Boss4': typeof Boss4 !== 'undefined' ? Boss4 : null,
             'Boss5': typeof Boss5 !== 'undefined' ? Boss5 : null
         };

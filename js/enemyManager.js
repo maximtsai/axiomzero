@@ -49,8 +49,8 @@ const enemyManager = (() => {
     let clumpFocusAngles = [];
     const _queryResults = []; // Shared array for AOE queries
 
-    // Boss 3 specifically
-    // boss3ShareTimer now managed by bossManager
+    // Boss Legion specifically
+    // bosslegionShareTimer now managed by bossManager
 
     let testEnemyCount = 0;
     const _damageTextOptions = {
@@ -105,8 +105,8 @@ const enemyManager = (() => {
 
     function _buildPools() {
         // Shared reset function for all enemies
-        const resetFn = (e) => { 
-            e.deactivate(); 
+        const resetFn = (e) => {
+            e.deactivate();
             e._hasChained = false;
         };
 
@@ -122,7 +122,7 @@ const enemyManager = (() => {
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
         pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
         pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
-        pools.boss3 = new ObjectPool(() => new Boss3(), resetFn, 8).preAllocate(8);
+        pools.bosslegion = new ObjectPool(() => new BossLegion(), resetFn, 8).preAllocate(8);
         pools.test = new ObjectPool(() => new TestEnemy(), resetFn, 20).preAllocate(10);
     }
 
@@ -669,17 +669,17 @@ const enemyManager = (() => {
         }
 
         if (died && !enemy.model.isGhosting) {
-            // Handle multi-part bosses (Phalanx/Boss3)
-            if (enemy.model.type === 'boss3') {
-                let aliveBoss3Count = 0;
+            // Handle multi-part bosses (Phalanx/BossLegion)
+            if (enemy.model.type === 'bosslegion') {
+                let aliveBosslegionCount = 0;
                 for (let j = 0; j < activeEnemies.length; j++) {
                     const e = activeEnemies[j];
-                    if (e && e.model.type === 'boss3' && e.model.alive) {
-                        aliveBoss3Count++;
-                        if (aliveBoss3Count > 1) break;
+                    if (e && e.model.type === 'bosslegion' && e.model.alive) {
+                        aliveBosslegionCount++;
+                        if (aliveBosslegionCount > 1) break;
                     }
                 }
-                if (aliveBoss3Count > 1) {
+                if (aliveBosslegionCount > 1) {
                     _killEnemy(enemy, true, wasResonance, source);
                     return;
                 }
@@ -894,10 +894,14 @@ const enemyManager = (() => {
                     trueSpawnInterval *= 1.75;
                 }
 
-                // Farming mode speedup (cumulative 0.9x each minute)
+                // Farming mode speedup (cumulative 0.92x each minute)
                 if (waveIsFarming && !(typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses)) {
-                    trueSpawnInterval *= Math.pow(0.9, 1 + Math.floor(roundTimeElapsed / 60));
+                    trueSpawnInterval *= Math.pow(0.92, 1 + Math.floor(roundTimeElapsed / 60));
                 }
+
+                // Increase spawn rate by 2% per scale interval (lowering spawn interval/frequency)
+                const currentScaleLevel = Math.floor(roundTimeElapsed / GAME_CONSTANTS.ENEMY_SCALE_INTERVAL);
+                trueSpawnInterval /= Math.pow(GAME_CONSTANTS.ENEMY_SPAWN_SCALE_RATE, currentScaleLevel);
 
                 if (spawnTimer >= trueSpawnInterval) {
                     spawnTimer -= trueSpawnInterval;

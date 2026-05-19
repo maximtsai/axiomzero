@@ -24,7 +24,7 @@ const nodeTooltip = (() => {
     let currentNode = null;
     let lastShowTime = 0;
     let lastGlitchTime = 0;
-    const bgWidth = helper.isMobileDevice() ? 398 : 378;
+    const bgWidth = helper.isMobileDevice() ? 388 : 368;
     const depth = GAME_CONSTANTS.DEPTH_POPUPS;
 
     function _formatValue(node, val) {
@@ -48,7 +48,7 @@ const nodeTooltip = (() => {
         if (!node || !costT) return null;
 
         let iconStr = '◈';
-        if (node.costType === 'shard') iconStr = '◆';
+        if (node.costType === 'shard') iconStr = '♦';
         else if (node.costType === 'insight') iconStr = '◐';
         else if (node.costType === 'coin') iconStr = 'ⓒ';
         else if (node.costType === 'processor') iconStr = '■';
@@ -137,7 +137,7 @@ const nodeTooltip = (() => {
 
         nameT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Bold',
-            fontSize: '26px', // Initial size doesn't matter much as it is now set in show()
+            fontSize: '24px', // Initial size doesn't matter much as it is now set in show()
             color: '#ffffff',
             align: 'left',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -146,10 +146,10 @@ const nodeTooltip = (() => {
 
         descT = PhaserScene.add.rexBBCodeText(0, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '26px',
+            fontSize: '24px',
             color: '#ffffff',
             align: 'center',
-            wrap: { mode: 'word', width: helper.isMobileDevice() ? 375 : 355 },
+            wrap: { mode: 'word', width: helper.isMobileDevice() ? 365 : 345 },
             lineSpacing: 5,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5, 0);
@@ -157,7 +157,7 @@ const nodeTooltip = (() => {
 
         lvT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Regular',
-            fontSize: '26px',
+            fontSize: '24px',
             color: '#d0d0d0',
             align: 'center',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -167,7 +167,7 @@ const nodeTooltip = (() => {
         goldBg = PhaserScene.add.image(0, 0, 'buttons', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'Quantico-Bold',
-            fontSize: '26px',
+            fontSize: '24px',
             color: '#ffffff',
             align: 'center',
         }).setOrigin(0.5, 0.5);
@@ -176,7 +176,7 @@ const nodeTooltip = (() => {
         costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Bold',
-            fontSize: '26px',
+            fontSize: '24px',
             color: '#ffffff',
             align: 'center',
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
@@ -186,7 +186,7 @@ const nodeTooltip = (() => {
         leakBg = PhaserScene.add.image(0, 0, 'buttons', 'memory_leak_bg.png');
         leakT = PhaserScene.add.text(0, 0, 'MEMORY LEAK', {
             fontFamily: 'Quantico-Bold',
-            fontSize: '26px',
+            fontSize: '24px',
             color: '#000000',
             align: 'center',
         }).setOrigin(0.5, 0.5);
@@ -231,11 +231,12 @@ const nodeTooltip = (() => {
         container.setVisible(true);
 
         const isBigValue = gameState.settings.bigFont;
-        const baseW = helper.isMobileDevice() ? 398 : 378;
+        const baseW = helper.isMobileDevice() ? 388 : 368;
         let currentBgWidth = (isBigValue ? baseW + 50 : baseW) + (node.tooltipExtraWidth || 0);
 
-        const baseFontSize = isBigValue ? 30 : 26;
-        const nameFontSize = isBigValue ? 36 : 32;
+        const mobileOffset = helper.isMobileDevice() ? 3 : 0;
+        const baseFontSize = (isBigValue ? 28 : 24) + mobileOffset;
+        const nameFontSize = (isBigValue ? 34 : 30) + mobileOffset;
 
         nameT.setFontSize(nameFontSize + 'px');
         nameT.setText(node.name.toUpperCase());
@@ -254,6 +255,7 @@ const nodeTooltip = (() => {
         lvT.setFontSize(baseFontSize + 'px');
         maxT.setFontSize(baseFontSize + 'px');
         costT.setFontSize(baseFontSize + 'px');
+        leakT.setFontSize(baseFontSize + 'px');
 
         // Update wrap width for description
         if (descT.setWrapWidth) {
@@ -279,7 +281,7 @@ const nodeTooltip = (() => {
         bg.setOrigin(0.5, 0);
         bgEdges.setOrigin(0.5, 0);
 
-        const rowSpacing = isBigValue ? 10 : 7;
+        const rowSpacing = isBigValue ? 9 : 6;
         const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);
 
@@ -310,19 +312,19 @@ const nodeTooltip = (() => {
         } else {
             lvT.setVisible(true);
             lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 2);
-            currentY += lvT.height + 7;
+            currentY += lvT.height + 6;
         }
 
         // Row 3.5: Memory Leak Warning
         if (node.leaky > 0) {
-            leakBg.setVisible(true).setPosition(0, currentY + 16);
-            leakT.setVisible(true).setPosition(0, currentY + 16);
+            leakBg.setVisible(true).setPosition(0, currentY + 15);
+            leakT.setVisible(true).setPosition(0, currentY + 15);
 
             let leakStr = 'DATA LEAK';
             leakStr = `+${_formatValue(node, node.leaky)} ${leakStr}`;
             leakT.setText(leakStr);
 
-            currentY += 39;
+            currentY += 38;
         } else {
             leakBg.setVisible(false);
             leakT.setVisible(false);
@@ -334,32 +336,32 @@ const nodeTooltip = (() => {
         const isSwappable = isDuoActive && !isThisNodeActive;
 
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
-            goldBg.setVisible(true).setPosition(0, currentY + 20);
-            maxT.setVisible(true).setPosition(0, currentY + 19); // was 15, moving up with others or keeping relative to background?
+            goldBg.setVisible(true).setPosition(0, currentY + 19);
+            maxT.setVisible(true).setPosition(0, currentY + 18); // was 15, moving up with others or keeping relative to background?
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : '🗹 ' + t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
-            currentY += 39;
+            currentY += 38;
         } else if (isSwappable) {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 20);
+            costBg.setVisible(true).setPosition(0, currentY + 19);
             costBg.setTexture('buttons', 'light_red_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 19);
+            costT.setVisible(true).setPosition(0, currentY + 18);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
-            currentY += 39;
+            currentY += 38;
         } else {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 20);
-            costT.setVisible(true).setPosition(0, currentY + 19);
+            costBg.setVisible(true).setPosition(0, currentY + 19);
+            costT.setVisible(true).setPosition(0, currentY + 18);
 
             let bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
 
             let iconStr, currentRes;
             if (node.costType === 'shard') {
-                iconStr = '◆';
+                iconStr = '♦';
                 currentRes = resourceManager.getShards();
                 bgPixel = 'light_red_pixel.png';
             } else if (node.costType === 'insight') {
@@ -399,7 +401,7 @@ const nodeTooltip = (() => {
             }
             costBg.setFrame(bgPixel);
 
-            currentY += 39;
+            currentY += 38;
         }
 
         const totalHeight = currentY + 4;

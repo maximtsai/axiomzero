@@ -3,8 +3,8 @@
 // Handles logarithmic scaling based on max health.
 
 const HEALTH_BAR_GAP = 14;
-const FONT_SIZE_MOBILE = 32;
-const FONT_SIZE_DESKTOP = 25;
+const FONT_SIZE_MOBILE = 31;
+const FONT_SIZE_DESKTOP = 24;
 
 class HealthBar {
     /**

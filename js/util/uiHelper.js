@@ -422,7 +422,7 @@ Object.assign(helper, {
         switch (id) {
             case 'data': return '◈';
             case 'insight': return '◐';
-            case 'shard': return '◆';
+            case 'shard': return '♦';
             case 'processor': return '■';
             case 'coin': return 'ⓒ';
             default: return '';

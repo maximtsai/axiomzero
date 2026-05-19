@@ -67,10 +67,13 @@ const secondaryTooltip = (() => {
         _clearTweens();
 
         const isBig = (typeof gameState !== 'undefined' && gameState.settings && gameState.settings.bigFont);
-        const titleSize = isBig ? 27 : 24;
-        const bodySize = isBig ? 25 : 22;
+        const isMobile = (typeof helper !== 'undefined' && helper.isMobileDevice());
+        const mobileOffset = isMobile ? 3 : 0;
+        const titleSize = (isBig ? 27 : 24) + mobileOffset;
+        const bodySize = (isBig ? 25 : 22) + mobileOffset;
 
-        const currWidth = isBig ? 325 : 285;
+        const widthOffset = isMobile ? 14 : 0;
+        const currWidth = (isBig ? 325 : 285) + widthOffset;
         const padding = 10;
 
         // Dynamically update word wrapping on body text

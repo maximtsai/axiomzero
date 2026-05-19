@@ -3,7 +3,7 @@ const CURRENCY_ORDER = ['data', 'insight', 'shard', 'coin', 'processor'];
 const RESOURCE_DEFS = {
     data: { icon: 'resrc_data.png', color: '#00f5ff', scale: 1 },
     insight: { icon: 'resrc_insight.png', color: GAME_CONSTANTS.COLOR_NEUTRAL, scale: 1.06 },
-    shard: { icon: 'resrc_shard.png', color: '#ffb300', scale: 1.06 },
+    shard: { icon: 'resrc_shard.png', color: '#FD7B8B', scale: 1.06 },
     coin: { icon: 'resrc_coin.png', color: '#00ff66', scale: 1.06 },
     processor: { icon: 'resrc_processor.png', color: '#ffe600', scale: 1.06 }
 };
@@ -16,8 +16,8 @@ const CONFIG = {
     TOOLTIP_WIDTH: 410,
     BTN_SCALE: helper.isMobileDevice() ? 1.14 : 1.09,
     ICON_MOBILE_Y_OFFSET: 2,
-    FONT_SIZE_MOBILE: 32,
-    FONT_SIZE_DESKTOP: 25
+    FONT_SIZE_MOBILE: 31,
+    FONT_SIZE_DESKTOP: 24
 };
 
 class CurrencyCluster {

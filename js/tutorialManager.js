@@ -131,7 +131,7 @@ const tutorialManager = (() => {
         if (condition) {
             const msg = t('tutorial', 'unlock_shards');
             const x = 400;
-            const y = 625;
+            const y = 620;
             _createTutorialPopup(msg, x, y, true, '#ffaaaa', '#ff0000', 'duo_shard', '38px', 7000);
         }
     }

@@ -1,0 +1,554 @@
+// js/enemies/boss_legion.js — Boss Legion - A 6-piece fragmented boss.
+// Each piece is a "Data Shard" that shares HP with its neighbors.
+
+
+const BOSS_LEGION_PIECE_STATES = {
+    TRAVEL: 'travel',
+    IDLE: 'idle'
+};
+
+const bosslegionHealPacketPool = new ObjectPool(
+    () => {
+        const spr = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_heal_packet.png');
+        spr.setVisible(false);
+        spr.setActive(false);
+        helper.setBlendMode(spr, Phaser.BlendModes.ADD);
+        return spr;
+    },
+    (spr) => {
+        spr.setVisible(false);
+        spr.setActive(false);
+        spr.setAlpha(1);
+        spr.setScale(1);
+    },
+    6
+);
+
+const playBosslegionHealPacket = (fx, fy, tx, ty, depth) => {
+    const spr = bosslegionHealPacketPool.get();
+    if (!spr) return;
+
+    const dx = tx - fx;
+    const dy = ty - fy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const ratio = dist > 0 ? 30 / dist : 0;
+
+    const startX = fx + dx * ratio;
+    const startY = fy + dy * ratio;
+    const endX = tx - dx * ratio;
+    const endY = ty - dy * ratio;
+
+    spr.setPosition(startX, startY).setDepth(depth).setVisible(true).setActive(true).setAlpha(1);
+
+    PhaserScene.tweens.add({
+        targets: spr,
+        x: endX, y: endY,
+        duration: 750,
+        ease: 'Cubic.easeInOut'
+    });
+    PhaserScene.tweens.add({
+        targets: spr,
+        alpha: 0,
+        duration: 760,
+        ease: 'Cubic.easeIn',
+        onComplete: () => {
+            bosslegionHealPacketPool.release(spr);
+        }
+    });
+};
+
+class BossLegionPieceModel extends BossModel {
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
+        this.size = 58;
+        this.bossId = 'bosslegion';
+        this.type = 'bosslegion';
+        this.state = BOSS_LEGION_PIECE_STATES.TRAVEL;
+
+        this.neighbors = []; // Up to 2 adjacent BossLegion instances
+        this.pendingHPChange = 0;
+
+        this.initialSpeedMult = 18.0;
+        this.rampDuration = 2.8;
+        this.siphonPulse = 0; // Remains for view sync, but will be purely visual
+        this.hasPostUpdate = true;
+    }
+
+    activate(x, y, config = {}) {
+        super.activate(x, y, config);
+        this.state = BOSS_LEGION_PIECE_STATES.TRAVEL;
+        this.pendingHPChange = 0;
+        this.siphonPulse = 0;
+        this.neighbors = config.neighbors || [];
+    }
+
+    update(dt) {
+        const burnTick = super.update(dt);
+        if (!this.alive) return burnTick;
+
+        // shareHP calculation logic
+        this.shareTimer -= dt;
+        if (this.shareTimer <= 0) {
+            this.shareTimer = 1.0;
+        }
+
+        const centerX = GAME_CONSTANTS.halfWidth;
+        const centerY = GAME_CONSTANTS.halfHeight;
+        const dx = this.x - centerX;
+        const dy = this.y - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (this.state === BOSS_LEGION_PIECE_STATES.TRAVEL) {
+            if (dist < 264) {
+                this.state = BOSS_LEGION_PIECE_STATES.IDLE;
+                this.vx = 0;
+                this.vy = 0;
+            }
+        } else if (this.state === BOSS_LEGION_PIECE_STATES.IDLE) {
+            this.vx = 0;
+            this.vy = 0;
+        }
+
+        return burnTick;
+    }
+
+    // Post-update hook for HP sharing
+    postUpdate(dt) {
+        if (this.siphonPulse > 0) {
+            this.siphonPulse -= dt * 2.5;
+            if (this.siphonPulse < 0) this.siphonPulse = 0;
+        }
+    }
+
+    calculateSiphon() {
+        if (!this.alive || this.health <= 0) return;
+
+        for (const neighbor of this.neighbors) {
+            if (neighbor && neighbor.model && neighbor.model.alive) {
+                const myHP = this.health;
+                const otherHP = neighbor.model.health;
+
+                // Health flows from high HP to low HP
+                if (myHP > otherHP) {
+                    const diff = myHP - otherHP;
+                    const giveAmount = diff / 4;
+
+                    // Only give if neighbor is still alive/viable
+                    if (otherHP > 0) {
+                        this.pendingHPChange -= giveAmount;
+                        neighbor.model.pendingHPChange += giveAmount;
+
+                        playBosslegionHealPacket(this.x, this.y, neighbor.model.x, neighbor.model.y, GAME_CONSTANTS.DEPTH_ENEMIES - 3);
+                    }
+                }
+            }
+        }
+    }
+
+    applySiphon() {
+        if (!this.alive) {
+            this.pendingHPChange = 0;
+            return;
+        }
+        if (Math.abs(this.pendingHPChange) > 0.01) {
+            this.siphonPulse = 1.0;
+        }
+        this.health += this.pendingHPChange;
+        if (this.health > this.maxHealth) this.health = this.maxHealth;
+        // Don't die from siphoning alone (though the math shouldn't allow it to go below lower HP)
+        if (this.health < 0.1) this.health = 0.1;
+
+        const netChange = this.pendingHPChange;
+        this.pendingHPChange = 0;
+        return netChange;
+    }
+}
+
+let _sharedAttackSprite = null;
+let _sharedAttackActive = false;
+let _sharedAttackCooldown = 0;
+let _sharedAttackBuildUp = 0;
+let _sharedAttackSfx = null;
+let _sharedAttackDamage = 7;
+
+// Cleanup static assets on phase change/game reset
+if (typeof messageBus !== 'undefined') {
+    // Wait until assets are loaded and PhaserScene exists before pre-allocating
+    messageBus.subscribeOnce('assetsLoaded', () => {
+        bosslegionHealPacketPool.preAllocate(6);
+    });
+    messageBus.subscribe('phaseChanged', (phase) => {
+        if (phase !== GAME_CONSTANTS.PHASE_COMBAT) {
+            _sharedAttackActive = false;
+            _sharedAttackCooldown = 0;
+            _sharedAttackBuildUp = 0;
+            _sharedAttackDamage = 7;
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
+            if (_sharedAttackSprite) {
+                _sharedAttackSprite.setVisible(false);
+                PhaserScene.tweens.killTweensOf(_sharedAttackSprite);
+            }
+        }
+    });
+}
+
+class BossLegionPieceView extends EnemyView {
+    constructor() {
+        super('bosses', 'boss_3.png', 'boss_3_hp.png', GAME_CONSTANTS.DEPTH_ENEMIES - 2);
+
+        this.lineSprite = PhaserScene.add.image(0, 0, 'pixels', 'pink_pixel.png');
+        this.lineSprite.setDepth(GAME_CONSTANTS.DEPTH_ENEMIES - 3);
+        this.lineSprite.setOrigin(0, 0.5);
+        this.lineSprite.setVisible(false);
+
+        // Pulse effect (pink themed for Legion)
+        this.pulse = helper.createNineSlice(0, 0, 'bosses', 'pink_pulse.png', 120, 120, 65, 65, 65, 65);
+        this.pulse.setTint(0xff66cc);
+        this.pulse.setDepth(this.img.depth - 1);
+        this.pulse.setVisible(false);
+        this.pulse.setAlpha(0);
+
+        // Charge sprite
+        this.chargeSprite = PhaserScene.add.image(0, 0, 'bosses', 'boss_3_charge.png');
+        this.chargeSprite.setDepth(this.img.depth + 1);
+        this.chargeSprite.setScale(1);
+        this.chargeSprite.setAlpha(0);
+        this.chargeSprite.setVisible(false);
+    }
+
+    activate(x, y, rotation, cannotRotate) {
+        super.activate(x, y, rotation, cannotRotate);
+        this.lineSprite.setVisible(false);
+        this.pulse.setVisible(true);
+        this.pulse.setPosition(x, y);
+        this._startPulseEffect();
+
+        this.chargeSprite.setVisible(true);
+        this.chargeSprite.setPosition(x, y);
+        this.chargeSprite.setRotation(rotation);
+        this.chargeSprite.setAlpha(0);
+    }
+
+    _startPulseEffect() {
+        const playPulse = () => {
+            if (!this.pulse || !this.pulse.scene) return;
+            this.pulse.width = 100;
+            this.pulse.height = 100;
+            this.pulse.setAlpha(0.6);
+            PhaserScene.tweens.add({
+                targets: this.pulse,
+                width: 340,
+                height: 340,
+                alpha: 0,
+                duration: 1600,
+                ease: 'Cubic.easeOut'
+            });
+        };
+        playPulse();
+        this.pulseTimer = PhaserScene.time.addEvent({
+            delay: 3000,
+            callback: playPulse,
+            loop: true
+        });
+    }
+
+    update(dt, model) {
+        super.update(dt, model);
+
+        // Draw connection to the FIRST neighbor (to avoid double drawing in a ring)
+        if (model && model.alive && model.neighbors[0] && model.neighbors[0].model && model.neighbors[0].model.alive) {
+            const n = model.neighbors[0].model;
+
+            const p = model.siphonPulse || 0;
+            const alpha = 0.05 + (p * 0.5); // Slightly lowered alpha as per suggestion 2 earlier
+            const thickness = 1.5 + (p * 2.5);
+
+            const dx = n.x - model.x;
+            const dy = n.y - model.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx);
+
+            this.lineSprite.setPosition(model.x, model.y)
+                .setRotation(angle)
+                .setDisplaySize(dist, thickness)
+                .setAlpha(alpha)
+                .setVisible(true);
+        } else {
+            this.lineSprite.setVisible(false);
+        }
+    }
+
+    syncPosition(x, y) {
+        super.syncPosition(x, y);
+        if (this.pulse) this.pulse.setPosition(x, y);
+        if (this.chargeSprite) this.chargeSprite.setPosition(x, y);
+    }
+
+    deactivate() {
+        super.deactivate();
+        if (this.lineSprite) {
+            this.lineSprite.setVisible(false).setActive(false);
+        }
+        if (this.pulse) {
+            PhaserScene.tweens.killTweensOf(this.pulse);
+            this.pulse.setVisible(false).setActive(false);
+            this.pulse.setAlpha(0);
+        }
+        if (this.chargeSprite) {
+            PhaserScene.tweens.killTweensOf(this.chargeSprite);
+            this.chargeSprite.setVisible(false).setActive(false);
+            this.chargeSprite.setAlpha(0);
+        }
+        if (this.pulseTimer) {
+            this.pulseTimer.remove();
+            this.pulseTimer = null;
+        }
+    }
+
+    playChargeAnimation() {
+        if (!this.chargeSprite) return;
+        this.chargeSprite.setAlpha(0);
+    }
+
+    setChargeAlpha(alpha) {
+        if (this.chargeSprite) this.chargeSprite.setAlpha(alpha);
+    }
+}
+
+class BossLegion extends Boss {
+    constructor(levelScalingModifier = 1) {
+        super(levelScalingModifier);
+        this.model = new BossLegionPieceModel(levelScalingModifier);
+        this.view = new BossLegionPieceView();
+        this._isMaster = false;
+    }
+
+    activate(x, y, scale = 1.0, config = {}) {
+        this.model.config = config; // Persistent config for shard indexing
+        this._isMaster = false;     // Reset master status on pool reuse
+
+        super.activate(x, y, {
+            maxHealth: 333,
+            damage: 0,
+            speed: GAME_CONSTANTS.ENEMY_BASE_SPEED * 0.6,
+            initialSpeedMult: this.model.initialSpeedMult,
+            rampDuration: this.model.rampDuration,
+            size: 58,
+            ...config
+        });
+
+        // Face tower
+        const angle = Math.atan2(GAME_CONSTANTS.halfHeight - y, GAME_CONSTANTS.halfWidth - x);
+        this.setRotation(angle);
+    }
+
+    update(dt) {
+        super.update(dt);
+
+        // Core Attack orchestration
+        if (!_sharedAttackActive && _sharedAttackCooldown <= 0) {
+            // Trigger if any unit (this one) is IDLE (ready)
+            if (this.model.state === BOSS_LEGION_PIECE_STATES.IDLE) {
+                this.startGroupAttack();
+            }
+        }
+
+        if (_sharedAttackCooldown > 0) {
+            // Only update shared timers once per frame (triggered by the master shard)
+            if (this._isMaster) {
+                _sharedAttackCooldown -= dt;
+            }
+        }
+
+        // Shared view update handled in Enemy loop, but we proxy the alpha here
+        if (_sharedAttackActive) {
+            if (this._isMaster) {
+                _sharedAttackBuildUp += dt;
+                _sharedAttackCooldown = 0; // Explicit reset while charging
+            }
+
+            const b = _sharedAttackBuildUp;
+            let alpha = 0;
+
+            if (b < 0.1) {
+                alpha = (b / 0.1) * 0.5;
+            } else if (b < 0.2) {
+                alpha = 0.5 - ((b - 0.1) / 0.1) * 0.4;
+            } else if (b < 2.5) {
+                const progress = (b - 0.2) / 2.3;
+                alpha = 0.1 + (Math.pow(progress, 2) * 0.9);
+            } else {
+                alpha = 1.0;
+            }
+
+            this.view.setChargeAlpha(alpha);
+
+            if (this._isMaster && _sharedAttackBuildUp >= 2.5 && _sharedAttackActive) {
+                // Impact Phase! Handled by one shard to avoid multiple hits
+                this.finishGroupAttack();
+            }
+        } else {
+            this.view.setChargeAlpha(0);
+        }
+    }
+
+    startGroupAttack() {
+        if (_sharedAttackActive) return;
+        _sharedAttackActive = true;
+        _sharedAttackBuildUp = 0;
+        if (typeof audio !== 'undefined') {
+            _sharedAttackSfx = audio.play('power_surge', 0.85);
+        }
+
+        const tx = GAME_CONSTANTS.halfWidth;
+        const ty = GAME_CONSTANTS.halfHeight;
+
+        if (!_sharedAttackSprite) {
+            _sharedAttackSprite = PhaserScene.add.image(tx, ty, 'bosses', 'boss3_attack.png');
+            _sharedAttackSprite.setDepth(305); // Above projectiles (300)
+        }
+
+        _sharedAttackSprite.setPosition(tx, ty);
+        _sharedAttackSprite.setScale(1.03);
+        _sharedAttackSprite.setAlpha(0);
+        _sharedAttackSprite.setVisible(true);
+
+        _sharedAttackSprite.currAnim = PhaserScene.tweens.add({
+            targets: _sharedAttackSprite,
+            alpha: 0.9,
+            duration: 2500,
+            ease: 'Quad.easeIn'
+        });
+    }
+
+    finishGroupAttack() {
+        _sharedAttackActive = false;
+        _sharedAttackCooldown = 3.0;
+
+        if (_sharedAttackSprite) {
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
+            if (_sharedAttackSprite.currAnim) {
+                _sharedAttackSprite.currAnim.stop();
+            }
+            _sharedAttackSprite.setFrame('boss3_attack_thick.png');
+            _sharedAttackSprite.setScale(1.045);
+            PhaserScene.tweens.add({
+                targets: _sharedAttackSprite,
+                scaleX: 0.06,
+                scaleY: 0.06,
+                alpha: 1,
+                duration: 450,
+                ease: 'Quad.easeIn',
+                onComplete: () => {
+                    _sharedAttackSprite.setFrame('boss3_attack.png');
+                    _sharedAttackSprite.setVisible(false);
+                    if (typeof tower !== 'undefined' && tower.isAlive()) {
+                        tower.takeDamage(_sharedAttackDamage);
+                        _sharedAttackDamage += 1;
+                        if (typeof cameraManager !== 'undefined') {
+                            cameraManager.shake(300, 0.015);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    onDeath(isFinal = true) {
+        if (!isFinal) {
+            // Master reassignment if the controller shard dies
+            if (this._isMaster) {
+                const shards = enemyManager.getEnemiesByType('bosslegion');
+                const nextMaster = shards.find(s => s !== this && s.model.alive);
+                if (nextMaster) nextMaster._isMaster = true;
+            }
+
+            // Optimization: Remove ourself from the neighbor chain to keep connections and HP sharing active
+            const prev = this.model.neighbors[1];
+            const next = this.model.neighbors[0];
+            if (prev && next) {
+                prev.model.neighbors[0] = next;
+                next.model.neighbors[1] = prev;
+            }
+
+            // Shard shattered animation
+            if (typeof customEmitters !== 'undefined') {
+                const depth = (this.view && this.view.img) ? this.view.img.depth : GAME_CONSTANTS.DEPTH_ENEMIES;
+                customEmitters.playExplosionPulse(this.model.x, this.model.y, depth, 0.75, 'explosion_pulse');
+            }
+            if (typeof audio !== 'undefined') audio.play('explosion_death', 0.65);
+        } else {
+            // Core Phalanx death - cleanup group effects
+            _sharedAttackActive = false;
+            _sharedAttackBuildUp = 0;
+            if (_sharedAttackSfx) {
+                _sharedAttackSfx.stop();
+                _sharedAttackSfx = null;
+            }
+            if (_sharedAttackSprite) {
+                _sharedAttackSprite.setVisible(false);
+                PhaserScene.tweens.killTweensOf(_sharedAttackSprite);
+            }
+
+            super.onDeath(true);
+        }
+    }
+
+    setNeighbors(n1, n2) {
+        this.model.neighbors = [n1, n2];
+    }
+
+    static getSpawnLayout(sx, sy, angle, distance) {
+        const layout = [];
+        const count = 6;
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+
+        // Use a fixed orientation (ignore incoming random angle) for consistent spawning
+        const fixedAngle = 0;
+
+        for (let i = 0; i < count; i++) {
+            const shardAngle = fixedAngle + (i * (Math.PI * 2 / count));
+            const px = cx + Math.cos(shardAngle) * distance;
+            const py = cy + Math.sin(shardAngle) * distance;
+            layout.push({
+                x: px,
+                y: py,
+                angle: shardAngle,
+                config: {
+                    legionIndex: i
+                }
+            });
+        }
+        return layout;
+    }
+
+    static postSpawn(spawnedPieces) {
+        const count = spawnedPieces.length;
+        if (count > 0) {
+            spawnedPieces[0]._isMaster = true; // First spawned shard is the global timer manager
+
+            // Standard boss announcement text with a 1s delay
+            PhaserScene.time.delayedCall(1000, () => {
+                if (typeof messageBus !== 'undefined' && typeof t === 'function') {
+                    messageBus.publish('BossAnnounceText', { msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bosslegion_name') });
+                }
+                if (typeof audio !== 'undefined') {
+                    audio.play('legion_warcry', 0.9);
+                }
+            });
+        }
+
+        for (let i = 0; i < count; i++) {
+            const prev = spawnedPieces[(i + count - 1) % count];
+            const next = spawnedPieces[(i + 1) % count];
+            spawnedPieces[i].setNeighbors(next, prev);
+        }
+    }
+}

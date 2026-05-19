@@ -97,8 +97,9 @@ GAME_CONSTANTS.ENEMY_BASE_HEALTH = 6;
 GAME_CONSTANTS.ENEMY_BASE_DAMAGE = 2;
 GAME_CONSTANTS.ENEMY_BASE_SPEED = 31;    // px/sec
 GAME_CONSTANTS.ENEMY_CONTACT_RADIUS = 30;    // px — deals damage & dies at tower
-GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.08;  // Multiplicative multiplier applied every interval
+GAME_CONSTANTS.ENEMY_SCALE_RATE = 1.07;  // Multiplicative multiplier applied every interval
 GAME_CONSTANTS.ENEMY_SCALE_INTERVAL = 6; // seconds between scaling jumps
+GAME_CONSTANTS.ENEMY_SPAWN_SCALE_RATE = 1.02; // Spawn rate multiplicative multiplier applied every interval
 
 GAME_CONSTANTS.ENEMY_SIZE_BASIC = 22;
 GAME_CONSTANTS.ENEMY_SIZE_SHOOTER = 24;

@@ -115,7 +115,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['awaken'],
-        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed', 'volatile_cache', 'peak_traffic', 'emergency_overclock'],
+        childIds: ['lore_1', 'lore_2', 'lore_3', 'lore_5', 'lore_6', 'lore_7', 'lore_8', 'lore_9', 'zero_day_exploit', 'two_step_auth', 'unsecured_files', 'junk_data_2', 'completionist', 'physical_anchor', 'kernel_breaker', 'clock_speed', 'volatile_cache', 'peak_traffic'],
         treeX: gridX(0),
         treeY: gridY(-2.0),
         effect: function () {
@@ -218,13 +218,13 @@ const NODE_DEFS = [
         popupText: t('nodes', 'combat_shield.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 0,
+        baseCost: 50,
         costType: 'data',
         costScaling: 'static',
-        parents: ['placeholder_duo_4', 'data_compression'],
-        childIds: ['combat_shield_hp'],
-        treeX: gridX(-5.5),
-        treeY: gridY(5),
+        parents: ['system_redundancy_new'],
+        childIds: ['threat_response'],
+        treeX: gridX(-2.5),
+        treeY: gridY(3.5),
         effect: function () {
             combatShield.unlock();
             upgradeDispatcher.recalcCombatShield();
@@ -233,9 +233,9 @@ const NODE_DEFS = [
     {
         id: 'placeholder_duo_4',
         isPlaceholder: true,
-        parents: ['backup_server'],
+        parents: ['stress_calibration'],
         monitorsDuoTier: 4,
-        childIds: ['combat_shield'],
+        childIds: ['failsafe'],
         treeX: gridX(-5.5),
         treeY: gridY(4.0),
         effect: function () { },
@@ -251,7 +251,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['backup_server'],
+        parents: ['stress_calibration'],
         childIds: ['sword_lunge', 'sword_flurry'],
         isDuoBox: true,
         isLeftDuo: true,
@@ -319,7 +319,7 @@ const NODE_DEFS = [
         baseCost: 1,
         costType: 'shard',
         costScaling: 'static',
-        parents: ['backup_server'],
+        parents: ['stress_calibration'],
         childIds: ['scythe_harvest', 'scythe_lethality'],
         isDuoBox: true,
         duoBoxTier: 4,
@@ -384,10 +384,10 @@ const NODE_DEFS = [
         costType: 'coin',
         costScaling: 'linear',
         costStep: 1,
-        parents: ['combat_shield'],
+        parents: ['backup_server'],
         childIds: [],
-        treeX: gridX(-6.5),
-        treeY: gridY(5),
+        treeX: gridX(-7.5),
+        treeY: gridY(2),
         effect: function () {
             upgradeDispatcher.recalcCombatShield();
         },
@@ -400,13 +400,13 @@ const NODE_DEFS = [
         popupText: t('nodes', 'backup_server.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 150,
-        costType: 'data',
+        baseCost: 25,
+        costType: 'coin',
         costScaling: 'static',
-        parents: ['bomb_2'],
-        childIds: ['restore_point', 'placeholder_duo_4', 'sword', 'scythe'],
-        treeX: gridX(-5.5),
-        treeY: gridY(2.0),
+        parents: ['stress_calibration'],
+        childIds: ['combat_shield_hp'],
+        treeX: gridX(-6.5),
+        treeY: gridY(2),
         effect: function () { },
     },
     {
@@ -417,13 +417,13 @@ const NODE_DEFS = [
         popupText: t('nodes', 'restore_point.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 30,
-        costType: 'coin',
+        baseCost: 300,
+        costType: 'data',
         costScaling: 'static',
-        parents: ['backup_server'],
+        parents: ['failsafe'],
         childIds: [],
         treeX: gridX(-6.5),
-        treeY: gridY(2.5),
+        treeY: gridY(5),
         effect: function () { },
     },
     {
@@ -535,10 +535,10 @@ const NODE_DEFS = [
         popupText: t('nodes', 'integrity.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 4,
-        baseCost: 4,
+        baseCost: 6,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 8,
+        costStep: 6,
         parents: ['awaken'],
         childIds: ['bug_report'],
         treeX: gridX(-1),
@@ -699,7 +699,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['threat_response', 'bypass'],
-        childIds: ['backup_server', 'packet_sniffing', 'lethal_explosive'],
+        childIds: ['packet_sniffing', 'lethal_explosive'],
         treeX: gridX(-3.5),
         treeY: gridY(2),
         effect: function () {
@@ -753,10 +753,10 @@ const NODE_DEFS = [
         popupText: t('nodes', 'threat_response.popup'),
         popupColor: COLORS.HEALTH,
         maxLevel: 1,
-        baseCost: 200,
+        baseCost: 125,
         costType: 'data',
         costScaling: 'static',
-        parents: ['failsafe'],
+        parents: ['combat_shield'],
         childIds: ['bomb_2'],
         treeX: gridX(-2.5),
         treeY: gridY(2.5),
@@ -877,7 +877,7 @@ const NODE_DEFS = [
         popupText: t('nodes', 'shockwave_amplifier.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 1,
-        baseCost: 35,
+        baseCost: 30,
         costType: 'data',
         costScaling: 'static',
         costStep: 0,
@@ -898,10 +898,10 @@ const NODE_DEFS = [
         popupText: t('nodes', 'shockwave_seismic_crush.popup'),
         popupColor: COLORS.COMBAT,
         maxLevel: 2,
-        baseCost: 35,
+        baseCost: 30,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 20,
+        costStep: 30,
         parents: ['shockwave_weapon'],
         childIds: [],
         isDuoChild: true,
@@ -966,7 +966,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['reveal_map'],
-        childIds: ['failsafe', 'armor'],
+        childIds: ['armor', 'combat_shield'],
         treeX: gridX(-1.5),
         treeY: gridY(4),
         effect: function () { },
@@ -1000,13 +1000,13 @@ const NODE_DEFS = [
         popupText: t('nodes', 'failsafe.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 50,
+        baseCost: 100,
         costType: 'data',
         costScaling: 'static',
-        parents: ['system_redundancy_new'],
-        childIds: ['threat_response'],
-        treeX: gridX(-2.5),
-        treeY: gridY(3.5),
+        parents: ['placeholder_duo_4', 'data_compression'],
+        childIds: ['restore_point'],
+        treeX: gridX(-5.5),
+        treeY: gridY(5),
         effect: function () { },
     },
     {
@@ -1017,13 +1017,13 @@ const NODE_DEFS = [
         popupText: t('nodes', 'emergency_overclock.popup'),
         popupColor: COLORS.UTILITY,
         maxLevel: 1,
-        baseCost: 200,
-        costType: 'data',
+        baseCost: 30,
+        costType: 'coin',
         costScaling: 'static',
-        parents: ['cheat'],
+        parents: ['stress_calibration'],
         childIds: [],
-        treeX: gridX(2.5),
-        treeY: gridY(-3.0),
+        treeX: gridX(-5.5),
+        treeY: gridY(1),
         effect: function () {
             if (typeof tower !== 'undefined') {
                 tower.recalcStats();
@@ -1346,20 +1346,17 @@ const NODE_DEFS = [
                     nodeAnims.playRevealMapActivationAnimation(node, () => {
 
                         // Sequential node revelation once explosion finishes
-                        PhaserScene.time.delayedCall(250, () => {
+                        PhaserScene.time.delayedCall(300, () => {
                             upgradeTree._refreshAllNodes();
-                            PhaserScene.time.delayedCall(250, () => {
+                            PhaserScene.time.delayedCall(300, () => {
                                 upgradeTree.revealNode('repeat_exploit');
-                                PhaserScene.time.delayedCall(250, () => {
-                                    upgradeTree.revealNode('emergency_overclock');
-                                });
-                                PhaserScene.time.delayedCall(500, () => {
+                                PhaserScene.time.delayedCall(300, () => {
                                     upgradeTree.revealNode('armor');
                                 });
 
-                                PhaserScene.time.delayedCall(750, () => {
+                                PhaserScene.time.delayedCall(600, () => {
                                     upgradeTree.revealNode('diagnostic_analytics');
-                                    PhaserScene.time.delayedCall(500, () => {
+                                    PhaserScene.time.delayedCall(600, () => {
                                         upgradeTree.revealNode('access_internet');
                                     });
 
@@ -1442,7 +1439,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'static',
         parents: ['test_defenses'],
-        childIds: ['bomb_2', 'stress_calibration'],
+        childIds: ['bomb_2'],
         treeX: gridX(-3),
         treeY: gridY(1.0),
         effect: function () {
@@ -1463,10 +1460,10 @@ const NODE_DEFS = [
         baseCost: 125,
         costType: 'data',
         costScaling: 'static',
-        parents: ['bypass'],
-        childIds: [],
-        treeX: gridX(-2.5),
-        treeY: gridY(2),
+        parents: ['packet_sniffing'],
+        childIds: ['backup_server', 'placeholder_duo_4', 'sword', 'scythe', 'emergency_overclock'],
+        treeX: gridX(-5.5),
+        treeY: gridY(2.0),
         effect: function () {
             upgradeDispatcher.recalcEverything();
         },
@@ -1485,7 +1482,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['diagnostic_analytics'],
-        childIds: ['combat_shield'],
+        childIds: ['failsafe'],
         treeX: gridX(-4.5),
         treeY: gridY(5.0),
         effect: function () { },
@@ -1526,7 +1523,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['bomb_2'],
-        childIds: [],
+        childIds: ['stress_calibration'],
         treeX: gridX(-4.5),
         treeY: gridY(2),
         effect: function () {
