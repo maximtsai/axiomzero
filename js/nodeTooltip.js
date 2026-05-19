@@ -173,7 +173,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([goldBg, maxT]);
 
-        costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_green_pixel.png').setDisplaySize(bgWidth - 6, 37);
+        costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_teal_pixel.png').setDisplaySize(bgWidth - 6, 51);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Bold',
             fontSize: '24px',
@@ -236,23 +236,32 @@ const nodeTooltip = (() => {
 
         const mobileOffset = helper.isMobileDevice() ? 3 : 0;
         const baseFontSize = (isBigValue ? 28 : 24) + mobileOffset;
-        const nameFontSize = (isBigValue ? 34 : 30) + mobileOffset;
+        const nameFontSize = (isBigValue ? 36 : 32) + mobileOffset;
 
         nameT.setFontSize(nameFontSize + 'px');
         nameT.setText(node.name.toUpperCase());
 
         const iconOffset = node.icon ? 53 : 0;
-        const titleWidth = nameT.width + iconOffset;
+        let titleWidth = nameT.width + iconOffset;
+
+        if (node.isDuoBox) {
+            lvT.setVisible(false);
+        } else {
+            lvT.setVisible(true);
+            lvT.setText(`[${node.level}/${node.maxLevel}]`);
+            lvT.setFontSize((baseFontSize) + 'px');
+            lvT.setOrigin(0, 0.56);
+            titleWidth += lvT.width + 12; // 12px gap
+        }
 
         // Auto-expand if title (+ buffer) exceeds default width
-        if (titleWidth + 8 > currentBgWidth) {
-            currentBgWidth = titleWidth + 8;
+        if (titleWidth + 16 > currentBgWidth) {
+            currentBgWidth = titleWidth + 16;
         }
 
         const currentWordWrap = currentBgWidth - 25;
 
         descT.setFontSize(baseFontSize + 'px');
-        lvT.setFontSize(baseFontSize + 'px');
         maxT.setFontSize(baseFontSize + 'px');
         costT.setFontSize(baseFontSize + 'px');
         leakT.setFontSize(baseFontSize + 'px');
@@ -265,7 +274,7 @@ const nodeTooltip = (() => {
         }
 
         // Update background elements display sizes
-        const barHeight = isBigValue ? 37 : 35;
+        const barHeight = isBigValue ? 49 : 47;
         goldBg.setDisplaySize(currentBgWidth - 10, barHeight);
         costBg.setDisplaySize(currentBgWidth - 10, barHeight);
 
@@ -274,6 +283,8 @@ const nodeTooltip = (() => {
 
         if (node.isDuoBox) {
             bgEdges.setFrame('duo_hover_popup_edges.png');
+        } else if (node.state === NODE_STATE.MAXED) {
+            bgEdges.setFrame('max_hover_popup_edges.png');
         } else {
             bgEdges.setFrame('normal_hover_popup_edges.png');
         }
@@ -281,13 +292,13 @@ const nodeTooltip = (() => {
         bg.setOrigin(0.5, 0);
         bgEdges.setOrigin(0.5, 0);
 
-        const rowSpacing = isBigValue ? 9 : 6;
+        const rowSpacing = isBigValue ? 11 : 8;
         const lineSpacingValue = isBigValue ? 7 : 4;
         descT.setLineSpacing(lineSpacingValue);
 
-        let currentY = 6;
+        let currentY = 10;
 
-        // Row 1: Icon & Name
+        // Row 1: Icon & Name & Level
         const titleStartX = -titleWidth / 2 - 2;
         const centerTitleY = currentY + 19;
 
@@ -300,20 +311,16 @@ const nodeTooltip = (() => {
         }
 
         nameT.setPosition(titleStartX + iconOffset, centerTitleY);
-        currentY += 44 + rowSpacing;
+
+        if (!node.isDuoBox) {
+            lvT.setPosition(titleStartX + iconOffset + nameT.width + 12, centerTitleY);
+        }
+
+        currentY += 46 + rowSpacing;
 
         // Row 2: Description
         descT.setText(node.description).setPosition(0, currentY - 5);
         currentY += descT.height + rowSpacing;
-
-        // Row 3: Level (skip for duo-box nodes — always 1/1)
-        if (node.isDuoBox) {
-            lvT.setVisible(false);
-        } else {
-            lvT.setVisible(true);
-            lvT.setText('Lv. ' + node.level + ' / ' + node.maxLevel).setPosition(0, currentY - 2);
-            currentY += lvT.height + 6;
-        }
 
         // Row 3.5: Memory Leak Warning
         if (node.leaky > 0) {
@@ -324,7 +331,7 @@ const nodeTooltip = (() => {
             leakStr = `+${_formatValue(node, node.leaky)} ${leakStr}`;
             leakT.setText(leakStr);
 
-            currentY += 38;
+            currentY += 42;
         } else {
             leakBg.setVisible(false);
             leakT.setVisible(false);
@@ -341,23 +348,24 @@ const nodeTooltip = (() => {
             maxT.setText(isThisNodeActive ? t('tooltips', 'active') : '🗹 ' + t('tooltips', 'max'));
             costBg.setVisible(false);
             costT.setVisible(false);
-            currentY += 38;
+            currentY += 44;
         } else if (isSwappable) {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 19);
+            costBg.setVisible(true).setPosition(0, currentY + 26);
             costBg.setTexture('buttons', 'light_red_pixel.png');
-            costT.setVisible(true).setPosition(0, currentY + 18);
+            costBg.setDisplaySize(currentBgWidth - 10, barHeight);
+            costT.setVisible(true).setPosition(0, currentY + 25);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
-            currentY += 38;
+            currentY += 52;
         } else {
             goldBg.setVisible(false);
             maxT.setVisible(false);
-            costBg.setVisible(true).setPosition(0, currentY + 19);
-            costT.setVisible(true).setPosition(0, currentY + 18);
+            costBg.setVisible(true).setPosition(0, currentY + 26);
+            costT.setVisible(true).setPosition(0, currentY + 25);
 
-            let bgPixel = node.canAfford() ? 'dark_green_pixel.png' : 'dark_red_pixel.png';
+            let bgPixel = node.canAfford() ? 'dark_teal_pixel.png' : 'dark_red_pixel.png';
 
             let iconStr, currentRes;
             if (node.costType === 'shard') {
@@ -400,8 +408,9 @@ const nodeTooltip = (() => {
                 }
             }
             costBg.setFrame(bgPixel);
+            costBg.setDisplaySize(currentBgWidth - 10, barHeight);
 
-            currentY += 38;
+            currentY += 52;
         }
 
         const totalHeight = currentY + 4;
