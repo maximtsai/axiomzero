@@ -14,9 +14,9 @@ const treePopups = (() => {
         const cy = GAME_CONSTANTS.halfHeight;
         const depth = GAME_CONSTANTS.DEPTH_POPUPS + 1000;
 
-        // Default to highest unlocked level (highest boss defeated + 1), capped by max config
-        const maxLevel = Math.min((gameState.levelsDefeated || 0) + 1, getMaxConfiguredLevel());
-        selectedLevel = maxLevel;
+        // Default to highest unlocked display level, capped by total display levels
+        const maxDisplayLevel = Math.min(getDisplayLevelFromActual(gameState.levelsDefeated || 0) + 1, getMaxDisplayLevels());
+        selectedLevel = maxDisplayLevel;
 
         // Black back screen — Click blocker
         levelSelectOverlay = PhaserScene.add.image(cx, cy, 'buttons', 'black_pixel.png')
@@ -71,8 +71,9 @@ const treePopups = (() => {
             levelDisplay.setText(t('ui', 'level') + selectedLevel);
 
             // Calculate and show DATA bonus
-            const isEndless = selectedLevel < maxLevel;
-            const config = LEVEL_CONFIG[selectedLevel] || {};
+            const isEndless = selectedLevel < maxDisplayLevel;
+            const actualLevel = getActualLevelFromDisplay(selectedLevel);
+            const config = LEVEL_CONFIG[actualLevel] || {};
             const mult = config.dataDropMultiplier || 1.0;
 
             let bonusText = "";
@@ -100,7 +101,7 @@ const treePopups = (() => {
             }
 
             // High score display
-            const best = scoreManager.getBestScore(selectedLevel);
+            const best = scoreManager.getBestScore(actualLevel);
             if (best) {
                 bestScoreDisplay.setText(`${t('ui', 'best_time')}: ${scoreManager.formatTime(best.bestTime)}  [${best.kills} KILLS]`);
                 bestScoreDisplay.setVisible(true);
@@ -110,7 +111,7 @@ const treePopups = (() => {
 
             // Update button states
             minusBtn.setState(selectedLevel > 1 ? NORMAL : DISABLE);
-            plusBtn.setState(selectedLevel < maxLevel ? NORMAL : DISABLE);
+            plusBtn.setState(selectedLevel < maxDisplayLevel ? NORMAL : DISABLE);
         };
 
         // Minus button
@@ -138,7 +139,7 @@ const treePopups = (() => {
             press: { ref: 'increment_press.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
             disable: { ref: 'increment_disable.png', atlas: 'buttons', x: cx + 35, y: cy + 15 },
             onMouseUp: () => {
-                if (selectedLevel < maxLevel) {
+                if (selectedLevel < maxDisplayLevel) {
                     selectedLevel++;
                     updateLevelUI();
                 }
@@ -155,7 +156,7 @@ const treePopups = (() => {
             hover: { ref: 'button_hover.png', atlas: 'buttons', x: cx + 110, y: cy + 105 },
             press: { ref: 'button_press.png', atlas: 'buttons', x: cx + 110, y: cy + 105 },
             onMouseUp: () => {
-                gameState.currentLevel = selectedLevel;
+                gameState.currentLevel = getActualLevelFromDisplay(selectedLevel);
                 closeLevelSelect();
                 transitionManager.transitionTo(GAME_CONSTANTS.PHASE_COMBAT);
             }

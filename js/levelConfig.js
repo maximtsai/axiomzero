@@ -260,3 +260,45 @@ function getMaxConfiguredLevel() {
     return Math.max(...Object.keys(LEVEL_CONFIG).map(Number));
 }
 
+// Map from displayLevel (1-indexed count of normal levels) to actual level config ID (1-indexed)
+function getActualLevelFromDisplay(displayLevel) {
+    let currentNormalCount = 0;
+    const maxConfigLevel = getMaxConfiguredLevel();
+    for (let i = 1; i <= maxConfigLevel; i++) {
+        const config = LEVEL_CONFIG[i];
+        if (config && !config.specialLevel) {
+            currentNormalCount++;
+            if (currentNormalCount === displayLevel) {
+                return i;
+            }
+        }
+    }
+    // Fallback if not found or displayLevel out of bounds
+    return displayLevel;
+}
+
+// Map from actual level config ID (1-indexed) to the display level number
+function getDisplayLevelFromActual(actualLevel) {
+    let currentNormalCount = 0;
+    for (let i = 1; i <= actualLevel; i++) {
+        const config = LEVEL_CONFIG[i];
+        if (config && !config.specialLevel) {
+            currentNormalCount++;
+        }
+    }
+    return currentNormalCount || 1;
+}
+
+// Get the total number of normal (non-special) levels configured
+function getMaxDisplayLevels() {
+    let count = 0;
+    const maxConfigLevel = getMaxConfiguredLevel();
+    for (let i = 1; i <= maxConfigLevel; i++) {
+        const config = LEVEL_CONFIG[i];
+        if (config && !config.specialLevel) {
+            count++;
+        }
+    }
+    return count || 1;
+}
+

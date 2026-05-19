@@ -164,7 +164,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0);
         container.add(lvT);
 
-        goldBg = PhaserScene.add.image(0, 0, 'buttons', 'gold_pixel.png').setDisplaySize(bgWidth - 6, 37);
+        goldBg = PhaserScene.add.image(0, 0, 'buttons', 'gold_pixel.png').setDisplaySize(bgWidth - 8, 34);
         maxT = PhaserScene.add.text(0, 0, t('tooltips', 'max'), {
             fontFamily: 'Quantico-Bold',
             fontSize: '24px',
@@ -173,7 +173,7 @@ const nodeTooltip = (() => {
         }).setOrigin(0.5, 0.5);
         container.add([goldBg, maxT]);
 
-        costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_teal_pixel.png').setDisplaySize(bgWidth - 6, 51);
+        costBg = PhaserScene.add.image(0, 0, 'buttons', 'dark_teal_pixel.png').setDisplaySize(bgWidth - 8, 48);
         costT = PhaserScene.add.text(0, 0, '', {
             fontFamily: 'Quantico-Bold',
             fontSize: '24px',
@@ -259,7 +259,7 @@ const nodeTooltip = (() => {
             currentBgWidth = titleWidth + 16;
         }
 
-        const currentWordWrap = currentBgWidth - 25;
+        const currentWordWrap = currentBgWidth - 26;
 
         descT.setFontSize(baseFontSize + 'px');
         maxT.setFontSize(baseFontSize + 'px');
@@ -274,9 +274,9 @@ const nodeTooltip = (() => {
         }
 
         // Update background elements display sizes
-        const barHeight = isBigValue ? 49 : 47;
-        goldBg.setDisplaySize(currentBgWidth - 10, barHeight);
-        costBg.setDisplaySize(currentBgWidth - 10, barHeight);
+        const barHeight = isBigValue ? 46 : 44;
+        goldBg.setDisplaySize(currentBgWidth - 12, barHeight);
+        costBg.setDisplaySize(currentBgWidth - 12, barHeight);
 
         const bgTexture = node.isDuoBox ? 'black_pixel.png' : 'navy_pixel.png';
         bg.setFrame(bgTexture);
@@ -345,7 +345,8 @@ const nodeTooltip = (() => {
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 19);
             maxT.setVisible(true).setPosition(0, currentY + 18); // was 15, moving up with others or keeping relative to background?
-            maxT.setText(isThisNodeActive ? t('tooltips', 'active') : '🗹 ' + t('tooltips', 'max'));
+            maxT.setText(isThisNodeActive ? '🗹 INSTALLED' : '🗹 ' + t('tooltips', 'max'));
+            maxT.setColor('#F2E6CC');
             costBg.setVisible(false);
             costT.setVisible(false);
             currentY += 44;
@@ -354,7 +355,7 @@ const nodeTooltip = (() => {
             maxT.setVisible(false);
             costBg.setVisible(true).setPosition(0, currentY + 26);
             costBg.setTexture('buttons', 'light_red_pixel.png');
-            costBg.setDisplaySize(currentBgWidth - 10, barHeight);
+            costBg.setDisplaySize(currentBgWidth - 12, barHeight);
             costT.setVisible(true).setPosition(0, currentY + 25);
             costT.setText(t('tooltips', 'swap'));
             costT.setColor('#ffffff');
@@ -408,12 +409,12 @@ const nodeTooltip = (() => {
                 }
             }
             costBg.setFrame(bgPixel);
-            costBg.setDisplaySize(currentBgWidth - 10, barHeight);
+            costBg.setDisplaySize(currentBgWidth - 12, barHeight);
 
             currentY += 52;
         }
 
-        const totalHeight = currentY + 4;
+        const totalHeight = currentY + 3;
         bg.setDisplaySize(currentBgWidth, totalHeight);
         const edgePadding = 42;
         bgEdges.setSize(currentBgWidth + edgePadding, totalHeight + edgePadding);
