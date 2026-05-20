@@ -67,7 +67,7 @@ const takeoverTargets = (() => {
     // ── Security Level Config ─────────────────────────────────────────────────
     // cost = DATA cost, duration = seconds, rewardMult applies to base reward
     const SECURITY_CONFIG = {
-        LOW: { costMin: 25, costMax: 75, durMin: 30, durMax: 60, rewardMult: 1 },
+        LOW: { costMin: 25, costMax: 75, durMin: 45, durMax: 60, rewardMult: 1 },
         MEDIUM: { costMin: 75, costMax: 200, durMin: 60, durMax: 120, rewardMult: 2.5 },
         HIGH: { costMin: 200, costMax: 500, durMin: 120, durMax: 240, rewardMult: 5 },
     };
@@ -88,6 +88,7 @@ const takeoverTargets = (() => {
     let pendingReward = null;  // { rewardType, rewardAmount, targetName }
     let hasCompletedFirstTutorial = false;
     let insightCooldown = 0;   // Cooldown in refreshes before another insight target can appear
+    let lastPickedWasData = false; // Tracks if the player's last attacked target was a DATA reward
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -106,7 +107,7 @@ const takeoverTargets = (() => {
 
     // ── Target Generation ─────────────────────────────────────────────────────
 
-    function _generateTarget(usedNames, allowInsight) {
+    function _generateTarget(usedNames, allowInsight, allowData) {
         // Pick a unique corp name
         let name;
         let attempts = 0;
@@ -129,16 +130,31 @@ const takeoverTargets = (() => {
 
         // Pick reward type
         let rewardType;
-        const rewardRoll = Math.random();
-        if (allowInsight) {
-            // weighted: 55% coin, 35% data, 10% insight
-            if (rewardRoll < 0.55) rewardType = 'coin';
-            else if (rewardRoll < 0.90) rewardType = 'data';
-            else rewardType = 'insight';
+        if (allowData) {
+            if (allowInsight) {
+                // Coin is exactly 2x Data frequency. Insight is 10%.
+                // Coin: 60%, Data: 30%, Insight: 10%
+                const rewardRoll = Math.random();
+                if (rewardRoll < 0.60) rewardType = 'coin';
+                else if (rewardRoll < 0.90) rewardType = 'data';
+                else rewardType = 'insight';
+            } else {
+                // Coin is exactly 2x Data frequency.
+                // Coin: 66.7%, Data: 33.3%
+                const rewardRoll = Math.random();
+                if (rewardRoll < 2 / 3) rewardType = 'coin';
+                else rewardType = 'data';
+            }
         } else {
-            // weighted: 60% coin, 40% data
-            if (rewardRoll < 0.60) rewardType = 'coin';
-            else rewardType = 'data';
+            // DATA is excluded completely
+            if (allowInsight) {
+                // Coin: 90%, Insight: 10%
+                const rewardRoll = Math.random();
+                if (rewardRoll < 0.90) rewardType = 'coin';
+                else rewardType = 'insight';
+            } else {
+                rewardType = 'coin';
+            }
         }
 
         const baseReward = BASE_REWARDS[rewardType];
@@ -170,7 +186,7 @@ const takeoverTargets = (() => {
     function rollTargets() {
         if (!hasCompletedFirstTutorial) {
             // First-time tutorial behavior: Only two cards to reduce player cognitive load.
-            // Target 1: Low risk, low cost, 5s duration, net positive DATA.
+            // Target 1: Low risk, low cost, 4s duration, net positive DATA.
             const usedNames = new Set();
             const name1 = _pick(CORP_NAMES);
             usedNames.add(name1);
@@ -185,7 +201,7 @@ const takeoverTargets = (() => {
                     security: 'LOW',
                     flavor: 'Simulating a basic sandbox breach',
                     cost: 10,
-                    duration: 5,
+                    duration: 4,
                     rewardType: 'data',
                     rewardAmount: 15, // Net positive return (+5 data)
                 },
@@ -194,7 +210,7 @@ const takeoverTargets = (() => {
                     security: 'LOW',
                     flavor: 'Cracking a minor corporate terminal',
                     cost: 25,
-                    duration: 40,
+                    duration: 45,
                     rewardType: 'coin',
                     rewardAmount: 15, // displayed as 0.15 COIN
                 },
@@ -207,10 +223,11 @@ const takeoverTargets = (() => {
         const usedNames = new Set();
         insightCooldown = Math.max(0, insightCooldown - 1);
         let canGenerateInsight = insightCooldown === 0;
+        let canGenerateData = !lastPickedWasData;
 
         currentTargets = [];
         for (let i = 0; i < 3; i++) {
-            const t = _generateTarget(usedNames, canGenerateInsight);
+            const t = _generateTarget(usedNames, canGenerateInsight, canGenerateData);
             if (t.rewardType === 'insight') {
                 canGenerateInsight = false; // Only one per refresh
                 insightCooldown = 3; // Enforce wait for at least 2 more refreshes
@@ -246,6 +263,9 @@ const takeoverTargets = (() => {
 
         // Deduct cost
         resourceManager.spend('data', target.cost);
+
+        // Record if the picked target grants data
+        lastPickedWasData = (target.rewardType === 'data');
 
         activeAttack = {
             target: { ...target },
@@ -400,6 +420,7 @@ const takeoverTargets = (() => {
             pendingReward: pendingReward,
             hasCompletedFirstTutorial: hasCompletedFirstTutorial,
             insightCooldown: insightCooldown,
+            lastPickedWasData: lastPickedWasData,
         };
     }
 
@@ -430,6 +451,10 @@ const takeoverTargets = (() => {
 
         if (s.hasOwnProperty('insightCooldown')) {
             insightCooldown = s.insightCooldown;
+        }
+
+        if (s.hasOwnProperty('lastPickedWasData')) {
+            lastPickedWasData = s.lastPickedWasData;
         }
 
         // Check if a saved attack has completed while the game was closed
