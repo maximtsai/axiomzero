@@ -1637,7 +1637,7 @@ const NODE_DEFS = [
         leaky: 10,
         costScaling: 'static',
         parents: ['proxy_routing', 'fiber_optics'],
-        childIds: ['financial_takeover'],
+        childIds: ['financial_breach'],
         treeX: gridX(0),
         treeY: gridY(8),
         effect: function () {
@@ -1651,11 +1651,11 @@ const NODE_DEFS = [
     },
 
     {
-        id: 'financial_takeover',
-        name: t('nodes', 'financial_takeover.name'),
+        id: 'financial_breach',
+        name: t('nodes', 'financial_breach.name'),
         icon: 'Skillicon14_03.png',
-        description: t('nodes', 'financial_takeover.desc'),
-        popupText: t('nodes', 'financial_takeover.popup'),
+        description: t('nodes', 'financial_breach.desc'),
+        popupText: t('nodes', 'financial_breach.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 400,
