@@ -28,7 +28,7 @@ const treePopups = (() => {
         const blocker = helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
         if (upgradeTree && upgradeTree.assignToUICamera) upgradeTree.assignToUICamera(blocker);
 
-        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', 550, 360, 64, 64, 64, 64);
+        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', 550, 360, 60, 60, 60, 60);
         bg.setDepth(depth + 1).setScrollFactor(0);
         levelSelectButtons.push(bg);
 

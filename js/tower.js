@@ -204,6 +204,7 @@ class TowerView {
         this.warnShockwave2 = null;
         this.artilleryCallTween = null;
         this.deathVisualsTimer = null;
+        this.glowAlphaTween = null;
     }
 
     spawn(cx, cy) {
@@ -515,6 +516,49 @@ class TowerView {
         });
     }
 
+    onPhaseTransition(phase) {
+        if (!this.glowSprite) return;
+
+        if (this.glowAlphaTween) {
+            this.glowAlphaTween.stop();
+            this.glowAlphaTween = null;
+        }
+
+        if (phase === GAME_CONSTANTS.PHASE_UPGRADE) {
+            this.glowSprite.setAlpha(0.85).setScale(1);
+        } else if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
+            this.glowAlphaTween = PhaserScene.tweens.add({
+                targets: this.glowSprite,
+                alpha: 0.55,
+                scale: 0.35,
+                duration: 500,
+                ease: 'Cubic.easeOut',
+                onComplete: () => {
+                    this.glowAlphaTween = PhaserScene.tweens.add({
+                        targets: this.glowSprite,
+                        alpha: 1,
+                        scale: 1.75,
+                        duration: 1000,
+                        ease: 'Cubic.easeInOut',
+                        onComplete: () => {
+                            this.glowAlphaTween = PhaserScene.tweens.add({
+                                targets: this.glowSprite,
+                                alpha: 0.8,
+                                scale: 1,
+                                duration: 2000,
+                                ease: 'Cubic.easeInOut',
+                                onComplete: () => {
+                                    this.glowAlphaTween = null;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+        }
+    }
+
     /** Briefly recoil away from the target then spring back. */
     playRecoil(targetX, targetY) {
         if (!this.sprite || !this.sprite.scene) return;
@@ -529,18 +573,18 @@ class TowerView {
         const rx = cx - (dx / dist) * recoilDist;
         const ry = cy - (dy / dist) * recoilDist;
         // Kill existing recoil tweens
-        PhaserScene.tweens.killTweensOf([this.sprite, this.glowSprite], ['x', 'y', 'scaleX', 'scaleY']);
+        PhaserScene.tweens.killTweensOf(this.sprite, ['x', 'y', 'scaleX', 'scaleY']);
 
         // 1. Positional recoil (faster)
         PhaserScene.tweens.add({
-            targets: [this.sprite, this.glowSprite],
+            targets: this.sprite,
             x: rx,
             y: ry,
             duration: 155,
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
-                    targets: [this.sprite, this.glowSprite],
+                    targets: this.sprite,
                     x: cx,
                     y: cy,
                     duration: 270,
@@ -552,14 +596,14 @@ class TowerView {
 
         // 2. Scale recoil (slightly longer total duration)
         PhaserScene.tweens.add({
-            targets: [this.sprite, this.glowSprite],
+            targets: this.sprite,
             scaleX: 0.9,
             scaleY: 0.9,
             duration: 170,
             ease: 'Quad.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
-                    targets: [this.sprite, this.glowSprite],
+                    targets: this.sprite,
                     scaleX: 1.0,
                     scaleY: 1.0,
                     duration: 300,
@@ -1235,6 +1279,8 @@ const tower = (() => {
     }
 
     function _onPhaseChanged(phase) {
+        view.onPhaseTransition(phase);
+
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             model.active = true;
             model.attackTimer = 0;

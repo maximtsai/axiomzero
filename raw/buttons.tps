@@ -828,6 +828,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">buttons/popup_nineslice - Copy.png</key>
             <key type="filename">buttons/popup_nineslice.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>

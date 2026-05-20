@@ -1,7 +1,7 @@
 // UIButtons - Helper functions for creating UI buttons
 
 const UI_RADIUS_SMALL = 20;
-const UI_RADIUS_LARGE = 64;
+const UI_RADIUS_LARGE = 60;
 
 function createOptionsButton(x, y) {
     let icon;
@@ -82,7 +82,7 @@ function _showOptionsPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false);
 
-    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, 64, 64, 64, 64);
+    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, 60, 60, 60, 60);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
