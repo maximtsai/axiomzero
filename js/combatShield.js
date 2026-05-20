@@ -122,6 +122,7 @@ class CombatShield {
                 const dy = pointer.worldY - GAME_CONSTANTS.halfHeight;
                 const distSq = dx * dx + dy * dy;
 
+                let manualRotation = 0;
                 let diffDeg = 0;
                 if (distSq > 16) {
                     const targetAngle = Math.atan2(dy, dx);
@@ -129,16 +130,19 @@ class CombatShield {
                         Phaser.Math.RadToDeg(this.angle),
                         Phaser.Math.RadToDeg(targetAngle)
                     );
-                    this.rotationAcceleration = diffDeg * 0.15;
+                    this.rotationAcceleration = diffDeg * 0.19;
+                    const slowFactor = this.isSlowed ? 0.05 : 1.0;
+                    manualRotation = diffDeg * 0.08 * slowFactor * delta;
                 } else {
                     this.rotationAcceleration = 0;
                 }
 
                 this.rotationVelocity += this.rotationAcceleration * delta;
-                this.rotationVelocity *= Math.pow(0.75, delta);
+                this.rotationVelocity *= Math.pow(0.68, delta);
 
                 const currentVelocity = this.isSlowed ? (this.rotationVelocity * 0.05) : this.rotationVelocity;
-                const newAngleDeg = Phaser.Math.Angle.WrapDegrees(Phaser.Math.RadToDeg(this.angle) + (currentVelocity * delta));
+
+                const newAngleDeg = Phaser.Math.Angle.WrapDegrees(Phaser.Math.RadToDeg(this.angle) + (currentVelocity * delta) + manualRotation);
                 this.angle = Phaser.Math.DegToRad(newAngleDeg);
                 this._sprite.setRotation(this.angle);
             }

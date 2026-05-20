@@ -9,7 +9,7 @@ class LaserAttackModel {
         this.BEAM_LENGTH = 1000;         // px
         this.BEAM_VISUAL_HALF_WIDTH = 30;// visual beam half-width (Increased by 5 from 25)
         this.BEAM_DAMAGE_HALF_WIDTH = 40;// damage half-width (Increased by 5 from 35)
-        this.BASE_DAMAGE_PER_TICK = 4;   // (Increased by 1 from 3)
+        this.BASE_DAMAGE_PER_TICK = 3;
         this.TICK_INTERVAL = 200;        // ms between damage ticks
         this.FIRE_DURATION = 4000;       // ms beam is active
         this.COOLDOWN_DURATION = 4000;   // ms cooldown between fires

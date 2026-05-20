@@ -334,7 +334,7 @@ const resourceManager = (() => {
                 fontSize: 36,
                 color: '#ff5555',
                 color2: '#ffaa00',
-                depth: GAME_CONSTANTS.DEPTH_UI + 100,
+                depth: GAME_CONSTANTS.DEPTH_HUD + 100,
                 duration: 1700,
             });
         }
