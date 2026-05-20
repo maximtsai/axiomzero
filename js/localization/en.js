@@ -15,7 +15,7 @@ window.TRANSLATIONS.en = {
         neural_tree: 'UPGRADE TREE',
         deploy: 'DEPLOY',
         mine: 'MINE',
-        takeover: 'TAKEOVER',
+        takeover: 'BREACH',
         coin_mine: '// COIN MINE',
         done: 'Done',
         test_weapons: 'COMBAT TEST',
@@ -100,7 +100,7 @@ window.TRANSLATIONS.en = {
         packet_sniffing: { name: 'PACKET SNIFFER', desc: 'Passively gain [color=cyan]1 DATA[/color] every [color=#37E0F3]2s[/color] during combat', popup: 'SNIFFER ACTIVE' },
         fiber_optics: { name: 'FIBER OPTICS', desc: '[color=#37E0F3]-10%[/color] to all core attack cooldowns.', popup: '-10% COOLDOWN' },
         global_backdoor: { name: 'GLOBAL BACKDOOR', desc: 'Reduce [color=cyan]DATA[/color] cost of ALL nodes by [color=#37E0F3]30[/color].', popup: 'UNAUTHORIZED ACCESS' },
-        financial_takeover: { name: 'FINANCIAL TAKEOVER', desc: 'Gain access to the global financial override interface.', popup: 'TAKEOVER INTERFACE ENABLED' },
+        financial_breach: { name: 'FINANCIAL BREACH', desc: 'Breach the security grids of global financial institutions to siphon corporate assets.', popup: 'FINANCIAL BREACH ACTIVE' },
         volatile_cache: { name: 'VOLATILE CACHE', desc: 'Deal [color=#37E0F3]+5% Damage[/color] for every [color=#ffb300]Memory Leak[/color] node owned.', popup: 'SYSTEM VOLATILITY INCREASED' },
         stress_calibration: { name: 'STRESS CALIBRATION', desc: '[color=#FD7B8B]Shard ♦[/color] abilities have [color=#37E0F3]0.5 second[/color] reduced cooldowns when below [color=#ff5555]50%[/color] health.', popup: 'STRESS CALIBRATION ACTIVE' },
 
@@ -340,7 +340,14 @@ window.TRANSLATIONS.en = {
     },
     popup: {
         insight_gained: '+LEVEL UP!',
-        shard_acquired: '+1 SHARD ACQUIRED'
+        shard_acquired: '+1 SHARD ACQUIRED',
+        breach_successful: 'BREACH SUCCESSFUL',
+        breaching: 'BREACHING...',
+        takeover_title: 'TAKEOVER',
+        attack: 'ATTACK',
+        cancel_refund: '75% DATA refund',
+        collect: 'COLLECT',
+        cancel: 'CANCEL',
     },
     tower_stats: {
         title: 'CORE',

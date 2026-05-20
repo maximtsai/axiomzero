@@ -262,6 +262,9 @@ const GAME_STATE_DEFAULTS = {
     // Local best scores per farming level { levelId: { bestTime, kills, date } }
     localBestScores: {},
 
+    // Takeover / Financial Breach state
+    takeoverState: null,
+
     // Settings
     settings: {
         globalVolume: 0.85,

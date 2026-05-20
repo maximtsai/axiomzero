@@ -161,6 +161,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
 
     // UI systems — depend on resource / tower for data display
     upgradeTree.init();
+    takeoverTargets.init();
     announcementManager.init();
     gameHUD.init();
     iterationOverScreen.init();

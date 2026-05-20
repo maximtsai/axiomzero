@@ -20,6 +20,9 @@ const upgradeTree = (() => {
     let slideRightBtn = null;
     let slideLeftBtn = null;
     let takeoverBtn = null;
+    let takeoverBtnGlow = null;
+    let _takeoverGlowTween = null;
+    let _currentIndicatorState = 'idle';
 
     let treeGroup = null;
     let draggableGroup = null;
@@ -1303,7 +1306,7 @@ const upgradeTree = (() => {
             _showDeployButton();
         }
 
-        const takeoverLevel = (gameState.upgrades && gameState.upgrades.financial_takeover) || 0;
+        const takeoverLevel = (gameState.upgrades && gameState.upgrades.financial_breach) || 0;
         if (takeoverLevel > 0) {
             _showTakeoverButton();
         }
@@ -1331,6 +1334,9 @@ const upgradeTree = (() => {
         dragSurface.setVisible(false);
         deployBtn.setVisible(false);
         if (takeoverBtn) takeoverBtn.setVisible(false);
+        if (takeoverBtnGlow) takeoverBtnGlow.setVisible(false);
+        if (_takeoverGlowTween) { _takeoverGlowTween.stop(); _takeoverGlowTween = null; }
+        _currentIndicatorState = 'idle'; // Reset so indicator rebuilds cleanly on re-show
         if (deployBtnGlow) deployBtnGlow.setVisible(false);
         if (coordText) coordText.setVisible(false);
 
@@ -1584,6 +1590,12 @@ const upgradeTree = (() => {
                 lastHoverLabel = currentHoverLabel;
             }
         }
+
+        // Takeover indicator: check for background completion and update glow
+        if (typeof takeoverTargets !== 'undefined' && takeoverBtn && takeoverBtn.bgSprite && takeoverBtn.bgSprite.visible) {
+            takeoverTargets.checkCompletion();
+            _updateTakeoverIndicator();
+        }
     }
 
     function _onDeployClicked() {
@@ -1719,12 +1731,78 @@ const upgradeTree = (() => {
         takeoverBtn.setState(DISABLE);
 
         treeGroup.add(takeoverBtn);
+
+        // Indicator glow behind the button
+        takeoverBtnGlow = PhaserScene.add.image(TREE_CENTER_X - 220, 48, 'buttons', 'white_pixel.png');
+        takeoverBtnGlow.setDisplaySize(140, 42);
+        takeoverBtnGlow.setDepth(GAME_CONSTANTS.DEPTH_UPGRADE_TREE + 24);
+        takeoverBtnGlow.setScrollFactor(0);
+        takeoverBtnGlow.setAlpha(0);
+        takeoverBtnGlow.setVisible(false);
+        helper.setBlendMode(takeoverBtnGlow, Phaser.BlendModes.ADD);
+        treeGroup.add(takeoverBtnGlow);
     }
 
     function _showTakeoverButton() {
         if (takeoverBtn) {
             takeoverBtn.setVisible(true);
             takeoverBtn.setState(NORMAL);
+        }
+        _updateTakeoverIndicator();
+    }
+
+    /** Update the TAKEOVER button glow indicator based on attack state. */
+    function _updateTakeoverIndicator() {
+        if (!takeoverBtnGlow || !takeoverBtn || !takeoverBtn.bgSprite) return;
+
+        if (!takeoverBtn.bgSprite.visible) {
+            if (_takeoverGlowTween) { _takeoverGlowTween.stop(); _takeoverGlowTween = null; }
+            takeoverBtnGlow.setVisible(false);
+            takeoverBtnGlow.setAlpha(0);
+            return;
+        }
+
+        if (typeof takeoverTargets === 'undefined') return;
+        const state = takeoverTargets.getButtonState();
+
+        // Only change indicator if the state has transitioned or tween was lost
+        if (state === _currentIndicatorState && _takeoverGlowTween && _takeoverGlowTween.isPlaying()) {
+            return;
+        }
+
+        _currentIndicatorState = state;
+
+        if (state === 'idle') {
+            // No glow
+            if (_takeoverGlowTween) { _takeoverGlowTween.stop(); _takeoverGlowTween = null; }
+            takeoverBtnGlow.setVisible(false);
+            takeoverBtnGlow.setAlpha(0);
+        } else if (state === 'attacking') {
+            // Cyan pulse
+            takeoverBtnGlow.setVisible(true);
+            helper.setTint(takeoverBtnGlow, 0x00f5ff);
+            if (_takeoverGlowTween) { _takeoverGlowTween.stop(); _takeoverGlowTween = null; }
+            _takeoverGlowTween = PhaserScene.tweens.add({
+                targets: takeoverBtnGlow,
+                alpha: { from: 0.15, to: 0.45 },
+                duration: 1200,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut',
+                });
+        } else if (state === 'reward_pending') {
+            // Green pulse
+            takeoverBtnGlow.setVisible(true);
+            helper.setTint(takeoverBtnGlow, 0x44ff44);
+            if (_takeoverGlowTween) { _takeoverGlowTween.stop(); _takeoverGlowTween = null; }
+            _takeoverGlowTween = PhaserScene.tweens.add({
+                targets: takeoverBtnGlow,
+                alpha: { from: 0.2, to: 0.55 },
+                duration: 800,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut',
+            });
         }
     }
 
