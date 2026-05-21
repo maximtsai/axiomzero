@@ -239,7 +239,7 @@ class TowerView {
         this.glowSprite = PhaserScene.add.image(cx, cy, 'player', 'tower1_glow.png');
         this.glowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER);
         this.glowSprite.setScale(1.0);
-        this.glowSprite.setAlpha(1);
+        this.glowSprite.setAlpha(0.8);
         helper.setBlendMode(this.glowSprite, Phaser.BlendModes.ADD);
 
         // Pre-create death shockwave (temp depth 0 for visibility)
@@ -262,7 +262,7 @@ class TowerView {
         // Flash glow layer — underneath the main tower sprite (main is DEPTH_TOWER)
         this.flashGlowSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_flash_glow.png');
         this.flashGlowSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER - 1);
-        this.flashGlowSprite.setAlpha(1).setVisible(false);
+        this.flashGlowSprite.setAlpha(0.85).setVisible(false);
 
         this.artilleryCallSprite = PhaserScene.add.image(cx, cy, 'player', 'tower_artillery_call.png');
         this.artilleryCallSprite.setDepth(GAME_CONSTANTS.DEPTH_TOWER + 1);

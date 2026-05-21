@@ -1709,7 +1709,7 @@ const NODE_DEFS = [
         baseCost: 100,
         costType: 'data',
         costScaling: 'linear',
-        costStep: 50,
+        costStep: 100,
         parents: ['access_internet'],
         childIds: [],
         treeX: gridX(-1),

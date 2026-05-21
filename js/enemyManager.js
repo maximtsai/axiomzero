@@ -1001,8 +1001,8 @@ const enemyManager = (() => {
                 const attackDistR2 = e.model.contactR2 || 2025;
 
                 if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
-                    const shieldReach = 56;
-                    const shieldReachSq = shieldReach * shieldReach;
+                    // const shieldReach = 58;
+                    const shieldReachSq = 3364; // 58*58
 
                     if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
                         combatShield.takeDamage(e.model.damage);
