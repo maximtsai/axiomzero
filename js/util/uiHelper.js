@@ -340,10 +340,10 @@ Object.assign(helper, {
      */
     createHeader: function (x, y, width, label, depth) {
         const text = PhaserScene.add.text(x, y, label, {
-            fontFamily: 'Quantico-Bold', fontSize: '23px', color: '#000000',
+            fontFamily: 'Quantico-Bold', fontSize: '23px', color: '#60D2D1',
         }).setOrigin(0, 0.8).setDepth(depth).setScrollFactor(0);
 
-        const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'buttons', 'black_pixel.png');
+        const line = PhaserScene.add.image(x + width / 2 - 40, y + 9, 'buttons', 'teal.png');
         line.setDisplaySize(width - 80, 2);
         line.setDepth(depth);
         line.setScrollFactor(0);

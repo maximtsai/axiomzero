@@ -241,6 +241,7 @@
             <key type="filename">buttons/orange_pixel.png</key>
             <key type="filename">buttons/red_pixel.png</key>
             <key type="filename">buttons/scarlet_pixel.png</key>
+            <key type="filename">buttons/teal.png</key>
             <key type="filename">buttons/white_pixel.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -828,7 +829,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">buttons/popup_nineslice - Copy.png</key>
             <key type="filename">buttons/popup_nineslice.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -841,6 +841,21 @@
                 <rect>53,53,105,105</rect>
                 <key>scale9Paddings</key>
                 <rect>53,53,105,105</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">buttons/popup_nineslice2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>65,65,130,130</rect>
+                <key>scale9Paddings</key>
+                <rect>65,65,130,130</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

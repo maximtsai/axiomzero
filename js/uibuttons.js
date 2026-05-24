@@ -1,7 +1,7 @@
 // UIButtons - Helper functions for creating UI buttons
 
 const UI_RADIUS_SMALL = 20;
-const UI_RADIUS_LARGE = 60;
+const UI_RADIUS_LARGE = 64;
 
 function createOptionsButton(x, y) {
     let icon;
@@ -58,8 +58,8 @@ function _showOptionsPopup() {
     const W = GAME_CONSTANTS.halfWidth;
     const H = GAME_CONSTANTS.halfHeight;
     const depth = 110900;
-    const width = 800;
-    const height = 646;
+    const width = 860;
+    const height = 704;
     const elements = [];
     const textObjects = [];
 
@@ -82,24 +82,24 @@ function _showOptionsPopup() {
     // Use the global helper to block background clicks/dragging
     helper.createGlobalClickBlocker(false);
 
-    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, 60, 60, 60, 60);
+    const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
     popupBG.setScrollFactor(0);
     elements.push(popupBG);
 
-    const titleObj = PhaserScene.add.text(W - width / 2 + 30, H - height / 2 + 20, t('options', 'title'), {
+    const titleObj = PhaserScene.add.text(W - width / 2 + 64, H - height / 2 + 60, t('options', 'title'), {
         fontFamily: 'Quantico-Bold', fontSize: '27px', color: '#ffffff',
     }).setOrigin(0, 0).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(titleObj);
     textObjects.push({ obj: titleObj, size: 27 });
 
     // --- AUDIO SECTION ---
-    const audioHeaderY = H - height / 2 + 75;
-    const audioHeader = helper.createHeader(W - width / 2 + 40, audioHeaderY + 15, width, t('options', 'audio') + '♫', depth + 3);
+    const audioHeaderY = H - height / 2 + 105;
+    const audioHeader = helper.createHeader(W - width / 2 + 60, audioHeaderY + 15, 820, t('options', 'audio') + '♫', depth + 3);
     elements.push(audioHeader.text, audioHeader.line);
     textObjects.push({ obj: audioHeader.text, size: 23 });
 
-    const musicLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 51, t('options', 'music_vol'), {
+    const musicLabel = PhaserScene.add.text(W - width / 2 + 60, audioHeaderY + 51, t('options', 'music_vol'), {
         fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(musicLabel);
@@ -114,7 +114,7 @@ function _showOptionsPopup() {
     );
     elements.push(musicSlider);
 
-    const sfxLabel = PhaserScene.add.text(W - width / 2 + 40, audioHeaderY + 89, t('options', 'sfx_vol'), {
+    const sfxLabel = PhaserScene.add.text(W - width / 2 + 60, audioHeaderY + 89, t('options', 'sfx_vol'), {
         fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(sfxLabel);
@@ -131,12 +131,12 @@ function _showOptionsPopup() {
 
     // --- VISUAL SECTION ---
     const visualHeaderY = audioHeaderY + 135;
-    const visualHeader = helper.createHeader(W - width / 2 + 40, visualHeaderY - 1, width, t('options', 'visual') + '⏿', depth + 3);
+    const visualHeader = helper.createHeader(W - width / 2 + 60, visualHeaderY - 1, 820, t('options', 'visual') + '⏿', depth + 3);
     elements.push(visualHeader.text, visualHeader.line);
     textObjects.push({ obj: visualHeader.text, size: 23 });
 
     // Chromatic Aberration Checkbox
-    const chroma = helper.createCheckbox(W - width / 2 + 95, visualHeaderY + 35, t('options', 'chroma'), gameState.settings.chromaticAberration, depth + 3, (val) => {
+    const chroma = helper.createCheckbox(W - width / 2 + 115, visualHeaderY + 35, t('options', 'chroma'), gameState.settings.chromaticAberration, depth + 3, (val) => {
         gameState.settings.chromaticAberration = val;
         saveGame();
     });
@@ -152,7 +152,7 @@ function _showOptionsPopup() {
     textObjects.push({ obj: dmgCheck.text, size: 21 });
 
     // BIG font Checkbox (Visual row 2)
-    const bigFont = helper.createCheckbox(W - width / 2 + 95, visualHeaderY + 80, t('options', 'big_font'), gameState.settings.bigFont, depth + 3, (val) => {
+    const bigFont = helper.createCheckbox(W - width / 2 + 115, visualHeaderY + 80, t('options', 'big_font'), gameState.settings.bigFont, depth + 3, (val) => {
         gameState.settings.bigFont = val;
         saveGame();
         updateAllTextSizes();
@@ -180,18 +180,18 @@ function _showOptionsPopup() {
     elements.push(fullscreen.btn, fullscreen.text);
     textObjects.push({ obj: fullscreen.text, size: 21 });
 
-    const particlesLabel = PhaserScene.add.text(W - width / 2 + 40, visualHeaderY + 130, t('options', 'particles'), {
+    const particlesLabel = PhaserScene.add.text(W - width / 2 + 60, visualHeaderY + 130, t('options', 'particles'), {
         fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
     }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
     elements.push(particlesLabel);
     textObjects.push({ obj: particlesLabel, size: 21 });
 
-    const fullBg = helper.createNineSlice(W - width / 2 + 244, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
+    const fullBg = helper.createNineSlice(W - width / 2 + 264, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
     fullBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(fullBg);
 
     const fullBtn = new Button({
-        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 244, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
+        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 264, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
         disable: { ref: 'white_pixel.png', atlas: 'buttons', alpha: 0.001 },
         onHover: () => {
             if (fullBtn.state !== 'disable') {
@@ -216,18 +216,18 @@ function _showOptionsPopup() {
     fullBtn.setScrollFactor(0);
     elements.push(fullBtn);
 
-    const fullText = PhaserScene.add.text(W - width / 2 + 244, visualHeaderY + 130, t('options', 'particles_full'), {
+    const fullText = PhaserScene.add.text(W - width / 2 + 264, visualHeaderY + 130, t('options', 'particles_full'), {
         fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff'
     }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0);
     elements.push(fullText);
     textObjects.push({ obj: fullText, size: 21 });
 
-    const minBg = helper.createNineSlice(W - width / 2 + 386, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
+    const minBg = helper.createNineSlice(W - width / 2 + 406, visualHeaderY + 130, 'buttons', 'glow_btn_9slice.png', 140, 60, 20, 20, 20, 20);
     minBg.setDepth(depth + 3).setScrollFactor(0);
     elements.push(minBg);
 
     const minBtn = new Button({
-        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 386, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
+        normal: { ref: 'white_pixel.png', atlas: 'buttons', x: W - width / 2 + 406, y: visualHeaderY + 130, alpha: 0.001, scaleX: 65, scaleY: 28 },
         disable: { ref: 'white_pixel.png', atlas: 'buttons', alpha: 0.001 },
         onHover: () => {
             if (minBtn.state !== 'disable') {
@@ -252,7 +252,7 @@ function _showOptionsPopup() {
     minBtn.setScrollFactor(0);
     elements.push(minBtn);
 
-    const minText = PhaserScene.add.text(W - width / 2 + 386, visualHeaderY + 130, t('options', 'particles_minimal'), {
+    const minText = PhaserScene.add.text(W - width / 2 + 406, visualHeaderY + 130, t('options', 'particles_minimal'), {
         fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff'
     }).setOrigin(0.5).setDepth(depth + 5).setScrollFactor(0);
     elements.push(minText);
@@ -274,23 +274,23 @@ function _showOptionsPopup() {
 
     // --- LANGUAGE SECTION ---
     const languageHeaderY = visualHeaderY + 166;
-    const langHeader = helper.createHeader(W - width / 2 + 40, languageHeaderY + 19, width, t('options', 'language') + "文/A", depth + 3);
+    const langHeader = helper.createHeader(W - width / 2 + 60, languageHeaderY + 19, 820, t('options', 'language') + "文/A", depth + 3);
     elements.push(langHeader.text, langHeader.line);
     textObjects.push({ obj: langHeader.text, size: 23 });
 
     // --- DATA SECTION ---
     const dataHeaderY = languageHeaderY + 130;
-    const dataHeader = helper.createHeader(W - width / 2 + 40, dataHeaderY - 5, width, t('options', 'data_label') + ' ⚠', depth + 3);
+    const dataHeader = helper.createHeader(W - width / 2 + 60, dataHeaderY - 5, 820, t('options', 'data_label') + ' ⚠', depth + 3);
     elements.push(dataHeader.text, dataHeader.line);
     textObjects.push({ obj: dataHeader.text, size: 23 });
 
     const resetUnderlay = PhaserScene.add.image(W + 190, dataHeaderY + 86, 'buttons', 'black_pixel.png');
-    resetUnderlay.setDisplaySize(width - 477, 31);
+    resetUnderlay.setDisplaySize(343, 31);
     resetUnderlay.setDepth(depth + 3).setAlpha(0.5);
     resetUnderlay.setScrollFactor(0);
     elements.push(resetUnderlay);
 
-    const resetGlow = helper.createGlowButton(W + 190, dataHeaderY + 87, width - 450, 60, t('options', 'reset_progress'), depth + 3, () => {
+    const resetGlow = helper.createGlowButton(W + 190, dataHeaderY + 87, 370, 60, t('options', 'reset_progress'), depth + 3, () => {
         _showResetConfirmPopup();
     }, true);
     elements.push(resetGlow.bg, resetGlow.text, resetGlow.btn);
@@ -350,7 +350,7 @@ function _showOptionsPopup() {
     // (resetBtn removed as it is now part of resetGlow)
 
     const closeBtn = new Button({
-        normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: W + width / 2 - 35, y: H - height / 2 + 36 },
+        normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: W + width / 2 - 75, y: H - height / 2 + 76 },
         hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
         press: { ref: 'close_button_press.png', atlas: 'buttons' },
         onMouseUp: () => closePopup()
