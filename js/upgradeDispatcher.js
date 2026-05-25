@@ -120,6 +120,11 @@ const upgradeDispatcher = (() => {
         resourceManager.setPacketSniffing(getLevel('packet_sniffing') > 0);
     }
 
+    /** Recalculates data daemon state. */
+    function recalcDataDaemon() {
+        resourceManager.setDataDaemon(getLevel('data_daemon') > 0);
+    }
+
     /** Recalculates shockwave upgrades from upgrade nodes. */
     function recalcShockwaveStats() {
         if (typeof shockwaveAttack === 'undefined') return;
@@ -239,6 +244,7 @@ const upgradeDispatcher = (() => {
         }
         if (typeof resourceManager !== 'undefined') {
             recalcPacketSniffing();
+            recalcDataDaemon();
         }
         if (typeof laserAttack !== 'undefined') {
             recalcLaser();
@@ -287,6 +293,7 @@ const upgradeDispatcher = (() => {
         recalcLightningDamage,
         recalcLightningStats,
         recalcPacketSniffing,
+        recalcDataDaemon,
         recalcShockwaveStats,
         recalcThreatResponse,
         recalcAftershock,

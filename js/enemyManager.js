@@ -266,7 +266,7 @@ const enemyManager = (() => {
         }
 
         // Global unlock check for Data Chests (Cache enemies)
-        if (chosenType === 'cache' && !((gameState.upgrades || {}).data_chest_unlock)) {
+        if (chosenType === 'cache' && !((gameState.upgrades || {}).access_internet)) {
             chosenType = 'basic';
         }
 

@@ -931,28 +931,7 @@ const NODE_DEFS = [
             // Recalculated via 'upgradePurchased' â†’ tower._onUpgradePurchased
         },
     },
-    {
-        id: 'data_chest_unlock',
-        name: t('nodes', 'data_chest_unlock.name'),
-        icon: 'Skillicon14_38.png',
-        description: t('nodes', 'data_chest_unlock.desc'),
-        popupText: t('nodes', 'data_chest_unlock.popup'),
-        popupColor: COLORS.RESOURCE,
-        maxLevel: 1,
-        baseCost: 1,
-        label: 'INSIGHT',
-        costType: 'insight',
-        costScaling: 'static',
-        parents: ['reveal_map'],
-        childIds: ['access_internet'],
-        treeX: gridX(-0.5),
-        treeY: gridY(5),
-        effect: function () {
-            if (typeof GAME_VARS !== 'undefined') {
-                GAME_VARS.highChanceDataCacheSpawn = true;
-            }
-        },
-    },
+
     {
         id: 'system_redundancy_new',
         name: t('nodes', 'system_redundancy_new.name'),
@@ -1308,7 +1287,7 @@ const NODE_DEFS = [
         costScaling: 'static',
         costStep: 0,
         parents: ['placeholder_duo_1'],
-        childIds: ['system_redundancy_new', 'data_chest_unlock', 'impulse', 'unsecured_wallet'],
+        childIds: ['system_redundancy_new', 'access_internet', 'impulse', 'unsecured_wallet'],
         treeX: gridX(0),
         treeY: gridY(4),
         effect: async function () {
@@ -1357,7 +1336,7 @@ const NODE_DEFS = [
                                 PhaserScene.time.delayedCall(600, () => {
                                     upgradeTree.revealNode('diagnostic_analytics');
                                     PhaserScene.time.delayedCall(600, () => {
-                                        upgradeTree.revealNode('access_internet');
+                                        upgradeTree.revealNode('global_backdoor');
                                     });
 
                                     PhaserScene.time.delayedCall(1000, () => {
@@ -1392,6 +1371,9 @@ const NODE_DEFS = [
                                             }
 
                                             if (node) node.finalizePurchase();
+                                            if (typeof upgradeDispatcher !== 'undefined') {
+                                                upgradeDispatcher.recalcBackground();
+                                            }
                                         });
                                     });
                                 });
@@ -1590,7 +1572,7 @@ const NODE_DEFS = [
         costType: 'insight',
         costScaling: 'static',
         parents: ['reveal_map'],
-        childIds: ['access_internet'],
+        childIds: ['global_backdoor'],
         tooltipExtraWidth: 140,
         treeX: gridX(0.5),
         treeY: gridY(5),
@@ -1612,8 +1594,8 @@ const NODE_DEFS = [
         baseCost: 15,
         costType: 'coin',
         costScaling: 'static',
-        parents: ['access_internet'],
-        childIds: ['global_backdoor'],
+        parents: ['global_backdoor'],
+        childIds: ['financial_breach'],
         treeX: gridX(0.5),
         treeY: gridY(7),
         effect: function () {
@@ -1633,12 +1615,14 @@ const NODE_DEFS = [
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
         baseCost: 1,
+        label: 'INSIGHT',
         costType: 'insight',
         costScaling: 'static',
-        parents: ['proxy_routing', 'fiber_optics'],
-        childIds: ['financial_breach'],
+        requiresMaxParent: true,
+        parents: ['access_internet', 'unsecured_wallet'],
+        childIds: ['black_market', 'proxy_routing', 'fiber_optics'],
         treeX: gridX(0),
-        treeY: gridY(8),
+        treeY: gridY(6),
         effect: function () {
             if (typeof upgradeDispatcher !== 'undefined') {
                 upgradeDispatcher.recalcEverything();
@@ -1660,16 +1644,57 @@ const NODE_DEFS = [
         baseCost: 400,
         costType: 'data',
         costScaling: 'static',
-        parents: ['global_backdoor'],
-        childIds: [],
-        treeX: gridX(-0.5),
-        treeY: gridY(9),
+        parents: ['proxy_routing', 'fiber_optics'],
+        childIds: ['shell_contracts', 'data_daemon'],
+        treeX: gridX(0),
+        treeY: gridY(8),
         effect: function () {
             if (typeof upgradeDispatcher !== 'undefined') {
                 upgradeDispatcher.recalcEverything();
             }
             if (typeof upgradeTree !== 'undefined') {
                 upgradeTree._showTakeoverButton();
+            }
+        },
+    },
+
+    {
+        id: 'shell_contracts',
+        name: t('nodes', 'shell_contracts.name'),
+        icon: 'Skillicon14_09.png',
+        description: t('nodes', 'shell_contracts.desc'),
+        popupText: t('nodes', 'shell_contracts.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 500,
+        costType: 'data',
+        costScaling: 'static',
+        parents: ['financial_breach'],
+        childIds: [],
+        treeX: gridX(-0.5),
+        treeY: gridY(9),
+        effect: function () { },
+    },
+
+    {
+        id: 'data_daemon',
+        name: t('nodes', 'data_daemon.name'),
+        icon: 'Skillicon14_03.png',
+        description: t('nodes', 'data_daemon.desc'),
+        popupText: t('nodes', 'data_daemon.popup'),
+        popupColor: COLORS.RESOURCE,
+        maxLevel: 1,
+        baseCost: 1,
+        label: 'INSIGHT',
+        costType: 'insight',
+        costScaling: 'static',
+        parents: ['financial_breach'],
+        childIds: [],
+        treeX: gridX(0.5),
+        treeY: gridY(9),
+        effect: function () {
+            if (typeof upgradeDispatcher !== 'undefined') {
+                upgradeDispatcher.recalcEverything();
             }
         },
     },
@@ -1687,13 +1712,16 @@ const NODE_DEFS = [
         costScaling: 'static',
         leaky: 10,
         requiresMaxParent: true,
-        parents: ['data_chest_unlock', 'unsecured_wallet'],
-        childIds: ['black_market', 'proxy_routing', 'fiber_optics'],
-        treeX: gridX(0),
-        treeY: gridY(6),
+        parents: ['reveal_map'],
+        childIds: ['global_backdoor'],
+        treeX: gridX(-0.5),
+        treeY: gridY(5),
         effect: function () {
             if (typeof upgradeDispatcher !== 'undefined') {
                 upgradeDispatcher.recalcBackground();
+            }
+            if (typeof GAME_VARS !== 'undefined') {
+                GAME_VARS.highChanceDataCacheSpawn = true;
             }
         },
     },
@@ -1710,7 +1738,7 @@ const NODE_DEFS = [
         costType: 'data',
         costScaling: 'linear',
         costStep: 100,
-        parents: ['access_internet'],
+        parents: ['global_backdoor'],
         childIds: [],
         treeX: gridX(-1),
         treeY: gridY(6),
@@ -1753,8 +1781,8 @@ const NODE_DEFS = [
         baseCost: 300,
         costType: 'data',
         costScaling: 'static',
-        parents: ['access_internet'],
-        childIds: ['global_backdoor'],
+        parents: ['global_backdoor'],
+        childIds: ['financial_breach'],
         treeX: gridX(-0.5),
         treeY: gridY(7.0),
         effect: function () { },

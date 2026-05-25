@@ -69,7 +69,7 @@ const takeoverTargets = (() => {
     const SECURITY_CONFIG = {
         LOW: { costMin: 25, costMax: 75, durMin: 45, durMax: 60, rewardMult: 1 },
         MEDIUM: { costMin: 75, costMax: 200, durMin: 60, durMax: 120, rewardMult: 2.5 },
-        HIGH: { costMin: 200, costMax: 500, durMin: 120, durMax: 240, rewardMult: 5 },
+        HIGH: { costMin: 200, costMax: 500, durMin: 60, durMax: 270, rewardMult: 5 },
     };
 
     const SECURITY_LEVELS = ['LOW', 'MEDIUM', 'HIGH'];
@@ -267,10 +267,11 @@ const takeoverTargets = (() => {
         // Record if the picked target grants data
         lastPickedWasData = (target.rewardType === 'data');
 
+        const speedMult = (typeof upgradeDispatcher !== 'undefined' && upgradeDispatcher.getLevel('shell_contracts') > 0) ? 1.5 : 1.0;
         activeAttack = {
             target: { ...target },
             startTime: Date.now(),
-            duration: target.duration * 1000, // convert to ms
+            duration: (target.duration * 1000) / speedMult, // convert to ms
             cost: target.cost,
         };
 

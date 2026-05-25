@@ -30,6 +30,8 @@ const resourceManager = (() => {
 
     let isPacketSniffingActive = false;
     let sniffTimer = 0;
+    let isDataDaemonActive = false;
+    let daemonTimer = 0;
     let currentPhase = '';
 
     // ── init ─────────────────────────────────────────────────────────────────
@@ -108,6 +110,7 @@ const resourceManager = (() => {
         // Initial check for packet sniffing if already purchased (on load)
         const ups = gameState.upgrades || {};
         isPacketSniffingActive = (ups.packet_sniffing || 0) > 0;
+        isDataDaemonActive = (ups.data_daemon || 0) > 0;
 
         updateManager.addFunction(_update);
     }
@@ -491,6 +494,15 @@ const resourceManager = (() => {
             }
         }
 
+        // ── Data Daemon Logic ──
+        if (isDataDaemonActive && currentPhase === GAME_CONSTANTS.PHASE_COMBAT) {
+            daemonTimer += delta;
+            if (daemonTimer >= 1000) {
+                addData(1);
+                daemonTimer -= 1000;
+            }
+        }
+
         if (activeDrops.length === 0 && flyingDrops.length === 0) return;
 
         frameCounter++;
@@ -695,6 +707,7 @@ const resourceManager = (() => {
         if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
             resetSession();
             sniffTimer = 0; // Reset timer at start of combat
+            daemonTimer = 0; // Reset daemon timer
         } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE
             || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
             clearDrops();  // flying drops are cashed out inside clearDrops()
@@ -763,6 +776,7 @@ const resourceManager = (() => {
         canAfford, spend, // Added for cleaner spending logic
         getSessionData, getSessionInsight, getSessionShards, getSessionProcessors, getSessionCoins, getSessionSniffedData,
         resetSession, clearDrops, recalcPickupRadius: _recalcPickupRadius,
-        setPacketSniffing: (active) => { isPacketSniffingActive = active; }
+        setPacketSniffing: (active) => { isPacketSniffingActive = active; },
+        setDataDaemon: (active) => { isDataDaemonActive = active; }
     };
 })();

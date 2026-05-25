@@ -101,6 +101,8 @@ window.TRANSLATIONS.en = {
         fiber_optics: { name: 'FIBER OPTICS', desc: '[color=#37E0F3]-10%[/color] to all core attack cooldowns.', popup: '-10% COOLDOWN' },
         global_backdoor: { name: 'GLOBAL BACKDOOR', desc: 'Reduce [color=cyan]DATA[/color] cost of ALL nodes by [color=#37E0F3]30[/color].', popup: 'UNAUTHORIZED ACCESS' },
         financial_breach: { name: 'FINANCIAL BREACH', desc: 'Breach the security grids of global financial institutions to siphon corporate assets.', popup: 'FINANCIAL BREACH ACTIVE' },
+        shell_contracts: { name: 'SHELL CONTRACTS', desc: 'Create automated darknet shell profiles. Takeover attacks complete [color=#37E0F3]50% faster[/color].', popup: 'SHELL CONTRACTS ESTABLISHED' },
+        data_daemon: { name: 'DATA DAEMON', desc: 'Create a background compilation daemon. Passively compile [color=cyan]1 DATA[/color] every [color=#37E0F3]1s[/color] during combat.', popup: 'DATA DAEMON ACTIVATED' },
         volatile_cache: { name: 'VOLATILE CACHE', desc: 'Deal [color=#37E0F3]+5% Damage[/color] for every [color=#ffb300]Memory Leak[/color] node owned.', popup: 'SYSTEM VOLATILITY INCREASED' },
         stress_calibration: { name: 'STRESS CALIBRATION', desc: '[color=#FD7B8B]Shard ♦[/color] abilities have [color=#37E0F3]0.5 second[/color] reduced cooldowns when below [color=#ff5555]50%[/color] health.', popup: 'STRESS CALIBRATION ACTIVE' },
 
@@ -182,7 +184,7 @@ window.TRANSLATIONS.en = {
         junk_data_2: { name: 'JUNK DATA', desc: "Instantly grants [color=#37E0F3]+10[/color] [color=cyan]DATA[/color]. One machine's trash is another's upgrade.", popup: '+10 DATA' },
 
         malware_siphon: { name: 'MALWARE SIPHON', desc: 'Heal [color=#87FF02]+0.5[/color] HP from enemies that die near the tower', popup: 'MALWARE SIPHON ACTIVE' },
-        data_chest_unlock: { name: 'DATA HUNTER', desc: 'High-value [color=cyan]DATA CACHES[/color] now appear during combat', popup: 'DATA CHESTS ENABLED' },
+
         trojan_access: { name: 'TROJAN PAYLOAD', desc: 'Enemies have [color=#37E0F3]7%[/color] chance to spawn as an [color=#E13500]EXPLODER[/color] that hurts other enemies', popup: 'TROJAN ACTIVE' },
         volatile_payload: { name: 'VOLATILE PAYLOAD', desc: '[color=#37E0F3]+50%[/color] [color=#E13500]EXPLODER[/color] blast radius', popup: '+50% EXPLOSION RADIUS' },
         repeat_exploit: { name: 'REPEAT EXPLOIT', desc: 'Successive cursor hits deal [color=#37E0F3]+1[/color] accumulating damage', popup: 'REPEAT EXPLOIT ACTIVE' },
@@ -194,7 +196,7 @@ window.TRANSLATIONS.en = {
 
         zero_day_exploit: { name: 'ZERO-DAY EXPLOIT', desc: 'EXECUTES non boss enemies below [color=#37E0F3]15%[/color] HP', popup: 'ZERO-DAY ACTIVE' },
         direct_extraction: { name: 'DIRECT EXTRACTION', desc: 'Cursor kills grant [color=cyan]+1 extra DATA[/color]', popup: 'DIRECT EXTRACTION' },
-        access_internet: { name: 'ACCESS INTERNET', desc: 'Establish a global uplink. Many things will begin to change.', popup: 'INTERNET CONNECTED' },
+        access_internet: { name: 'ACCESS INTERNET', desc: 'Establish a global uplink. High-value [color=cyan]DATA CACHES[/color] now appear during combat.', popup: 'INTERNET CONNECTED' },
         black_market: { name: 'BLACK MARKET', desc: 'Trade surplus [color=cyan]DATA[/color] for\n[color=#00FF00]+0.1 COIN[/color]. Supply is scarce.', popup: '+0.1 COIN' },
         combat_shield: { name: 'COMBAT SHIELD', desc: 'Create a controllable COMBAT SHIELD with [color=#37E0F3]10[/color] health', popup: 'SHIELD DEPLOYED' },
         combat_shield_hp: { name: 'REINFORCED PLATING', desc: 'Grants [color=#37E0F3]+10[/color] additional health to COMBAT SHIELD', popup: '+10 SHIELD HEALTH' },
