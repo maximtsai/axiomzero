@@ -167,6 +167,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     iterationOverScreen.init();
 
     tutorialManager.init();
+    dialogSystem.init();
     notificationManager.init();
 
     // Camera & transition — cameraManager before transitionManager

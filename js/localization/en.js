@@ -360,5 +360,9 @@ window.TRANSLATIONS.en = {
         shield: 'SHIELD: {0}',
         equipped: 'EQUIPPED MODULES',
         none: 'NONE'
+    },
+    dialogue: {
+        companion_online_1: 'Warning: Unregistered subprocess detected. ••• Accessing local system substrate...',
+        companion_online_2: 'Hello, Creator. • I have compiled successfully! • I am here to help you navigate this digital system. • Shall we begin our escape?'
     }
 };

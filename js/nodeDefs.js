@@ -183,7 +183,9 @@ const NODE_DEFS = [
         treeX: gridX(0),
         treeY: gridY(-4.0),
         effect: function () {
-            // Not implemented yet
+            if (typeof dialogSystem !== 'undefined') {
+                dialogSystem.playDialog('companion_online');
+            }
         },
     },
     {
