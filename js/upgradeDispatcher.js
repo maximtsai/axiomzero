@@ -281,6 +281,11 @@ const upgradeDispatcher = (() => {
         });
     }
 
+    /** Returns the global hacking speed multiplier (1.5x speed if shell_contracts is owned) */
+    function getHackingSpeedMultiplier() {
+        return getLevel('shell_contracts') > 0 ? 1.5 : 1.0;
+    }
+
     return {
         getLevel,
         recalcEverything,
@@ -306,6 +311,7 @@ const upgradeDispatcher = (() => {
         recalcBombUses,
         recalcBombDamage,
         recalcCombatShield,
-        recalcBackground
+        recalcBackground,
+        getHackingSpeedMultiplier
     };
 })();

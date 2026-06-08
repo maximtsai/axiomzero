@@ -481,6 +481,7 @@ const laserAttack = (() => {
         model.firing = true;
         model.fireTimer = 0;
         model.tickTimer = 0;
+        model.damageTickCount = 0;
 
         view.show(model);
         messageBus.publish('SoundPlay', 'laser_start');
@@ -506,6 +507,14 @@ const laserAttack = (() => {
 
         if (model.twinLevel > 0) {
             _applyBeamDamage(model.getTurretX(towerPos.x, Math.PI), model.getTurretY(towerPos.y, Math.PI), model.angle + Math.PI, L, halfDmgW, dmg);
+        }
+
+        // Screenshake every second damage tick
+        model.damageTickCount = (model.damageTickCount || 0) + 1;
+        if (model.damageTickCount % 2 === 0) {
+            if (typeof cameraManager !== 'undefined') {
+                cameraManager.shake(50, 0.0035);
+            }
         }
     }
 

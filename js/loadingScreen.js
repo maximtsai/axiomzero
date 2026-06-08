@@ -105,8 +105,11 @@ class LoadingScreen {
     }
 
     _queueAssets(scene) {
+        // Only load music files during the initial loading screen
         audioFiles.forEach(f => {
-            scene.load.audio(f.name, 'assets/' + f.src);
+            if (f.name.includes('music')) {
+                scene.load.audio(f.name, 'assets/' + f.src);
+            }
         });
 
         imageAtlases.forEach(f => {
@@ -131,6 +134,7 @@ class LoadingScreen {
     }
 
     _showRunAnywaysButton(forceFinish) {
+        if (this._runBtnBg) return;
         const scene = this._scene;
         const cx = GAME_CONSTANTS.halfWidth;
         const btnY = GAME_CONSTANTS.halfHeight + 125;  // below bar (bar is at cy+50)

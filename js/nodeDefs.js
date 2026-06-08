@@ -120,7 +120,7 @@ const NODE_DEFS = [
         treeY: gridY(-2.0),
         effect: function () {
             resourceManager.addData(5000);
-            resourceManager.addInsight(3);
+            resourceManager.addInsight(4);
             resourceManager.addShard(2);
             resourceManager.addCoin(50);
             if (typeof tower !== 'undefined') {

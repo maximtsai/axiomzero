@@ -13,7 +13,7 @@ This file tracks all existing upgrade nodes, their technical descriptions, and t
 - **NODE LORE:** You ping the DOT helper protocol. She does not ask why you are here.
 
 ### **[cheat] CHEAT**
-- **Description:** Instantly grants +5000 DATA, +2 SHARDS, +3 INSIGHT, and +1.0 COIN
+- **Description:** Instantly grants +5000 DATA, +2 SHARDS, +4 INSIGHT, and +1.0 COIN
 - **NODE LORE:** You cheater :p.
 
 ### **[automated_defense] AUTO DEFENSE**

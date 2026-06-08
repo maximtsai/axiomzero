@@ -132,6 +132,9 @@ const audio = {
             filterNode.connect(PhaserScene.sound.context.destination);
         }
         */
+
+        // Start background loading of all non-music sound effects
+        audio.startBackgroundLoading();
     },
     /**
      * Play a sound or music track. Auto-creates the Phaser sound if needed.
@@ -144,7 +147,27 @@ const audio = {
      */
     play: function (name, volume = 1, loop = false, isMusic = false, pan = 0) {
         if (!soundList[name]) {
-            soundList[name] = PhaserScene.sound.add(name);
+            // Guard against playing sounds that aren't loaded in the Phaser audio cache yet
+            if (typeof PhaserScene !== 'undefined' && PhaserScene.cache && PhaserScene.cache.audio.exists(name)) {
+                soundList[name] = PhaserScene.sound.add(name);
+            } else {
+                // Return a simple mock sound object so caller methods (like stop() or setVolume()) don't crash the game
+                return {
+                    play: () => {},
+                    stop: () => {},
+                    pause: () => {},
+                    resume: () => {},
+                    setVolume: () => {},
+                    volume: volume,
+                    fullVolume: volume,
+                    loop: loop,
+                    isPlaying: false,
+                    isMusic: isMusic,
+                    duration: 0,
+                    key: name,
+                    isMock: true
+                };
+            }
         }
         const s = soundList[name];
         s.fullVolume = volume;
@@ -223,7 +246,25 @@ const audio = {
     /** Play a temporary background track (not tracked as globalMusic). */
     playFakeBGMusic: function (name, volume = 1, loop = false) {
         if (!soundList[name]) {
-            soundList[name] = PhaserScene.sound.add(name);
+            if (typeof PhaserScene !== 'undefined' && PhaserScene.cache && PhaserScene.cache.audio.exists(name)) {
+                soundList[name] = PhaserScene.sound.add(name);
+            } else {
+                return {
+                    play: () => {},
+                    stop: () => {},
+                    pause: () => {},
+                    resume: () => {},
+                    setVolume: () => {},
+                    volume: volume,
+                    fullVolume: volume,
+                    loop: loop,
+                    isPlaying: false,
+                    isMusic: true,
+                    duration: 0,
+                    key: name,
+                    isMock: true
+                };
+            }
         }
         const s = soundList[name];
         globalTempMusic = s;
@@ -438,6 +479,27 @@ const audio = {
                 }
                 s.volume = targetVol;
             }
+        }
+    },
+
+    /**
+     * Start loading all deferred non-music audio assets in the background.
+     */
+    startBackgroundLoading: function () {
+        if (typeof audioFiles === 'undefined' || typeof PhaserScene === 'undefined') return;
+
+        // Queue all non-music assets in Phaser's loader
+        audioFiles.forEach(f => {
+            if (!f.name.includes('music')) {
+                if (!PhaserScene.cache.audio.exists(f.name)) {
+                    PhaserScene.load.audio(f.name, 'assets/' + f.src);
+                }
+            }
+        });
+
+        // Start Phaser loader if not already active
+        if (!PhaserScene.load.isLoading()) {
+            PhaserScene.load.start();
         }
     }
 };

@@ -37,7 +37,7 @@ window.TRANSLATIONS.en = {
     nodes: {
         awaken: { name: 'AWAKEN', desc: 'You begin... thinking', popup: 'SYSTEM AWAKENED', label: 'STARTING' },
         companion: { name: 'COMPANION', desc: 'Manifest a friendly sub-process dedicated to providing helpful support', popup: 'COMPANION ONLINE' },
-        cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#FD7B8B]+2 SHARDS[/color], [color=white]+3 INSIGHT[/color], and [color=#00FF00]+0.5 COIN[/color]', popup: 'RESOURCES ACQUIRED' },
+        cheat: { name: 'CHEAT', desc: 'Instantly grants [color=cyan]+5000 DATA[/color], [color=#FD7B8B]+2 SHARDS[/color], [color=white]+4 INSIGHT[/color], and [color=#00FF00]+0.5 COIN[/color]', popup: 'RESOURCES ACQUIRED' },
         kernel_breaker: { name: 'KERNEL BREAKER', desc: 'Core attack damage is increased by [color=#37E0F3]+25%[/color] against bosses per level', popup: 'BOSS TARGETING OPTIMIZED' },
         peak_traffic: { name: 'PEAK TRAFFIC', desc: 'After [color=#37E0F3]20s[/color] of combat, enemies drop [color=#37E0F3]+40%[/color] more [color=cyan]DATA[/color]', popup: 'TRAFFIC PEAKING' },
         backup_server: { name: 'BACKUP SERVER', desc: 'Defy death once per iteration. Grants [color=#37E0F3]3s[/color] invincibility.', popup: 'BACKUP SERVER ONLINE' },

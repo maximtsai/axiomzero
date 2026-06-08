@@ -1334,7 +1334,6 @@ class Node {
             this.ghost2Visible = true;
 
         } else {
-            console.log("ghost 2");
             // Hide ghost 2
             if (this.ghost2Sprite) {
                 if (draggableGroup) draggableGroup.removeChild(this.ghost2Sprite);

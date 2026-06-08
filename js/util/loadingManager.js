@@ -74,6 +74,14 @@ class LoadingManager {
             loadComplete = true;
             clearTimeout(warningTimeout);
             clearTimeout(loadTimeout);
+
+            // Clean up event listeners so background loading doesn't trigger them again
+            scene.load.off('progress', onProgress);
+            scene.load.off('fileprogress', resetTimer);
+            scene.load.off('loaderror', onLoadError);
+            scene.load.off('filecomplete', onFileComplete);
+            scene.load.off('complete', onComplete);
+
             if (onCompleteCallback) onCompleteCallback();
         };
 
@@ -90,17 +98,12 @@ class LoadingManager {
             }, GAME_CONSTANTS.TIMEOUT_THRESHOLD);
         };
 
-        // Overall progress (0–1) — update bar and reset stall timers
-        scene.load.on('progress', (value) => {
+        const onProgress = (value) => {
             resetTimer();
             if (onProgressCallback) onProgressCallback(value);
-        });
+        };
 
-        // Per-file progress — also counts as activity
-        scene.load.on('fileprogress', resetTimer);
-
-        // File error — retry with exponential backoff up to MAX_RETRIES
-        scene.load.on('loaderror', (file) => {
+        const onLoadError = (file) => {
             console.error('Load error:', file.key, file.url);
             resetTimer();
 
@@ -116,25 +119,38 @@ class LoadingManager {
                 console.error(`Giving up on ${file.key} after ${GAME_CONSTANTS.MAX_RETRIES} attempts`);
                 if (onProgressCallback) onProgressCallback(null, 'some files failed');
             }
-        });
+        };
 
-        // File success — clear retry record
-        scene.load.on('filecomplete', (key) => {
+        const onFileComplete = (key) => {
             if (failedFiles.has(key)) {
                 debugLog(`${key} recovered on retry`);
                 failedFiles.delete(key);
             }
-        });
+        };
 
-        // Normal completion — skipped if retries are still pending; scene.load.retry()
-        // will restart the loader and fire another 'complete' once those finish.
-        scene.load.on('complete', () => {
+        const onComplete = () => {
             if (pendingRetries > 0) return;
             if (scene.load.totalFailed > 0) {
                 console.warn(`${scene.load.totalFailed} file(s) failed — continuing anyway`);
             }
             finish();
-        });
+        };
+
+        // Overall progress (0–1) — update bar and reset stall timers
+        scene.load.on('progress', onProgress);
+
+        // Per-file progress — also counts as activity
+        scene.load.on('fileprogress', resetTimer);
+
+        // File error — retry with exponential backoff up to MAX_RETRIES
+        scene.load.on('loaderror', onLoadError);
+
+        // File success — clear retry record
+        scene.load.on('filecomplete', onFileComplete);
+
+        // Normal completion — skipped if retries are still pending; scene.load.retry()
+        // will restart the loader and fire another 'complete' once those finish.
+        scene.load.on('complete', onComplete);
 
         // Seed the timers before load.start() is called
         resetTimer();
@@ -165,12 +181,10 @@ class LoadingManager {
             }
         }, GAME_CONSTANTS.WATCHDOG_INTERVAL);
 
-        scene.load.on('progress', resetTimer);
-        scene.load.on('fileprogress', resetTimer);
-        scene.load.on('complete', () => clearInterval(stallCheck));
-
-        // Retry logic (same pattern as Phase 2, no progress callback needed)
-        scene.load.on('loaderror', (file) => {
+        const onProgress = () => { resetTimer(); };
+        const onFileProgress = () => { resetTimer(); };
+        
+        const onLoadError = (file) => {
             console.error('Phase 1 load error:', file.key);
             resetTimer();
 
@@ -182,14 +196,29 @@ class LoadingManager {
             } else {
                 console.error(`Giving up on ${file.key} after ${GAME_CONSTANTS.MAX_RETRIES} attempts`);
             }
-        });
+        };
 
-        scene.load.on('filecomplete', (key) => {
+        const onFileComplete = (key) => {
             if (failedFiles.has(key)) {
                 debugLog(`${key} recovered on retry`);
                 failedFiles.delete(key);
             }
-        });
+        };
+
+        const onComplete = () => {
+            clearInterval(stallCheck);
+            scene.load.off('progress', onProgress);
+            scene.load.off('fileprogress', onFileProgress);
+            scene.load.off('loaderror', onLoadError);
+            scene.load.off('filecomplete', onFileComplete);
+            scene.load.off('complete', onComplete);
+        };
+
+        scene.load.on('progress', onProgress);
+        scene.load.on('fileprogress', onFileProgress);
+        scene.load.on('loaderror', onLoadError);
+        scene.load.on('filecomplete', onFileComplete);
+        scene.load.on('complete', onComplete);
     }
 }
 

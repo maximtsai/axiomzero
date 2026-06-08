@@ -100,6 +100,16 @@ const takeoverTargets = (() => {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
+    function _pickWeighted(choices, weights) {
+        const total = weights.reduce((sum, w) => sum + w, 0);
+        let roll = Math.random() * total;
+        for (let i = 0; i < choices.length; i++) {
+            if (roll < weights[i]) return choices[i];
+            roll -= weights[i];
+        }
+        return choices[choices.length - 1];
+    }
+
     /** Round to nearest 5 for cleaner cost display */
     function _roundTo5(n) {
         return Math.round(n / 5) * 5;
@@ -118,11 +128,7 @@ const takeoverTargets = (() => {
         usedNames.add(name);
 
         // Pick security level — weighted: 50% LOW, 35% MEDIUM, 15% HIGH
-        const roll = Math.random();
-        let security;
-        if (roll < 0.50) security = 'LOW';
-        else if (roll < 0.85) security = 'MEDIUM';
-        else security = 'HIGH';
+        const security = _pickWeighted(SECURITY_LEVELS, [0.50, 0.35, 0.15]);
 
         const config = SECURITY_CONFIG[security];
         let cost = _roundTo5(_randInt(config.costMin, config.costMax));
@@ -267,7 +273,7 @@ const takeoverTargets = (() => {
         // Record if the picked target grants data
         lastPickedWasData = (target.rewardType === 'data');
 
-        const speedMult = (typeof upgradeDispatcher !== 'undefined' && upgradeDispatcher.getLevel('shell_contracts') > 0) ? 1.5 : 1.0;
+        const speedMult = (typeof upgradeDispatcher !== 'undefined') ? upgradeDispatcher.getHackingSpeedMultiplier() : 1.0;
         activeAttack = {
             target: { ...target },
             startTime: Date.now(),
