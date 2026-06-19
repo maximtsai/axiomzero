@@ -51,8 +51,9 @@ class InternalMessageBus {
         
         this.index++;
         
-        if (this.index > MESSAGE_BUS_CONSTANTS.INDEX_THRESHOLD) {
-            console.warn(`WARNING: Subscriber threshold reached for topic ${topic}!`);
+        const activeCount = Object.keys(this.topics[topic]).length;
+        if (activeCount > MESSAGE_BUS_CONSTANTS.INDEX_THRESHOLD) {
+            console.warn(`WARNING: Active subscriber threshold reached for topic ${topic}! (${activeCount} active subscribers)`);
         }
 
         return {
@@ -75,8 +76,11 @@ class InternalMessageBus {
      * @returns {{unsubscribe: function, topic: string}} An object with an unsubscribe function
      */
     subscribeOnce(topic, callback, target = null) {
-        const subscription = this.subscribe(topic, function(...args) {
-            subscription.unsubscribe();
+        let subscription;
+        subscription = this.subscribe(topic, function(...args) {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
             callback.apply(target, args);
         });
         return subscription;
