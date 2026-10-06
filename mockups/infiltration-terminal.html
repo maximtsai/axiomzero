@@ -390,7 +390,7 @@ kbd {
 .cta.holding { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--btn) 70%, transparent)); }
 
 /* Live progress on the active row */
-.row-progress { position: absolute; left: 24px; right: 20px; bottom: 10px; height: 2px; background: var(--line); }
+.row-progress { position: absolute; left: 24px; right: 20px; bottom: 5px; height: 2px; background: var(--line); }
 .row-progress i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
 .row .key { position: absolute; right: 20px; bottom: 14px; opacity: .55; }
 .row.selected .key, .row:hover .key { opacity: 1; }
@@ -1273,6 +1273,7 @@ kbd {
 
     // ── Boot ────────────────────────────────────────────────────────────────
     window.mockState = S; // for tinkering from devtools
+    window.mockApi = { render, hexIcon, routeSvg, pipsHtml, SEC }; // used by the one-off asset export
     rollTargets();
     fit();
     setOpen(true);
