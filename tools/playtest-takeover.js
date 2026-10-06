@@ -15,7 +15,7 @@
  *   AZT.takeover.start(i) / fastForward(sec) / finishIn(sec) / completeNow()
  *
  * Real UI input (DOM mouse events through Phaser):
- *   openViaButton() / open() / close() / select(i) / initiate() / abort() / claim()
+ *   openViaButton() / open() / close() / select(i) / initiate() / abort() (held) / claim()
  *   ui()            → { view: 'closed'|'detail'|'hacking'|'success', selected, texts: [...] }
  *   checkLayout()   → overlapping / out-of-panel text in the terminal
  *
@@ -270,7 +270,7 @@
     }
 
     async function close() {
-        await AZT.clickFrame('close_button_', _inPopup());
+        await AZT.clickFrame(/^close_(normal|hover)\.png$/, _inPopup());
         await until(() => view() === 'closed', 1000);
         return view();
     }
@@ -279,7 +279,8 @@
     async function select(i) {
         const target = tt().getTargets()[i];
         if (!target) throw new Error(`no target in slot ${i}`);
-        const hit = AZT.findTexts(_exact(target.name), _inPopup()).filter(h => h.x < PANE_X()).sort((a, b) => a.x - b.x)[0];
+        const rowHit = () => AZT.findTexts(_exact(target.name), _inPopup()).filter(h => h.x < PANE_X()).sort((a, b) => a.x - b.x)[0];
+        const hit = await until(rowHit, 1500); // rows fade in for ~0.5s after open/refresh
         if (!hit) throw new Error(`row for ${target.name} not visible`);
         await AZT.clickAt(hit.x, hit.y);
         await until(() => takeoverPopup.getSelectedIndex() === i, 800);
@@ -297,8 +298,9 @@
         return view();
     }
 
+    /** HOLD TO ABORT: press and hold past the 800ms confirm time. */
     async function abort() {
-        await AZT.clickText(_exact(t('takeover', 'abort')), _inPopup());
+        await AZT.holdText(_exact(t('takeover', 'abort')), 950, _inPopup());
         await until(() => view() === 'detail', 1000);
         await wait(250);
         return view();
@@ -350,15 +352,18 @@
         return { flow: name, passed, steps };
     }
 
-    /** The header status line (left-aligned at T + 56 in takeoverPopup's layout). */
+    /** The header status line (left-aligned, centred at T + 53.5 in takeoverPopup's layout). */
     const statusText = () => {
-        const y = GAME_CONSTANTS.halfHeight - 330 + 56;
+        const y = GAME_CONSTANTS.halfHeight - 330 + 53.5;
         const hit = AZT.findTexts(/\S/, _inPopup()).find(t => Math.abs(t.y - y) < 6 && t.x < GAME_CONSTANTS.halfWidth);
         return hit ? hit.text : '';
     };
 
     async function _ensureOpen(check) {
-        if (takeoverPopup.isOpen()) return;
+        if (takeoverPopup.isOpen()) {
+            await wait(600); // let a refresh's fade-in finish
+            return;
+        }
         const viaButton = AZT.findTexts(_exact(t('ui', 'takeover'))).length > 0;
         const v = viaButton ? await openViaButton() : open();
         if (!viaButton) await wait(250);
@@ -407,7 +412,10 @@
             const dataBefore = gameState.data;
             await select(slot);
             check('initiate → hacking', await initiate() === 'hacking', ui().texts);
-            check('abort → back to detail', await abort() === 'detail', ui().texts);
+            await AZT.clickText(_exact(t('takeover', 'abort')), _inPopup());
+            await wait(300);
+            check('a quick click does not abort', view() === 'hacking' && tt().getButtonState() === 'attacking', view());
+            check('hold → back to detail', await abort() === 'detail', ui().texts);
             const refund = Math.floor(target.cost * 0.75);
             check(`refund ${refund} of ${target.cost}`, gameState.data === dataBefore - target.cost + refund, { before: dataBefore, after: gameState.data });
             check('state idle', tt().getButtonState() === 'idle');
@@ -435,7 +443,7 @@
             if (tt().getButtonState() === 'idle') check('start a breach', start(0), status());
             check('state attacking', tt().getButtonState() === 'attacking');
             await _ensureOpen(check);
-            check('hacking view', view() === 'hacking', ui().texts);
+            check('hacking view', await until(() => view() === 'hacking', 1000), ui().texts);
             const p1 = tt().getProgress();
             check('close', await close() === 'closed');
             await wait(1200);

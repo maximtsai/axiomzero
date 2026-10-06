@@ -210,6 +210,17 @@
         return `clicked (${Math.round(x)}, ${Math.round(y)})`;
     }
 
+    /** Press and hold at game coordinates for `ms` (hold-to-confirm buttons). */
+    async function holdAt(x, y, ms = 900) {
+        _mouse('mousemove', x, y);
+        await wait(50);
+        _mouse('mousedown', x, y);
+        await wait(ms);
+        _mouse('mouseup', x, y);
+        await wait(80);
+        return `held (${Math.round(x)}, ${Math.round(y)}) for ${ms}ms`;
+    }
+
     async function hoverAt(x, y) {
         _mouse('mousemove', x, y);
         await wait(50);
@@ -271,6 +282,14 @@
         if (!hit) throw new Error(`clickText: no visible text matching ${match}`);
         await clickAt(hit.x, hit.y);
         return `clicked "${hit.text}" at (${hit.x}, ${hit.y})`;
+    }
+
+    /** Press and hold the topmost visible text matching `match`. */
+    async function holdText(match, ms = 900, opts) {
+        const hit = findTexts(match, opts)[0];
+        if (!hit) throw new Error(`holdText: no visible text matching ${match}`);
+        await holdAt(hit.x, hit.y, ms);
+        return `held "${hit.text}" for ${ms}ms`;
     }
 
     async function clickFrame(match, opts) {
@@ -349,7 +368,7 @@
         state, loadSave, loadPreset, restore, hasBackup, waitForBoot, wait,
         grant, combat, upgrades, spawn, spawnMiniboss, spawnBoss, god, speed,
         unlockPath, allMaxed, nodes, presets: Object.keys(PRESETS),
-        toClient, clickAt, hoverAt, findTexts, findFrames, clickText, clickFrame, screenTexts,
+        toClient, clickAt, holdAt, hoverAt, findTexts, findFrames, clickText, holdText, clickFrame, screenTexts,
     };
 
     // ── Extensions ───────────────────────────────────────────────────────────

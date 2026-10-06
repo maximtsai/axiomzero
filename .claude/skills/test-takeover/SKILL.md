@@ -65,7 +65,7 @@ Set up per the `playtest` skill (800x450 viewport, inject `tools/playtest.js`, `
 
 **UI drivers (real clicks):**
 - `openViaButton()` / `open()` / `close()`
-- `select(i)`, `initiate()`, `abort()`, `claim()`
+- `select(i)`, `initiate()`, `abort()` (holds HOLD TO ABORT past its 800ms confirm), `claim()`
 - `ui()` → `{ view: 'closed'|'detail'|'hacking'|'success', selected, texts }`
 - `checkLayout()` → overlapping / out-of-panel text
 
@@ -83,4 +83,4 @@ For visual changes, screenshot each view: detail, hacking (use `finishIn`/`fastF
 
 ## Design reference
 
-`mockups/infiltration-terminal.html` is a standalone HTML mock of the terminal (no Phaser) with the same rules. It includes ideas not yet in the game (route trace, hold-to-abort, live row countdown). Open it at `http://localhost:8124/mockups/infiltration-terminal.html`; `window.mockState` exposes its state.
+`mockups/infiltration-terminal.html` is the visual source of truth for the terminal: a standalone HTML mock (no Phaser) with the same rules, open at `http://localhost:8124/mockups/infiltration-terminal.html` (`window.mockState` exposes its state). The game's terminal is assembled from its baked pieces. After changing the mock, run `npm run export-terminal-assets`, have the user republish `raw/infiltration.tps`, update any moved coordinates in `takeoverPopup.js` from `raw/infiltration_layout.json`, then compare game screenshots with `mockups/reference/terminal_*.png` (same 1148x708 crop at x=226, y=96 of a 1600x900 frame).

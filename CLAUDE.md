@@ -27,7 +27,8 @@ Browser-based hybrid incremental / tower-defense game built on Phaser 3. Plain J
 - Upgrade tree nodes: `NODE_DEFS` in `js/nodeDefs.js` (`id`, `parents`, `childIds`, `maxLevel`, `baseCost`, `costType`, `costScaling`, `treeX/treeY` via `gridX()/gridY()`, `effect`). Effects route through `upgradeDispatcher.js`. `js/upgradeManager.js` is a dead stub.
 - Duo-box (choice) nodes: `js/duoNode.js`; state in `gameState.activeShards` / `duoBoxPurchased`.
 - Enemies: `js/enemies/*.js` extend `Enemy` (`enemy.js`), `Miniboss`, or `Boss`; register in `enemyManager.js` and `index.html`.
-- Takeover / Financial Breach: `takeoverTargets.js` (logic, state in `gameState.takeoverState`, publishes `takeover*` messageBus events), `takeoverPopup.js` (split-console terminal) + `infiltrationUI.js` (vector UI kit). Unlocked by the `financial_breach` node. Tests: `tests/takeover.test.js`; balance: `node tools/takeover-sim.js`; in-game: the `test-takeover` skill.
+- Takeover / Financial Breach: `takeoverTargets.js` (logic, state in `gameState.takeoverState`, publishes `takeover*` messageBus events), `takeoverPopup.js` (split-console terminal) + `infiltrationUI.js` (helpers). Unlocked by the `financial_breach` node. Tests: `tests/takeover.test.js`; balance: `node tools/takeover-sim.js`; in-game: the `test-takeover` skill.
+- Terminal visuals are baked, not drawn: `mockups/infiltration-terminal.html` is the source of truth → `npm run export-terminal-assets` writes `raw/infiltration/*.png` (+ `raw/infiltration_layout.json` with exact positions) → republish `raw/infiltration.tps` in TexturePacker (trim off) → `takeoverPopup.js` places the frames at the mock's coordinates. Every colour variant is its own frame (no runtime tint, canvas-safe). To change the look, edit the mock and re-export rather than drawing in Phaser.
 - Lore: `loreDefs.js`, `lore.txt`, `maxed_node_lore.txt`.
 
 ## Conventions

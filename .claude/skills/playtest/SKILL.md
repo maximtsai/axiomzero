@@ -52,7 +52,8 @@ Game state:
 
 Real input. These dispatch DOM mouse events on the canvas, so clicks go through Phaser input, mouseManager, messageBus and buttonManager exactly like a player's. Coordinates are game space (1600x900):
 - `await AZT.clickAt(x, y)` / `await AZT.hoverAt(x, y)`
-- `await AZT.clickText('ABORT BREACH')` / `await AZT.clickFrame('close_button_')`: click the topmost visible text or atlas frame (string = substring/prefix, or a RegExp; `{ minDepth }` restricts to a popup layer)
+- `await AZT.clickText('INITIATE BREACH')` / `await AZT.clickFrame(/^close_normal/)`: click the topmost visible text or atlas frame (string = substring/prefix, or a RegExp; `{ minDepth }` restricts to a popup layer)
+- `await AZT.holdText('HOLD TO ABORT', 950)` / `await AZT.holdAt(x, y, ms)`: press and hold (hold-to-confirm buttons)
 - `AZT.findTexts(match)` / `AZT.findFrames(match)`: positions, sizes and depths of what's on screen
 - `AZT.screenTexts(minDepth)`: every visible text, top to bottom. A cheap text "screenshot" for asserting UI state.
 

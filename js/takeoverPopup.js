@@ -1,52 +1,64 @@
 /**
  * @fileoverview Financial Breach terminal: split-console popup for the takeover system.
  *
- *   ┌ header: title, live status line, DATA / COIN balances, close ───────────┐
+ *   ┌ header: title, status line, INSIGHT / COIN / DATA balances, close ──────┐
  *   │ target list (select)      │ context pane                                │
- *   │                           │   detail  - dossier, stats, INITIATE BREACH │
- *   │                           │   hacking - firewall layers, countdown,     │
- *   │                           │             live intrusion log, ABORT       │
+ *   │                           │   detail  - route preview, stats, INITIATE  │
+ *   │                           │   hacking - route trace, countdown, log,    │
+ *   │                           │             HOLD TO ABORT                   │
  *   │                           │   success - payout, CLAIM REWARD            │
  *   └───────────────────────────┴─────────────────────────────────────────────┘
  *
- * Game logic lives in takeoverTargets.js and drawing primitives in infiltrationUI.js.
- * The popup compares its view against the logic state every frame and re-renders on
- * any mismatch, so breaches finishing (or being changed from elsewhere) never leave
- * stale UI behind.
+ * Visual source of truth: mockups/infiltration-terminal.html. Its pieces are baked into
+ * the 'infiltration' atlas (tools/export-terminal-assets.js → raw/infiltration.tps), and
+ * every coordinate below is the mock's, taken from raw/infiltration_layout.json. Only
+ * text, numbers and animation are live here; nothing is tinted at runtime.
+ *
+ * Game logic lives in takeoverTargets.js. The popup compares its view with the logic
+ * state every frame and re-renders on any mismatch, so it never shows stale state.
  */
 const takeoverPopup = (() => {
     const UI = infiltrationUI;
-    const { THEME, FONT } = UI;
+    const { ATLAS, COLOR, FONT, SECURITY } = UI;
+    const F = UI.frame;
 
-    // ── Layout ───────────────────────────────────────────────────────────────
+    // ── Layout (mock coordinates: the terminal's top-left is 250,120) ────────
 
-    const W = 1100;
-    const H = 660;
-    const L = GAME_CONSTANTS.halfWidth - W / 2;
-    const T = GAME_CONSTANTS.halfHeight - H / 2;
-    const LIST = { x: L + 24, y: T + 86, w: 430 };
-    const PANE = { x: L + 474, y: T + 86, w: 602, h: 556 };
-    const ROW_H = 160;
-    const ROW_GAP = 14;
-    const ROWS_Y = LIST.y + 34;
-    const LOG_ROWS = 7;
+    const L = GAME_CONSTANTS.halfWidth - 550;
+    const T = GAME_CONSTANTS.halfHeight - 330;
+    const M = (x) => x - 250 + L;          // mock x → game x
+    const MY = (y) => y - 120 + T;         // mock y → game y
+    const ROW_TOP = (i) => MY(240 + i * 174);
+    const ROW_CX = M(489);
+    const PANE_CX = M(1025);
+    const PANE = { x: M(724), y: MY(206), w: 602, h: 556 };
     const DEPTH = GAME_CONSTANTS.DEPTH_POPUPS + 2000;
     const D = DEPTH + 2; // content base depth
+
+    // Per-view vertical positions (mock y).
+    const ROUTE = {
+        detail: { y: 387, label: 413.5 },
+        hacking: { y: 335, label: 361.5 },
+        success: { y: 334, label: 360.5 },
+    };
 
     // ── State ────────────────────────────────────────────────────────────────
 
     let isVisible = false;
     let overlay = null;
     let updateFn = null;
+    let keyHandler = null;
     let view = 'closed';        // 'closed' | 'detail' | 'hacking' | 'success'
     let selectedIndex = 0;
     let busy = false;           // an animated transition is running; ignore input
-    let toast = null;           // { text, color, until } — temporary status line message
+    let toast = null;           // { text, color, until }
 
-    const layers = { frame: [], list: [], pane: [] };
+    const layers = { frame: [], list: [], pane: [], route: [] };
     let currentLayer = 'frame';
     let fref = {};              // live frame objects (status, balances, scan bar)
-    let pref = {};              // live pane objects (timer, firewall, log...)
+    let pref = {};              // live pane objects (timer, route, log...)
+    let liveRow = null;         // { time, fill } on the active target's row
+    const shown = { data: null, coin: null, insight: null };
 
     const log = { target: null, lines: [], queue: [], typing: null, nextAt: 0, layersDone: 0 };
 
@@ -62,7 +74,7 @@ const takeoverPopup = (() => {
     function inLayer(name, fn) {
         const prev = currentLayer;
         currentLayer = name;
-        try { fn(); } finally { currentLayer = prev; }
+        try { return fn(); } finally { currentLayer = prev; }
     }
 
     function clearLayer(name) {
@@ -74,11 +86,11 @@ const takeoverPopup = (() => {
     }
 
     const txt = (x, y, str, opts) => add(UI.text(PhaserScene, x, y, str, opts));
-    const gfx = (depth) => add(PhaserScene.add.graphics().setDepth(depth));
-    const hexStr = (n) => '#' + n.toString(16).padStart(6, '0');
+    const img = (x, y, name, depth) => add(PhaserScene.add.image(x, y, ATLAS, F(name)).setDepth(depth));
+    const swatch = (name, depth) => add(PhaserScene.add.image(0, 0, ATLAS, F(name)).setDepth(depth));
     const fmtInt = (n) => Math.floor(n).toLocaleString('en-US');
 
-    /** Fade objects in from 0 to their current alpha (optionally sliding from the left). */
+    /** Fade objects in to their current alpha (optionally sliding from the left). */
     function fadeIn(objs, { delay = 0, slide = 0, duration = 240 } = {}) {
         for (const o of objs) {
             if (o.alpha === undefined || o.type === 'Zone' || PhaserScene.tweens.isTweening(o)) continue;
@@ -93,6 +105,9 @@ const takeoverPopup = (() => {
     // ── Logic helpers ────────────────────────────────────────────────────────
 
     const tt = () => takeoverTargets;
+    const sec = (target) => SECURITY[target.security] || SECURITY.LOW;
+    const rewardStr = (type, amount) => tt().formatReward(type, amount);
+    const timeStr = (target) => helper.formatTime(Math.ceil(tt().getEffectiveDuration(target)));
 
     function logicView() {
         if (tt().getPendingReward()) return 'success';
@@ -103,17 +118,13 @@ const takeoverPopup = (() => {
     function activeIndex() {
         const a = tt().getActiveAttack();
         if (!a) return -1;
-        return tt().getTargets().findIndex(t => t && t.name === a.target.name);
+        return tt().getTargets().findIndex(x => x && x.name === a.target.name);
     }
 
     function firstTargetIndex() {
         const i = tt().getTargets().findIndex(Boolean);
         return i < 0 ? 0 : i;
     }
-
-    const securityColor = (sec) => UI.toHex(tt().getSecurityColor(sec));
-    const pipCount = (sec) => ({ LOW: 1, MEDIUM: 2, HIGH: 3 }[sec] || 1);
-    const rewardStr = (type, amount) => tt().formatReward(type, amount);
 
     // ── Show / hide ──────────────────────────────────────────────────────────
 
@@ -130,18 +141,24 @@ const takeoverPopup = (() => {
             .setDepth(DEPTH)
             .setAlpha(0);
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) upgradeTree.assignToUICamera(overlay);
-        PhaserScene.tweens.add({ targets: overlay, alpha: 0.8, duration: 160 });
+        PhaserScene.tweens.add({ targets: overlay, alpha: 0.82, duration: 160 });
 
         const blocker = helper.createGlobalClickBlocker(false).setDepth(DEPTH + 0.5);
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) upgradeTree.assignToUICamera(blocker);
 
         selectedIndex = firstTargetIndex();
+        shown.data = shown.coin = shown.insight = null;
         buildFrame();
         render(true);
+        inLayer('frame', () => UI.glitchText(PhaserScene, add, fref.title));
 
         if (!updateFn) {
             updateFn = update;
             updateManager.addFunction(updateFn);
+        }
+        if (PhaserScene.input.keyboard && !keyHandler) {
+            keyHandler = onKey;
+            PhaserScene.input.keyboard.on('keydown', keyHandler);
         }
     }
 
@@ -154,11 +171,17 @@ const takeoverPopup = (() => {
             updateManager.removeFunction(updateFn);
             updateFn = null;
         }
+        if (keyHandler && PhaserScene.input.keyboard) {
+            PhaserScene.input.keyboard.off('keydown', keyHandler);
+            keyHandler = null;
+        }
+        clearLayer('route');
         clearLayer('pane');
         clearLayer('list');
         clearLayer('frame');
         fref = {};
         pref = {};
+        liveRow = null;
 
         if (overlay) {
             PhaserScene.tweens.killTweensOf(overlay);
@@ -169,70 +192,53 @@ const takeoverPopup = (() => {
         if (typeof messageBus !== 'undefined') messageBus.publish('takeoverPopupClosed');
     }
 
+    function onKey(e) {
+        if (!isVisible) return;
+        if (e.key === 'Escape') hide();
+        else if (e.key === '1' || e.key === '2' || e.key === '3') select(Number(e.key) - 1);
+        else if (e.key === 'Enter') {
+            if (view === 'detail') initiate();
+            else if (view === 'success') claim();
+        }
+    }
+
     // ── Frame (static chrome) ────────────────────────────────────────────────
 
     function buildFrame() {
         clearLayer('frame');
         inLayer('frame', () => {
-            const g = gfx(DEPTH + 1);
-            UI.fillChamfer(g, L, T, W, H, 22, THEME.BG, 0.97);
-            UI.scanlines(g, L + 2, T + 2, W - 4, H - 4, 0.025);
-            g.fillStyle(THEME.CYAN, 0.035);
-            g.fillRect(L + 1, T + 1, W - 24, 71);
-            g.lineStyle(1, THEME.CYAN, 0.18);
-            g.lineBetween(L + 24, T + 72, L + W - 24, T + 72);
-            g.lineStyle(2, THEME.CYAN, 0.9);
-            g.lineBetween(L + 24, T + 72, L + 200, T + 72);
-            g.lineStyle(1, THEME.CYAN, 0.1);
-            g.lineBetween(PANE.x - 10, PANE.y + 8, PANE.x - 10, PANE.y + PANE.h - 8);
+            img(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'panel', DEPTH + 1);
+            fref.scan = img(GAME_CONSTANTS.halfWidth, T + 45, 'scanbar', DEPTH + 1.1);
 
-            // Title glyph: three slanted bars
-            for (let i = 0; i < 3; i++) {
-                g.fillStyle(THEME.CYAN, 1 - i * 0.3);
-                const bx = L + 26 + i * 8;
-                g.fillPoints([{ x: bx + 4, y: T + 20 }, { x: bx + 9, y: T + 20 }, { x: bx + 5, y: T + 40 }, { x: bx, y: T + 40 }], true);
-            }
+            fref.title = txt(M(312), MY(144.5), t('takeover', 'title'), { font: FONT.BOLD, size: 24, spacing: 3 }).setDepth(D);
+            fref.status = txt(M(312), MY(173.5), '', { size: 12, color: COLOR.MUTED, spacing: 1 }).setDepth(D);
+            fref.cursor = img(0, MY(174), 'cursor', D);
 
-            const fg = gfx(DEPTH + 1.2);
-            UI.glowChamfer(fg, L, T, W, H, 22, THEME.CYAN, 0.5, 1);
-            UI.brackets(fg, L - 7, T - 7, W + 14, H + 14, 30, THEME.CYAN, 0.9, 2);
-
-            txt(L + 60, T + 30, t('takeover', 'title'), { font: FONT.BOLD, size: 24, spacing: 3 }).setDepth(D);
-            fref.status = txt(L + 60, T + 56, '', { size: 12, color: THEME.MUTED, spacing: 1 }).setDepth(D);
-            fref.cursor = add(PhaserScene.add.image(0, T + 56, 'buttons', 'white_pixel.png').setDisplaySize(7, 12).setDepth(D));
-            helper.setTint(fref.cursor, THEME.CYAN);
-
-            // Balances
-            const balance = (x, label, color) => {
-                txt(x, T + 22, label, { size: 10, color: THEME.DIM, origin: [1, 0.5], spacing: 2 }).setDepth(D);
-                return txt(x, T + 45, '', { font: FONT.BOLD, size: 20, color, origin: [1, 0.5] }).setDepth(D);
-            };
-            fref.coin = balance(L + W - 230, t('takeover', 'balance_coin'), tt().getRewardColor('coin'));
-            fref.data = balance(L + W - 92, t('takeover', 'balance_data'), THEME.CYAN_STR);
-            fref.lastCoin = fref.lastData = null;
+            // Balances, laid out right-to-left in layoutBalances()
+            fref.bal = ['data', 'coin', 'insight'].map(key => ({
+                key,
+                label: txt(0, MY(139.5), t('takeover', 'balance_' + key), { size: 10, color: COLOR.DIM, origin: [1, 0.5], spacing: 2 }).setDepth(D),
+                value: txt(0, MY(165), '', { font: FONT.BOLD, size: 20, origin: [1, 0.5], color: { data: COLOR.CYAN, coin: '#00ff00', insight: COLOR.WHITE }[key] }).setDepth(D),
+            }));
 
             const closeBtn = new Button({
-                normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: L + W - 42, y: T + 36 },
-                hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
-                press: { ref: 'close_button_press.png', atlas: 'buttons' },
+                normal: { ref: 'close_normal.png', atlas: ATLAS, x: M(1306), y: MY(156) },
+                hover: { ref: 'close_hover.png', atlas: ATLAS },
+                press: { ref: 'close_hover.png', atlas: ATLAS },
                 onMouseUp: () => {
                     audio.play('click', 1.0);
                     hide();
                 },
             });
             closeBtn.setDepth(D + 1);
-            closeBtn.setScale(0.6);
             add(closeBtn);
 
-            // Slow scan bar sweeping the panel
-            fref.scan = add(PhaserScene.add.image(GAME_CONSTANTS.halfWidth, T, 'buttons', 'white_pixel.png')
-                .setDisplaySize(W - 8, 90).setDepth(DEPTH + 1.1).setAlpha(0.03));
-            helper.setBlendMode(fref.scan, Phaser.BlendModes.ADD);
+            txt(M(274), MY(220), t('takeover', 'targets'), { size: 11, color: COLOR.DIM, spacing: 3 }).setDepth(D);
         });
 
         // Power-on flicker
         for (const o of layers.frame) {
-            if (o instanceof Button || o.alpha === undefined || o === fref.scan) continue;
+            if (o instanceof Button || o.alpha === undefined) continue;
             const a = o.alpha;
             o.setAlpha(0);
             PhaserScene.tweens.add({ targets: o, alpha: a, duration: 200, ease: 'Stepped', easeParams: [4] });
@@ -240,26 +246,38 @@ const takeoverPopup = (() => {
         updateBalances(true);
     }
 
+    /** Count balances toward their real values and keep the three columns right-aligned. */
     function updateBalances(force = false) {
-        if (!fref.data) return;
-        const data = gameState.data;
-        const coin = gameState.coin;
-        if (force || data !== fref.lastData) {
-            if (!force && fref.lastData !== null) bump(fref.data);
-            fref.data.setText(fmtInt(data));
-            fref.lastData = data;
+        if (!fref.bal) return;
+        let changed = force;
+        for (const b of fref.bal) {
+            const real = gameState[b.key] || 0;
+            if (shown[b.key] === null || force) shown[b.key] = real;
+            const diff = real - shown[b.key];
+            if (diff !== 0) {
+                const step = Math.sign(diff) * Math.max(1, Math.ceil(Math.abs(diff) * 0.16));
+                shown[b.key] = Math.abs(step) >= Math.abs(diff) ? real : shown[b.key] + step;
+                if (b.value.scale === 1) bump(b.value);
+            }
+            const str = b.key === 'coin' ? (shown[b.key] * 0.01).toFixed(2) : fmtInt(shown[b.key]);
+            if (b.value.text !== str) {
+                b.value.setText(str);
+                changed = true;
+            }
         }
-        if (force || coin !== fref.lastCoin) {
-            if (!force && fref.lastCoin !== null) bump(fref.coin);
-            fref.coin.setText((coin * 0.01).toFixed(2));
-            fref.lastCoin = coin;
+        if (!changed) return;
+        let right = M(1264);
+        for (const b of fref.bal) {
+            b.label.x = right;
+            b.value.x = right;
+            right -= Math.max(b.label.width, b.value.width) + 34;
         }
     }
 
     function bump(textObj) {
         PhaserScene.tweens.killTweensOf(textObj);
-        textObj.setScale(1.18);
-        PhaserScene.tweens.add({ targets: textObj, scale: 1, duration: 260, ease: 'Back.easeOut' });
+        textObj.setScale(1.15);
+        PhaserScene.tweens.add({ targets: textObj, scale: 1, duration: 240, ease: 'Back.easeOut' });
     }
 
     function setToast(text, color, ms = 2600) {
@@ -269,20 +287,20 @@ const takeoverPopup = (() => {
     function statusLine() {
         if (toast && performance.now() < toast.until) return [toast.text, toast.color];
         toast = null;
-        const speed = tt().getHackingSpeed().toFixed(1);
-        if (view === 'hacking') return [t('takeover', 'status_breaching', [speed]), THEME.CYAN_STR];
-        if (view === 'success') return [t('takeover', 'status_complete'), THEME.GREEN_STR];
-        if (tt().isTutorial()) return [t('takeover', 'status_tutorial'), THEME.GREEN_STR];
-        const online = tt().getTargets().filter(Boolean).length;
-        return [t('takeover', 'status_idle', [online, speed]), THEME.MUTED];
+        const speed = tt().getHackingSpeed();
+        const boost = speed > 1 ? t('takeover', 'status_speed', [speed.toFixed(1)]) : '';
+        if (view === 'hacking') return [t('takeover', 'status_breaching') + boost, COLOR.CYAN];
+        if (view === 'success') return [t('takeover', 'status_complete'), COLOR.GREEN];
+        if (tt().isTutorial()) return [t('takeover', 'status_tutorial'), COLOR.GREEN];
+        return [t('takeover', 'status_idle') + boost, COLOR.MUTED];
     }
 
     function updateStatus() {
         if (!fref.status) return;
-        const [text, color] = statusLine();
-        if (fref.status.text !== text) {
-            fref.status.setText(text);
-            fref.cursor.x = fref.status.x + fref.status.width + 8;
+        const [str, color] = statusLine();
+        if (fref.status.text !== str) {
+            fref.status.setText(str);
+            fref.cursor.x = fref.status.x + fref.status.width + 11;
         }
         if (fref.status.style.color !== color) fref.status.setColor(color);
     }
@@ -290,6 +308,7 @@ const takeoverPopup = (() => {
     // ── Render ───────────────────────────────────────────────────────────────
 
     function render(intro = false) {
+        const prev = view;
         view = logicView();
         const targets = tt().getTargets();
         if (view === 'detail' && !targets[selectedIndex]) selectedIndex = firstTargetIndex();
@@ -297,110 +316,90 @@ const takeoverPopup = (() => {
         renderList(intro);
         renderPane(intro);
         updateStatus();
+        if (prev === 'hacking' && view === 'success' && pref.name) {
+            inLayer('pane', () => UI.glitchText(PhaserScene, add, pref.name));
+        }
     }
 
     // ── Target list ──────────────────────────────────────────────────────────
 
     function renderList(intro) {
         clearLayer('list');
+        liveRow = null;
         inLayer('list', () => {
-            txt(LIST.x + 4, LIST.y + 14, t('takeover', 'targets'), { size: 11, color: THEME.DIM, spacing: 3 }).setDepth(D);
-            const g = gfx(D);
-            g.lineStyle(1, THEME.LINE, 1);
-            g.lineBetween(LIST.x + 90, LIST.y + 14, LIST.x + LIST.w, LIST.y + 14);
-
             const targets = tt().getTargets();
             const busyIdx = view === 'detail' ? -1 : activeIndex();
             for (let i = 0; i < 3; i++) {
-                const y = ROWS_Y + i * (ROW_H + ROW_GAP);
-                const objs = targets[i] ? targetRow(i, targets[i], y, busyIdx) : offlineRow(y);
+                const objs = targets[i] ? targetRow(i, targets[i], ROW_TOP(i), busyIdx) : offlineRow(ROW_TOP(i));
                 if (intro) fadeIn(objs, { delay: 80 + i * 70, slide: 18 });
             }
         });
     }
 
-    function targetRow(i, target, y, busyIdx) {
+    function targetRow(i, target, top, busyIdx) {
         const objs = [];
         const push = (o) => { objs.push(o); return o; };
-        const x = LIST.x, w = LIST.w, h = ROW_H;
-        const sec = target.security;
-        const color = securityColor(sec);
+        const s = sec(target);
         const selected = view === 'detail' ? i === selectedIndex : i === busyIdx;
         const locked = busyIdx !== -1 && i !== busyIdx;
+        const live = i === busyIdx && view === 'hacking';
         const affordable = resourceManager.canAfford('data', target.cost);
+        const rowY = top + 80;
 
-        const g = push(gfx(D + 0.1));
-        const draw = (hover) => {
-            g.clear();
-            UI.fillChamfer(g, x, y, w, h, 14, THEME.ROW, 0.92);
-            if (selected) {
-                UI.fillChamfer(g, x, y, w, h, 14, color, 0.07);
-                UI.glowChamfer(g, x, y, w, h, 14, color, 0.95, 0.8);
-                UI.brackets(g, x - 6, y - 6, w + 12, h + 12, 14, color, 0.85, 1.5);
-                g.fillStyle(color, 0.95);
-                g.fillTriangle(x + w + 9, y + h / 2 - 8, x + w + 17, y + h / 2, x + w + 9, y + h / 2 + 8);
-            } else {
-                UI.strokeChamfer(g, x, y, w, h, 14, color, hover ? 0.65 : 0.22, 1.2);
-            }
-            g.fillStyle(color, selected ? 0.95 : 0.45);
-            g.fillRect(x + 1, y + 16, 3, h - 32);
-            g.lineStyle(1, THEME.LINE, 1);
-            g.lineBetween(x + 20, y + 92, x + w - 20, y + 92);
-        };
-        draw(false);
+        const bg = push(img(ROW_CX, rowY, `row_${s.key}_${selected ? 'selected' : 'normal'}`, D));
+        push(img(M(324), top + 48, `icon_${target.rewardType}_${s.key}`, D + 0.1).setScale(52 / 64));
+        push(txt(M(364), top + 36.5, target.name, { font: FONT.BOLD, size: 19, spacing: 0.5 }).setDepth(D + 0.1));
+        push(img(M(376), top + 65, `pips_${s.key}`, D + 0.1));
+        push(txt(M(398), top + 65.5, t('takeover', 'security_' + target.security), { font: FONT.BOLD, size: 12, color: s.color, spacing: 1 }).setDepth(D + 0.1));
 
-        UI.hexIcon(push(gfx(D + 0.2)), x + 50, y + 48, 24, target.rewardType, color);
-        push(txt(x + 88, y + 34, target.name, { font: FONT.BOLD, size: 19 }).setDepth(D + 0.2));
-        UI.pips(push(gfx(D + 0.2)), x + 90, y + 62, pipCount(sec), 3, color);
-        push(txt(x + 130, y + 62, t('takeover', 'security_' + sec), { font: FONT.BOLD, size: 12, color: hexStr(color), spacing: 1 }).setDepth(D + 0.2));
-
-        // Top-right tag
         let tag = null;
-        if (i === busyIdx) {
-            tag = view === 'success' ? [t('takeover', 'tag_ready'), THEME.GREEN_STR] : [t('takeover', 'tag_live'), THEME.CYAN_STR];
-        } else if (tt().isTutorial() && i === firstTargetIndex()) {
-            tag = [t('takeover', 'recommended'), THEME.GREEN_STR];
-        }
+        if (i === busyIdx) tag = view === 'success' ? [t('takeover', 'tag_ready'), COLOR.GREEN] : [t('takeover', 'tag_live'), COLOR.CYAN];
+        else if (tt().isTutorial() && i === firstTargetIndex()) tag = [t('takeover', 'recommended'), COLOR.GREEN];
         if (tag) {
-            const tagText = push(txt(x + w - 20, y + 22, tag[0], { font: FONT.BOLD, size: 11, color: tag[1], origin: [1, 0.5], spacing: 2 }).setDepth(D + 0.2));
-            if (i === busyIdx) PhaserScene.tweens.add({ targets: tagText, alpha: 0.35, duration: 600, yoyo: true, repeat: -1, delay: 300 });
+            const tagText = push(txt(M(684), top + 24, tag[0], { font: FONT.BOLD, size: 11, color: tag[1], origin: [1, 0.5], spacing: 2 }).setDepth(D + 0.1));
+            if (i === busyIdx) PhaserScene.tweens.add({ targets: tagText, alpha: 0.3, duration: view === 'success' ? 450 : 600, yoyo: true, repeat: -1 });
         }
 
-        // Metrics
         const cols = [
-            [x + 24, t('takeover', 'cost'), `${target.cost} DATA`, affordable ? THEME.CYAN_STR : THEME.RED_STR],
-            [x + 152, t('takeover', 'payout'), rewardStr(target.rewardType, target.rewardAmount), tt().getRewardColor(target.rewardType)],
-            [x + 318, t('takeover', 'time'), helper.formatTime(Math.ceil(tt().getEffectiveDuration(target))), THEME.TEXT],
+            [M(298), t('takeover', 'cost'), `${target.cost} DATA`, affordable ? COLOR.CYAN : COLOR.RED],
+            [M(426), t('takeover', 'payout'), rewardStr(target.rewardType, target.rewardAmount), tt().getRewardColor(target.rewardType)],
+            [M(592), t('takeover', live ? 'left' : 'time'), timeStr(target), live ? COLOR.CYAN : COLOR.TEXT],
         ];
-        for (const [cx, label, value, c] of cols) {
-            push(txt(cx, y + 114, label, { size: 11, color: THEME.DIM, spacing: 2 }).setDepth(D + 0.2));
-            push(txt(cx, y + 136, value, { font: FONT.BOLD, size: 16, color: c }).setDepth(D + 0.2));
+        let timeText = null;
+        for (const [cx, label, value, color] of cols) {
+            push(txt(cx, top + 115, label, { size: 11, color: COLOR.DIM, spacing: 2 }).setDepth(D + 0.1));
+            timeText = push(txt(cx, top + 140.5, value, { font: FONT.BOLD, size: 16, color }).setDepth(D + 0.1));
+        }
+
+        if (live) {
+            push(img(M(491), top + 154, 'rowbar_track', D + 0.1));
+            const fill = push(img(M(491), top + 154, 'rowbar_fill', D + 0.15));
+            liveRow = { time: timeText, fill };
         }
 
         if (!locked && view === 'detail') {
-            const zone = push(add(PhaserScene.add.zone(x + w / 2, y + h / 2, w, h).setInteractive({ useHandCursor: true }).setDepth(D + 0.5)));
+            const zone = push(add(PhaserScene.add.zone(ROW_CX, rowY, 430, 160).setInteractive({ useHandCursor: true }).setDepth(D + 0.5)));
             zone.on('pointerover', () => {
                 if (i === selectedIndex) return;
-                draw(true);
+                bg.setFrame(F(`row_${s.key}_hover`));
                 audio.play('click', 0.25);
             });
-            zone.on('pointerout', () => { if (i !== selectedIndex) draw(false); });
+            zone.on('pointerout', () => { if (i !== selectedIndex) bg.setFrame(F(`row_${s.key}_normal`)); });
             zone.on('pointerup', () => select(i));
         }
         if (locked) objs.forEach(o => o.setAlpha && o.setAlpha(0.28));
         return objs;
     }
 
-    function offlineRow(y) {
-        const g = gfx(D + 0.1);
-        UI.dashedRect(g, LIST.x, y, LIST.w, ROW_H, THEME.DISABLED, 0.6);
-        const label = txt(LIST.x + LIST.w / 2, y + ROW_H / 2, t('takeover', 'offline'), { font: FONT.BOLD, size: 13, color: THEME.DIM, origin: [0.5, 0.5], spacing: 2 }).setDepth(D + 0.2);
-        PhaserScene.tweens.add({ targets: label, alpha: 0.35, duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-        return [g, label];
+    function offlineRow(top) {
+        const bg = img(ROW_CX, top + 80, 'row_offline', D);
+        const label = txt(ROW_CX, top + 80, t('takeover', 'offline'), { font: FONT.BOLD, size: 13, color: COLOR.DIM, origin: [0.5, 0.5], spacing: 2 }).setDepth(D + 0.1);
+        PhaserScene.tweens.add({ targets: [bg, label], alpha: 0.4, duration: 1000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+        return [bg, label];
     }
 
     function select(i) {
-        if (busy || view !== 'detail' || i === selectedIndex) return;
+        if (busy || view !== 'detail' || i === selectedIndex || !tt().getTargets()[i]) return;
         selectedIndex = i;
         audio.play('click', 0.8);
         renderList(false);
@@ -410,6 +409,7 @@ const takeoverPopup = (() => {
     // ── Context pane ─────────────────────────────────────────────────────────
 
     function renderPane(intro) {
+        clearLayer('route');
         clearLayer('pane');
         pref = {};
         inLayer('pane', () => {
@@ -417,238 +417,249 @@ const takeoverPopup = (() => {
             else if (view === 'success') paneSuccess();
             else paneDetail();
         });
-        if (intro) fadeIn(layers.pane, { duration: 200 });
+        if (intro) fadeIn([...layers.pane, ...layers.route], { duration: 200 });
     }
 
-    function paneChrome(color) {
-        const g = gfx(D);
-        UI.strokeChamfer(g, PANE.x, PANE.y, PANE.w, PANE.h, 16, color, 0.18, 1);
-        UI.brackets(g, PANE.x - 4, PANE.y - 4, PANE.w + 8, PANE.h + 8, 16, color, 0.6, 1.5);
-        return g;
+    function paneChrome(accentKey) {
+        const ns = add(helper.createNineSlice(PANE_CX, PANE.y + PANE.h / 2, ATLAS, F('pane_' + accentKey), PANE.w + 8, PANE.h + 8, 28, 28, 28, 28));
+        ns.setDepth(D);
+        return ns;
     }
 
-    function paneHeader(label, color, blink) {
-        const x = PANE.x + 24;
-        if (blink) {
-            const dot = gfx(D + 0.2);
-            dot.fillStyle(UI.toHex(color), 1);
-            dot.fillCircle(x + 4, PANE.y + 22, 4);
-            PhaserScene.tweens.add({ targets: dot, alpha: 0.2, duration: 500, yoyo: true, repeat: -1 });
-        }
-        txt(blink ? x + 16 : x, PANE.y + 22, label, { font: FONT.BOLD, size: 11, color, spacing: 3 }).setDepth(D + 0.2);
+    function eyebrow(label, color, dotFrame) {
+        const dot = img(M(752), MY(229), dotFrame, D + 0.1);
+        PhaserScene.tweens.add({ targets: dot, alpha: 0.25, duration: 500, yoyo: true, repeat: -1 });
+        txt(M(766), MY(229), label, { font: FONT.BOLD, size: 11, color, spacing: 3 }).setDepth(D + 0.1);
     }
 
     function paneDetail() {
         const target = tt().getTargets()[selectedIndex];
         if (!target) return;
-        const P = PANE, x = P.x + 24, cx = P.x + P.w / 2;
-        const color = securityColor(target.security);
+        const s = sec(target);
         const affordable = resourceManager.canAfford('data', target.cost);
         pref.affordable = affordable;
 
-        paneChrome(color);
-        paneHeader(t('takeover', 'dossier'), THEME.DIM, false);
-        txt(x, P.y + 58, target.name, { font: FONT.BOLD, size: 30 }).setDepth(D + 0.2);
-        UI.pips(gfx(D + 0.2), x + 2, P.y + 94, pipCount(target.security), 3, color);
-        const secLabel = txt(x + 42, P.y + 94, t('takeover', 'security_' + target.security), { font: FONT.BOLD, size: 13, color: hexStr(color), spacing: 1 }).setDepth(D + 0.2);
-        txt(secLabel.x + secLabel.width + 14, P.y + 94, '//  ' + t('takeover', 'layers', [tt().getFirewallLayers(target.security)]), { size: 13, color: THEME.MUTED, spacing: 1 }).setDepth(D + 0.2);
-        txt(x, P.y + 128, target.flavor, { font: FONT.ITALIC, size: 17, color: THEME.MUTED, wrap: P.w - 48 }).setDepth(D + 0.2);
+        paneChrome(s.key);
+        pref.name = txt(M(748), MY(250.5), target.name, { font: FONT.BOLD, size: 30, spacing: 0.5 }).setDepth(D + 0.1);
+        img(M(760), MY(287.5), `pips_${s.key}`, D + 0.1);
+        txt(M(782), MY(287.5), t('takeover', 'security_' + target.security), { font: FONT.BOLD, size: 13, color: s.color, spacing: 1 }).setDepth(D + 0.1);
+        txt(M(748), MY(321), target.flavor, { font: FONT.ITALIC, size: 17, color: COLOR.MUTED }).setDepth(D + 0.1);
 
-        // Dossier
-        const d = UI.dossier(target);
-        const rows = [
-            [t('takeover', 'host'), d.host],
-            [t('takeover', 'route'), t('takeover', 'route_value', [d.hops])],
-            [t('takeover', 'cipher'), d.cipher],
-        ];
-        rows.forEach(([label, value], k) => {
-            txt(x, P.y + 172 + k * 24, label, { size: 11, color: THEME.DIM, spacing: 2 }).setDepth(D + 0.2);
-            txt(x + 96, P.y + 172 + k * 24, value, { size: 14, color: '#9fb3c8', spacing: 1 }).setDepth(D + 0.2);
-        });
+        drawRoute(target, 'preview', 0, ROUTE.detail);
 
-        // Stat boxes
         const speed = tt().getHackingSpeed();
         const net = target.rewardType === 'data' ? target.rewardAmount - target.cost : null;
-        const boxes = [
-            [t('takeover', 'cost'), `${target.cost} DATA`, affordable ? THEME.CYAN_STR : THEME.RED_STR,
-                affordable ? '' : t('takeover', 'insufficient'), THEME.RED_STR],
+        const stats = [
+            [t('takeover', 'cost'), `${target.cost} DATA`, affordable ? COLOR.CYAN : COLOR.RED, '', ''],
             [t('takeover', 'payout'), rewardStr(target.rewardType, target.rewardAmount), tt().getRewardColor(target.rewardType),
-                net !== null ? t('takeover', 'net', [net]) : '', THEME.GREEN_STR],
-            [t('takeover', 'time'), helper.formatTime(Math.ceil(tt().getEffectiveDuration(target))), THEME.TEXT,
-                speed > 1 ? t('takeover', 'sped_up', [speed.toFixed(1)]) : '', THEME.CYAN_STR],
+                net !== null ? t('takeover', 'net', [net]) : '', COLOR.GREEN],
+            [t('takeover', 'time'), timeStr(target), COLOR.TEXT, speed > 1 ? t('takeover', 'sped_up', [speed.toFixed(1)]) : '', COLOR.CYAN],
         ];
-        const bw = 174, bh = 92, by = P.y + 252;
-        const bg = gfx(D + 0.1);
-        boxes.forEach(([label, value, valueColor, sub, subColor], k) => {
-            const bx = x + k * (bw + 16);
-            UI.fillChamfer(bg, bx, by, bw, bh, 10, THEME.ROW, 0.9);
-            UI.strokeChamfer(bg, bx, by, bw, bh, 10, THEME.LINE, 1, 1);
-            bg.fillStyle(color, 0.9);
-            bg.fillRect(bx, by + 10, 2, 18);
-            txt(bx + 14, by + 20, label, { size: 11, color: THEME.DIM, spacing: 2 }).setDepth(D + 0.2);
-            txt(bx + 14, by + 50, value, { font: FONT.BOLD, size: 21, color: valueColor }).setDepth(D + 0.2);
-            if (sub) txt(bx + 14, by + 76, sub, { size: 11, color: subColor, spacing: 1 }).setDepth(D + 0.2);
+        stats.forEach(([label, value, valueColor, sub, subColor], k) => {
+            const bx = M(748 + k * 190);
+            img(bx + 87, MY(493), `stat_${s.key}`, D + 0.05);
+            txt(bx + 14, MY(471), label, { size: 11, color: COLOR.DIM, spacing: 2 }).setDepth(D + 0.1);
+            txt(bx + 14, MY(502), value, { font: FONT.BOLD, size: 21, color: valueColor }).setDepth(D + 0.1);
+            if (sub) txt(bx + 14, MY(531), sub, { size: 11, color: subColor, spacing: 1 }).setDepth(D + 0.1);
         });
 
         pref.initBtn = UI.button(PhaserScene, add, {
-            x: cx, y: P.y + 424, w: 440, h: 66, depth: D + 0.3,
+            x: PANE_CX, y: MY(700), w: 440, h: 64, depth: D + 0.2,
+            base: 'btn_cyan', deniedFrame: 'btn_denied', chevron: 'chev_cyan', labelColor: COLOR.CYAN,
             label: affordable ? t('takeover', 'initiate') : t('takeover', 'insufficient'),
-            sub: affordable ? t('takeover', 'debit', [target.cost]) : t('takeover', 'need_have', [target.cost, fmtInt(gameState.data)]),
-            color: THEME.CYAN, enabled: affordable, chevrons: true,
+            sub: affordable ? t('takeover', 'debit', [target.cost]) : t('takeover', 'need', [target.cost]),
+            enabled: affordable,
             onClick: initiate, onDenied: deny,
         });
-        txt(cx, P.y + 500, t('takeover', 'abort_hint'), { size: 11, color: THEME.DIM, origin: [0.5, 0.5], spacing: 1 }).setDepth(D + 0.2);
     }
 
     function paneHacking() {
         const a = tt().getActiveAttack();
         const target = a.target;
-        const P = PANE, x = P.x + 24, cx = P.x + P.w / 2, right = P.x + P.w - 24;
-        const color = securityColor(target.security);
-        pref.color = color;
+        const s = sec(target);
+        pref.sec = s;
         pref.layers = tt().getFirewallLayers(target.security);
 
-        paneChrome(THEME.CYAN);
-        paneHeader(t('takeover', 'in_progress'), THEME.CYAN_STR, true);
-        txt(x, P.y + 58, target.name, { font: FONT.BOLD, size: 30 }).setDepth(D + 0.2);
-        txt(right, P.y + 58, rewardStr(target.rewardType, target.rewardAmount), { font: FONT.BOLD, size: 16, color: tt().getRewardColor(target.rewardType), origin: [1, 0.5] }).setDepth(D + 0.2);
+        paneChrome('cyan');
+        eyebrow(t('takeover', 'in_progress'), COLOR.CYAN, 'dot_cyan');
+        pref.name = txt(M(748), MY(264.5), target.name, { font: FONT.BOLD, size: 30, spacing: 0.5 }).setDepth(D + 0.1);
+        txt(M(1303), MY(269.5), rewardStr(target.rewardType, target.rewardAmount), { font: FONT.BOLD, size: 16, color: tt().getRewardColor(target.rewardType), origin: [1, 0.5] }).setDepth(D + 0.1);
 
-        txt(x, P.y + 100, t('takeover', 'firewall'), { size: 11, color: THEME.DIM, spacing: 3 }).setDepth(D + 0.2);
-        pref.layerText = txt(right, P.y + 100, '', { font: FONT.BOLD, size: 11, color: hexStr(color), origin: [1, 0.5], spacing: 2 }).setDepth(D + 0.2);
-        pref.fw = gfx(D + 0.2);
+        pref.layerText = txt(M(1302), MY(393), '', { font: FONT.BOLD, size: 11, color: s.color, origin: [1, 0.5], spacing: 2 }).setDepth(D + 0.1);
+        pref.timer = txt(M(748), MY(429), '', { font: FONT.BOLD, size: 52, spacing: 1 }).setDepth(D + 0.1);
+        pref.pct = txt(M(1302), MY(438), '', { font: FONT.BOLD, size: 26, color: COLOR.CYAN, origin: [1, 0.5] }).setDepth(D + 0.1);
+        img(PANE_CX, MY(472), 'bar_track', D + 0.1);
+        pref.barFill = img(PANE_CX, MY(472), 'bar_fill', D + 0.15);
 
-        pref.timer = txt(x, P.y + 168, '', { font: FONT.BOLD, size: 52 }).setDepth(D + 0.2);
-        pref.pct = txt(right, P.y + 176, '', { font: FONT.BOLD, size: 26, color: THEME.CYAN_STR, origin: [1, 0.5] }).setDepth(D + 0.2);
-        pref.bar = gfx(D + 0.2);
-
-        buildLogBox(P.y + 236, LOG_ROWS);
+        buildLog('log_tall', MY(559), MY(511), 6);
         if (log.target !== target.name) resetLog(target, true);
 
         pref.abortBtn = UI.button(PhaserScene, add, {
-            x: cx, y: P.y + 484, w: 360, h: 58, depth: D + 0.3,
+            x: PANE_CX, y: MY(675), w: 360, h: 58, depth: D + 0.2,
+            base: 'btn_red', holdFrame: 'btn_red_holdfill', holdMs: 800, labelColor: COLOR.RED,
             label: t('takeover', 'abort'), sub: t('takeover', 'refund', [tt().getRefundAmount()]),
-            color: THEME.RED, onClick: abort,
+            onClick: abort,
         });
+        txt(PANE_CX, MY(724), t('takeover', 'bg_hint'), { size: 11, color: COLOR.DIM, origin: [0.5, 0.5], spacing: 1 }).setDepth(D + 0.1);
+
+        pref.routeDone = -1;
         updateHacking(true);
     }
 
     function paneSuccess() {
-        const a = tt().getActiveAttack();
+        const a = tt().getActiveAttack();       // stays set until the reward is claimed
         const pr = tt().getPendingReward();
-        const P = PANE, x = P.x + 24, cx = P.x + P.w / 2, right = P.x + P.w - 24;
         const rewardColor = tt().getRewardColor(pr.rewardType);
 
-        paneChrome(THEME.GREEN);
-        paneHeader(t('takeover', 'complete'), THEME.GREEN_STR, true);
-        txt(x, P.y + 58, pr.targetName, { font: FONT.BOLD, size: 30 }).setDepth(D + 0.2);
+        paneChrome('green');
+        eyebrow(t('takeover', 'complete'), COLOR.GREEN, 'dot_green');
+        pref.name = txt(M(748), MY(264.5), pr.targetName, { font: FONT.BOLD, size: 30, spacing: 0.5 }).setDepth(D + 0.1);
+        drawRoute(a ? a.target : { name: pr.targetName, security: 'LOW' }, 'done', 1, ROUTE.success);
 
-        // Firewall: fully breached
-        const layersN = tt().getFirewallLayers(a ? a.target.security : 'LOW'); // activeAttack stays set until claimed
-        txt(x, P.y + 100, t('takeover', 'firewall'), { size: 11, color: THEME.DIM, spacing: 3 }).setDepth(D + 0.2);
-        txt(right, P.y + 100, t('takeover', 'all_layers'), { font: FONT.BOLD, size: 11, color: THEME.GREEN_STR, origin: [1, 0.5], spacing: 2 }).setDepth(D + 0.2);
-        drawFirewall(gfx(D + 0.2), layersN, layersN, 0, THEME.GREEN, true);
-
-        // Payout, centred as icon + amount
-        txt(cx, P.y + 150, t('takeover', 'payout'), { size: 11, color: THEME.DIM, origin: [0.5, 0.5], spacing: 3 }).setDepth(D + 0.2);
-        const amount = txt(0, P.y + 196, rewardStr(pr.rewardType, pr.rewardAmount), { font: FONT.BOLD, size: 44, color: rewardColor }).setDepth(D + 0.2);
-        const total = 64 + 18 + amount.width;
-        const start = cx - total / 2;
-        UI.hexIcon(gfx(D + 0.2), start + 32, P.y + 196, 30, pr.rewardType, UI.toHex(rewardColor));
-        amount.x = start + 64 + 18;
+        txt(PANE_CX, MY(392), t('takeover', 'payout'), { size: 11, color: COLOR.DIM, origin: [0.5, 0.5], spacing: 3 }).setDepth(D + 0.1);
+        const amount = txt(0, MY(438.5), rewardStr(pr.rewardType, pr.rewardAmount), { font: FONT.BOLD, size: 44, color: rewardColor }).setDepth(D + 0.1);
+        const start = PANE_CX - (64 + 18 + amount.width) / 2;
+        img(start + 32, MY(438), `icon_${pr.rewardType}_reward`, D + 0.1);
+        amount.x = start + 82;
         pref.reward = amount;
+        PhaserScene.tweens.add({ targets: amount, scale: { from: 0.6, to: 1 }, alpha: { from: 0, to: 1 }, duration: 500, ease: 'Back.easeOut' });
 
-        buildLogBox(P.y + 236 + 24, LOG_ROWS - 1);
+        buildLog('log_short', MY(540), MY(506), 4);
         if (log.target !== pr.targetName) resetLog({ name: pr.targetName }, false);
-        const hasDoneLines = log.lines.some(l => l.done) || log.queue.some(l => l.done) || (log.typing && log.typing.done);
-        if (!hasDoneLines) {
-            queueLog(t('takeover', 'log_done'), THEME.GREEN_STR, true);
-            queueLog(t('takeover', 'log_exfil'), THEME.GREEN_STR, true);
-            queueLog(t('takeover', 'log_await'), THEME.GREEN_STR, true);
+        const hasDone = log.lines.some(l => l.done) || log.queue.some(l => l.done) || (log.typing && log.typing.done);
+        if (!hasDone) {
+            queueLog(t('takeover', 'log_done'), COLOR.GREEN, true);
+            queueLog(t('takeover', 'log_await'), COLOR.GREEN, true);
         }
 
         pref.claimBtn = UI.button(PhaserScene, add, {
-            x: cx, y: P.y + 484, w: 440, h: 62, depth: D + 0.3,
+            x: PANE_CX, y: MY(700), w: 440, h: 64, depth: D + 0.2,
+            base: 'btn_green', glowFrame: 'btn_green_glow', chevron: 'chev_green', labelColor: COLOR.GREEN,
             label: t('takeover', 'claim'), sub: rewardStr(pr.rewardType, pr.rewardAmount),
-            color: THEME.GREEN, chevrons: true, onClick: claim,
+            onClick: claim,
         });
         pref.claimBtn.pulse();
     }
 
-    // ── Hacking visuals ──────────────────────────────────────────────────────
+    // ── Route trace: CORE → proxy hops → firewall gates → VAULT ───────────────
 
-    function drawFirewall(g, total, done, partial, color, blinkOn) {
-        const x = PANE.x + 24, y = PANE.y + 114, w = PANE.w - 48, h = 22, gap = 8;
-        const segW = (w - gap * (total - 1)) / total;
-        g.clear();
-        for (let k = 0; k < total; k++) {
-            const sx = x + k * (segW + gap);
-            if (k < done) {
-                g.fillStyle(color, 0.85);
-                g.fillRect(sx, y, segW, h);
-            } else if (k === done) {
-                g.fillStyle(color, 0.12);
-                g.fillRect(sx, y, segW, h);
-                g.fillStyle(color, 0.45);
-                g.fillRect(sx, y, segW * partial, h);
-                g.lineStyle(1.5, color, blinkOn ? 1 : 0.45);
-                g.strokeRect(sx, y, segW, h);
-            } else {
-                g.lineStyle(1, THEME.DISABLED, 0.6);
-                g.strokeRect(sx, y, segW, h);
+    /** mode: 'preview' | 'hacking' | 'done'. Rebuilds the route layer. */
+    function drawRoute(target, mode, progress, pos) {
+        clearLayer('route');
+        inLayer('route', () => {
+            const Y = MY(pos.y);
+            const hops = UI.routeHops(target);
+            const gates = tt().getFirewallLayers(target.security);
+            const s = sec(target);
+            const nodes = ['core', ...Array(hops).fill('hop'), ...Array(gates).fill('gate'), 'vault'];
+            const step = 514 / (nodes.length - 1);
+            const xs = nodes.map((_, i) => M(768) + i * step);
+            const done = mode === 'done' ? gates : Math.min(gates, Math.floor(progress * gates));
+            const firstGate = 1 + hops;
+            const reach = mode === 'preview' ? 0 : mode === 'done' ? nodes.length - 1 : firstGate + done;
+
+            for (let i = 0; i < nodes.length - 1; i++) {
+                swatch(i < reach ? 'px_cyan' : 'px_line', D + 0.1).setOrigin(0, 0.5).setPosition(xs[i], Y).setDisplaySize(step, 2);
             }
-        }
+            pref.route = { Y, x0: xs[0], xReach: xs[reach], gateXs: xs.slice(firstGate, firstGate + gates), activeGate: null, gateFill: null };
+
+            nodes.forEach((n, i) => {
+                const x = xs[i];
+                if (n === 'core') img(x, Y, 'route_core', D + 0.2);
+                else if (n === 'hop') img(x, Y, mode === 'preview' ? 'route_hop_dim' : 'route_hop_lit', D + 0.2);
+                else if (n === 'vault') {
+                    const v = img(x, Y, mode === 'done' ? 'route_vault_lit' : 'route_vault_dim', D + 0.2);
+                    if (mode === 'done') PhaserScene.tweens.add({ targets: v, alpha: 0.35, duration: 500, yoyo: true, repeat: -1 });
+                } else {
+                    const g = i - firstGate;
+                    let state = 'route_gate_locked';
+                    if (mode === 'done') state = 'route_gate_broken_green';
+                    else if (g < done) state = `route_gate_broken_${s.key}`;
+                    else if (mode === 'hacking' && g === done) state = `route_gate_active_${s.key}`;
+                    const gate = img(x, Y, state, D + 0.2);
+                    if (mode === 'hacking' && g === done) {
+                        pref.route.activeGate = gate;
+                        pref.route.gateFill = swatch(s.swatch, D + 0.2).setOrigin(0, 0.5).setPosition(x - 11, Y + 19.5).setAlpha(0.45);
+                    }
+                }
+            });
+            txt(xs[0], MY(pos.label), t('takeover', 'route_core'), { size: 10, color: COLOR.DIM, origin: [0.5, 0.5], spacing: 1.5 }).setDepth(D + 0.1);
+            txt(xs[xs.length - 1], MY(pos.label), t('takeover', 'route_vault'), { size: 10, color: COLOR.DIM, origin: [0.5, 0.5], spacing: 1.5 }).setDepth(D + 0.1);
+
+            // Packets flowing along the lit part of the route
+            pref.packets = [];
+            if (reach > 0) {
+                const count = Math.max(1, Math.floor((xs[reach] - xs[0]) / 14));
+                for (let k = 0; k < count; k++) {
+                    pref.packets.push(add(PhaserScene.add.image(0, Y, 'buttons', 'white_pixel.png').setDisplaySize(2, 2).setDepth(D + 0.15).setAlpha(0.85)));
+                }
+            }
+        });
     }
 
-    function drawProgress(g, p) {
-        const x = PANE.x + 24, y = PANE.y + 206, w = PANE.w - 48, h = 6;
-        g.clear();
-        g.fillStyle(THEME.LINE, 1);
-        g.fillRect(x, y, w, h);
-        g.fillStyle(THEME.CYAN, 1);
-        g.fillRect(x, y, Math.max(1, w * p), h);
-        g.fillStyle(THEME.CYAN, 0.25);
-        g.fillRect(x, y - 3, Math.max(1, w * p), h + 6);
-        g.fillStyle(THEME.BG, 1);
-        for (let k = 1; k < 10; k++) g.fillRect(x + (w * k) / 10 - 1, y, 2, h);
+    function updateRoute(now) {
+        const r = pref.route;
+        if (!r) return;
+        const span = r.xReach - r.x0;
+        pref.packets.forEach((p, k) => { p.x = r.x0 + ((k * 14 + now * 0.0233) % span); });
+        if (r.activeGate) r.activeGate.setAlpha(Math.floor(now / 350) % 2 === 0 ? 1 : 0.45);
     }
+
+    function burstGate(x, y) {
+        inLayer('route', () => {
+            const b = add(PhaserScene.add.image(x, y, 'buttons', 'white_pixel.png').setDisplaySize(30, 36).setDepth(D + 0.3).setAlpha(0.95));
+            PhaserScene.tweens.add({ targets: b, alpha: 0, duration: 550, ease: 'Cubic.easeOut', onComplete: () => b.setVisible(false) });
+        });
+    }
+
+    // ── Hacking per-frame ────────────────────────────────────────────────────
 
     function updateHacking(force = false) {
         if (!pref.timer) return;
-        const p = tt().getProgress();
+        const p = Math.max(0, tt().getProgress());
         const N = pref.layers;
         const done = Math.min(N, Math.floor(p * N));
-        const blinkOn = Math.floor(performance.now() / 350) % 2 === 0;
+        const remaining = tt().getRemainingSeconds();
 
-        const timeStr = helper.formatTime(tt().getRemainingSeconds());
-        if (pref.timer.text !== timeStr) pref.timer.setText(timeStr);
+        const timeText = helper.formatTime(remaining);
+        if (pref.timer.text !== timeText) pref.timer.setText(timeText);
+        const finalSecs = remaining <= 10 && Math.floor(performance.now() / 250) % 2 === 0;
+        pref.timer.setColor(finalSecs ? COLOR.CYAN : COLOR.TEXT);
         const pctStr = Math.floor(p * 100) + '%';
         if (pref.pct.text !== pctStr) pref.pct.setText(pctStr);
         const layerStr = t('takeover', 'layer', [Math.min(done + 1, N), N]);
         if (pref.layerText.text !== layerStr) pref.layerText.setText(layerStr);
+        pref.barFill.setCrop(0, 0, 12 + 554 * p, pref.barFill.frame.height);
 
-        drawFirewall(pref.fw, N, done, p * N - done, pref.color, blinkOn);
-        drawProgress(pref.bar, p);
+        if (liveRow) {
+            if (liveRow.time.text !== timeText) liveRow.time.setText(timeText);
+            liveRow.fill.setCrop(0, 0, 8 + 386 * p, liveRow.fill.frame.height);
+        }
+
+        if (done !== pref.routeDone) {
+            const a = tt().getActiveAttack();
+            drawRoute(a.target, 'hacking', p, ROUTE.hacking);
+            if (!force && done > 0 && pref.route.gateXs[done - 1] !== undefined) {
+                burstGate(pref.route.gateXs[done - 1], pref.route.Y);
+                audio.play('click2', 0.5);
+            }
+            pref.routeDone = done;
+        }
+        if (pref.route && pref.route.gateFill) pref.route.gateFill.setDisplaySize(Math.max(0.01, 22 * (p * N - done)), 3);
 
         if (done > log.layersDone) {
-            for (let k = log.layersDone + 1; k <= done; k++) {
-                queueLog(t('takeover', 'log_layer', [k]), hexStr(pref.color));
-            }
-            if (!force) audio.play('click2', 0.5);
+            for (let k = log.layersDone + 1; k <= done; k++) queueLog(t('takeover', 'log_layer', [k]), pref.sec.color);
             log.layersDone = done;
         }
     }
 
     // ── Intrusion log ────────────────────────────────────────────────────────
 
-    function buildLogBox(y, rows) {
-        const x = PANE.x + 24, w = PANE.w - 48, h = rows * 24 + 16;
-        const g = gfx(D + 0.1);
-        UI.fillChamfer(g, x, y, w, h, 10, 0x03060b, 0.9);
-        UI.strokeChamfer(g, x, y, w, h, 10, THEME.LINE, 1, 1);
-        UI.scanlines(g, x + 2, y + 2, w - 4, h - 4, 0.03, 3);
+    function buildLog(boxFrame, boxY, firstLineY, rows) {
+        img(PANE_CX, boxY, boxFrame, D + 0.05);
         pref.logTexts = [];
         for (let k = 0; k < rows; k++) {
-            pref.logTexts.push(txt(x + 16, y + 20 + k * 24, '', { size: 14, color: '#5fd4e0', spacing: 1 }).setDepth(D + 0.2));
+            pref.logTexts.push(txt(M(764), firstLineY + k * 21, '', { size: 14, color: COLOR.LOG, spacing: 1 }).setDepth(D + 0.1));
         }
         pref.logSig = [];
         renderLog();
@@ -663,20 +674,19 @@ const takeoverPopup = (() => {
         log.layersDone = 0;
         log.nextAt = performance.now() + 900;
         if (!target) return;
-        log.lines.push({ text: t('takeover', 'log_start', [target.name]), color: THEME.CYAN_STR });
+        log.lines.push({ text: t('takeover', 'log_start', [target.name]), color: COLOR.CYAN });
         if (prefill && target.security) {
             const N = tt().getFirewallLayers(target.security);
             const done = Math.min(N, Math.floor(Math.max(0, tt().getProgress()) * N));
             for (let k = 1; k <= done; k++) {
-                log.lines.push({ text: UI.randomLogLine(), color: '#5fd4e0' });
-                log.lines.push({ text: t('takeover', 'log_layer', [k]), color: hexStr(securityColor(target.security)) });
+                log.lines.push({ text: UI.randomLogLine(), color: COLOR.LOG });
+                log.lines.push({ text: t('takeover', 'log_layer', [k]), color: sec(target).color });
             }
             log.layersDone = done;
-            log.lines.push({ text: UI.randomLogLine(), color: '#5fd4e0' });
         }
     }
 
-    function queueLog(text, color = '#5fd4e0', done = false) {
+    function queueLog(text, color = COLOR.LOG, done = false) {
         log.queue.push({ text, color, done });
     }
 
@@ -709,10 +719,10 @@ const takeoverPopup = (() => {
             visible.push({ text: log.typing.text.slice(0, Math.floor(log.typing.shown)) + cursor, color: log.typing.color });
         } else if (visible.length) {
             const last = visible[visible.length - 1];
-            visible[visible.length - 1] = { ...last, text: last.text + (view === 'success' ? cursor : '') };
+            visible[visible.length - 1] = { ...last, text: last.text + cursor };
         }
         for (let k = 0; k < rows; k++) {
-            const line = visible[k] || { text: '', color: '#5fd4e0' };
+            const line = visible[k] || { text: '', color: COLOR.LOG };
             const sig = line.text + '|' + line.color;
             if (pref.logSig[k] === sig) continue;
             pref.logSig[k] = sig;
@@ -737,7 +747,7 @@ const takeoverPopup = (() => {
         busy = true;
         audio.play('upgrade', 0.9);
         if (pref.initBtn) pref.initBtn.setLabel(t('takeover', 'initiating'), t('takeover', 'debit', [target.cost]));
-        flashPane(THEME.CYAN);
+        flashPane('px_cyan');
         PhaserScene.time.delayedCall(420, () => {
             busy = false;
             if (!isVisible) return;
@@ -753,7 +763,7 @@ const takeoverPopup = (() => {
 
     function deny() {
         audio.play('glitch_medium', 0.35);
-        setToast(t('takeover', 'status_denied'), THEME.RED_STR, 2000);
+        setToast(t('takeover', 'status_denied'), COLOR.RED, 2000);
         if (pref.initBtn) pref.initBtn.shake();
         updateStatus();
     }
@@ -763,7 +773,7 @@ const takeoverPopup = (() => {
         const refund = tt().getRefundAmount();
         if (!tt().cancelAttack()) return;
         audio.play('click', 1.0);
-        setToast(t('takeover', 'status_aborted', [refund]), THEME.CYAN_STR);
+        setToast(t('takeover', 'status_aborted', [refund]), COLOR.CYAN);
         resetLog(null);
         selectedIndex = firstTargetIndex();
         render(true);
@@ -776,15 +786,16 @@ const takeoverPopup = (() => {
         busy = true;
         audio.play(pr.rewardType === 'coin' ? 'coin_gain' : 'upgrade_max', 0.7);
         if (pref.reward) {
+            PhaserScene.tweens.killTweensOf(pref.reward);
             PhaserScene.tweens.add({ targets: pref.reward, scale: 1.3, alpha: 0, y: pref.reward.y - 40, duration: 380, ease: 'Cubic.easeIn' });
         }
-        flashPane(THEME.GREEN);
+        flashPane('px_green');
         PhaserScene.time.delayedCall(380, () => {
             busy = false;
             const reward = tt().collectReward();
             if (!isVisible) return;
             if (reward) {
-                setToast(t('takeover', 'status_claimed', [rewardStr(reward.rewardType, reward.rewardAmount).replace(/^\+/, '')]),
+                setToast(t('takeover', 'status_claimed', [rewardStr(reward.rewardType, reward.rewardAmount)]),
                     tt().getRewardColor(reward.rewardType));
             }
             resetLog(null);
@@ -793,12 +804,12 @@ const takeoverPopup = (() => {
         });
     }
 
-    function flashPane(color) {
-        const f = add(PhaserScene.add.image(PANE.x + PANE.w / 2, PANE.y + PANE.h / 2, 'buttons', 'white_pixel.png')
-            .setDisplaySize(PANE.w, PANE.h).setDepth(D + 0.6).setAlpha(0.22));
-        helper.setTint(f, color);
-        helper.setBlendMode(f, Phaser.BlendModes.ADD);
-        PhaserScene.tweens.add({ targets: f, alpha: 0, duration: 320, ease: 'Cubic.easeOut', onComplete: () => f.setVisible(false) });
+    function flashPane(swatchFrame) {
+        inLayer('pane', () => {
+            const f = img(PANE_CX, PANE.y + PANE.h / 2, swatchFrame, D + 0.6).setDisplaySize(PANE.w, PANE.h).setAlpha(0.22);
+            helper.setBlendMode(f, Phaser.BlendModes.ADD);
+            PhaserScene.tweens.add({ targets: f, alpha: 0, duration: 320, ease: 'Cubic.easeOut', onComplete: () => f.setVisible(false) });
+        });
     }
 
     // ── Per-frame update ─────────────────────────────────────────────────────
@@ -811,13 +822,12 @@ const takeoverPopup = (() => {
         const dt = lastFrame ? Math.min(100, now - lastFrame) : 16;
         lastFrame = now;
 
-        if (fref.scan) {
-            const span = H - 90;
-            fref.scan.y = T + 45 + ((now / 5000) % 1) * span;
-        }
+        if (fref.scan) fref.scan.y = T + 45 + ((now / 5000) % 1) * 570;
         if (fref.cursor) fref.cursor.setVisible(Math.floor(now / 530) % 2 === 0);
         updateBalances();
         updateStatus();
+        updateRoute(now);
+        if (pref.abortBtn) pref.abortBtn.tick();
 
         if (busy) return;
 
