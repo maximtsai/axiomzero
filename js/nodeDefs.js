@@ -1525,7 +1525,6 @@ const NODE_DEFS = [
         popupColor: COLORS.RESOURCE,
         maxLevel: 10,
         baseCost: 2,
-        label: t('nodes', 'label.plus_data'),
         costType: 'data',
         costScaling: 'static',
         requiresMaxParent: true,

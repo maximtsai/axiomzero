@@ -237,16 +237,6 @@ class CurrencyCluster {
         });
     }
 
-    _getResourceValue(id) {
-        if (typeof resourceManager === 'undefined') return 0;
-        if (id === 'data') return resourceManager.getData();
-        if (id === 'insight') return resourceManager.getInsight();
-        if (id === 'shard') return resourceManager.getShards();
-        if (id === 'processor') return resourceManager.getProcessors();
-        if (id === 'coin') return resourceManager.getCoins();
-        return 0;
-    }
-
     setVisible(vis) {
         if (!vis) {
             Object.values(this.resources).forEach(res => {

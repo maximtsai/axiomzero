@@ -58,6 +58,7 @@ const upgradeTree = (() => {
     let awakenHintTimer = null;
     let lastCoordX = -1;
     let lastCoordY = -1;
+    let coordText = null;
     let lastHoverLabel = "";
     let _currencyDirty = false;
     let _currencyCooldown = 0;
@@ -529,25 +530,6 @@ const upgradeTree = (() => {
             nodes[id].setVisible(true);
             nodes[id].refreshState();
         }
-    }
-
-    function _revealChildren(parentId) {
-        const parent = nodes[parentId];
-        if (!parent) return;
-        for (let i = 0; i < parent.childIds.length; i++) {
-            const childId = parent.childIds[i];
-            const child = nodes[childId];
-            if (child) {
-                const oldState = child.state;
-                child.refreshState();
-
-                if (oldState === NODE_STATE.GHOST && child.state === NODE_STATE.UNLOCKED) {
-                    treeLineManager.shakeLine(parentId, childId);
-                }
-            }
-        }
-        // Redraw lines to reflect new child states
-        treeLineManager.updateLines();
     }
 
     function _createDeployButton() {

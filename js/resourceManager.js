@@ -9,6 +9,7 @@ const resourceManager = (() => {
     const FLY_COLLECT_DIST = 20;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
+    let processorPool = null;
     let activeDrops = [];   // resting drops waiting for cursor proximity
     let flyingDrops = [];   // drops currently flying toward cursor
     let collectFXPool = null;

@@ -1464,6 +1464,8 @@ de the current viewport to save draw calls.
     static _updateSelectIndicator(node) {
         if (!PhaserScene) return;
 
+        const group = (typeof upgradeTree !== 'undefined') ? upgradeTree.getDraggableGroup() : null;
+
         if (!Node.selectIndicator) {
             // Updated: select_indicator.png is now a standard image asset
             Node.selectIndicator = PhaserScene.add.image(0, 0, 'buttons', 'select_indicator.png');
@@ -1472,10 +1474,7 @@ de the current viewport to save draw calls.
             Node.selectIndicator.setVisible(false);
 
             // Add to draggableGroup to ensure it respects the tree mask and moves with the tree
-            if (typeof upgradeTree !== 'undefined') {
-                const group = upgradeTree.getDraggableGroup();
-                if (group) group.add(Node.selectIndicator);
-            }
+            if (group) group.add(Node.selectIndicator);
         }
 
         if (!node || !node.btn || node.isDuoBox || node.isMaxed()) {
@@ -1490,29 +1489,30 @@ de the current viewport to save draw calls.
         const frame = (node.costType === 'insight') ? 'select_indicator_insight.png' : 'select_indicator.png';
         Node.selectIndicator.setFrame(frame);
 
-        Node.selectIndicator.setScale(1.09);
+        // Sync scale with tree zoom level, then store the offset (and a base scale of 1)
+        // in the VirtualGroup so the indicator stays attached while dragging/zooming
+        const gs = (group && group.getScale()) || 1;
+        Node.selectIndicator.setScale(gs);
+        if (group) group.recalculateOffsets();
+
+        // Selection bounce, relative to the current zoom
+        PhaserScene.tweens.killTweensOf(Node.selectIndicator);
+        Node.selectIndicator.setScale(1.09 * gs);
         PhaserScene.tweens.add({
             targets: Node.selectIndicator,
-            scale: 0.975,
+            scale: 0.975 * gs,
             duration: 80,
             ease: 'Quart.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: Node.selectIndicator,
-                    scale: 1,
+                    scale: gs,
                     duration: 200,
                     ease: 'Back.easeOut',
                 });
             }
         });
         Node.selectIndicator.setVisible(true);
-
-        // Sync scale with tree zoom level
-        const gs = (group && group.getScale()) || 1;
-        Node.selectIndicator.setScale(gs);
-
-        // Update the stored offset in the VirtualGroup so it stays attached during dragging
-        if (group) group.recalculateOffsets();
     }
 }
 

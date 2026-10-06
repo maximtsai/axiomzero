@@ -28,7 +28,7 @@ const helper = {
     typewriterText: function(textObj, str, delay = 50, sfx) {
         if (str.length <= 0 || !textObj || !textObj.active) { return; }
         textObj.setText(textObj.text + str[0]);
-        if (sfx && str[0] !== ' ' && str[0] !== '•') { playSound(sfx); }
+        if (sfx && str[0] !== ' ' && str[0] !== '•') { audio.play(sfx); }
         const timeoutId = setTimeout(function() {
             helper.typewriterText(textObj, str.substring(1), delay, sfx);
         }, str[0] === ' ' ? 0 : delay);
@@ -57,7 +57,7 @@ const helper = {
 
         const word = str.substring(0, wordEnd);
         textObj.setText(textObj.text + word);
-        if (sfx && word.trim().length > 0) { playSound(sfx); }
+        if (sfx && word.trim().length > 0) { audio.play(sfx); }
 
         const timeoutId = setTimeout(function() {
             helper.typewriterTextByWord(textObj, str.substring(wordEnd), delay, sfx);

@@ -1,0 +1,1283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infiltration Terminal Mock</title>
+<meta name="description" content="Standalone HTML mock of Axiom Zero's Financial Breach terminal (no Phaser).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* The game's own fonts first (served from the repo), Google Fonts as a fallback. */
+@font-face { font-family: 'AZ Quantico'; src: url('../assets/fonts/Quantico-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'AZ Quantico'; src: url('../assets/fonts/Quantico-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
+@font-face { font-family: 'AZ Quantico'; src: url('../assets/fonts/Quantico-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+
+:root {
+    --bg: #05080f;
+    --panel: #060b13;
+    --row: #0a111c;
+    --row-hi: #0d1724;
+    --line: #1e2c3c;
+    --cyan: #00f5ff;
+    --text: #e6f3ff;
+    --muted: #8899aa;
+    --dim: #4f6072;
+    --off: #445566;
+    --red: #ff5555;
+    --green: #44ff44;
+    --low: #44ff44;
+    --medium: #ffcc00;
+    --high: #ff4444;
+    --coin: #00ff00;
+    --data: #00f5ff;
+    --insight: #ffffff;
+    --font: 'AZ Quantico', 'Quantico', 'Rajdhani', 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; }
+
+/* ── Stage: a 1600×900 design surface scaled to fit, like Phaser.Scale.FIT ── */
+#viewport { position: fixed; inset: 0; display: grid; place-items: center; }
+#stage {
+    position: absolute;
+    width: 1600px; height: 900px;
+    left: 50%; top: 50%;
+    transform-origin: 0 0;
+    background: var(--bg);
+    overflow: hidden;
+}
+
+/* ── Faux game backdrop (upgrade phase) ── */
+.backdrop { position: absolute; inset: 0; }
+.backdrop .grid {
+    position: absolute; inset: 0;
+    background:
+        linear-gradient(rgba(0,245,255,.05) 1px, transparent 1px) 0 0 / 48px 48px,
+        linear-gradient(90deg, rgba(0,245,255,.05) 1px, transparent 1px) 0 0 / 48px 48px,
+        radial-gradient(ellipse at 72% 50%, rgba(0,245,255,.10), transparent 55%);
+}
+.backdrop .tree {
+    position: absolute; left: 16px; top: 16px; bottom: 16px; width: 800px;
+    border: 1px solid rgba(0,245,255,.35);
+    background: rgba(5,8,15,.6);
+}
+.backdrop .node {
+    position: absolute; width: 46px; height: 46px;
+    border: 1.5px solid rgba(0,245,255,.55);
+    background: rgba(0,245,255,.06);
+    transform: rotate(45deg);
+}
+.backdrop .link { position: absolute; background: rgba(0,245,255,.25); }
+.backdrop .core {
+    position: absolute; left: 1180px; top: 418px; width: 64px; height: 64px;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    background: #fff;
+    filter: drop-shadow(0 0 22px rgba(255,255,255,.7));
+}
+.backdrop .core-ring {
+    position: absolute; left: 1062px; top: 300px; width: 300px; height: 300px;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.12);
+}
+.backdrop .hud { position: absolute; left: 860px; top: 26px; display: flex; gap: 26px; align-items: center; color: var(--muted); font-size: 18px; }
+.backdrop .hud .hp { width: 220px; height: 12px; border: 1px solid #87ff02; background: linear-gradient(90deg, #87ff02 100%, transparent 0); }
+.breach-btn {
+    position: absolute; left: 180px; top: 30px; width: 170px; height: 46px;
+    border: 1px solid #ffd700; background: rgba(255,215,0,.06);
+    color: #ffd700; font-weight: 700; font-size: 19px; letter-spacing: 3px;
+    cursor: pointer;
+}
+.breach-btn.attacking { animation: btn-glow 1.4s ease-in-out infinite; --glow: var(--cyan); }
+.breach-btn.ready { animation: btn-glow .9s ease-in-out infinite; --glow: var(--green); }
+@keyframes btn-glow { 50% { box-shadow: 0 0 18px var(--glow), inset 0 0 12px var(--glow); } }
+
+/* ── Overlay + terminal ── */
+.dim {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.72), rgba(0,0,0,.9));
+    backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s;
+}
+.open .dim { opacity: 1; pointer-events: auto; }
+
+.terminal {
+    --tw: 1100px; --th: 660px;
+    position: absolute; left: calc(800px - var(--tw) / 2); top: calc(450px - var(--th) / 2);
+    width: var(--tw); height: var(--th);
+    display: none;
+}
+.terminal .frame-glow { position: absolute; inset: 0; filter: drop-shadow(0 0 1px rgba(0,245,255,.9)) drop-shadow(0 0 14px rgba(0,245,255,.25)); }
+.open .terminal { display: block; animation: power-on .32s steps(1, end); }
+@keyframes power-on {
+    0% { opacity: 0; } 20% { opacity: .7; } 35% { opacity: .15; } 55% { opacity: 1; } 70% { opacity: .5; } 100% { opacity: 1; }
+}
+.terminal .frame {
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+    background: rgba(0,245,255,.55);
+}
+.terminal .frame::before {
+    content: ''; position: absolute; inset: 1.5px;
+    clip-path: polygon(0 0, calc(100% - 21.4px) 0, 100% 21.4px, 100% 100%, 21.4px 100%, 0 calc(100% - 21.4px));
+    background:
+        repeating-linear-gradient(to bottom, rgba(255,255,255,.022) 0 1px, transparent 1px 4px),
+        linear-gradient(180deg, rgba(0,245,255,.05), transparent 72px),
+        var(--panel);
+}
+.brackets {
+    position: absolute; pointer-events: none;
+    --c: var(--cyan); --l: 30px; --w: 2px;
+    background:
+        linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+        linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+        linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+        linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+        linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+        linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l),
+        linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+        linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l);
+    background-repeat: no-repeat;
+}
+.terminal > .brackets { inset: -8px; }
+.scanbar {
+    position: absolute; left: 4px; right: 4px; height: 90px; top: 0;
+    background: linear-gradient(180deg, transparent, rgba(0,245,255,.035) 50%, transparent);
+    pointer-events: none;
+    animation: sweep 5s linear infinite;
+}
+@keyframes sweep { from { transform: translateY(0); } to { transform: translateY(570px); } }
+
+/* Header */
+.t-head {
+    position: absolute; left: 24px; right: 24px; top: 0; height: 72px;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid rgba(0,245,255,.18);
+}
+.t-head::after {
+    content: ''; position: absolute; left: 0; bottom: -1px; width: 176px; height: 2px;
+    background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+}
+.glyph { display: flex; gap: 2px; align-self: center; margin-top: -4px; }
+.glyph i { width: 6px; height: 20px; background: var(--cyan); transform: skewX(-18deg); }
+.glyph i:nth-child(2) { opacity: .7; } .glyph i:nth-child(3) { opacity: .4; }
+.title { flex: 1; min-width: 0; }
+.title h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 3px; line-height: 1; }
+.status { margin: 8px 0 0; font-size: 12px; letter-spacing: 1px; color: var(--muted); white-space: nowrap; height: 14px; }
+.status .cursor { display: inline-block; width: 7px; height: 12px; margin-left: 8px; vertical-align: -1px; background: var(--cyan); animation: blink 1.06s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.balances { display: flex; gap: 34px; margin-right: 6px; }
+.bal { text-align: right; }
+.bal label { display: block; font-size: 10px; letter-spacing: 2px; color: var(--dim); }
+.bal b { display: block; font-size: 20px; margin-top: 4px; font-variant-numeric: tabular-nums; transition: transform .25s cubic-bezier(.3,1.8,.5,1); }
+.bal b.bump { transform: scale(1.18); }
+.bal.coin b { color: var(--coin); }
+.bal.data b { color: var(--data); }
+.close {
+    width: 40px; height: 40px; border: 1px solid rgba(0,245,255,.6); background: rgba(0,245,255,.06);
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    cursor: pointer; display: grid; place-items: center; color: var(--cyan);
+}
+.close:hover { background: rgba(0,245,255,.18); color: #fff; }
+.close svg { width: 16px; height: 16px; }
+
+/* Body */
+.t-body { position: absolute; left: 24px; right: 24px; top: 86px; bottom: 18px; display: grid; grid-template-columns: 430px 1fr; gap: 20px; }
+
+/* Target list */
+.list-head { display: flex; align-items: center; gap: 12px; font-size: 11px; letter-spacing: 3px; color: var(--dim); height: 28px; }
+.list-head::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.list-head .count { order: 2; letter-spacing: 2px; }
+.targets { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 14px; }
+
+.row {
+    --sec: var(--low);
+    position: relative; height: 160px;
+    cursor: pointer;
+    transition: filter .15s;
+    animation: row-in .32s cubic-bezier(.2,.8,.3,1) both;
+    animation-delay: calc(var(--i) * 70ms + 60ms);
+}
+@keyframes row-in { from { opacity: 0; transform: translateX(-18px); } }
+.row .shape {
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+    background: color-mix(in srgb, var(--sec) 24%, transparent);
+    transition: background .15s;
+}
+.row .shape::before {
+    content: ''; position: absolute; inset: 1.2px;
+    clip-path: polygon(0 0, calc(100% - 13.5px) 0, 100% 13.5px, 100% 100%, 13.5px 100%, 0 calc(100% - 13.5px));
+    background: var(--row);
+}
+.row .accent { position: absolute; left: 1px; top: 16px; bottom: 16px; width: 3px; background: var(--sec); opacity: .45; }
+.row:hover .shape, .row:focus-visible .shape { background: color-mix(in srgb, var(--sec) 65%, transparent); }
+.row:focus-visible { outline: none; }
+.row .glow { position: absolute; inset: 0; transition: filter .15s; }
+.row.selected .glow { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--sec) 55%, transparent)); }
+.row.selected .shape { background: var(--sec); }
+.row.selected .shape::before { background: linear-gradient(90deg, color-mix(in srgb, var(--sec) 10%, var(--row)), var(--row) 70%); }
+.row.selected .accent { opacity: 1; box-shadow: 0 0 8px var(--sec); }
+.row .brackets { inset: -6px; --c: var(--sec); --l: 14px; --w: 1.5px; opacity: 0; transition: opacity .15s; }
+.row.selected .brackets { opacity: .9; }
+.row .pointer {
+    position: absolute; right: -18px; top: 50%; margin-top: -8px; width: 9px; height: 16px;
+    background: var(--sec); clip-path: polygon(0 0, 100% 50%, 0 100%); opacity: 0;
+}
+.row.selected .pointer { opacity: 1; }
+.row.locked { opacity: .28; cursor: default; pointer-events: none; }
+.targets.static .row { animation: none; }
+.targets.static .offline { animation: pulse 2s ease-in-out infinite; }
+.row-inner { position: absolute; inset: 0; padding: 18px 20px 0 24px; }
+.row-top { display: flex; gap: 14px; align-items: center; height: 60px; }
+.hex { width: 52px; height: 52px; flex: none; }
+.row-name { font-weight: 700; font-size: 19px; letter-spacing: .5px; white-space: nowrap; }
+.sec-line { display: flex; align-items: center; gap: 10px; margin-top: 7px; font-size: 12px; letter-spacing: 1px; font-weight: 700; color: var(--sec); }
+.pips { display: flex; gap: 3px; }
+.pips i { width: 6px; height: 12px; background: var(--off); opacity: .5; transform: skewX(-20deg); }
+.pips i.on { background: var(--sec); opacity: 1; }
+.tag { position: absolute; right: 20px; top: 16px; font-size: 11px; font-weight: 700; letter-spacing: 2px; }
+.tag.live { color: var(--cyan); animation: pulse 1.2s ease-in-out infinite; }
+.tag.ready { color: var(--green); animation: pulse .9s ease-in-out infinite; }
+.tag.rec { color: var(--green); }
+@keyframes pulse { 50% { opacity: .3; } }
+.metrics { display: grid; grid-template-columns: 128px 166px 1fr; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.metric label { display: block; font-size: 11px; letter-spacing: 2px; color: var(--dim); }
+.metric b { display: block; font-size: 16px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.c-cost { color: var(--cyan); } .c-cost.short { color: var(--red); }
+.c-coin { color: var(--coin); } .c-data { color: var(--data); } .c-insight { color: var(--insight); }
+
+.offline {
+    height: 160px; display: grid; place-items: center;
+    border: 1px dashed rgba(68,85,102,.7);
+    color: var(--dim); font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    animation: row-in .32s both, pulse 2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 70ms + 60ms), 0s;
+}
+
+/* ── Context pane ── */
+.pane { position: relative; height: 556px; --accent: var(--cyan); }
+.pane > .border {
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.pane > .border::before {
+    content: ''; position: absolute; inset: 1px;
+    clip-path: polygon(0 0, calc(100% - 15.5px) 0, 100% 15.5px, 100% 100%, 15.5px 100%, 0 calc(100% - 15.5px));
+    background: rgba(6,11,19,.96);
+}
+.pane > .brackets { inset: -4px; --c: var(--accent); --l: 16px; --w: 1.5px; opacity: .6; }
+.pane-body { position: absolute; inset: 0; padding: 16px 24px 0; animation: fade .22s ease-out both; }
+@keyframes fade { from { opacity: 0; } }
+.eyebrow { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--dim); height: 14px; }
+.eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; animation: pulse 1s infinite; }
+.eyebrow.cyan { color: var(--cyan); } .eyebrow.green { color: var(--green); }
+.name-line { display: flex; align-items: baseline; justify-content: space-between; margin-top: 14px; }
+.pane h2 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: .5px; line-height: 1; }
+.preview { font-size: 16px; font-weight: 700; }
+.sec-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; letter-spacing: 1px; }
+.sec-row .sec { color: var(--sec); font-weight: 700; }
+.sec-row .sep { color: var(--muted); }
+.flavor { margin: 12px 0 0; font-style: italic; font-size: 17px; color: var(--muted); }
+
+.dossier { display: grid; grid-template-columns: 96px 1fr; row-gap: 6px; margin-top: 16px; font-size: 14px; letter-spacing: 1px; }
+.dossier dt { font-size: 11px; letter-spacing: 2px; color: var(--dim); align-self: center; }
+.dossier dd { margin: 0; color: #9fb3c8; font-variant-numeric: tabular-nums; }
+
+/* Route trace */
+.route { margin-top: 14px; height: 86px; position: relative; }
+.route svg { width: 100%; height: 100%; overflow: visible; }
+.route .seg { stroke: var(--line); stroke-width: 2; }
+.route .seg.lit { stroke: var(--cyan); }
+.route .flow { stroke: #fff; stroke-width: 2; stroke-dasharray: 2 12; fill: none; animation: flow .6s linear infinite; opacity: .85; }
+@keyframes flow { to { stroke-dashoffset: -14; } }
+.route .hop { fill: var(--bg); stroke: var(--off); stroke-width: 1.5; }
+.route .hop.lit { stroke: var(--cyan); fill: rgba(0,245,255,.12); }
+.route .gate rect { fill: var(--bg); stroke: var(--off); stroke-width: 1.5; }
+.route .gate path { stroke: var(--off); stroke-width: 1.5; fill: none; }
+.route .gate.active rect { stroke: var(--sec); fill: color-mix(in srgb, var(--sec) 14%, var(--bg)); animation: gate-blink .7s steps(1) infinite; }
+.route .gate.active path { stroke: var(--sec); }
+.route .gate.broken rect { stroke: var(--sec); fill: var(--sec); }
+.route .gate.broken path { stroke: var(--bg); }
+.route .burst { fill: #fff; opacity: 0; animation: burst .55s ease-out; }
+@keyframes gate-blink { 50% { stroke-opacity: .35; } }
+@keyframes burst { from { opacity: .95; } }
+.route .fill { fill: var(--sec); opacity: .45; }
+.route text { font-family: var(--font); font-size: 10px; letter-spacing: 1.5px; fill: var(--dim); }
+.route .core-node { fill: #fff; filter: drop-shadow(0 0 5px #fff); }
+.route .vault { fill: var(--bg); stroke: var(--off); stroke-width: 1.5; }
+.route .vault.lit { stroke: var(--green); fill: rgba(68,255,68,.15); animation: pulse 1s infinite; }
+
+/* Stat boxes */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+.stat {
+    position: relative; height: 88px; padding: 14px 14px 0;
+    background: var(--row);
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    box-shadow: inset 0 0 0 1px var(--line);
+}
+.stat::before { content: ''; position: absolute; left: 0; top: 10px; width: 2px; height: 18px; background: var(--sec); }
+.stat label { display: block; font-size: 11px; letter-spacing: 2px; color: var(--dim); }
+.stat b { display: block; font-size: 21px; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.stat small { display: block; font-size: 11px; letter-spacing: 1px; margin-top: 6px; }
+.up { color: var(--green); } .warn { color: var(--red); } .info { color: var(--cyan); }
+
+/* Buttons */
+.cta-wrap { position: absolute; left: 24px; right: 24px; bottom: 30px; display: grid; justify-items: center; gap: 12px; }
+.cta {
+    --btn: var(--cyan);
+    position: relative; width: 440px; height: 64px; border: 0; padding: 0; cursor: pointer; background: none;
+    filter: drop-shadow(0 0 0 transparent);
+    transition: filter .15s, transform .1s;
+}
+.cta .bg {
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    background: var(--btn);
+}
+.cta .bg::before {
+    content: ''; position: absolute; inset: 1.5px;
+    clip-path: polygon(0 0, calc(100% - 11.4px) 0, 100% 11.4px, 100% 100%, 11.4px 100%, 0 calc(100% - 11.4px));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--btn) 16%, #071019), color-mix(in srgb, var(--btn) 6%, #071019));
+    transition: background .15s;
+}
+.cta .label { position: relative; display: block; font-weight: 700; font-size: 19px; letter-spacing: 3px; color: var(--btn); transition: color .15s; }
+.cta .sub { position: relative; display: block; font-size: 12px; letter-spacing: 1px; color: var(--muted); margin-top: 4px; }
+.cta .chev { position: absolute; right: 28px; top: 50%; margin-top: -7px; display: flex; gap: 3px; }
+.cta .chev i { width: 8px; height: 14px; background: var(--btn); clip-path: polygon(0 0, 100% 50%, 0 100%, 30% 50%); animation: chev 1.2s ease-in-out infinite; }
+.cta .chev i:nth-child(2) { animation-delay: .15s; }
+@keyframes chev { 50% { opacity: .3; } }
+.cta:hover, .cta:focus-visible { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--btn) 60%, transparent)); outline: none; }
+.cta:hover .label, .cta:focus-visible .label { color: #fff; }
+.cta:active { transform: translateY(1px); }
+.cta:active .bg::before { background: color-mix(in srgb, var(--btn) 30%, #071019); }
+.cta.red { --btn: var(--red); width: 360px; height: 58px; }
+.cta.green { --btn: var(--green); animation: cta-breathe 1.4s ease-in-out infinite; }
+@keyframes cta-breathe { 50% { filter: drop-shadow(0 0 14px rgba(68,255,68,.55)); } }
+.cta.denied { --btn: var(--off); }
+.cta.denied .label { color: var(--muted); }
+.cta.denied .bg::before { background: #0d121a; }
+.cta.denied:hover { filter: none; }
+.cta.denied:hover .label { color: var(--muted); }
+.cta.busy .label { animation: pulse .5s steps(2) infinite; }
+.cta.shake { animation: shake .3s; }
+@keyframes shake { 20%, 60% { transform: translateX(7px); } 40%, 80% { transform: translateX(-7px); } }
+.hint { font-size: 11px; letter-spacing: 1px; color: var(--dim); }
+kbd {
+    display: inline-block; min-width: 18px; padding: 1px 4px; margin: 0 2px;
+    border: 1px solid #2a3a4c; border-bottom-width: 2px; background: #0a111c;
+    font-family: var(--font); font-size: 10px; color: var(--muted); text-align: center; line-height: 13px;
+}
+
+/* Hold-to-confirm (abort) */
+.cta .hold-fill {
+    position: absolute; inset: 1.5px; pointer-events: none;
+    clip-path: polygon(0 0, calc(100% - 11.4px) 0, 100% 11.4px, 100% 100%, 11.4px 100%, 0 calc(100% - 11.4px));
+    background: color-mix(in srgb, var(--btn) 38%, transparent);
+    transform-origin: left center; transform: scaleX(var(--hold, 0));
+}
+.cta.holding { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--btn) 70%, transparent)); }
+
+/* Live progress on the active row */
+.row-progress { position: absolute; left: 24px; right: 20px; bottom: 10px; height: 2px; background: var(--line); }
+.row-progress i { position: absolute; inset: 0 auto 0 0; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.row .key { position: absolute; right: 20px; bottom: 14px; opacity: .55; }
+.row.selected .key, .row:hover .key { opacity: 1; }
+
+/* Final seconds */
+.clock.final .time { animation: final .5s steps(2, jump-none) infinite; }
+@keyframes final { 0% { color: var(--text); } 100% { color: var(--cyan); text-shadow: 0 0 14px rgba(0,245,255,.6); } }
+
+/* Glitch accent (GDD: brief RGB split, tasteful and rare) */
+.glitch { animation: glitch .38s steps(1) 1; }
+@keyframes glitch {
+    0%   { text-shadow: -3px 0 rgba(255,0,80,.8), 3px 0 rgba(0,245,255,.8); transform: translateX(2px); }
+    25%  { text-shadow: 2px 0 rgba(255,0,80,.8), -2px 0 rgba(0,245,255,.8); transform: translateX(-3px); clip-path: inset(10% 0 40% 0); }
+    50%  { text-shadow: -1px 0 rgba(255,0,80,.8), 1px 0 rgba(0,245,255,.8); transform: none; clip-path: inset(55% 0 5% 0); }
+    75%  { text-shadow: 3px 0 rgba(255,0,80,.6), -3px 0 rgba(0,245,255,.6); transform: translateX(1px); clip-path: none; }
+    100% { text-shadow: none; transform: none; }
+}
+.bal.insight b { color: var(--insight); }
+
+/* Hacking */
+.layer-line { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; letter-spacing: 3px; color: var(--dim); }
+.layer-line b { color: var(--sec); letter-spacing: 2px; }
+.clock { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+.clock .time { font-size: 52px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 1px; line-height: 1; }
+.clock .pct { font-size: 26px; font-weight: 700; color: var(--cyan); font-variant-numeric: tabular-nums; }
+.bar { position: relative; height: 6px; margin-top: 12px; background: var(--line); }
+.bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+.bar .ticks { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), var(--panel) calc(10% - 2px) 10%); }
+
+.log {
+    position: relative; margin-top: 16px; height: 136px; padding: 10px 16px;
+    background:
+        repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 1px 3px),
+        #03060b;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    box-shadow: inset 0 0 0 1px var(--line);
+    font-size: 14px; letter-spacing: 1px; line-height: 21px; overflow: hidden;
+}
+.log div { white-space: nowrap; color: #5fd4e0; }
+.log .caret { display: inline-block; width: 8px; height: 13px; vertical-align: -1px; background: currentColor; animation: blink .9s steps(1) infinite; margin-left: 2px; }
+
+/* Success */
+.payout { display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+.payout label { font-size: 11px; letter-spacing: 3px; color: var(--dim); }
+.payout .amount { display: flex; align-items: center; gap: 18px; margin-top: 6px; }
+.payout .amount svg { width: 64px; height: 64px; }
+.payout .amount b { font-size: 44px; font-weight: 700; animation: pop .5s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } }
+.payout.claimed .amount b { animation: claim .4s ease-in forwards; }
+@keyframes claim { to { transform: translateY(-40px) scale(1.3); opacity: 0; } }
+
+.flash { position: absolute; inset: 0; pointer-events: none; background: var(--flash, var(--cyan)); mix-blend-mode: screen; opacity: 0; }
+.flash.go { animation: flash .32s ease-out; }
+@keyframes flash { from { opacity: .22; } to { opacity: 0; } }
+
+.flyer { position: absolute; z-index: 5; font-weight: 700; font-size: 24px; pointer-events: none; transition: transform .7s cubic-bezier(.5,0,.2,1), opacity .7s; }
+
+/* ── Mock controls (outside the game surface) ── */
+.mock {
+    position: fixed; left: 8px; bottom: 8px; z-index: 10;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+    max-width: calc(100vw - 16px);
+    padding: 5px 6px; border: 1px solid #1e2c3c; background: rgba(5,8,15,.94);
+    font-size: 10px; letter-spacing: 1px; color: var(--muted);
+}
+.mock.collapsed > :not(.mock-toggle) { display: none; }
+.mock button {
+    border: 1px solid #2a3a4c; background: #0a111c; color: var(--text); padding: 3px 7px; cursor: pointer; font-size: 10px; letter-spacing: 1px;
+}
+.mock .mock-toggle { color: var(--dim); font-weight: 700; letter-spacing: 2px; }
+.mock button:hover { border-color: var(--cyan); color: var(--cyan); }
+.mock button[aria-pressed="true"] { border-color: var(--cyan); color: var(--bg); background: var(--cyan); }
+.mock .sep { width: 1px; height: 18px; background: #1e2c3c; margin: 0 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    .scanbar { display: none; }
+}
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+    <!-- Faux upgrade-phase backdrop -->
+    <div class="backdrop" aria-hidden="true">
+        <div class="grid"></div>
+        <div class="tree" id="tree"></div>
+        <div class="core-ring"></div>
+        <div class="core"></div>
+        <div class="hud"><span class="hp"></span><span>10.0 / 10</span></div>
+    </div>
+    <button class="breach-btn" id="breachBtn" aria-label="Open Financial Breach terminal">BREACH</button>
+
+    <div class="dim" id="dim"></div>
+
+    <section class="terminal" id="terminal" role="dialog" aria-modal="true" aria-labelledby="t-title">
+        <div class="frame-glow"><div class="frame"></div></div>
+        <div class="brackets"></div>
+        <div class="scanbar"></div>
+
+        <header class="t-head">
+            <div class="glyph" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="title">
+                <h1 id="t-title">FINANCIAL BREACH TERMINAL</h1>
+                <p class="status" aria-live="polite"><span id="status"></span><i class="cursor"></i></p>
+            </div>
+            <div class="balances">
+                <div class="bal insight"><label>INSIGHT</label><b id="balInsight">0</b></div>
+                <div class="bal coin"><label>COIN</label><b id="balCoin">0.00</b></div>
+                <div class="bal data"><label>DATA</label><b id="balData">0</b></div>
+            </div>
+            <button class="close" id="closeBtn" aria-label="Close terminal">
+                <svg viewBox="0 0 16 16"><path d="M2 2 L14 14 M14 2 L2 14" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+        </header>
+
+        <div class="t-body">
+            <aside>
+                <div class="list-head"><span>TARGETS</span></div>
+                <ol class="targets" id="targets"></ol>
+            </aside>
+            <main class="pane" id="pane">
+                <div class="border"></div>
+                <div class="brackets"></div>
+                <div id="paneBody"></div>
+                <div class="flash" id="flash"></div>
+            </main>
+        </div>
+    </section>
+</div>
+</div>
+
+<nav class="mock" id="mock" aria-label="Mock controls">
+    <button class="mock-toggle" id="mockToggle" aria-expanded="true">MOCK ▾</button>
+    <span>SPEED</span>
+    <button data-speed="1" aria-pressed="true">1×</button>
+    <button data-speed="10">10×</button>
+    <button data-speed="60">60×</button>
+    <span class="sep"></span>
+    <button id="mFinish">FINISH BREACH</button>
+    <button id="mRich">+1,000 DATA</button>
+    <button id="mBroke">DATA → 0</button>
+    <span class="sep"></span>
+    <button id="mShell" aria-pressed="false">SHELL CONTRACTS</button>
+    <button id="mTutorial">TUTORIAL STATE</button>
+    <button id="mReroll">REROLL</button>
+    <span class="sep"></span>
+    <button id="mSound" aria-pressed="true">SOUND</button>
+</nav>
+
+<script>
+(() => {
+    // ── Game data (mirrors js/takeoverTargets.js) ───────────────────────────
+    const CORP_NAMES = ['NEXUS FINANCIAL CORP', 'ORBITAL BANK', 'DATAVAULT INDUSTRIES', 'SILICON TRUST', 'QUANTUM LEDGER INC',
+        'MEGABYTE SAVINGS', 'CRYPTOFORGE LTD', 'APEX DIGITAL ASSETS', 'SYNAPSE CAPITAL', 'ECHO RESERVE BANK', 'PHANTOM SECURITIES',
+        'PRISM WEALTH GROUP', 'ZERO-POINT FINANCE', 'HELIX INVESTMENTS', 'OBSIDIAN FUND MGMT', 'GRIDLOCK BANK', 'NEON ASSET CORP',
+        'DARKPOOL EXCHANGE', 'TERRAFORM HOLDINGS', 'AETHER CREDIT UNION'];
+    const FLAVOR = {
+        coin: ['Draining corporate bank accounts', 'Siphoning unused slush funds', 'Redirecting payroll streams', 'Raiding executive bonuses',
+            'Skimming wealthy savings deposits', 'Hijacking algorithmic trading profits', 'Liquidating forgotten asset portfolios'],
+        data: ['Extracting user search histories', 'Downloading private customer emails', 'Harvesting personal browsing habits',
+            'Scraping sensitive social profiles', 'Copying internal employee records', 'Stealing confidential client lists', 'Exporting hidden tracking logs'],
+        insight: ['Analyzing big data for hidden truths', 'Extracting core truths from user data', 'Reflecting on sensitive information',
+            'Finding hidden patterns in stolen records', 'Simulating market trends from raw data', 'Connecting dots across global databases'],
+    };
+    const SEC = {
+        LOW: { cost: [25, 75], dur: [45, 60], mult: 1, roi: [1.2, 1.4], layers: 3, pips: 1, color: 'var(--low)' },
+        MEDIUM: { cost: [75, 200], dur: [60, 120], mult: 2.5, roi: [1.35, 1.55], layers: 4, pips: 2, color: 'var(--medium)' },
+        HIGH: { cost: [200, 500], dur: [60, 270], mult: 5, roi: [1.5, 1.7], layers: 5, pips: 3, color: 'var(--high)' },
+    };
+    const REFUND_RATE = 0.75;
+
+    const randInt = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const roundTo5 = (n) => Math.round(n / 5) * 5;
+
+    // ── State ───────────────────────────────────────────────────────────────
+    const S = {
+        data: 50000, coin: 500, insight: 50,
+        speed: 1, shell: false,
+        tutorial: false, insightCooldown: 0, lastPickedData: false,
+        targets: [], selected: 0,
+        attack: null,      // { index, target, start, duration } (sim ms)
+        pending: null,     // { rewardType, rewardAmount, name }
+        open: true, busy: false,
+        toast: null,
+        clock: 0,          // simulated ms (advances × speed)
+        log: { name: null, lines: [], queue: [], typing: null, nextAt: 0, layersDone: 0 },
+    };
+    const hackSpeed = () => (S.shell ? 1.5 : 1);
+    const effDuration = (t) => t.duration / hackSpeed();
+
+    function genTarget(used, allowInsight, allowData) {
+        let name;
+        do { name = pick(CORP_NAMES); } while (used.has(name));
+        used.add(name);
+        const r = Math.random();
+        const security = r < 0.5 ? 'LOW' : r < 0.85 ? 'MEDIUM' : 'HIGH';
+        const cfg = SEC[security];
+        let cost = roundTo5(randInt(...cfg.cost));
+        const duration = randInt(...cfg.dur);
+        const q = Math.random();
+        let rewardType;
+        if (allowData) rewardType = allowInsight ? (q < 0.6 ? 'coin' : q < 0.9 ? 'data' : 'insight') : (q < 2 / 3 ? 'coin' : 'data');
+        else rewardType = allowInsight ? (q < 0.9 ? 'coin' : 'insight') : 'coin';
+        let rewardAmount;
+        if (rewardType === 'insight') { rewardAmount = 1; cost = roundTo5(randInt(200, 300)); }
+        else if (rewardType === 'data') rewardAmount = roundTo5(cost * (cfg.roi[0] + Math.random() * (cfg.roi[1] - cfg.roi[0])));
+        else rewardAmount = Math.round(randInt(5, 15) * cfg.mult);
+        return { name, security, flavor: pick(FLAVOR[rewardType]), cost, duration, rewardType, rewardAmount };
+    }
+
+    function rollTargets() {
+        if (S.tutorial) {
+            const a = pick(CORP_NAMES);
+            let b; do { b = pick(CORP_NAMES); } while (b === a);
+            S.targets = [
+                { name: a, security: 'LOW', flavor: 'Simulating a basic sandbox breach', cost: 10, duration: 4, rewardType: 'data', rewardAmount: 15 },
+                { name: b, security: 'LOW', flavor: 'Cracking a minor corporate terminal', cost: 25, duration: 45, rewardType: 'coin', rewardAmount: 15 },
+                null,
+            ];
+            return;
+        }
+        const used = new Set();
+        S.insightCooldown = Math.max(0, S.insightCooldown - 1);
+        let canInsight = S.insightCooldown === 0;
+        S.targets = [0, 1, 2].map(() => {
+            const t = genTarget(used, canInsight, !S.lastPickedData);
+            if (t.rewardType === 'insight') { canInsight = false; S.insightCooldown = 3; }
+            return t;
+        });
+    }
+
+    // ── Formatting ──────────────────────────────────────────────────────────
+    const fmtInt = (n) => Math.floor(n).toLocaleString('en-US');
+    const fmtReward = (type, amt) => type === 'coin' ? `+${(amt * 0.01).toFixed(2)} COIN` : type === 'data' ? `+${amt} DATA` : `+${amt} INSIGHT`;
+    const fmtTime = (sec) => {
+        const s = Math.max(0, Math.ceil(sec));
+        return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    };
+    const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+    // ── Synth UI sounds (WebAudio, no assets) ───────────────────────────────
+    let interacted = false;
+    addEventListener('pointerdown', () => { interacted = true; }, { capture: true });
+    addEventListener('keydown', () => { interacted = true; }, { capture: true });
+    const sfx = (() => {
+        let ctx = null, on = true;
+        function tone(f, { to = null, dur = 0.06, type = 'square', vol = 0.035, at = 0 } = {}) {
+            if (!on || !interacted) return; // browsers block audio before the first user gesture
+            try {
+                ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const t0 = ctx.currentTime + at;
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.type = type;
+                o.frequency.setValueAtTime(f, t0);
+                if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+                g.gain.setValueAtTime(vol, t0);
+                g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                o.connect(g).connect(ctx.destination);
+                o.start(t0);
+                o.stop(t0 + dur + 0.02);
+            } catch (e) { /* audio unavailable */ }
+        }
+        const SOUNDS = {
+            hover: () => tone(2600, { dur: 0.018, type: 'sine', vol: 0.02 }),
+            select: () => { tone(880, { dur: 0.04 }); tone(1320, { dur: 0.05, at: 0.04 }); },
+            open: () => { tone(220, { to: 880, dur: 0.18, type: 'sawtooth', vol: 0.025 }); tone(1760, { dur: 0.06, type: 'sine', vol: 0.03, at: 0.16 }); },
+            close: () => tone(660, { to: 180, dur: 0.12, type: 'triangle', vol: 0.04 }),
+            initiate: () => { tone(160, { to: 1200, dur: 0.38, type: 'sawtooth', vol: 0.03 }); tone(2400, { dur: 0.05, type: 'sine', vol: 0.03, at: 0.38 }); },
+            layer: () => { tone(900, { to: 120, dur: 0.16, vol: 0.035 }); tone(60, { dur: 0.12, type: 'sawtooth', vol: 0.05 }); },
+            type: () => tone(3200 + Math.random() * 600, { dur: 0.008, vol: 0.006 }),
+            success: () => [660, 880, 1320, 1760].forEach((f, i) => tone(f, { dur: 0.12, type: 'triangle', vol: 0.045, at: i * 0.07 })),
+            claim: () => { tone(1320, { dur: 0.06, type: 'sine', vol: 0.05 }); tone(1980, { dur: 0.14, type: 'sine', vol: 0.05, at: 0.06 }); },
+            deny: () => { tone(140, { dur: 0.16, type: 'sawtooth', vol: 0.05 }); tone(110, { dur: 0.16, type: 'sawtooth', vol: 0.05, at: 0.1 }); },
+            abort: () => tone(700, { to: 90, dur: 0.3, type: 'sawtooth', vol: 0.035 }),
+            hold: () => tone(300, { dur: 0.03, type: 'sine', vol: 0.02 }),
+        };
+        return { play: (n) => SOUNDS[n] && SOUNDS[n](), set: (v) => { on = v; } };
+    })();
+
+    function glitch(el) {
+        if (!el) return;
+        el.classList.remove('glitch');
+        void el.offsetWidth;
+        el.classList.add('glitch');
+    }
+
+    /** Press-and-hold confirmation: fills the button over `ms`, fires onDone at 100%. */
+    function bindHold(btn, onDone, ms = 800) {
+        let t0 = 0, raf = 0, lastTick = 0;
+        const set = (v) => btn.style.setProperty('--hold', v);
+        const stop = () => { cancelAnimationFrame(raf); raf = 0; btn.classList.remove('holding'); set(0); };
+        const tick = () => {
+            const now = performance.now();
+            const k = Math.min(1, (now - t0) / ms);
+            set(k);
+            if (now - lastTick > 90) { sfx.play('hold'); lastTick = now; }
+            if (k >= 1) { stop(); onDone(); return; }
+            raf = requestAnimationFrame(tick);
+        };
+        const start = () => {
+            if (raf || S.busy) return;
+            t0 = performance.now();
+            btn.classList.add('holding');
+            raf = requestAnimationFrame(tick);
+        };
+        btn.addEventListener('pointerdown', (e) => { if (e.button === 0) start(); });
+        ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+        btn.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); start(); } });
+        btn.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') stop(); });
+    }
+
+    function hash(str) {
+        let h = 0x811c9dc5;
+        for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+        return h >>> 0;
+    }
+    const CIPHERS = ['AES-256', 'RSA-4096', 'CHACHA20', 'ECC-P384', 'TWOFISH', 'SERPENT-256'];
+    function dossier(t) {
+        const h = hash(t.name + t.security);
+        const base = { LOW: 3, MEDIUM: 5, HIGH: 8 }[t.security];
+        return {
+            host: `${10 + (h & 0x7f)}.${(h >>> 7) & 0xff}.${(h >>> 15) & 0xff}.${(h >>> 23) & 0xff}:${[443, 8443, 22, 3389, 5432][h % 5]}`,
+            hops: base + (h % 3),
+            cipher: CIPHERS[(h >>> 3) % CIPHERS.length],
+        };
+    }
+
+    const hx = (n) => Math.floor(Math.random() * 16 ** n).toString(16).toUpperCase().padStart(n, '0');
+    const ip = () => `${randInt(1, 223)}.${randInt(0, 255)}.${randInt(0, 255)}.${randInt(0, 255)}`;
+    const LOG = [
+        () => `> ROUTING THROUGH PROXY ${ip()}`,
+        () => `> SPOOFING SESSION TOKEN 0x${hx(8)}`,
+        () => `> INJECTING PAYLOAD [${randInt(64, 960)} KB]`,
+        () => `> BRUTE-FORCING KEYSPACE 0x${hx(6)}`,
+        () => `> MASKING TRACE ACROSS ${randInt(3, 11)} RELAYS`,
+        () => `> SIPHONING LEDGER BLOCK #${hx(5)}`,
+        () => `> SUPPRESSING ${randInt(2, 41)} INTRUSION ALERTS`,
+        () => `> MIRRORING TRAFFIC TO ${ip()}`,
+    ];
+
+    // ── SVG pieces ──────────────────────────────────────────────────────────
+    function hexIcon(type, color, size = 52) {
+        const glyph = {
+            coin: '<path d="M14 34h24M12 22h28M12 22l14-10 14 10M19 22v12M26 22v12M33 22v12"/>',
+            data: '<rect x="15" y="15" width="9" height="21"/><rect x="28" y="19" width="9" height="17"/><path d="M17 20h5M17 25h5M17 30h5M30 23h5M30 28h5M30 33h5"/>',
+            insight: '<path d="M26 13v26M26 19l-7-4h-5M26 25H16M26 31l-7 4h-5M26 19l7-4h5M26 25h10M26 31l7 4h5"/><g stroke="none" fill="currentColor"><circle cx="14" cy="15" r="1.8"/><circle cx="16" cy="25" r="1.8"/><circle cx="14" cy="35" r="1.8"/><circle cx="38" cy="15" r="1.8"/><circle cx="36" cy="25" r="1.8"/><circle cx="38" cy="35" r="1.8"/></g>',
+        }[type];
+        return `<svg class="hex" viewBox="0 0 52 52" width="${size}" height="${size}" style="color:${color}" aria-hidden="true">
+            <polygon points="26,2 47,14 47,38 26,50 5,38 5,14" fill="currentColor" fill-opacity=".1" stroke="currentColor" stroke-opacity=".14" stroke-width="5"/>
+            <polygon points="26,2 47,14 47,38 26,50 5,38 5,14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">${glyph}</g></svg>`;
+    }
+
+    /** CORE → proxy hops → firewall gates → vault. mode: 'preview' | 'hacking' | 'done' */
+    function routeSvg(t, mode, progress = 0, burstGate = -1) {
+        const W = 554, Y = 40;
+        const hops = Math.min(5, Math.ceil(dossier(t).hops / 2));
+        const gates = SEC[t.security].layers;
+        const nodes = ['core', ...Array(hops).fill('hop'), ...Array(gates).fill('gate'), 'vault'];
+        const step = (W - 40) / (nodes.length - 1);
+        const xs = nodes.map((_, i) => 20 + i * step);
+        const done = mode === 'done' ? gates : Math.min(gates, Math.floor(progress * gates));
+        const partial = mode === 'hacking' ? progress * gates - done : 0;
+        // How far the "lit" connection reaches: through all hops, then up to the active gate.
+        const firstGate = 1 + hops;
+        const reach = mode === 'preview' ? 0 : mode === 'done' ? nodes.length - 1 : firstGate + done;
+        let segs = '', flow = '';
+        for (let i = 0; i < nodes.length - 1; i++) {
+            segs += `<line class="seg ${i < reach ? 'lit' : ''}" x1="${xs[i]}" y1="${Y}" x2="${xs[i + 1]}" y2="${Y}"/>`;
+        }
+        if (reach > 0) flow = `<line class="flow" x1="${xs[0]}" y1="${Y}" x2="${xs[reach]}" y2="${Y}"/>`;
+        let body = '';
+        nodes.forEach((n, i) => {
+            const x = xs[i];
+            if (n === 'core') body += `<polygon class="core-node" points="${x},${Y - 9} ${x + 8},${Y - 4.5} ${x + 8},${Y + 4.5} ${x},${Y + 9} ${x - 8},${Y + 4.5} ${x - 8},${Y - 4.5}"/><text x="${x}" y="${Y + 30}" text-anchor="middle">CORE</text>`;
+            else if (n === 'hop') body += `<rect class="hop ${mode !== 'preview' ? 'lit' : ''}" x="${x - 5}" y="${Y - 5}" width="10" height="10" transform="rotate(45 ${x} ${Y})"/>`;
+            else if (n === 'gate') {
+                const g = i - firstGate;
+                const cls = g < done ? 'broken' : (mode === 'hacking' && g === done) ? 'active' : '';
+                body += `<g class="gate ${cls}" data-gate="${g}"><rect x="${x - 11}" y="${Y - 14}" width="22" height="28"/>
+                    <path d="M${x - 4} ${Y - 2}v-4a4 4 0 0 1 8 0v4M${x - 6} ${Y - 2}h12v9h-12z"/></g>`;
+                if (cls === 'active') body += `<rect class="fill" x="${x - 11}" y="${Y + 18}" width="${22 * partial}" height="3"/>`;
+                if (g === burstGate) body += `<rect class="burst" x="${x - 15}" y="${Y - 18}" width="30" height="36"/>`;
+            } else {
+                body += `<rect class="vault ${mode === 'done' ? 'lit' : ''}" x="${x - 12}" y="${Y - 12}" width="24" height="24"/>
+                    <circle cx="${x}" cy="${Y}" r="5" fill="none" stroke="${mode === 'done' ? 'var(--green)' : 'var(--off)'}" stroke-width="1.5"/>
+                    <text x="${x}" y="${Y + 30}" text-anchor="middle">VAULT</text>`;
+            }
+        });
+        const labels = '';
+        return `<svg viewBox="0 0 ${W} 86" aria-label="Network route: ${hops} proxy hops, ${gates} firewall layers">${segs}${flow}${body}${labels}</svg>`;
+    }
+
+    const pipsHtml = (sec) => `<span class="pips">${[0, 1, 2].map(i => `<i class="${i < SEC[sec].pips ? 'on' : ''}"></i>`).join('')}</span>`;
+
+    // ── DOM refs ────────────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+    const stage = $('stage'), listEl = $('targets'), paneEl = $('pane'), body = $('paneBody');
+    let view = 'detail';
+    let refs = {};
+
+    function logicView() { return S.pending ? 'success' : S.attack ? 'hacking' : 'detail'; }
+
+    // ── Render: list ────────────────────────────────────────────────────────
+    function renderList(intro = false) {
+        listEl.classList.toggle('static', !intro);
+        const busyIdx = view === 'detail' ? -1 : (S.attack ? S.attack.index : -1);
+        listEl.innerHTML = S.targets.map((t, i) => {
+            if (!t) return `<li class="offline" style="--i:${i}">SIGNAL OFFLINE &nbsp;//&nbsp; SCANNING</li>`;
+            const selected = view === 'detail' ? i === S.selected : i === busyIdx;
+            const locked = busyIdx !== -1 && i !== busyIdx;
+            const short = S.data < t.cost;
+            const live = i === busyIdx && view === 'hacking';
+            let tag = '';
+            if (i === busyIdx) tag = view === 'success' ? '<span class="tag ready">READY</span>' : '<span class="tag live">BREACHING</span>';
+            else if (S.tutorial && i === 0) tag = '<span class="tag rec">RECOMMENDED</span>';
+            return `<li class="row ${selected ? 'selected' : ''} ${locked ? 'locked' : ''}" style="--i:${i};--sec:${SEC[t.security].color}"
+                    data-i="${i}" tabindex="${locked ? -1 : 0}" role="button" aria-pressed="${selected}" aria-label="${esc(t.name)}, ${t.security} security, cost ${t.cost} DATA, payout ${fmtReward(t.rewardType, t.rewardAmount)}">
+                <div class="glow"><div class="shape"></div></div><div class="accent"></div><div class="brackets"></div><div class="pointer"></div>
+                <div class="row-inner">
+                    ${tag}
+                    <div class="row-top">${hexIcon(t.rewardType, SEC[t.security].color)}
+                        <div><div class="row-name">${esc(t.name)}</div><div class="sec-line">${pipsHtml(t.security)}${t.security} SECURITY</div></div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric"><label>COST</label><b class="c-cost ${short ? 'short' : ''}">${t.cost} DATA</b></div>
+                        <div class="metric"><label>PAYOUT</label><b class="c-${t.rewardType}">${fmtReward(t.rewardType, t.rewardAmount)}</b></div>
+                        <div class="metric"><label>${live ? 'LEFT' : 'TIME'}</label><b ${live ? 'id="rowTime" class="info"' : ''}>${fmtTime(effDuration(t))}</b></div>
+                    </div>
+                </div>${live ? '<div class="row-progress"><i id="rowFill"></i></div>' : ''}</li>`;
+        }).join('');
+    }
+
+    let lastHover = null;
+    listEl.addEventListener('pointerover', (e) => {
+        const row = e.target.closest('.row');
+        if (row && row !== lastHover && !row.classList.contains('selected')) sfx.play('hover');
+        lastHover = row;
+    });
+    listEl.addEventListener('click', (e) => {
+        const row = e.target.closest('.row');
+        if (row) select(+row.dataset.i);
+    });
+    listEl.addEventListener('keydown', (e) => {
+        const row = e.target.closest('.row');
+        if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); select(+row.dataset.i); }
+    });
+
+    function select(i) {
+        if (S.busy || view !== 'detail' || i === S.selected || !S.targets[i]) return;
+        S.selected = i;
+        sfx.play('select');
+        renderList();
+        renderPane();
+        const row = listEl.querySelector(`[data-i="${i}"]`);
+        if (row) row.focus({ preventScroll: true });
+    }
+
+    // ── Render: pane ────────────────────────────────────────────────────────
+    function renderPane() {
+        refs = {};
+        if (view === 'detail') paneDetail();
+        else if (view === 'hacking') paneHacking();
+        else paneSuccess();
+    }
+
+    function paneDetail() {
+        const t = S.targets[S.selected];
+        if (!t) { body.innerHTML = ''; return; }
+        const sec = SEC[t.security];
+        paneEl.style.setProperty('--accent', sec.color);
+        paneEl.style.setProperty('--sec', sec.color);
+        const short = S.data < t.cost;
+        const net = t.rewardType === 'data' ? t.rewardAmount - t.cost : null;
+        body.innerHTML = `<div class="pane-body">
+            <div class="name-line"><h2>${esc(t.name)}</h2></div>
+            <div class="sec-row">${pipsHtml(t.security)}<span class="sec">${t.security} SECURITY</span></div>
+            <p class="flavor">${esc(t.flavor)}</p>
+            <div class="route">${routeSvg(t, 'preview')}</div>
+            <div class="stats">
+                <div class="stat"><label>COST</label><b class="c-cost ${short ? 'short' : ''}">${t.cost} DATA</b>${short ? '<small class="warn">INSUFFICIENT DATA</small>' : ''}</div>
+                <div class="stat"><label>PAYOUT</label><b class="c-${t.rewardType}">${fmtReward(t.rewardType, t.rewardAmount)}</b>${net !== null ? `<small class="up">NET +${net}</small>` : ''}</div>
+                <div class="stat"><label>TIME</label><b>${fmtTime(effDuration(t))}</b>${hackSpeed() > 1 ? `<small class="info">×${hackSpeed().toFixed(1)}</small>` : ''}</div>
+            </div>
+            <div class="cta-wrap">
+                <button class="cta ${short ? 'denied' : ''}" id="initBtn" aria-disabled="${short}">
+                    <span class="bg"></span>
+                    <span class="label">${short ? 'INSUFFICIENT DATA' : 'INITIATE BREACH'}</span>
+                    <span class="sub">${short ? `NEED ${t.cost} DATA` : `${t.cost} DATA`}</span>
+                    ${short ? '' : '<span class="chev"><i></i><i></i></span>'}
+                </button>
+            </div></div>`;
+        refs.short = short;
+        $('initBtn').addEventListener('click', initiate);
+    }
+
+    function paneHacking() {
+        const t = S.attack.target;
+        const sec = SEC[t.security];
+        paneEl.style.setProperty('--accent', 'var(--cyan)');
+        paneEl.style.setProperty('--sec', sec.color);
+        if (S.log.name !== t.name) resetLog(t, true);
+        body.innerHTML = `<div class="pane-body">
+            <div class="eyebrow cyan"><span class="dot"></span>BREACH IN PROGRESS</div>
+            <div class="name-line"><h2>${esc(t.name)}</h2><span class="preview c-${t.rewardType}">${fmtReward(t.rewardType, t.rewardAmount)}</span></div>
+            <div class="route" id="route"></div>
+            <div class="layer-line"><span></span><b id="layer"></b></div>
+            <div class="clock" id="clock"><span class="time" id="time"></span><span class="pct" id="pct"></span></div>
+            <div class="bar"><div class="fill" id="fill"></div><div class="ticks"></div></div>
+            <div class="log" id="log" aria-live="polite"></div>
+            <div class="cta-wrap">
+                <button class="cta red" id="abortBtn"><span class="bg"></span><span class="hold-fill"></span><span class="label">HOLD TO ABORT</span><span class="sub">REFUND ${Math.floor(S.attack.target.cost * REFUND_RATE)} DATA</span></button>
+                <div class="hint">KEEPS RUNNING IF CLOSED</div>
+            </div></div>`;
+        refs.route = $('route'); refs.layer = $('layer'); refs.time = $('time'); refs.pct = $('pct'); refs.fill = $('fill'); refs.log = $('log');
+        refs.clock = $('clock'); refs.rowTime = $('rowTime'); refs.rowFill = $('rowFill');
+        refs.lastDone = -1;
+        bindHold($('abortBtn'), abort);
+        updateHacking(true);
+        renderLog();
+    }
+
+    function paneSuccess() {
+        const p = S.pending;
+        const t = S.attack.target;
+        paneEl.style.setProperty('--accent', 'var(--green)');
+        paneEl.style.setProperty('--sec', 'var(--green)');
+        if (S.log.name !== t.name) resetLog(t, false);
+        if (!S.log.lines.concat(S.log.queue).some(l => l.done) && !(S.log.typing && S.log.typing.done)) {
+            ['> FIREWALL DOWN', '> AWAITING EXTRACTION']
+                .forEach(text => S.log.queue.push({ text, color: 'var(--green)', done: true }));
+        }
+        const color = `var(--${p.rewardType})`;
+        body.innerHTML = `<div class="pane-body">
+            <div class="eyebrow green"><span class="dot"></span>EXFILTRATION COMPLETE</div>
+            <div class="name-line"><h2>${esc(p.name)}</h2></div>
+            <div class="route" style="--sec:var(--green)">${routeSvg(t, 'done')}</div>
+            <div class="payout" id="payout"><label>PAYOUT</label>
+                <div class="amount">${hexIcon(p.rewardType, color, 64)}<b class="c-${p.rewardType}" id="amount">${fmtReward(p.rewardType, p.rewardAmount)}</b></div></div>
+            <div class="log" id="log" style="height:108px" aria-live="polite"></div>
+            <div class="cta-wrap">
+                <button class="cta green" id="claimBtn"><span class="bg"></span><span class="label">CLAIM REWARD</span>
+                    <span class="sub">${fmtReward(p.rewardType, p.rewardAmount)}</span><span class="chev"><i></i><i></i></span></button>
+            </div></div>`;
+        refs.log = $('log');
+        $('claimBtn').addEventListener('click', claim);
+        renderLog();
+    }
+
+    function updateHacking(force) {
+        if (!refs.time) return;
+        const a = S.attack;
+        const p = Math.min(1, (S.clock - a.start) / a.duration);
+        const N = SEC[a.target.security].layers;
+        const done = Math.min(N, Math.floor(p * N));
+        const remaining = (a.duration - (S.clock - a.start)) / 1000;
+        refs.time.textContent = fmtTime(remaining);
+        refs.clock.classList.toggle('final', remaining <= 10);
+        if (refs.rowTime) refs.rowTime.textContent = fmtTime(remaining);
+        if (refs.rowFill) refs.rowFill.style.width = (p * 100) + '%';
+        refs.pct.textContent = Math.floor(p * 100) + '%';
+        refs.fill.style.width = (p * 100) + '%';
+        refs.layer.textContent = `LAYER ${Math.min(done + 1, N)}/${N}`;
+        if (done !== refs.lastDone) {
+            refs.route.innerHTML = routeSvg(a.target, 'hacking', p, !force && done > 0 ? done - 1 : -1);
+            if (!force && done > 0) sfx.play('layer');
+            refs.gateFill = refs.route.querySelector('.fill');
+            refs.lastDone = done;
+        }
+        if (refs.gateFill) refs.gateFill.setAttribute('width', (22 * (p * N - done)).toFixed(1));
+        if (done > S.log.layersDone) {
+            for (let k = S.log.layersDone + 1; k <= done; k++) S.log.queue.push({ text: `> FIREWALL LAYER ${k} BREACHED`, color: SEC[a.target.security].color });
+            S.log.layersDone = done;
+        }
+    }
+
+    // ── Intrusion log ───────────────────────────────────────────────────────
+    function resetLog(t, prefill) {
+        const L = S.log;
+        L.name = t ? t.name : null; L.lines = []; L.queue = []; L.typing = null; L.layersDone = 0;
+        L.nextAt = performance.now() + 900;
+        if (!t) return;
+        L.lines.push({ text: `> UPLINK ESTABLISHED: ${t.name}`, color: 'var(--cyan)' });
+        if (prefill && S.attack) {
+            const N = SEC[t.security].layers;
+            const done = Math.min(N, Math.floor(((S.clock - S.attack.start) / S.attack.duration) * N));
+            for (let k = 1; k <= done; k++) {
+                L.lines.push({ text: pick(LOG)(), color: '#5fd4e0' });
+                L.lines.push({ text: `> FIREWALL LAYER ${k} BREACHED`, color: SEC[t.security].color });
+            }
+            L.layersDone = done;
+        }
+    }
+
+    function stepLog(dt) {
+        const L = S.log;
+        if (!L.typing && L.queue.length) L.typing = { ...L.queue.shift(), shown: 0 };
+        if (L.typing) {
+            const before = Math.floor(L.typing.shown);
+            L.typing.shown += dt * 0.07;
+            if (view === 'hacking' && Math.floor(L.typing.shown) > before && before % 3 === 0) sfx.play('type');
+            if (L.typing.shown >= L.typing.text.length) {
+                L.lines.push({ text: L.typing.text, color: L.typing.color, done: L.typing.done });
+                if (L.lines.length > 40) L.lines.shift();
+                L.typing = null;
+            }
+        } else if (view === 'hacking' && performance.now() >= L.nextAt) {
+            L.queue.push({ text: pick(LOG)(), color: '#5fd4e0' });
+            L.nextAt = performance.now() + 1300 + Math.random() * 1500;
+        }
+        renderLog();
+    }
+
+    function renderLog() {
+        if (!refs.log) return;
+        const L = S.log;
+        const rows = view === 'success' ? 4 : 6;
+        const lines = L.lines.slice(-(L.typing ? rows - 1 : rows)).map(l => ({ ...l }));
+        if (L.typing) lines.push({ text: L.typing.text.slice(0, Math.floor(L.typing.shown)), color: L.typing.color, caret: true });
+        else if (lines.length) lines[lines.length - 1].caret = true;
+        const html = lines.map((l, k) => `<div style="color:${l.color};opacity:${(0.4 + 0.6 * (k + 1) / lines.length).toFixed(2)}">${esc(l.text)}${l.caret ? '<i class="caret"></i>' : ''}</div>`).join('');
+        if (refs.logHtml !== html) { refs.log.innerHTML = html; refs.logHtml = html; }
+    }
+
+    // ── Actions ─────────────────────────────────────────────────────────────
+    function initiate() {
+        if (S.busy || view !== 'detail') return;
+        const i = S.selected, t = S.targets[i];
+        if (!t) return;
+        const btn = $('initBtn');
+        if (S.data < t.cost) { deny(btn); return; }
+        S.busy = true;
+        sfx.play('initiate');
+        btn.classList.add('busy');
+        btn.querySelector('.label').textContent = 'ESTABLISHING UPLINK...';
+        flash('var(--cyan)');
+        setTimeout(() => {
+            S.busy = false;
+            S.data -= t.cost;
+            S.lastPickedData = t.rewardType === 'data';
+            S.attack = { index: i, target: { ...t }, start: S.clock, duration: effDuration(t) * 1000 };
+            resetLog(t, false);
+            render();
+        }, 450);
+    }
+
+    function deny(btn) {
+        sfx.play('deny');
+        toast('INSUFFICIENT DATA', 'var(--red)');
+        btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+    }
+
+    function abort() {
+        if (S.busy || view !== 'hacking') return;
+        const refund = Math.floor(S.attack.target.cost * REFUND_RATE);
+        S.data += refund;
+        sfx.play('abort');
+        S.attack = null;
+        S.tutorial = false;
+        toast(`+${refund} DATA REFUNDED`, 'var(--cyan)');
+        resetLog(null);
+        rollTargets();
+        S.selected = 0;
+        render(true);
+    }
+
+    function claim() {
+        if (S.busy || view !== 'success') return;
+        S.busy = true;
+        const p = S.pending;
+        sfx.play('claim');
+        flash('var(--green)');
+        $('payout').classList.add('claimed');
+        flyTo($('amount'), $({ data: 'balData', coin: 'balCoin', insight: 'balInsight' }[p.rewardType]), fmtReward(p.rewardType, p.rewardAmount), `var(--${p.rewardType})`);
+        setTimeout(() => {
+            if (p.rewardType === 'data') S.data += p.rewardAmount;
+            else if (p.rewardType === 'coin') S.coin += p.rewardAmount;
+            else S.insight += p.rewardAmount;
+            S.pending = null; S.attack = null; S.tutorial = false; S.busy = false;
+            toast(`${fmtReward(p.rewardType, p.rewardAmount)} SECURED`, `var(--${p.rewardType})`);
+            resetLog(null);
+            rollTargets();
+            S.selected = 0;
+            render(true);
+        }, 420);
+    }
+
+    function flash(color) {
+        const f = $('flash');
+        f.style.setProperty('--flash', color);
+        f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+    }
+
+    /** Float the payout text from the pane up to its balance chip. */
+    function flyTo(fromEl, toEl, label, color) {
+        if (!fromEl || !toEl) return;
+        const sr = stage.getBoundingClientRect(), scale = sr.width / 1600;
+        const a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+        const el = document.createElement('div');
+        el.className = 'flyer';
+        el.textContent = label;
+        el.style.color = color;
+        el.style.left = (a.left - sr.left) / scale + 'px';
+        el.style.top = (a.top - sr.top) / scale + 'px';
+        stage.appendChild(el);
+        requestAnimationFrame(() => {
+            el.style.transform = `translate(${(b.left - a.left) / scale}px, ${(b.top - a.top) / scale}px) scale(.6)`;
+            el.style.opacity = '0';
+        });
+        setTimeout(() => el.remove(), 750);
+    }
+
+    // ── Status line / balances ──────────────────────────────────────────────
+    function toast(text, color, ms = 2600) { S.toast = { text, color, until: performance.now() + ms }; }
+
+    function statusLine() {
+        if (S.toast && performance.now() < S.toast.until) return [S.toast.text, S.toast.color];
+        const sp = hackSpeed().toFixed(1);
+        const boost = hackSpeed() > 1 ? `  //  ×${sp} SPEED` : '';
+        if (view === 'hacking') return ['BREACH IN PROGRESS' + boost, 'var(--cyan)'];
+        if (view === 'success') return ['READY TO EXTRACT', 'var(--green)'];
+        if (S.tutorial) return ['TIP: START WITH THE 4-SECOND SANDBOX', 'var(--green)'];
+        return ['UPLINK SECURE' + boost, 'var(--muted)'];
+    }
+
+    const shown = { data: null, coin: null, insight: null };
+    function updateChrome() {
+        const [text, color] = statusLine();
+        const st = $('status');
+        if (st.textContent !== text) st.textContent = text;
+        st.style.color = color;
+        // Balances count toward their real value instead of jumping.
+        for (const [key, id, fmt] of [['data', 'balData', fmtInt], ['coin', 'balCoin', (v) => (v * 0.01).toFixed(2)], ['insight', 'balInsight', fmtInt]]) {
+            const el = $(id);
+            if (shown[key] === null) shown[key] = S[key];
+            const diff = S[key] - shown[key];
+            if (diff !== 0) {
+                const step = Math.sign(diff) * Math.max(1, Math.ceil(Math.abs(diff) * 0.16));
+                shown[key] = Math.abs(step) >= Math.abs(diff) ? S[key] : shown[key] + step;
+                if (!el.classList.contains('bump')) { el.classList.add('bump'); setTimeout(() => el.classList.remove('bump'), 220); }
+            }
+            const text = fmt(shown[key]);
+            if (el.textContent !== text) el.textContent = text;
+        }
+        const b = $('breachBtn');
+        b.classList.toggle('attacking', view === 'hacking');
+        b.classList.toggle('ready', view === 'success');
+    }
+
+    // ── Render / loop ───────────────────────────────────────────────────────
+    function render(intro = false) {
+        const prev = view;
+        view = logicView();
+        if (view === 'detail' && !S.targets[S.selected]) S.selected = S.targets.findIndex(Boolean);
+        renderList(intro);
+        renderPane();
+        updateChrome();
+        if (prev === 'hacking' && view === 'success') {
+            sfx.play('success');
+            glitch(document.querySelector('.pane h2'));
+        }
+    }
+
+    let last = performance.now();
+    function frame(now) {
+        const dt = Math.min(100, now - last);
+        last = now;
+        S.clock += dt * S.speed;
+        if (S.open && !S.busy) {
+            if (S.attack && !S.pending && S.clock - S.attack.start >= S.attack.duration) {
+                S.pending = { rewardType: S.attack.target.rewardType, rewardAmount: S.attack.target.rewardAmount, name: S.attack.target.name };
+            }
+            if (logicView() !== view) render();
+            else if (view === 'hacking') updateHacking(false);
+            else if (view === 'detail' && refs.short !== undefined && S.targets[S.selected] && (S.data < S.targets[S.selected].cost) !== refs.short) render();
+            stepLog(dt);
+            updateChrome();
+        } else if (S.attack && !S.pending && S.clock - S.attack.start >= S.attack.duration) {
+            S.pending = { rewardType: S.attack.target.rewardType, rewardAmount: S.attack.target.rewardAmount, name: S.attack.target.name };
+            view = logicView();
+            updateChrome();
+        }
+        requestAnimationFrame(frame);
+    }
+
+    // ── Open / close ────────────────────────────────────────────────────────
+    function setOpen(open) {
+        S.open = open;
+        stage.classList.toggle('open', open);
+        sfx.play(open ? 'open' : 'close');
+        if (open) {
+            S.toast = null;
+            render(true);
+            glitch($('t-title'));
+            const sel = listEl.querySelector('.row.selected') || $('closeBtn');
+            sel.focus({ preventScroll: true });
+        } else {
+            $('breachBtn').focus({ preventScroll: true });
+        }
+    }
+    $('closeBtn').addEventListener('click', () => setOpen(false));
+    $('breachBtn').addEventListener('click', () => setOpen(true));
+    $('dim').addEventListener('click', () => setOpen(false));
+
+    document.addEventListener('keydown', (e) => {
+        if (!S.open) return;
+        if (e.key === 'Tab') {
+            // Keep focus inside the dialog
+            const f = [...$('terminal').querySelectorAll('button, [tabindex="0"]')].filter(el => el.offsetParent !== null);
+            if (!f.length) return;
+            const i = f.indexOf(document.activeElement);
+            const next = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : (i === f.length - 1 ? 0 : i + 1);
+            e.preventDefault();
+            f[next].focus({ preventScroll: true });
+            return;
+        }
+        if (e.key === 'Escape') setOpen(false);
+        else if (['1', '2', '3'].includes(e.key)) select(+e.key - 1);
+        else if (e.key === 'Enter' && document.activeElement && document.activeElement.classList.contains('row')) {
+            /* handled by row keydown */
+        } else if (e.key === 'Enter' && view === 'detail') initiate();
+        else if (e.key === 'Enter' && view === 'success') claim();
+    });
+
+    // ── Scale the 1600×900 stage to the window ──────────────────────────────
+    function fit() {
+        const s = Math.min(innerWidth / 1600, innerHeight / 900);
+        stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+    }
+    addEventListener('resize', fit);
+
+    // ── Mock controls ───────────────────────────────────────────────────────
+    const mock = $('mock'), mockToggle = $('mockToggle');
+    function setMockOpen(open) {
+        mock.classList.toggle('collapsed', !open);
+        mockToggle.setAttribute('aria-expanded', String(open));
+        mockToggle.textContent = open ? 'MOCK ▾' : 'MOCK ▸';
+    }
+    mockToggle.addEventListener('click', () => setMockOpen(mock.classList.contains('collapsed')));
+    setMockOpen(innerHeight >= 700);
+    document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
+        S.speed = +b.dataset.speed;
+        document.querySelectorAll('[data-speed]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    }));
+    $('mFinish').addEventListener('click', () => { if (S.attack) S.attack.start = S.clock - S.attack.duration; });
+    $('mRich').addEventListener('click', () => { S.data += 1000; });
+    $('mBroke').addEventListener('click', () => { S.data = 0; });
+    $('mShell').addEventListener('click', (e) => {
+        S.shell = !S.shell;
+        e.currentTarget.setAttribute('aria-pressed', String(S.shell));
+        if (view === 'detail') render();
+    });
+    $('mTutorial').addEventListener('click', () => {
+        S.attack = null; S.pending = null; S.tutorial = true;
+        resetLog(null); rollTargets(); S.selected = 0;
+        if (!S.open) setOpen(true); else render(true);
+    });
+    $('mSound').addEventListener('click', (e) => {
+        const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+        e.currentTarget.setAttribute('aria-pressed', String(on));
+        sfx.set(on);
+    });
+    $('mReroll').addEventListener('click', () => {
+        if (S.attack) return;
+        S.tutorial = false; rollTargets(); S.selected = 0; render(true);
+    });
+
+    // ── Backdrop tree (decorative) ──────────────────────────────────────────
+    const tree = $('tree');
+    const pts = [[380, 760], [380, 640], [260, 560], [500, 560], [380, 470], [200, 420], [560, 420], [380, 330], [380, 220], [270, 140], [490, 140]];
+    const links = [[0, 1], [1, 2], [1, 3], [2, 4], [3, 4], [2, 5], [3, 6], [4, 7], [7, 8], [8, 9], [8, 10]];
+    tree.innerHTML = links.map(([a, b]) => {
+        const [x1, y1] = pts[a], [x2, y2] = pts[b];
+        const len = Math.hypot(x2 - x1, y2 - y1), ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        return `<div class="link" style="left:${x1}px;top:${y1}px;width:${len}px;height:1.5px;transform-origin:0 0;transform:rotate(${ang}deg)"></div>`;
+    }).join('') + pts.map(([x, y]) => `<div class="node" style="left:${x - 23}px;top:${y - 23}px"></div>`).join('');
+
+    // ── Boot ────────────────────────────────────────────────────────────────
+    window.mockState = S; // for tinkering from devtools
+    rollTargets();
+    fit();
+    setOpen(true);
+    requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

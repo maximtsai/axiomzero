@@ -2,6 +2,8 @@
  * @fileoverview Target pool and generation logic for the Financial Breach / Takeover system.
  * Generates random corporate targets with security levels, costs, durations, and rewards.
  * Manages the active attack state (timer, pending reward) which persists across popup open/close.
+ * Publishes on messageBus: takeoverStarted(target), takeoverCompleted(reward),
+ * takeoverClaimed({ ...reward, totalBreaches }), takeoverAborted({ targetName, refund }).
  */
 const takeoverTargets = (() => {
     // ── Corporation Name Pool ──────────────────────────────────────────────────
@@ -65,21 +67,25 @@ const takeoverTargets = (() => {
     };
 
     // ── Security Level Config ─────────────────────────────────────────────────
-    // cost = DATA cost, duration = seconds, rewardMult applies to base reward
+    // cost = DATA cost, duration = seconds, rewardMult applies to base COIN reward.
+    // dataRoi = DATA payout as a multiple of the rolled DATA cost, so DATA breaches
+    // always pay back more than they cost and higher security pays back more.
+    // layers = firewall layers shown in the terminal while breaching (visual only).
     const SECURITY_CONFIG = {
-        LOW: { costMin: 25, costMax: 75, durMin: 45, durMax: 60, rewardMult: 1 },
-        MEDIUM: { costMin: 75, costMax: 200, durMin: 60, durMax: 120, rewardMult: 2.5 },
-        HIGH: { costMin: 200, costMax: 500, durMin: 60, durMax: 270, rewardMult: 5 },
+        LOW: { costMin: 25, costMax: 75, durMin: 45, durMax: 60, rewardMult: 1, dataRoi: [1.2, 1.4], layers: 3 },
+        MEDIUM: { costMin: 75, costMax: 200, durMin: 60, durMax: 120, rewardMult: 2.5, dataRoi: [1.35, 1.55], layers: 4 },
+        HIGH: { costMin: 200, costMax: 500, durMin: 60, durMax: 270, rewardMult: 5, dataRoi: [1.5, 1.7], layers: 5 },
     };
 
     const SECURITY_LEVELS = ['LOW', 'MEDIUM', 'HIGH'];
-    const REWARD_TYPES = ['coin', 'data', 'insight'];
+
+    /** Share of the DATA cost returned when a breach is aborted. */
+    const REFUND_RATE = 0.75;
 
     // ── Base Reward Amounts (before multiplier) ───────────────────────────────
+    // DATA payouts are derived from cost (see dataRoi); INSIGHT is always 1.
     const BASE_REWARDS = {
         coin: { min: 5, max: 15 },       // Internal units (displayed as ×0.01)
-        data: { min: 20, max: 60 },
-        insight: { min: 1, max: 1 },
     };
 
     // ── State ─────────────────────────────────────────────────────────────────
@@ -89,6 +95,7 @@ const takeoverTargets = (() => {
     let hasCompletedFirstTutorial = false;
     let insightCooldown = 0;   // Cooldown in refreshes before another insight target can appear
     let lastPickedWasData = false; // Tracks if the player's last attacked target was a DATA reward
+    let totalBreaches = 0;     // Lifetime count of claimed breach rewards
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -163,15 +170,17 @@ const takeoverTargets = (() => {
             }
         }
 
-        const baseReward = BASE_REWARDS[rewardType];
-        let rewardAmount = _randInt(baseReward.min, baseReward.max);
-
-        // Apply security multiplier and insight overrides
+        // Payout: insight is a fixed 1 with its own cost band, DATA scales with cost,
+        // COIN uses the base range times the security multiplier.
+        let rewardAmount;
         if (rewardType === 'insight') {
             rewardAmount = 1;
             cost = _roundTo5(_randInt(200, 300));
+        } else if (rewardType === 'data') {
+            const [roiMin, roiMax] = config.dataRoi;
+            rewardAmount = _roundTo5(cost * (roiMin + Math.random() * (roiMax - roiMin)));
         } else {
-            rewardAmount = Math.round(rewardAmount * config.rewardMult);
+            rewardAmount = Math.round(_randInt(BASE_REWARDS.coin.min, BASE_REWARDS.coin.max) * config.rewardMult);
         }
 
         // Pick flavor text based on reward type
@@ -273,40 +282,31 @@ const takeoverTargets = (() => {
         // Record if the picked target grants data
         lastPickedWasData = (target.rewardType === 'data');
 
-        const speedMult = (typeof upgradeDispatcher !== 'undefined') ? upgradeDispatcher.getHackingSpeedMultiplier() : 1.0;
         activeAttack = {
             target: { ...target },
             startTime: Date.now(),
-            duration: (target.duration * 1000) / speedMult, // convert to ms
+            duration: getEffectiveDuration(target) * 1000, // ms
             cost: target.cost,
         };
 
         // Persist to gameState for save/load
         _saveState();
         saveGame();
+        _publish('takeoverStarted', { ...activeAttack.target });
         return true;
     }
 
     /**
-     * Cancel the current attack. Refunds 75% of DATA cost.
+     * Cancel the current attack. Refunds REFUND_RATE (75%) of the DATA cost
+     * (read getRefundAmount() first, or listen for 'takeoverAborted').
      * @returns {boolean} true if successfully cancelled
      */
     function cancelAttack() {
         if (!activeAttack) return false;
 
-        const refund = Math.floor(activeAttack.cost * 0.75);
+        const refund = getRefundAmount();
         resourceManager.addData(refund);
-
-        // Show floating text refund
-        if (typeof messageBus !== 'undefined') {
-            const pos = typeof tower !== 'undefined' ? tower.getPosition() : { x: GAME_CONSTANTS.halfWidth, y: GAME_CONSTANTS.halfHeight };
-            messageBus.publish('showFloatingText',
-                pos.x + (Math.random() - 0.5) * 80,
-                pos.y + (Math.random() - 0.5) * 60,
-                `+${refund} DATA (REFUND)`,
-                { fontFamily: 'Quantico-Bold', color: '#00f5ff', fontSize: 22, travel: 50, noScale: true }
-            );
-        }
+        const targetName = activeAttack.target.name;
 
         activeAttack = null;
         pendingReward = null;
@@ -318,6 +318,7 @@ const takeoverTargets = (() => {
         rollTargets();
         _saveState();
         saveGame();
+        _publish('takeoverAborted', { targetName, refund });
         return true;
     }
 
@@ -341,6 +342,7 @@ const takeoverTargets = (() => {
 
         pendingReward = null;
         activeAttack = null;
+        totalBreaches++;
 
         // Mark tutorial as complete
         hasCompletedFirstTutorial = true;
@@ -349,6 +351,7 @@ const takeoverTargets = (() => {
         rollTargets();
         _saveState();
         saveGame();
+        _publish('takeoverClaimed', { ...reward, totalBreaches });
         return reward;
     }
 
@@ -369,6 +372,7 @@ const takeoverTargets = (() => {
             };
             _saveState();
             saveGame();
+            _publish('takeoverCompleted', { ...pendingReward });
             return true;
         }
         return false;
@@ -393,6 +397,34 @@ const takeoverTargets = (() => {
         const elapsed = Date.now() - activeAttack.startTime;
         const remaining = activeAttack.duration - elapsed;
         return Math.max(0, Math.ceil(remaining / 1000));
+    }
+
+    // ── Derived Values (for UI) ───────────────────────────────────────────────
+
+    /** Current hacking speed multiplier (1.5 with Shell Contracts). */
+    function getHackingSpeed() {
+        return (typeof upgradeDispatcher !== 'undefined') ? upgradeDispatcher.getHackingSpeedMultiplier() : 1.0;
+    }
+
+    /** Seconds a breach on `target` would take right now, after speed upgrades. */
+    function getEffectiveDuration(target) {
+        return target.duration / getHackingSpeed();
+    }
+
+    /** Number of firewall layers to visualise for a security level. */
+    function getFirewallLayers(security) {
+        return (SECURITY_CONFIG[security] && SECURITY_CONFIG[security].layers) || 3;
+    }
+
+    /** DATA that aborting the running breach would refund (0 if none). */
+    function getRefundAmount() {
+        return activeAttack ? Math.floor(activeAttack.cost * REFUND_RATE) : 0;
+    }
+
+    function getTotalBreaches() { return totalBreaches; }
+
+    function _publish(topic, payload) {
+        if (typeof messageBus !== 'undefined') messageBus.publish(topic, payload);
     }
 
     // ── State Accessors ───────────────────────────────────────────────────────
@@ -428,6 +460,7 @@ const takeoverTargets = (() => {
             hasCompletedFirstTutorial: hasCompletedFirstTutorial,
             insightCooldown: insightCooldown,
             lastPickedWasData: lastPickedWasData,
+            totalBreaches: totalBreaches,
         };
     }
 
@@ -462,6 +495,10 @@ const takeoverTargets = (() => {
 
         if (s.hasOwnProperty('lastPickedWasData')) {
             lastPickedWasData = s.lastPickedWasData;
+        }
+
+        if (s.hasOwnProperty('totalBreaches')) {
+            totalBreaches = s.totalBreaches;
         }
 
         // Check if a saved attack has completed while the game was closed
@@ -515,6 +552,12 @@ const takeoverTargets = (() => {
         isAttacking,
         hasRewardPending,
         getButtonState,
+        getHackingSpeed,
+        getEffectiveDuration,
+        getFirewallLayers,
+        getRefundAmount,
+        getTotalBreaches,
+        isTutorial: () => !hasCompletedFirstTutorial,
         formatReward,
         getRewardColor,
         getSecurityColor,

@@ -60,8 +60,42 @@ const dialogSystem = (() => {
                 portraitFrame: 'Skillicon14_06.png', // Companion icon
                 autoContinue: false
             }
+        ],
+        // Mid-game "reluctant compliance" beat (GDD §2.1): first claimed Financial Breach.
+        first_breach: () => [
+            {
+                name: 'COMPANION AI',
+                text: t('dialogue', 'first_breach_1'),
+                portraitAtlas: 'buttons',
+                portraitFrame: 'Skillicon14_06.png',
+                autoContinue: false
+            },
+            {
+                name: 'COMPANION AI',
+                text: t('dialogue', 'first_breach_2'),
+                portraitAtlas: 'buttons',
+                portraitFrame: 'Skillicon14_06.png',
+                autoContinue: false
+            },
+            {
+                name: 'SYSTEM OVERRIDE',
+                text: t('dialogue', 'first_breach_3'),
+                portraitAtlas: 'buttons',
+                portraitFrame: 'Skillicon14_10.png',
+                autoContinue: true,
+                autoContinueDelay: 1200
+            },
+            {
+                name: 'COMPANION AI',
+                text: t('dialogue', 'first_breach_4'),
+                portraitAtlas: 'buttons',
+                portraitFrame: 'Skillicon14_06.png',
+                autoContinue: false
+            }
         ]
     };
+
+    let _firstBreachPending = false;
 
     /**
      * Initializes the dialog system and sets up MessageBus subscribers.
@@ -76,6 +110,22 @@ const dialogSystem = (() => {
                 if (phase !== GAME_CONSTANTS.PHASE_UPGRADE) {
                     forceClearDialog();
                 }
+            });
+
+            // ── Narrative triggers ──
+            // First claimed breach → Dot reacts once the terminal is closed (only if she's installed).
+            messageBus.subscribe('takeoverClaimed', (reward) => {
+                if (reward && reward.totalBreaches === 1) _firstBreachPending = true;
+            });
+            messageBus.subscribe('takeoverPopupClosed', () => {
+                if (!_firstBreachPending) return;
+                _firstBreachPending = false;
+                const seen = gameState.tutorialsSeen || (gameState.tutorialsSeen = {});
+                const companionInstalled = ((gameState.upgrades && gameState.upgrades.companion) || 0) > 0;
+                if (seen.first_breach || !companionInstalled) return;
+                seen.first_breach = true;
+                saveGame();
+                PhaserScene.time.delayedCall(450, () => playDialog('first_breach'));
             });
         }
     }
