@@ -542,7 +542,8 @@ class TowerView {
         }
 
         PhaserScene.time.delayedCall(350, () => {
-            if (this.sprite && this.sprite.scene) {
+            // Only undo our own frame swap: a killing blow switches to the broken frame meanwhile
+            if (this.sprite && this.sprite.scene && this.sprite.frame.name === 'tower_dark.png') {
                 this.sprite.setFrame('tower1.png');
             }
             if (this.flashGlowSprite && this.flashGlowSprite.scene) {
@@ -1028,6 +1029,7 @@ const tower = (() => {
     // impact instead of a stack of jittering punches.
     const HIT_TIER_SOLID = 0.05;   // >= 5% of max HP
     const HIT_TIER_HEAVY = 0.15;   // >= 15% of max HP
+    const BIG_HIT_MIN_DAMAGE = 15; // the big-damage visual also needs more than this much damage
     const LOW_HEALTH_RATIO = 0.25; // vignette pulses while the health bar is red
     const _hitFx = {
         lastSound: -1e9, pendingPct: 0, flushTimer: null,
@@ -1255,22 +1257,30 @@ const tower = (() => {
 
         if (hasSource) view.playHitDirection(x, y, tier);
         _queueDamageNumber(damageTaken);
+
+        // Big-damage visual (dark frame, bloom, black shards): heavy hits over 15 damage,
+        // at most once per 0.6s. Plays on a killing blow too.
+        const bigHit = tier === 2 && damageTaken > BIG_HIT_MIN_DAMAGE && now - _hitFx.lastBig >= 600;
+        if (bigHit) {
+            _hitFx.lastBig = now;
+            _hitFx.lastFlash = now;
+            _hitFx.lastFlashTier = tier;
+            if (view.flashGlowSprite) {
+                PhaserScene.tweens.killTweensOf(view.flashGlowSprite); // a running chip flash would fade it out
+                view.flashGlowSprite.setAlpha(0.85);
+            }
+            view.takeBigDamageVisual(x, y);
+        }
+
         if (!survived) return; // death sequence takes over from here
 
         // Flash + zoom punch: one per 70ms, unless this hit is heavier than the last one shown
-        if (now - _hitFx.lastFlash >= 70 || tier > _hitFx.lastFlashTier) {
+        if (bigHit) {
+            zoomShake(1.022);
+        } else if (now - _hitFx.lastFlash >= 70 || tier > _hitFx.lastFlashTier) {
             _hitFx.lastFlash = now;
             _hitFx.lastFlashTier = tier;
-            if (tier === 2 && now - _hitFx.lastBig >= 600) {
-                _hitFx.lastBig = now;
-                if (view.flashGlowSprite) {
-                    PhaserScene.tweens.killTweensOf(view.flashGlowSprite); // a running chip flash would fade it out
-                    view.flashGlowSprite.setAlpha(0.85);
-                }
-                view.takeBigDamageVisual(x, y);
-            } else {
-                view.playHitFlash(tier);
-            }
+            view.playHitFlash(tier);
             zoomShake([1.005, 1.012, 1.022][tier]);
         }
 
