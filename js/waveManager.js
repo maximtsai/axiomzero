@@ -137,7 +137,7 @@ const waveManager = (() => {
         });
 
         // Brief slow-mo for impact
-        timeManager.slowFor(200, 0.2);
+        timeManager.slowFor(150, 0.2);
 
         // ── Floating "BACKUP SERVER" text ──
         const cx = GAME_CONSTANTS.halfWidth;

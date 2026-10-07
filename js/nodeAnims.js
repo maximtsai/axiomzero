@@ -30,7 +30,8 @@ const nodeAnims = {
 
         // Settle at the tree's zoom scale, not the current scale: a hover jiggle still running
         // from the previous click would otherwise become the node's permanent size.
-        PhaserScene.tweens.killTweensOf(targets);
+        // Don't kill running tweens here: the purchase fade-out on fadeoutSprite (old frame
+        // fading to reveal the gold one) would freeze opaque and blank the node.
         const dragGroup = upgradeTree.getDraggableGroup && upgradeTree.getDraggableGroup();
         const restScale = (dragGroup && dragGroup.getScale()) || 1;
         const baseScaleX = restScale;

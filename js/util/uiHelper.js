@@ -76,7 +76,27 @@ Object.assign(helper, {
             onMouseUp: function () { }
         });
         blocker.setScrollFactor(0);
+        // Track live local blockers for isInputBlocked(); undo on destroy
+        helper._localBlockers = (helper._localBlockers || 0) + 1;
+        const destroy = blocker.destroy.bind(blocker);
+        let released = false;
+        blocker.destroy = function () {
+            if (!released) {
+                released = true;
+                helper._localBlockers = Math.max(0, helper._localBlockers - 1);
+            }
+            return destroy();
+        };
         return blocker;
+    },
+
+    /**
+     * True while any click blocker owns input: the shared global one (popups, transitions)
+     * or a local one (companion dialog, reset confirm). Keyboard and wheel handlers check this.
+     */
+    isInputBlocked: function () {
+        return helper.isGlobalBlockerActive() || (helper._localBlockers || 0) > 0
+            || (typeof buttonManager !== 'undefined' && buttonManager.isBlocked);
     },
 
     /** Disables the global click blocker and restores the default cursor. */

@@ -14,7 +14,8 @@
 
 const dialogSystem = (() => {
     let currentPhase = ''; // Tracks the current game phase via MessageBus
-    let _clickBlocker = null; // Full-screen click blocker for modal dialogs
+    let _clickBlocker = null; // Full-screen dim layer for modal dialogs (visual only)
+    let _inputBlocker = null; // Local Button blocker that routes clicks to the dialog
 
     // UI elements
     let _dialogContainer = null;
@@ -123,14 +124,17 @@ const dialogSystem = (() => {
                 const seen = gameState.tutorialsSeen || (gameState.tutorialsSeen = {});
                 const companionInstalled = ((gameState.upgrades && gameState.upgrades.companion) || 0) > 0;
                 if (seen.first_breach || !companionInstalled) return;
-                PhaserScene.time.delayedCall(450, () => {
+                const tryPlay = () => {
                     // Only mark it seen once it actually plays (deploying in the delay window skips it)
                     if (seen.first_breach) return;
                     if (!_canShowDialog()) { _firstBreachPending = true; return; } // retry next time the terminal closes
+                    // A popup, slide or transition owns input: wait until it's done
+                    if (helper.isInputBlocked()) { PhaserScene.time.delayedCall(300, tryPlay); return; }
                     seen.first_breach = true;
                     saveGame();
                     playDialog('first_breach');
-                });
+                };
+                PhaserScene.time.delayedCall(450, tryPlay);
             });
         }
     }
@@ -392,10 +396,14 @@ const dialogSystem = (() => {
             .setScrollFactor(0)
             .setDepth(GAME_CONSTANTS.DEPTH_DIALOG);
 
-        // Clicks go through the global Button blocker: game UI is routed by buttonManager,
-        // so a Phaser-interactive image alone would not stop clicks reaching the tree or DEPLOY.
-        const inputBlocker = helper.createGlobalClickBlocker(false);
+        // Clicks go through a Button blocker: game UI is routed by buttonManager, so a
+        // Phaser-interactive image alone would not stop clicks reaching the tree or DEPLOY.
+        // It's a private (local) blocker: sharing the global one let a tree slide or level
+        // select release it mid-dialog and leave the dialog stuck.
+        if (_inputBlocker) _inputBlocker.destroy();
+        const inputBlocker = helper.createLocalClickBlocker().setDepth(GAME_CONSTANTS.DEPTH_DIALOG);
         inputBlocker.setOnMouseUpFunc(_onScreenClicked);
+        _inputBlocker = inputBlocker;
 
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
             upgradeTree.assignToUICamera(_clickBlocker);
@@ -542,11 +550,9 @@ const dialogSystem = (() => {
             _clickBlocker.destroy();
             _clickBlocker = null;
         }
-        // Release the global blocker only if it is still ours (a transition may have claimed it since)
-        const inputBlocker = globalObjects.clickBlocker;
-        if (inputBlocker && inputBlocker.onMouseUpFunc === _onScreenClicked) {
-            inputBlocker.setOnMouseUpFunc(function () { });
-            helper.hideGlobalClickBlocker();
+        if (_inputBlocker) {
+            _inputBlocker.destroy();
+            _inputBlocker = null;
         }
         _currentDialog = null;
     }

@@ -5,6 +5,8 @@
 const HEALTH_BAR_GAP = 14;
 const FONT_SIZE_MOBILE = 31;
 const FONT_SIZE_DESKTOP = 24;
+const GHOST_HOLD_MS = 300;   // damage chunk stays visible this long...
+const GHOST_DRAIN_MS = 350;  // ...then drains down to the new health
 
 class HealthBar {
     /**
@@ -48,6 +50,12 @@ class HealthBar {
         this.flare.setOrigin(0.5, 0.5).setScale(1, 0.75).setDepth(this.depth + 1).setScrollFactor(0);
         this.flare.setAlpha(0);
 
+        // ── Damage ghost: the lost chunk lingers behind the fill, then drains ──
+        this.ghost = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP - 11, this.y + HEALTH_BAR_GAP - 9, 'buttons', 'white_pixel.png');
+        this.ghost.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2)
+            .setDepth(this.depth + 1.5).setScrollFactor(0).setAlpha(0.8);
+        this._ghostTimer = null;
+
         // ── Fill ──
         this.fill = PhaserScene.add.image(this.baseX + HEALTH_BAR_GAP - 11, this.y + HEALTH_BAR_GAP - 9, 'buttons', 'green_pixel.png');
         this.fill.setOrigin(0, 0).setDisplaySize(this.baseW - HEALTH_BAR_GAP * 2, this.h - HEALTH_BAR_GAP * 2).setDepth(this.depth + 2).setScrollFactor(0);
@@ -77,7 +85,9 @@ class HealthBar {
         if (this.bg.width !== dynamicW) {
             this.bg.width = dynamicW;
         }
-        this.fill.setDisplaySize((dynamicW - HEALTH_BAR_GAP * 2) * ratio, this.h - HEALTH_BAR_GAP * 2);
+        const fillW = (dynamicW - HEALTH_BAR_GAP * 2) * ratio;
+        this.fill.setDisplaySize(fillW, this.h - HEALTH_BAR_GAP * 2);
+        this._updateGhost(fillW, this.lastHealth !== -1 && current < this.lastHealth);
 
         // Reposition text to the right of the dynamic bar (compensated for background shift)
         this.text.x = this.bg.x + dynamicW + 4;
@@ -106,6 +116,33 @@ class HealthBar {
         this.lastHealth = current;
 
         this.text.setText(current.toFixed(1) + ' / ' + max.toFixed(0));
+    }
+
+    /** Keep the ghost at the old width for a moment after damage, then drain it to the fill. */
+    _updateGhost(fillW, tookDamage) {
+        const h = this.h - HEALTH_BAR_GAP * 2;
+        if (tookDamage) {
+            // Hold at whatever is showing now (the pre-hit width, or a chunk still draining)
+            PhaserScene.tweens.killTweensOf(this.ghost);
+            if (this._ghostTimer) this._ghostTimer.remove(false);
+            this._ghostTimer = PhaserScene.time.delayedCall(GHOST_HOLD_MS, () => {
+                this._ghostTimer = null;
+                PhaserScene.tweens.add({
+                    targets: this.ghost,
+                    displayWidth: this.fill.displayWidth,
+                    duration: GHOST_DRAIN_MS,
+                    ease: 'Quad.easeIn',
+                });
+            });
+            this.ghost.displayHeight = h;
+            return;
+        }
+        // Healed, resized or unchanged: no chunk to show unless one is still pending
+        if (!this._ghostTimer && !PhaserScene.tweens.isTweening(this.ghost)) {
+            this.ghost.setDisplaySize(fillW, h);
+        } else if (this.ghost.displayWidth < fillW) {
+            this.ghost.setDisplaySize(fillW, h);
+        }
     }
 
     refreshFontSize() {
@@ -138,12 +175,14 @@ class HealthBar {
         this.bg.setVisible(vis);
         this.fill.setVisible(vis);
         this.flare.setVisible(vis);
+        this.ghost.setVisible(vis);
         this.text.setVisible(vis);
     }
 
     setAlpha(alpha) {
         this.bg.setAlpha(alpha);
         this.fill.setAlpha(alpha);
+        this.ghost.setAlpha(alpha * 0.8);
         this.text.setAlpha(alpha);
     }
 
@@ -156,6 +195,7 @@ class HealthBar {
         this.bg.setPosition(x - 11, y - 9);
         this.flare.setPosition(x - 11, y + this.h / 2 - 9);
         this.fill.setPosition(x + HEALTH_BAR_GAP - 11, y + HEALTH_BAR_GAP - 9);
+        this.ghost.setPosition(x + HEALTH_BAR_GAP - 11, y + HEALTH_BAR_GAP - 9);
         // text.x/y is updated in update() too, but we set it here for immediate feedback
         this.text.setPosition(this.bg.x + this.bg.width + 4, y + 12);
 
@@ -170,6 +210,7 @@ class HealthBar {
     addToGroup(group) {
         if (!group) return;
         group.add(this.bg);
+        group.add(this.ghost);
         group.add(this.fill);
         group.add(this.flare);
         group.add(this.text);
@@ -178,6 +219,7 @@ class HealthBar {
     assignToUICamera() {
         if (typeof upgradeTree === 'undefined' || !upgradeTree.assignToUICamera) return;
         upgradeTree.assignToUICamera(this.bg);
+        upgradeTree.assignToUICamera(this.ghost);
         upgradeTree.assignToUICamera(this.fill);
         upgradeTree.assignToUICamera(this.flare);
         upgradeTree.assignToUICamera(this.text);
@@ -185,6 +227,8 @@ class HealthBar {
 
     destroy() {
         this.bg.destroy();
+        if (this._ghostTimer) this._ghostTimer.remove(false);
+        this.ghost.destroy();
         this.fill.destroy();
         this.flare.destroy();
         this.text.destroy();

@@ -34,6 +34,9 @@ class TimeManager {
 
         PhaserScene.anims.pauseAll();
         this._frozen = { tweens, events };
+        // Everything running is paused, so the pause menu can run at normal speed even if a
+        // slow-mo (e.g. the boss-death ramp) was active. _applySlows restores it on resume.
+        this.applyTimeScale(1);
     }
 
     /** Resume exactly what freezeWorld() paused. */
@@ -45,6 +48,7 @@ class TimeManager {
         this._frozen.events.forEach(ev => { ev.paused = false; });
         PhaserScene.anims.resumeAll();
         this._frozen = null;
+        this._applySlows();
     }
 
     /** Apply a timeScale value to all Phaser time systems and GAME_VARS. */
@@ -116,6 +120,7 @@ class TimeManager {
     }
 
     _applySlows() {
+        if (this._frozen) return; // paused: normal speed for the menu; re-applied on resume
         const base = GAME_VARS.gameManualSlowSpeed || 1;
         let scale = base;
         let tweenScale = base;

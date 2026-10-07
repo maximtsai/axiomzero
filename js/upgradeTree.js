@@ -144,7 +144,7 @@ const upgradeTree = (() => {
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
             if (!visible || !draggableGroup) return;
             // A popup, dialog or transition owns input; don't zoom the tree behind it
-            if (helper.isGlobalBlockerActive() || buttonManager.isBlocked) return;
+            if (helper.isInputBlocked()) return;
 
             // Only zoom if pointer is within bounds. In full view, bounds is the whole screen.
             if (!fullUpgradeView && pointer.x > PANEL_W) return;
@@ -350,7 +350,7 @@ const upgradeTree = (() => {
             if (hoveredBtn && hoveredBtn.getDepth() > 10000) return;
 
             if (typeof treePopups !== 'undefined' && treePopups.isAnyPopupVisible()) return;
-            if (helper.isGlobalBlockerActive()) return;
+            if (helper.isInputBlocked()) return;
 
             isDraggingTree = true;
             dragDistanceTotal = 0;
@@ -1039,7 +1039,7 @@ const upgradeTree = (() => {
         if (hintPulseTimer) return;
 
         const check = () => {
-            if (!visible || helper.isGlobalBlockerActive()) return; // not behind level select / popups
+            if (!visible || helper.isInputBlocked()) return; // not behind level select / popups / dialogs
             const shardCount = resourceManager.getShards();
             if (shardCount <= 0) return;
 

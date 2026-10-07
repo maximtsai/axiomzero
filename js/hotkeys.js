@@ -59,7 +59,7 @@ const hotkeys = (() => {
     /** Options can open when nothing else holds input (popup, dialog, transition, death). */
     function _canOpenOptions() {
         if (transitionManager.isTransitioning()) return false;
-        if (helper.isGlobalBlockerActive() || buttonManager.isBlocked) return false;
+        if (helper.isInputBlocked()) return false;
         if (gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT && !tower.isAlive()) return false;
         return true;
     }

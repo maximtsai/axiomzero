@@ -163,6 +163,7 @@ GAME_CONSTANTS.DEPTH_HUD = 1000;
 GAME_CONSTANTS.DEPTH_UPGRADE_TREE = 2000;
 GAME_CONSTANTS.DEPTH_DEATH_OVERLAY = 3000;  // death flash — covers entire game
 GAME_CONSTANTS.DEPTH_DEATH_TOWER = 3500;  // tower elevated above overlay during shake
+GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS = 100; // idle weapons re-check for a target this often
 GAME_CONSTANTS.DEPTH_DIALOG = 4500;  // companion dialog — above the tree panel and HUD, below transitions
 GAME_CONSTANTS.DEPTH_TRANSITION = 5000;
 GAME_CONSTANTS.DEPTH_ITERATION_OVER = 6000;

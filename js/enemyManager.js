@@ -62,7 +62,7 @@ const enemyManager = (() => {
         depth: GAME_CONSTANTS.DEPTH_RESOURCES + 50,
         duration: 1000,
         scaleX: 1,
-        noScale: true, // size is computed here; floatingText's own number scaling would apply it twice
+        presized: true, // size is computed here; floatingText's number scaling would apply it twice (keeps the fade-out shrink)
     };
 
     // Spawn Rules configuration

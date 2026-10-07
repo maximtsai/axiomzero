@@ -353,9 +353,15 @@ const customEmitters = (() => {
     }
 
     // tower hit (lighter version of core death explosion)
+    // Decelerate: speed is only applied at emit (an ease there does nothing), so each particle
+    // gets an acceleration opposite its own velocity that brings it near rest by end of life.
+    // Phaser sets velocity and life before it reads accelerationX/Y, so both are available here.
+    const towerHitDecel = (axis) => (p) => -p[axis] * 0.9 / Math.max(0.05, p.life / 1000);
     const towerHitParams = {
         frame: 'white_pixel.png',
-        speed: { min: 80, max: 180, ease: 'Cubic.easeOut' },
+        speed: { min: 120, max: 260 }, // faster start: deceleration roughly halves the travel
+        accelerationX: { onEmit: towerHitDecel('velocityX') },
+        accelerationY: { onEmit: towerHitDecel('velocityY') },
         lifespan: { min: 400, max: 1000 },
         scale: { start: 18, end: 4, ease: 'Quad.easeIn' },
         alpha: { start: 0.6, end: 0, ease: 'Quad.easeIn' },

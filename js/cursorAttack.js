@@ -816,6 +816,12 @@ class PulseAttackView {
     playBombArmAnimation(baseSize, finalBombSize, onPhase1Complete, onPhase2Complete) {
         if (!this.artillerySprite) return;
 
+        // Re-armed while the cancel fade is still running: stop it, or it fades and hides the new bomb
+        if (this.cancelAnimating) {
+            PhaserScene.tweens.killTweensOf(this.artillerySprite);
+            this.cancelAnimating = false;
+        }
+
         this.artillerySprite.setVisible(true).setAlpha(1);
         this.artilleryBright.setVisible(false).setAlpha(1);
 
@@ -895,6 +901,7 @@ class PulseAttackView {
     }
 
     stopAllArtilleryAnimations() {
+        this.cancelAnimating = false; // a cancel fade killed below must not keep the layers visible
         if (this.bombSlow) {
             timeManager.endSlow(this.bombSlow);
             this.bombSlow = null;
@@ -1175,7 +1182,7 @@ const pulseAttack = (() => {
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
             // A popup, dialog or transition owns input: don't slide the tree or arm the bomb behind it
-            if (helper.isGlobalBlockerActive() || buttonManager.isBlocked) return;
+            if (helper.isInputBlocked()) return;
 
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
             const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;

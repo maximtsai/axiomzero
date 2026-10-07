@@ -54,9 +54,10 @@ const floatingText = (() => {
         let fontSize = opts.fontSize !== undefined ? opts.fontSize : 22;
         const fontFamily = opts.fontFamily || 'Quantico-Bold';
 
-        // Dynamic scaling based on numerical value (Skip if noScale is set)
+        // Dynamic scaling based on numerical value. Skipped for noScale, and for presized
+        // (the caller already sized the font, e.g. enemy damage numbers).
         const numVal = parseFloat(text.trim());
-        if (!isNaN(numVal) && !opts.noScale) {
+        if (!isNaN(numVal) && !opts.noScale && !opts.presized) {
             const baseSize = fontSize;
             const minSize = baseSize - 6;
             const scalar = 2.2;

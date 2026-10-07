@@ -362,8 +362,12 @@ function _showOptionsPopup() {
             : Promise.reject(new Error('clipboard unavailable'));
         copied.then(() => _optionsToast(t('options', 'export_success')))
             .catch(() => {
-                _downloadTextFile('axiomzero-save.txt', str);
-                _optionsToast(t('options', 'export_downloaded'));
+                if (_downloadTextFile('axiomzero-save.txt', str)) {
+                    _optionsToast(t('options', 'export_downloaded'));
+                } else {
+                    // Downloads unavailable too: let the player copy the string by hand
+                    prompt(t('options', 'export_success'), str);
+                }
             });
     });
     exportGlow.text.setFontSize('21px');
@@ -376,10 +380,12 @@ function _showOptionsPopup() {
         if (str) {
             const result = importSaveFromString(str);
             if (result.success) {
+                // gameState is already the imported one; block all input until the reload
+                helper.createLocalClickBlocker().setDepth(300000);
                 _optionsToast(t('options', 'import_success'));
                 // Let the message show, and the cloud write finish, before reloading
                 const shown = new Promise(resolve => setTimeout(resolve, 900));
-                Promise.all([result.synced, shown]).finally(() => window.location.reload());
+                Promise.all([_settleWithin(result.synced, CLOUD_WAIT_MS), shown]).finally(() => window.location.reload());
             } else {
                 const errorMsg = t('options', result.error) || t('options', 'err_generic');
                 _optionsToast(t('options', 'import_fail', [errorMsg]), '#ff3366');
@@ -560,6 +566,17 @@ function createMuteMusicButton(x, y) {
     return button;
 }
 
+// Longest we wait for a CrazyGames cloud write/delete before reloading anyway
+const CLOUD_WAIT_MS = 4000;
+
+/** Resolves when `promise` settles or after `ms`, whichever is first (an SDK call can hang). */
+function _settleWithin(promise, ms) {
+    return Promise.race([
+        Promise.resolve(promise).catch(() => { }),
+        new Promise(resolve => setTimeout(resolve, ms)),
+    ]);
+}
+
 /** Message over the Options popup. Native alert() would drop the player out of fullscreen. */
 function _optionsToast(text, color = '#00f5ff') {
     notificationManager.notify(text, {
@@ -567,16 +584,30 @@ function _optionsToast(text, color = '#00f5ff') {
     });
 }
 
-/** Offer `text` as a file download (export fallback when the clipboard isn't available). */
+/**
+ * Offer `text` as a file download (export fallback when the clipboard isn't available).
+ * @returns {boolean} false where downloads can't work (sandboxed iframe without allow-downloads)
+ */
 function _downloadTextFile(filename, text) {
-    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    try {
+        if (window.self !== window.top) {
+            // In an embed we can't tell whether the sandbox allows downloads; don't claim success
+            const frame = window.frameElement;
+            const sandbox = frame && frame.getAttribute && frame.getAttribute('sandbox');
+            if (!frame || (sandbox !== null && !/allow-downloads/.test(sandbox))) return false;
+        }
+        const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 function _showResetConfirmPopup() {
@@ -613,8 +644,7 @@ function _showResetConfirmPopup() {
     const yesGlow = helper.createGlowButton(W - 110, H + 70, 160, 66, t('ui', 'yes'), depth + 3, () => {
         // Wait for the cloud copy to be deleted, or it is restored on reload.
         // Settings (volume, visual toggles) survive the reset.
-        clearSave()
-            .then(() => saveSettings())
+        _settleWithin(clearSave().then(() => saveSettings()), CLOUD_WAIT_MS)
             .finally(() => window.location.reload());
     }, true);
     yesGlow.text.setFontSize('26px');

@@ -223,7 +223,7 @@ const lightningAttack = (() => {
 
         if (model.updateTimer(delta) && !_fire()) {
             // No target: stay charged so the first enemy to appear is struck at once
-            model.fireTimer = model.FIRE_INTERVAL;
+            model.fireTimer = model.FIRE_INTERVAL - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS; // retry in 0.1s, not every frame
         }
     }
 
@@ -233,14 +233,34 @@ const lightningAttack = (() => {
         return m.x >= 0 && m.x <= GAME_CONSTANTS.WIDTH && m.y >= 0 && m.y <= GAME_CONSTANTS.HEIGHT;
     }
 
+    function _nearestOnScreen(x, y) {
+        _queryResults.length = 0;
+        enemyManager.getEnemiesInRange(x, y, GAME_CONSTANTS.WIDTH, _queryResults);
+        let best = null;
+        let bestD2 = Infinity;
+        for (let i = 0; i < _queryResults.length; i++) {
+            const e = _queryResults[i];
+            if (!e.model.alive || !_isOnScreen(e)) continue;
+            const dx = e.model.x - x;
+            const dy = e.model.y - y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < bestD2) {
+                bestD2 = d2;
+                best = e;
+            }
+        }
+        return best;
+    }
+
     /** @returns {boolean} True if a bolt was fired. */
     function _fire() {
         const pos = tower.getPosition();
         if (!pos) return false;
 
-        // Find nearest enemy to the tower; nothing on screen → hold the charge
-        const first = enemyManager.getNearestEnemy(pos.x, pos.y, GAME_CONSTANTS.WIDTH);
-        if (!first || !_isOnScreen(first)) return false;
+        // Nearest ON-SCREEN enemy (an off-screen enemy coming from above can be nearer than
+        // visible ones at the sides); nothing on screen → hold the charge
+        const first = _nearestOnScreen(pos.x, pos.y);
+        if (!first) return false;
 
         // Hits are recorded with the enemy's spawn serial: a pooled enemy that died and
         // respawned within the chain delay is a different target, not the one we hit.

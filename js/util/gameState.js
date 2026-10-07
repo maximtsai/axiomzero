@@ -15,8 +15,12 @@ function initGameState() {
     // Stage 1: Always populate with absolute fresh defaults
     Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
 
+    // A save holding only settings (written by Options or Reset before any progress) still
+    // starts a fresh game, so the fresh path below runs (legacy migration, debug start)
+    const savedSettings = _settingsOnlySave();
+
     // Stage 2: Restore from save if it exists
-    if (hasSave()) {
+    if (hasSave() && !savedSettings) {
         // An unreadable save would be overwritten by the fresh game's first save; keep a copy
         if (!loadGame()) _backupUnreadableSave();
     } else {
@@ -35,7 +39,18 @@ function initGameState() {
             gameState.levelsDefeated = 3;
             debugLog('Debug start: Resources and progression granted');
         }
+        if (savedSettings) gameState.settings = _withDefaults(GAME_STATE_DEFAULTS.settings, savedSettings);
     }
+}
+
+/** @returns {Object|null} The settings of a save that contains nothing but settings. */
+function _settingsOnlySave() {
+    try {
+        const stored = _readStoredSave();
+        const data = stored && typeof stored.version === 'number' ? stored.data : null;
+        if (data && Object.keys(data).length === 1 && data.settings) return data.settings;
+    } catch (e) { /* unreadable: handled by the normal load path */ }
+    return null;
 }
 
 /** @returns {Object} The current game state object. */

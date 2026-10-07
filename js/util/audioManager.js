@@ -471,8 +471,11 @@ const audio = {
         audio._refreshAllVolumes();
 
         PhaserScene.time.delayedCall(duration, () => {
-            globalVolume = prevGlobal;
-            globalMusicVol = prevMusic;
+            // Restore to the current settings, not the values captured above: a slider moved
+            // while the dip was running (e.g. pause menu) would otherwise be overwritten
+            const s = gameState.settings || {};
+            globalVolume = s.globalVolume !== undefined ? s.globalVolume : prevGlobal;
+            globalMusicVol = s.globalMusicVol !== undefined ? s.globalMusicVol : prevMusic;
             audio._refreshAllVolumes();
         });
     },
