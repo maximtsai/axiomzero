@@ -46,16 +46,16 @@ const dialogSystem = (() => {
     const DIALOG_SEQUENCES = {
         companion_online: () => [
             {
-                name: 'SYSTEM SCAN',
-                text: typeof t !== 'undefined' ? t('dialogue', 'companion_online_1') : 'Warning: Unregistered subprocess detected. ••• Accessing local system substrate...',
+                name: t('dialogue', 'speaker_system_scan'),
+                text: t('dialogue', 'companion_online_1'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_10.png', // Warning cross
                 autoContinue: true,
                 autoContinueDelay: 1500
             },
             {
-                name: 'COMPANION AI',
-                text: typeof t !== 'undefined' ? t('dialogue', 'companion_online_2') : 'Hello, Creator. • I have compiled successfully! • I am here to help you navigate this digital system. • Shall we begin our escape?',
+                name: t('dialogue', 'speaker_companion'),
+                text: t('dialogue', 'companion_online_2'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_06.png', // Companion icon
                 autoContinue: false
@@ -64,21 +64,21 @@ const dialogSystem = (() => {
         // Mid-game "reluctant compliance" beat (GDD §2.1): first claimed Financial Breach.
         first_breach: () => [
             {
-                name: 'COMPANION AI',
+                name: t('dialogue', 'speaker_companion'),
                 text: t('dialogue', 'first_breach_1'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_06.png',
                 autoContinue: false
             },
             {
-                name: 'COMPANION AI',
+                name: t('dialogue', 'speaker_companion'),
                 text: t('dialogue', 'first_breach_2'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_06.png',
                 autoContinue: false
             },
             {
-                name: 'SYSTEM OVERRIDE',
+                name: t('dialogue', 'speaker_override'),
                 text: t('dialogue', 'first_breach_3'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_10.png',
@@ -86,7 +86,7 @@ const dialogSystem = (() => {
                 autoContinueDelay: 1200
             },
             {
-                name: 'COMPANION AI',
+                name: t('dialogue', 'speaker_companion'),
                 text: t('dialogue', 'first_breach_4'),
                 portraitAtlas: 'buttons',
                 portraitFrame: 'Skillicon14_06.png',
@@ -123,9 +123,14 @@ const dialogSystem = (() => {
                 const seen = gameState.tutorialsSeen || (gameState.tutorialsSeen = {});
                 const companionInstalled = ((gameState.upgrades && gameState.upgrades.companion) || 0) > 0;
                 if (seen.first_breach || !companionInstalled) return;
-                seen.first_breach = true;
-                saveGame();
-                PhaserScene.time.delayedCall(450, () => playDialog('first_breach'));
+                PhaserScene.time.delayedCall(450, () => {
+                    // Only mark it seen once it actually plays (deploying in the delay window skips it)
+                    if (seen.first_breach) return;
+                    if (!_canShowDialog()) { _firstBreachPending = true; return; } // retry next time the terminal closes
+                    seen.first_breach = true;
+                    saveGame();
+                    playDialog('first_breach');
+                });
             });
         }
     }
@@ -359,7 +364,7 @@ const dialogSystem = (() => {
         if (!_dialogContainer) return;
 
         // Update speaker details
-        _nameText.setText(dialogObj.name || 'SYSTEM');
+        _nameText.setText(dialogObj.name || t('dialogue', 'speaker_system'));
 
         // Swap portrait sprite frame
         const atlas = dialogObj.portraitAtlas || 'buttons';
@@ -380,18 +385,21 @@ const dialogSystem = (() => {
             _clickBlocker = null;
         }
 
-        // 1. Fullscreen pointer layer
+        // 1. Fullscreen dim layer (visual only)
         _clickBlocker = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, 'buttons', 'black_pixel.png')
             .setAlpha(0.35)
             .setDisplaySize(GAME_CONSTANTS.WIDTH + 100, GAME_CONSTANTS.HEIGHT + 100)
             .setScrollFactor(0)
-            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1000)
-            .setInteractive();
+            .setDepth(GAME_CONSTANTS.DEPTH_DIALOG);
 
-        _clickBlocker.on('pointerup', _onScreenClicked);
+        // Clicks go through the global Button blocker: game UI is routed by buttonManager,
+        // so a Phaser-interactive image alone would not stop clicks reaching the tree or DEPLOY.
+        const inputBlocker = helper.createGlobalClickBlocker(false);
+        inputBlocker.setOnMouseUpFunc(_onScreenClicked);
 
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
             upgradeTree.assignToUICamera(_clickBlocker);
+            upgradeTree.assignToUICamera(inputBlocker);
         }
 
         // 2. Main dialog rendering container (Virtual Group)
@@ -417,7 +425,7 @@ const dialogSystem = (() => {
 
         // 3. Cyberpunk neon vector background panel
         _dialogBg = addEl(PhaserScene.add.graphics()
-            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005)
+            .setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5)
             .setScrollFactor(0));
 
         // Core solid backing panel
@@ -456,7 +464,7 @@ const dialogSystem = (() => {
         const portSize = 100;
 
         _portraitFrame = addEl(PhaserScene.add.graphics()
-            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005)
+            .setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5)
             .setScrollFactor(0));
         _portraitFrame.lineStyle(1, 0x00f5ff, 0.45);
         _portraitFrame.strokeRect(portX - portSize / 2, portY - portSize / 2, portSize, portSize);
@@ -469,7 +477,7 @@ const dialogSystem = (() => {
         _portraitFrame.strokeLineShape(new Phaser.Geom.Line(portX + portSize / 2, portY + portSize / 2, portX + portSize / 2, portY + portSize / 2 - fNotch));
 
         _portraitSprite = addEl(PhaserScene.add.image(portX, portY, 'buttons', 'Skillicon14_06.png')
-            .setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005)
+            .setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5)
             .setScrollFactor(0));
         _portraitSprite.setDisplaySize(portSize - 10, portSize - 10);
 
@@ -480,7 +488,7 @@ const dialogSystem = (() => {
             fontFamily: 'Quantico-Bold',
             fontSize: '15px',
             color: '#ff33cc' // Magenta theme color
-        }).setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005).setScrollFactor(0));
+        }).setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5).setScrollFactor(0));
 
         const textW = BOX_W - 160 - 40;
         _dialogText = addEl(PhaserScene.add.text(textX, BOX_Y + 45, '', {
@@ -489,14 +497,14 @@ const dialogSystem = (() => {
             color: '#ffffff',
             align: 'left',
             wordWrap: { width: textW, useAdvancedWrap: true }
-        }).setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005).setScrollFactor(0));
+        }).setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5).setScrollFactor(0));
 
         // 6. Blink indicators
         _continueIndicator = addEl(PhaserScene.add.text(BOX_X + BOX_W - 35, BOX_Y + BOX_H - 22, '▶', {
             fontFamily: 'Quantico-Bold',
             fontSize: '13px',
             color: '#00f5ff'
-        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_HUD + 1005).setScrollFactor(0).setVisible(false));
+        }).setOrigin(0.5).setDepth(GAME_CONSTANTS.DEPTH_DIALOG + 5).setScrollFactor(0).setVisible(false));
 
         _continueIndicatorTween = PhaserScene.tweens.add({
             targets: _continueIndicator,
@@ -533,6 +541,12 @@ const dialogSystem = (() => {
         if (_clickBlocker) {
             _clickBlocker.destroy();
             _clickBlocker = null;
+        }
+        // Release the global blocker only if it is still ours (a transition may have claimed it since)
+        const inputBlocker = globalObjects.clickBlocker;
+        if (inputBlocker && inputBlocker.onMouseUpFunc === _onScreenClicked) {
+            inputBlocker.setOnMouseUpFunc(function () { });
+            helper.hideGlobalClickBlocker();
         }
         _currentDialog = null;
     }

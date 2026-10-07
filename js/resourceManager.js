@@ -402,7 +402,7 @@ const resourceManager = (() => {
         activeDrops.length = 0;
 
         if (missedDataCount > 60) {
-            console.log(`[RESOURCE] Missed a lot of data: ${missedDataCount} units lost.`);
+            debugLog(`[RESOURCE] Missed a lot of data: ${missedDataCount} units lost.`);
         }
     }
 

@@ -8,6 +8,7 @@
 
 const enemyManager = (() => {
     const POOL_SIZE = 80;
+    const BOSS_DESTROY_DELAY = 6000; // ms after a boss/miniboss is removed before its view is destroyed
     const MINIBOSS_POOL_SIZE = 2;
     const CLUMP_AVOIDANCE_RADIUS = 0.6;
 
@@ -61,7 +62,8 @@ const enemyManager = (() => {
         strokeThickness: 2,
         depth: GAME_CONSTANTS.DEPTH_RESOURCES + 50,
         duration: 1000,
-        scaleX: 1
+        scaleX: 1,
+        noScale: true, // size is computed here; floatingText's own number scaling would apply it twice
     };
 
     // Spawn Rules configuration
@@ -121,8 +123,6 @@ const enemyManager = (() => {
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
         pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
-        pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
-        pools.bosslegion = new ObjectPool(() => new BossLegion(), resetFn, 8).preAllocate(8);
         pools.test = new ObjectPool(() => new TestEnemy(), resetFn, 20).preAllocate(10);
     }
 
@@ -456,7 +456,12 @@ const enemyManager = (() => {
 
 
     function _releaseToPool(e) {
-        if (e.model.isBoss || e.model.isMiniboss) return; // Bosses are not pooled
+        if (e.model.isBoss || e.model.isMiniboss) {
+            // Bosses are created per spawn, not pooled. Destroy their display objects once
+            // death effects (which may still read the view) have played out.
+            PhaserScene.time.delayedCall(BOSS_DESTROY_DELAY, () => e.destroy());
+            return;
+        }
 
         if (pools[e.model.type]) {
             pools[e.model.type].release(e);
@@ -464,6 +469,20 @@ const enemyManager = (() => {
             // Fallback for types not explicitly in pools (shouldn't happen with current logic)
             pools.basic.release(e);
         }
+    }
+
+    /**
+     * Remove an enemy that left the play area on its own (no death effects, no rewards).
+     * Deactivating alone left it in activeEnemies, unpooled and still counted in typeCounts.
+     */
+    function despawnEnemy(enemy) {
+        enemy.deactivate();
+        const idx = activeEnemies.indexOf(enemy);
+        if (idx === -1) return;
+        activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
+        activeEnemies.pop();
+        typeCounts[enemy.model.type] = Math.max(0, (typeCounts[enemy.model.type] || 1) - 1);
+        _releaseToPool(enemy);
     }
 
     function findValidAngle(generatorFn, rules) {
@@ -770,6 +789,20 @@ const enemyManager = (() => {
 
         if (wasMiniboss) {
             bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
+            // Farming minibosses carry a DATA payout; enemyKilled is the only path that drops it
+            if (enemy.model.isFarmingMiniboss && enemy.model.baseResourceDrop > 0) {
+                messageBus.publish('enemyKilled',
+                    ex,
+                    ey,
+                    enemy.model.baseResourceDrop,
+                    enemy.model.type,
+                    wasBoss,
+                    wasMiniboss,
+                    wasResonance,
+                    enemy.model.hijacksSpawned,
+                    source
+                );
+            }
             if (enemy.view && enemy.view.img) {
                 customEmitters.minibossExplosion(enemy.view.img);
             }
@@ -1173,6 +1206,7 @@ const enemyManager = (() => {
 
     return {
         init,
+        despawnEnemy,
         freeze,
         unfreeze,
         clearAllEnemies,

@@ -1,6 +1,7 @@
 /**
  * @fileoverview Controls passage of game time via GAME_VARS.timeScale.
- * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame.
+ * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame,
+ * gamePaused, gameResumed.
  * @module timeManager
  */
 class TimeManager {
@@ -10,6 +11,39 @@ class TimeManager {
         messageBus.subscribe("setGameSlow", this.setGameSlow.bind(this));
         messageBus.subscribe("clearGameSlow", this.clearGameSlow.bind(this));
         messageBus.subscribe("unpauseGame", this.setUnpause.bind(this));
+        messageBus.subscribe("gamePaused", this.freezeWorld.bind(this));
+        messageBus.subscribe("gameResumed", this.unfreezeWorld.bind(this));
+        this._frozen = null;
+    }
+
+    /**
+     * Freeze every tween, timer event and sprite animation that is running right now.
+     * Managers stop their own update loops on 'gamePaused', but boss attack chains,
+     * delayed hits and effects run on Phaser tweens/timers and would keep going.
+     * Anything created while frozen (the pause menu itself) runs normally.
+     */
+    freezeWorld() {
+        if (this._frozen || typeof PhaserScene === 'undefined') return;
+        const tweens = PhaserScene.tweens.getTweens().filter(tw => !tw.paused);
+        tweens.forEach(tw => tw.pause());
+
+        const clock = PhaserScene.time;
+        const events = [...(clock._active || []), ...(clock._pendingInsertion || [])].filter(ev => !ev.paused);
+        events.forEach(ev => { ev.paused = true; });
+
+        PhaserScene.anims.pauseAll();
+        this._frozen = { tweens, events };
+    }
+
+    /** Resume exactly what freezeWorld() paused. */
+    unfreezeWorld() {
+        if (!this._frozen) return;
+        this._frozen.tweens.forEach(tw => {
+            if (!(tw.isDestroyed && tw.isDestroyed())) tw.resume();
+        });
+        this._frozen.events.forEach(ev => { ev.paused = false; });
+        PhaserScene.anims.resumeAll();
+        this._frozen = null;
     }
 
     /** Apply a timeScale value to all Phaser time systems and GAME_VARS. */

@@ -25,7 +25,7 @@ class InternalMouseManager {
             // helper.createClickEffect(pointer.x, pointer.y);
             GAME_VARS.mousedown = true;
             GAME_VARS.mouseJustDowned = true;
-            if (GAME_VARS.wasTouch) console.log(`[MouseManager] Touch detected! Type: ${pointer.pointerType}`);
+            if (GAME_VARS.wasTouch) debugLog(`[MouseManager] Touch detected! Type: ${pointer.pointerType}`);
             GAME_VARS.lastmousedown.x = pointer.x;
             GAME_VARS.lastmousedown.y = pointer.y;
             messageBus.publish('pointerDown', pointer.x, pointer.y);

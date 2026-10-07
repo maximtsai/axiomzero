@@ -1,6 +1,6 @@
 /**
  * @fileoverview Generic game state management and save/load persistence.
- * Defines: gameState, getGameState, setGameState, saveGame, loadGame, hasSave, clearSave.
+ * Defines: gameState, getGameState, setGameState, saveGame, saveSettings, loadGame, hasSave, clearSave.
  * Uses localStorage with versioned save format for migration support.
  *
  * Game-specific data (GAME_STATE_DEFAULTS, SAVE_KEY, SAVE_VERSION) is defined
@@ -17,7 +17,8 @@ function initGameState() {
 
     // Stage 2: Restore from save if it exists
     if (hasSave()) {
-        loadGame();
+        // An unreadable save would be overwritten by the fresh game's first save; keep a copy
+        if (!loadGame()) _backupUnreadableSave();
     } else {
         // If no full save, check for legacy individual keys to absorb during fresh init
         const migrated = _migrateState(0, gameState);
@@ -94,38 +95,133 @@ function _migrateState(fromVersion, data) {
 }
 
 
-/** Serialize game state to localStorage. */
+/**
+ * Serialize game state to localStorage (and the CrazyGames cloud when enabled).
+ * @returns {Promise} Resolves once the cloud write settles, so callers can wait before reloading.
+ */
 function saveGame() {
     try {
-        const payload = JSON.stringify({ version: SAVE_VERSION, data: gameState });
-        localStorage.setItem(SAVE_KEY, payload);
+        const synced = _writeSave(gameState);
         debugLog('Game saved');
-
-        if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
-            // Suggestion 2: Selective Syncing (exclude localBestScores from cloud payloads)
-            const cloudState = { ...gameState };
-            delete cloudState.localBestScores;
-            
-            const cloudPayload = JSON.stringify({ version: SAVE_VERSION, data: cloudState });
-
-            // Suggestion 1: LZ-string compression
-            const compressed = LZString.compressToEncodedURIComponent(cloudPayload);
-
-            sdk.setItem(SAVE_KEY, compressed).catch(e => {
-                console.error('[Cloud] Cloud save failed:', e);
-            });
-        }
+        return synced;
     } catch (e) {
         console.error('saveGame failed:', e);
+    }
+    return Promise.resolve();
+}
+
+/**
+ * Persist only gameState.settings (volume, mute, visual toggles). The rest of the stored
+ * save stays as it was at the last phase change: progress is deliberately saved only on
+ * phase changes, so a player can reload to undo a misclick even after touching Options.
+ * @returns {Promise} Resolves once the cloud write settles.
+ */
+function saveSettings() {
+    try {
+        const stored = _readStoredSave();
+        let version = SAVE_VERSION;
+        let data = {};
+        if (stored && typeof stored.version === 'number' && stored.data) {
+            version = stored.version;
+            data = stored.data;
+        } else if (stored && typeof stored.version !== 'number') {
+            version = 0; // legacy plain-object save
+            data = stored;
+        }
+        // With no save yet, a settings-only save loads as a fresh game with these settings
+        data.settings = JSON.parse(JSON.stringify(gameState.settings));
+        const synced = _writeSave(data, version);
+        debugLog('Settings saved');
+        return synced;
+    } catch (e) {
+        console.error('saveSettings failed:', e);
+    }
+    return Promise.resolve();
+}
+
+/** Write a save payload to localStorage and, when enabled, the CrazyGames cloud. */
+function _writeSave(data, version = SAVE_VERSION) {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ version, data }));
+
+    if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
+        // Suggestion 2: Selective Syncing (exclude localBestScores from cloud payloads)
+        const cloudState = { ...data };
+        delete cloudState.localBestScores;
+
+        const cloudPayload = JSON.stringify({ version, data: cloudState });
+
+        // Suggestion 1: LZ-string compression
+        const compressed = LZString.compressToEncodedURIComponent(cloudPayload);
+
+        return sdk.setItem(SAVE_KEY, compressed).catch(e => {
+            console.error('[Cloud] Cloud save failed:', e);
+        });
+    }
+    return Promise.resolve();
+}
+
+/** Parse the stored save (plain or LZ-compressed JSON). @returns {Object|null} */
+function _readStoredSave() {
+    let raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    // A failed cloud write falls back to storing the LZ-compressed payload locally
+    if (raw.trim()[0] !== '{' && typeof LZString !== 'undefined') {
+        raw = LZString.decompressFromEncodedURIComponent(raw.trim()) || raw;
+    }
+    return JSON.parse(raw);
+}
+
+function _isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+/**
+ * Merge a saved value over its default. Nested objects (settings, stats, tutorialsSeen)
+ * keep default keys the save predates, and a numeric field that was saved as null
+ * (a NaN that went through JSON) falls back to its default.
+ */
+function _withDefaults(def, saved) {
+    if (_isPlainObject(def) && _isPlainObject(saved)) {
+        const merged = JSON.parse(JSON.stringify(def));
+        for (const key in saved) {
+            // SECURITY: Prevent Prototype Pollution
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+            merged[key] = _withDefaults(def[key], saved[key]);
+        }
+        return merged;
+    }
+    if (typeof def === 'number' && !Number.isFinite(saved)) return def;
+    return saved;
+}
+
+/** Apply loaded save data onto gameState (which already holds fresh defaults). */
+function _applySaveData(data, skipKeys = []) {
+    for (const key in data) {
+        // SECURITY: Prevent Prototype Pollution
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+        if (skipKeys.includes(key)) continue;
+        gameState[key] = _withDefaults(GAME_STATE_DEFAULTS[key], data[key]);
+    }
+}
+
+/** Copy a save that failed to load to a side key, so starting fresh doesn't destroy it. */
+function _backupUnreadableSave() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (raw) {
+            localStorage.setItem(SAVE_KEY + '_unreadable', raw);
+            console.error('Save could not be loaded; a copy was kept under "' + SAVE_KEY + '_unreadable".');
+        }
+    } catch (e) {
+        console.error('Could not back up unreadable save:', e);
     }
 }
 
 /** Load game state from localStorage. @returns {boolean} true if a save was found and loaded. */
 function loadGame() {
     try {
-        const raw = localStorage.getItem(SAVE_KEY);
-        if (!raw) return false;
-        const parsed = JSON.parse(raw);
+        const parsed = _readStoredSave();
+        if (!parsed) return false;
 
         let data;
         if (parsed && typeof parsed.version === 'number' && parsed.data) {
@@ -142,12 +238,7 @@ function loadGame() {
         Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
 
         // Stage 2: Apply loaded data
-        for (const key in data) {
-            // SECURITY: Prevent Prototype Pollution
-            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
-
-            gameState[key] = data[key];
-        }
+        _applySaveData(data);
 
         debugLog('Game loaded');
         return true;
@@ -159,13 +250,31 @@ function loadGame() {
 
 /** @returns {boolean} True if a save exists in localStorage. */
 function hasSave() {
-    return localStorage.getItem(SAVE_KEY) !== null;
+    try {
+        return localStorage.getItem(SAVE_KEY) !== null;
+    } catch (e) {
+        return false; // Storage blocked (sandboxed iframe, site data disabled)
+    }
 }
 
-/** Delete the save from localStorage. */
+/**
+ * Delete the save from localStorage and the CrazyGames cloud.
+ * @returns {Promise} Resolves once the cloud copy is gone; reload only after it, or the
+ * boot-time cloud fetch restores the old save.
+ */
 function clearSave() {
-    localStorage.removeItem(SAVE_KEY);
+    try {
+        localStorage.removeItem(SAVE_KEY);
+    } catch (e) {
+        console.error('clearSave failed:', e);
+    }
     debugLog('Save cleared');
+    if (typeof FLAGS !== 'undefined' && FLAGS.USING_CRAZYGAMES_SDK && typeof sdk !== 'undefined') {
+        return Promise.resolve(sdk.removeItem(SAVE_KEY)).catch(e => {
+            console.error('[Cloud] Cloud save delete failed:', e);
+        });
+    }
+    return Promise.resolve();
 }
 
 // ─── Export/Import Utilities ──────────────────────────────────────────────────
@@ -191,7 +300,7 @@ function exportSaveToString() {
         const payload = JSON.stringify({ version: SAVE_VERSION, data: exportData });
         const checksum = _calculateChecksum(payload);
         const combined = checksum + '|' + payload;
-        
+
         // This format is URL-safe and doesn't use trailing "=" padding,
         // making it much more reliable for copy-pasting on various platforms.
         return LZString.compressToEncodedURIComponent(combined);
@@ -205,7 +314,7 @@ function exportSaveToString() {
 function importSaveFromString(str) {
     try {
         if (!str) return { success: false, error: 'err_empty' };
-        
+
         const decompressed = LZString.decompressFromEncodedURIComponent(str.trim());
         if (!decompressed) return { success: false, error: 'err_decompression' };
 
@@ -234,23 +343,18 @@ function importSaveFromString(str) {
         Object.assign(gameState, JSON.parse(JSON.stringify(GAME_STATE_DEFAULTS)));
 
         // Stage 2: Apply loaded data
+        // UI/Audio settings are local to the device and shouldn't be overwritten by imports
         const data = _migrateState(parsed.version, parsed.data);
-        for (const key in data) {
-            // SECURITY: Prevent Prototype Pollution
-            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
-            
-            // UI/Audio settings are local to the device and shouldn't be overwritten by imports
-            if (key === 'settings') continue;
-
-            gameState[key] = data[key];
-        }
+        _applySaveData(data, ['settings']);
 
         // Restore preserved settings
         gameState.settings = localSettings;
 
         gameState.isImported = true;
-        saveGame(); // Persist the imported state immediately
-        return { success: true };
+        // Persist immediately. Callers must wait on `synced` before reloading, or the
+        // boot-time cloud fetch can bring back the pre-import save.
+        const synced = saveGame();
+        return { success: true, synced };
     } catch (e) {
         console.error('Import failed:', e);
         return { success: false, error: 'err_generic' };

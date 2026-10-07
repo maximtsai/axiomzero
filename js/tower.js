@@ -88,7 +88,7 @@ class TowerModel {
             for (const id in ups) {
                 if (ups[id] > 0) {
                     const def = NODE_DEFS.find(n => n.id === id);
-                    if (def && def.leaky !== undefined) {
+                    if (def && def.leaky > 0) { // repeat_exploit has leaky: 0 and is not a leak node
                         leakCount++;
                     }
                 }
@@ -949,6 +949,14 @@ const tower = (() => {
 
     function takeDamage(amount, x = undefined, y = undefined) {
         if (!model.alive || model.isInvincible) return true; // Successfully 'survived' because we are invincible/dead
+        if (model.paused) return true; // Pause menu open: late setTimeout/tween hits don't land
+
+        // A hit the combat shield absorbs never reaches the tower: no hurt sound, flash or Bug Report drops
+        if (x != null && y != null && typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive
+            && combatShield.isAttackBlocked(x, y)) {
+            combatShield.takeDamage(amount);
+            return true;
+        }
 
         const survived = model.takeDamage(amount, x, y);
         const damageTaken = Math.max(0, amount - model.armor) * (model.damageReceivedMultiplier || 1);
@@ -1191,16 +1199,21 @@ const tower = (() => {
 
             model.attackTimer += tick;
             if (model.attackTimer >= model.attackCooldown) {
-                model.attackTimer -= model.attackCooldown;
-                _tryAutoAttack();
+                if (_tryAutoAttack()) {
+                    model.attackTimer -= model.attackCooldown;
+                } else {
+                    // Nothing in range: stay charged so the first enemy to arrive is shot at once
+                    model.attackTimer = model.attackCooldown;
+                }
             }
         }
     }
 
+    /** @returns {boolean} True if the tower fired (false when no enemy is in range). */
     function _tryAutoAttack() {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
-        if (!target) return;
+        if (!target) return false;
 
         const isAssault = upgradeDispatcher.getLevel('assault') > 0;
         const isRocket = upgradeDispatcher.getLevel('rocket') > 0;
@@ -1234,6 +1247,7 @@ const tower = (() => {
                 }
             }
         }
+        return true;
     }
 
     function _fireAssaultBurst(pos, isInversed = false, startDelay = 0) {
@@ -1325,7 +1339,8 @@ const tower = (() => {
         debugLog('Tower invincible for 2.8s after boss defeat');
     }
 
-    function _onEnemyDeath(x, y, drop, type, wasResonance = false) {
+    // Matches the enemyKilled payload; minibossDefeated/bossDefeated only pass (x, y, ...)
+    function _onEnemyDeath(x, y, drop, type, wasBoss, wasMiniboss, wasResonance = false) {
         if (!model.alive || !model.awakened) return;
         const ups = gameState.upgrades || {};
 

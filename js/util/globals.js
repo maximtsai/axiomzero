@@ -72,13 +72,18 @@ const GAME_OPTIONS_DEFAULTS = {
     musicVolume: 1,
 };
 
-const gameOptions = (function () {
+const gameOptions = Object.assign({}, GAME_OPTIONS_DEFAULTS);
+
+/**
+ * Merge saved options over the defaults. Called from gameConfig.js right after it
+ * declares OPTIONS_KEY: this file loads first, so reading the key here threw (silently).
+ */
+function loadGameOptions() {
     try {
         const raw = localStorage.getItem(OPTIONS_KEY);
-        if (raw) return Object.assign({}, GAME_OPTIONS_DEFAULTS, JSON.parse(raw));
-    } catch (e) { /* ignore corrupt data */ }
-    return Object.assign({}, GAME_OPTIONS_DEFAULTS);
-})();
+        if (raw) Object.assign(gameOptions, JSON.parse(raw));
+    } catch (e) { /* ignore corrupt data or blocked storage */ }
+}
 
 /** Persist current gameOptions to localStorage. */
 function saveGameOptions() {

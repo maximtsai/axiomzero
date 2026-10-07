@@ -98,7 +98,7 @@ class CurrencyCluster {
                         { text: t('hud', `${id}_desc`), style: 'normal' }
                     ], CONFIG.TOOLTIP_WIDTH);
                     if (typeof upgradeTree !== 'undefined') {
-                        upgradeTree.setHoverLabel(id.toUpperCase());
+                        upgradeTree.setHoverLabel(t('hover', id));
                     }
                 },
                 onHoverOut: () => {

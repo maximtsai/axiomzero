@@ -454,6 +454,18 @@ class EnemyView {
         }
     }
 
+    /** Destroys every display object this view owns, including subclass extras. */
+    destroy() {
+        for (const key of Object.keys(this)) {
+            const obj = this[key];
+            if (obj instanceof Phaser.GameObjects.GameObject) {
+                PhaserScene.tweens.killTweensOf(obj);
+                obj.destroy();
+                this[key] = null;
+            }
+        }
+    }
+
     syncPosition(x, y) {
         if (this.img) this.img.setPosition(x, y);
         if (this.hpImg) this.hpImg.setPosition(x, y);
@@ -586,6 +598,11 @@ class Enemy {
     deactivate() {
         this.model.deactivate();
         this.view.deactivate();
+    }
+
+    /** Frees the enemy's display objects for good (pool overflow, or a dead boss). */
+    destroy() {
+        if (this.view && typeof this.view.destroy === 'function') this.view.destroy();
     }
 
     /**

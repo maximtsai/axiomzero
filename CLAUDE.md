@@ -38,7 +38,8 @@ Browser-based hybrid incremental / tower-defense game built on Phaser 3. Plain J
 - Short-lived entities (projectiles, drops, floating text, effects) use `ObjectPool`. Assume 600+ drops / 100+ enemies on screen.
 - `white_pixel` / `black_pixel` are 2x2 textures: `setScale(targetPx / 2)`.
 - Audio: register in `assets/audioFiles.js`, play with `audio.play('key', vol)` / `audio.playMusic('key')`.
-- Persistent state lives on `gameState` (`js/util/gameState.js`), defaults + `SAVE_KEY`/`SAVE_VERSION` in `js/gameConfig.js`. New saved fields need a default in `GAME_STATE_DEFAULTS`; breaking changes need a `migrateProjectState` step.
+- Persistent state lives on `gameState` (`js/util/gameState.js`), defaults + `SAVE_KEY`/`SAVE_VERSION` in `js/gameConfig.js`. New saved fields need a default in `GAME_STATE_DEFAULTS` (loading merges nested defaults into old saves); breaking changes need a `migrateProjectState` step.
+- Progress saves only on phase changes (deliberate: players can reload to undo a misclick). Don't call `saveGame()` from tree/UI actions; option toggles and sliders use `saveSettings()`, which writes only `gameState.settings`.
 - Style: 4-space indent, single quotes, `// ── Section ──` divider comments, JSDoc `@fileoverview` headers on files.
 
 ## Commands

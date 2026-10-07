@@ -37,6 +37,9 @@ const iterationOverScreen = (() => {
     let barY = 0;
 
     let visible = false;
+    // Clicks frantically aimed at enemies when combat ends shouldn't skip the results
+    const INPUT_DELAY_MS = 700;
+    let _inputReadyAt = 0;
     let isBossKill = false;
 
     // ── init ─────────────────────────────────────────────────────────
@@ -323,6 +326,7 @@ const iterationOverScreen = (() => {
 
     function show() {
         visible = true;
+        _inputReadyAt = Date.now() + INPUT_DELAY_MS;
 
         // Safety: Ensure time scale is restored to 1.0 when showing results
         if (typeof timeManager !== 'undefined') {
@@ -394,7 +398,7 @@ const iterationOverScreen = (() => {
                     const delta = sessionData - _lastRunData;
                     const sign = delta >= 0 ? '+' : '';
                     const color = delta >= 0 ? '#00ff88' : '#ff4444';
-                    dataDeltaText.setText(`${sign}${delta} vs last run`);
+                    dataDeltaText.setText(t('results', 'vs_last_run', [sign + helper.formatNumber(delta)]));
                     dataDeltaText.setColor(color);
                     dataDeltaText.setVisible(true);
                     activeTexts.push(dataDeltaText);
@@ -794,6 +798,8 @@ const iterationOverScreen = (() => {
             { id: 'shockwave', label: t('results', 'shockwave'), color: 0x00f5ff },
             { id: 'laser', label: t('results', 'laser'), color: 0xff2d78 },
             { id: 'artillery', label: t('results', 'artillery'), color: 0xff9500 },
+            { id: 'sword', label: t('results', 'sword'), color: 0x00f5ff },
+            { id: 'scythe', label: t('results', 'scythe'), color: 0xff2d78 },
             { id: 'friendlyfire', label: t('results', 'collateral'), color: 0xff2d78 },
             { id: 'other', label: t('results', 'system'), color: 0x777777 },
         ];
@@ -845,7 +851,7 @@ const iterationOverScreen = (() => {
 
         if (stats.executions > 0) {
             const execY = listStartY + (activeSources.length * entryHeight) + 12;
-            const lbl = PhaserScene.add.text(startX + 15, execY, 'EXECUTION COUNT:', {
+            const lbl = PhaserScene.add.text(startX + 15, execY, t('results', 'execution_count'), {
                 fontFamily: 'Quantico-Bold',
                 fontSize: '19px', // Increased from 17px
                 color: '#ff2d78',
@@ -915,6 +921,7 @@ const iterationOverScreen = (() => {
     // ── button handlers ──────────────────────────────────────────────
 
     function _onUpgradesClicked() {
+        if (Date.now() < _inputReadyAt) return;
         _hideAll();
         enemyManager.clearAllEnemies();
         projectileManager.clearAll();
@@ -926,6 +933,7 @@ const iterationOverScreen = (() => {
     }
 
     function _onRetryClicked() {
+        if (Date.now() < _inputReadyAt) return;
         _hideAll();
         if (typeof audio !== 'undefined' && audio.stopComplexTransition) {
             audio.stopComplexTransition(GAME_CONSTANTS.AUDIO_TRANSITIONS.BOSS);

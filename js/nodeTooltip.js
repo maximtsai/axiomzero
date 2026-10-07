@@ -327,7 +327,7 @@ const nodeTooltip = (() => {
             leakBg.setVisible(true).setPosition(0, currentY + 15);
             leakT.setVisible(true).setPosition(0, currentY + 15);
 
-            let leakStr = 'DATA LEAK';
+            let leakStr = t('tooltips', 'data_leak');
             leakStr = `+${_formatValue(node, node.leaky)} ${leakStr}`;
             leakT.setText(leakStr);
 
@@ -345,7 +345,7 @@ const nodeTooltip = (() => {
         if (node.state === NODE_STATE.MAXED || isThisNodeActive) {
             goldBg.setVisible(true).setPosition(0, currentY + 19);
             maxT.setVisible(true).setPosition(0, currentY + 18); // was 15, moving up with others or keeping relative to background?
-            maxT.setText(isThisNodeActive ? '🗹 INSTALLED' : '🗹 ' + t('tooltips', 'max'));
+            maxT.setText('🗹 ' + (isThisNodeActive ? t('tooltips', 'installed') : t('tooltips', 'max')));
             maxT.setColor('#F2E6CC');
             costBg.setVisible(false);
             costT.setVisible(false);
@@ -443,10 +443,11 @@ const nodeTooltip = (() => {
             else if (side === 'right') horizontalOffset = -16 * zoom;
         }
 
-        // Clamp X position to stay within the leftpanel bounds
+        // Clamp X position to stay on screen (left panel edge, and the right edge in full view)
         let targetX = centerX + horizontalOffset;
         const halfW = currentBgWidth / 2;
         const margin = 10;
+        targetX = Math.min(targetX, GAME_CONSTANTS.WIDTH - halfW - margin);
         targetX = Math.max(targetX, halfW + margin);
         const edgeOffset = 21;
 
@@ -510,8 +511,8 @@ const nodeTooltip = (() => {
             const leakYOffset = (currentY - 120); // currentY was incremented by 39 after leakT
             const secondaryY = container.y + (showAbove ? -totalHeight : 0) + leakYOffset;
 
-            const title = "DATA LEAK";
-            const body = `Increases global cost of all DATA LEAK nodes.\nCURRENT PENALTY: [b][color=#ff5d5d]+${_formatValue(node, gameState.leakPenalty || 0)}[/color][/b]`;
+            const title = t('tooltips', 'data_leak');
+            const body = t('tooltips', 'leak_body', [_formatValue(node, gameState.leakPenalty || 0)]);
 
             // Offset the X based on the main tooltip's width
             const secondaryX = targetX + (side === 'right' ? halfW : -halfW);

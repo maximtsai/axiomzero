@@ -163,6 +163,7 @@ GAME_CONSTANTS.DEPTH_HUD = 1000;
 GAME_CONSTANTS.DEPTH_UPGRADE_TREE = 2000;
 GAME_CONSTANTS.DEPTH_DEATH_OVERLAY = 3000;  // death flash — covers entire game
 GAME_CONSTANTS.DEPTH_DEATH_TOWER = 3500;  // tower elevated above overlay during shake
+GAME_CONSTANTS.DEPTH_DIALOG = 4500;  // companion dialog — above the tree panel and HUD, below transitions
 GAME_CONSTANTS.DEPTH_TRANSITION = 5000;
 GAME_CONSTANTS.DEPTH_ITERATION_OVER = 6000;
 GAME_CONSTANTS.DEPTH_POPUPS = 10000;
@@ -195,6 +196,8 @@ GAME_CONSTANTS.AUDIO_TRANSITIONS = {
 const SAVE_KEY = 'axiomzero_save';
 const OPTIONS_KEY = 'axiomzero_options';
 const SAVE_VERSION = 2;
+
+loadGameOptions(); // globals.js loads before this file, so options are read once the key exists
 
 // ─── Default game state shape ─────────────────────────────────────────────────
 // Consumed by js/util/gameState.js and gameInit.js.
@@ -257,7 +260,6 @@ const GAME_STATE_DEFAULTS = {
     tutorialsSeen: {
         bomb: false
     },
-    tutorialsDisabled: false,
 
     // Local best scores per farming level { levelId: { bestTime, kills, date } }
     localBestScores: {},

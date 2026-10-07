@@ -221,8 +221,9 @@ const lightningAttack = (() => {
         const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
         if (!model.unlocked || model.paused || (!model.active && !isTesting) || !tower.isAlive()) return;
 
-        if (model.updateTimer(delta)) {
-            _fire();
+        if (model.updateTimer(delta) && !_fire()) {
+            // No target: stay charged so the first enemy to appear is struck at once
+            model.fireTimer = model.FIRE_INTERVAL;
         }
     }
 
@@ -232,7 +233,7 @@ const lightningAttack = (() => {
 
         // Find nearest enemy to the tower
         const first = enemyManager.getNearestEnemy(pos.x, pos.y, 9999);
-        if (!first) return;
+        if (!first) return false;
 
         const hitEnemies = [first];
         view.drawBolt(pos.x, pos.y, first.model.x, first.model.y);
@@ -259,6 +260,7 @@ const lightningAttack = (() => {
                 _chainStep(first, first.model.x, first.model.y, hitEnemies, 1);
             });
         }
+        return true;
     }
 
     function _chainStep(lastHit, fromX, fromY, hitEnemies, currentChain) {

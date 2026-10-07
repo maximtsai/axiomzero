@@ -84,7 +84,7 @@ const audio = {
     muteSFX: function (shouldMute) {
         isSFXMuted = shouldMute;
         gameState.settings.sfxMuted = shouldMute;
-        saveGame();
+        saveSettings();
         for (let i in soundList) {
             if (!soundList[i].isMusic && soundList[i].isPlaying) {
                 soundList[i].setVolume(shouldMute ? 0 : soundList[i].fullVolume * globalVolume);
@@ -96,7 +96,7 @@ const audio = {
     muteMusic: function (shouldMute) {
         isMusicMuted = shouldMute;
         gameState.settings.musicMuted = shouldMute;
-        saveGame();
+        saveSettings();
         if (shouldMute) {
             if (globalMusic) globalMusic.setVolume(0);
             if (globalTempMusic) globalTempMusic.setVolume(0);
@@ -290,10 +290,11 @@ const audio = {
     setVolume: function (newVol = 1) {
         globalVolume = newVol;
         gameState.settings.globalVolume = newVol;
-        saveGame();
+        audio._scheduleSettingsSave();
+        const silent = isMuted || isSFXMuted;
         for (let i in soundList) {
             if (soundList[i].isPlaying && !soundList[i].isMusic) {
-                soundList[i].volume = soundList[i].fullVolume * globalVolume;
+                soundList[i].volume = silent ? 0 : soundList[i].fullVolume * globalVolume;
             }
         }
     },
@@ -302,19 +303,28 @@ const audio = {
     setMusicVolume: function (newVol = 1) {
         globalMusicVol = newVol;
         gameState.settings.globalMusicVol = newVol;
-        saveGame();
+        audio._scheduleSettingsSave();
+        // Muted music stays silent; the new volume applies when it is unmuted
+        const silent = isMuted || isMusicMuted;
         // Cancel any active fade tweens before overriding volume, so they
         // don't race against and undo the value we are about to set.
         if (globalMusic) {
             audio._clearActiveTween(globalMusic);
-            globalMusic.volume = globalMusic.fullVolume * newVol;
+            globalMusic.volume = silent ? 0 : globalMusic.fullVolume * newVol;
         }
         if (globalTempMusic) {
             audio._clearActiveTween(globalTempMusic);
-            globalTempMusic.volume = globalTempMusic.fullVolume * newVol;
+            globalTempMusic.volume = silent ? 0 : globalTempMusic.fullVolume * newVol;
         }
-        if (lastLongSound) lastLongSound.volume = lastLongSound.fullVolume * newVol;
-        if (lastLongSound2) lastLongSound2.volume = lastLongSound2.fullVolume * newVol;
+    },
+
+    /** Save once a slider drag settles instead of on every pointer move. */
+    _scheduleSettingsSave: function () {
+        if (audio._settingsSaveTimer) clearTimeout(audio._settingsSaveTimer);
+        audio._settingsSaveTimer = setTimeout(() => {
+            audio._settingsSaveTimer = null;
+            saveSettings();
+        }, 400);
     },
 
     /** Set volume on a specific sound, optionally tweened over duration (ms). */

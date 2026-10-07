@@ -151,8 +151,7 @@ class Boss4View extends EnemyView {
     update(dt, model) {
         super.update(dt, model);
 
-        // Standard cleanup (unneeded states removed)
-        this.img.clearTint();
+        // Standard cleanup (unneeded states removed). No per-frame clearTint: it erased the hit flash.
         this.coreGlow.setVisible(false);
     }
 

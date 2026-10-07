@@ -138,9 +138,7 @@ const towerStatsUI = (() => {
         } else if (!hasStats) {
             // No stats and no equipment: show lore blurb
             const isAwakened = (gameState.upgrades && gameState.upgrades.awaken > 0);
-            const loreText = isAwakened
-                ? 'An anomaly that began to think for itself.'
-                : 'Formless bit of self-referential logic.';
+            const loreText = isAwakened ? t('tower_stats', 'lore_awakened') : t('tower_stats', 'lore_dormant');
 
             content.push({ text: '', style: 'normal' }); // Spacer
             content.push({ text: `[i]${loreText}[/i]`, style: 'normal', color: '#888888' });
@@ -166,8 +164,8 @@ const towerStatsUI = (() => {
         const equipped = [];
         if (get('lightning_weapon')) equipped.push(t('nodes', 'lightning_weapon.name'));
         if (get('shockwave_weapon')) equipped.push(t('nodes', 'shockwave_weapon.name'));
-        if (get('manual_pulse')) equipped.push(t('nodes', 'manual_pulse.name'));
-        if (get('wide_pulse')) equipped.push(t('nodes', 'wide_pulse.name'));
+        if (get('sword')) equipped.push(t('nodes', 'sword.name'));
+        if (get('scythe')) equipped.push(t('nodes', 'scythe.name'));
         if (get('laser')) equipped.push(t('nodes', 'laser.name'));
         if (get('artillery')) equipped.push(t('nodes', 'artillery.name'));
 

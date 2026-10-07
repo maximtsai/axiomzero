@@ -125,7 +125,7 @@ const upgradeTree = (() => {
         PhaserScene.time.delayedCall(0, () => {
             if (treeMaskContainer) {
                 treeMaskContainer.sort('depth');
-                console.log("depth sorted tree lines all (delayed) ======");
+                debugLog("depth sorted tree lines all (delayed) ======");
             }
         });
 
@@ -144,6 +144,8 @@ const upgradeTree = (() => {
         // Zoom Input Logic (Scroll Wheel)
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
             if (!visible || !draggableGroup) return;
+            // A popup, dialog or transition owns input; don't zoom the tree behind it
+            if (helper.isGlobalBlockerActive() || buttonManager.isBlocked) return;
 
             // Only zoom if pointer is within bounds. In full view, bounds is the whole screen.
             if (!fullUpgradeView && pointer.x > PANEL_W) return;
@@ -522,7 +524,7 @@ const upgradeTree = (() => {
     }
 
     function _refreshAllNodes() {
-        console.log("refresh all nodes");
+        debugLog("refresh all nodes");
         // Refresh every node in the tree. refreshState() is recursive, which handles
         // downstream propagation, but iterating through all nodes ensures that isolated 
         // branches or nodes with custom revelation logic are always caught.
@@ -552,7 +554,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
-                setHoverLabel("BEGIN WAVE");
+                setHoverLabel(t('hover', 'begin_wave'));
                 if (deployBtnGlow) deployBtnGlow.setAlpha(1);
             },
             onHoverOut: () => {
@@ -1510,7 +1512,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(0, 100);
-                setHoverLabel("ZOOM IN");
+                setHoverLabel(t('hover', 'zoom_in'));
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
@@ -1532,7 +1534,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(-100, 0);
-                setHoverLabel("ZOOM OUT");
+                setHoverLabel(t('hover', 'zoom_out'));
             },
             onHoverOut: () => { setHoverLabel(null); }
         });

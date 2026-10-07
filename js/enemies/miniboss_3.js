@@ -57,12 +57,13 @@ class Miniboss3 extends Miniboss {
         m.slamTimer = 0; // Ready immediately
         m.isSlamming = false;
 
-        this.setEnemyGlow('heavy_glow.png');
-
         super.activate(x, y, {
             initialSpeedMult: m.initialSpeedMult,
             rampDuration: m.rampDuration
         });
+
+        // After super.activate, which hides the glow by default
+        this.setEnemyGlow('heavy_glow.png');
     }
 
     deactivate() {

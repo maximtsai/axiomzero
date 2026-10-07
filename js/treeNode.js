@@ -298,7 +298,7 @@ class Node {
                     const canReveal = !isHidden && (canRevealParentState || canRevealDuo);
 
                     if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN && canReveal) {
-                        console.log(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
+                        debugLog(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
                     }
 
                     if (canReveal) {
@@ -350,7 +350,7 @@ class Node {
             this.setState(NODE_STATE.MAXED);
         } else if (this.forceUnlocked || (this.isRequirementsMet() && !this.forceGhost)) {
             if (FLAGS.DEBUG && this.state !== NODE_STATE.UNLOCKED) {
-                console.log(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
+                debugLog(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
             }
             this.setState(NODE_STATE.UNLOCKED);
         } else {
@@ -466,6 +466,7 @@ class Node {
 
         // Deduct cost and increment level
         this._deductCost(cost);
+        this.lastPaidCost = cost; // effects that refund the purchase read this
         this.level++;
 
         // Persist
@@ -572,6 +573,9 @@ class Node {
         if (this.isMaxed()) return false;
         if (!this.canAfford()) return false;
 
+        // Price it now: once the level goes up, getCost() returns Infinity for a maxed node
+        this._pendingCost = this.getCost();
+
         // Set state and level locally (visuals follow state change)
         this.level++;
         this.setState(NODE_STATE.MAXED);
@@ -581,20 +585,21 @@ class Node {
             upgradeTree.playPurchasePulse(this.btn.x, this.btn.y + 1, true, this.costType === 'insight');
         }
 
-        console.log(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
+        debugLog(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
         return true;
     }
 
     finalizePurchase() {
-        const cost = this.getCost();
+        const cost = this._pendingCost !== undefined ? this._pendingCost : 0;
+        this._pendingCost = undefined;
         this._deductCost(cost);
 
         // Persist to global state
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
         // saveGameState();
-        messageBus.publish('upgradePurchased', { id: this.id, level: this.level });
-        console.log(`[NODE] finalizePurchase completed for ${this.id}`);
+        messageBus.publish('upgradePurchased', { id: this.id, level: this.level, costType: this.costType, cost: cost });
+        debugLog(`[NODE] finalizePurchase completed for ${this.id}`);
 
         // Redraw all lines to match new node states
         if (typeof treeLineManager !== 'undefined') {
@@ -801,7 +806,7 @@ class Node {
         if (this.state !== NODE_STATE.UNLOCKED) return;
 
         if (FLAGS.DEBUG) {
-            console.log(`[NODE] Clicked: ${this.id} (${this.name})`);
+            debugLog(`[NODE] Clicked: ${this.id} (${this.name})`);
         }
 
         if (this.isDuoBox) {
@@ -873,7 +878,7 @@ class Node {
             }
 
             // Notify systems of state change
-            messageBus.publish('upgradePurchased', { id: this.id });
+            messageBus.publish('upgradePurchased', { id: this.id, isSwap: true });
             this._playDuoPulse();
             nodeAnims.playDuoSwapAnimation(this);
 
@@ -1193,7 +1198,7 @@ class Node {
         }
 
         if (typeof upgradeTree !== 'undefined') {
-            const label = this.isDuoBox ? "TWIN NODE" : `${this.labelCategory} NODE`;
+            const label = this.isDuoBox ? t('hover', 'twin_node') : t('hover', 'node', [this.labelCategory]);
             upgradeTree.setHoverLabel(label);
         }
     }

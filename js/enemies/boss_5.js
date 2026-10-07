@@ -545,7 +545,6 @@ class Boss5 extends Boss {
                 });
             }
         }
-
-        messageBus.publish('bossDefeated', ex, ey);
+        // bossDefeated is published by bossManager.onEnemyDeath; publishing here too double-counted it
     }
 }

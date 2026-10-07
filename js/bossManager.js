@@ -106,7 +106,8 @@ const bossManager = (() => {
                 m.maxHealth = farmingOverrides.health;
                 m.health = m.maxHealth;
             }
-            if (farmingOverrides.damage) {
+            // Only scale contact damage for minibosses that have it (Miniboss3 attacks with slams, damage 0)
+            if (farmingOverrides.damage && m.damage > 0) {
                 m.damage = farmingOverrides.damage;
             }
             if (farmingOverrides.data) {
@@ -146,7 +147,7 @@ const bossManager = (() => {
 
         messageBus.publish('minibossSpawned');
         const variantStr = isFarmingSpawn ? 'Farming' : 'Standard';
-        console.log(`[BossManager] Spawning ${variantStr} Miniboss: ${mb.model.type} (HP: ${Math.floor(mb.model.health)})`);
+        debugLog(`[BossManager] Spawning ${variantStr} Miniboss: ${mb.model.type} (HP: ${Math.floor(mb.model.health)})`);
         debugLog('Miniboss spawned at angle ' + (angle * 180 / Math.PI).toFixed(1) + '°');
     }
 
@@ -176,6 +177,7 @@ const bossManager = (() => {
         const distanceOffset = (tempB.model && tempB.model.getSpawnDistanceOffset) ? tempB.model.getSpawnDistanceOffset() : 0;
         const distance = GAME_CONSTANTS.ENEMY_SPAWN_DISTANCE + distanceOffset;
         const angle = _getValidBossSpawnAngle(tempB);
+        tempB.destroy(); // probe only; the real boss is created below
         const sx = GAME_CONSTANTS.halfWidth + Math.cos(angle) * distance;
         const sy = GAME_CONSTANTS.halfHeight + Math.sin(angle) * distance;
 

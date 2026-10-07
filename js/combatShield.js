@@ -43,6 +43,10 @@ class CombatShield {
             this.freeze(duration);
         });
 
+        // Don't follow the mouse around while the pause menu is open
+        messageBus.subscribe('gamePaused', () => { this.paused = true; });
+        messageBus.subscribe('gameResumed', () => { this.paused = false; });
+
         updateManager.addFunction((dt) => this.update(dt));
         this._initialized = true;
     }
@@ -112,7 +116,7 @@ class CombatShield {
     }
 
     update(dt) {
-        if (!this.unlocked || !this.alive || !this._sprite) return;
+        if (this.paused || !this.unlocked || !this.alive || !this._sprite) return;
         const delta = dt / 16.66;
 
         if (!this.isFrozen) {

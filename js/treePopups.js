@@ -28,7 +28,8 @@ const treePopups = (() => {
         const blocker = helper.createGlobalClickBlocker(false).setDepth(depth + 0.5);
         if (upgradeTree && upgradeTree.assignToUICamera) upgradeTree.assignToUICamera(blocker);
 
-        const bg = helper.createNineSlice(cx, cy, 'buttons', 'popup_nineslice.png', 550, 360, 44, 44, 44, 44);
+        // 400 tall so the title clears the frame's top border
+        const bg = helper.createNineSlice(cx, cy - 10, 'buttons', 'popup_nineslice.png', 550, 400, 44, 44, 44, 44);
         bg.setDepth(depth + 1).setScrollFactor(0);
         levelSelectButtons.push(bg);
 
@@ -77,11 +78,11 @@ const treePopups = (() => {
             const mult = config.dataDropMultiplier || 1.0;
 
             let bonusText = "";
-            if (isEndless) bonusText += "(ENDLESS)";
+            if (isEndless) bonusText += t('ui', 'endless');
             if (mult > 1.0) {
                 const pct = Math.round((mult - 1) * 100);
                 if (bonusText !== "") bonusText += " ";
-                bonusText += `+${pct}% DATA`;
+                bonusText += t('ui', 'data_bonus', [pct]);
             }
 
             if (bonusText !== "") {
@@ -103,7 +104,7 @@ const treePopups = (() => {
             // High score display
             const best = scoreManager.getBestScore(actualLevel);
             if (best) {
-                bestScoreDisplay.setText(`${t('ui', 'best_time')}: ${scoreManager.formatTime(best.bestTime)}  [${best.kills} KILLS]`);
+                bestScoreDisplay.setText(`${t('ui', 'best_time')}: ${scoreManager.formatTime(best.bestTime)}  ${t('ui', 'best_kills', [best.kills])}`);
                 bestScoreDisplay.setVisible(true);
             } else {
                 bestScoreDisplay.setVisible(false);
@@ -205,6 +206,7 @@ const treePopups = (() => {
     return {
         showLevelSelectPopup,
         closeLevelSelect,
+        isLevelSelectOpen: () => levelSelectOverlay !== null,
         isAnyPopupVisible
     };
 })();

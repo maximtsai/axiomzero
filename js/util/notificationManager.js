@@ -26,18 +26,17 @@ const notificationManager = (() => {
         const size = opts.fontSize || 29;
 
         const t = PhaserScene.add.text(x, y, text, {
-            fontFamily: 'Arial',
+            fontFamily: 'Quantico-Bold',
             fontSize: size,
             color: col,
             stroke: '#000000',
             strokeThickness: 5,
             align: 'center',
-        }).setOrigin(0.5, 0.5).setDepth(DEPTH);
+        }).setOrigin(0.5, 0.5).setDepth(DEPTH).setScrollFactor(0);
 
-        // May be needed later, but not needed now
-        // if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
-        //     upgradeTree.assignToUICamera(t);
-        // }
+        if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
+            upgradeTree.assignToUICamera(t);
+        }
 
         PhaserScene.tweens.add({
             targets: t,

@@ -18,7 +18,7 @@ const treeLineManager = (() => {
     function init(config) {
         // CLEANUP: If we are re-initializing, clear old lines to prevent duplicates
         if (lines && lines.length > 0) {
-            console.log(`treeLineManager.init: Cleaning up ${lines.length} existing lines.`);
+            debugLog(`treeLineManager.init: Cleaning up ${lines.length} existing lines.`);
             for (let l of lines) {
                 if (l && l.destroy) l.destroy();
             }

@@ -38,7 +38,7 @@ const cinematicManager = (() => {
         isEnding = false;
         isMinimal = false;
 
-        console.log('[Cinematic] Cutscene started');
+        debugLog('[Cinematic] Cutscene started');
 
         // Block all custom buttons
         if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(true);
@@ -65,7 +65,7 @@ const cinematicManager = (() => {
         isEnding = false;
         isMinimal = true;
 
-        console.log('[Cinematic] Minimal cutscene started');
+        debugLog('[Cinematic] Minimal cutscene started');
 
         if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(true);
 
@@ -90,7 +90,7 @@ const cinematicManager = (() => {
         }
         isEnding = true;
 
-        console.log('[Cinematic] Cutscene ending');
+        debugLog('[Cinematic] Cutscene ending');
 
         _fadeUI(1, FADE_OUT_DUR);
 
@@ -101,7 +101,7 @@ const cinematicManager = (() => {
             active = false;
             isEnding = false;
             isMinimal = false;
-            console.log('[Cinematic] Cutscene finished');
+            debugLog('[Cinematic] Cutscene finished');
             if (onComplete) onComplete();
         };
 
@@ -125,7 +125,7 @@ const cinematicManager = (() => {
         if (active) return Promise.resolve();
         active = true;
 
-        console.log('[Cinematic] System Scan Interruption triggered');
+        debugLog('[Cinematic] System Scan Interruption triggered');
 
         // Slow down game speed by 70% (timeScale 0.3)
         // We set applyToTweens to false so the cinematic tweens themselves aren't slowed

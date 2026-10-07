@@ -24,14 +24,16 @@ class ObjectPool {
         this.reset = reset;
 
         // --- Configuration & Compatibility ---
+        // Objects released into a full pool are destroyed, not just dropped: an orphaned
+        // Phaser object stays on the display list forever.
         if (typeof optionsOrSize === 'number') {
             this.maxSize = optionsOrSize;
             this.onAcquire = null;
-            this.destroy = null;
+            this.destroy = ObjectPool.destroyObject;
         } else {
             this.maxSize = optionsOrSize?.maxSize ?? 50;
             this.onAcquire = optionsOrSize?.onAcquire ?? null;
-            this.destroy = optionsOrSize?.destroy ?? null;
+            this.destroy = optionsOrSize?.destroy ?? ObjectPool.destroyObject;
         }
 
         this.pool = [];          // idle objects
@@ -41,6 +43,19 @@ class ObjectPool {
 
         this.stats = { created: 0, reused: 0, discarded: 0 };
         this.peakActive = 0;
+    }
+
+    /**
+     * Default `destroy` hook: calls obj.destroy() when the object has one (Phaser objects,
+     * enemies, Hijack), otherwise destroys a plain record's `img` (projectile-style records).
+     */
+    static destroyObject(obj) {
+        if (!obj) return;
+        if (typeof obj.destroy === 'function') {
+            obj.destroy();
+        } else if (obj.img && typeof obj.img.destroy === 'function') {
+            obj.img.destroy();
+        }
     }
 
     /** Pre-allocate objects for the pool. Useful during initialization/loading. */

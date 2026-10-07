@@ -22,6 +22,7 @@ const gameHUD = (() => {
     let bombCanCancel = false;
     let bombPulseIndicator = null;
     let bombPulseTimer = null;
+    const SCREEN_EDGE_MARGIN = 8;
 
     // Layout & Depth Configuration
     const DEPTHS = {
@@ -134,7 +135,7 @@ const gameHUD = (() => {
                     { text: t('hud', 'health_desc'), style: 'normal' }
                 ], 410);
                 if (typeof upgradeTree !== 'undefined') {
-                    upgradeTree.setHoverLabel('HEALTH');
+                    upgradeTree.setHoverLabel(t('hover', 'health'));
                 }
             },
             onHoverOut: () => {
@@ -197,7 +198,7 @@ const gameHUD = (() => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
                 if (bombIcon) bombIcon.setAlpha(1);
-                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel('BOMB');
+                if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(t('hover', 'bomb'));
             },
             onHoverOut: () => {
                 _updateBombUI();
@@ -323,6 +324,7 @@ const gameHUD = (() => {
             bombBtn.setState(isDisabled ? DISABLE : NORMAL);
             if (bombBtnTxt) bombBtnTxt.setText(`${model.bombUses}/${model.maxBombUses}`);
         }
+        _keepBombLabelOnScreen();
 
         if (bombIcon) {
             const isInteracted = bombBtn.state === HOVER || bombBtn.state === PRESS;
@@ -735,5 +737,14 @@ const gameHUD = (() => {
         });
     }
 
+
+    /** The bomb button hugs the right edge; shift a wide label (CANCEL) left so it isn't cut off. */
+    function _keepBombLabelOnScreen() {
+        if (!bombBtnTxt) return;
+        const w = bombBtnTxt.width;
+        if (!w) return;
+        const overflow = Math.max(0, bombBtnTxt.x + w / 2 - (GAME_CONSTANTS.WIDTH - SCREEN_EDGE_MARGIN));
+        bombBtnTxt.setOrigin(0.5 + overflow / w, 0.75);
+    }
     return { init, setWaveProgressBarVisible, refreshTestDefensesButton, setTestButtonVisible, setBombButtonVisible, setHealthBarVisible, setHealthHoverActive, setCurrencyVisible, setCurrencyHUDShifted, resetHUDPosition, shiftHUDTo, setAlpha, setBombPulse, clearBombPulse };
 })();

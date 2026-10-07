@@ -344,7 +344,7 @@ const waveManager = (() => {
         PhaserScene.time.delayedCall(750, () => {
             // 2. Play shockwave animation at boss location
             const shockwave = PhaserScene.add.image(x, y, 'enemies', 'explosion_flash.png');
-            shockwave.setDepth(GAME_CONSTANTS.DEPTH_WAVE_COMPLETE);
+            shockwave.setDepth(GAME_CONSTANTS.DEPTH_PROJECTILES + 10); // above enemies (was an undefined constant → depth 0)
             shockwave.setScale(0.1);
             shockwave.setAlpha(0.8);
 
@@ -422,7 +422,7 @@ const waveManager = (() => {
         const cx = GAME_CONSTANTS.halfWidth;
         const cy = GAME_CONSTANTS.halfHeight;
 
-        const text = PhaserScene.add.text(cx, cy - 10, "+2 MAX HP", {
+        const text = PhaserScene.add.text(cx, cy - 10, t('hud', 'max_hp_bonus', [2]), {
             fontFamily: 'MunroSmall',
             fontSize: '32px',
             color: '#87FF02',

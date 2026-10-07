@@ -65,7 +65,7 @@ const customEmitters = (() => {
             sprite.setActive(false);
             sprite.setVisible(false);
             sprite.on('animationcomplete', (anim) => {
-                if (anim.key === 'explosion_pulse') {
+                if (anim.key === 'explosion_pulse' || anim.key === 'explosion_pulse_slow') {
                     sprite.setActive(false);
                     sprite.setVisible(false);
                     explosionPulsePool.release(sprite);

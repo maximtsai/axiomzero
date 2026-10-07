@@ -460,7 +460,7 @@ const artilleryAttack = (() => {
         }
 
         // Fallback: If no enemies are valid or screen is empty, pick a safe random spot.
-        console.log('[DEBUG] Artillery using fallback (0 valid enemy predictions).');
+        debugLog('[DEBUG] Artillery using fallback (0 valid enemy predictions).');
         return {
             x: Phaser.Math.Between(minX, maxX),
             y: Phaser.Math.Between(minY, maxY)

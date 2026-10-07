@@ -321,7 +321,7 @@ class PulseAttackView {
         this.artilleryRed.setBlendMode(Phaser.BlendModes.ADD);
 
         // Subtle detonation reminder text
-        const reminderMsg = "CLICK TO DETONATE";
+        const reminderMsg = t('hud', 'detonate_hint');
         this.detonateReminderText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight + 375, reminderMsg, {
             fontFamily: 'MunroSmall',
             fontSize: '26px',
@@ -350,11 +350,6 @@ class PulseAttackView {
 
     setDetonateReminderVisibility(visible) {
         if (!this.detonateReminderText) return;
-
-        // Respect global tutorial disable flag
-        if (visible && typeof gameState !== 'undefined' && gameState.tutorialsDisabled) {
-            visible = false;
-        }
 
         const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
         const targetX = GAME_CONSTANTS.halfWidth + (isUpgrade ? 400 : 0);
@@ -644,7 +639,7 @@ class PulseAttackView {
             this.sprite.setAlpha(this.IDLE_ALPHA);
         }
 
-        if (this.artillerySprite && !bombArmed && !bombFired) {
+        if (this.artillerySprite && !bombArmed && !bombFired && !this.cancelAnimating) {
             this.artillerySprite.setVisible(false);
             this.artilleryBright.setVisible(false);
             this.artilleryBrightGlow?.setVisible(false);
@@ -920,18 +915,25 @@ class PulseAttackView {
     }
 
     playBombCancelAnimation(baseSize) {
-        this.stopAllArtilleryAnimations();
+        this.stopAllArtilleryAnimations(); // hides every layer
 
         const targetSize = baseSize + 20;
+
+        // Show the bomb outline again and let it expand and fade. cancelAnimating keeps
+        // setVisibility (run every frame) from hiding it while the bomb is no longer armed.
+        this.cancelAnimating = true;
+        this.artillerySprite.setVisible(true).setAlpha(1);
 
         PhaserScene.tweens.add({
             targets: [this.artillerySprite],
             width: targetSize,
             height: targetSize,
+            alpha: 0,
             duration: 300,
             ease: 'Cubic.easeIn',
             onComplete: () => {
-                this.artillerySprite.setVisible(false);
+                this.cancelAnimating = false;
+                this.artillerySprite.setVisible(false).setAlpha(1);
                 this.artilleryBright.setVisible(false);
             }
         });
@@ -1157,6 +1159,9 @@ const pulseAttack = (() => {
 
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
+            // A popup, dialog or transition owns input: don't slide the tree or arm the bomb behind it
+            if (helper.isGlobalBlockerActive() || buttonManager.isBlocked) return;
+
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
             const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
             let isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());

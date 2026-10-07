@@ -3,6 +3,31 @@
 const UI_RADIUS_SMALL = 20;
 const UI_RADIUS_LARGE = 64;
 
+// Close functions of the open Options / reset-confirm popups (null when closed), for hotkeys
+let _optionsPopupClose = null;
+let _resetConfirmClose = null;
+
+/** @returns {boolean} True while the Options popup is open. */
+function isOptionsPopupOpen() {
+    return _optionsPopupClose !== null;
+}
+
+/** Opens the Options popup (pauses combat). No-op if it is already open. */
+function openOptionsPopup() {
+    if (!_optionsPopupClose) _showOptionsPopup();
+}
+
+/**
+ * Closes the top-most Options-layer popup: the reset confirm if open, else Options itself.
+ * @param {boolean} [all=false] Close Options entirely, confirm included.
+ * @returns {boolean} True if something was closed.
+ */
+function closeTopOptionsPopup(all = false) {
+    if (_resetConfirmClose && !all) { _resetConfirmClose(); return true; }
+    if (_optionsPopupClose) { _optionsPopupClose(); return true; }
+    return false;
+}
+
 function createOptionsButton(x, y) {
     let icon;
     const button = new Button({
@@ -21,13 +46,13 @@ function createOptionsButton(x, y) {
             ref: 'sq_button_press.png',
         },
         onMouseUp: function () {
-            _showOptionsPopup();
+            openOptionsPopup();
         },
         onHover: () => {
             let sfx = audio.play('click', 0.95);
             if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
             if (icon) icon.setAlpha(1.0);
-            if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel('OPTIONS');
+            if (typeof upgradeTree !== 'undefined') upgradeTree.setHoverLabel(t('hover', 'options'));
         },
         onHoverOut: () => {
             if (icon) icon.setAlpha(0.83);
@@ -138,7 +163,7 @@ function _showOptionsPopup() {
     // Chromatic Aberration Checkbox
     const chroma = helper.createCheckbox(W - width / 2 + 115, visualHeaderY + 35, t('options', 'chroma'), gameState.settings.chromaticAberration, depth + 3, (val) => {
         gameState.settings.chromaticAberration = val;
-        saveGame();
+        saveSettings();
     });
     elements.push(chroma.btn, chroma.text);
     textObjects.push({ obj: chroma.text, size: 21 });
@@ -146,7 +171,7 @@ function _showOptionsPopup() {
     // Damage Numbers Checkbox
     const dmgCheck = helper.createCheckbox(W + 50, visualHeaderY + 35, t('options', 'dmg_numbers'), gameState.settings.showDamageNumbers, depth + 3, (val) => {
         gameState.settings.showDamageNumbers = val;
-        saveGame();
+        saveSettings();
     });
     elements.push(dmgCheck.btn, dmgCheck.text);
     textObjects.push({ obj: dmgCheck.text, size: 21 });
@@ -154,7 +179,7 @@ function _showOptionsPopup() {
     // BIG font Checkbox (Visual row 2)
     const bigFont = helper.createCheckbox(W - width / 2 + 115, visualHeaderY + 80, t('options', 'big_font'), gameState.settings.bigFont, depth + 3, (val) => {
         gameState.settings.bigFont = val;
-        saveGame();
+        saveSettings();
         updateAllTextSizes();
         messageBus.publish('settingChanged_bigFont', val);
     });
@@ -166,7 +191,7 @@ function _showOptionsPopup() {
     gameState.settings.fullscreen = currentFullscreen; // Sync setting with reality
     const fullscreen = helper.createCheckbox(W + 50, visualHeaderY + 80, t('options', 'fullscreen'), currentFullscreen, depth + 3, (val) => {
         gameState.settings.fullscreen = val;
-        saveGame();
+        saveSettings();
         if (val) {
             if (PhaserScene.scale.fullscreenUnsupported) {
                 console.warn('Fullscreen not supported');
@@ -207,7 +232,7 @@ function _showOptionsPopup() {
         },
         onMouseUp: () => {
             gameState.settings.minimalParticles = false;
-            saveGame();
+            saveSettings();
             updateParticleButtons();
             messageBus.publish('settingChanged_minimalParticles', false);
         }
@@ -243,7 +268,7 @@ function _showOptionsPopup() {
         },
         onMouseUp: () => {
             gameState.settings.minimalParticles = true;
-            saveGame();
+            saveSettings();
             updateParticleButtons();
             messageBus.publish('settingChanged_minimalParticles', true);
         }
@@ -272,11 +297,23 @@ function _showOptionsPopup() {
 
     updateParticleButtons();
 
-    // --- LANGUAGE SECTION ---
+    // --- LANGUAGE / CONTROLS SECTION ---
+    // The language header only makes sense once there is more than one player language;
+    // until then this slot lists the keyboard shortcuts.
     const languageHeaderY = visualHeaderY + 166;
-    const langHeader = helper.createHeader(W - width / 2 + 60, languageHeaderY + 19, 820, t('options', 'language') + "文/A", depth + 3);
+    const showLanguage = SUPPORTED_LANGUAGES.filter(lang => lang !== 'debug').length > 1;
+    const langHeaderText = showLanguage ? t('options', 'language') + "文/A" : t('options', 'controls') + '⌨';
+    const langHeader = helper.createHeader(W - width / 2 + 60, languageHeaderY + 19, 820, langHeaderText, depth + 3);
     elements.push(langHeader.text, langHeader.line);
     textObjects.push({ obj: langHeader.text, size: 23 });
+
+    if (!showLanguage) {
+        const controlsText = PhaserScene.add.text(W - width / 2 + 60, languageHeaderY + 66, t('options', 'controls_list'), {
+            fontFamily: 'Quantico-Bold', fontSize: '21px', color: '#ffffff',
+        }).setOrigin(0, 0.5).setDepth(depth + 3).setScrollFactor(0).setShadow(2, 2, '#000000', 2, true, true);
+        elements.push(controlsText);
+        textObjects.push({ obj: controlsText, size: 21 });
+    }
 
     // --- DATA SECTION ---
     const dataHeaderY = languageHeaderY + 130;
@@ -336,7 +373,7 @@ function _showOptionsPopup() {
             const result = importSaveFromString(str);
             if (result.success) {
                 alert(t('options', 'import_success'));
-                window.location.reload();
+                Promise.resolve(result.synced).finally(() => window.location.reload());
             } else {
                 const errorMsg = t('options', result.error) || t('options', 'err_generic');
                 alert(t('options', 'import_fail').replace('{0}', errorMsg));
@@ -362,12 +399,15 @@ function _showOptionsPopup() {
     _assignElementsToUI(elements);
 
     function closePopup() {
+        if (_resetConfirmClose) _resetConfirmClose();
+        _optionsPopupClose = null;
         messageBus.publish('gameResumed');
         helper.hideGlobalClickBlocker();
         elements.forEach(el => {
             if (el && el.destroy) el.destroy();
         });
     }
+    _optionsPopupClose = closePopup;
 }
 
 
@@ -530,8 +570,9 @@ function _showResetConfirmPopup() {
     PhaserScene.tweens.add({ targets: darkBG, alpha: 0.85, duration: 80 });
     elements.push(darkBG);
 
-    // Use the global helper to block background clicks/dragging
-    helper.createGlobalClickBlocker(false).setDepth(depth + 1);
+    // Block the Options popup underneath. A local blocker leaves the global one (held by Options) untouched.
+    const blocker = helper.createLocalClickBlocker().setDepth(depth + 1);
+    elements.push(blocker);
 
     const popupBG = helper.createNineSlice(W, H, 'buttons', 'popup_nineslice.png', width, height, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE, UI_RADIUS_LARGE);
     popupBG.setDepth(depth + 2);
@@ -545,8 +586,11 @@ function _showResetConfirmPopup() {
 
     // YES Button
     const yesGlow = helper.createGlowButton(W - 110, H + 70, 160, 66, t('ui', 'yes'), depth + 3, () => {
-        clearSave();
-        window.location.reload();
+        // Wait for the cloud copy to be deleted, or it is restored on reload.
+        // Settings (volume, visual toggles) survive the reset.
+        clearSave()
+            .then(() => saveSettings())
+            .finally(() => window.location.reload());
     }, true);
     yesGlow.text.setFontSize('26px');
     yesGlow.bg.setAlpha(0.35);
@@ -561,11 +605,14 @@ function _showResetConfirmPopup() {
     });
     elements.push(yesGlow.bg, yesGlow.text, yesGlow.btn);
 
-    // NO Button
-    const noGlow = helper.createGlowButton(W + 110, H + 70, 160, 66, t('ui', 'no'), depth + 3, () => {
-        helper.hideGlobalClickBlocker();
+    function closeConfirm() {
+        _resetConfirmClose = null;
         elements.forEach(el => { if (el && el.destroy) el.destroy(); });
-    });
+    }
+    _resetConfirmClose = closeConfirm;
+
+    // NO Button
+    const noGlow = helper.createGlowButton(W + 110, H + 70, 160, 66, t('ui', 'no'), depth + 3, closeConfirm);
     noGlow.text.setFontSize('26px');
     elements.push(noGlow.bg, noGlow.text, noGlow.btn);
 
@@ -573,10 +620,7 @@ function _showResetConfirmPopup() {
         normal: { ref: 'close_button_normal.png', atlas: 'buttons', x: W + width / 2 - 36, y: H - height / 2 + 36 },
         hover: { ref: 'close_button_hover.png', atlas: 'buttons' },
         press: { ref: 'close_button_press.png', atlas: 'buttons' },
-        onMouseUp: () => {
-            helper.hideGlobalClickBlocker();
-            elements.forEach(el => { if (el && el.destroy) el.destroy(); });
-        }
+        onMouseUp: closeConfirm
     });
     closeBtn.setDepth(depth + 3);
     closeBtn.setScrollFactor(0);

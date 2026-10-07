@@ -1166,7 +1166,7 @@ const NODE_DEFS = [
         id: 'bypass_2',
         name: t('nodes', 'bypass_2.name'),
         icon: 'Skillicon14_07.png',
-        description: 'Refunds 150 DATA upon purchase',
+        description: t('nodes', 'bypass_2.desc'),
         popupText: t('nodes', 'bypass_2.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
@@ -1177,9 +1177,10 @@ const NODE_DEFS = [
         childIds: ['parallel_processing'],
         treeX: gridX(5.0),
         treeY: gridY(5),
+        // Refund what was actually paid (leak penalty and Global Backdoor change the price)
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(150);
+                resourceManager.addData(this.lastPaidCost !== undefined ? this.lastPaidCost : 150);
             }
         },
         leaky: 10,
@@ -1415,7 +1416,7 @@ const NODE_DEFS = [
         id: 'bypass',
         name: t('nodes', 'bypass.name'),
         icon: 'Skillicon14_07.png',
-        description: 'Refunds 75 DATA upon purchase',
+        description: t('nodes', 'bypass.desc'),
         popupText: t('nodes', 'bypass.popup'),
         popupColor: COLORS.RESOURCE,
         maxLevel: 1,
@@ -1426,9 +1427,10 @@ const NODE_DEFS = [
         childIds: ['bomb_2'],
         treeX: gridX(-3),
         treeY: gridY(1.0),
+        // Refund what was actually paid (leak penalty and Global Backdoor change the price)
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(75);
+                resourceManager.addData(this.lastPaidCost !== undefined ? this.lastPaidCost : 75);
             }
         },
         leaky: 10,
@@ -1487,7 +1489,7 @@ const NODE_DEFS = [
         childIds: [],
         tooltipExtraWidth: 40,
         treeX: gridX(1.5),
-        treeY: gridY(-2.0),
+        treeY: gridY(-1.0), // was -2.0, which overlapped lore_1
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(100);
@@ -1531,7 +1533,7 @@ const NODE_DEFS = [
         parents: ['cheat'],
         childIds: [],
         treeX: gridX(1.5),
-        treeY: gridY(-3.0),
+        treeY: gridY(-4.0), // was -3.0, which overlapped clock_speed
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
                 resourceManager.addData(10);
@@ -2180,9 +2182,10 @@ const NODE_DEFS = [
         childIds: [],
         treeX: gridX(-3.5),
         treeY: gridY(8.0),
+        // Refund what was actually paid (leak penalty and Global Backdoor change the price)
         effect: function () {
             if (typeof resourceManager !== 'undefined') {
-                resourceManager.addData(1000);
+                resourceManager.addData(this.lastPaidCost !== undefined ? this.lastPaidCost : 1000);
             }
         },
     },

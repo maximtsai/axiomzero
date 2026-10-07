@@ -2,9 +2,24 @@
 // Handles centered transition messages (Boss/Regular) with typewriter and glitch effects.
 
 const announcementManager = (() => {
+    // On-screen announcement objects, so they can be hidden when combat ends early
+    const _live = new Set();
+
     function init() {
         messageBus.subscribe('AnnounceText', showAnnounceMessage);
         messageBus.subscribe('BossAnnounceText', ({ msg1, msg2 }) => showBossAnnouncement(msg1, msg2));
+        messageBus.subscribe('phaseChanged', (phase) => {
+            // A wave that ends within a few seconds would otherwise leave "SYSTEM ANOMALY
+            // DETECTED" over the results screen. Hide rather than destroy: the typewriter and
+            // glitch timers still finish and clean the objects up themselves.
+            if (phase !== GAME_CONSTANTS.PHASE_COMBAT) _live.forEach(obj => obj.setVisible(false));
+        });
+    }
+
+    function _track(obj) {
+        _live.add(obj);
+        obj.once('destroy', () => _live.delete(obj));
+        return obj;
     }
 
     /**
@@ -31,27 +46,27 @@ const announcementManager = (() => {
         const commonX = GAME_CONSTANTS.halfWidth;
 
         // Message 1 (Status)
-        const txt1 = PhaserScene.add.text(commonX, baseYPos - totalHeight / 2, '', {
+        const txt1 = _track(PhaserScene.add.text(commonX, baseYPos - totalHeight / 2, '', {
             fontFamily: 'MunroSmall',
             fontSize: fSize1,
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
             strokeThickness: 3,
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 4, true, true);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 4, true, true));
 
         // Message 2 (Boss Name)
-        const txt2 = PhaserScene.add.text(commonX, txt1.y + h1 - 5, '', {
+        const txt2 = _track(PhaserScene.add.text(commonX, txt1.y + h1 - 5, '', {
             fontFamily: 'MunroSmall',
             fontSize: fSize2,
             color: '#ffffff',
             align: 'center',
             stroke: '#000000',
             strokeThickness: 6,
-        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 3, '#000000', 8, true, true);
+        }).setOrigin(0.5, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(2, 3, '#000000', 8, true, true));
 
         // Decorative Line (centered between them or below)
-        const line = PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'buttons', 'white_line.png');
+        const line = _track(PhaserScene.add.image(commonX, txt2.y + h2 + 10, 'buttons', 'white_line.png'));
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
 
         // Line Animation
@@ -132,7 +147,7 @@ const announcementManager = (() => {
         tempTxt.destroy();
 
         const baseYPos = GAME_CONSTANTS.halfHeight - 300;
-        const txt = PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
+        const txt = _track(PhaserScene.add.text(GAME_CONSTANTS.halfWidth - (fullWidth / 2), baseYPos - (fullHeight * 0.5), '', {
             fontFamily: 'MunroSmall',
             fontSize: fSize,
             color: '#ffffff',
@@ -140,9 +155,9 @@ const announcementManager = (() => {
             stroke: '#000000',
             strokeThickness: 4,
             lineSpacing: -4
-        }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true);
+        }).setOrigin(0, 0).setDepth(GAME_CONSTANTS.DEPTH_HUD + 10).setAlpha(1).setShadow(1, 2, '#000000', 6, true, true));
 
-        const line = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'buttons', 'white_line.png');
+        const line = _track(PhaserScene.add.image(GAME_CONSTANTS.halfWidth, txt.y + fullHeight + 10, 'buttons', 'white_line.png'));
         line.setDepth(GAME_CONSTANTS.DEPTH_HUD + 9).setAlpha(0).setScale(0, 1.0);
 
         PhaserScene.tweens.add({

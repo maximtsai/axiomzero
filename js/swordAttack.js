@@ -298,7 +298,7 @@ const swordAttack = (() => {
         const pos = tower.getPosition();
         const enemies = enemyManager.getEnemiesInRange(pos.x, pos.y, model.SEARCH_RANGE);
         if (!enemies || enemies.length === 0) {
-            model.fireTimer = 0;
+            model.fireTimer = model.FIRE_INTERVAL; // stay charged until something is in range
             return;
         }
 
@@ -327,7 +327,7 @@ const swordAttack = (() => {
             model.fireTimer -= model.FIRE_INTERVAL;
             _fireSequence(closest);
         } else {
-            model.fireTimer = 0;
+            model.fireTimer = model.FIRE_INTERVAL;
         }
     }
 
