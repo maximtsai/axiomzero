@@ -233,8 +233,8 @@ class CacheEnemy extends Enemy {
         m.vy = Math.sin(m.flightAngle) * m.speed;
     }
 
-    takeDamage(amount) {
-        const result = super.takeDamage(amount);
+    takeDamage(amount, source) {
+        const result = super.takeDamage(amount, source);
 
         const m = this.model;
         if (m.alive && result && result.actualApplied > 0) {

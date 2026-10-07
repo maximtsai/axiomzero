@@ -352,15 +352,19 @@ function _showOptionsPopup() {
     // --- EXPORT BUTTON ---
     const exportGlow = helper.createGlowButton(W - 240, dataHeaderY + 37, 240, 60, t('options', 'export_data'), depth + 3, () => {
         const str = exportSaveToString();
-        if (str) {
-            navigator.clipboard.writeText(str).then(() => {
-                alert(t('options', 'export_success'));
-            }).catch(() => {
-                prompt(t('options', 'export_success'), str);
-            });
-        } else {
-            alert(t('options', 'export_fail'));
+        if (!str) {
+            _optionsToast(t('options', 'export_fail'), '#ff3366');
+            return;
         }
+        // navigator.clipboard is missing outside secure contexts / some embeds: fall back to a file
+        const copied = (navigator.clipboard && navigator.clipboard.writeText)
+            ? navigator.clipboard.writeText(str)
+            : Promise.reject(new Error('clipboard unavailable'));
+        copied.then(() => _optionsToast(t('options', 'export_success')))
+            .catch(() => {
+                _downloadTextFile('axiomzero-save.txt', str);
+                _optionsToast(t('options', 'export_downloaded'));
+            });
     });
     exportGlow.text.setFontSize('21px');
     elements.push(exportGlow.bg, exportGlow.text, exportGlow.btn);
@@ -372,11 +376,13 @@ function _showOptionsPopup() {
         if (str) {
             const result = importSaveFromString(str);
             if (result.success) {
-                alert(t('options', 'import_success'));
-                Promise.resolve(result.synced).finally(() => window.location.reload());
+                _optionsToast(t('options', 'import_success'));
+                // Let the message show, and the cloud write finish, before reloading
+                const shown = new Promise(resolve => setTimeout(resolve, 900));
+                Promise.all([result.synced, shown]).finally(() => window.location.reload());
             } else {
                 const errorMsg = t('options', result.error) || t('options', 'err_generic');
-                alert(t('options', 'import_fail').replace('{0}', errorMsg));
+                _optionsToast(t('options', 'import_fail', [errorMsg]), '#ff3366');
             }
         }
     });
@@ -552,6 +558,25 @@ function createMuteMusicButton(x, y) {
     button.setDepth(7000);
     button.setScrollFactor(0);
     return button;
+}
+
+/** Message over the Options popup. Native alert() would drop the player out of fullscreen. */
+function _optionsToast(text, color = '#00f5ff') {
+    notificationManager.notify(text, {
+        y: GAME_CONSTANTS.halfHeight + 300, fontSize: 22, duration: 2600, color, depth: 200010,
+    });
+}
+
+/** Offer `text` as a file download (export fallback when the clipboard isn't available). */
+function _downloadTextFile(filename, text) {
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function _showResetConfirmPopup() {

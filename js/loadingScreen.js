@@ -52,6 +52,7 @@ class LoadingScreen {
                     }
                 }
                 if (statusText) {
+                    this._holdText = true;
                     this._text.setText(t('loading_screen', 'status', statusText));
                 }
             },
@@ -67,7 +68,8 @@ class LoadingScreen {
             callback: () => {
                 dots++;
                 if (dots > 3) dots = 1;
-                if (this._text) {
+                // Once a status or warning is showing, the dots would overwrite it within a second
+                if (this._text && !this._holdText) {
                     const baseText = t('ui', 'loading').replace(/\.+$/, '');
                     this._text.setText(baseText + '.'.repeat(dots));
                 }
@@ -125,10 +127,12 @@ class LoadingScreen {
     }
 
     _onSlowWarning() {
+        this._holdText = true;
         if (this._text) this._text.setText(t('loading_screen', 'slow'));
     }
 
     _onTimeoutReached(forceFinish) {
+        this._holdText = true;
         if (this._text) this._text.setText(t('loading_screen', 'error'));
         this._showRunAnywaysButton(forceFinish);
     }

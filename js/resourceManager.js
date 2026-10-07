@@ -470,7 +470,6 @@ const resourceManager = (() => {
 
     // ── per-frame ────────────────────────────────────────────────────────────
 
-    let frameCounter = 0;
     function _update(delta) {
         if (paused) return;
 
@@ -506,7 +505,6 @@ const resourceManager = (() => {
 
         if (activeDrops.length === 0 && flyingDrops.length === 0) return;
 
-        frameCounter++;
         const dt = delta / 1000;
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;

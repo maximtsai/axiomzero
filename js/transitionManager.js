@@ -4,8 +4,6 @@
 
 const transitionManager = (() => {
     let transitioning = false;
-    let isWiping = false;
-    let blocker = null;
     let _failsafeTimer = null;
     let _revealTimer = null;
 

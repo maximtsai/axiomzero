@@ -134,7 +134,7 @@ const bossManager = (() => {
                 const fsy = GAME_CONSTANTS.halfHeight + Math.sin(fa) * finalDist;
 
                 // Try to get a fast enemy from pool via enemyManager
-                const fe = _enemyManager.spawnAt('fast', fsx, fsy, {
+                _enemyManager.spawnAt('fast', fsx, fsy, {
                     scale: currentScale,
                     initialSpeedMult: 6,
                     rampDuration: 1.5

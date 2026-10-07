@@ -14,6 +14,7 @@ const notificationManager = (() => {
      * @param {number}  opts.duration - Fade duration in ms (default 1400)
      * @param {string}  opts.color    - Text color (default '#ffffff')
      * @param {number}  opts.fontSize - Font size in px (default 24)
+     * @param {number}  opts.depth    - Render depth (default 99000; raise it to show over popups)
      * @returns {Phaser.GameObjects.Text}
      */
     function notify(text, opts = {}) {
@@ -32,7 +33,7 @@ const notificationManager = (() => {
             stroke: '#000000',
             strokeThickness: 5,
             align: 'center',
-        }).setOrigin(0.5, 0.5).setDepth(DEPTH).setScrollFactor(0);
+        }).setOrigin(0.5, 0.5).setDepth(opts.depth !== undefined ? opts.depth : DEPTH).setScrollFactor(0);
 
         if (typeof upgradeTree !== 'undefined' && upgradeTree.assignToUICamera) {
             upgradeTree.assignToUICamera(t);

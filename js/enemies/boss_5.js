@@ -362,11 +362,11 @@ class Boss5 extends Boss {
 
     // ── Option C: Pre-death stagger ──────────────────────────────────────────
 
-    takeDamage(amount) {
+    takeDamage(amount, source) {
         // Block all damage during stagger phase
         if (this.model.staggering) return { died: false, actualApplied: 0 };
 
-        const result = super.takeDamage(amount);
+        const result = super.takeDamage(amount, source);
         if (!result) return { died: false, actualApplied: 0 };
 
         if (result.died && !this.model.staggerPhaseComplete) {
@@ -436,8 +436,13 @@ class Boss5 extends Boss {
             targets.forEach(t => helper.clearTint(t));
 
             m.staggering = false;
-            m.invincible = false;
             m.staggerPhaseComplete = true;
+
+            // If the tower died during the stagger (onTowerDied made us invincible) or the boss was
+            // already cleared, don't finish the kill: the run is lost and the level isn't credited.
+            const towerDead = typeof tower !== 'undefined' && !tower.isAlive();
+            if (towerDead || !m.alive || gameStateMachine.getPhase() !== GAME_CONSTANTS.PHASE_COMBAT) return;
+            m.invincible = false;
 
             // Force lethal damage to trigger the real death sequence
             if (typeof enemyManager !== 'undefined') {

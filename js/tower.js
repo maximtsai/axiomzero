@@ -71,7 +71,6 @@ class TowerModel {
         } else {
             this.attackRange = 0;
         }
-        const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.4 * regenLv; // baseDecay commented out per request
         this.armor = armorLv; // 1 flat damage reduction per level
@@ -1060,12 +1059,7 @@ const tower = (() => {
                 zoomShake(1.015);
 
                 // Hitstop effect — slow down world logic for 300ms real-time
-                setTimeout(() => {
-                    PhaserScene.time.timeScale = 0.25;
-                    PhaserScene.time.delayedCall(300, () => {
-                        PhaserScene.time.timeScale = 1.0;
-                    });
-                }, 40);
+                setTimeout(() => timeManager.slowFor(300, 0.25), 40);
             }
 
             if (x !== undefined && y !== undefined) {

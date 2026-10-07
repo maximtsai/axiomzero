@@ -26,10 +26,15 @@ const nodeAnims = {
     playMaxedAnimation: (node) => {
         if (!node.btn || node.isDuoBox) return;
 
-        const baseScaleX = node.btn.scaleX;
-        const baseScaleY = node.btn.scaleY;
-
         const targets = [node.btn, node.iconSprite, node.fadeoutSprite].filter(Boolean);
+
+        // Settle at the tree's zoom scale, not the current scale: a hover jiggle still running
+        // from the previous click would otherwise become the node's permanent size.
+        PhaserScene.tweens.killTweensOf(targets);
+        const dragGroup = upgradeTree.getDraggableGroup && upgradeTree.getDraggableGroup();
+        const restScale = (dragGroup && dragGroup.getScale()) || 1;
+        const baseScaleX = restScale;
+        const baseScaleY = restScale;
 
         targets.forEach(t => { t.setScale(baseScaleX, baseScaleY) });
         PhaserScene.tweens.add({

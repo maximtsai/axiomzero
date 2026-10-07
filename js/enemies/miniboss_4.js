@@ -131,7 +131,6 @@ class Miniboss4 extends Miniboss {
 
     activate(x, y) {
         const m = this.model;
-        const v = this.view;
 
         // Intended: Minibosses/Bosses do not scale with level progression
         m.maxHealth = MB4.HEALTH * (m.multiplier || 1);

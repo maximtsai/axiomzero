@@ -9,7 +9,6 @@
 const enemyManager = (() => {
     const POOL_SIZE = 80;
     const BOSS_DESTROY_DELAY = 6000; // ms after a boss/miniboss is removed before its view is destroyed
-    const MINIBOSS_POOL_SIZE = 2;
     const CLUMP_AVOIDANCE_RADIUS = 0.6;
 
     let pools = {};         // key: type, value: ObjectPool
@@ -511,7 +510,6 @@ const enemyManager = (() => {
             if (valid && rules.avoidActiveTypes && rules.minSeparation) {
                 for (let t = 0; t < rules.avoidActiveTypes.length; t++) {
                     const typeToAvoid = rules.avoidActiveTypes[t];
-                    const minSep2 = rules.minSeparation * rules.minSeparation;
 
                     for (let i = 0; i < activeEnemies.length; i++) {
                         const target = activeEnemies[i];
@@ -766,8 +764,10 @@ const enemyManager = (() => {
             if (enemy.model.type === 'test') {
                 testEnemyCount = Math.max(0, testEnemyCount - 1);
                 if (testEnemyCount <= 0 && typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-                    const bombArmed = (typeof pulseAttack !== 'undefined' && pulseAttack.getModel().bombArmed);
-                    if (!bombArmed) {
+                    // A bomb mid-explosion (fired: armed is already false) ends the test itself when it finishes
+                    const bombModel = (typeof pulseAttack !== 'undefined') ? pulseAttack.getModel() : null;
+                    const bombBusy = !!bombModel && (bombModel.bombArmed || bombModel.bombFired);
+                    if (!bombBusy) {
                         GAME_VARS.testingDefenses = false;
                         messageBus.publish('testingDefensesEnded');
                     }
@@ -821,8 +821,7 @@ const enemyManager = (() => {
             }
 
             // Cinematic time slow on boss death (90% reduction)
-            timeManager.applyTimeScale(0.1);
-            timeManager.tweenTimeScale(1, 200);
+            timeManager.slowRamp(0.1, 200);
 
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
@@ -1026,53 +1025,51 @@ const enemyManager = (() => {
 
             const prevLen = activeEnemies.length;
 
-            if (true) {
-                const dx = e.model.x - tPos.x;
-                const dy = e.model.y - tPos.y;
-                const distSq = dx * dx + dy * dy;
+            const dx = e.model.x - tPos.x;
+            const dy = e.model.y - tPos.y;
+            const distSq = dx * dx + dy * dy;
 
-                const attackDistR2 = e.model.contactR2 || 2025;
+            const attackDistR2 = e.model.contactR2 || 2025;
 
-                if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
-                    // const shieldReach = 58;
-                    const shieldReachSq = 3364; // 58*58
+            if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
+                // const shieldReach = 58;
+                const shieldReachSq = 3364; // 58*58
 
-                    if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
-                        combatShield.takeDamage(e.model.damage);
+                if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
+                    combatShield.takeDamage(e.model.damage);
 
-                        if (e.model.selfDamage > 0 && e.model.type !== 'shooter' && e.model.type !== 'sniper') {
-                            damageEnemy(e, e.model.selfDamage);
-                        }
+                    if (e.model.selfDamage > 0 && e.model.type !== 'shooter' && e.model.type !== 'sniper') {
+                        damageEnemy(e, e.model.selfDamage);
+                    }
 
-                        if (!e.model.isBoss && !e.model.isMiniboss) {
-                            e.model.pushback = 120;
-                        }
+                    if (!e.model.isBoss && !e.model.isMiniboss) {
+                        e.model.pushback = 120;
+                    }
 
-                        e.model.attackTimer = e.model.attackCooldown;
+                    e.model.attackTimer = e.model.attackCooldown;
 
-                        if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
-                            continue;
-                        }
-                        i++;
+                    if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
                         continue;
                     }
+                    i++;
+                    continue;
                 }
+            }
 
-                if (distSq < attackDistR2) {
-                    e.model.isAttacking = true;
+            if (distSq < attackDistR2) {
+                e.model.isAttacking = true;
 
-                    if (e.model.attackTimer <= 0 && e.model.damage > 0) {
-                        const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
-                        e.model.attackTimer = e.model.attackCooldown;
+                if (e.model.attackTimer <= 0 && e.model.damage > 0) {
+                    const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
+                    e.model.attackTimer = e.model.attackCooldown;
 
-                        if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
-                            _killEnemy(e);
-                        }
+                    if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
+                        _killEnemy(e);
                     }
-                    if (activeEnemies.length === 0) break;
-                } else {
-                    e.model.isAttacking = false;
                 }
+                if (activeEnemies.length === 0) break;
+            } else {
+                e.model.isAttacking = false;
             }
 
             if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {

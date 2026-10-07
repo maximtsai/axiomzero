@@ -4,7 +4,6 @@
  */
 const treeLineManager = (() => {
     let lines = [];
-    let treeGroupRef = null;
     let draggableGroupRef = null;
     let nodesRef = null;
 
@@ -25,7 +24,6 @@ const treeLineManager = (() => {
             lines = [];
         }
 
-        treeGroupRef = config.treeGroup;
         draggableGroupRef = config.draggableGroup;
         nodesRef = config.nodes;
     }

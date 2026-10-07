@@ -284,8 +284,8 @@ class Miniboss1 extends Miniboss {
 
     // ── Damage ────────────────────────────────────────────────────────────────
 
-    takeDamage(amount) {
-        return super.takeDamage(amount);
+    takeDamage(amount, source) {
+        return super.takeDamage(amount, source); // pass source: Data Mining / Memory Leak read it
     }
 
     // ── Knockback override ────────────────────────────────────────────────────

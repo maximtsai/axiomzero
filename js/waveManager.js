@@ -137,8 +137,7 @@ const waveManager = (() => {
         });
 
         // Brief slow-mo for impact
-        PhaserScene.time.timeScale = 0.2;
-        setTimeout(() => { PhaserScene.time.timeScale = 1.0; }, 200);
+        timeManager.slowFor(200, 0.2);
 
         // ── Floating "BACKUP SERVER" text ──
         const cx = GAME_CONSTANTS.halfWidth;

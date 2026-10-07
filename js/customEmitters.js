@@ -786,7 +786,7 @@ const customEmitters = (() => {
             main.setVisible(false);
             bright.setVisible(false);
             red.setVisible(false);
-            timeManager.applyTimeScale(0.15, false); // Less extreme slow-down
+            const exploderSlow = timeManager.beginSlow(0.15, false); // Less extreme slow-down
             PhaserScene.time.delayedCall(5, () => {
                 PhaserScene.cameras.main.setZoom(1.005);
                 black.setVisible(false);
@@ -816,7 +816,7 @@ const customEmitters = (() => {
                     PhaserScene.time.delayedCall(8, () => {
                         // 3. Resume and Detonate (The 'Pop')
                         black.setVisible(false);
-                        timeManager.applyTimeScale(1.0);
+                        timeManager.endSlow(exploderSlow);
 
                         main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.1);
                         bright.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.12);

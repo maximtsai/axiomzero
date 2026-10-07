@@ -274,6 +274,7 @@ window.TRANSLATIONS.en = {
         import_data: '[ IMPORT SAVE ]',
         export_success: 'Save string copied to clipboard!',
         export_fail: 'Failed to export save.',
+        export_downloaded: 'Clipboard unavailable: save downloaded as a file.',
         import_prompt: 'Paste your save string here:',
         import_success: 'Save imported successfully! Reloading...',
         import_fail: 'Failed to import save: {0}',

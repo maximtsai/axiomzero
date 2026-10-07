@@ -149,7 +149,6 @@ const towerStatsUI = (() => {
     }
 
     function _getStats() {
-        const ups = gameState.upgrades || {};
 
         const hp = tower.getHealth();
         const damage = tower.getDamage();

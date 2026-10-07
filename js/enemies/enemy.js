@@ -70,6 +70,7 @@ class EnemyModel {
     }
 
     activate(x, y, config = {}) {
+        this.spawnSerial = ++EnemyModel.spawnCounter; // distinguishes a pooled enemy's lives
         this.x = x;
         this.y = y;
         this.alive = true;
@@ -370,6 +371,8 @@ class EnemyModel {
 
 // ─── VIEW ────────────────────────────────────────────────────────────────────
 
+EnemyModel.spawnCounter = 0;
+
 class EnemyView {
     /**
      * @param {string} texKey     Atlas texture key (e.g. 'enemies')
@@ -577,6 +580,8 @@ class EnemyView {
 
 // ─── CONTROLLER ──────────────────────────────────────────────────────────────
 
+const MAX_DATA_DROPS_PER_HIT = 25; // Memory Leak / Data Mining pickups from a single boss hit
+
 class Enemy {
     constructor() {
         // Subclasses MUST set this.model and this.view in their constructors.
@@ -647,12 +652,15 @@ class Enemy {
 
     takeDamage(amount, source = 'other') {
         const result = this.model.takeDamage(amount);
+        // Drop counts below use the damage actually dealt (no overkill) and are capped per hit:
+        // one huge hit used to spawn tens of thousands of pickups and freeze the game.
+        const dealt = (result && result.actualApplied !== undefined) ? result.actualApplied : amount;
 
         // MEMORY LEAK logic: Bosses drop data on cursor hit
         if (source === 'cursor' && this.model.isBoss) {
             const memoryLeakLevel = (gameState.upgrades && gameState.upgrades.memory_leak) || 0;
             if (memoryLeakLevel > 0) {
-                const dataToDrop = 1 + Math.floor(amount * 0.1);
+                const dataToDrop = Math.min(MAX_DATA_DROPS_PER_HIT, 1 + Math.floor(dealt * 0.1));
                 for (let i = 0; i < dataToDrop; i++) {
                     const angle = Math.random() * Math.PI * 2;
                     const dist = 5 + Math.random() * 45;
@@ -665,9 +673,9 @@ class Enemy {
         if (source === 'tower' && this.model.isBoss) {
             const dataMiningLevel = (gameState.upgrades && gameState.upgrades.data_mining) || 0;
             if (dataMiningLevel > 0) {
-                const total = (amount * 0.2) + (this.model.dataMiningAccumulator || 0);
-                const dataToDrop = Math.floor(total);
-                this.model.dataMiningAccumulator = total - dataToDrop;
+                const total = (dealt * 0.2) + (this.model.dataMiningAccumulator || 0);
+                const dataToDrop = Math.min(MAX_DATA_DROPS_PER_HIT, Math.floor(total));
+                this.model.dataMiningAccumulator = total - Math.floor(total);
 
                 for (let i = 0; i < dataToDrop; i++) {
                     const angle = Math.random() * Math.PI * 2;
@@ -731,7 +739,7 @@ class Enemy {
     }
 
     stun(duration) {
-        if (this.isBoss) return;
+        if (this.model.isBoss) return;
         this.model.stunned = true;
         PhaserScene.time.delayedCall(duration, () => {
             this.model.stunned = false;
@@ -744,7 +752,8 @@ class Enemy {
 
     forceSlow(mult, duration) {
         this.model.forceSlowMult = mult;
-        const finalDuration = (this.isBoss || this.isMiniboss) ? duration * 0.66 : duration;
+        // isBoss/isMiniboss live on the model; the controller never had them, so this never applied
+        const finalDuration = (this.model.isBoss || this.model.isMiniboss) ? duration * 0.66 : duration;
         this.model.forceSlowTimer = finalDuration;
     }
 

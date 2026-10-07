@@ -329,7 +329,6 @@ class Node {
         } else if (this.isDuoBox) {
             // Duo-box special state logic
             const tierPurchased = this._isDuoTierPurchased();
-            const activeShard = gameState.activeShards[this.duoBoxTier];
 
             if (!this.isRequirementsMet()) {
                 // Parent not bought yet — Duo inner nodes stay HIDDEN until unlocked
@@ -1092,7 +1091,6 @@ class Node {
             return;
         }
 
-        const wasVisible = this.duoBackingSprite.visible;
         this.duoBackingSprite.setVisible(true);
 
         // Only pulse if it's the very first time this backing is being revealed logically
@@ -1418,7 +1416,6 @@ de the current viewport to save draw calls.
     updateVisibility() {
         if (!this.btn || this.state === NODE_STATE.HIDDEN) return;
 
-        const group = upgradeTree.getDraggableGroup();
         const screenX = this.btn.x;
         const screenY = this.btn.y;
 

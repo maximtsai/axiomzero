@@ -169,9 +169,6 @@ const shockwaveAttack = (() => {
         let validHits = [];
         for (let i = 0; i < hits.length; i++) {
             const e = hits[i];
-            const dx = e.model.x - pos.x;
-            const dy = e.model.y - pos.y;
-            const distSq = dx * dx + dy * dy;
 
             if (e.checkCollision(pos.x, pos.y, 1.0, model.radius, 15)) {
                 validHits.push(e);

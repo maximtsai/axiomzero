@@ -330,7 +330,7 @@ const iterationOverScreen = (() => {
 
         // Safety: Ensure time scale is restored to 1.0 when showing results
         if (typeof timeManager !== 'undefined') {
-            timeManager.applyTimeScale(1.0);
+            timeManager.clearSlows();
         }
 
         const sessionData = resourceManager.getSessionData();

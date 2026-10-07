@@ -368,22 +368,17 @@ const nodeTooltip = (() => {
 
             let bgPixel = node.canAfford() ? 'dark_teal_pixel.png' : 'dark_red_pixel.png';
 
-            let iconStr, currentRes;
+            let currentRes;
             if (node.costType === 'shard') {
-                iconStr = '♦';
                 currentRes = resourceManager.getShards();
                 bgPixel = 'light_red_pixel.png';
             } else if (node.costType === 'insight') {
-                iconStr = '◐';
                 currentRes = resourceManager.getInsight();
             } else if (node.costType === 'coin') {
-                iconStr = 'ⓒ';
                 currentRes = resourceManager.getCoins();
             } else if (node.costType === 'processor') {
-                iconStr = '■';
                 currentRes = resourceManager.getProcessors();
             } else {
-                iconStr = '◈';
                 currentRes = resourceManager.getData();
             }
             if (isPurchaseRefresh && purchaseCost > 0) {

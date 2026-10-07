@@ -4,7 +4,6 @@
 
 const upgradeTree = (() => {
     // Panel container position (the left half slides on/off)
-    let panelX = 0;
 
     // All Node instances keyed by id
     const nodes = {};
@@ -369,7 +368,15 @@ const upgradeTree = (() => {
 
             dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
             if (dragDistanceTotal > 30) {
-                if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) nodeTooltip.hide();
+                if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) {
+                    nodeTooltip.hide();
+                    // Clear the tap selection with it (mobile): hiding only the tooltip left the
+                    // select highlight on the last tapped node
+                    if (typeof Node !== 'undefined') {
+                        Node.touchedNode = null;
+                        Node._updateSelectIndicator(null);
+                    }
+                }
                 if (typeof buttonManager !== 'undefined') buttonManager.cancelClick();
             }
 
@@ -473,7 +480,7 @@ const upgradeTree = (() => {
             node.create(TREE_X_OFFSET, 0); // offset handled by treeX/treeY in defs
 
             // Restore revelation/unlock flags
-            if (gameState.revealedNodes && gameState.revealedNodes[def.id]) {
+            if (gameState.revealedNodes && gameState.revealedNodes[def.id] === true) {
                 node.revealedManually = true;
             }
             if (gameState.unlockedNodes && gameState.unlockedNodes[def.id]) {
@@ -655,7 +662,6 @@ const upgradeTree = (() => {
         fullUpgradeView = true;
         slideRightBtn.setState(DISABLE);
         const targetX = GAME_CONSTANTS.WIDTH * 0.5;
-        const targetXHalf = GAME_CONSTANTS.WIDTH * 0.25;
 
         helper.createGlobalClickBlocker(false);
         cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, customDuration, 'Cubic.easeOut');
@@ -746,7 +752,6 @@ const upgradeTree = (() => {
         // _fullViewReturnOffset = 0;
         slideLeftBtn.setState(DISABLE);
         const targetX = 0;
-        const targetXHalf = 0;
 
         _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
         helper.createGlobalClickBlocker(false);
@@ -1034,7 +1039,7 @@ const upgradeTree = (() => {
         if (hintPulseTimer) return;
 
         const check = () => {
-            if (!visible) return;
+            if (!visible || helper.isGlobalBlockerActive()) return; // not behind level select / popups
             const shardCount = resourceManager.getShards();
             if (shardCount <= 0) return;
 
@@ -1600,7 +1605,8 @@ const upgradeTree = (() => {
         gameState.isFirstLaunch = false;
 
         _stopDeployHint();
-        _stopHintTimer();
+        // The duo hint timer keeps running: backing out of level select returns to the tree,
+        // and leaving the upgrade phase stops it (_onPhaseChanged).
 
         // If high level boss defeated, show level selector
         if ((gameState.levelsDefeated || 0) >= 1) {
@@ -1882,7 +1888,8 @@ const upgradeTree = (() => {
     function revealNode(id, revealedManually = true) {
         if (!nodes[id]) return false;
         if (!gameState.revealedNodes) gameState.revealedNodes = {};
-        gameState.revealedNodes[id] = true;
+        // true = manual reveal; 'passive' = revealed without the manual flag (restored the same way on load)
+        gameState.revealedNodes[id] = revealedManually ? true : 'passive';
         nodes[id].revealedManually = revealedManually;
         nodes[id].refreshState();
         nodes[id].playRevealAnimation();
@@ -1913,7 +1920,6 @@ const upgradeTree = (() => {
     function onEnterUpgradePhase(duration) {
         let treeTargetX = 0;
         let maskTargetX = 0;
-        let maskScaleX = 1;
         let panelW = 830;
         let panelX = -6;
         let deployX = deployBtnInitialX;
@@ -1921,7 +1927,6 @@ const upgradeTree = (() => {
         if (fullUpgradeView) {
             treeTargetX = GAME_CONSTANTS.WIDTH * 0.5;
             maskTargetX = GAME_CONSTANTS.WIDTH * 0.25;
-            maskScaleX = 1.98;
             panelW = 1612;
             deployX = deployBtnInitialX + 782;
             _updateNodesHitArea(GAME_CONSTANTS.WIDTH);

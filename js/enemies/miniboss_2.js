@@ -328,8 +328,8 @@ class Miniboss2 extends Miniboss {
 
     // ── Damage & Knockback ────────────────────────────────────────────────────
 
-    takeDamage(amount) {
-        return super.takeDamage(amount);
+    takeDamage(amount, source) {
+        return super.takeDamage(amount, source); // pass source: Data Mining / Memory Leak read it
     }
 
     applyKnockback(dirX, dirY, distance) {

@@ -227,15 +227,24 @@ const lightningAttack = (() => {
         }
     }
 
+    /** True if the enemy is inside the visible play area (lightning doesn't strike off-screen). */
+    function _isOnScreen(e) {
+        const m = e.model;
+        return m.x >= 0 && m.x <= GAME_CONSTANTS.WIDTH && m.y >= 0 && m.y <= GAME_CONSTANTS.HEIGHT;
+    }
+
+    /** @returns {boolean} True if a bolt was fired. */
     function _fire() {
         const pos = tower.getPosition();
-        if (!pos) return;
+        if (!pos) return false;
 
-        // Find nearest enemy to the tower
-        const first = enemyManager.getNearestEnemy(pos.x, pos.y, 9999);
-        if (!first) return false;
+        // Find nearest enemy to the tower; nothing on screen → hold the charge
+        const first = enemyManager.getNearestEnemy(pos.x, pos.y, GAME_CONSTANTS.WIDTH);
+        if (!first || !_isOnScreen(first)) return false;
 
-        const hitEnemies = [first];
+        // Hits are recorded with the enemy's spawn serial: a pooled enemy that died and
+        // respawned within the chain delay is a different target, not the one we hit.
+        const hitEnemies = [{ e: first, serial: first.model.spawnSerial }];
         view.drawBolt(pos.x, pos.y, first.model.x, first.model.y);
 
         let actualDamage = model.damage;
@@ -254,21 +263,23 @@ const lightningAttack = (() => {
             sound.detune = Phaser.Math.Between(-150, 80);
         }
 
-        // Start dynamic chain sequence
+        // Start dynamic chain sequence (position and serial captured now, not when the step runs)
         if (model.chainCount > 1) {
+            const fx = first.model.x, fy = first.model.y, serial = first.model.spawnSerial;
             PhaserScene.time.delayedCall(100, () => {
-                _chainStep(first, first.model.x, first.model.y, hitEnemies, 1);
+                _chainStep(first, serial, fx, fy, hitEnemies, 1);
             });
         }
         return true;
     }
 
-    function _chainStep(lastHit, fromX, fromY, hitEnemies, currentChain) {
-        if (!tower.isAlive()) return;
+    function _chainStep(lastHit, lastSerial, fromX, fromY, hitEnemies, currentChain) {
+        if (!tower.isAlive() || model.paused) return;
 
-        // Track the enemy if still alive/active, otherwise gracefully jump from its death coordinates
-        const originX = (lastHit && lastHit.model && lastHit.model.alive) ? lastHit.model.x : fromX;
-        const originY = (lastHit && lastHit.model && lastHit.model.alive) ? lastHit.model.y : fromY;
+        // Track the enemy if it's still the same live enemy, otherwise jump from where it was hit
+        const sameLife = lastHit && lastHit.model && lastHit.model.alive && lastHit.model.spawnSerial === lastSerial;
+        const originX = sameLife ? lastHit.model.x : fromX;
+        const originY = sameLife ? lastHit.model.y : fromY;
         const lastHitSize = (lastHit && lastHit.model) ? (lastHit.model.size || 15) : 15;
 
         let bestDist = model.CHAIN_RANGE;
@@ -284,7 +295,7 @@ const lightningAttack = (() => {
             // Skip already hit enemies to ensure we don't double-chain
             let alreadyHit = false;
             for (let j = 0; j < hitEnemies.length; j++) {
-                if (hitEnemies[j] === e) { alreadyHit = true; break; }
+                if (hitEnemies[j].e === e && hitEnemies[j].serial === e.model.spawnSerial) { alreadyHit = true; break; }
             }
             if (alreadyHit) continue;
 
@@ -324,12 +335,14 @@ const lightningAttack = (() => {
             }
         }
 
-        hitEnemies.push(bestEnemy);
+        const serial = bestEnemy.model.spawnSerial;
+        hitEnemies.push({ e: bestEnemy, serial });
 
         // Schedule next chain step dynamically
         if (currentChain + 1 < model.chainCount) {
+            const bx = bestEnemy.model.x, by = bestEnemy.model.y;
             PhaserScene.time.delayedCall(85, () => {
-                _chainStep(bestEnemy, bestEnemy.model.x, bestEnemy.model.y, hitEnemies, currentChain + 1);
+                _chainStep(bestEnemy, serial, bx, by, hitEnemies, currentChain + 1);
             });
         }
     }

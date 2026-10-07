@@ -129,9 +129,7 @@ const cinematicManager = (() => {
 
         // Slow down game speed by 70% (timeScale 0.3)
         // We set applyToTweens to false so the cinematic tweens themselves aren't slowed
-        if (typeof timeManager !== 'undefined') {
-            timeManager.applyTimeScale(0.3, false);
-        }
+        const scanSlow = (typeof timeManager !== 'undefined') ? timeManager.beginSlow(0.3, false) : null;
 
         // Block input
         if (typeof buttonManager !== 'undefined') buttonManager.setBlocked(true);
@@ -156,7 +154,7 @@ const cinematicManager = (() => {
                     onComplete: () => {
                         // Restore time scale
                         if (typeof timeManager !== 'undefined') {
-                            timeManager.applyTimeScale(1, true);
+                            timeManager.endSlow(scanSlow);
                         }
                         // Keep it visible for a moment
                         PhaserScene.time.delayedCall(100, () => {

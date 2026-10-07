@@ -346,6 +346,11 @@ const scytheAttack = (() => {
             model.active = true;
             model.resetTimer();
         } else {
+            if (swingTimer) {
+                swingTimer.remove(false);
+                swingTimer = null;
+            }
+            model.isSwinging = false;
             model.active = false;
             view.hide();
         }

@@ -21,7 +21,6 @@ const gameHUD = (() => {
     let isFarming = false;
     let bombCanCancel = false;
     let bombPulseIndicator = null;
-    let bombPulseTimer = null;
     const SCREEN_EDGE_MARGIN = 8;
 
     // Layout & Depth Configuration
@@ -422,9 +421,6 @@ const gameHUD = (() => {
         else _hideAll();
     }
 
-    let _hudPosTween = null;
-    let _hudOffsetX = 0;
-    let _hudOffsetY = 0;
 
     function _onHealthChanged(current, max) {
         if (healthBar) healthBar.update(current, max);

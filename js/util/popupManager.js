@@ -83,7 +83,7 @@ function _buildPopup({ createBG, boxWidth, title = '', body = '', buttons = [], 
         ref: 'black_pixel.png', atlas: 'buttons', scaleX: GAME_CONSTANTS.WIDTH, scaleY: GAME_CONSTANTS.HEIGHT,
         depth, targetAlpha: 0.75, duration: fast ? 1 : 60,
     });
-    const blocker = _createFullscreenBlocker(depth);
+    _createFullscreenBlocker(depth);
 
     // Popup background (delegated to caller)
     const popupBG = createBG(W, H, depth, fast);

@@ -228,13 +228,11 @@ const announcementManager = (() => {
             if (!targets[0].ref.scene) return;
 
             // 1. Initial Jitter & Flicker
-            let jitterCount = 0;
             const jitterTotal = 8;
-            const jitterEvent = PhaserScene.time.addEvent({
+            PhaserScene.time.addEvent({
                 delay: 35,
                 repeat: jitterTotal - 1,
                 callback: () => {
-                    jitterCount++;
                     const ox = (Math.random() - 0.5) * 12;
                     const oy = (Math.random() - 0.5) * 6;
                     const flickAlpha = 0.5 + Math.random() * 0.5;

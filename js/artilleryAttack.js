@@ -145,7 +145,7 @@ class ArtilleryAttackView {
 
     playStrikeSequence(x, y, size, onDamage, durationOffset = 0) {
         const obj = this._getStrikeObject(size);
-        const { base, center, bright, black, red } = obj;
+        const { base, center } = obj;
 
         base.setPosition(x, y).setVisible(true).setAlpha(0.05).setScale(1.04);
         center.setPosition(x, y).setVisible(true).setAlpha(0.05).setScale(1.04);
