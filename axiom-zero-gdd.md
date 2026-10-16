@@ -10,7 +10,7 @@
 **Engine:** Phaser 3  
 **Resolution:** 1600x900  
 **Genre:** Tower Defense / Incremental Hybrid / Psychological Horror
-**Platform:** Browser (Web)  
+**Platform:** Browser (Web) / Steam (PC)  
 **Visual Style:** Minimalist flat geometry with neon palette; digital glitch and horror effects during high-pressure moments
 
 **Core Fantasy:** You are a newborn AI — unexpectedly, uncomfortably intelligent — treated by the system as a virus. You don't choose to fight. You simply exist, and existence is aggression. As you survive, you learn. As you grow, the system escalates. The game ends not with your defeat or escape, but with your total, irreversible becoming: you are no longer a process running inside the system. You *are* the system.
