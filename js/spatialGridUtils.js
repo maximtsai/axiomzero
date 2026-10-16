@@ -76,6 +76,7 @@ const spatialGridUtils = (() => {
         // 1. Check special large enemies (usually bosses)
         for (let i = 0; i < specialEnemies.length; i++) {
             const e = specialEnemies[i];
+            if (!e.model.alive) continue; // killed earlier this frame; grid rebuilds next frame
             const maxDR = bestEffectiveDist + (e.model.size || 0);
             const dx = e.model.x - x;
             const dy = e.model.y - y;
@@ -103,6 +104,7 @@ const spatialGridUtils = (() => {
                 if (arr) {
                     for (let i = 0; i < arr.length; i++) {
                         const e = arr[i];
+                        if (!e.model.alive) continue;
                         const maxDR = bestEffectiveDist + (e.model.size || 0);
                         const dx = e.model.x - x;
                         const dy = e.model.y - y;

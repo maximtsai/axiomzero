@@ -39,7 +39,7 @@ const achievementManager = (() => {
         gameState.achievements[achievementId] = true;
         
         // Log internally (can be hooked to Steam API later)
-        console.log(`%c ACHIEVEMENT UNLOCKED: ${achievementId} `, 'background: #222; color: #bada55; font-weight: bold;');
+        debugLog(`%c ACHIEVEMENT UNLOCKED: ${achievementId} `, 'background: #222; color: #bada55; font-weight: bold;');
         
         // Persist the unlock immediately
         saveGame();

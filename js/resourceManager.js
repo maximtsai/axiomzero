@@ -9,6 +9,7 @@ const resourceManager = (() => {
     const FLY_COLLECT_DIST = 20;   // Manhattan distance (px) — no sqrt needed
 
     let dropPool = [];
+    let processorPool = null;
     let activeDrops = [];   // resting drops waiting for cursor proximity
     let flyingDrops = [];   // drops currently flying toward cursor
     let collectFXPool = null;
@@ -401,7 +402,7 @@ const resourceManager = (() => {
         activeDrops.length = 0;
 
         if (missedDataCount > 60) {
-            console.log(`[RESOURCE] Missed a lot of data: ${missedDataCount} units lost.`);
+            debugLog(`[RESOURCE] Missed a lot of data: ${missedDataCount} units lost.`);
         }
     }
 
@@ -469,7 +470,6 @@ const resourceManager = (() => {
 
     // ── per-frame ────────────────────────────────────────────────────────────
 
-    let frameCounter = 0;
     function _update(delta) {
         if (paused) return;
 
@@ -505,7 +505,6 @@ const resourceManager = (() => {
 
         if (activeDrops.length === 0 && flyingDrops.length === 0) return;
 
-        frameCounter++;
         const dt = delta / 1000;
         const cx = GAME_VARS.mouseposx;
         const cy = GAME_VARS.mouseposy;

@@ -183,12 +183,18 @@ class Hijack {
         this._recheck(0);
     }
 
+    // Pool membership (inPool) is owned by hijackManager._releaseToPool; setting it here
+    // made every exploded missile skip pool.release, so the pool kept allocating new ones.
     deactivate() {
         this.active = false;
-        this.inPool = true;
         this.img.setVisible(false);
         this.img.setActive(false);
         this.target = null;
+    }
+
+    destroy() {
+        if (this.img) this.img.destroy();
+        this.img = null;
     }
 
     update(delta) {

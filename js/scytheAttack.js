@@ -160,7 +160,7 @@ const scytheAttack = (() => {
         // Optimization: Only scan enemies within search range using spatial grid
         const enemies = enemyManager.getEnemiesInRange(pos.x, pos.y, model.SEARCH_RANGE);
         if (!enemies || enemies.length === 0) {
-            model.fireTimer = 0; // Skip and try again next full cooldown
+            model.fireTimer = model.FIRE_INTERVAL - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS; // stay (almost) charged; retry in 0.1s
             return;
         }
 
@@ -248,8 +248,8 @@ const scytheAttack = (() => {
             model.fireTimer -= model.FIRE_INTERVAL;
             _fireSequence(nearestMissAngle, pos);
         } else {
-            // No enemies within 400 units: Skip and reset timer
-            model.fireTimer = 0;
+            // No enemies within 400 units: stay charged and retry next frame
+            model.fireTimer = model.FIRE_INTERVAL - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS;
         }
     }
 
@@ -346,6 +346,11 @@ const scytheAttack = (() => {
             model.active = true;
             model.resetTimer();
         } else {
+            if (swingTimer) {
+                swingTimer.remove(false);
+                swingTimer = null;
+            }
+            model.isSwinging = false;
             model.active = false;
             view.hide();
         }

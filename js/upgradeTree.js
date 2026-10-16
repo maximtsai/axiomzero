@@ -4,7 +4,6 @@
 
 const upgradeTree = (() => {
     // Panel container position (the left half slides on/off)
-    let panelX = 0;
 
     // All Node instances keyed by id
     const nodes = {};
@@ -58,6 +57,7 @@ const upgradeTree = (() => {
     let awakenHintTimer = null;
     let lastCoordX = -1;
     let lastCoordY = -1;
+    let coordText = null;
     let lastHoverLabel = "";
     let _currencyDirty = false;
     let _currencyCooldown = 0;
@@ -124,7 +124,7 @@ const upgradeTree = (() => {
         PhaserScene.time.delayedCall(0, () => {
             if (treeMaskContainer) {
                 treeMaskContainer.sort('depth');
-                console.log("depth sorted tree lines all (delayed) ======");
+                debugLog("depth sorted tree lines all (delayed) ======");
             }
         });
 
@@ -143,6 +143,8 @@ const upgradeTree = (() => {
         // Zoom Input Logic (Scroll Wheel)
         PhaserScene.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
             if (!visible || !draggableGroup) return;
+            // A popup, dialog or transition owns input; don't zoom the tree behind it
+            if (helper.isInputBlocked()) return;
 
             // Only zoom if pointer is within bounds. In full view, bounds is the whole screen.
             if (!fullUpgradeView && pointer.x > PANEL_W) return;
@@ -348,7 +350,7 @@ const upgradeTree = (() => {
             if (hoveredBtn && hoveredBtn.getDepth() > 10000) return;
 
             if (typeof treePopups !== 'undefined' && treePopups.isAnyPopupVisible()) return;
-            if (helper.isGlobalBlockerActive()) return;
+            if (helper.isInputBlocked()) return;
 
             isDraggingTree = true;
             dragDistanceTotal = 0;
@@ -366,7 +368,15 @@ const upgradeTree = (() => {
 
             dragDistanceTotal += Math.abs(dx) + Math.abs(dy);
             if (dragDistanceTotal > 30) {
-                if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) nodeTooltip.hide();
+                if (typeof nodeTooltip !== 'undefined' && nodeTooltip.isVisible()) {
+                    nodeTooltip.hide();
+                    // Clear the tap selection with it (mobile): hiding only the tooltip left the
+                    // select highlight on the last tapped node
+                    if (typeof Node !== 'undefined') {
+                        Node.touchedNode = null;
+                        Node._updateSelectIndicator(null);
+                    }
+                }
                 if (typeof buttonManager !== 'undefined') buttonManager.cancelClick();
             }
 
@@ -470,7 +480,7 @@ const upgradeTree = (() => {
             node.create(TREE_X_OFFSET, 0); // offset handled by treeX/treeY in defs
 
             // Restore revelation/unlock flags
-            if (gameState.revealedNodes && gameState.revealedNodes[def.id]) {
+            if (gameState.revealedNodes && gameState.revealedNodes[def.id] === true) {
                 node.revealedManually = true;
             }
             if (gameState.unlockedNodes && gameState.unlockedNodes[def.id]) {
@@ -521,7 +531,7 @@ const upgradeTree = (() => {
     }
 
     function _refreshAllNodes() {
-        console.log("refresh all nodes");
+        debugLog("refresh all nodes");
         // Refresh every node in the tree. refreshState() is recursive, which handles
         // downstream propagation, but iterating through all nodes ensures that isolated 
         // branches or nodes with custom revelation logic are always caught.
@@ -529,25 +539,6 @@ const upgradeTree = (() => {
             nodes[id].setVisible(true);
             nodes[id].refreshState();
         }
-    }
-
-    function _revealChildren(parentId) {
-        const parent = nodes[parentId];
-        if (!parent) return;
-        for (let i = 0; i < parent.childIds.length; i++) {
-            const childId = parent.childIds[i];
-            const child = nodes[childId];
-            if (child) {
-                const oldState = child.state;
-                child.refreshState();
-
-                if (oldState === NODE_STATE.GHOST && child.state === NODE_STATE.UNLOCKED) {
-                    treeLineManager.shakeLine(parentId, childId);
-                }
-            }
-        }
-        // Redraw lines to reflect new child states
-        treeLineManager.updateLines();
     }
 
     function _createDeployButton() {
@@ -570,7 +561,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfx = audio.play('click', 0.95);
                 if (sfx) sfx.detune = Phaser.Math.Between(-50, 50);
-                setHoverLabel("BEGIN WAVE");
+                setHoverLabel(t('hover', 'begin_wave'));
                 if (deployBtnGlow) deployBtnGlow.setAlpha(1);
             },
             onHoverOut: () => {
@@ -671,7 +662,6 @@ const upgradeTree = (() => {
         fullUpgradeView = true;
         slideRightBtn.setState(DISABLE);
         const targetX = GAME_CONSTANTS.WIDTH * 0.5;
-        const targetXHalf = GAME_CONSTANTS.WIDTH * 0.25;
 
         helper.createGlobalClickBlocker(false);
         cameraManager.slideTo(-GAME_CONSTANTS.WIDTH * 0.75, customDuration, 'Cubic.easeOut');
@@ -762,7 +752,6 @@ const upgradeTree = (() => {
         // _fullViewReturnOffset = 0;
         slideLeftBtn.setState(DISABLE);
         const targetX = 0;
-        const targetXHalf = 0;
 
         _updateNodesHitArea(GAME_CONSTANTS.halfWidth - 10);
         helper.createGlobalClickBlocker(false);
@@ -1050,7 +1039,7 @@ const upgradeTree = (() => {
         if (hintPulseTimer) return;
 
         const check = () => {
-            if (!visible) return;
+            if (!visible || helper.isInputBlocked()) return; // not behind level select / popups / dialogs
             const shardCount = resourceManager.getShards();
             if (shardCount <= 0) return;
 
@@ -1528,7 +1517,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(0, 100);
-                setHoverLabel("ZOOM IN");
+                setHoverLabel(t('hover', 'zoom_in'));
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
@@ -1550,7 +1539,7 @@ const upgradeTree = (() => {
             onHover: () => {
                 let sfxclick = audio.play('click', 0.95);
                 if (sfxclick) sfxclick.detune = Phaser.Math.Between(-100, 0);
-                setHoverLabel("ZOOM OUT");
+                setHoverLabel(t('hover', 'zoom_out'));
             },
             onHoverOut: () => { setHoverLabel(null); }
         });
@@ -1616,7 +1605,8 @@ const upgradeTree = (() => {
         gameState.isFirstLaunch = false;
 
         _stopDeployHint();
-        _stopHintTimer();
+        // The duo hint timer keeps running: backing out of level select returns to the tree,
+        // and leaving the upgrade phase stops it (_onPhaseChanged).
 
         // If high level boss defeated, show level selector
         if ((gameState.levelsDefeated || 0) >= 1) {
@@ -1898,7 +1888,8 @@ const upgradeTree = (() => {
     function revealNode(id, revealedManually = true) {
         if (!nodes[id]) return false;
         if (!gameState.revealedNodes) gameState.revealedNodes = {};
-        gameState.revealedNodes[id] = true;
+        // true = manual reveal; 'passive' = revealed without the manual flag (restored the same way on load)
+        gameState.revealedNodes[id] = revealedManually ? true : 'passive';
         nodes[id].revealedManually = revealedManually;
         nodes[id].refreshState();
         nodes[id].playRevealAnimation();
@@ -1929,7 +1920,6 @@ const upgradeTree = (() => {
     function onEnterUpgradePhase(duration) {
         let treeTargetX = 0;
         let maskTargetX = 0;
-        let maskScaleX = 1;
         let panelW = 830;
         let panelX = -6;
         let deployX = deployBtnInitialX;
@@ -1937,7 +1927,6 @@ const upgradeTree = (() => {
         if (fullUpgradeView) {
             treeTargetX = GAME_CONSTANTS.WIDTH * 0.5;
             maskTargetX = GAME_CONSTANTS.WIDTH * 0.25;
-            maskScaleX = 1.98;
             panelW = 1612;
             deployX = deployBtnInitialX + 782;
             _updateNodesHitArea(GAME_CONSTANTS.WIDTH);

@@ -298,7 +298,7 @@ const swordAttack = (() => {
         const pos = tower.getPosition();
         const enemies = enemyManager.getEnemiesInRange(pos.x, pos.y, model.SEARCH_RANGE);
         if (!enemies || enemies.length === 0) {
-            model.fireTimer = 0;
+            model.fireTimer = model.FIRE_INTERVAL - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS; // stay (almost) charged; retry in 0.1s
             return;
         }
 
@@ -327,7 +327,7 @@ const swordAttack = (() => {
             model.fireTimer -= model.FIRE_INTERVAL;
             _fireSequence(closest);
         } else {
-            model.fireTimer = 0;
+            model.fireTimer = model.FIRE_INTERVAL - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS;
         }
     }
 
@@ -362,7 +362,7 @@ const swordAttack = (() => {
             const flurryLength = model.targetLength * 0.65;
 
             // First Flurry: 250ms delay, -0.375 radians
-            PhaserScene.time.delayedCall(250, () => {
+            _trackFlurry(PhaserScene.time.delayedCall(250, () => {
                 const angle1 = targetAngle - 0.375;
                 view.playAttack(
                     angle1,
@@ -373,10 +373,10 @@ const swordAttack = (() => {
                     0.9,
                     50
                 );
-            });
+            }));
 
             // Second Flurry: 400ms delay, +0.375 radians
-            PhaserScene.time.delayedCall(400, () => {
+            _trackFlurry(PhaserScene.time.delayedCall(400, () => {
                 const angle2 = targetAngle + 0.375;
                 view.playAttack(
                     angle2,
@@ -387,7 +387,7 @@ const swordAttack = (() => {
                     0.9,
                     0
                 );
-            });
+            }));
         }
     }
 
@@ -507,12 +507,22 @@ const swordAttack = (() => {
         return hitEnemies;
     }
 
+    // Pending flurry stabs, cancelled when combat ends so they don't land on the next screen
+    let _flurryTimers = [];
+
+    function _trackFlurry(ev) {
+        _flurryTimers = _flurryTimers.filter(t => t.getOverallProgress() < 1);
+        _flurryTimers.push(ev);
+    }
+
     function _onPhaseChanged(phase) {
         const isCombat = phase === GAME_CONSTANTS.PHASE_COMBAT;
         if (isCombat && model.unlocked) {
             model.active = true;
             model.resetTimer();
         } else {
+            _flurryTimers.forEach(ev => ev.remove(false));
+            _flurryTimers = [];
             model.active = false;
             model.isAttacking = false;
             view.hide();

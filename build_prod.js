@@ -77,7 +77,6 @@ while ((match = scriptRegex.exec(bodyHtml)) !== null) {
 }
 
 const allScripts = [...headScripts, ...bodyScripts];
-const scriptTagsToReplace = [...headScriptTagsToReplace, ...bodyScriptTagsToReplace];
 
 console.log(`Found ${allScripts.length} local scripts to bundle (${headScripts.length} in <head>, ${bodyScripts.length} in <body>).`);
 
@@ -144,7 +143,7 @@ foldersToCopy.forEach(folder => {
 });
 
 // Also copy any intentionally skipped scripts as standalone files
-const filesToCopy = ['favicon.png', 'styles.css', 'sw.js', 'attribution.txt', 'icons.txt', 'lore.txt', ...SKIP_BUNDLE];
+const filesToCopy = ['favicon.png', 'styles.css', 'manifest.json', 'sw.js', 'attribution.txt', 'icons.txt', 'lore.txt', ...SKIP_BUNDLE];
 filesToCopy.forEach(file => {
     const fullPath = path.join(projectDir, file);
     const destPath = path.join(distDir, file);

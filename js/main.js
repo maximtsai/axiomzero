@@ -73,7 +73,7 @@ const config = {
 // ─── Global Ad Hooks ──────────────────────────────────────────────────────────
 
 window.pauseGameForAd = function () {
-    console.log('[Ad Break] Pausing game and audio...');
+    debugLog('[Ad Break] Pausing game and audio...');
     if (typeof PhaserScene !== 'undefined') {
         PhaserScene.scene.pause();
     }
@@ -83,7 +83,7 @@ window.pauseGameForAd = function () {
 };
 
 window.resumeGameFromAd = function () {
-    console.log('[Ad Break] Resuming game and audio...');
+    debugLog('[Ad Break] Resuming game and audio...');
     if (typeof PhaserScene !== 'undefined') {
         PhaserScene.scene.resume();
     }

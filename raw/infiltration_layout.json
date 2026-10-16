@@ -1,0 +1,2199 @@
+{
+  "note": "Game coordinates (1600x900). Text boxes are glyph-run bounds; x/y = top-left.",
+  "views": {
+    "detail": {
+      "texts": [
+        {
+          "text": "FINANCIAL BREACH TERMINAL",
+          "path": "header.t-head > div.title > h1#t-title",
+          "x": 312,
+          "y": 127,
+          "w": 424,
+          "h": 35,
+          "font": "700 24px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "UPLINK SECURE",
+          "path": "header.t-head > div.title > p.status > span#status",
+          "x": 312,
+          "y": 165,
+          "w": 103,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(136, 153, 170)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "INSIGHT",
+          "path": "header.t-head > div.balances > div.bal.insight > label",
+          "x": 1021,
+          "y": 132,
+          "w": 53,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50",
+          "path": "header.t-head > div.balances > div.bal.insight > b#balInsight",
+          "x": 1047,
+          "y": 151,
+          "w": 27,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "COIN",
+          "path": "header.t-head > div.balances > div.bal.coin > label",
+          "x": 1123,
+          "y": 132,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "5.00",
+          "path": "header.t-head > div.balances > div.bal.coin > b#balCoin",
+          "x": 1108,
+          "y": 151,
+          "w": 48,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "DATA",
+          "path": "header.t-head > div.balances > div.bal.data > label",
+          "x": 1231,
+          "y": 132,
+          "w": 33,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50,000",
+          "path": "header.t-head > div.balances > div.bal.data > b#balData",
+          "x": 1189,
+          "y": 151,
+          "w": 75,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "TARGETS",
+          "path": "div.t-body > aside > div.list-head > span",
+          "x": 274,
+          "y": 212,
+          "w": 68,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "ORBITAL BANK",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 263,
+          "w": 140,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "LOW SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 297,
+          "w": 98,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 347,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "50 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 369,
+          "w": 66,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 347,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+0.12 COIN",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b.c-coin",
+          "x": 426,
+          "y": 369,
+          "w": 89,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 347,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "00:50",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 369,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 437,
+          "w": 146,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "MEDIUM SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 471,
+          "w": 124,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 521,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "135 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 543,
+          "w": 75,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 521,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-data",
+          "x": 426,
+          "y": 543,
+          "w": 85,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 521,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "01:30",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 543,
+          "w": 48,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "SYNAPSE CAPITAL",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 611,
+          "w": 174,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "HIGH SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 645,
+          "w": 102,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 68, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 695,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "250 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 717,
+          "w": 76,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 695,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+1 INSIGHT",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b.c-insight",
+          "x": 426,
+          "y": 717,
+          "w": 87,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 695,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "04:00",
+          "path": "div.t-body > aside > ol#targets > li.row > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 717,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.name-line > h2",
+          "x": 748,
+          "y": 229,
+          "w": 226,
+          "h": 43,
+          "font": "700 30px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "MEDIUM SECURITY",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.sec-row > span.sec",
+          "x": 782,
+          "y": 278,
+          "w": 133,
+          "h": 19,
+          "font": "700 13px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "Draining corporate bank accounts",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > p.flavor",
+          "x": 748,
+          "y": 309,
+          "w": 270,
+          "h": 24,
+          "font": "italic 400 17px",
+          "color": "rgb(136, 153, 170)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "CORE",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.route > svg > text",
+          "x": 752,
+          "y": 406,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "VAULT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.route > svg > text",
+          "x": 1263,
+          "y": 406,
+          "w": 37,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > label",
+          "x": 762,
+          "y": 463,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "135 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > b.c-cost",
+          "x": 762,
+          "y": 487,
+          "w": 98,
+          "h": 30,
+          "font": "700 21px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > label",
+          "x": 952,
+          "y": 463,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > b.c-data",
+          "x": 952,
+          "y": 487,
+          "w": 111,
+          "h": 30,
+          "font": "700 21px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "NET +60",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > small.up",
+          "x": 952,
+          "y": 523,
+          "w": 51,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > label",
+          "x": 1142,
+          "y": 463,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "01:30",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.stats > div.stat > b",
+          "x": 1142,
+          "y": 487,
+          "w": 62,
+          "h": 30,
+          "font": "700 21px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "INITIATE BREACH",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#initBtn > span.label",
+          "x": 925,
+          "y": 676,
+          "w": 201,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "3px",
+          "align": "center"
+        },
+        {
+          "text": "135 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#initBtn > span.sub",
+          "x": 993,
+          "y": 707,
+          "w": 63,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(136, 153, 170)",
+          "letterSpacing": "1px",
+          "align": "center"
+        }
+      ],
+      "boxes": {
+        ".terminal": [
+          {
+            "x": 250,
+            "y": 120,
+            "w": 1100,
+            "h": 660
+          }
+        ],
+        ".t-head": [
+          {
+            "x": 274,
+            "y": 120,
+            "w": 1052,
+            "h": 72
+          }
+        ],
+        ".close": [
+          {
+            "x": 1286,
+            "y": 136,
+            "w": 40,
+            "h": 40
+          }
+        ],
+        ".balances": [
+          {
+            "x": 1021,
+            "y": 132,
+            "w": 243,
+            "h": 47
+          }
+        ],
+        ".targets": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 508
+          }
+        ],
+        ".row": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 414,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 588,
+            "w": 430,
+            "h": 160
+          }
+        ],
+        ".row .hex": [
+          {
+            "x": 298,
+            "y": 262,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 436,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 610,
+            "w": 52,
+            "h": 52
+          }
+        ],
+        ".row .pips": [
+          {
+            "x": 364,
+            "y": 299,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 473,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 647,
+            "w": 24,
+            "h": 12
+          }
+        ],
+        ".pane": [
+          {
+            "x": 724,
+            "y": 206,
+            "w": 602,
+            "h": 556
+          }
+        ],
+        ".pane .route svg": [
+          {
+            "x": 748,
+            "y": 347,
+            "w": 554,
+            "h": 86
+          }
+        ],
+        ".stat": [
+          {
+            "x": 748,
+            "y": 449,
+            "w": 174,
+            "h": 88
+          },
+          {
+            "x": 938,
+            "y": 449,
+            "w": 174,
+            "h": 88
+          },
+          {
+            "x": 1128,
+            "y": 449,
+            "w": 174,
+            "h": 88
+          }
+        ],
+        ".cta": [
+          {
+            "x": 805,
+            "y": 668,
+            "w": 440,
+            "h": 64
+          }
+        ]
+      }
+    },
+    "hacking": {
+      "texts": [
+        {
+          "text": "FINANCIAL BREACH TERMINAL",
+          "path": "header.t-head > div.title > h1#t-title",
+          "x": 312,
+          "y": 127,
+          "w": 424,
+          "h": 35,
+          "font": "700 24px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "BREACH IN PROGRESS",
+          "path": "header.t-head > div.title > p.status > span#status",
+          "x": 312,
+          "y": 165,
+          "w": 145,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "INSIGHT",
+          "path": "header.t-head > div.balances > div.bal.insight > label",
+          "x": 1021,
+          "y": 132,
+          "w": 53,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50",
+          "path": "header.t-head > div.balances > div.bal.insight > b#balInsight",
+          "x": 1047,
+          "y": 151,
+          "w": 27,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "COIN",
+          "path": "header.t-head > div.balances > div.bal.coin > label",
+          "x": 1123,
+          "y": 132,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "5.00",
+          "path": "header.t-head > div.balances > div.bal.coin > b#balCoin",
+          "x": 1108,
+          "y": 151,
+          "w": 48,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "DATA",
+          "path": "header.t-head > div.balances > div.bal.data > label",
+          "x": 1231,
+          "y": 132,
+          "w": 33,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50,000",
+          "path": "header.t-head > div.balances > div.bal.data > b#balData",
+          "x": 1189,
+          "y": 151,
+          "w": 75,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "TARGETS",
+          "path": "div.t-body > aside > div.list-head > span",
+          "x": 274,
+          "y": 212,
+          "w": 68,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "ORBITAL BANK",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 263,
+          "w": 140,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "LOW SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 297,
+          "w": 98,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 347,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "50 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 369,
+          "w": 66,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 347,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+0.12 COIN",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-coin",
+          "x": 426,
+          "y": 369,
+          "w": 89,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 347,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "00:50",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 369,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "BREACHING",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > span.tag.live",
+          "x": 604,
+          "y": 430,
+          "w": 80,
+          "h": 16,
+          "font": "700 11px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 437,
+          "w": 146,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "MEDIUM SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 471,
+          "w": 124,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 521,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "135 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 543,
+          "w": 75,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 521,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-data",
+          "x": 426,
+          "y": 543,
+          "w": 85,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "LEFT",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 521,
+          "w": 31,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "00:45",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b#rowTime",
+          "x": 592,
+          "y": 543,
+          "w": 48,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "SYNAPSE CAPITAL",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 611,
+          "w": 174,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "HIGH SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 645,
+          "w": 102,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 68, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 695,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "250 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 717,
+          "w": 76,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 695,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+1 INSIGHT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-insight",
+          "x": 426,
+          "y": 717,
+          "w": 87,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 695,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "04:00",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 717,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "BREACH IN PROGRESS",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.eyebrow.cyan",
+          "x": 766,
+          "y": 221,
+          "w": 172,
+          "h": 16,
+          "font": "700 11px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.name-line > h2",
+          "x": 748,
+          "y": 243,
+          "w": 226,
+          "h": 43,
+          "font": "700 30px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.name-line > span.preview.c-data",
+          "x": 1218,
+          "y": 258,
+          "w": 85,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "CORE",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#route > svg > text",
+          "x": 752,
+          "y": 354,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "VAULT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#route > svg > text",
+          "x": 1263,
+          "y": 354,
+          "w": 37,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "LAYER 3/4",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.layer-line > b#layer",
+          "x": 1230,
+          "y": 385,
+          "w": 72,
+          "h": 16,
+          "font": "700 11px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "00:45",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#clock > span#time",
+          "x": 748,
+          "y": 392,
+          "w": 162,
+          "h": 74,
+          "font": "700 52px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "50%",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#clock > span#pct",
+          "x": 1241,
+          "y": 419,
+          "w": 61,
+          "h": 38,
+          "font": "700 26px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "> MIRRORING TRAFFIC TO 133.78.152.104",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 501,
+          "w": 320,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(95, 212, 224)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> FIREWALL LAYER 2 BREACHED",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 522,
+          "w": 236,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> MIRRORING TRAFFIC TO 133.19.34.44",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 543,
+          "w": 301,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(95, 212, 224)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> FIREWALL DOWN",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 564,
+          "w": 139,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> AWAITING EXTRACTION",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 585,
+          "w": 188,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> S",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 606,
+          "w": 25,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(95, 212, 224)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "HOLD TO ABORT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#abortBtn > span.label",
+          "x": 932,
+          "y": 651,
+          "w": 186,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(255, 85, 85)",
+          "letterSpacing": "3px",
+          "align": "center"
+        },
+        {
+          "text": "REFUND 101 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#abortBtn > span.sub",
+          "x": 965,
+          "y": 682,
+          "w": 119,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(136, 153, 170)",
+          "letterSpacing": "1px",
+          "align": "center"
+        },
+        {
+          "text": "KEEPS RUNNING IF CLOSED",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > div.hint",
+          "x": 943,
+          "y": 716,
+          "w": 164,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1px",
+          "align": "start"
+        }
+      ],
+      "boxes": {
+        ".terminal": [
+          {
+            "x": 250,
+            "y": 120,
+            "w": 1100,
+            "h": 660
+          }
+        ],
+        ".t-head": [
+          {
+            "x": 274,
+            "y": 120,
+            "w": 1052,
+            "h": 72
+          }
+        ],
+        ".close": [
+          {
+            "x": 1286,
+            "y": 136,
+            "w": 40,
+            "h": 40
+          }
+        ],
+        ".balances": [
+          {
+            "x": 1021,
+            "y": 132,
+            "w": 243,
+            "h": 47
+          }
+        ],
+        ".targets": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 508
+          }
+        ],
+        ".row": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 414,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 588,
+            "w": 430,
+            "h": 160
+          }
+        ],
+        ".row .hex": [
+          {
+            "x": 298,
+            "y": 262,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 436,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 610,
+            "w": 52,
+            "h": 52
+          }
+        ],
+        ".row .pips": [
+          {
+            "x": 364,
+            "y": 299,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 473,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 647,
+            "w": 24,
+            "h": 12
+          }
+        ],
+        ".pane": [
+          {
+            "x": 724,
+            "y": 206,
+            "w": 602,
+            "h": 556
+          }
+        ],
+        ".pane .route svg": [
+          {
+            "x": 748,
+            "y": 295,
+            "w": 554,
+            "h": 86
+          }
+        ],
+        ".cta": [
+          {
+            "x": 845,
+            "y": 646,
+            "w": 360,
+            "h": 58
+          }
+        ],
+        ".bar": [
+          {
+            "x": 748,
+            "y": 469,
+            "w": 554,
+            "h": 6
+          }
+        ],
+        ".log": [
+          {
+            "x": 748,
+            "y": 491,
+            "w": 554,
+            "h": 136
+          }
+        ],
+        ".eyebrow .dot": [
+          {
+            "x": 748,
+            "y": 225,
+            "w": 8,
+            "h": 8
+          }
+        ],
+        ".row-progress": [
+          {
+            "x": 298,
+            "y": 567,
+            "w": 386,
+            "h": 2
+          }
+        ]
+      }
+    },
+    "success": {
+      "texts": [
+        {
+          "text": "FINANCIAL BREACH TERMINAL",
+          "path": "header.t-head > div.title > h1#t-title",
+          "x": 312,
+          "y": 127,
+          "w": 424,
+          "h": 35,
+          "font": "700 24px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "READY TO EXTRACT",
+          "path": "header.t-head > div.title > p.status > span#status",
+          "x": 312,
+          "y": 165,
+          "w": 127,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "INSIGHT",
+          "path": "header.t-head > div.balances > div.bal.insight > label",
+          "x": 1021,
+          "y": 132,
+          "w": 53,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50",
+          "path": "header.t-head > div.balances > div.bal.insight > b#balInsight",
+          "x": 1047,
+          "y": 151,
+          "w": 27,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "COIN",
+          "path": "header.t-head > div.balances > div.bal.coin > label",
+          "x": 1123,
+          "y": 132,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "5.00",
+          "path": "header.t-head > div.balances > div.bal.coin > b#balCoin",
+          "x": 1108,
+          "y": 151,
+          "w": 48,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "DATA",
+          "path": "header.t-head > div.balances > div.bal.data > label",
+          "x": 1231,
+          "y": 132,
+          "w": 33,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "right"
+        },
+        {
+          "text": "50,000",
+          "path": "header.t-head > div.balances > div.bal.data > b#balData",
+          "x": 1189,
+          "y": 151,
+          "w": 75,
+          "h": 28,
+          "font": "700 20px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "right"
+        },
+        {
+          "text": "TARGETS",
+          "path": "div.t-body > aside > div.list-head > span",
+          "x": 274,
+          "y": 212,
+          "w": 68,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "ORBITAL BANK",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 263,
+          "w": 140,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "LOW SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 297,
+          "w": 98,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 347,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "50 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 369,
+          "w": 66,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 347,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+0.12 COIN",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-coin",
+          "x": 426,
+          "y": 369,
+          "w": 89,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 255, 0)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 347,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "00:50",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 369,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "READY",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > span.tag.ready",
+          "x": 639,
+          "y": 430,
+          "w": 45,
+          "h": 16,
+          "font": "700 11px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 437,
+          "w": 146,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "MEDIUM SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 471,
+          "w": 124,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 204, 0)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 521,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "135 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 543,
+          "w": 75,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 521,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b.c-data",
+          "x": 426,
+          "y": 543,
+          "w": 85,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 521,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "01:30",
+          "path": "div.t-body > aside > ol#targets > li.row.selected > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 543,
+          "w": 48,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "SYNAPSE CAPITAL",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.row-name",
+          "x": 364,
+          "y": 611,
+          "w": 174,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "HIGH SECURITY",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.row-top > div > div.sec-line",
+          "x": 398,
+          "y": 645,
+          "w": 102,
+          "h": 17,
+          "font": "700 12px",
+          "color": "rgb(255, 68, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "COST",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 298,
+          "y": 695,
+          "w": 36,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "250 DATA",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-cost",
+          "x": 298,
+          "y": 717,
+          "w": 76,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 426,
+          "y": 695,
+          "w": 54,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "+1 INSIGHT",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b.c-insight",
+          "x": 426,
+          "y": 717,
+          "w": 87,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(255, 255, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "TIME",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > label",
+          "x": 592,
+          "y": 695,
+          "w": 33,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "2px",
+          "align": "start"
+        },
+        {
+          "text": "04:00",
+          "path": "div.t-body > aside > ol#targets > li.row.locked > div.row-inner > div.metrics > div.metric > b",
+          "x": 592,
+          "y": 717,
+          "w": 49,
+          "h": 23,
+          "font": "700 16px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "EXFILTRATION COMPLETE",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.eyebrow.green",
+          "x": 766,
+          "y": 221,
+          "w": 195,
+          "h": 16,
+          "font": "700 11px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "SILICON TRUST",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.name-line > h2.glitch",
+          "x": 748,
+          "y": 243,
+          "w": 226,
+          "h": 43,
+          "font": "700 30px",
+          "color": "rgb(230, 243, 255)",
+          "letterSpacing": "0.5px",
+          "align": "start"
+        },
+        {
+          "text": "CORE",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.route > svg > text",
+          "x": 752,
+          "y": 353,
+          "w": 32,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "VAULT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.route > svg > text",
+          "x": 1263,
+          "y": 353,
+          "w": 37,
+          "h": 15,
+          "font": "400 10px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "1.5px",
+          "align": "middle"
+        },
+        {
+          "text": "PAYOUT",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#payout > label",
+          "x": 995,
+          "y": 384,
+          "w": 60,
+          "h": 16,
+          "font": "400 11px",
+          "color": "rgb(79, 96, 114)",
+          "letterSpacing": "3px",
+          "align": "start"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#payout > div.amount > b#amount",
+          "x": 950,
+          "y": 407,
+          "w": 232,
+          "h": 63,
+          "font": "700 44px",
+          "color": "rgb(0, 245, 255)",
+          "letterSpacing": "normal",
+          "align": "start"
+        },
+        {
+          "text": "> MIRRORING TRAFFIC TO 133.19.34.44",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 496,
+          "w": 301,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(95, 212, 224)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> FIREWALL DOWN",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 517,
+          "w": 139,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> AWAITING EXTRACTION",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 538,
+          "w": 188,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "> SIPHONIN",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div#log > div",
+          "x": 764,
+          "y": 559,
+          "w": 89,
+          "h": 20,
+          "font": "400 14px",
+          "color": "rgb(95, 212, 224)",
+          "letterSpacing": "1px",
+          "align": "start"
+        },
+        {
+          "text": "CLAIM REWARD",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#claimBtn > span.label",
+          "x": 936,
+          "y": 676,
+          "w": 179,
+          "h": 27,
+          "font": "700 19px",
+          "color": "rgb(68, 255, 68)",
+          "letterSpacing": "3px",
+          "align": "center"
+        },
+        {
+          "text": "+195 DATA",
+          "path": "div.t-body > main#pane > div#paneBody > div.pane-body > div.cta-wrap > button#claimBtn > span.sub",
+          "x": 989,
+          "y": 707,
+          "w": 71,
+          "h": 17,
+          "font": "400 12px",
+          "color": "rgb(136, 153, 170)",
+          "letterSpacing": "1px",
+          "align": "center"
+        }
+      ],
+      "boxes": {
+        ".terminal": [
+          {
+            "x": 250,
+            "y": 120,
+            "w": 1100,
+            "h": 660
+          }
+        ],
+        ".t-head": [
+          {
+            "x": 274,
+            "y": 120,
+            "w": 1052,
+            "h": 72
+          }
+        ],
+        ".close": [
+          {
+            "x": 1286,
+            "y": 136,
+            "w": 40,
+            "h": 40
+          }
+        ],
+        ".balances": [
+          {
+            "x": 1021,
+            "y": 132,
+            "w": 243,
+            "h": 47
+          }
+        ],
+        ".targets": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 508
+          }
+        ],
+        ".row": [
+          {
+            "x": 274,
+            "y": 240,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 414,
+            "w": 430,
+            "h": 160
+          },
+          {
+            "x": 274,
+            "y": 588,
+            "w": 430,
+            "h": 160
+          }
+        ],
+        ".row .hex": [
+          {
+            "x": 298,
+            "y": 262,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 436,
+            "w": 52,
+            "h": 52
+          },
+          {
+            "x": 298,
+            "y": 610,
+            "w": 52,
+            "h": 52
+          }
+        ],
+        ".row .pips": [
+          {
+            "x": 364,
+            "y": 299,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 473,
+            "w": 24,
+            "h": 12
+          },
+          {
+            "x": 364,
+            "y": 647,
+            "w": 24,
+            "h": 12
+          }
+        ],
+        ".pane": [
+          {
+            "x": 724,
+            "y": 206,
+            "w": 602,
+            "h": 556
+          }
+        ],
+        ".pane .route svg": [
+          {
+            "x": 748,
+            "y": 294,
+            "w": 554,
+            "h": 86
+          }
+        ],
+        ".cta": [
+          {
+            "x": 805,
+            "y": 668,
+            "w": 440,
+            "h": 64
+          }
+        ],
+        ".log": [
+          {
+            "x": 748,
+            "y": 486,
+            "w": 554,
+            "h": 108
+          }
+        ],
+        ".payout .amount svg": [
+          {
+            "x": 868,
+            "y": 406,
+            "w": 64,
+            "h": 64
+          }
+        ],
+        ".eyebrow .dot": [
+          {
+            "x": 748,
+            "y": 225,
+            "w": 8,
+            "h": 8
+          }
+        ]
+      }
+    }
+  }
+}

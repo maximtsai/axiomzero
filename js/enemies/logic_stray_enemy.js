@@ -98,7 +98,7 @@ class LogicStrayEnemy extends Enemy {
         const dx = Math.abs(m.x - GAME_CONSTANTS.halfWidth);
         const dy = Math.abs(m.y - GAME_CONSTANTS.halfHeight);
         if (dx > 1150 || dy > 1150) {
-            this.deactivate();
+            enemyManager.despawnEnemy(this);
         }
     }
 

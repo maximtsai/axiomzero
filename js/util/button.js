@@ -366,14 +366,6 @@ class Button {
         return this.getYPos();
     }
 
-    getScaleX() {
-        return this.bgSprite.scaleX;
-    }
-
-    getScaleY() {
-        return this.bgSprite.scaleY;
-    }
-
     getXPos() {
         return this.bgSprite ? this.bgSprite.x : (this.normal.x || 0);
     }

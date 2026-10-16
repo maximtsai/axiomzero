@@ -321,7 +321,7 @@ class PulseAttackView {
         this.artilleryRed.setBlendMode(Phaser.BlendModes.ADD);
 
         // Subtle detonation reminder text
-        const reminderMsg = "CLICK TO DETONATE";
+        const reminderMsg = t('hud', 'detonate_hint');
         this.detonateReminderText = PhaserScene.add.text(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight + 375, reminderMsg, {
             fontFamily: 'MunroSmall',
             fontSize: '26px',
@@ -350,11 +350,6 @@ class PulseAttackView {
 
     setDetonateReminderVisibility(visible) {
         if (!this.detonateReminderText) return;
-
-        // Respect global tutorial disable flag
-        if (visible && typeof gameState !== 'undefined' && gameState.tutorialsDisabled) {
-            visible = false;
-        }
 
         const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
         const targetX = GAME_CONSTANTS.halfWidth + (isUpgrade ? 400 : 0);
@@ -400,7 +395,6 @@ class PulseAttackView {
                 const jX = (Math.random() - 0.5) * jitterDist;
                 const jY = (Math.random() - 0.5) * jitterDist;
 
-                const targetSize = model.getEffectiveSize();
                 // (Size update handled below in global expansion block)
 
                 this.spriteGlow.setVisible(true);
@@ -644,7 +638,7 @@ class PulseAttackView {
             this.sprite.setAlpha(this.IDLE_ALPHA);
         }
 
-        if (this.artillerySprite && !bombArmed && !bombFired) {
+        if (this.artillerySprite && !bombArmed && !bombFired && !this.cancelAnimating) {
             this.artillerySprite.setVisible(false);
             this.artilleryBright.setVisible(false);
             this.artilleryBrightGlow?.setVisible(false);
@@ -822,6 +816,12 @@ class PulseAttackView {
     playBombArmAnimation(baseSize, finalBombSize, onPhase1Complete, onPhase2Complete) {
         if (!this.artillerySprite) return;
 
+        // Re-armed while the cancel fade is still running: stop it, or it fades and hides the new bomb
+        if (this.cancelAnimating) {
+            PhaserScene.tweens.killTweensOf(this.artillerySprite);
+            this.cancelAnimating = false;
+        }
+
         this.artillerySprite.setVisible(true).setAlpha(1);
         this.artilleryBright.setVisible(false).setAlpha(1);
 
@@ -892,7 +892,24 @@ class PulseAttackView {
         this.armTweens.push(tw1);
     }
 
+    /** delayedCall that stopAllArtilleryAnimations() can cancel (a bomb reset mid-blast must not detonate later). */
+    _bombDelay(ms, fn) {
+        const ev = PhaserScene.time.delayedCall(ms, fn);
+        if (!this.bombTimers) this.bombTimers = [];
+        this.bombTimers.push(ev);
+        return ev;
+    }
+
     stopAllArtilleryAnimations() {
+        this.cancelAnimating = false; // a cancel fade killed below must not keep the layers visible
+        if (this.bombSlow) {
+            timeManager.endSlow(this.bombSlow);
+            this.bombSlow = null;
+        }
+        if (this.bombTimers) {
+            this.bombTimers.forEach(ev => ev.remove(false));
+            this.bombTimers = [];
+        }
         if (this.armTweens) {
             this.armTweens.forEach(t => t.stop());
             this.armTweens = [];
@@ -920,18 +937,25 @@ class PulseAttackView {
     }
 
     playBombCancelAnimation(baseSize) {
-        this.stopAllArtilleryAnimations();
+        this.stopAllArtilleryAnimations(); // hides every layer
 
         const targetSize = baseSize + 20;
+
+        // Show the bomb outline again and let it expand and fade. cancelAnimating keeps
+        // setVisibility (run every frame) from hiding it while the bomb is no longer armed.
+        this.cancelAnimating = true;
+        this.artillerySprite.setVisible(true).setAlpha(1);
 
         PhaserScene.tweens.add({
             targets: [this.artillerySprite],
             width: targetSize,
             height: targetSize,
+            alpha: 0,
             duration: 300,
             ease: 'Cubic.easeIn',
             onComplete: () => {
-                this.artillerySprite.setVisible(false);
+                this.cancelAnimating = false;
+                this.artillerySprite.setVisible(false).setAlpha(1);
                 this.artilleryBright.setVisible(false);
             }
         });
@@ -962,9 +986,9 @@ class PulseAttackView {
                 // (False applies it to everything EXCEPT tweens, so explosions remain fluid)
                 this.artillerySprite.setVisible(false);
                 this.artilleryBrightGlow.setVisible(false);
-                timeManager.applyTimeScale(0.15, false);
+                this.bombSlow = timeManager.beginSlow(0.15, false);
                 this.artilleryBlack.setVisible(true).setAlpha(1);
-                PhaserScene.time.delayedCall(13, () => {
+                this._bombDelay(13, () => {
                     PhaserScene.cameras.main.setZoom(1.03);
 
                     this.artilleryBlack.setVisible(false);
@@ -1013,10 +1037,10 @@ class PulseAttackView {
                                             this.artilleryBlack.setVisible(false);
                                             this.artillerySprite.setVisible(true);
                                             this.artilleryBright.setVisible(true).setAlpha(1);
-                                            PhaserScene.time.delayedCall(20, () => {
-                                                PhaserScene.time.delayedCall(13, () => {
-                                                    // Always restore game speed to 1.0 to prevent capture bugs
-                                                    timeManager.applyTimeScale(1.0);
+                                            this._bombDelay(20, () => {
+                                                this._bombDelay(13, () => {
+                                                    timeManager.endSlow(this.bombSlow);
+                                                    this.bombSlow = null;
                                                 });
                                                 // 2. Hide artilleryBlack (as requested: "artilleryBlack is set invisible")
 
@@ -1157,6 +1181,9 @@ const pulseAttack = (() => {
 
         // Spacebar listener for armBomb and detonation
         PhaserScene.input.keyboard.on('keydown-SPACE', () => {
+            // A popup, dialog or transition owns input: don't slide the tree or arm the bomb behind it
+            if (helper.isInputBlocked()) return;
+
             const isUpgrade = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_UPGRADE;
             const isCombat = gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT;
             let isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());
@@ -1377,6 +1404,9 @@ const pulseAttack = (() => {
         if ((isCombat || GAME_VARS.testingDefenses) && model.unlocked) {
             model.active = true;
             model.resetTimer();
+            // Start with the standard charge count: toggling Manual off/on or buying Charge Buffer
+            // in the upgrade phase left a stale count (often 0)
+            if (isCombat) model.charges = Math.ceil(model.maxCharges / 2);
             view.setVisibility(true, true, model.manualMode, model.charges);
             // Ensure reminder position is correct for the current phase if bomb is armed
             if (model.bombReadyToFire) view.setDetonateReminderVisibility(true);
@@ -1389,9 +1419,9 @@ const pulseAttack = (() => {
     }
 
     function _resetState() {
-        // Safety: Always restore time scale on reset to prevent slow-mo sticking
+        // Safety: drop any slow-mo still active so it can't stick
         if (typeof timeManager !== 'undefined') {
-            timeManager.applyTimeScale(1.0);
+            timeManager.clearSlows();
         }
 
         model.bombArmed = false;

@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Game Server (port 8124)",
-      "runtimeExecutable": "runServer8124.exe",
+      "runtimeExecutable": "C:/Users/Maxim/Desktop/maxgames/axiomzero/runServer8124.exe",
       "runtimeArgs": [],
       "port": 8124
     }

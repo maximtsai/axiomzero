@@ -8,7 +8,7 @@
 
 const enemyManager = (() => {
     const POOL_SIZE = 80;
-    const MINIBOSS_POOL_SIZE = 2;
+    const BOSS_DESTROY_DELAY = 6000; // ms after a boss/miniboss is removed before its view is destroyed
     const CLUMP_AVOIDANCE_RADIUS = 0.6;
 
     let pools = {};         // key: type, value: ObjectPool
@@ -61,7 +61,8 @@ const enemyManager = (() => {
         strokeThickness: 2,
         depth: GAME_CONSTANTS.DEPTH_RESOURCES + 50,
         duration: 1000,
-        scaleX: 1
+        scaleX: 1,
+        presized: true, // size is computed here; floatingText's number scaling would apply it twice (keeps the fade-out shrink)
     };
 
     // Spawn Rules configuration
@@ -121,8 +122,6 @@ const enemyManager = (() => {
         pools.swarmer = new ObjectPool(() => new SwarmerEnemy(), resetFn, POOL_SIZE * 2).preAllocate(POOL_SIZE);
         pools.shell = new ObjectPool(() => new ShellEnemy(), resetFn, POOL_SIZE).preAllocate(15);
         pools.cache = new ObjectPool(() => new CacheEnemy(), resetFn, 4).preAllocate(2);
-        pools.miniboss_4 = new ObjectPool(() => new Miniboss4(), resetFn, 1).preAllocate(1);
-        pools.bosslegion = new ObjectPool(() => new BossLegion(), resetFn, 8).preAllocate(8);
         pools.test = new ObjectPool(() => new TestEnemy(), resetFn, 20).preAllocate(10);
     }
 
@@ -456,7 +455,12 @@ const enemyManager = (() => {
 
 
     function _releaseToPool(e) {
-        if (e.model.isBoss || e.model.isMiniboss) return; // Bosses are not pooled
+        if (e.model.isBoss || e.model.isMiniboss) {
+            // Bosses are created per spawn, not pooled. Destroy their display objects once
+            // death effects (which may still read the view) have played out.
+            PhaserScene.time.delayedCall(BOSS_DESTROY_DELAY, () => e.destroy());
+            return;
+        }
 
         if (pools[e.model.type]) {
             pools[e.model.type].release(e);
@@ -464,6 +468,20 @@ const enemyManager = (() => {
             // Fallback for types not explicitly in pools (shouldn't happen with current logic)
             pools.basic.release(e);
         }
+    }
+
+    /**
+     * Remove an enemy that left the play area on its own (no death effects, no rewards).
+     * Deactivating alone left it in activeEnemies, unpooled and still counted in typeCounts.
+     */
+    function despawnEnemy(enemy) {
+        enemy.deactivate();
+        const idx = activeEnemies.indexOf(enemy);
+        if (idx === -1) return;
+        activeEnemies[idx] = activeEnemies[activeEnemies.length - 1];
+        activeEnemies.pop();
+        typeCounts[enemy.model.type] = Math.max(0, (typeCounts[enemy.model.type] || 1) - 1);
+        _releaseToPool(enemy);
     }
 
     function findValidAngle(generatorFn, rules) {
@@ -492,7 +510,6 @@ const enemyManager = (() => {
             if (valid && rules.avoidActiveTypes && rules.minSeparation) {
                 for (let t = 0; t < rules.avoidActiveTypes.length; t++) {
                     const typeToAvoid = rules.avoidActiveTypes[t];
-                    const minSep2 = rules.minSeparation * rules.minSeparation;
 
                     for (let i = 0; i < activeEnemies.length; i++) {
                         const target = activeEnemies[i];
@@ -747,8 +764,10 @@ const enemyManager = (() => {
             if (enemy.model.type === 'test') {
                 testEnemyCount = Math.max(0, testEnemyCount - 1);
                 if (testEnemyCount <= 0 && typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses) {
-                    const bombArmed = (typeof pulseAttack !== 'undefined' && pulseAttack.getModel().bombArmed);
-                    if (!bombArmed) {
+                    // A bomb mid-explosion (fired: armed is already false) ends the test itself when it finishes
+                    const bombModel = (typeof pulseAttack !== 'undefined') ? pulseAttack.getModel() : null;
+                    const bombBusy = !!bombModel && (bombModel.bombArmed || bombModel.bombFired);
+                    if (!bombBusy) {
                         GAME_VARS.testingDefenses = false;
                         messageBus.publish('testingDefensesEnded');
                     }
@@ -770,6 +789,20 @@ const enemyManager = (() => {
 
         if (wasMiniboss) {
             bossManager.onEnemyDeath(enemy, ex, ey, wasMiniboss, wasBoss, skipBossEffects);
+            // Farming minibosses carry a DATA payout; enemyKilled is the only path that drops it
+            if (enemy.model.isFarmingMiniboss && enemy.model.baseResourceDrop > 0) {
+                messageBus.publish('enemyKilled',
+                    ex,
+                    ey,
+                    enemy.model.baseResourceDrop,
+                    enemy.model.type,
+                    wasBoss,
+                    wasMiniboss,
+                    wasResonance,
+                    enemy.model.hijacksSpawned,
+                    source
+                );
+            }
             if (enemy.view && enemy.view.img) {
                 customEmitters.minibossExplosion(enemy.view.img);
             }
@@ -788,8 +821,7 @@ const enemyManager = (() => {
             }
 
             // Cinematic time slow on boss death (90% reduction)
-            timeManager.applyTimeScale(0.1);
-            timeManager.tweenTimeScale(1, 200);
+            timeManager.slowRamp(0.1, 200);
 
             const bossDepth = (enemy.view && enemy.view.img) ? enemy.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
 
@@ -993,53 +1025,51 @@ const enemyManager = (() => {
 
             const prevLen = activeEnemies.length;
 
-            if (true) {
-                const dx = e.model.x - tPos.x;
-                const dy = e.model.y - tPos.y;
-                const distSq = dx * dx + dy * dy;
+            const dx = e.model.x - tPos.x;
+            const dy = e.model.y - tPos.y;
+            const distSq = dx * dx + dy * dy;
 
-                const attackDistR2 = e.model.contactR2 || 2025;
+            const attackDistR2 = e.model.contactR2 || 2025;
 
-                if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
-                    // const shieldReach = 58;
-                    const shieldReachSq = 3364; // 58*58
+            if (typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive) {
+                // const shieldReach = 58;
+                const shieldReachSq = 3364; // 58*58
 
-                    if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
-                        combatShield.takeDamage(e.model.damage);
+                if (distSq < shieldReachSq && combatShield.isAttackBlocked(e.model.x, e.model.y)) {
+                    combatShield.takeDamage(e.model.damage);
 
-                        if (e.model.selfDamage > 0 && e.model.type !== 'shooter' && e.model.type !== 'sniper') {
-                            damageEnemy(e, e.model.selfDamage);
-                        }
+                    if (e.model.selfDamage > 0 && e.model.type !== 'shooter' && e.model.type !== 'sniper') {
+                        damageEnemy(e, e.model.selfDamage);
+                    }
 
-                        if (!e.model.isBoss && !e.model.isMiniboss) {
-                            e.model.pushback = 120;
-                        }
+                    if (!e.model.isBoss && !e.model.isMiniboss) {
+                        e.model.pushback = 120;
+                    }
 
-                        e.model.attackTimer = e.model.attackCooldown;
+                    e.model.attackTimer = e.model.attackCooldown;
 
-                        if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
-                            continue;
-                        }
-                        i++;
+                    if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
                         continue;
                     }
+                    i++;
+                    continue;
                 }
+            }
 
-                if (distSq < attackDistR2) {
-                    e.model.isAttacking = true;
+            if (distSq < attackDistR2) {
+                e.model.isAttacking = true;
 
-                    if (e.model.attackTimer <= 0 && e.model.damage > 0) {
-                        const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
-                        e.model.attackTimer = e.model.attackCooldown;
+                if (e.model.attackTimer <= 0 && e.model.damage > 0) {
+                    const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
+                    e.model.attackTimer = e.model.attackCooldown;
 
-                        if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
-                            _killEnemy(e);
-                        }
+                    if (playerSurvived && e.takeDamage(e.model.selfDamage).died) {
+                        _killEnemy(e);
                     }
-                    if (activeEnemies.length === 0) break;
-                } else {
-                    e.model.isAttacking = false;
                 }
+                if (activeEnemies.length === 0) break;
+            } else {
+                e.model.isAttacking = false;
             }
 
             if (activeEnemies.length < prevLen && activeEnemies[i] !== e) {
@@ -1173,6 +1203,7 @@ const enemyManager = (() => {
 
     return {
         init,
+        despawnEnemy,
         freeze,
         unfreeze,
         clearAllEnemies,

@@ -46,7 +46,8 @@ const milestoneTracker = (() => {
 
     // ── Event handlers ───────────────────────────────────────────────────
 
-    function _onEnemyKilled() {
+    function _onEnemyKilled(x, y, drop, type) {
+        if (type === 'test') return; // TEST DEFENSES targets aren't real kills
         gameState.stats.kills++;
     }
 
@@ -58,7 +59,8 @@ const milestoneTracker = (() => {
         }
     }
 
-    function _onUpgradePurchased() {
+    function _onUpgradePurchased(data) {
+        if (data && data.isSwap) return; // swapping a duo choice is free, not a purchase
         gameState.stats.nodePurch++;
     }
 

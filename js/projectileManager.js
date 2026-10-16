@@ -35,11 +35,13 @@ const projectileManager = (() => {
                     damage: 0,
                     isCrit: false,
                     isRocket: false,
+                    isAssault: false,
                     life: 0,
                 };
             },
             (p) => {
                 p.alive = false;
+                p.isAssault = false;
                 p.img.setVisible(false);
                 p.img.setActive(false);
             },
@@ -79,7 +81,7 @@ const projectileManager = (() => {
 
     // ── public API ───────────────────────────────────────────────────────────
 
-    function fire(fromX, fromY, toX, toY, dmg, isCrit = false, isRocket = false, vol = null, detune = null) {
+    function fire(fromX, fromY, toX, toY, dmg, isCrit = false, isRocket = false, vol = null, detune = null, isAssault = false) {
         if (!pool) return;
         const p = pool.get();
         if (!p) return;
@@ -97,6 +99,7 @@ const projectileManager = (() => {
         p.damage = dmg;
         p.isCrit = isCrit;
         p.isRocket = isRocket;
+        p.isAssault = isAssault;
         p.alive = true;
         p.life = 3000; // auto-expire after 3s
 
@@ -205,7 +208,7 @@ const projectileManager = (() => {
                         if (p.isAssault && upgradeDispatcher.getLevel('suppressive_fire') > 0) {
                             if (!e.model.isBoss && !e.model.isMiniboss) {
                                 if (Math.random() < 0.30) {
-                                    e.forceSlow(0.05, 3000); // 90% slow for 2.5s
+                                    e.forceSlow(0.1, 2.5); // 90% slow for 2.5s (enemy timers count in seconds)
                                 }
                             }
                         }

@@ -1,6 +1,7 @@
 /**
  * @fileoverview Controls passage of game time via GAME_VARS.timeScale.
- * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame.
+ * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame,
+ * gamePaused, gameResumed.
  * @module timeManager
  */
 class TimeManager {
@@ -10,6 +11,44 @@ class TimeManager {
         messageBus.subscribe("setGameSlow", this.setGameSlow.bind(this));
         messageBus.subscribe("clearGameSlow", this.clearGameSlow.bind(this));
         messageBus.subscribe("unpauseGame", this.setUnpause.bind(this));
+        messageBus.subscribe("gamePaused", this.freezeWorld.bind(this));
+        messageBus.subscribe("gameResumed", this.unfreezeWorld.bind(this));
+        this._frozen = null;
+        this._slows = new Set();
+    }
+
+    /**
+     * Freeze every tween, timer event and sprite animation that is running right now.
+     * Managers stop their own update loops on 'gamePaused', but boss attack chains,
+     * delayed hits and effects run on Phaser tweens/timers and would keep going.
+     * Anything created while frozen (the pause menu itself) runs normally.
+     */
+    freezeWorld() {
+        if (this._frozen || typeof PhaserScene === 'undefined') return;
+        const tweens = PhaserScene.tweens.getTweens().filter(tw => !tw.paused);
+        tweens.forEach(tw => tw.pause());
+
+        const clock = PhaserScene.time;
+        const events = [...(clock._active || []), ...(clock._pendingInsertion || [])].filter(ev => !ev.paused);
+        events.forEach(ev => { ev.paused = true; });
+
+        PhaserScene.anims.pauseAll();
+        this._frozen = { tweens, events };
+        // Everything running is paused, so the pause menu can run at normal speed even if a
+        // slow-mo (e.g. the boss-death ramp) was active. _applySlows restores it on resume.
+        this.applyTimeScale(1);
+    }
+
+    /** Resume exactly what freezeWorld() paused. */
+    unfreezeWorld() {
+        if (!this._frozen) return;
+        this._frozen.tweens.forEach(tw => {
+            if (!(tw.isDestroyed && tw.isDestroyed())) tw.resume();
+        });
+        this._frozen.events.forEach(ev => { ev.paused = false; });
+        PhaserScene.anims.resumeAll();
+        this._frozen = null;
+        this._applySlows();
     }
 
     /** Apply a timeScale value to all Phaser time systems and GAME_VARS. */
@@ -24,25 +63,73 @@ class TimeManager {
 
     /**
      * Briefly slow game time, then auto-restore.
-     * @param {number} [dur=100] - Pause duration in ms.
-     * @param {number} [magnitude] - timeScale during pause (default 0.5).
+     * @param {number} [dur=100] - Duration in ms (real time).
+     * @param {number} [magnitude] - timeScale during the slow-down (default 0.5).
      */
     setTempPause(dur = 100, magnitude) {
-        this.applyTimeScale(magnitude || 0.5);
-        if (this.currTimeoutAmt) {
-            if (GAME_VARS.timeScale > this.currTimeoutAmt) {
-                return;
-            }
-        }
+        this.slowFor(dur, magnitude || 0.5);
+    }
 
-        this.currTimeoutAmt = GAME_VARS.timeScale;
-        if (this.currTimeoutPause) {
-            clearTimeout(this.currTimeoutPause);
-        }
-        this.currTimeoutPause = setTimeout(() => {
-            this.applyTimeScale(GAME_VARS.gameManualSlowSpeed || 1);
-            this.currTimeoutAmt = null;
-        }, dur)
+    // ── Slow-motion requests ─────────────────────────────────────────────
+    // Effects request slow-motion here instead of writing the time scale themselves, so
+    // overlapping effects (bomb blast, artillery impact, hitstop, boss death) can't end each
+    // other's slow-mo early: the slowest active request wins until it ends.
+
+    /**
+     * Start an open-ended slow-mo. Pass the returned handle to endSlow().
+     * @param {number} scale - timeScale while active.
+     * @param {boolean} [applyToTweens=true] - false keeps tweens at normal speed (explosions stay fluid).
+     */
+    beginSlow(scale, applyToTweens = true) {
+        const req = { scale, applyToTweens };
+        this._slows.add(req);
+        this._applySlows();
+        return req;
+    }
+
+    /** End a slow-mo started with beginSlow(). Safe to call twice or with null. */
+    endSlow(req) {
+        if (req && this._slows.delete(req)) this._applySlows();
+    }
+
+    /** Slow-mo for `dur` ms of real time. */
+    slowFor(dur, scale, applyToTweens = true) {
+        const req = this.beginSlow(scale, applyToTweens);
+        setTimeout(() => this.endSlow(req), dur);
+        return req;
+    }
+
+    /** Slow-mo that eases back to normal speed over `duration` ms (boss death). */
+    slowRamp(fromScale, duration, ease = 'Linear') {
+        const req = this.beginSlow(fromScale);
+        PhaserScene.tweens.add({
+            targets: req,
+            scale: 1,
+            duration,
+            ease,
+            onUpdate: () => this._applySlows(),
+            onComplete: () => this.endSlow(req),
+        });
+        return req;
+    }
+
+    /** Drop every slow-mo request (phase changes, results screen). */
+    clearSlows() {
+        this._slows.clear();
+        this._applySlows();
+    }
+
+    _applySlows() {
+        if (this._frozen) return; // paused: normal speed for the menu; re-applied on resume
+        const base = GAME_VARS.gameManualSlowSpeed || 1;
+        let scale = base;
+        let tweenScale = base;
+        this._slows.forEach(req => {
+            if (req.scale < scale) scale = req.scale;
+            if (req.applyToTweens && req.scale < tweenScale) tweenScale = req.scale;
+        });
+        this.applyTimeScale(scale, false);
+        if (typeof PhaserScene !== 'undefined' && PhaserScene.tweens) PhaserScene.tweens.timeScale = tweenScale;
     }
 
     /** Pause the game until explicitly unpaused. @param {number} [amt=0.002] */
@@ -62,44 +149,16 @@ class TimeManager {
     setGameSlow(amt) {
         GAME_VARS.gameManualSlowSpeed = amt;
         GAME_VARS.gameManualSlowSpeedInverse = 1 / amt;
-        this.applyTimeScale(amt);
+        this._applySlows();
     }
 
     /** Remove slow-motion and restore normal speed. */
     clearGameSlow() {
         GAME_VARS.gameManualSlowSpeed = 1;
         GAME_VARS.gameManualSlowSpeedInverse = 1;
-        this.applyTimeScale(1);
+        this._applySlows();
     }
 
-    /**
-     * Tween the game timeScale to a target value.
-     * @param {number} targetScale - Target timeScale value.
-     * @param {number} duration - Duration in ms.
-     * @param {string} [ease='Linear'] - Easing function.
-     * @param {boolean} [applyToTweens=true] - Whether to apply scaling to Phaser tweens.
-     * @param {function} [onComplete] - Callback on finish.
-     */
-    tweenTimeScale(targetScale, duration, ease = 'Linear', applyToTweens = true, onComplete = null) {
-        // Kill any existing timeScale tweens on GAME_VARS to prevent clashing
-        if (PhaserScene.tweens) {
-            PhaserScene.tweens.killTweensOf(GAME_VARS, 'timeScale');
-        }
-
-        PhaserScene.tweens.add({
-            targets: GAME_VARS,
-            timeScale: targetScale,
-            duration,
-            ease,
-            onUpdate: () => {
-                this.applyTimeScale(GAME_VARS.timeScale, applyToTweens);
-            },
-            onComplete: () => {
-                this.applyTimeScale(targetScale, applyToTweens);
-                if (onComplete) onComplete();
-            }
-        });
-    }
 
 }
 

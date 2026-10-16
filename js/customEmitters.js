@@ -15,6 +15,16 @@ const customEmitters = (() => {
         };
     }
 
+    // ── Particle braking ──────────────────────────────────────────────────────
+    // Phaser applies particle speed only at emit (a speed ease does nothing), so to make a
+    // particle slow down we give it an acceleration opposite its own velocity. Phaser sets
+    // velocity and life before it reads accelerationX/Y, so both are available here.
+    // `shed` = share of the starting speed lost by end of life (0.9 → ends at 10%).
+    function _brake(shed) {
+        const op = (axis) => ({ onEmit: (p) => -p[axis] * shed / Math.max(0.05, p.life / 1000) });
+        return { accelerationX: op('velocityX'), accelerationY: op('velocityY') };
+    }
+
     // ── Sprite pool for basicStrikeManual ─────────────────────────────────────
     const strikeSpritePool = new ObjectPool(
         () => {
@@ -65,7 +75,7 @@ const customEmitters = (() => {
             sprite.setActive(false);
             sprite.setVisible(false);
             sprite.on('animationcomplete', (anim) => {
-                if (anim.key === 'explosion_pulse') {
+                if (anim.key === 'explosion_pulse' || anim.key === 'explosion_pulse_slow') {
                     sprite.setActive(false);
                     sprite.setVisible(false);
                     explosionPulsePool.release(sprite);
@@ -210,24 +220,11 @@ const customEmitters = (() => {
     const _cacheSpark = _make('pixels', cacheSparkParams, GAME_CONSTANTS.DEPTH_ENEMIES - 1);
 
 
-    // ── basicStrike ──────────────────────────────────────────────────────────
-    const strikeParams = {
-        frame: 'blue_pixel.png',
-        speed: { min: 80, max: 230, ease: 'Cubic.easeOut' },
-        lifespan: { min: 200, max: 400 },
-        scaleX: { start: 12, end: 0, ease: 'Quad.easeIn' },
-        scaleY: 2,
-        alpha: 1,
-        gravityY: 0,
-        emitting: false,
-        angle: { min: -180, max: 180 },
-    }
-
-    const _strike = _make('pixels', strikeParams, 152);
 
     const enemyDamageParams = {
         frame: 'damage_particle.png',
-        speed: { start: 300, end: 40, ease: 'Cubic.easeOut' },
+        speed: 520, // braking covers ~57% of the old constant-300 travel; faster start compensates
+        ..._brake(0.87), // 520 → ~70 px/s over the particle's life
         lifespan: { min: 180, max: 475 },
         scaleX: { start: 0.93, end: 0, ease: 'Quart.easeIn' },
         scaleY: { start: 0.5, end: 0.25, ease: 'Quart.easeIn' },
@@ -236,7 +233,7 @@ const customEmitters = (() => {
                 return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
             }
         },
-        gravityY: 250,
+        gravityY: 0,
         emitting: false,
     };
 
@@ -244,7 +241,8 @@ const customEmitters = (() => {
 
     const swarmerDamageParams = Object.assign({}, enemyDamageParams, {
         frame: 'swarmer_damage_particle.png',
-        speed: { start: 260, end: 30, ease: 'Cubic.easeOut' },
+        speed: 450, // same compensation as above (was a constant 260)
+        ..._brake(0.88), // 450 → ~55 px/s
         lifespan: { min: 190, max: 380 },
         scaleX: { start: 1.1, end: 0, ease: 'Quart.easeIn' },
         scaleY: { start: 0.7, end: 0.4, ease: 'Quart.easeIn' },
@@ -267,16 +265,6 @@ const customEmitters = (() => {
         e.explode(count, x, y);
     }
 
-    function basicStrike(x, y, angle) {
-        const count = Math.floor(Math.random() * 3) + 3;
-        const e = _strike();
-        const minAngle = angle - 60;
-        const maxAngle = angle + 60;
-        const newParams = Object.assign({}, strikeParams);
-        newParams.angle = { min: minAngle, max: maxAngle };
-        e.setConfig(newParams);
-        e.explode(count, x, y);
-    }
 
     // ── basicStrikeManual ─────────────────────────────────────────────────────
     function basicStrikeManual(x, y, angle) {
@@ -319,7 +307,8 @@ const customEmitters = (() => {
     // tower death 
     const towerDeathParams = {
         frame: 'white_pixel.png',
-        speed: { min: 100, max: 200, ease: 'Cubic.easeOut' },
+        speed: { min: 175, max: 350 }, // ~1.75x the old constant speed; braking keeps the same reach
+        ..._brake(0.9),
         lifespan: { min: 400, max: 1000 },
         scale: { start: 25, end: 5, ease: 'Quad.easeIn' },
         alpha: { start: 0.4, end: 0, ease: 'Quad.easeIn' },
@@ -329,7 +318,8 @@ const customEmitters = (() => {
 
     const towerDeathShrapnelParams = {
         frame: 'white_pixel.png',
-        speed: { min: 280, max: 490, ease: 'Cubic.easeOut' },
+        speed: { min: 490, max: 860 }, // ~1.75x the old constant speed; braking keeps the same reach
+        ..._brake(0.9),
         lifespan: { min: 300, max: 600 },
         scale: { start: 30, end: 0 },
         alpha: { start: 0.8, end: 0 },
@@ -355,7 +345,8 @@ const customEmitters = (() => {
     // tower hit (lighter version of core death explosion)
     const towerHitParams = {
         frame: 'white_pixel.png',
-        speed: { min: 80, max: 180, ease: 'Cubic.easeOut' },
+        speed: { min: 145, max: 310 }, // faster start: deceleration roughly halves the travel
+        ..._brake(0.9), // slows to ~10% of its start speed by end of life
         lifespan: { min: 400, max: 1000 },
         scale: { start: 18, end: 4, ease: 'Quad.easeIn' },
         alpha: { start: 0.6, end: 0, ease: 'Quad.easeIn' },
@@ -367,36 +358,6 @@ const customEmitters = (() => {
 
     function towerHit(x, y, count = 2) {
         const e = _towerHit();
-        e.explode(count, x, y);
-    }
-
-    // ── Sword Hit ──────────────────────────────────────────────────────────
-    const swordHitParams = {
-        frame: 'white_pixel.png',
-        lifespan: { min: 150, max: 480 },
-        speed: { start: 270, end: 0, ease: 'Cubic.easeOut' },
-        scaleX: { start: 16, end: 0, ease: 'Cubic.easeIn' },
-        scaleY: 2.5,
-        rotate: {
-            onUpdate: (particle) => {
-                return Phaser.Math.RadToDeg(Math.atan2(particle.velocityY, particle.velocityX));
-            }
-        },
-        gravityY: 0,
-        emitting: false,
-    };
-
-    const _swordHit = _make('player', swordHitParams, GAME_CONSTANTS.DEPTH_ENEMIES + 12);
-
-    function swordHit(x, y, angle, count = 2) {
-        if (gameState.settings.minimalParticles) return;
-        const e = _swordHit();
-
-        const deg = Phaser.Math.RadToDeg(angle);
-        const newParams = Object.assign({}, swordHitParams);
-        newParams.angle = { min: deg - 80, max: deg + 80 };
-        e.setConfig(newParams);
-
         e.explode(count, x, y);
     }
 
@@ -786,7 +747,7 @@ const customEmitters = (() => {
             main.setVisible(false);
             bright.setVisible(false);
             red.setVisible(false);
-            timeManager.applyTimeScale(0.15, false); // Less extreme slow-down
+            const exploderSlow = timeManager.beginSlow(0.15, false); // Less extreme slow-down
             PhaserScene.time.delayedCall(5, () => {
                 PhaserScene.cameras.main.setZoom(1.005);
                 black.setVisible(false);
@@ -816,7 +777,7 @@ const customEmitters = (() => {
                     PhaserScene.time.delayedCall(8, () => {
                         // 3. Resume and Detonate (The 'Pop')
                         black.setVisible(false);
-                        timeManager.applyTimeScale(1.0);
+                        timeManager.endSlow(exploderSlow);
 
                         main.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.1);
                         bright.setVisible(true).setAlpha(1).setRotation(startRot).setScale(1.12);
@@ -1002,7 +963,6 @@ const customEmitters = (() => {
 
     return {
         init,
-        basicStrike,
         basicStrikeManual,
         towerDeath,
         towerHit,
@@ -1014,7 +974,6 @@ const customEmitters = (() => {
         createExploderExplosion,
         enemyDamage,
         swarmerDamage,
-        swordHit,
         malwareSiphonFX,
         cacheTrail,
         playShellDeath: (x, y, depth) => {

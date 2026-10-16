@@ -18,7 +18,7 @@ const DISABLED_NODES = [
         treeX: gridX(0),
         treeY: gridY(0),
         effect: function () {
-            console.log("Hello World node activated!");
+            debugLog("Hello World node activated!");
         }
     },
     {
@@ -35,7 +35,7 @@ const DISABLED_NODES = [
         treeX: gridX(1),
         treeY: gridY(0),
         effect: function () {
-            console.log("Companion uninstalled. It chirps a final, hopeful note, wishing you well.");
+            debugLog("Companion uninstalled. It chirps a final, hopeful note, wishing you well.");
         }
     },
     {
@@ -52,7 +52,7 @@ const DISABLED_NODES = [
         treeX: gridX(2),
         treeY: gridY(0),
         effect: function () {
-            console.log("Sharp Teeth upgraded. The companion's combat sub-routines are becoming more aggressive.");
+            debugLog("Sharp Teeth upgraded. The companion's combat sub-routines are becoming more aggressive.");
         }
     },
     {
@@ -69,7 +69,7 @@ const DISABLED_NODES = [
         treeX: gridX(3),
         treeY: gridY(0),
         effect: function () {
-            console.log("Data Scavenger activated. The companion is now prioritizing uncollected data drops.");
+            debugLog("Data Scavenger activated. The companion is now prioritizing uncollected data drops.");
         }
     },
     {
@@ -86,7 +86,7 @@ const DISABLED_NODES = [
         treeX: gridX(4),
         treeY: gridY(0),
         effect: function () {
-            console.log("Companion reinstalled. It chirps a happy welcome back!");
+            debugLog("Companion reinstalled. It chirps a happy welcome back!");
         }
     }
 ];

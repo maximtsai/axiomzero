@@ -36,8 +36,16 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
                     finalSave = JSON.stringify(cloudSave);
                 }
 
-                localStorage.setItem(SAVE_KEY, finalSave);
-                debugLog('Cloud save fetched, unpacked, and injected into localStorage.');
+                let readable = false;
+                try {
+                    readable = !!JSON.parse(finalSave);
+                } catch (parseError) {
+                    console.error('Cloud save is unreadable; keeping the local save:', parseError);
+                }
+                if (readable) {
+                    localStorage.setItem(SAVE_KEY, finalSave);
+                    debugLog('Cloud save fetched, unpacked, and injected into localStorage.');
+                }
             }
         } catch (e) {
             console.error('Failed to pre-fetch cloud save:', e);
@@ -169,6 +177,7 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     tutorialManager.init();
     dialogSystem.init();
     notificationManager.init();
+    hotkeys.init();
 
     // Camera & transition — cameraManager before transitionManager
     cameraManager.init();

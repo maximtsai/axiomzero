@@ -363,10 +363,8 @@ const tutorialManager = (() => {
         _activeDelayedCalls = [];
     }
 
+    /** Clears the tutorial popups on screen. Doesn't disable future hints. */
     function hideAll() {
-        if (typeof gameState !== 'undefined') {
-            gameState.tutorialsDisabled = true;
-        }
         _clearTutorial();
         _cancelActiveDelayedCalls();
         messageBus.publish('hideTutorials');

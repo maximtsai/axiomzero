@@ -298,7 +298,7 @@ class Node {
                     const canReveal = !isHidden && (canRevealParentState || canRevealDuo);
 
                     if (FLAGS.DEBUG && this.state === NODE_STATE.HIDDEN && canReveal) {
-                        console.log(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
+                        debugLog(`[NODE] ${this.id} found revealer parent: ${pid} (state: ${parent.state}, level: ${parent.level})`);
                     }
 
                     if (canReveal) {
@@ -329,7 +329,6 @@ class Node {
         } else if (this.isDuoBox) {
             // Duo-box special state logic
             const tierPurchased = this._isDuoTierPurchased();
-            const activeShard = gameState.activeShards[this.duoBoxTier];
 
             if (!this.isRequirementsMet()) {
                 // Parent not bought yet — Duo inner nodes stay HIDDEN until unlocked
@@ -350,7 +349,7 @@ class Node {
             this.setState(NODE_STATE.MAXED);
         } else if (this.forceUnlocked || (this.isRequirementsMet() && !this.forceGhost)) {
             if (FLAGS.DEBUG && this.state !== NODE_STATE.UNLOCKED) {
-                console.log(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
+                debugLog(`[NODE] ${this.id} -> UNLOCKED (met: ${this.isRequirementsMet()})`);
             }
             this.setState(NODE_STATE.UNLOCKED);
         } else {
@@ -466,6 +465,7 @@ class Node {
 
         // Deduct cost and increment level
         this._deductCost(cost);
+        this.lastPaidCost = cost; // effects that refund the purchase read this
         this.level++;
 
         // Persist
@@ -572,6 +572,9 @@ class Node {
         if (this.isMaxed()) return false;
         if (!this.canAfford()) return false;
 
+        // Price it now: once the level goes up, getCost() returns Infinity for a maxed node
+        this._pendingCost = this.getCost();
+
         // Set state and level locally (visuals follow state change)
         this.level++;
         this.setState(NODE_STATE.MAXED);
@@ -581,20 +584,21 @@ class Node {
             upgradeTree.playPurchasePulse(this.btn.x, this.btn.y + 1, true, this.costType === 'insight');
         }
 
-        console.log(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
+        debugLog(`[NODE] playPurchaseAnimationOnly triggered for ${this.id}`);
         return true;
     }
 
     finalizePurchase() {
-        const cost = this.getCost();
+        const cost = this._pendingCost !== undefined ? this._pendingCost : 0;
+        this._pendingCost = undefined;
         this._deductCost(cost);
 
         // Persist to global state
         if (!gameState.upgrades) gameState.upgrades = {};
         gameState.upgrades[this.id] = this.level;
         // saveGameState();
-        messageBus.publish('upgradePurchased', { id: this.id, level: this.level });
-        console.log(`[NODE] finalizePurchase completed for ${this.id}`);
+        messageBus.publish('upgradePurchased', { id: this.id, level: this.level, costType: this.costType, cost: cost });
+        debugLog(`[NODE] finalizePurchase completed for ${this.id}`);
 
         // Redraw all lines to match new node states
         if (typeof treeLineManager !== 'undefined') {
@@ -801,7 +805,7 @@ class Node {
         if (this.state !== NODE_STATE.UNLOCKED) return;
 
         if (FLAGS.DEBUG) {
-            console.log(`[NODE] Clicked: ${this.id} (${this.name})`);
+            debugLog(`[NODE] Clicked: ${this.id} (${this.name})`);
         }
 
         if (this.isDuoBox) {
@@ -873,7 +877,7 @@ class Node {
             }
 
             // Notify systems of state change
-            messageBus.publish('upgradePurchased', { id: this.id });
+            messageBus.publish('upgradePurchased', { id: this.id, isSwap: true });
             this._playDuoPulse();
             nodeAnims.playDuoSwapAnimation(this);
 
@@ -1087,7 +1091,6 @@ class Node {
             return;
         }
 
-        const wasVisible = this.duoBackingSprite.visible;
         this.duoBackingSprite.setVisible(true);
 
         // Only pulse if it's the very first time this backing is being revealed logically
@@ -1193,7 +1196,7 @@ class Node {
         }
 
         if (typeof upgradeTree !== 'undefined') {
-            const label = this.isDuoBox ? "TWIN NODE" : `${this.labelCategory} NODE`;
+            const label = this.isDuoBox ? t('hover', 'twin_node') : t('hover', 'node', [this.labelCategory]);
             upgradeTree.setHoverLabel(label);
         }
     }
@@ -1413,7 +1416,6 @@ de the current viewport to save draw calls.
     updateVisibility() {
         if (!this.btn || this.state === NODE_STATE.HIDDEN) return;
 
-        const group = upgradeTree.getDraggableGroup();
         const screenX = this.btn.x;
         const screenY = this.btn.y;
 
@@ -1464,6 +1466,8 @@ de the current viewport to save draw calls.
     static _updateSelectIndicator(node) {
         if (!PhaserScene) return;
 
+        const group = (typeof upgradeTree !== 'undefined') ? upgradeTree.getDraggableGroup() : null;
+
         if (!Node.selectIndicator) {
             // Updated: select_indicator.png is now a standard image asset
             Node.selectIndicator = PhaserScene.add.image(0, 0, 'buttons', 'select_indicator.png');
@@ -1472,10 +1476,7 @@ de the current viewport to save draw calls.
             Node.selectIndicator.setVisible(false);
 
             // Add to draggableGroup to ensure it respects the tree mask and moves with the tree
-            if (typeof upgradeTree !== 'undefined') {
-                const group = upgradeTree.getDraggableGroup();
-                if (group) group.add(Node.selectIndicator);
-            }
+            if (group) group.add(Node.selectIndicator);
         }
 
         if (!node || !node.btn || node.isDuoBox || node.isMaxed()) {
@@ -1490,29 +1491,30 @@ de the current viewport to save draw calls.
         const frame = (node.costType === 'insight') ? 'select_indicator_insight.png' : 'select_indicator.png';
         Node.selectIndicator.setFrame(frame);
 
-        Node.selectIndicator.setScale(1.09);
+        // Sync scale with tree zoom level, then store the offset (and a base scale of 1)
+        // in the VirtualGroup so the indicator stays attached while dragging/zooming
+        const gs = (group && group.getScale()) || 1;
+        Node.selectIndicator.setScale(gs);
+        if (group) group.recalculateOffsets();
+
+        // Selection bounce, relative to the current zoom
+        PhaserScene.tweens.killTweensOf(Node.selectIndicator);
+        Node.selectIndicator.setScale(1.09 * gs);
         PhaserScene.tweens.add({
             targets: Node.selectIndicator,
-            scale: 0.975,
+            scale: 0.975 * gs,
             duration: 80,
             ease: 'Quart.easeOut',
             onComplete: () => {
                 PhaserScene.tweens.add({
                     targets: Node.selectIndicator,
-                    scale: 1,
+                    scale: gs,
                     duration: 200,
                     ease: 'Back.easeOut',
                 });
             }
         });
         Node.selectIndicator.setVisible(true);
-
-        // Sync scale with tree zoom level
-        const gs = (group && group.getScale()) || 1;
-        Node.selectIndicator.setScale(gs);
-
-        // Update the stored offset in the VirtualGroup so it stays attached during dragging
-        if (group) group.recalculateOffsets();
     }
 }
 

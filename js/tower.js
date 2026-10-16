@@ -71,7 +71,6 @@ class TowerModel {
         } else {
             this.attackRange = 0;
         }
-        const lvlCfg = getCurrentLevelConfig();
         // const baseDecay = lvlCfg.healthDecay || 0;
         this.healthRegen = 0.4 * regenLv; // baseDecay commented out per request
         this.armor = armorLv; // 1 flat damage reduction per level
@@ -88,7 +87,7 @@ class TowerModel {
             for (const id in ups) {
                 if (ups[id] > 0) {
                     const def = NODE_DEFS.find(n => n.id === id);
-                    if (def && def.leaky !== undefined) {
+                    if (def && def.leaky > 0) { // repeat_exploit has leaky: 0 and is not a leak node
                         leakCount++;
                     }
                 }
@@ -205,6 +204,13 @@ class TowerView {
         this.artilleryCallTween = null;
         this.deathVisualsTimer = null;
         this.glowAlphaTween = null;
+
+        // Hit feedback (all canvas-safe: frame/alpha/graphics, no runtime tint)
+        this.hitArcs = [];          // small pool of Graphics arcs showing which side a hit came from
+        this.hitArcIndex = 0;
+        this.hurtVignette = null;   // persistent low-health pulse
+        this.hurtFlash = null;      // brief red edge flash on heavier hits
+        this.lowHealthTween = null;
     }
 
     spawn(cx, cy) {
@@ -283,6 +289,8 @@ class TowerView {
             this.rangeSprite.setScale(0);
         }
         this.updateRangeSprite(rangeScale);
+
+        this._createHitFeedback(cx, cy);
 
         // Breathe / pulse tween on glow
         this.breatheTween = PhaserScene.tweens.add({
@@ -367,11 +375,160 @@ class TowerView {
         });
     }
 
-    playHitFlash() {
-        if (this.sprite) {
-            helper.setTintFill(this.sprite, 0xffffff);
-            PhaserScene.time.delayedCall(80, () => {
-                helper.clearTint(this.sprite);
+    // ── Hit feedback ─────────────────────────────────────────────────────
+
+    _createHitFeedback(cx, cy) {
+        const texKey = TowerView.ensureVignetteTexture();
+        const w = GAME_CONSTANTS.WIDTH * 1.08;   // oversized so zoom punches don't reveal the edges
+        const h = GAME_CONSTANTS.HEIGHT * 1.08;
+        this.hurtVignette = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, texKey)
+            .setDisplaySize(w, h).setScrollFactor(0).setDepth(GAME_CONSTANTS.DEPTH_HUD - 2).setAlpha(0).setVisible(false);
+        this.hurtFlash = PhaserScene.add.image(GAME_CONSTANTS.halfWidth, GAME_CONSTANTS.halfHeight, texKey)
+            .setDisplaySize(w, h).setScrollFactor(0).setDepth(GAME_CONSTANTS.DEPTH_HUD - 1).setAlpha(0).setVisible(false);
+
+        for (let i = 0; i < 6; i++) {
+            // Above the tower and its flash bloom (the arc sits outside the tower sprite)
+            const g = PhaserScene.add.graphics().setPosition(cx, cy).setDepth(GAME_CONSTANTS.DEPTH_TOWER + 2).setVisible(false);
+            this.hitArcs.push(g);
+        }
+    }
+
+    /** Red-edged radial vignette, generated once (no art asset needed, works on both renderers). */
+    static ensureVignetteTexture() {
+        const key = 'tower_hurt_vignette';
+        if (PhaserScene.textures.exists(key)) return key;
+        const W = 320, H = 180;
+        const tex = PhaserScene.textures.createCanvas(key, W, H);
+        const ctx = tex.getContext();
+        const grad = ctx.createRadialGradient(W / 2, H / 2, H * 0.32, W / 2, H / 2, W * 0.6);
+        grad.addColorStop(0, 'rgba(225, 53, 0, 0)');
+        grad.addColorStop(0.55, 'rgba(225, 53, 0, 0.25)');
+        grad.addColorStop(1, 'rgba(255, 30, 60, 1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+        tex.refresh();
+        return key;
+    }
+
+    /**
+     * White flash on the tower, sized to the hit. Uses the flash-glow sprite instead of a
+     * tint, so it also shows on the Canvas renderer.
+     * @param {number} tier 0 = chip, 1 = solid, 2 = heavy (heavy uses takeBigDamageVisual)
+     */
+    playHitFlash(tier = 0) {
+        if (!this.sprite || !this.sprite.scene || !this.flashGlowSprite) return;
+        const glow = this.flashGlowSprite;
+        PhaserScene.tweens.killTweensOf(glow);
+        glow.setVisible(true).setAlpha(tier >= 1 ? 0.75 : 0.4);
+        PhaserScene.tweens.add({
+            targets: glow,
+            alpha: 0,
+            duration: tier >= 1 ? 200 : 120,
+            ease: 'Quad.easeOut',
+            onComplete: () => glow.setVisible(false).setAlpha(0.85),
+        });
+        if (tier >= 1) {
+            this.sprite.setFrame('tower_dark.png');
+            PhaserScene.time.delayedCall(90, () => {
+                if (this.sprite && this.sprite.scene && this.sprite.frame.name === 'tower_dark.png') {
+                    this.sprite.setFrame('tower1.png');
+                }
+            });
+        }
+    }
+
+    /** Knock the tower sprite away from the impact and let it spring back (visual only). */
+    playHitJolt(fromX, fromY, distance) {
+        if (!this.sprite || !this.sprite.scene) return;
+        const cx = GAME_CONSTANTS.halfWidth;
+        const cy = GAME_CONSTANTS.halfHeight;
+        const dx = cx - fromX;
+        const dy = cy - fromY;
+        const d = Math.sqrt(dx * dx + dy * dy) || 1;
+        PhaserScene.tweens.killTweensOf(this.sprite, ['x', 'y']);
+        PhaserScene.tweens.add({
+            targets: this.sprite,
+            x: cx + (dx / d) * distance,
+            y: cy + (dy / d) * distance,
+            duration: 50,
+            ease: 'Quad.easeOut',
+            onComplete: () => {
+                PhaserScene.tweens.add({
+                    targets: this.sprite,
+                    x: cx,
+                    y: cy,
+                    duration: 260,
+                    ease: 'Back.easeOut',
+                    easeParams: [2.5],
+                });
+            },
+        });
+    }
+
+    /** A short red arc on the tower's edge, facing where the hit came from. */
+    playHitDirection(fromX, fromY, tier) {
+        if (!this.hitArcs.length) return;
+        const g = this.hitArcs[this.hitArcIndex];
+        this.hitArcIndex = (this.hitArcIndex + 1) % this.hitArcs.length;
+
+        const angle = Math.atan2(fromY - GAME_CONSTANTS.halfHeight, fromX - GAME_CONSTANTS.halfWidth);
+        const half = [0.32, 0.45, 0.6][tier];
+        g.clear();
+        // Radius 58 sits outside the combat shield's arc
+        g.lineStyle([4, 6, 9][tier], GAME_CONSTANTS.COLOR_HOSTILE, 1);
+        g.beginPath();
+        g.arc(0, 0, 58, angle - half, angle + half, false);
+        g.strokePath();
+
+        PhaserScene.tweens.killTweensOf(g);
+        g.setVisible(true).setAlpha(1).setScale(1);
+        PhaserScene.tweens.add({
+            targets: g,
+            alpha: 0,
+            scale: 1.25,
+            duration: 420 + tier * 140,
+            ease: 'Cubic.easeOut',
+            onComplete: () => g.setVisible(false),
+        });
+    }
+
+    /** Brief red edge flash for solid/heavy hits. */
+    playHurtFlash(strength) {
+        if (!this.hurtFlash) return;
+        PhaserScene.tweens.killTweensOf(this.hurtFlash);
+        this.hurtFlash.setVisible(true).setAlpha(Math.max(this.hurtFlash.alpha, strength));
+        PhaserScene.tweens.add({
+            targets: this.hurtFlash,
+            alpha: 0,
+            duration: 420,
+            ease: 'Quad.easeOut',
+            onComplete: () => this.hurtFlash.setVisible(false),
+        });
+    }
+
+    /** Subtle, slowly pulsing red edges while health is low. */
+    setLowHealthVignette(on) {
+        if (!this.hurtVignette) return;
+        if (this.lowHealthTween) {
+            this.lowHealthTween.stop();
+            this.lowHealthTween = null;
+        }
+        if (on) {
+            this.hurtVignette.setVisible(true).setAlpha(0.07);
+            this.lowHealthTween = PhaserScene.tweens.add({
+                targets: this.hurtVignette,
+                alpha: 0.2,
+                duration: 900,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut',
+            });
+        } else {
+            PhaserScene.tweens.add({
+                targets: this.hurtVignette,
+                alpha: 0,
+                duration: 300,
+                onComplete: () => this.hurtVignette.setVisible(false),
             });
         }
     }
@@ -385,7 +542,8 @@ class TowerView {
         }
 
         PhaserScene.time.delayedCall(350, () => {
-            if (this.sprite && this.sprite.scene) {
+            // Only undo our own frame swap: a killing blow switches to the broken frame meanwhile
+            if (this.sprite && this.sprite.scene && this.sprite.frame.name === 'tower_dark.png') {
                 this.sprite.setFrame('tower1.png');
             }
             if (this.flashGlowSprite && this.flashGlowSprite.scene) {
@@ -864,6 +1022,22 @@ const tower = (() => {
     const model = new TowerModel();
     const view = new TowerView();
     let _hurtSoundIndex = 0;
+
+    // ── Hit feedback tuning ──
+    // Reactions scale with the share of max HP a hit takes. During a swarm, sounds, flashes,
+    // shakes and stops are rate-limited and merged so 10 simultaneous hits read as one big
+    // impact instead of a stack of jittering punches.
+    const HIT_TIER_SOLID = 0.05;   // >= 5% of max HP
+    const HIT_TIER_HEAVY = 0.15;   // >= 15% of max HP
+    const BIG_HIT_MIN_DAMAGE = 15; // the big-damage visual also needs more than this much damage
+    const LOW_HEALTH_RATIO = 0.25; // vignette pulses while the health bar is red
+    const _hitFx = {
+        lastSound: -1e9, pendingPct: 0, flushTimer: null,
+        lastFlash: -1e9, lastFlashTier: -1,
+        lastJolt: -1e9, lastStop: -1e9, lastBig: -1e9,
+        recentHits: [], numberTotal: 0, numberTimer: null,
+    };
+    let _lowHealthShown = false;
     let _expAtCombatStart = 0;
     let _healingAccumulator = 0;
 
@@ -949,52 +1123,23 @@ const tower = (() => {
 
     function takeDamage(amount, x = undefined, y = undefined) {
         if (!model.alive || model.isInvincible) return true; // Successfully 'survived' because we are invincible/dead
+        if (model.paused) return true; // Pause menu open: late setTimeout/tween hits don't land
+
+        // A hit the combat shield absorbs never reaches the tower: no hurt sound, flash or Bug Report drops
+        if (x != null && y != null && typeof combatShield !== 'undefined' && combatShield.unlocked && combatShield.alive
+            && combatShield.isAttackBlocked(x, y)) {
+            combatShield.takeDamage(amount);
+            return true;
+        }
 
         const survived = model.takeDamage(amount, x, y);
         const damageTaken = Math.max(0, amount - model.armor) * (model.damageReceivedMultiplier || 1);
 
         if (damageTaken > 0.5) {
-            let volume = 0.9;
-            let detune = 25;
-            const pct = damageTaken / model.maxHealth;
-
-            if (pct < 0.03) {
-                volume = 0.45;
-                detune = -200;
-            } else if (pct < 0.08) {
-                volume = 0.6;
-                detune = -75;
-            }
-
-            detune += (Math.random() * 30 - 15); // Small random variation
-
-            const key = (_hurtSoundIndex === 0) ? 'tower_hurt' : 'tower_hurt2';
-            _hurtSoundIndex = (_hurtSoundIndex + 1) % 2;
-
-            const s = audio.play(key, volume);
-            if (s) s.detune = detune;
-
-            // Trigger hit particles: 2 base + 1 per 10% max health lost
-            const hitPct = damageTaken / model.maxHealth;
-            const particleCount = 2 + Math.floor(hitPct / 0.1);
-            const pos = getPosition();
-            let px = pos.x;
-            let py = pos.y;
-
-            if (x !== undefined || y !== undefined) {
-                const dx = x - pos.x;
-                const dy = y - pos.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                px = pos.x + (dx / dist) * 15;
-                py = pos.y + (dy / dist) * 15;
-            }
-
-            customEmitters.towerHit(px, py, particleCount);
+            _reactToHit(damageTaken, x, y, survived);
         }
 
         if (survived) {
-            view.playHitFlash();
-            zoomShake(1.007);
             // BUG REPORT: Drop 1 DATA on hit + 1 extra per 5 cumulative damage
             if ((gameState.upgrades || {}).bug_report && damageTaken > 0) {
                 model.bugReportAccumulator += damageTaken;
@@ -1051,13 +1196,8 @@ const tower = (() => {
                 // Optional: slow down zoom shake slightly to emphasize core hit
                 zoomShake(1.015);
 
-                // Hitstop effect — slow down world logic for 300ms real-time
-                setTimeout(() => {
-                    PhaserScene.time.timeScale = 0.25;
-                    PhaserScene.time.delayedCall(300, () => {
-                        PhaserScene.time.timeScale = 1.0;
-                    });
-                }, 40);
+                // Hitstop effect — slow down world logic for 220ms real-time
+                setTimeout(() => timeManager.slowFor(220, 0.25), 40);
             }
 
             if (x !== undefined && y !== undefined) {
@@ -1076,6 +1216,142 @@ const tower = (() => {
             die();
         }
         return survived;
+    }
+
+    /**
+     * Sound, particles, flash, shake, jolt, hit-stop, direction arc, edge flash and damage
+     * number for one damaging hit, scaled by severity and merged during swarms.
+     */
+    function _reactToHit(damageTaken, x, y, survived) {
+        const now = performance.now();
+        const pct = damageTaken / model.maxHealth;
+        const tier = pct >= HIT_TIER_HEAVY ? 2 : (pct >= HIT_TIER_SOLID ? 1 : 0);
+        const hasSource = x != null && y != null;
+        const pos = getPosition();
+
+        // Swarm density: hits in the last 100ms
+        _hitFx.recentHits = _hitFx.recentHits.filter(t => now - t < 100);
+        _hitFx.recentHits.push(now);
+        const swarm = _hitFx.recentHits.length > 4;
+
+        // Sound: at most one per 80ms; skipped hits add to the next sound's weight
+        _hitFx.pendingPct += pct;
+        if (now - _hitFx.lastSound >= 80) {
+            _playHurtSound();
+        } else if (!_hitFx.flushTimer) {
+            _hitFx.flushTimer = setTimeout(() => {
+                _hitFx.flushTimer = null;
+                if (_hitFx.pendingPct > 0 && model.alive) _playHurtSound();
+            }, 80 - (now - _hitFx.lastSound));
+        }
+
+        // Particles at the contact point (fewer per hit in a swarm)
+        let px = pos.x, py = pos.y;
+        if (hasSource) {
+            const dx = x - pos.x, dy = y - pos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            px = pos.x + (dx / dist) * 15;
+            py = pos.y + (dy / dist) * 15;
+        }
+        customEmitters.towerHit(px, py, swarm ? 1 : 2 + Math.floor(pct / 0.1));
+
+        if (hasSource) view.playHitDirection(x, y, tier);
+        _queueDamageNumber(damageTaken);
+
+        // Big-damage visual (dark frame, bloom, black shards): heavy hits over 15 damage,
+        // at most once per 0.6s. Plays on a killing blow too.
+        const bigHit = tier === 2 && damageTaken > BIG_HIT_MIN_DAMAGE && now - _hitFx.lastBig >= 600;
+        if (bigHit) {
+            _hitFx.lastBig = now;
+            _hitFx.lastFlash = now;
+            _hitFx.lastFlashTier = tier;
+            if (view.flashGlowSprite) {
+                PhaserScene.tweens.killTweensOf(view.flashGlowSprite); // a running chip flash would fade it out
+                view.flashGlowSprite.setAlpha(0.85);
+            }
+            view.takeBigDamageVisual(x, y);
+        }
+
+        if (!survived) return; // death sequence takes over from here
+
+        // Flash + zoom punch: one per 70ms, unless this hit is heavier than the last one shown
+        if (bigHit) {
+            zoomShake(1.022);
+        } else if (now - _hitFx.lastFlash >= 70 || tier > _hitFx.lastFlashTier) {
+            _hitFx.lastFlash = now;
+            _hitFx.lastFlashTier = tier;
+            view.playHitFlash(tier);
+            zoomShake([1.005, 1.012, 1.022][tier]);
+        }
+
+        if (tier >= 1) {
+            if (hasSource && now - _hitFx.lastJolt >= 120) {
+                _hitFx.lastJolt = now;
+                view.playHitJolt(x, y, tier === 2 ? 7 : 4);
+            }
+            if (now - _hitFx.lastStop >= 350) {
+                _hitFx.lastStop = now;
+                timeManager.slowFor(tier === 2 ? 70 : 40, 0.05);
+            }
+            view.playHurtFlash(tier === 2 ? 0.32 : 0.16);
+        }
+    }
+
+    function _playHurtSound() {
+        const pct = _hitFx.pendingPct;
+        _hitFx.pendingPct = 0;
+        _hitFx.lastSound = performance.now();
+
+        let volume = 0.9;
+        let detune = 25;
+        if (pct < 0.03) {
+            volume = 0.45;
+            detune = -200;
+        } else if (pct < 0.08) {
+            volume = 0.6;
+            detune = -75;
+        }
+        detune += (Math.random() * 30 - 15); // Small random variation
+
+        const key = (_hurtSoundIndex === 0) ? 'tower_hurt' : 'tower_hurt2';
+        _hurtSoundIndex = (_hurtSoundIndex + 1) % 2;
+        const s = audio.play(key, volume);
+        if (s) s.detune = detune;
+    }
+
+    /** Damage taken within ~0.2s shows as one red number by the tower. */
+    function _queueDamageNumber(amount) {
+        if (!gameState.settings.showDamageNumbers) return;
+        _hitFx.numberTotal += amount;
+        if (_hitFx.numberTimer) return;
+        _hitFx.numberTimer = setTimeout(() => {
+            _hitFx.numberTimer = null;
+            const total = _hitFx.numberTotal;
+            _hitFx.numberTotal = 0;
+            if (total <= 0) return;
+            const pos = getPosition();
+            const text = '-' + (total >= 10 ? Math.round(total) : (Math.round(total * 10) / 10));
+            messageBus.publish('showFloatingText', pos.x + 30, pos.y - 34, text, {
+                fontFamily: 'Quantico-Bold',
+                fontSize: 22,
+                color: '#ff5d5d',
+                depth: GAME_CONSTANTS.DEPTH_TOWER + 5,
+                duration: 900,
+                travel: 38,
+                stroke: '#000000',
+                strokeThickness: 2,
+                presized: true,
+            });
+        }, 200);
+    }
+
+    function _syncLowHealthVignette() {
+        const low = model.alive && gameStateMachine.getPhase() === GAME_CONSTANTS.PHASE_COMBAT
+            && model.health <= model.maxHealth * LOW_HEALTH_RATIO;
+        if (low !== _lowHealthShown) {
+            _lowHealthShown = low;
+            view.setLowHealthVignette(low);
+        }
     }
 
     function heal(amount) {
@@ -1123,6 +1399,7 @@ const tower = (() => {
     function shake(duration, onComplete) { view.shake(duration, onComplete); }
 
     function _update(delta) {
+        _syncLowHealthVignette();
         const isTesting = typeof GAME_VARS !== 'undefined' && GAME_VARS.testingDefenses;
         if (!model.alive || (!model.active && !isTesting) || model.paused) return;
 
@@ -1191,16 +1468,21 @@ const tower = (() => {
 
             model.attackTimer += tick;
             if (model.attackTimer >= model.attackCooldown) {
-                model.attackTimer -= model.attackCooldown;
-                _tryAutoAttack();
+                if (_tryAutoAttack()) {
+                    model.attackTimer -= model.attackCooldown;
+                } else {
+                    // Nothing in range: stay charged so the first enemy to arrive is shot at once
+                    model.attackTimer = Math.max(0, model.attackCooldown - GAME_CONSTANTS.WEAPON_IDLE_RETRY_MS); // retry in 0.1s, not every frame
+                }
             }
         }
     }
 
+    /** @returns {boolean} True if the tower fired (false when no enemy is in range). */
     function _tryAutoAttack() {
         const pos = view.getPosition();
         const target = enemyManager.getNearestEnemy(pos.x, pos.y, model.attackRange);
-        if (!target) return;
+        if (!target) return false;
 
         const isAssault = upgradeDispatcher.getLevel('assault') > 0;
         const isRocket = upgradeDispatcher.getLevel('rocket') > 0;
@@ -1234,6 +1516,7 @@ const tower = (() => {
                 }
             }
         }
+        return true;
     }
 
     function _fireAssaultBurst(pos, isInversed = false, startDelay = 0) {
@@ -1325,7 +1608,8 @@ const tower = (() => {
         debugLog('Tower invincible for 2.8s after boss defeat');
     }
 
-    function _onEnemyDeath(x, y, drop, type, wasResonance = false) {
+    // Matches the enemyKilled payload; minibossDefeated/bossDefeated only pass (x, y, ...)
+    function _onEnemyDeath(x, y, drop, type, wasBoss, wasMiniboss, wasResonance = false) {
         if (!model.alive || !model.awakened) return;
         const ups = gameState.upgrades || {};
 

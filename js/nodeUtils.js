@@ -13,7 +13,7 @@ function registerNode(config) {
         return null;
     }
 
-    console.log(`[NODE UTILS] Registering node: ${config.id}`);
+    debugLog(`[NODE UTILS] Registering node: ${config.id}`);
 
     // Ensure defaults
     if (config.maxLevel === undefined) config.maxLevel = 1;
@@ -25,7 +25,7 @@ function registerNode(config) {
     if (typeof NODE_DEFS !== 'undefined') {
         // Prevent duplicates
         if (NODE_DEFS.some(d => d.id === config.id)) {
-            console.log(`[NODE UTILS] Node '${config.id}' is already registered.`);
+            debugLog(`[NODE UTILS] Node '${config.id}' is already registered.`);
             return getNodeDef(config.id);
         }
 
@@ -37,7 +37,7 @@ function registerNode(config) {
             if (parentDef) {
                 if (!parentDef.childIds) parentDef.childIds = [];
                 if (!parentDef.childIds.includes(config.id)) {
-                    console.log(`[NODE UTILS] Adding reciprocity: parent ${parentId} now lists ${config.id} as child.`);
+                    debugLog(`[NODE UTILS] Adding reciprocity: parent ${parentId} now lists ${config.id} as child.`);
                     parentDef.childIds.push(config.id);
                 }
             }
@@ -69,14 +69,14 @@ function getNodeDef(id) {
  * @param {string} parentId - The ID of the node that will become the parent.
  */
 function attachNodeToParent(nodeId, parentId) {
-    console.log(`[NODE UTILS] Attaching node '${nodeId}' to parent '${parentId}'`);
+    debugLog(`[NODE UTILS] Attaching node '${nodeId}' to parent '${parentId}'`);
     let nodeDef = getNodeDef(nodeId);
 
     // If not in active defs, check disabled nodes
     if (!nodeDef && typeof DISABLED_NODES !== 'undefined') {
         nodeDef = DISABLED_NODES.find(d => d.id === nodeId);
         if (nodeDef) {
-            console.log(`[NODE UTILS] Found '${nodeId}' in DISABLED_NODES. Activating...`);
+            debugLog(`[NODE UTILS] Found '${nodeId}' in DISABLED_NODES. Activating...`);
             // Ensure the parent is listed before registering to trigger reciprocity
             if (!nodeDef.parents.includes(parentId)) {
                 nodeDef.parents.push(parentId);
@@ -102,7 +102,7 @@ function attachNodeToParent(nodeId, parentId) {
     }
     if (!parentDef.childIds) parentDef.childIds = [];
     if (!parentDef.childIds.includes(nodeId)) {
-        console.log(`[NODE UTILS] Updating reciprocity link: parent ${parentId} -> child ${nodeId}`);
+        debugLog(`[NODE UTILS] Updating reciprocity link: parent ${parentId} -> child ${nodeId}`);
         parentDef.childIds.push(nodeId);
     }
 
@@ -116,7 +116,7 @@ function attachNodeToParent(nodeId, parentId) {
 
         // 1. If child doesn't exist in the UI yet, spawn it
         if (!child && typeof upgradeTree.spawnNode === 'function') {
-            console.log(`[NODE UTILS] Triggering UI spawn for '${nodeId}'`);
+            debugLog(`[NODE UTILS] Triggering UI spawn for '${nodeId}'`);
             child = upgradeTree.spawnNode(nodeId);
         } else if (!child) {
             console.warn(`[NODE UTILS] Cannot spawn '${nodeId}' visually: upgradeTree.spawnNode is missing!`);
@@ -124,10 +124,10 @@ function attachNodeToParent(nodeId, parentId) {
 
         // 2. Refresh parent state to trigger visibility cascade (HIDDEN -> GHOST)
         if (parent) {
-            console.log(`[NODE UTILS] Refreshing parent '${parentId}' for visibility cascade.`);
+            debugLog(`[NODE UTILS] Refreshing parent '${parentId}' for visibility cascade.`);
             parent.refreshState();
         } else if (child) {
-            console.log(`[NODE UTILS] Refreshing child '${nodeId}' directly.`);
+            debugLog(`[NODE UTILS] Refreshing child '${nodeId}' directly.`);
             child.refreshState();
         }
     }
@@ -142,7 +142,7 @@ function saveDynamicNode(nodeId) {
     const def = getNodeDef(nodeId);
     if (!def) return;
 
-    console.log(`[NODE UTILS] Persisting node '${nodeId}' to gameState.`);
+    debugLog(`[NODE UTILS] Persisting node '${nodeId}' to gameState.`);
 
     gameState.dynamicNodes[nodeId] = {
         parents: [...def.parents],
@@ -158,7 +158,7 @@ function saveDynamicNode(nodeId) {
 function restoreDynamicNodes() {
     if (typeof gameState === 'undefined' || !gameState.dynamicNodes) return;
 
-    console.log("[NODE UTILS] Restoring dynamic nodes from save...");
+    debugLog("[NODE UTILS] Restoring dynamic nodes from save...");
 
     for (const nodeId in gameState.dynamicNodes) {
         const savedData = gameState.dynamicNodes[nodeId];
@@ -168,7 +168,7 @@ function restoreDynamicNodes() {
         if (!def && typeof DISABLED_NODES !== 'undefined') {
             def = DISABLED_NODES.find(d => d.id === nodeId);
             if (def) {
-                console.log(`[NODE UTILS] Restoring '${nodeId}' from DISABLED_NODES.`);
+                debugLog(`[NODE UTILS] Restoring '${nodeId}' from DISABLED_NODES.`);
                 // Apply saved position before registering
                 if (savedData.treeX !== undefined) def.treeX = savedData.treeX;
                 if (savedData.treeY !== undefined) def.treeY = savedData.treeY;
@@ -178,7 +178,7 @@ function restoreDynamicNodes() {
                 registerNode(def);
             }
         } else if (def) {
-            console.log(`[NODE UTILS] Syncing active node '${nodeId}' from save.`);
+            debugLog(`[NODE UTILS] Syncing active node '${nodeId}' from save.`);
             // Node is already active, just sync any saved properties
             if (savedData.treeX !== undefined) def.treeX = savedData.treeX;
             if (savedData.treeY !== undefined) def.treeY = savedData.treeY;
@@ -198,7 +198,7 @@ function restoreDynamicNodes() {
  * @param {number} y - The new treeY coordinate.
  */
 function updateNodePosition(nodeId, x, y) {
-    console.log(`[NODE UTILS] Moving node '${nodeId}' to (${x}, ${y})`);
+    debugLog(`[NODE UTILS] Moving node '${nodeId}' to (${x}, ${y})`);
     const def = getNodeDef(nodeId);
     if (!def) {
         console.error(`[NODE UTILS] Cannot update position: Node '${nodeId}' not found.`);
@@ -212,7 +212,7 @@ function updateNodePosition(nodeId, x, y) {
     if (typeof upgradeTree !== 'undefined') {
         const liveNode = upgradeTree.getNode(nodeId);
         if (liveNode && typeof liveNode.setPosition === 'function') {
-            console.log(`[NODE UTILS] Updating live sprite position for '${nodeId}'`);
+            debugLog(`[NODE UTILS] Updating live sprite position for '${nodeId}'`);
             liveNode.setPosition(x, y);
         } else if (liveNode) {
             console.warn(`[NODE UTILS] liveNode found but setPosition is missing for '${nodeId}'!`);

@@ -98,7 +98,7 @@ class CurrencyCluster {
                         { text: t('hud', `${id}_desc`), style: 'normal' }
                     ], CONFIG.TOOLTIP_WIDTH);
                     if (typeof upgradeTree !== 'undefined') {
-                        upgradeTree.setHoverLabel(id.toUpperCase());
+                        upgradeTree.setHoverLabel(t('hover', id));
                     }
                 },
                 onHoverOut: () => {
@@ -235,16 +235,6 @@ class CurrencyCluster {
             res.text.setDepth(depth);
             if (res.btn) res.btn.setDepth(depth - 1);
         });
-    }
-
-    _getResourceValue(id) {
-        if (typeof resourceManager === 'undefined') return 0;
-        if (id === 'data') return resourceManager.getData();
-        if (id === 'insight') return resourceManager.getInsight();
-        if (id === 'shard') return resourceManager.getShards();
-        if (id === 'processor') return resourceManager.getProcessors();
-        if (id === 'coin') return resourceManager.getCoins();
-        return 0;
     }
 
     setVisible(vis) {

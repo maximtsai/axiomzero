@@ -29,7 +29,7 @@ const analyticsManager = (() => {
         if (typeof messageBus !== 'undefined') {
             // Track every upgrade purchased
             messageBus.subscribe('upgradePurchased', (data) => {
-                if (data && data.id) {
+                if (data && data.id && !data.isSwap) {
                     trackNodePurchase(data.id, data.level, data.costType, data.cost);
                 }
             });

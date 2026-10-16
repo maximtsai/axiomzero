@@ -155,7 +155,7 @@ class CacheEnemy extends Enemy {
             this.view.createVisuals();
         }
 
-        console.log(`[CacheEnemy] SPAWNED at ${Math.floor(x)}, ${Math.floor(y)}`);
+        debugLog(`[CacheEnemy] SPAWNED at ${Math.floor(x)}, ${Math.floor(y)}`);
         this.view.coreParts.forEach(p => p.setVisible(true));
 
         // Play appear sound after 4s if still alive and in window, with retries
@@ -209,8 +209,8 @@ class CacheEnemy extends Enemy {
         const distSq = (m.x - GAME_CONSTANTS.halfWidth) ** 2 + (m.y - GAME_CONSTANTS.halfHeight) ** 2;
 
         if (distSq > 1250 ** 2) {
-            console.log(`[CacheEnemy] DESPAWNED (too far: ${Math.sqrt(distSq).toFixed(1)})`);
-            this.deactivate();
+            debugLog(`[CacheEnemy] DESPAWNED (too far: ${Math.sqrt(distSq).toFixed(1)})`);
+            enemyManager.despawnEnemy(this);
         }
     }
 
@@ -233,8 +233,8 @@ class CacheEnemy extends Enemy {
         m.vy = Math.sin(m.flightAngle) * m.speed;
     }
 
-    takeDamage(amount) {
-        const result = super.takeDamage(amount);
+    takeDamage(amount, source) {
+        const result = super.takeDamage(amount, source);
 
         const m = this.model;
         if (m.alive && result && result.actualApplied > 0) {

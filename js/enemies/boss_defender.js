@@ -657,6 +657,8 @@ class BossDefender extends Boss {
 
     update(dt) {
         super.update(dt);
+        // A burn tick inside super.update can kill the boss, and deactivate destroys the view
+        if (!this.model.alive || !this.view.img) return;
         // Sync visual rotation with the model's calculated steering rotation
         this.setRotation(this.model.baseRotation);
         this.view.setTurretRotation(this.model.turretRotation);

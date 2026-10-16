@@ -5,3 +5,6 @@ nul
 assets/backgrounds/**
 assets/sprites/**
 dist/
+node_modules/
+.env
+.env.*

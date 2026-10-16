@@ -56,6 +56,49 @@ Object.assign(helper, {
         return globalObjects.clickBlocker;
     },
 
+    /**
+     * Creates a private full-screen click blocker on top of every existing Button.
+     * Use it for a popup that opens over another popup: the shared global blocker
+     * stays as it is, and the caller destroys this one when its popup closes.
+     */
+    createLocalClickBlocker: function () {
+        const blocker = new Button({
+            normal: {
+                ref: 'black_pixel.png',
+                atlas: 'buttons',
+                x: GAME_CONSTANTS.halfWidth,
+                y: GAME_CONSTANTS.halfHeight,
+                alpha: 0.001,
+                scaleX: 1000,
+                scaleY: 1000,
+                depth: 999999
+            },
+            onMouseUp: function () { }
+        });
+        blocker.setScrollFactor(0);
+        // Track live local blockers for isInputBlocked(); undo on destroy
+        helper._localBlockers = (helper._localBlockers || 0) + 1;
+        const destroy = blocker.destroy.bind(blocker);
+        let released = false;
+        blocker.destroy = function () {
+            if (!released) {
+                released = true;
+                helper._localBlockers = Math.max(0, helper._localBlockers - 1);
+            }
+            return destroy();
+        };
+        return blocker;
+    },
+
+    /**
+     * True while any click blocker owns input: the shared global one (popups, transitions)
+     * or a local one (companion dialog, reset confirm). Keyboard and wheel handlers check this.
+     */
+    isInputBlocked: function () {
+        return helper.isGlobalBlockerActive() || (helper._localBlockers || 0) > 0
+            || (typeof buttonManager !== 'undefined' && buttonManager.isBlocked);
+    },
+
     /** Disables the global click blocker and restores the default cursor. */
     hideGlobalClickBlocker: function () {
         if (!globalObjects.clickBlocker) { return; }

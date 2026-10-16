@@ -83,8 +83,8 @@ class Slider {
             this._updateKnobTexture('normal');
         };
 
-        // Initial update to set fill scale
-        this._updateKnob(this.knob.x);
+        // Initial update to set fill scale (no onChange: opening a menu shouldn't apply or save anything)
+        this._updateKnob(this.knob.x, false);
     }
 
     _updateKnobTexture(state) {
@@ -111,7 +111,7 @@ class Slider {
         PhaserScene.input.on('pointerup', this._boundUp);
     }
 
-    _updateKnob(mx) {
+    _updateKnob(mx, notify = true) {
         const clampedX = Math.max(this.minX, Math.min(this.maxX, mx));
         this.knob.x = clampedX;
 
@@ -127,7 +127,7 @@ class Slider {
             }
         }
 
-        if (this.onChange) this.onChange(value);
+        if (notify && this.onChange) this.onChange(value);
     }
 
     _endDrag() {

@@ -36,7 +36,6 @@ class InternalButtonManager {
         let handX = GAME_VARS.mouseposx;
         let handY = GAME_VARS.mouseposy;
         // check hovering
-        let hasHovered = false;
         let currentHovered = null;
         let newHovered = null;
 
@@ -46,7 +45,6 @@ class InternalButtonManager {
                 if (this.lastHovered !== buttonObj) {
                     newHovered = buttonObj;
                 }
-                hasHovered = true;
                 currentHovered = buttonObj;
                 break;
             }

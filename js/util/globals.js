@@ -9,6 +9,31 @@
  * Must be loaded before all other util scripts.
  * @module globals
  */
+
+// ── Storage fallback ──────────────────────────────────────────────────────────
+// In a sandboxed iframe or with site data blocked, merely touching localStorage throws,
+// which used to leave a black screen after loading. Swap in an in-memory store so the
+// game still runs; progress just isn't kept after the tab closes.
+(function ensureLocalStorage() {
+    try {
+        window.localStorage.getItem('__storage_probe__');
+    } catch (e) {
+        const mem = {};
+        const shim = {
+            getItem: (k) => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
+            setItem: (k, v) => { mem[k] = String(v); },
+            removeItem: (k) => { delete mem[k]; },
+            clear: () => { Object.keys(mem).forEach(k => delete mem[k]); },
+            key: (i) => Object.keys(mem)[i] || null,
+            get length() { return Object.keys(mem).length; },
+        };
+        try {
+            Object.defineProperty(window, 'localStorage', { value: shim, configurable: true });
+        } catch (e2) { /* can't shadow it in this browser; nothing more to do */ }
+        console.warn('localStorage is unavailable; progress will not be saved this session.');
+    }
+})();
+
 const GAME_CONSTANTS = {
     // Math
     DEG_TO_RADIAL: 57.296,
@@ -72,13 +97,18 @@ const GAME_OPTIONS_DEFAULTS = {
     musicVolume: 1,
 };
 
-const gameOptions = (function () {
+const gameOptions = Object.assign({}, GAME_OPTIONS_DEFAULTS);
+
+/**
+ * Merge saved options over the defaults. Called from gameConfig.js right after it
+ * declares OPTIONS_KEY: this file loads first, so reading the key here threw (silently).
+ */
+function loadGameOptions() {
     try {
         const raw = localStorage.getItem(OPTIONS_KEY);
-        if (raw) return Object.assign({}, GAME_OPTIONS_DEFAULTS, JSON.parse(raw));
-    } catch (e) { /* ignore corrupt data */ }
-    return Object.assign({}, GAME_OPTIONS_DEFAULTS);
-})();
+        if (raw) Object.assign(gameOptions, JSON.parse(raw));
+    } catch (e) { /* ignore corrupt data or blocked storage */ }
+}
 
 /** Persist current gameOptions to localStorage. */
 function saveGameOptions() {
