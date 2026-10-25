@@ -110,7 +110,7 @@ DATA, INSIGHT, SHARD, COIN, PROCESSOR (`hud/CurrencyCluster.js`).
 | Range | 0 until AUTO DEFENSE; then `230 × (1 + 0.2·coverage + 0.2·farsight)` | COVERAGE, FARSIGHT |
 | Attack cooldown | `1000 × (1 − 0.05·clock_speed) × 0.9 (fiber_optics)` ms | CLOCK SPEED (×4), FIBER OPTICS; ×2 attack speed under 50% HP with EMERGENCY OVERCLOCK |
 | Regen | `0.4·regen` HP/s, never negative | AUTO-RESTORE (0.20 COIN) |
-| Armor | flat −`armor` per hit, then ×0.9 with PROXY ROUTING ⚠ (§10.9) | ARMOR (×2) |
+| Armor | flat −`armor` per hit, then ×0.9 with PROXY ROUTING ⚠ (§10.8) | ARMOR (×2) |
 
 Notes:
 
@@ -121,7 +121,7 @@ Notes:
 - **RECURSIVE ARRAY** (`prismatic_array`, under FARSIGHT): 40% chance of an extra core shot.
 - **EXP → INSIGHT:**
   - EXP accrues only while the tower is alive in combat, at `0.62 × boost` per second, and 100 EXP = 1 INSIGHT. That is about 161 s per INSIGHT.
-  - The boost depends on lifetime `stats.insightEarn`: ×1.4 at 0, ×1.2 at 1, ×1.1 at 2 ⚠ (§10.12). Farming mode applies ×0.5 on top.
+  - The boost depends on lifetime `stats.insightEarn`: ×1.4 at 0, ×1.2 at 1, ×1.1 at 2 ⚠ (§10.11). Farming mode applies ×0.5 on top.
   - No node changes the rate.
 - **Heals:**
   - MALWARE SIPHON: +0.5 per death near the tower.
@@ -151,7 +151,7 @@ Notes:
   - IMPULSE (+50% vs full HP)
   - INSTABILITY (marks the enemy; the next non-cursor hit does +10)
   - AFTERSHOCK (a second, larger hit for 4 or 8 damage)
-  - **RESONANCE:** every 4th pulse does ×2 damage (×3 with AMPLITUDE); CRESCENDO makes it +100 px larger ⚠ (§10.9).
+  - **RESONANCE:** every 4th pulse does ×2 damage (×3 with AMPLITUDE); CRESCENDO makes it +100 px larger ⚠ (§10.8).
 - **Bomb:**
   - BOMB and BOMB 2 give one charge each. Charges refill on every phase change.
   - Arm with **Space** or the HUD button, then click or press Space to detonate at the cursor. Cancelling refunds the charge.
@@ -289,8 +289,8 @@ Scaling notation:
 | Shooter (`shooter_enemy.js`) | 6s | 1.5 | Stops at 160 px and fires a 2-damage bullet every 2.5 s. |
 | Sniper (`sniper_enemy.js`) | 12s | 4 | Stops at 250 px and fires a 4-damage bullet every 5 s. No knockback. |
 | Protector (`protector_enemy.js`) | 15s | 3 | No contact damage. Parks at 210 px; other non-boss enemies within 210 px take 50% damage. |
-| Exploder (`exploder.js`) | 6s | 1 | Only from TROJAN PAYLOAD: after at least 4 spawns, a 9.2% roll converts the next basic. On death it deals 1.25× its max HP to nearby *enemies* (radius ×1.5 with VOLATILE PAYLOAD) ⚠ (§10.9). |
-| Cache / "loot goblin" (`cache_enemy.js`) | 21s | 12 | Needs ACCESS INTERNET, which also gives basics a 10% chance to become caches until the first cache spawns ⚠ (§10.14). Flies past the tower, speeds up when hit, and drops 2 DATA per hit. Escapes beyond 1250 px. Soft cap of 1 (`enemyManager.js` ~293): a cache roll becomes basic 80% of the time while one is active, 40% while none is. |
+| Exploder (`exploder.js`) | 6s | 1 | Only from TROJAN PAYLOAD: after at least 4 spawns, a 9.2% roll converts the next basic. On death it deals 1.25× its max HP to nearby *enemies* (radius ×1.5 with VOLATILE PAYLOAD) ⚠ (§10.8). |
+| Cache / "loot goblin" (`cache_enemy.js`) | 21s | 12 | Needs ACCESS INTERNET, which also gives basics a 10% chance to become caches until the first cache spawns ⚠ (§10.13). Flies past the tower, speeds up when hit, and drops 2 DATA per hit. Escapes beyond 1250 px. Soft cap of 1 (`enemyManager.js` ~293): a cache roll becomes basic 80% of the time while one is active, 40% while none is. |
 | Logic Stray (`logic_stray_enemy.js`) | 12s | 0 | Flees when hit and drops 1 PROCESSOR. **Weight 0 on every level**, so it never spawns ⚠ (§10.5). |
 | Shell (`shell_enemy.js`) | 12·lsm | 0 | Fast projectile-enemy, only spawned by Boss Defender's bombard. |
 | Test (`test_enemy.js`) | 6·lsm | 0 | Sandbox target. Kills are ignored by rewards and stats. |
@@ -339,7 +339,7 @@ Scaling notation:
 - **Level select** (`treePopups.js`):
   - Shown on DEPLOY once a boss is beaten.
   - Shows levels 1 to `min(levelsDefeated + 1, 5)`.
-  - Shows "(ENDLESS)" for beaten levels ⚠ (§10.11), "+N% DATA" and the best farming time.
+  - Shows "(ENDLESS)" for beaten levels ⚠ (§10.10), "+N% DATA" and the best farming time.
   - Levels above 5 fall back to level 5's config.
 - **Wave length:** 50 s, or 46 s if the level's miniboss is already beaten. Progress pauses during a miniboss.
 - **Spawn interval:**
@@ -349,7 +349,7 @@ Scaling notation:
   - ×`0.92^(1+floor(t/60))` in farming mode.
   - +225 ms while a boss is alive and another +225 ms while a miniboss is alive (they stack).
   - In the "opening rush", enemies spawn and move at ×27 for about the first 1 s of each fight (until `combatTime` 5.05), then ramp back to ×1 over 1.25 s.
-  - A spawn pause of `spawnPauseDuration` (default 3000 ms) follows each 6 s scale step ⚠ (§10.10).
+  - A spawn pause of `spawnPauseDuration` (default 3000 ms) follows each 6 s scale step ⚠ (§10.9).
 - **Weights:** `initialWeights` until 50.5% progress; `lateWeights` merged over them after that, or always once the miniboss or level is beaten.
 - **`ENEMY_SPAWN_RULES`** sets a minimum `combatTime` per type (swarmer, sniper 6; protector 7; fast, cache 8). `combatTime` starts at 4 and pauses while a boss or miniboss is alive, so 8 means about 4 s into the fight.
 
@@ -361,7 +361,7 @@ Scaling notation:
 | 4 | Boss4 / MB4 | 1.8 | 3 | 1 | 450 → 475 | basic, swarmer, heavy, cache, protector (late: +shooter, sniper) |
 | 5 | Boss5 / MB4 | 2.2 | 4.2 | 1.1 | 475 | as level 4 |
 
-⚠ Interval outliers: §10.10.
+⚠ Interval outliers: §10.9.
 
 ---
 
@@ -441,7 +441,7 @@ Scaling notation:
 
 - **Auto-pause:** in combat, hiding the tab or blurring the window opens Options.
 - **Saving** (`util/gameState.js`): progress saves on phase changes only, so reloading undoes a tree misclick; settings save immediately via `saveSettings()`.
-  Mid-phase exceptions: §10.13. Format, export/import, reset and cloud mirroring: `docs/ARCHITECTURE.md` §7.4.
+  Mid-phase exceptions: §10.12. Format, export/import, reset and cloud mirroring: `docs/ARCHITECTURE.md` §7.4.
 
 ---
 
@@ -454,20 +454,18 @@ Scaling notation:
 5. **PROCESSOR** has no source (Logic Stray weight is 0 on every level) and no sink.
 6. **Surplus SHARDs:** CHEAT's +2 have nothing to buy, because Override and Synthesis were not built.
 7. **SECURITY TEST 3** (1000 DATA, refunded) has no children; it gates nothing.
-8. **Unused weapon hooks:** `laserAttack` still supports a disintegration level (+1 damage per tick) and
-   `artilleryAttack` a stun level, but no node sets them (their old nodes were removed). Add nodes or delete the hooks.
-9. **Descriptions that disagree with code:**
+8. **Descriptions that disagree with code:**
    - PROXY ROUTING says 20%; the code does 10%.
    - TROJAN PAYLOAD says 7%; the code is a 9.2% roll gated by 4 spawns.
    - CRESCENDO says "+100% size"; the code adds +100 px.
-10. **Spawn tuning:**
+9. **Spawn tuning:**
     - The spawn-pause modulo (`currentScaleLevel % 1`) is always true, so the pause comes every 6 s rather than the commented ~12 s.
     - Level 3's late interval of 125 ms is an outlier.
     - Level 4's late interval is slower than its early one.
     - Level 5 has no late interval.
-11. **Level select** doesn't label level 5 "(ENDLESS)" once every level is beaten, though it plays as farming (`treePopups.js`: `isEndless = selected < maxDisplayLevel`).
-12. **EXP first-run boost:** the ×1.4 boost reads `stats.insightEarn`, which only updates at run end. It therefore lasts the whole first run, not just until the first INSIGHT.
-13. **Mid-phase `saveGame()` calls** (takeover start/abort/completion/claim, achievement unlocks, the first-breach dialog flag, a new farming best score) also persist unconfirmed tree purchases. That weakens the "reload undoes a misclick" rule.
-14. **ACCESS INTERNET cache boost** (basics 10% → cache) is one-shot by design: set on purchase (`nodeDefs.js` ~1727), cleared by the first cache spawn (`enemyManager.js` ~449) and not saved. Intended?
+10. **Level select** doesn't label level 5 "(ENDLESS)" once every level is beaten, though it plays as farming (`treePopups.js`: `isEndless = selected < maxDisplayLevel`).
+11. **EXP first-run boost:** the ×1.4 boost reads `stats.insightEarn`, which only updates at run end. It therefore lasts the whole first run, not just until the first INSIGHT.
+12. **Mid-phase `saveGame()` calls** (takeover start/abort/completion/claim, achievement unlocks, the first-breach dialog flag, a new farming best score) also persist unconfirmed tree purchases. That weakens the "reload undoes a misclick" rule.
+13. **ACCESS INTERNET cache boost** (basics 10% → cache) is one-shot by design: set on purchase (`nodeDefs.js` ~1727), cleared by the first cache spawn (`enemyManager.js` ~449) and not saved. Intended?
 
 More notes on engineering, balance and performance are in `BACKLOG.md`.

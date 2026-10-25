@@ -28,7 +28,6 @@ class LaserAttackModel {
 
         // Upgrade levels
         this.apertureLevel = 0; // laser_aperture (+60px width)
-        this.disintegrationLevel = 0; // laser_disintegration (+1 base damage)
         this.twinLevel = 0;       // laser_twin_beams (dual turret)
 
         // Visual feedback
@@ -362,9 +361,8 @@ const laserAttack = (() => {
         view.hide();
     }
 
-    function setLevels({ aperture = 0, disintegration = 0, twin = 0, cooldownMultiplier = 1.0 } = {}) {
+    function setLevels({ aperture = 0, twin = 0, cooldownMultiplier = 1.0 } = {}) {
         model.apertureLevel = aperture;
-        model.disintegrationLevel = disintegration;
         model.twinLevel = twin;
         model.setCooldownMultiplier(cooldownMultiplier);
     }
@@ -506,7 +504,7 @@ const laserAttack = (() => {
     function _dealDamage(towerPos) {
         _tickHitSet.clear();
         const halfDmgW = model.getDamageHalfWidth();
-        const dmg = model.BASE_DAMAGE_PER_TICK + model.disintegrationLevel;
+        const dmg = model.BASE_DAMAGE_PER_TICK;
         const L = model.BEAM_LENGTH;
 
         _applyBeamDamage(model.getTurretX(towerPos.x), model.getTurretY(towerPos.y), model.angle, L, halfDmgW, dmg);

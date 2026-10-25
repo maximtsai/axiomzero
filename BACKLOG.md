@@ -65,5 +65,3 @@ ENDLESS labelling, …) are listed in `docs/MECHANICS.md` §10.
 
 ## Tech debt
 
-- Unused weapon hooks: laser disintegration and artillery stun levels exist with no nodes
-  (`docs/MECHANICS.md` §10.8).

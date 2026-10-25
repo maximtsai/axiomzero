@@ -19,7 +19,6 @@ class ArtilleryAttackModel {
         this.radiusLevel = 0;     // artillery_shells
         this.volleyLevel = 0;     // artillery_volley
         this.firstStrikeLevel = 0; // artillery_first_strike
-        this.stunLevel = 0;        // artillery_stun
     }
 
     setFireInterval(ms) {
@@ -399,11 +398,6 @@ const artilleryAttack = (() => {
                 }
 
                 enemyManager.damageEnemy(enemy, damage, 'artillery');
-
-                // SHELLSHOCKED logic: 80% slow for 1.25s
-                if (model.stunLevel > 0 && typeof enemy.forceSlow === 'function') {
-                    enemy.forceSlow(0.15, 1);
-                }
             }
         }, durationOffset);
     }
@@ -487,7 +481,6 @@ const artilleryAttack = (() => {
         model.radiusLevel = levels.radius || 0;
         model.volleyLevel = levels.volley || 0;
         model.firstStrikeLevel = levels.firstStrike || 0;
-        model.stunLevel = levels.stun || 0;
 
         if (levels.cooldownMultiplier !== undefined) {
             model.setFireInterval(6000 * levels.cooldownMultiplier);
