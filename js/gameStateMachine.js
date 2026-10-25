@@ -4,8 +4,7 @@
 // Phases:
 //   'UPGRADE_PHASE' — between waves; player spends currency and prepares
 //   'COMBAT_PHASE'   — wave is running; enemies are alive
-//   'WAVE_COMPLETE' — wave just ended; brief pause before returning to upgrades
-//   'GAME_OVER'     — player failed the wave
+//   'WAVE_COMPLETE' — run ended (tower death, END WAVE or boss kill); results screen
 //
 // Usage:
 //   gameStateMachine.goTo('COMBAT_PHASE');

@@ -707,8 +707,7 @@ const resourceManager = (() => {
             resetSession();
             sniffTimer = 0; // Reset timer at start of combat
             daemonTimer = 0; // Reset daemon timer
-        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE
-            || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
+        } else if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             clearDrops();  // flying drops are cashed out inside clearDrops()
         }
     }

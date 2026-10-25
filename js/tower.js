@@ -43,10 +43,7 @@ class TowerModel {
         const intensityLv = upgradeDispatcher.getLevel('intensity');
         const regenLv = upgradeDispatcher.getLevel('regen');
         const coverageLv = upgradeDispatcher.getLevel('coverage');
-        const focus2Lv = upgradeDispatcher.getLevel('focus_range_2');
-        const focus3Lv = upgradeDispatcher.getLevel('focus_range_3');
         const armorLv = upgradeDispatcher.getLevel('armor');
-        const baseHpLv = upgradeDispatcher.getLevel('base_hp_boost');
         const clockSpeedLv = upgradeDispatcher.getLevel('clock_speed');
         const anchorHp = upgradeDispatcher.getLevel('physical_anchor') * 40;
         const farsightLv = upgradeDispatcher.getLevel('farsight');
@@ -56,18 +53,17 @@ class TowerModel {
         const systemRedundancyLv = upgradeDispatcher.getLevel('system_redundancy_new');
         const permanentHp = gameState.permanentHpBonus || 0;
         this.maxHealth = GAME_CONSTANTS.TOWER_BASE_HEALTH + 5 * integrityLv + 20 * systemRedundancyLv + anchorHp + permanentHp;
-        const shellDamage = baseHpLv * 4;
 
         const autoDefLv = upgradeDispatcher.getLevel('automated_defense');
         if (autoDefLv > 0) {
-            this.damage = 5 + 2 * intensityLv + shellDamage;
+            this.damage = 5 + 2 * intensityLv;
         } else {
             this.damage = 0;
         }
 
         if (autoDefLv > 0) {
             // node grants base 230 range
-            this.attackRange = 230 * (1 + 0.2 * coverageLv + 0.2 * focus2Lv + 0.2 * focus3Lv + 0.2 * farsightLv);
+            this.attackRange = 230 * (1 + 0.2 * coverageLv + 0.2 * farsightLv);
         } else {
             this.attackRange = 0;
         }

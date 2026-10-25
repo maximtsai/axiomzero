@@ -7,7 +7,7 @@ Systems talk through `messageBus.publish(topic, ...args)` / `subscribe(topic, fn
 Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`).
 "Payload" is the argument list of a publish call (up to two distinct shapes). File paths are relative to `js/`.
 
-## Topics (68)
+## Topics (63)
 
 | Topic | Payload | Published by | Subscribed by | Notes |
 |---|---|---|---|---|
@@ -20,7 +20,6 @@ Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`
 | `BossAnnounceText` | `{ msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossSquare_name') }`<br>`{ msg1: t('ui', 'boss_prefix'), msg2: t('ui', 'bossCircle_name') }` | enemies/bossCircle.js, enemies/bossSquare.js, enemies/boss_4.js, enemies/boss_5.js, enemies/boss_defender.js, enemies/boss_legion.js | announcementManager.js |  |
 | `bossDefeated` | `ex, ey` | bossManager.js | achievementManager.js, gameHUD.js, milestoneTracker.js, tower.js, waveManager.js | Args: x, y. Only when the last living boss part dies (Boss Legion has several). |
 | `bossSpawned` | `—` | bossManager.js | gameInit.js |  |
-| `clearGameSlow` |  | — | util/timeManager.js | Legacy timeManager topic; nothing publishes it. |
 | `currencyChanged` | `'data', gameState.data, amount`<br>`'insight', gameState.insight, amount` | resourceManager.js | gameHUD.js, milestoneTracker.js, upgradeTree.js | Args: type, newTotal, delta. |
 | `cursorBombArmed` | `—` | cursorAttack.js | gameHUD.js |  |
 | `cursorBombCanCancel` | `—` | cursorAttack.js | gameHUD.js |  |
@@ -40,13 +39,11 @@ Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`
 | `minibossDefeated` | `ex, ey, enemy.model.isFarmingMiniboss` | bossManager.js | resourceManager.js, tower.js, waveManager.js | Args: x, y, isFarmingMiniboss. Only when the last living miniboss dies. |
 | `minibossSpawned` | `—` | bossManager.js | gameInit.js, waveManager.js |  |
 | `node_purchase_feedback` | `{ id: this.id, x: this.btn.x, y: this.btn.y, popupText: this.popupTex…` | treeNode.js | upgradeTree.js | Tree purchase effects (pulses/particles) for upgradeTree. |
-| `pauseGame` |  | — | util/timeManager.js | Legacy timeManager topic; nothing publishes it. Real pausing uses gamePaused. |
 | `phaseChanged` | `phase, data` | gameStateMachine.js | Hijack.js, achievementManager.js, announcementManager.js, artilleryAttack.js, combatShield.js, cursorAttack.js, dialogSystem.js, enemies/boss_legion.js, enemyBulletManager.js, enemyManager.js, gameHUD.js, gameInit.js, iterationOverScreen.js, laserAttack.js, lightningAttack.js, milestoneTracker.js, projectileManager.js, resourceManager.js, scytheAttack.js, shockwaveAttack.js, swordAttack.js, tower.js, towerStatsUI.js, tutorialManager.js, upgradeTree.js, util/scoreManager.js, waveManager.js | Args: phase (GAME_CONSTANTS.PHASE_*), data (e.g. `{ bossKill: true }`). Fired by gameStateMachine.goTo; UI-driven changes go through transitionManager.transitionTo. |
 | `pointerDown` | `pointer.x, pointer.y` | util/mouseManager.js | gameInit.js, util/buttonManager.js | Args: x, y (game coords). Drives Button input via buttonManager. |
 | `pointerMove` | `pointer.x, pointer.y` | util/mouseManager.js | util/buttonManager.js | Args: x, y (game coords). |
 | `pointerUp` | `pointer.x, pointer.y` | util/mouseManager.js | util/buttonManager.js | Args: x, y (game coords). |
 | `pulseData` | `—` | tutorialManager.js | resourceManager.js |  |
-| `setGameSlow` |  | — | util/timeManager.js | Legacy timeManager topic (manual slow speed); nothing publishes it. |
 | `settingChanged_bigFont` | `val` | uibuttons.js | gameHUD.js, hud/CurrencyCluster.js, hud/HealthBar.js |  |
 | `settingChanged_minimalParticles` | `false`<br>`true` | uibuttons.js | util/dustParticles.js |  |
 | `showFloatingText` | `pos.x + 30, pos.y - 34, text, { fontFamily: 'Quantico-Bold', fontSize…`<br>`pos.x, pos.y - 35, `+${healAmountText} HEAL`, { fontFamily: 'Quantico…` | bossManager.js, enemyManager.js, resourceManager.js, tower.js, treeNode.js, upgradeTree.js | util/floatingText.js | Args: x, y, text, opts (floatingText options: fontSize, color, depth, travel, duration, noScale, presized…). |
@@ -58,7 +55,6 @@ Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`
 | `takeoverCompleted` | `{ ...pendingReward }` | takeoverTargets.js | — |  |
 | `takeoverPopupClosed` | `—` | takeoverPopup.js | dialogSystem.js | Terminal hidden; dialogSystem uses it to start the first-breach dialog. |
 | `takeoverStarted` | `{ ...activeAttack.target }` | takeoverTargets.js | — |  |
-| `tempPause` |  | — | util/timeManager.js | Legacy timeManager topic; use timeManager.slowFor() directly. |
 | `testingDefensesEnded` | `—` | cursorAttack.js, enemyManager.js | artilleryAttack.js, cursorAttack.js, laserAttack.js, lightningAttack.js, scytheAttack.js, shockwaveAttack.js, swordAttack.js, tower.js, towerStatsUI.js | TEST DEFENSES finished (last test enemy gone, bomb done, or phase change). |
 | `testingDefensesStarted` | `—` | cursorAttack.js, enemyManager.js | artilleryAttack.js, combatShield.js, cursorAttack.js, laserAttack.js, lightningAttack.js, scytheAttack.js, shockwaveAttack.js, swordAttack.js, towerStatsUI.js | TEST DEFENSES (upgrade-phase sandbox wave) began; GAME_VARS.testingDefenses is true. |
 | `towerAwakened` | `—` | tower.js | — |  |
@@ -73,7 +69,6 @@ Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`
 | `trigger_tutorial` | `'duo_swap'` | treeNode.js | tutorialManager.js |  |
 | `triggerResourceVacuum` | `—` | waveManager.js | resourceManager.js |  |
 | `unfreezeEnemies` | `—` | waveManager.js | enemyManager.js, waveManager.js |  |
-| `unpauseGame` |  | — | util/timeManager.js | Legacy timeManager topic; nothing publishes it. |
 | `upgradePurchased` | `{ id: this.id, level: this.level, costType: this.costType, cost: cost…`<br>`{ id: this.id, isSwap: true }` | treeNode.js | gameHUD.js, milestoneTracker.js, resourceManager.js, tower.js, upgradeTree.js, util/analyticsManager.js | { id, level, costType, cost }. Duo-node swaps send { id, isSwap: true } (not counted as purchases). |
 | `waveComplete` | `data` | gameStateMachine.js | milestoneTracker.js, util/analyticsManager.js | Combat ended (tower death, END WAVE or boss kill); results screen follows. |
 | `waveModeFarmingStarted` | `—` | waveManager.js | gameHUD.js, util/scoreManager.js |  |
@@ -92,9 +87,4 @@ Many topics have a named constant in `GAME_CONSTANTS.EVENTS` (`js/gameConfig.js`
 
 ## Subscribed but never published
 
-- `clearGameSlow`
-- `pauseGame`
-- `setGameSlow`
 - `showNotification`
-- `tempPause`
-- `unpauseGame`

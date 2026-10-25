@@ -52,17 +52,7 @@ class Boss extends Enemy {
         if (!isFinal) return;
 
         if (typeof customEmitters !== 'undefined') {
-            const ex = this.model.x;
-            const ey = this.model.y;
-            const bossDepth = (this.view && this.view.img) ? this.view.img.depth : (GAME_CONSTANTS.DEPTH_ENEMIES || 150);
-
-            // Default standard boss death
-            if (customEmitters.createBossExplosionRays) {
-                PhaserScene.time.delayedCall(150, () => {
-                    customEmitters.createBossExplosionRays(ex, ey, bossDepth, {});
-                });
-            }
-
+            // Explosion rays are fired once by enemyManager._killEnemy (with the boss's sound config)
             if (typeof audio !== 'undefined') audio.play('on_death_boss', 0.9);
 
             // Post-death "System log" cinematic before final clear

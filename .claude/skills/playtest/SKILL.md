@@ -31,7 +31,7 @@ await AZT.waitForBoot(30000)   // also waits for extensions (AZT.takeover, ...)
 |---|---|
 | `fresh` | no save, AWAKEN-only tree (first-launch flow) |
 | `early` | AWAKEN owned, 300 DATA |
-| `midgame` | every non-shard node up to grid row 4 owned (including the CHEAT cluster below AWAKEN), level 3, lots of every currency. It owns both first-duo weapons without choosing one, so neither lightning nor shockwave fires: call `lightningAttack.unlock()` if you need one |
+| `midgame` | every non-shard node up to grid row 4 owned (including the CHEAT cluster below AWAKEN), level 3, lots of every currency. Owned duo boxes get an active choice (lightning for tier 1) |
 | `takeover` | `financial_breach` path owned, so the BREACH button is visible (for takeover work, prefer `AZT.takeover.load(...)`) |
 | `maxed` | every node at max level, level 5 (late-game visuals and performance) |
 

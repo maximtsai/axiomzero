@@ -109,6 +109,27 @@
         return NODE_DEFS.filter(d => d.id.includes(filter)).map(d => `${d.id} (max ${d.maxLevel || 1}, parents: ${(d.parents || []).join(',') || '-'})`);
     }
 
+    /**
+     * A real save that owns duo-box choice nodes also records which choice is active; without
+     * that, neither weapon of the pair is unlocked at boot. Pick one per owned tier
+     * (`prefer` wins, e.g. lightning for tier 1), like a player who bought them would have.
+     */
+    function duoChoices(upgrades, prefer = { 1: 'lightning_weapon' }) {
+        const activeShards = {};
+        const duoBoxPurchased = {};
+        for (const d of NODE_DEFS) {
+            if (!d.isDuoBox || !upgrades[d.id]) continue;
+            duoBoxPurchased[d.duoBoxTier] = true;
+            if (!activeShards[d.duoBoxTier] || prefer[d.duoBoxTier] === d.shardId) activeShards[d.duoBoxTier] = d.shardId;
+        }
+        return { activeShards, duoBoxPurchased };
+    }
+
+    /** Preset save with `upgrades` plus matching duo choices. */
+    function withUpgrades(fields, upgrades) {
+        return { ...fields, upgrades, ...duoChoices(upgrades) };
+    }
+
     // ── Presets ──────────────────────────────────────────────────────────────
 
     const RICH = { data: 50000, insight: 50, shard: 20, processor: 50, coin: 500 };
@@ -119,15 +140,16 @@
         // Tower awakened, a little DATA, level 1.
         early: () => ({ isFirstLaunch: false, data: 300, upgrades: unlockPath('awaken') }),
         // A few bosses down, deep pockets, core combat nodes owned.
-        midgame: () => ({
-            isFirstLaunch: false, ...RICH, currentLevel: 3, levelsDefeated: 2, minibossLevelsDefeated: 2,
-            // Lower part of the tree (first 4 grid rows), skipping shard-cost duo-box choices.
-            upgrades: unlockPath(NODE_DEFS.filter(d => d.treeY >= gridY(4) && d.costType !== 'shard').map(d => d.id)),
-        }),
+        midgame: () => withUpgrades(
+            { isFirstLaunch: false, ...RICH, currentLevel: 3, levelsDefeated: 2, minibossLevelsDefeated: 2 },
+            // Lower part of the tree (first 4 grid rows), skipping shard-cost duo-box choices
+            // (their children still pull them in; duoChoices picks lightning for tier 1).
+            unlockPath(NODE_DEFS.filter(d => d.treeY >= gridY(4) && d.costType !== 'shard').map(d => d.id)),
+        ),
         // Financial Breach owned → TAKEOVER button visible in the upgrade phase.
         takeover: () => ({ isFirstLaunch: false, ...RICH, levelsDefeated: 3, upgrades: unlockPath('financial_breach') }),
         // Everything maxed — for checking late-game visuals and performance.
-        maxed: () => ({ isFirstLaunch: false, ...RICH, currentLevel: 5, levelsDefeated: 5, minibossLevelsDefeated: 5, upgrades: allMaxed() }),
+        maxed: () => withUpgrades({ isFirstLaunch: false, ...RICH, currentLevel: 5, levelsDefeated: 5, minibossLevelsDefeated: 5 }, allMaxed()),
     };
 
     function loadPreset(name, overrides = {}) {

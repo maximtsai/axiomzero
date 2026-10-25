@@ -515,7 +515,7 @@ const gameHUD = (() => {
 
     function refreshTestDefensesButton() {
         if (!testDefensesBtn) return;
-        const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses_unlocked);
+        const isUnlocked = !!(typeof gameState !== 'undefined' && gameState.upgrades && gameState.upgrades.test_defenses >= 1);
 
         // Hide if tree is in full view expansion
         const isFullView = (typeof upgradeTree !== 'undefined' && upgradeTree.isFullView && upgradeTree.isFullView());

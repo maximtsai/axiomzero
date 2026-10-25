@@ -1,16 +1,11 @@
 /**
  * @fileoverview Controls passage of game time via GAME_VARS.timeScale.
- * Subscribes to messageBus topics: tempPause, pauseGame, setGameSlow, clearGameSlow, unpauseGame,
- * gamePaused, gameResumed.
+ * Subscribes to messageBus topics: gamePaused, gameResumed (pause freeze).
+ * Slow-motion goes through beginSlow/endSlow/slowFor/slowRamp requests.
  * @module timeManager
  */
 class TimeManager {
     constructor() {
-        messageBus.subscribe("tempPause", this.setTempPause.bind(this));
-        messageBus.subscribe("pauseGame", this.setPermPause.bind(this));
-        messageBus.subscribe("setGameSlow", this.setGameSlow.bind(this));
-        messageBus.subscribe("clearGameSlow", this.clearGameSlow.bind(this));
-        messageBus.subscribe("unpauseGame", this.setUnpause.bind(this));
         messageBus.subscribe("gamePaused", this.freezeWorld.bind(this));
         messageBus.subscribe("gameResumed", this.unfreezeWorld.bind(this));
         this._frozen = null;
@@ -130,19 +125,6 @@ class TimeManager {
         });
         this.applyTimeScale(scale, false);
         if (typeof PhaserScene !== 'undefined' && PhaserScene.tweens) PhaserScene.tweens.timeScale = tweenScale;
-    }
-
-    /** Pause the game until explicitly unpaused. @param {number} [amt=0.002] */
-    setPermPause(amt = 0.002) {
-        GAME_VARS.permTimeScale = amt;
-        this.applyTimeScale(amt);
-    }
-
-    /** Restore normal game speed (respects manual slow if active). */
-    setUnpause() {
-        const speed = GAME_VARS.gameManualSlowSpeed || 1;
-        GAME_VARS.permTimeScale = speed;
-        this.applyTimeScale(speed);
     }
 
     /** Set a persistent slow-motion speed. @param {number} amt - timeScale value. */

@@ -830,8 +830,8 @@ const enemyManager = (() => {
             const config = {};
             if (bossId === 'boss1') config.soundKey = '8_bit_explosion';
 
-            // Standard rays for all bosses (including Boss 5 if it calls super.onDeath)
-            if (typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
+            // Standard rays for all bosses. Boss5 plays its own staged ray sequence in onDeath.
+            if (bossId !== 'boss5' && typeof customEmitters !== 'undefined' && customEmitters.createBossExplosionRays) {
                 customEmitters.createBossExplosionRays(ex, ey, bossDepth, config);
             }
         } else {
@@ -1059,7 +1059,10 @@ const enemyManager = (() => {
             if (distSq < attackDistR2) {
                 e.model.isAttacking = true;
 
-                if (e.model.attackTimer <= 0 && e.model.damage > 0) {
+                if (e.model.type === 'test') {
+                    // TEST DEFENSES targets deal no damage but should still pop on contact
+                    if (e.takeDamage(e.model.selfDamage).died) _killEnemy(e);
+                } else if (e.model.attackTimer <= 0 && e.model.damage > 0) {
                     const playerSurvived = tower.takeDamage(e.model.damage, e.model.x, e.model.y);
                     e.model.attackTimer = e.model.attackCooldown;
 

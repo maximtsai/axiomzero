@@ -79,11 +79,9 @@ const milestoneTracker = (() => {
             waveStartTime = Date.now();
         }
 
-        // Add session stats when an iteration ends (WAVE_COMPLETE or GAME_OVER)
-        if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
-            if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
-                gameState.stats.iterEnd++;
-            }
+        // Add session stats when an iteration ends
+        if (phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE) {
+            gameState.stats.iterEnd++;
             gameState.stats.dataColl += resourceManager.getSessionData();
             gameState.stats.insightEarn += resourceManager.getSessionInsight();
             gameState.stats.shardColl += resourceManager.getSessionShards();
@@ -104,10 +102,9 @@ const milestoneTracker = (() => {
         }
 
         // Save game data when Deploy is clicked (enters COMBAT), 
-        // or when End Iteration happens (enters WAVE_COMPLETE or GAME_OVER)
+        // or when the run ends (enters WAVE_COMPLETE)
         if (phase === GAME_CONSTANTS.PHASE_COMBAT ||
             phase === GAME_CONSTANTS.PHASE_WAVE_COMPLETE ||
-            phase === GAME_CONSTANTS.PHASE_GAME_OVER ||
             phase === GAME_CONSTANTS.PHASE_UPGRADE) {
             saveGame();
         }

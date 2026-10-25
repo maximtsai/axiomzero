@@ -1,4 +1,4 @@
-// transitionManager.js — 0.8s linear slide animation between phases.
+// transitionManager.js — camera slide between phases (TRANSITION_DURATION 600 ms, +200 ms from the full tree view).
 // Uses cameraManager for camera-based transitions.
 // Blocks all input during the transition via click blocker.
 

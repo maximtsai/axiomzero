@@ -32,7 +32,7 @@ runtime rules that keep it working. Companion docs: `docs/MESSAGES.md` (messageB
 | 7 | Entities | `js/tower.js`, `js/enemies/enemy.js` → regular enemies → `miniboss.js` → `miniboss_1..4.js` → `boss.js` → `bossSquare`, `bossCircle`, `boss_defender`, `boss_legion`, `boss_4`, `boss_5` | Base classes must precede subclasses (`class X extends Enemy` evaluates at load). |
 | 8 | Combat systems | `bossManager`, `spatialGridUtils`, `enemyManager`, `Hijack`, `projectileManager`, `enemyBulletManager`, `resourceManager` | Enemy pools are built from the classes above (in `init()`). |
 | 9 | Attacks | `cursorAttack` (`pulseAttack`), `lightningAttack`, `shockwaveAttack`, `laserAttack`, `artilleryAttack`, `combatShield`, `customEmitters`, `scytheAttack`, `swordAttack` | Player weapons (MVC) and named particle effects. |
-| 10 | Upgrade logic | `upgradeDispatcher`, `waveManager`, `upgradeManager` (dead stub) | Dispatcher before the tree so node effects can call it. |
+| 10 | Upgrade logic | `upgradeDispatcher`, `waveManager` | Dispatcher before the tree so node effects can call it. |
 | 11 | Tree | `nodeAnims`, `treeNode` (`Node`), `duoNode` (`DuoNode extends Node`), `nodeTooltip`, `secondaryTooltip`, `nodeDefs`, `nodeUtils`, `disabledNodes`, `loreDefs`, `treePopups` | Node classes, then data (`NODE_DEFS`, `DISABLED_NODES`, `LORE_DEFS`), then popups (level select). |
 | 12 | Takeover | `takeoverTargets`, `infiltrationUI`, `takeoverPopup` | Logic, then terminal helpers, then the popup that uses both. |
 | 13 | Tree UI + HUD | `upgradeTree`, `announcementManager`, `hud/HealthBar`, `hud/CurrencyCluster`, `gameHUD`, `iterationOverScreen`, `transitionManager`, `tutorialManager`, `dialogSystem`, `towerStatsUI` | HUD components before `gameHUD`, which composes them. |
@@ -84,7 +84,7 @@ Inline `<script>` blocks in `index.html` also handle the mobile fullscreen gate,
 5. `gameInit.js` (`subscribeOnce('assetsLoaded')`): CrazyGames cloud pre-fetch (§7.4) → `initGameState()` →
    `restoreDynamicNodes()` → `audio.init` → `createAnimations` → `floatingText` → `tower`, `enemyManager`,
    `customEmitters`, `projectileManager`, `enemyBulletManager`, `resourceManager`, `hijackManager` → `waveManager` →
-   `upgradeManager` (stub) → `upgradeTree` (creates the tree cameras) → `takeoverTargets`, `announcementManager`,
+   `upgradeTree` (creates the tree cameras) → `takeoverTargets`, `announcementManager`,
    `gameHUD`, `iterationOverScreen`, `tutorialManager`, `dialogSystem`, `notificationManager`, `hotkeys` →
    `cameraManager`, `transitionManager` → `tooltipManager`, `scoreManager`, `milestoneTracker`, `achievementManager`,
    `glitchFX`, `dustParticles` → weapons (`pulseAttack` etc., unlocked from `gameState.upgrades` / `activeShards`) →
@@ -100,7 +100,6 @@ Inline `<script>` blocks in `index.html` also handle the mobile fullscreen gate,
 | `UPGRADE_PHASE` | boot; UPGRADES on the results screen (via `transitionManager`) | Tree panel on the left, tower on the right (camera `scrollX = -halfWidth/2`; full-tree view `-WIDTH*0.75`). HUD currencies, deploy / level select / BREACH buttons. |
 | `COMBAT_PHASE` | DEPLOY (`upgradeTree.js`) or level select (`treePopups.js`) via `transitionManager`; RETRY (`iterationOverScreen.js`, direct `goTo`, no slide) | Tower centred (`scrollX = 0`), waves, weapons, drops, END WAVE button. |
 | `WAVE_COMPLETE` | `waveManager`: tower death sequence, boss kill (`{ bossKill: true }`), or END WAVE (`endIterationRequested`) | `iterationOverScreen` results ("ITERATION COMPLETE", EXP bar) with UPGRADES / RETRY. |
-| `GAME_OVER` | never entered | Constant and listeners remain (`milestoneTracker`, `resourceManager`, `gameInit`); tower death goes to `WAVE_COMPLETE`. |
 
 **Transitions** (`js/transitionManager.js`): UI-driven phase changes call `transitionManager.transitionTo(phase)`, which
 shows the global click blocker, calls `gameStateMachine.goTo` *first* (so logic/UI switch on), slides the camera
@@ -151,7 +150,6 @@ depth 99000) · `analyticsManager` (gtag wrapper; off on localhost and unless `F
 - `upgradeTree.js`: panel, drag/zoom, full-view slide, deploy/level-select/BREACH buttons, camera routing.
 - `treeNode.js` (`Node`; states HIDDEN/GHOST/UNLOCKED/MAXED, purchase → `upgradePurchased`), `duoNode.js` (`DuoNode`, shard choices; `gameState.activeShards`/`duoBoxPurchased`), `nodeTooltip.js` + `secondaryTooltip.js`, `nodeAnims.js` (purchase/maxed tweens), `treePopups.js` (level select), `nodeUtils.js` (dynamic nodes, `restoreDynamicNodes`), `disabledNodes.js`, `loreDefs.js`.
 - `upgradeDispatcher.js`: `getLevel(id)` (0 if the branch is inactive) and `recalc*()` functions that push stats into weapons/tower; `NODE_DEFS[].effect` calls these; `recalcEverything()` at boot.
-- `upgradeManager.js`: **dead stub** (empty `init`/`buy`, still initialised by `gameInit`). Purchases live in `treeNode.js`.
 
 **Takeover / Financial Breach**: `takeoverTargets.js` (target generation, wall-clock attack timer, rewards; state in
 `gameState.takeoverState`; publishes `takeover*`), `takeoverPopup.js` (split-console terminal at `DEPTH_POPUPS + 2000`),
@@ -207,7 +205,7 @@ saves) · `achievementManager.js` (silent unlocks) · `loadingScreen.js` · `sdk
 ### 7.2 Slow motion (`js/util/timeManager.js`)
 - Never write `PhaserScene.time.timeScale`, `tweens.timeScale`, `anims.globalTimeScale` or `GAME_VARS.timeScale` directly.
 - Use `timeManager.beginSlow(scale, applyToTweens)` / `endSlow(handle)`, `slowFor(ms, scale)`, `slowRamp(from, ms, ease)`, `clearSlows()` (phase changes, results screen). The slowest active request wins, so overlapping effects can't cancel each other early. `applyToTweens = false` keeps tweens (explosions) fluid.
-- `setGameSlow`/`clearGameSlow` set a persistent manual speed that slows stack under. Their messageBus topics are legacy (never published; see `BACKLOG.md`).
+- `setGameSlow`/`clearGameSlow` set a persistent manual speed that slows stack under.
 
 ### 7.3 Input ownership (`js/util/uiHelper.js`, `js/util/buttonManager.js`)
 - **Global blocker**: one shared full-screen Button (`globalObjects.clickBlocker`). `helper.createGlobalClickBlocker()` re-enables it and moves it to the top of the hit list; `helper.hideGlobalClickBlocker()` disables it. Used by Options, `popupManager`, transitions, the takeover terminal, level select, tree full-view slides and the death sequence. Buttons created after it sit above it in the list, which is how a popup's own buttons stay clickable.
@@ -218,7 +216,7 @@ saves) · `achievementManager.js` (silent unlocks) · `loadingScreen.js` · `sdk
 ### 7.4 Saves (`js/util/gameState.js`, `js/milestoneTracker.js`, `js/gameInit.js`)
 - Progress saves on phase changes (`milestoneTracker` `phaseChanged` handler → `saveGame()`). Deliberate: a reload undoes a misclick. **Never call `saveGame()` from tree/UI actions.** Existing exceptions: achievement unlocks, takeover start/abort/complete/claim (wall-clock timer), the companion's `first_breach` flag, farming best scores, import.
 - Options toggles/sliders call `saveSettings()`: rewrites only `data.settings` of the stored save.
-- Format: `{ version, data }` under `SAVE_KEY`. Load: `_migrateState` (+ optional `migrateProjectState` hook, not currently defined) then `_applySaveData`, which merges nested defaults via `_withDefaults` (old saves gain new keys; numeric `null`/NaN fall back to defaults; `__proto__` keys skipped). New saved fields need a default in `GAME_STATE_DEFAULTS`.
+- Format: `{ version, data }` under `SAVE_KEY`. Load: `_migrateState`, then `migrateProjectState(fromVersion, data)` (`js/gameConfig.js`, project-specific cleanups and version migrations), then `_applySaveData`, which merges nested defaults via `_withDefaults` (old saves gain new keys; numeric `null`/NaN fall back to defaults; `__proto__` keys skipped). New saved fields need a default in `GAME_STATE_DEFAULTS`.
 - An unreadable save is copied to `<SAVE_KEY>_unreadable` before the fresh game overwrites it.
 - A save containing only `settings` (Options touched before any progress, or after Reset) still starts a fresh game (debug start, legacy migration) and keeps those settings.
 - CrazyGames (`FLAGS.USING_CRAZYGAMES_SDK`): at boot the cloud save is fetched, LZ-decompressed and injected into localStorage only if it parses; cloud options are merged into `gameOptions`. Writes go to localStorage plus the cloud (LZ-compressed, `localBestScores` stripped); if the cloud write fails `sdk.setItem` stores the compressed payload locally, which `_readStoredSave` also accepts. Reset/import wait for the cloud write (max 4 s, `CLOUD_WAIT_MS`) before reloading.

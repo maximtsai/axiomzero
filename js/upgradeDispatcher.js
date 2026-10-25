@@ -140,7 +140,6 @@ const upgradeDispatcher = (() => {
         if (typeof laserAttack === 'undefined') return;
         laserAttack.setLevels({
             aperture: getLevel('laser_aperture'),
-            disintegration: getLevel('laser_disintegration'),
             twin: getLevel('laser_twin_beams'),
             cooldownMultiplier: getShardCooldown(4000) / 4000
         });
@@ -152,7 +151,6 @@ const upgradeDispatcher = (() => {
         artilleryAttack.setLevels({
             volley: getLevel('artillery_volley'),
             firstStrike: getLevel('artillery_first_strike'),
-            stun: getLevel('artillery_stun'),
             cooldownMultiplier: getShardCooldown(6000) / 6000
         });
     }

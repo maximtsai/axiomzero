@@ -5,8 +5,9 @@
 
 class CombatShield {
     constructor() {
-        this.maxHealth = 20;
-        this.health = 20;
+        // Set by upgradeDispatcher.recalcCombatShield (10 + 10 per COMBAT SHIELD HP level)
+        this.maxHealth = 10;
+        this.health = 10;
         this.unlocked = false;
         this.alive = false;
         this.angle = 0;

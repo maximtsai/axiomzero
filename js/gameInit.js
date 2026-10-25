@@ -133,15 +133,16 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
         _applyThreatAdaptation(60);
     });
 
-    // Track active gameplay state for CrazyGames analytics
+    // Track active gameplay state for CrazyGames analytics. Only send changes: results screen →
+    // upgrade tree would otherwise send gameplayStop twice in a row.
+    let _sdkGameplayActive = false;
     messageBus.subscribe(GAME_CONSTANTS.EVENTS.PHASE_CHANGED, (phase) => {
-        if (typeof sdk !== 'undefined') {
-            if (phase === GAME_CONSTANTS.PHASE_COMBAT) {
-                sdk.gameplayStart();
-            } else if (phase === GAME_CONSTANTS.PHASE_UPGRADE || phase === GAME_CONSTANTS.PHASE_GAME_OVER) {
-                sdk.gameplayStop();
-            }
-        }
+        if (typeof sdk === 'undefined') return;
+        const active = phase === GAME_CONSTANTS.PHASE_COMBAT;
+        if (active === _sdkGameplayActive) return;
+        _sdkGameplayActive = active;
+        if (active) sdk.gameplayStart();
+        else sdk.gameplayStop(); // results screen and upgrade tree are not active gameplay
     });
 
     // ── Init all Phase 1 systems (order matters for dependencies) ───────
@@ -165,7 +166,6 @@ messageBus.subscribeOnce('assetsLoaded', async () => {
     waveManager.init();
 
     // Upgrade manager stub (kept for forward compatibility)
-    upgradeManager.init();
 
     // UI systems — depend on resource / tower for data display
     upgradeTree.init();

@@ -133,7 +133,6 @@ Notes:
 - **FAILSAFE:** fires on that same warning. Enemies within 800 px are pushed back and slowed.
 - **BACKUP SERVER:** once per wave, a lethal hit leaves the tower at 1 HP (40% with RESTORE POINT). It gets 3 s of invincibility and pushes back enemies within 350 px.
 - **Death:** `towerDied` fires, then the sequence in §1.
-- **GDD Δ:** `tower.js` still reads the GDD's AUX POWER (`base_hp_boost`, which it applies as +4 tower damage per level), `focus_range_2` and `focus_range_3`; none exist in `NODE_DEFS` ⚠ (§10.8).
 
 ### Cursor pulse and bomb (`cursorAttack.js`, `upgradeDispatcher.recalcPulse*`)
 
@@ -455,9 +454,8 @@ Scaling notation:
 5. **PROCESSOR** has no source (Logic Stray weight is 0 on every level) and no sink.
 6. **Surplus SHARDs:** CHEAT's +2 have nothing to buy, because Override and Synthesis were not built.
 7. **SECURITY TEST 3** (1000 DATA, refunded) has no children; it gates nothing.
-8. **Missing nodes still read in code:**
-   - `base_hp_boost` (+4 tower damage per level), `focus_range_2`, `focus_range_3` (`tower.js`)
-   - `laser_disintegration`, `artillery_stun` (`upgradeDispatcher.js`)
+8. **Unused weapon hooks:** `laserAttack` still supports a disintegration level (+1 damage per tick) and
+   `artilleryAttack` a stun level, but no node sets them (their old nodes were removed). Add nodes or delete the hooks.
 9. **Descriptions that disagree with code:**
    - PROXY ROUTING says 20%; the code does 10%.
    - TROJAN PAYLOAD says 7%; the code is a 9.2% roll gated by 4 spawns.

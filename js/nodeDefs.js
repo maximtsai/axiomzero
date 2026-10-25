@@ -1406,7 +1406,6 @@ const NODE_DEFS = [
         treeX: gridX(-2),
         treeY: gridY(1),
         effect: function () {
-            gameState.upgrades.test_defenses_unlocked = true;
             if (typeof gameHUD !== 'undefined' && gameHUD.refreshTestDefensesButton) {
                 gameHUD.refreshTestDefensesButton();
             }

@@ -18,7 +18,7 @@ Report each step's result to the user. Don't silently "fix" release flags. Ask w
    - Temporary test tweaks: boosted spawn weights in `levelConfig.js`, hardcoded resources, disabled nodes in `disabledNodes.js`. `git diff` against the last release tag/commit is the fastest way to spot them.
 3. **Lint and tests**: `npm run lint` and `npm test`. Zero errors and failures required.
 4. **Assets**: `npm run audit-assets`. Zero errors required; review the warnings with the user.
-5. **Save compatibility**: if `GAME_STATE_DEFAULTS` changed shape since the last release, confirm `SAVE_VERSION` was bumped and old saves are migrated. `migrateProjectState(fromVersion, data)` is called by `js/util/gameState.js` if it exists, but it isn't defined yet: write it (in `js/gameConfig.js`) for the first breaking change.
+5. **Save compatibility**: if `GAME_STATE_DEFAULTS` changed shape since the last release, confirm `SAVE_VERSION` was bumped and old saves are migrated. Add a `fromVersion` branch to `migrateProjectState(fromVersion, data)` in `js/gameConfig.js`.
 6. **Build**: `node build_prod.js` → `dist/`. Check the log for `Warning: File not found`.
 7. **Weight**: list the largest files in `dist/` and `assets/`:
    `find dist assets -type f -printf '%s %p\n' | sort -rn | head -15`

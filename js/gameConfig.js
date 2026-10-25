@@ -11,7 +11,6 @@
 GAME_CONSTANTS.PHASE_UPGRADE = 'UPGRADE_PHASE';
 GAME_CONSTANTS.PHASE_COMBAT = 'COMBAT_PHASE';
 GAME_CONSTANTS.PHASE_WAVE_COMPLETE = 'WAVE_COMPLETE';
-GAME_CONSTANTS.PHASE_GAME_OVER = 'GAME_OVER';
 
 // ─── Message Bus Events ───────────────────────────────────────────────────────
 
@@ -198,6 +197,20 @@ const SAVE_KEY = 'axiomzero_save';
 const OPTIONS_KEY = 'axiomzero_options';
 const SAVE_VERSION = 2;
 
+/**
+ * Project-specific save migration, called by js/util/gameState.js on every load (after its own
+ * generic migration). Bump SAVE_VERSION and branch on `fromVersion` for breaking changes;
+ * cleanups that are safe for any version can run unconditionally.
+ * @param {number} fromVersion  version the save was written with
+ * @param {Object} data         saved gameState fields
+ * @returns {Object} migrated data
+ */
+function migrateProjectState(fromVersion, data) {
+    // TEST DEFENSES used to store a true/false flag inside the upgrade-levels map
+    if (data.upgrades) delete data.upgrades.test_defenses_unlocked;
+    return data;
+}
+
 loadGameOptions(); // globals.js loads before this file, so options are read once the key exists
 
 // ─── Default game state shape ─────────────────────────────────────────────────
@@ -236,6 +249,8 @@ const GAME_STATE_DEFAULTS = {
     minibossLevelsDefeated: 0, // highest miniboss level defeated
     achievements: {},      // { achievementId: true }
     dynamicNodes: {},      // { nodeId: { parents: [], treeX, treeY } } — dynamic tree persistence
+    ghostNodes: {},        // { nodeId: true } — nodes forced to show as GHOST (upgradeTree.showGhostNode)
+    currentTier: 1,        // tree tier gate read by treeNode (never advanced yet)
 
     // Lifetime Stats
     stats: {
