@@ -110,7 +110,7 @@ DATA, INSIGHT, SHARD, COIN, PROCESSOR (`hud/CurrencyCluster.js`).
 | Range | 0 until AUTO DEFENSE; then `230 × (1 + 0.2·coverage + 0.2·farsight)` | COVERAGE, FARSIGHT |
 | Attack cooldown | `1000 × (1 − 0.05·clock_speed) × 0.9 (fiber_optics)` ms | CLOCK SPEED (×4), FIBER OPTICS; ×2 attack speed under 50% HP with EMERGENCY OVERCLOCK |
 | Regen | `0.4·regen` HP/s, never negative | AUTO-RESTORE (0.20 COIN) |
-| Armor | flat −`armor` per hit, then ×0.9 with PROXY ROUTING ⚠ (§10.8) | ARMOR (×2) |
+| Armor | flat −`armor` per hit, then ×0.8 with PROXY ROUTING | ARMOR (×2) |
 
 Notes:
 
@@ -455,7 +455,6 @@ Scaling notation:
 6. **Surplus SHARDs:** CHEAT's +2 have nothing to buy, because Override and Synthesis were not built.
 7. **SECURITY TEST 3** (1000 DATA, refunded) has no children; it gates nothing.
 8. **Descriptions that disagree with code:**
-   - PROXY ROUTING says 20%; the code does 10%.
    - TROJAN PAYLOAD says 7%; the code is a 9.2% roll gated by 4 spawns.
    - CRESCENDO says "+100% size"; the code adds +100 px.
 9. **Spawn tuning:**
