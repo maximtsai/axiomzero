@@ -17,10 +17,9 @@ Enemies use an MVC split. Read `js/enemies/enemy.js` (base `EnemyModel`, `EnemyV
 2. **Constants**: `GAME_CONSTANTS.ENEMY_SIZE_<NAME>` and other tuning in `js/gameConfig.js`, not magic numbers in the class.
 3. **Script tag** in `index.html`: after `enemy.js` and before `miniboss.js` / `bossManager.js` / `enemyManager.js`.
 4. **Pool + spawn** in `js/enemyManager.js`:
-   - add `<name>: {}` to the pools map,
-   - `pools.<name> = new ObjectPool(() => new <Name>Enemy(), resetFn, POOL_SIZE).preAllocate(n)`,
+   - in `_buildPools`: `pools.<name> = new ObjectPool(() => new <Name>Enemy(), resetFn, POOL_SIZE).preAllocate(n)`,
    - add a `chosenType === '<name>'` branch in the spawn chain.
-5. **Spawn weights**: add `<name>: 0` to every `enemyProbabilities` block in `js/levelConfig.js`, then set non-zero weights only for the levels where it should appear.
+5. **Spawn weights** (`js/levelConfig.js`): add `<name>: 0` to every level's `initialWeights` and `lateWeights`, then set non-zero weights only where it should appear. `enemyProbabilities` is built from these at runtime. A type needs a non-zero `initialWeights` entry to appear in `subWaves`.
 6. **Art**: frames `<name>.png` and `<name>_hp.png` must exist in the `enemies` atlas. If they don't, tell the user. They add the art to `raw/enemies/` and republish `raw/enemies.tps` in TexturePacker. Never hand-edit atlas JSON.
 7. **Text**: any player-facing name or description goes in `js/localization/en.js`.
 8. **Minibosses / bosses** extend `Miniboss` / `Boss` and are driven by `bossManager.js` and level config (the `miniboss` field, e.g. `'Miniboss1'`), not the regular spawn pool. Follow `miniboss_1.js` / `bossSquare.js`.
@@ -28,5 +27,5 @@ Enemies use an MVC split. Read `js/enemies/enemy.js` (base `EnemyModel`, `EnemyV
 ## Verify
 
 - `npm run lint` (catches missing script tags and undefined globals)
-- `node .claude/skills/asset-audit/audit.js` (catches missing frames)
-- `playtest` skill: load a save at a level whose `enemyProbabilities` includes the new type, start combat, screenshot it. For a quick look, temporarily raise its weight; revert that before finishing.
+- `npm run audit-assets` (catches missing frames)
+- `playtest` skill: load a save at a level whose weights include the new type, start combat, screenshot it. For a quick look, temporarily raise its weight; revert that before finishing.

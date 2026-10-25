@@ -31,7 +31,7 @@ await AZT.waitForBoot(30000)   // also waits for extensions (AZT.takeover, ...)
 |---|---|
 | `fresh` | no save, AWAKEN-only tree (first-launch flow) |
 | `early` | AWAKEN owned, 300 DATA |
-| `midgame` | bottom 4 tree rows owned, level 3, lots of every currency |
+| `midgame` | every non-shard node up to grid row 4 owned (including the CHEAT cluster below AWAKEN), level 3, lots of every currency. It owns both first-duo weapons without choosing one, so neither lightning nor shockwave fires: call `lightningAttack.unlock()` if you need one |
 | `takeover` | `financial_breach` path owned, so the BREACH button is visible (for takeover work, prefer `AZT.takeover.load(...)`) |
 | `maxed` | every node at max level, level 5 (late-game visuals and performance) |
 
@@ -45,7 +45,7 @@ Game state:
 - `AZT.state()`: phase, level, resources, tower HP, enemy count, boss, takeover state
 - `await AZT.combat()` / `await AZT.upgrades()`: real phase transition (camera slide included)
 - `AZT.spawn('heavy', 5)`: spawn around the tower; type = any `enemyManager` pool key (`basic`, `fast`, `heavy`, `swarmer`, `shooter`, `sniper`, `logic_stray`, `exploder`, `shell`, `protector`, `cache`)
-- `AZT.spawnMiniboss('Miniboss2')` / `AZT.spawnBoss()`
+- `AZT.spawnMiniboss('Miniboss2')` / `AZT.spawnBoss()`. `spawnMiniboss` spawns a *farming* miniboss, which publishes `enemyKilled` and drops DATA on death (regular minibosses don't)
 - `AZT.god(true)`: tower stays at full HP; `AZT.speed(3)`: game time scale
 - `AZT.grant({ data: 5000, shard: 3 })`: live currency through `resourceManager`
 - `await AZT.wait(ms)`: let animations and tweens settle
@@ -57,7 +57,7 @@ Real input. These dispatch DOM mouse events on the canvas, so clicks go through 
 - `AZT.findTexts(match)` / `AZT.findFrames(match)`: positions, sizes and depths of what's on screen
 - `AZT.screenTexts(minDepth)`: every visible text, top to bottom. A cheap text "screenshot" for asserting UI state.
 
-For anything else, call the game's globals directly (`gameStateMachine`, `upgradeTree`, `enemyManager`, `tower`, ...). See `PROJECT_STRUCTURE.md`.
+For anything else, call the game's globals directly (`gameStateMachine`, `upgradeTree`, `enemyManager`, `tower`, ...). See `docs/ARCHITECTURE.md`.
 
 ## 5. Check and show
 

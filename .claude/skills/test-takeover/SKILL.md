@@ -74,9 +74,12 @@ Set up per the `playtest` skill (800x450 viewport, inject `tools/playtest.js`, `
 ```js
 await AZT.takeover.flow('all')          // breach on each reward type + abort + select (needs 'idle'-like state)
 await AZT.takeover.flow('breach', { slot: 2 })
+await AZT.takeover.flow('abort')        // hold-to-abort refunds; a quick click does not abort
+await AZT.takeover.flow('select')       // row selection updates the detail pane
 await AZT.takeover.flow('resume')       // close/reopen mid-breach, progress keeps counting
 await AZT.takeover.flow('unaffordable') // needs DATA < cost: nothing spent, denial shown
 await AZT.takeover.flow('tutorial')     // needs load('tutorial')
+// AZT.takeover.flows lists every name
 ```
 
 For visual changes, screenshot each view: detail, hacking (use `finishIn`/`fastForward` to reach mid-progress), success. Run `checkLayout()` on the `extremes` scenario in all three views. Finish with `AZT.restore()` and `resize_window` preset `desktop`.

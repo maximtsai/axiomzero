@@ -8,7 +8,8 @@
     "build": "node build_prod.js",
     "audit-assets": "node .claude/skills/asset-audit/audit.js",
     "takeover-sim": "node tools/takeover-sim.js",
-    "export-terminal-assets": "node tools/export-terminal-assets.js"
+    "export-terminal-assets": "node tools/export-terminal-assets.js",
+    "docs:messages": "node tools/messages.js"
   },
   "devDependencies": {
     "eslint": "^10.12.0",
